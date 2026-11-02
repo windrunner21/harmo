@@ -20,12 +20,13 @@ onEachPlayground("field", () => {
     const { input, error } = await couponField(page);
     await enter(input, "WINTER10");
     await settled(error);
+    await slowDown(error);
 
     await enter(input, "SPRING25");
     await expect(input).not.toHaveAttribute("aria-invalid");
     await expect(error).toHaveAttribute("hidden");
-    // Held mid-close, it still says what it said.
-    expect(await hold(error), "closing animations").toBeGreaterThan(0);
+    // Mid-close, it still says what it said.
+    expect(await animations(error), "closing animations").toBeGreaterThan(0);
     await expect(error).toHaveText("This coupon code is not valid.");
 
     await release(error);
@@ -37,9 +38,9 @@ onEachPlayground("field", () => {
     const { input, error } = await couponField(page);
     await enter(input, "WINTER10");
     await settled(error);
+    await slowDown(error);
     await enter(input, "SPRING25");
     await expect(error).toHaveAttribute("hidden");
-    await hold(error);
 
     await enter(input, "WINTER10");
     await expect(error).not.toHaveAttribute("hidden");
@@ -64,15 +65,15 @@ const enter = async (input: Locator, code: string) => {
   await input.press("Tab");
 };
 
-// Pauses an element's animations, and says how many there are.
-const hold = (element: Locator) =>
-  element.evaluate((node) => {
-    const animations = node.getAnimations();
-    for (const animation of animations) animation.pause();
-    return animations.length;
-  });
+// Makes an element's transitions last 100 seconds, so a test sees them
+// halfway on any machine, then ends them with release.
+const slowDown = (element: Locator) =>
+  element.evaluate((node) => ((node as HTMLElement).style.transitionDuration = "100s"));
 
-// Finishes an element's animations, held or not.
+// How many animations and transitions an element is running.
+const animations = (element: Locator) => element.evaluate((node) => node.getAnimations().length);
+
+// Finishes an element's animations and transitions.
 const release = (element: Locator) =>
   element.evaluate((node) => {
     for (const animation of node.getAnimations()) animation.finish();

@@ -1,6 +1,7 @@
-# Checks every push to master and every pull request: the types, the markup
-# test, and the browser tests in Chromium, Firefox, and WebKit. A failed run
-# keeps Playwright's report, with a trace of each failed test.
+# Checks every push to master and every pull request: the types and the
+# markup test in one job, and the browser tests in a job per browser, side by
+# side. A failed browser job keeps Playwright's report, with a trace of each
+# failed test.
 name: CI
 
 on:
@@ -16,9 +17,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  checks:
+    name: Types and markup
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
 
@@ -29,29 +31,45 @@ jobs:
       - run: mise run check:react
       - run: mise run test:react
 
+  browser:
+    name: Browser tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      # One browser failing doesn't stop the others.
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
+      - run: bun install --frozen-lockfile
+
       - run: mise run build:playground
       - run: mise run build:react-playground
 
-      # Playwright's browsers, kept between runs until its version changes,
-      # and the system libraries they need, installed each time.
+      # This job's browser, kept between runs until Playwright's version
+      # changes, and the system libraries it needs, installed each time.
       - uses: actions/cache@v6
-        id: browsers
+        id: browser
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('tests/package.json') }}
-      - if: steps.browsers.outputs.cache-hit != 'true'
+          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('tests/package.json') }}
+      - if: steps.browser.outputs.cache-hit != 'true'
         working-directory: tests
-        run: bunx playwright install --with-deps
-      - if: steps.browsers.outputs.cache-hit == 'true'
+        run: bunx playwright install --with-deps ${{ matrix.browser }}
+      - if: steps.browser.outputs.cache-hit == 'true'
         working-directory: tests
-        run: bunx playwright install-deps
+        run: bunx playwright install-deps ${{ matrix.browser }}
 
       - working-directory: tests
-        run: bunx playwright test
+        run: bunx playwright test --project=${{ matrix.browser }}
 
-      - if: failure()
+      # However the job ends, also when it runs out of time.
+      - if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: tests/playwright-report
           retention-days: 14

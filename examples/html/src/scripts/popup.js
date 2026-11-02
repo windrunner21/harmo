@@ -1,7 +1,7 @@
 // Example only: keep each trigger's aria-expanded in sync with its popup,
-// make each opening find its position afresh, and record which side of the
-// trigger the popup is on, so it slides away from the trigger. The React
-// Popup does all three itself.
+// make each opening find its position afresh, record which side of the
+// trigger the popup is on, so it slides away from the trigger, and keep a
+// closing popup where it is. The React Popup does all of this itself.
 {
   for (const popup of document.querySelectorAll(".hpopup[popover]")) {
     const trigger = [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find(
@@ -30,14 +30,31 @@
       return popupBox.top + popupBox.height / 2 < triggerBox.top + triggerBox.height / 2 ? "top" : "bottom";
     };
 
+    // Pins a closing popup to its box, so it fades where it is.
+    const pin = () => {
+      const box = popup.getBoundingClientRect();
+      for (const [name, value] of Object.entries({ top: box.top, left: box.left, width: box.width, height: box.height })) {
+        popup.style.setProperty(`--hpopup-pinned-${name}`, `${value}px`);
+      }
+      popup.setAttribute("data-pinned", "");
+    };
+    const unpin = () => {
+      popup.removeAttribute("data-pinned");
+      for (const name of ["top", "left", "width", "height"]) popup.style.removeProperty(`--hpopup-pinned-${name}`);
+    };
+
     popup.addEventListener("beforetoggle", (event) => {
       const opening = event.newState === "open";
       trigger.setAttribute("aria-expanded", String(opening));
       // A change to its fallbacks makes the browser forget where it last fit;
       // it comes first, so the popup is measured afresh.
-      if (opening) popup.toggleAttribute("data-refit");
+      if (opening) {
+        unpin();
+        popup.toggleAttribute("data-refit");
+      }
 
       const side = opening ? landing() : current();
+      if (!opening) pin();
       if (popup.dataset.side === side) return;
 
       // Move to the new starting offset without animating, so the opening

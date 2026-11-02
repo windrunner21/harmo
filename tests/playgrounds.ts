@@ -41,15 +41,18 @@ export const test = base.extend({
   },
 });
 
-// Opens a page and, in the React playground, waits until every example is
-// ready: hydrated, with the effects inside run, which add listeners such as
-// Listbox's keys. examples/react/src/client.tsx marks each data-play-ready.
+// Opens a page, and waits until it's ready.
 export const open = async (page: Page, playground: Playground, slug: string) => {
   await page.goto(url(playground, slug));
-  if (playground === "react") {
-    await expect(page.locator("[data-play-root]:not([data-play-ready])"), "examples not ready").toHaveCount(0);
-  }
+  await ready(page);
 };
+
+// Waits until every React example on the page is ready: hydrated, with the
+// effects inside run, which add listeners such as Listbox's keys.
+// examples/react/src/client.tsx marks each data-play-ready. An HTML page has
+// none to wait for.
+export const ready = (page: Page) =>
+  expect(page.locator("[data-play-root]:not([data-play-ready])"), "examples not ready").toHaveCount(0);
 
 // Runs the tests that `tests` declares on one page of each playground.
 export const onEachPlayground = (slug: string, tests: () => void) => {
@@ -74,9 +77,11 @@ export const openPopup = (scope: Locator) => scope.locator(".hpopup:popover-open
 
 // Waits for an element's animations and transitions to finish, so a check
 // sees where it ends up; with `closest`, those of the nearest ancestor that
-// matches it, if there is one. Endless ones, such as a spinner's, don't count.
+// matches it, if there is one. A frame first, since WebKit may start a
+// transition only then. Endless ones, such as a spinner's, don't count.
 export const settled = (element: Locator, closest?: string) =>
-  element.evaluate((node, closest) => {
+  element.evaluate(async (node, closest) => {
+    await new Promise(requestAnimationFrame);
     const target = (closest && node.closest(closest)) || node;
     return Promise.all(
       target

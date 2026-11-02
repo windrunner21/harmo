@@ -1,12 +1,10 @@
-import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page } from "@playwright/test";
-import { open, pages, playgrounds, settled, test } from "./playgrounds.ts";
+import { createRequire } from "node:module";
+import { open, pages, playgrounds, test } from "./playgrounds.ts";
 
-// axe's WCAG 2.2 A and AA rules. Without preloading: axe would fetch the
-// stylesheets again, which a page opened from disk isn't allowed to. The
-// options come first, since they replace the tags set before them.
-const axe = (page: Page) =>
-  new AxeBuilder({ page }).options({ preload: false }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]);
+// axe, loaded into each page once and then run for each check. Loading it for
+// every check made each one about three times slower.
+const axe = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
 
 // Every page of both playgrounds loads without an error, gets ready (React),
 // and passes axe's automated WCAG 2.2 A and AA checks, as it loads and with
@@ -16,37 +14,67 @@ for (const playground of playgrounds) {
     for (const slug of pages(playground)) {
       test(slug, async ({ page }) => {
         await open(page, playground, slug);
+        await page.addScriptTag({ path: axe });
+        const { loaded, popups } = await checkAccessibility(page);
 
-        const { violations } = await axe(page).analyze();
-        expect.soft(summarize(violations), "accessibility violations").toEqual([]);
-
-        // Popups are hidden as the page loads, so axe checks each example
-        // again with its popup open, trigger included.
-        const triggers = page.locator(".play-demo [popovertarget]:not(.hpopup [popovertarget]):enabled");
-        for (let index = 0; index < (await triggers.count()); index++) {
-          const trigger = triggers.nth(index);
-          const popup = page.locator(`[id="${await trigger.getAttribute("popovertarget")}"]`);
-          const exampleId = await trigger.evaluate((element) => element.closest(".play-example")?.id);
-          await trigger.click();
-          await expect(popup).toBeVisible();
-          await settled(popup);
-          // A list that scrolls must be reachable with the keyboard. A
-          // listbox is: it, or its select's trigger, takes focus when it
-          // opens, and the arrow keys scroll it (see listbox.spec.ts). axe
-          // only sees that the list itself isn't in the Tab order.
-          const listbox = (await popup.getByRole("listbox").count()) > 0;
-          const check = listbox ? axe(page).disableRules(["scrollable-region-focusable"]) : axe(page);
-          const { violations } = await check.include(`[id="${exampleId}"]`).analyze();
-          expect.soft(summarize(violations), `accessibility violations with ${await trigger.innerText()} open`).toEqual([]);
-          await popup.evaluate((element) => (element as HTMLElement).hidePopover());
+        expect.soft(loaded, "accessibility violations").toEqual([]);
+        for (const { trigger, violations } of popups) {
+          expect.soft(violations, `accessibility violations with ${trigger} open`).toEqual([]);
         }
       });
     }
   });
 }
 
-const summarize = (violations: Awaited<ReturnType<AxeBuilder["analyze"]>>["violations"]) =>
-  violations.map(({ id, help, nodes }) => ({
-    rule: `${id}: ${help}`,
-    elements: nodes.map((node) => node.target.join(" ")),
-  }));
+// Runs axe on the page as it loads, then on each example with its popup open,
+// trigger included: each popup is opened as a click opens it, and checked
+// once it has finished opening. All in one call to the page, since in WebKit
+// each call takes about a tenth of a second.
+const checkAccessibility = (page: Page) =>
+  page.evaluate(async () => {
+    const { axe } = window as unknown as { axe: typeof import("axe-core") };
+
+    // axe's WCAG 2.2 A and AA rules, less any named. Without preloading: axe
+    // would fetch the stylesheets again, which a page opened from disk isn't
+    // allowed to.
+    const run = async (context: import("axe-core").ElementContext, except: string[] = []) => {
+      const { violations } = await axe.run(context, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
+        rules: Object.fromEntries(except.map((rule) => [rule, { enabled: false }])),
+        resultTypes: ["violations"],
+        preload: false,
+      });
+      return violations.map(({ id, help, nodes }) => ({
+        rule: `${id}: ${help}`,
+        elements: nodes.map((node) => node.target.join(" ")),
+      }));
+    };
+
+    const loaded = await run(document);
+    const popups = [];
+    const triggers = document.querySelectorAll<HTMLElement>(".play-demo [popovertarget]:not(.hpopup [popovertarget]):enabled");
+    for (const trigger of triggers) {
+      const popup = document.getElementById(trigger.getAttribute("popovertarget") ?? "");
+      const example = trigger.closest(".play-example");
+      if (!popup || !example) continue;
+      trigger.scrollIntoView({ block: "center" });
+      trigger.click();
+      // Checked once it's fully open: mid-fade, its text would fail on
+      // contrast. Watched frame by frame, since WebKit may start the fade a
+      // frame or more after the click.
+      for (let frame = 0; frame < 120; frame++) {
+        await new Promise(requestAnimationFrame);
+        const moving = popup.getAnimations().some((animation) => animation.playState !== "finished");
+        if (!moving && getComputedStyle(popup).opacity === "1") break;
+      }
+      // A list that scrolls must be reachable with the keyboard. A listbox
+      // is: it, or its select's trigger, takes focus when it opens, and the
+      // arrow keys scroll it (see listbox.spec.ts). axe only sees that the
+      // list itself isn't in the Tab order.
+      const listbox = popup.querySelector('[role="listbox"]') !== null;
+      const violations = await run({ include: [[`[id="${example.id}"]`]] }, listbox ? ["scrollable-region-focusable"] : []);
+      popups.push({ trigger: trigger.innerText.trim(), violations });
+      popup.hidePopover();
+    }
+    return { loaded, popups };
+  });

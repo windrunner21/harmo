@@ -33,8 +33,13 @@ export type TooltipProps = TooltipOptions &
 
 let lastHide = -Infinity;
 
+const milliseconds = (time: string) =>
+  parseFloat(time) * (time.trim().endsWith("ms") ? 1 : 1000);
+
 export const useTooltip = () => {
   const tooltip = useRef<HTMLSpanElement>(null);
+  const entered = useRef(0);
+  const delay = useRef(0);
   const [dismissed, setDismissed] = useState(false);
 
   const shown = () =>
@@ -59,9 +64,19 @@ export const useTooltip = () => {
           "--htooltip-delay",
           recent ? "0ms" : "",
         );
+        entered.current = performance.now();
+        delay.current = recent
+          ? 0
+          : milliseconds(
+              getComputedStyle(event.currentTarget).getPropertyValue(
+                "--harmo-tooltip-delay",
+              ),
+            );
       },
       onPointerLeave: () => {
-        if (shown()) lastHide = performance.now();
+        if (performance.now() - entered.current >= delay.current) {
+          lastHide = performance.now();
+        }
         setDismissed(false);
       },
       onBlur: () => setDismissed(false),

@@ -70,6 +70,7 @@ mise run watch:react-playground   # rebuild the React playground on change (run 
 mise run check:react              # type-check the React package, the React playground, and the tests
 mise run test:react               # compare the React examples' markup with the HTML examples
 mise run test:browser             # build both playgrounds, then test them in Chromium
+mise run test:browser:all         # the same in Chromium, Firefox, and WebKit, in Docker
 ```
 
 Package dependencies belong in the appropriate `package.json`; tools belong
@@ -168,12 +169,16 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   tests what each component's scripts do, such as Listbox's keys and Tabs'
   underline. Each test in `tests/` runs on both playgrounds, and the
   config lists Chromium, Firefox, and WebKit; `bunx playwright test`, in
-  `tests/`, runs all three, if you've installed them. A failed test keeps a
+  `tests/`, runs all three, if you've installed them, and
+  `mise run test:browser:all` runs them in Playwright's Docker image, where
+  Playwright can't install its browsers, such as on Arch. Pull the image
+  first: `docker pull mcr.microsoft.com/playwright:v1.64.1-noble`, at the
+  version of `@playwright/test` in `tests/package.json`. A failed test keeps a
   trace in `tests/test-results`, to open with `bunx playwright show-trace`.
 - GitHub Actions (`.github/workflows/ci.yml`) runs all of these on every push
-  to `master` and every pull request, the browser tests in all three
-  browsers. A failure shows on the pull request, and the run keeps
-  Playwright's report, with each failed test's trace.
+  to `master` and every pull request, the browser tests in a job per
+  browser, side by side. A failure shows on the pull request, and each job
+  keeps Playwright's report, with each failed test's trace.
 
 [docs/internal/testing.md](docs/internal/testing.md) explains the approach
 and why.

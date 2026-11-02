@@ -51,9 +51,14 @@ export const Popup = ({
           onBeforeToggle?.(event);
           if (event.defaultPrevented) return;
           const opening = event.newState === "open";
+          const popup = event.currentTarget;
           setOpen(opening);
-          if (opening) event.currentTarget.toggleAttribute("data-refit");
-          placeSide(event.currentTarget, opening);
+          if (opening) {
+            unpin(popup);
+            popup.toggleAttribute("data-refit");
+          }
+          placeSide(popup, opening);
+          if (!opening) pin(popup);
         }}
       >
         {children}
@@ -94,4 +99,21 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
   popup.dataset.side = side;
   popup.getBoundingClientRect();
   popup.style.transition = "";
+};
+
+const pinned = ["top", "left", "width", "height"] as const;
+
+const pin = (popup: HTMLElement) => {
+  const box = popup.getBoundingClientRect();
+  for (const name of pinned) {
+    popup.style.setProperty(`--hpopup-pinned-${name}`, `${box[name]}px`);
+  }
+  popup.setAttribute("data-pinned", "");
+};
+
+const unpin = (popup: HTMLElement) => {
+  popup.removeAttribute("data-pinned");
+  for (const name of pinned) {
+    popup.style.removeProperty(`--hpopup-pinned-${name}`);
+  }
 };

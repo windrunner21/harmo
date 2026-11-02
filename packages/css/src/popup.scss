@@ -58,6 +58,19 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink;
     position-try-fallbacks: $fallbacks, flip-block;
   }
 
+  // A closing popup fades where it is: the script pins it there, by its
+  // box, as closing starts, until it next opens. Firefox would otherwise
+  // place it afresh as it leaves the top layer, perhaps on the other side.
+  &[data-pinned] {
+    position-area: none;
+    position-try-fallbacks: none;
+    inset: var(--hpopup-pinned-top) auto auto var(--hpopup-pinned-left);
+
+    inline-size: var(--hpopup-pinned-width);
+    block-size: var(--hpopup-pinned-height);
+    margin: 0;
+  }
+
   &[data-side="top"] {
     --hpopup-slide-direction: 1;
   }

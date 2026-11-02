@@ -115,7 +115,9 @@ mise run test:browser    # builds both playgrounds, then tests them in Chromium
   its root `data-play-ready` once every effect inside has run;
 - [axe](https://github.com/dequelabs/axe-core) finds no WCAG 2.2 A or AA
   violation, as the page loads and with each example's popup open, its
-  trigger included.
+  trigger included. axe is loaded into the page once, and the whole check,
+  each popup opened and checked once it's fully open, runs in one call to
+  the page.
 
 The other files test one component each, from the "What a script does"
 table on its page in `docs/components`:
@@ -162,9 +164,17 @@ Filter chip.
   the `toggle` event, send them in one task with `dispatchEvent`.
 - Don't time things with the clock. To check that something animates, or
   doesn't, count the transitions it starts with `watchTransitions`; to check
-  a delay, read it from the CSS; to look mid-animation, pause the element's
-  animations and finish them after. A wait is fine only when it can't be too
-  short, such as waiting out a script's half-second pause, and says so.
+  a delay, read it from the CSS; to look mid-animation, make its transitions
+  long before they start, and finish them after: pausing one once it has
+  started can come too late on a busy machine. To wait out a script's timer,
+  such as Button's two seconds of loading, put the page on Playwright's
+  paused clock and move it on (see `button.spec.ts`). A wait is fine only
+  when it can't be too short, such as waiting out a script's half-second
+  pause, and says so.
+- Keep calls to the page few. In WebKit each one takes about a tenth of a
+  second, against a hundredth in Chromium, so a check that goes through many
+  elements, as `pages.spec.ts` does, works through them inside one
+  `page.evaluate`.
 - Make sure a new test can fail: break what it tests, in the built
   playground or the source, and watch it fail.
 
@@ -183,9 +193,13 @@ What they can't see:
   privacy.
 - In React, a press on a loading or `aria-disabled` Button calling the app's
   `onClick` anyway: the example's own handler shows nothing more.
-- In Chrome, whether a closing popup's fallback list changes: Chrome doesn't
-  move a closing popup either way. `data-refit` keeps the list unchanged
-  through closing, for engines that would.
+- In Chrome, whether a closing popup is pinned: Chrome doesn't move a
+  closing popup either way. Firefox does, as it leaves the top layer, and
+  the closing test fails there without the pin.
+- In Firefox, whether the tooltip scripts count a tooltip as having shown:
+  Chrome still shows it when the pointer leaves, so reading its style works
+  there too. Firefox has hidden it already, and the "right after one closes"
+  test fails there with that reading.
 - Firefox and WebKit, until CI runs them.
 
 ### Why Playwright
@@ -196,8 +210,8 @@ What they can't see:
   differ most where their implementations are new.
 - Its browser versions are pinned to its own version, so a test gives the
   same result on every machine.
-- It waits for elements before acting on them, keeps a trace of each failed
-  test, and has an official axe integration.
+- It waits for elements before acting on them, and keeps a trace of each
+  failed test. axe runs in all three browsers.
 
 Its test runner runs on Node, which mise installs; Bun does everything else.
 Bun's own browser, Bun.WebView, drives only Chrome on Linux, and Safari's
@@ -211,7 +225,13 @@ engine only on macOS.
   config lists, once installed with `bunx playwright install`. Playwright
   supports Ubuntu and Debian officially; on other Linux distributions,
   WebKit may need system libraries.
-- **On CI,** `.github/workflows/ci.yml` runs all three on Ubuntu, with
-  Playwright's own browsers, kept between runs until its version changes. A
-  failed run keeps the report, `playwright-report`, as an artifact; its
-  traces open with `bunx playwright show-trace`.
+- **In Docker:** `mise run test:browser:all` runs all three in Playwright's
+  image, `mcr.microsoft.com/playwright`, at the version of `@playwright/test`
+  in `tests/package.json`: the same Ubuntu and browsers as CI, on any system.
+  Pass Playwright's options after `--`, such as
+  `mise run test:browser:all -- --project=webkit`.
+- **On CI,** `.github/workflows/ci.yml` runs each browser in its own job on
+  Ubuntu, side by side, with Playwright's own browser, kept between runs
+  until its version changes. Each job keeps its report,
+  `playwright-report-<browser>`, as an artifact; its traces open with
+  `bunx playwright show-trace`.
