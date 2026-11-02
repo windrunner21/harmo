@@ -1,5 +1,7 @@
 [tools]
 bun = "latest"
+# Only for Playwright's test runner, which runs on Node; Bun does the rest.
+node = "lts"
 
 # Standalone Dart Sass. The aqua registry lists only the musl build for Linux,
 # which cannot run on glibc systems, so name the glibc builds explicitly.
@@ -47,10 +49,18 @@ description = "Compare the React examples' markup with the HTML examples"
 dir = "{{config_root}}/examples/react"
 run = "bun test"
 
+[tasks."test:browser"]
+description = "Build both playgrounds, then test them in Chromium"
+# CI runs every browser the config lists: bunx playwright test.
+depends = ["build:playground", "build:react-playground"]
+dir = "{{config_root}}/tests"
+run = "bunx playwright test --project=chromium"
+
 [tasks."check:react"]
-description = "Type-check the React package and the React playground"
+description = "Type-check the React package, the React playground, and the browser tests"
 # bun check, Bun's built-in type checker, needs Bun 1.4.3 or later.
 run = [
   "cd packages/react && bun check",
   "cd examples/react && bun check",
+  "cd tests && bun check",
 ]

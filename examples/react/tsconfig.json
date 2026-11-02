@@ -12,7 +12,8 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["bun"]
   },
-  "include": ["src"]
+  "include": ["src", "test", "build.ts"]
 }

@@ -146,6 +146,69 @@
   </div>
 </play-example>
 
+<play-example title="Single, grouped, with search">
+  <play-note>
+    Searching a grouped list hides each option that doesn't match, and each
+    group left with none, label and all.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="inbox-popup"
+    style="anchor-name: --inbox-popup"
+  >
+    <span class="hbutton-label">Inbox</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="inbox-popup" popover style="position-anchor: --inbox-popup">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        placeholder="Search inboxes"
+        aria-label="Search inboxes"
+        data-example-empty="No inboxes found"
+        aria-expanded="true"
+        aria-controls="inbox-listbox"
+        aria-autocomplete="list"
+      />
+    </div>
+    <ul class="hlistbox" id="inbox-listbox" role="listbox" aria-label="Inbox">
+      <li class="hoption" id="inbox-all" role="option" aria-selected="true">
+        <span class="hoption-label">All inboxes</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="inbox-messaging">Messaging</span>
+        <ul role="group" aria-labelledby="inbox-messaging">
+          <li class="hoption" id="inbox-whatsapp" role="option" aria-selected="false">
+            <span class="hoption-label">WhatsApp</span>
+          </li>
+          <li class="hoption" id="inbox-telegram" role="option" aria-selected="false">
+            <span class="hoption-label">Telegram</span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="inbox-email">Email</span>
+        <ul role="group" aria-labelledby="inbox-email">
+          <li class="hoption" id="inbox-gmail" role="option" aria-selected="false">
+            <span class="hoption-label">Gmail</span>
+          </li>
+          <li class="hoption" id="inbox-outlook" role="option" aria-selected="false">
+            <span class="hoption-label">Outlook</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
 <play-example title="Multiple">
   <play-note>
     <code>aria-multiselectable="true"</code> on the list, and a

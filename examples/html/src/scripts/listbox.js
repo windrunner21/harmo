@@ -83,12 +83,18 @@
         highlight(enabled()[0] ?? null, { scroll: true });
         requestAnimationFrame(() => updateTitles(listbox));
       });
-      // Each opening starts from the whole list.
-      popup.addEventListener("beforetoggle", (event) => {
-        if (event.newState !== "open" || !search.value || !options.length) return;
-        search.value = "";
-        search.dispatchEvent(new Event("input"));
-      });
+      // Each opening starts from the whole list. Capturing restores it before
+      // anything else handles the opening, such as a script that measures the
+      // popup.
+      popup.addEventListener(
+        "beforetoggle",
+        (event) => {
+          if (event.newState !== "open" || !search.value || !options.length) return;
+          search.value = "";
+          search.dispatchEvent(new Event("input"));
+        },
+        { capture: true },
+      );
     }
 
     // Pointer: highlight the enabled option underneath; leaving clears it.
@@ -129,22 +135,30 @@
 
     if (!popup) continue;
 
-    // On open: move focus to its owner, highlight the option a key asked for,
-    // else the selected option, else the first enabled one, and measure the
-    // labels now that the list has its width. On close: clear the highlight.
+    // As it opens, highlight the option a key asked for, else the selected
+    // option, else the first enabled one. This runs while the popup opens, so
+    // a key pressed straight after moves on from it. As it closes, clear the
+    // highlight.
     let opening = null;
-    popup.addEventListener("toggle", (event) => {
+    popup.addEventListener("beforetoggle", (event) => {
       if (event.newState === "open") {
-        if (owner !== trigger) owner.focus();
         const selected = listbox.querySelector('.hoption[aria-selected="true"]:not([aria-disabled="true"], [hidden])');
-        highlight(opening ?? selected ?? enabled()[0], { scroll: true });
-        requestAnimationFrame(() => updateTitles(listbox));
+        highlight(opening ?? selected ?? enabled()[0]);
       } else {
         highlight(null);
         clearTimeout(typedTimer);
         typed = "";
       }
       opening = null;
+    });
+
+    // Once it shows: move focus to its owner, scroll the highlighted option
+    // into view, and measure the labels now that the list has its width.
+    popup.addEventListener("toggle", (event) => {
+      if (event.newState !== "open") return;
+      if (owner !== trigger) owner.focus();
+      active?.scrollIntoView({ block: "nearest" });
+      requestAnimationFrame(() => updateTitles(listbox));
     });
 
     // Space activates a button on release, so a Space that chose an option

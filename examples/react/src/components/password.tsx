@@ -1,4 +1,5 @@
-import { PasswordInput, type PasswordStrength } from "@harmo/react";
+import { Checkbox, Field, PasswordInput, type PasswordStrength } from "@harmo/react";
+import { useState } from "react";
 
 export const examples = {
   "Current password": () => (
@@ -51,4 +52,26 @@ export const examples = {
       disabled
     />
   ),
+
+  Disabling: () => {
+    const [protecting, setProtecting] = useState(true);
+    return (
+      <>
+        <Field orientation="horizontal" label="Protect the export with a password">
+          <Checkbox
+            name="export-protect"
+            checked={protecting}
+            onChange={(event) => setProtecting(event.target.checked)}
+          />
+        </Field>
+        <PasswordInput
+          label="Export password"
+          showPasswordLabel="Show password"
+          hidePasswordLabel="Hide password"
+          autoComplete="new-password"
+          disabled={!protecting}
+        />
+      </>
+    );
+  },
 };

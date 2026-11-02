@@ -61,9 +61,9 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
       instant.current = true;
       place();
     });
-    observer.observe(root);
+    observer.observe(root, { box: "border-box" });
     for (const item of root.querySelectorAll('a, [role="tab"]')) {
-      observer.observe(item);
+      observer.observe(item, { box: "border-box" });
     }
     root.addEventListener("keydown", keyboard, true);
     root.addEventListener("pointerdown", pointer, true);

@@ -117,7 +117,8 @@
 
     placeIndicator();
     tabs.setAttribute("data-ready", "");
-    observer.observe(tabs);
-    for (const item of items()) observer.observe(item);
+    // Their whole boxes, so a change of padding counts as well as of text.
+    observer.observe(tabs, { box: "border-box" });
+    for (const item of items()) observer.observe(item, { box: "border-box" });
   }
 }

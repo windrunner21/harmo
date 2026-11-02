@@ -53,6 +53,11 @@ panel lays out its own content.
 - Without room, it tries in order: above the trigger; below, aligned to the
   trigger's other edge; above, aligned to the other edge; then below, shrunk to
   the window and scrolling.
+- Each opening starts from below. Browsers keep the last position that fit
+  while it still fits, so an open popup doesn't jump as the page scrolls. A
+  change to the fallback list makes them forget it, so `data-refit`, which a
+  script toggles as each opening starts, switches between two lists that
+  behave the same. Closing changes neither, so a closing popup stays put.
 - A column layout, so a list inside can shrink and scroll while a search row or
   footer stays put.
 - Opens in 200ms: a 12px slide away from the trigger and a fade. Closes in
@@ -74,11 +79,19 @@ panel lays out its own content.
 | Change | When |
 | --- | --- |
 | `aria-expanded` on the trigger | On every open and close; it also styles open select triggers |
-| `data-side="top"` on the popup | Before opening, when the popup will land above its trigger; CSS can't tell which side it landed on |
+| `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; its value doesn't matter, the change does |
+| `data-side="top"` on the popup | Before opening, when it will land above its trigger, and before closing, when it's above; CSS can't tell which side it landed on |
 
-Measure the closed popup against its trigger in `beforetoggle`. If the side
-changes, apply it without a transition so the slide starts from the right
-side. `examples/html/src/scripts/popup.js` is an example script.
+In `beforetoggle`, when opening, toggle `data-refit` first, then work the
+side out from the room around the trigger, as the CSS does: above when the
+popup fits there but not below. After the toggle, the popup measures at its
+whole height, not one it was shrunk to where it last fit; its position can't
+tell where it will land. When closing, measure where it is, since scrolling
+may have moved it. If the side changes, apply it without a transition, so the
+slide starts from the right side. `examples/html/src/scripts/popup.js` is an
+example script. Other listeners that change the popup's contents as it opens,
+such as a Listbox restoring its search results, should listen in the capture
+phase, so they run first.
 
 ## React
 

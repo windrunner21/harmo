@@ -244,6 +244,49 @@
   </div>
 </play-example>
 
+<play-example title="Disabling" layout="stack">
+  <play-note>
+    Disabling the trigger disables its hidden inputs too, so a form leaves
+    the value out, as it would a native select's. Here a checkbox turns the
+    select off and on, as an app's settings might.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="reminder" name="reminder" checked data-example-enables="reminder-channel" />
+    <label class="hlabel" for="reminder">Send a reminder</label>
+  </div>
+  <div class="hfield">
+    <span class="hlabel" id="reminder-channel-label">Reminder channel</span>
+    <button
+      class="hselect"
+      id="reminder-channel"
+      type="button"
+      data-name="reminder-channel"
+      role="combobox"
+      aria-labelledby="reminder-channel-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="reminder-channel-listbox"
+      popovertarget="reminder-channel-popup"
+      style="anchor-name: --reminder-channel"
+    >
+      <span class="hselect-value">SMS</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="reminder-channel-popup" popover style="position-anchor: --reminder-channel">
+      <ul class="hlistbox" id="reminder-channel-listbox" role="listbox" aria-labelledby="reminder-channel-label">
+        <li class="hoption" id="reminder-channel-sms" role="option" data-value="sms" aria-selected="true">
+          <span class="hoption-label">SMS</span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="reminder-channel-email" role="option" data-value="email" aria-selected="false">
+          <span class="hoption-label">Email</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="reminder-channel" value="sms" />
+  </div>
+</play-example>
+
 <play-example title="In a form" layout="stack">
   <play-note>
     The trigger is a button, so it submits nothing itself. Its

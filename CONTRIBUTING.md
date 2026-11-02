@@ -8,16 +8,28 @@ and the principles behind them in [docs/philosophy.md](docs/philosophy.md).
 
 Harmo's tools are managed by [mise](https://mise.jdx.dev/), which installs
 the versions `mise.toml` names: [Bun](https://bun.com), as the runtime,
-package manager, bundler, test runner, and type checker, and the standalone
-[Dart Sass](https://sass-lang.com/dart-sass/), which compiles the SCSS.
-Node isn't needed.
+package manager, bundler, test runner, and type checker; the standalone
+[Dart Sass](https://sass-lang.com/dart-sass/), which compiles the SCSS; and
+Node, which only runs [Playwright](https://playwright.dev)'s test runner for
+the browser tests.
 
 ```sh
-mise install                # install Bun and Dart Sass
+mise install                # install Bun, Dart Sass, and Node
 bun install                 # link the workspace's packages
 mise run build:css          # compile the CSS
-mise run check:react        # type-check the React package and playground
+mise run check:react        # type-check the React package, playground, and tests
 mise run test:react         # compare the React examples with the HTML examples
+mise run test:browser       # test both playgrounds in Chromium
+```
+
+The browser tests need a Chromium: either Playwright's own, downloaded once
+into your user cache with `bunx playwright install chromium` (run it in
+`tests/`), or one you already have, named in a `mise.local.toml` at the
+root, which git ignores:
+
+```toml
+[env]
+CHROMIUM_PATH = "/usr/bin/chromium"
 ```
 
 Consumers of the compiled CSS need none of this.
@@ -33,6 +45,7 @@ examples/html/         the HTML playground: the examples (the contract), example
                        scripts, and icons, in src/
 examples/react/        the React playground: the same examples in React, its
                        build, and the markup test
+tests/                 the browser tests, run with Playwright on both playgrounds
 docs/components/       one page per component
 docs/patterns/         compositions of components, such as the Settings list
 docs/philosophy.md     design principles and API guidelines
@@ -42,7 +55,8 @@ mise.toml              tool versions and tasks
 ```
 
 The packages are a Bun workspace: `examples/react` depends on
-`@harmo/react` and imports it as an app would.
+`@harmo/react` and imports it as an app would, and `tests` holds the
+browser tests' own dependencies.
 
 ## Commands
 
@@ -53,8 +67,9 @@ mise run build:playground         # build the CSS, then the HTML playground into
 mise run watch:playground         # rebuild the HTML playground on change (run watch:css alongside)
 mise run build:react-playground   # build the CSS, then the React playground into examples/react/dist
 mise run watch:react-playground   # rebuild the React playground on change (run watch:css alongside)
-mise run check:react              # type-check the React package and the React playground
+mise run check:react              # type-check the React package, the React playground, and the tests
 mise run test:react               # compare the React examples' markup with the HTML examples
+mise run test:browser             # build both playgrounds, then test them in Chromium
 ```
 
 Package dependencies belong in the appropriate `package.json`; tools belong
@@ -97,6 +112,9 @@ stay in step:
 5. **React examples:** `examples/react/src/components/<slug>.tsx`, listed in
    `examples/react/src/examples.ts`, until `mise run test:react` shows no
    failure and no to-do for it.
+6. **Browser tests:** for a component with behavior, `tests/<slug>.spec.ts`,
+   testing what its page's "What a script does" table says, on both
+   playgrounds.
 
 ## Playground
 
@@ -126,24 +144,39 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   That file exports `examples`, keyed by the HTML examples' titles, and is
   listed in `src/examples.ts`.
 - The build renders every example with React, as a server would, and
-  `src/client.tsx` hydrates it in the browser.
+  `src/client.tsx` hydrates it in the browser. Both wrap it in
+  `src/Ready.tsx`, which marks it `data-play-ready` once its effects have
+  run, for the browser tests.
 - Write each example on its own, without helpers shared across the file,
   since the playground shows its code to copy. `src/app-icons.tsx` stands in
   for an app's own icons.
 
 ## Testing
 
-- `mise run check:react` type-checks both React packages, strictly and with
-  unused code reported.
+- `mise run check:react` type-checks the React package, the React
+  playground with its build and markup test, and the browser tests, strictly
+  and with unused code reported.
 - `mise run test:react` renders every React example and compares its markup
   with the HTML example of the same title. An HTML example without a React
   version shows as a to-do.
 - Both playground builds check every page: no repeated ids, and every
   `aria-labelledby`, `aria-describedby`, `aria-controls`, `for`, and
   `popovertarget` points to an element.
+- `mise run test:browser` opens every page of both playgrounds in Chromium:
+  no console errors, every React example gets ready, and axe finds no WCAG
+  2.2 A or AA violation, as the page loads and with each popup open. Then it
+  tests what each component's scripts do, such as Listbox's keys and Tabs'
+  underline. Each test in `tests/` runs on both playgrounds, and the
+  config lists Chromium, Firefox, and WebKit; `bunx playwright test`, in
+  `tests/`, runs all three, if you've installed them. A failed test keeps a
+  trace in `tests/test-results`, to open with `bunx playwright show-trace`.
+- GitHub Actions (`.github/workflows/ci.yml`) runs all of these on every push
+  to `master` and every pull request, the browser tests in all three
+  browsers. A failure shows on the pull request, and the run keeps
+  Playwright's report, with each failed test's trace.
 
 [docs/internal/testing.md](docs/internal/testing.md) explains the approach
-and why; browser tests are planned.
+and why.
 
 ## CSS authoring
 

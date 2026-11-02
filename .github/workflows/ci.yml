@@ -1,0 +1,57 @@
+# Checks every push to master and every pull request: the types, the markup
+# test, and the browser tests in Chromium, Firefox, and WebKit. A failed run
+# keeps Playwright's report, with a trace of each failed test.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      # Bun, Dart Sass, and Node, at the versions mise.toml names.
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
+      - run: bun install --frozen-lockfile
+
+      - run: mise run check:react
+      - run: mise run test:react
+
+      - run: mise run build:playground
+      - run: mise run build:react-playground
+
+      # Playwright's browsers, kept between runs until its version changes,
+      # and the system libraries they need, installed each time.
+      - uses: actions/cache@v6
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/package.json') }}
+      - if: steps.browsers.outputs.cache-hit != 'true'
+        working-directory: tests
+        run: bunx playwright install --with-deps
+      - if: steps.browsers.outputs.cache-hit == 'true'
+        working-directory: tests
+        run: bunx playwright install-deps
+
+      - working-directory: tests
+        run: bunx playwright test
+
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: tests/playwright-report
+          retention-days: 14

@@ -132,11 +132,12 @@ focus.
 
 | Change | When |
 | --- | --- |
+| Highlight the option a key asked for, else the selected one, else the first enabled one | As the list opens (`beforetoggle`), so a key pressed straight after moves on from it |
 | Move `data-active` and the focused element's `aria-activedescendant` | Arrow keys, Home, End, type-to-jump, and pointer movement |
 | Toggle `aria-selected` and move the check mark | Enter, Space in a multi-select, or a click |
 | Close the popup, which returns focus to what opened it; a multi-select stays open | After a single-select choice, even of the selected option |
 | Move focus to the search field | When a list with a search row opens |
-| Clear the search field and show every option | Before the list opens, so each opening starts from the whole list |
+| Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup), so each opening starts from the whole list |
 | Set `hidden` on the options and groups that don't match, and render `.hlistbox-empty` when none do | As the search text changes |
 | Set a truncated `.hoption-label`'s `title` to its full text, and remove it when it fits | When the list opens or resizes, so hovering shows the whole option |
 

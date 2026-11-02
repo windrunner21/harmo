@@ -1,16 +1,16 @@
 @use "shortcuts" as *;
 
+// Below the trigger and aligned to its start; without room, the browser tries
+// these in order.
+$fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink;
+
 .hpopup {
   --hpopup-slide: 12px;
   --hpopup-slide-direction: -1;
 
   inset: auto;
   position-area: block-end span-inline-end;
-  position-try-fallbacks:
-    flip-block,
-    flip-inline,
-    flip-block flip-inline,
-    --hpopup-shrink;
+  position-try-fallbacks: $fallbacks;
 
   display: flex;
   flex-direction: column;
@@ -45,6 +45,17 @@
       calc(var(--hpopup-slide-direction) * var(--hpopup-slide))
     );
     transition-duration: $duration-fast;
+  }
+
+  // Each opening starts from below. A browser keeps the last position that
+  // fit for as long as it still fits, and a closed popup stays rendered, so
+  // one that once sat above would keep opening above. A change to the
+  // fallbacks makes it forget, so the script toggles data-refit as each
+  // opening starts, between two lists that differ by a repeat that changes
+  // nothing: by then, that fallback has been tried. Closing changes neither,
+  // so a closing popup stays where it is.
+  &[data-refit] {
+    position-try-fallbacks: $fallbacks, flip-block;
   }
 
   &[data-side="top"] {

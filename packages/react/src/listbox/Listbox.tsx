@@ -91,6 +91,11 @@ export const Listbox = ({
   const [uncontrolled, setUncontrolled] = useState(() => toList(defaultValue));
   const selected = value === undefined ? uncontrolled : toList(value);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const active = useRef<string | null>(null);
+  const setActive = (id: string | null) => {
+    active.current = id;
+    setActiveId(id);
+  };
   const [query, setQuery] = useState("");
   const [empty, setEmpty] = useState(false);
   const [triggerOwned, setTriggerOwned] = useState(
@@ -114,7 +119,7 @@ export const Listbox = ({
     );
 
   const highlight = (option?: HTMLElement | null) => {
-    setActiveId(option?.id ?? null);
+    setActive(option?.id ?? null);
     option?.scrollIntoView({ block: "nearest" });
   };
 
@@ -142,8 +147,8 @@ export const Listbox = ({
     const text = cycling ? typed.current[0] : typed.current;
     const options = enabled();
     const current = options.findIndex((option) =>
-      activeId
-        ? option.id === activeId
+      active.current
+        ? option.id === active.current
         : option.getAttribute("aria-selected") === "true",
     );
     const start = current < 0 ? 0 : current + (cycling ? 1 : 0);
@@ -164,7 +169,7 @@ export const Listbox = ({
       !event.metaKey &&
       (event.key !== " " || typed.current !== "");
     const options = typeahead ? [] : enabled();
-    const index = options.findIndex((option) => option.id === activeId);
+    const index = options.findIndex((option) => option.id === active.current);
     let next: HTMLElement | undefined;
 
     if (typeahead) {
@@ -196,13 +201,13 @@ export const Listbox = ({
         case " ":
           if (event.key === " " && searchable) return;
           if (!open) return;
-          if (!activeId) {
+          if (!active.current) {
             if (searchable) event.preventDefault();
             return;
           }
           event.preventDefault();
           if (triggerOwned) swallowSpace.current = event.key === " ";
-          document.getElementById(activeId)?.click();
+          document.getElementById(active.current)?.click();
           return;
         case "Tab":
           if (open && triggerOwned) popup?.hidePopover();
@@ -247,25 +252,30 @@ export const Listbox = ({
     };
 
     const beforeToggle = (event: Event) => {
-      if ((event as ToggleEvent).newState !== "open" || !search.current) return;
-      search.current.value = "";
-      flushSync(() => setQuery(""));
-    };
-
-    const toggle = (event: Event) => {
       if ((event as ToggleEvent).newState !== "open") {
-        setActiveId(null);
+        setActive(null);
         clearTimeout(typedTimer.current);
         typed.current = "";
         opening.current = null;
         return;
       }
-      if (!owned) (search.current ?? list.current)?.focus();
+      if (search.current) {
+        search.current.value = "";
+        flushSync(() => setQuery(""));
+      }
       const chosen = list.current?.querySelector<HTMLElement>(
         '.hoption[aria-selected="true"]:not([aria-disabled="true"], [hidden])',
       );
-      highlight(opening.current ?? chosen ?? enabled()[0]);
+      setActive((opening.current ?? chosen ?? enabled()[0])?.id ?? null);
       opening.current = null;
+    };
+
+    const toggle = (event: Event) => {
+      if ((event as ToggleEvent).newState !== "open") return;
+      if (!owned) (search.current ?? list.current)?.focus();
+      if (active.current) {
+        document.getElementById(active.current)?.scrollIntoView({ block: "nearest" });
+      }
       requestAnimationFrame(() => updateTitles(list.current));
     };
 
@@ -280,14 +290,14 @@ export const Listbox = ({
     const owner = trigger.current;
     owner?.addEventListener("keydown", keydown);
     owner?.addEventListener("keyup", keyup);
-    popup.addEventListener("beforetoggle", beforeToggle);
+    popup.addEventListener("beforetoggle", beforeToggle, true);
     popup.addEventListener("toggle", toggle);
     addEventListener("resize", resize);
     return () => {
       owner?.removeEventListener("keydown", keydown);
       owner?.removeEventListener("keyup", keyup);
       owner?.removeAttribute("aria-activedescendant");
-      popup.removeEventListener("beforetoggle", beforeToggle);
+      popup.removeEventListener("beforetoggle", beforeToggle, true);
       popup.removeEventListener("toggle", toggle);
       removeEventListener("resize", resize);
       cancelAnimationFrame(frame);
@@ -302,9 +312,9 @@ export const Listbox = ({
 
   useLayoutEffect(() => {
     setEmpty(!list.current?.querySelector(".hoption:not([hidden])"));
-    if (activeId && !enabled().some((option) => option.id === activeId)) {
+    if (active.current && !enabled().some((option) => option.id === active.current)) {
       const open = popupOf()?.matches(":popover-open");
-      setActiveId(open ? (enabled()[0]?.id ?? null) : null);
+      setActive(open ? (enabled()[0]?.id ?? null) : null);
     }
   });
 
@@ -323,7 +333,7 @@ export const Listbox = ({
         query,
         activeId,
         isSelected: (item) => selected.includes(item),
-        highlight: setActiveId,
+        highlight: setActive,
         choose,
       }}
     >
@@ -360,7 +370,7 @@ export const Listbox = ({
           onKeyDown?.(event);
         }}
         onPointerLeave={(event) => {
-          setActiveId(null);
+          setActive(null);
           onPointerLeave?.(event);
         }}
       >

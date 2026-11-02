@@ -75,6 +75,34 @@ export const examples = {
     </Popup>
   ),
 
+  "Single, grouped, with search": () => (
+    <Popup
+      trigger={
+        <Button variant="secondary" aria-haspopup="listbox">
+          Inbox
+          <ExpandChevron />
+        </Button>
+      }
+    >
+      <Listbox
+        aria-label="Inbox"
+        searchLabel="Search inboxes"
+        emptyMessage="No inboxes found"
+        defaultValue="all"
+      >
+        <Option value="all">All inboxes</Option>
+        <OptionGroup label="Messaging">
+          <Option value="whatsapp">WhatsApp</Option>
+          <Option value="telegram">Telegram</Option>
+        </OptionGroup>
+        <OptionGroup label="Email">
+          <Option value="gmail">Gmail</Option>
+          <Option value="outlook">Outlook</Option>
+        </OptionGroup>
+      </Listbox>
+    </Popup>
+  ),
+
   Multiple: () => (
     <Popup
       trigger={

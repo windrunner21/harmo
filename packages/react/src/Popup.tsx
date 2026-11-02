@@ -52,7 +52,8 @@ export const Popup = ({
           if (event.defaultPrevented) return;
           const opening = event.newState === "open";
           setOpen(opening);
-          if (opening) placeSide(event.currentTarget);
+          if (opening) event.currentTarget.toggleAttribute("data-refit");
+          placeSide(event.currentTarget, opening);
         }}
       >
         {children}
@@ -68,16 +69,25 @@ export const popupTrigger = (popup: HTMLElement) =>
     ),
   ).find((element) => !popup.contains(element));
 
-const placeSide = (popup: HTMLElement) => {
+const placeSide = (popup: HTMLElement, opening: boolean) => {
   const trigger = popupTrigger(popup);
   if (!trigger) return;
 
-  const popupBox = popup.getBoundingClientRect();
   const triggerBox = trigger.getBoundingClientRect();
-  const side =
-    popupBox.top + popupBox.height / 2 < triggerBox.top + triggerBox.height / 2
-      ? "top"
-      : "bottom";
+  let side: "top" | "bottom";
+  if (opening) {
+    const { marginBlockStart, marginBlockEnd } = getComputedStyle(popup);
+    const needed =
+      popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
+    const below = popup.ownerDocument.documentElement.clientHeight - triggerBox.bottom;
+    side = below < needed && triggerBox.top >= needed ? "top" : "bottom";
+  } else {
+    const popupBox = popup.getBoundingClientRect();
+    side =
+      popupBox.top + popupBox.height / 2 < triggerBox.top + triggerBox.height / 2
+        ? "top"
+        : "bottom";
+  }
   if (popup.dataset.side === side) return;
 
   popup.style.transition = "none";

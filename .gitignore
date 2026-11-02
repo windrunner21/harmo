@@ -1,6 +1,9 @@
 node_modules/
 dist/
 coverage/
+test-results/
+playwright-report/
+mise.local.toml
 .DS_Store
 
 # The maintainer's private planning notes, kept out of the repository.

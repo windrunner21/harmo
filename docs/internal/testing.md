@@ -95,12 +95,123 @@ export const examples = {
 The examples are the React playground's own, so the markup the test checks is
 the markup the playground shows.
 
-## 2. Behavior in a browser (planned)
+## 2. Behavior in a browser
 
-Browser tests, with Bun.WebView under `bun test` or with Playwright (not yet
-decided), will run against both playgrounds and test what the scripts do:
-keyboard navigation and focus in Listbox, Select, and Tabs; opening and
-closing popups and the side they open on; Escape on tooltips; the sliding
-pill and underline; and the error message's animation. Every React page must
-also hydrate without a console error, and axe will add automated
-accessibility checks to the same pages.
+`tests/` holds browser tests, run with [Playwright](https://playwright.dev)
+against the built playgrounds, opened from disk as people open them. Each
+test runs on both playgrounds, so the React components are checked against
+what the HTML examples' scripts do, as the markup test checks them against
+the HTML.
+
+```sh
+mise run test:browser    # builds both playgrounds, then tests them in Chromium
+```
+
+`tests/pages.spec.ts` opens every page of both playgrounds and checks that:
+
+- every React example gets ready: hydrated, with its effects run, which add
+  listeners such as Listbox's keys. `examples/react/src/Ready.tsx` wraps each
+  example, on the server too, so the markup and ids stay the same, and marks
+  its root `data-play-ready` once every effect inside has run;
+- [axe](https://github.com/dequelabs/axe-core) finds no WCAG 2.2 A or AA
+  violation, as the page loads and with each example's popup open, its
+  trigger included.
+
+The other files test one component each, from the "What a script does"
+table on its page in `docs/components`:
+
+| File | Tests |
+| --- | --- |
+| `listbox.spec.ts` | Focus and the highlight on opening; the arrow keys, Home, and End; type-ahead with one letter, several, and a pause; Enter, Space, and clicks choosing, and a single-select closing; disabled options; the pointer; the highlight scrolling into view; titles on truncated options, as the window resizes; search, groups it empties, the empty message, and Enter with no match; reopening after a search, on the side the whole list fits |
+| `select.spec.ts` | Focus staying on the trigger; the keys that open it, and keys sent straight after, even in one task; the value text, the placeholder, and the hidden inputs; Space not reopening it; Tab closing it; disabling and enabling it; a form's submit and reset, list included |
+| `filter-chip.spec.ts` | The values, then a count; the values in the chip's name; Clear filters; a single choice closing; the text filter's Enter and Apply |
+| `tabs.spec.ts` | Selecting with clicks and keys, wrapping, right to left, and skipping a disabled tab, with each tab's own panel; Tab into the panel; the underline sliding on a click and moving at once on a key or a resize, and with no width when no tab is current; links; the pill; right-to-left placement |
+| `popup.spec.ts` | `aria-expanded` with the trigger, Escape (focus returning), and a click outside; 8px below, aligned to the start, and at least as wide; above without room below; the other edge without room at the end; each opening starting fresh, even after being squeezed while closed; closing in place, sliding back toward its trigger |
+| `tooltip.spec.ts` | Naming and describing; the delay on hover and none on keyboard focus; no delay right after another closes, until a pause; the pointer moving onto it; Escape until the pointer or focus leaves; an unavailable action; 8px from each side; escaping a clipping container |
+| `field.spec.ts` | A validation error showing, marking the control, and describing it; its text kept while it closes, then cleared; shown again while it closes |
+| `password.spec.ts` | The toggle showing with a value, and disabled with the input; showing and hiding the password, with the name kept and the tooltip naming the next click; the strength word, hint, meter, and status at each level, and all of them cleared |
+| `textarea.spec.ts` | The counter counting toward `maxlength`, and describing the textarea |
+| `button.spec.ts` | Loading: busy, a spinner, focus kept; a press while loading ignored |
+| `banner.spec.ts` | A hidden banner staying hidden, then showing as an alert |
+| `checkbox.spec.ts` | The mixed state, until it's checked |
+| `expand-chevron.spec.ts` | Each stroke and the head folding with `aria-expanded`, and back |
+
+Every test fails if the page logs a console error or throws, which includes
+React's hydration mismatches; `test` in `tests/playgrounds.ts` adds that
+check. `tests/lists.ts` holds the checks shared by Listbox, Select, and
+Filter chip.
+
+### Writing a test
+
+- Wrap a component's tests in `onEachPlayground("<slug>", () => …)`, so each
+  runs on both playgrounds, and find elements by role and name inside the
+  example, never by id: React generates its own.
+- Test what the docs promise, and only what Harmo does: not what the
+  browser does anyway, such as a disabled button not opening a popup, and
+  not the playground's own glue, such as a link that stays on the page.
+- Get the example with `example(page, "<slug>-<title>")`, which scrolls its
+  demo to the middle of the window, so a popup it opens has room.
+- Inside an open popup, point with `pointAt` and click with `clickAt`, not
+  Playwright's `hover` and `click`. Playwright scrolls the page first, even
+  for an element already in view, and the popup follows its trigger a frame
+  later, away from the pointer; a click that lands outside closes the popup.
+- After opening a list with a click, wait for focus to land before pressing
+  keys, as a person sees it: focus can move into a popup only once it shows,
+  in its `toggle` event, a moment after the click. A select's trigger keeps
+  focus, so keys can follow at once there; to test keys that arrive before
+  the `toggle` event, send them in one task with `dispatchEvent`.
+- Don't time things with the clock. To check that something animates, or
+  doesn't, count the transitions it starts with `watchTransitions`; to check
+  a delay, read it from the CSS; to look mid-animation, pause the element's
+  animations and finish them after. A wait is fine only when it can't be too
+  short, such as waiting out a script's half-second pause, and says so.
+- Make sure a new test can fail: break what it tests, in the built
+  playground or the source, and watch it fail.
+
+One axe rule is left out for open listboxes: `scrollable-region-focusable`
+asks that a list that scrolls be in the Tab order. A listbox, or its
+select's trigger, takes focus when it opens instead, and the arrow keys
+scroll it, which `listbox.spec.ts` tests.
+
+A test of a known bug is marked with `test.fail`, naming the browsers it
+fails in and why, so the suite stays green while the bug is open, and fails
+once it's fixed, as a reminder to remove the mark.
+
+What they can't see:
+
+- Link's visited color: browsers hide `:visited` styles from scripts, for
+  privacy.
+- In React, a press on a loading or `aria-disabled` Button calling the app's
+  `onClick` anyway: the example's own handler shows nothing more.
+- In Chrome, whether a closing popup's fallback list changes: Chrome doesn't
+  move a closing popup either way. `data-refit` keeps the list unchanged
+  through closing, for engines that would.
+- Firefox and WebKit, until CI runs them.
+
+### Why Playwright
+
+- It runs the three engines Harmo supports: Chromium (Chrome and Edge),
+  Firefox, and WebKit (Safari), all on Linux. Harmo relies on recent
+  features, such as anchor positioning and `field-sizing`, and engines
+  differ most where their implementations are new.
+- Its browser versions are pinned to its own version, so a test gives the
+  same result on every machine.
+- It waits for elements before acting on them, keeps a trace of each failed
+  test, and has an official axe integration.
+
+Its test runner runs on Node, which mise installs; Bun does everything else.
+Bun's own browser, Bun.WebView, drives only Chrome on Linux, and Safari's
+engine only on macOS.
+
+### Browsers
+
+- **Locally,** `mise run test:browser` runs Chromium only: Playwright's own,
+  or the one `CHROMIUM_PATH` names (see CONTRIBUTING).
+- **All three:** `bunx playwright test` in `tests/` runs every browser the
+  config lists, once installed with `bunx playwright install`. Playwright
+  supports Ubuntu and Debian officially; on other Linux distributions,
+  WebKit may need system libraries.
+- **On CI,** `.github/workflows/ci.yml` runs all three on Ubuntu, with
+  Playwright's own browsers, kept between runs until its version changes. A
+  failed run keeps the report, `playwright-report`, as an artifact; its
+  traces open with `bunx playwright show-trace`.

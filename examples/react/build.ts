@@ -14,6 +14,7 @@ import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import { buildPlayground, dedent, runBuild, watchPlayground } from "../playground.ts";
 import { components } from "./src/examples.ts";
+import { Ready } from "./src/Ready.tsx";
 
 const src = join(import.meta.dir, "src");
 
@@ -54,7 +55,7 @@ if (process.argv.includes("--watch")) {
       render: ({ slug, title, id }) => {
         const Example = components[slug]?.[title];
         if (!Example) return undefined;
-        const demo = renderToString(createElement(Example), { identifierPrefix: `${id}-` });
+        const demo = renderToString(createElement(Ready, null, createElement(Example)), { identifierPrefix: `${id}-` });
         return { demo: withoutHints(demo), code: code.get(slug)?.get(title) ?? "", hydrate: true };
       },
     });

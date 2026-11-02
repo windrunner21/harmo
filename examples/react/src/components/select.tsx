@@ -1,4 +1,4 @@
-import { Button, Input, Option, Select } from "@harmo/react";
+import { Button, Checkbox, Field, Input, Option, Select } from "@harmo/react";
 import { useState, type FormEvent } from "react";
 
 export const examples = {
@@ -65,6 +65,30 @@ export const examples = {
       <Option value="europe">Europe</Option>
     </Select>
   ),
+
+  Disabling: () => {
+    const [reminding, setReminding] = useState(true);
+    return (
+      <>
+        <Field orientation="horizontal" label="Send a reminder">
+          <Checkbox
+            name="reminder"
+            checked={reminding}
+            onChange={(event) => setReminding(event.target.checked)}
+          />
+        </Field>
+        <Select
+          label="Reminder channel"
+          name="reminder-channel"
+          defaultValue="sms"
+          disabled={!reminding}
+        >
+          <Option value="sms">SMS</Option>
+          <Option value="email">Email</Option>
+        </Select>
+      </>
+    );
+  },
 
   "In a form": () => {
     const [sent, setSent] = useState("Save to see what the form sends.");

@@ -2,9 +2,9 @@
 // PasswordInput does them. Both also run once at load, for a field that
 // starts with a value.
 {
-  // The toggle shows once something is typed. Its label stays "Show
-  // password"; aria-pressed says whether the password shows, and the tooltip
-  // names the next click.
+  // The toggle shows once something is typed, and is disabled with the
+  // input. Its label stays "Show password"; aria-pressed says whether the
+  // password shows, and the tooltip names the next click.
   for (const toggle of document.querySelectorAll(".hpassword-toggle")) {
     const input = document.getElementById(toggle.getAttribute("aria-controls"));
     const tip = toggle.parentElement.querySelector(".htooltip");
@@ -16,8 +16,10 @@
     });
     const sync = () => {
       toggle.hidden = input.value === "";
+      toggle.disabled = input.disabled;
     };
     input.addEventListener("input", sync);
+    new MutationObserver(sync).observe(input, { attributeFilter: ["disabled"] });
     sync();
   }
 
@@ -58,7 +60,8 @@
       word.textContent = level.word;
       hint.textContent = level.hint;
       meter.setAttribute("aria-valuenow", value);
-      meter.setAttribute("aria-valuetext", level.word || "Empty");
+      if (level.word) meter.setAttribute("aria-valuetext", level.word);
+      else meter.removeAttribute("aria-valuetext");
       for (const element of [word, meter, hint]) {
         if (level.status) element.dataset.status = level.status;
         else element.removeAttribute("data-status");
