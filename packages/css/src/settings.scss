@@ -1,0 +1,77 @@
+@use "shortcuts" as *;
+
+.hsettings {
+  display: flex;
+  flex-direction: column;
+
+  font-family: $font-family;
+}
+
+.hsetting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding-block: 16px;
+
+  border-block-end: 1px solid $color-border;
+
+  &:first-child {
+    padding-block-start: 0;
+  }
+
+  &:last-child {
+    padding-block-end: 0;
+
+    border-block-end: none;
+  }
+
+  & > :not(.hsetting-text) {
+    flex-shrink: 0;
+  }
+
+  &:has(> :disabled, > .hsetting-text > :disabled) {
+    .hsetting-title,
+    .hsetting-description {
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.hsetting-text {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-inline-size: 0;
+
+  // A control that fills its container sits under the description and spans
+  // the text; compact ones stay on the right.
+  & > :is(.hselect, .hinput, .htextarea, .hsegmented) {
+    margin-block-start: 8px;
+  }
+}
+
+.hsetting-title {
+  margin: 0;
+
+  font-size: 0.9375rem;
+  font-weight: $font-weight-bold;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+}
+
+.hsetting-description {
+  margin: 0;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-tertiary;
+}

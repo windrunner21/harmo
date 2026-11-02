@@ -1,0 +1,91 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    34px tall and as wide as its container. The placeholder is gray; give the
+    input a label in a Field rather than relying on it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="company">Company</label>
+    <input class="hinput" id="company" name="company" type="text" autocomplete="organization" placeholder="Acme Inc." />
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="full-name">Full name</label>
+    <input class="hinput" id="full-name" name="full-name" type="text" autocomplete="name" value="Jane Smith" />
+  </div>
+</play-example>
+
+<play-example title="Types" layout="stack">
+  <play-note>
+    Any text-like <code>type</code> works, and the browser brings its keyboard
+    and autofill. Give each an <code>autocomplete</code> value where one fits.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="work-email">Work email</label>
+    <input class="hinput" id="work-email" name="work-email" type="email" autocomplete="email" />
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="phone">Phone number</label>
+    <input class="hinput" id="phone" name="phone" type="tel" autocomplete="tel" />
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="website">Website</label>
+    <input class="hinput" id="website" name="website" type="url" autocomplete="url" placeholder="https://" />
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="contact-search">Search contacts</label>
+    <input class="hinput" id="contact-search" name="contact-search" type="search" />
+  </div>
+</play-example>
+
+<play-example title="Invalid" layout="stack">
+  <play-note>
+    <code>aria-invalid="true"</code> turns the border red, with a red ring
+    when focused. Set it only after the app has validated the value.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="billing-email">Billing email</label>
+    <input
+      class="hinput"
+      id="billing-email"
+      name="billing-email"
+      type="email"
+      autocomplete="email"
+      value="not-an-email"
+      aria-describedby="billing-email-error"
+      aria-invalid="true"
+    />
+    <p class="herror" id="billing-email-error">Enter a valid email address.</p>
+  </div>
+</play-example>
+
+<play-example title="Read-only and disabled" layout="stack">
+  <play-note>
+    Both get a gray background. A <code>readonly</code> input can still be
+    focused and copied from; a <code>disabled</code> one can't, and its text
+    fades.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="account-id">Account ID</label>
+    <input class="hinput" id="account-id" name="account-id" type="text" value="ACC-20391" readonly />
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="sender-name">Sender name</label>
+    <input class="hinput" id="sender-name" name="sender-name" type="text" value="Acme Support" disabled />
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="sender-id">Sender ID</label>
+    <input class="hinput" id="sender-id" name="sender-id" type="text" placeholder="Not available in your region" disabled />
+  </div>
+</play-example>
+
+<play-example title="Next to a button" layout="stack">
+  <play-note>
+    In a flex row, the input takes the room the button leaves. The row here is
+    a plain flex container of your own.
+  </play-note>
+  <div style="display: flex; gap: 8px">
+    <input class="hinput" type="search" aria-label="Search conversations" placeholder="Search conversations" />
+    <button class="hbutton" data-variant="secondary" type="button">
+      <span class="hbutton-label">Search</span>
+    </button>
+  </div>
+</play-example>

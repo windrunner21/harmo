@@ -1,0 +1,60 @@
+@use "shortcuts" as *;
+
+.hradio:where(input[type="radio"]) {
+  display: inline-block;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: $checkbox-size;
+  block-size: $checkbox-size;
+  margin: 0;
+  padding: 0;
+
+  vertical-align: middle;
+
+  appearance: none;
+  background-color: transparent;
+  border: 1px solid $color-border-control;
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  transition:
+    background-color $duration-fast ease,
+    border-color $duration-fast ease;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:where(:not(:disabled, :checked)) {
+      border-color: $color-primary-hover;
+    }
+  }
+
+  &:checked {
+    background-color: $color-primary-tint;
+    background-image: radial-gradient(
+      circle,
+      $color-primary 2.75px,
+      transparent 3.25px
+    );
+    border-color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+
+    transition: none;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+
+    transition: none;
+  }
+
+  @media (forced-colors: active) {
+    appearance: auto;
+  }
+}

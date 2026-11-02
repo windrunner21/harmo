@@ -1,0 +1,159 @@
+<play-example title="Switches" layout="wide">
+  <play-note>
+    Each row has a title and description, with its control on the right. The
+    text isn't a label: the switch takes its name from the title with
+    <code>aria-labelledby</code> and its description with
+    <code>aria-describedby</code>. A disabled control grays its row's text.
+  </play-note>
+  <div class="hsettings">
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="recap-title">Recap emails</h3>
+        <p class="hsetting-description" id="recap-description">
+          Send account recap emails to the recipients below. Operational emails go to each member's sign-in email.
+        </p>
+      </div>
+      <input
+        class="hswitch"
+        type="checkbox"
+        role="switch"
+        aria-labelledby="recap-title"
+        aria-describedby="recap-description"
+      />
+    </div>
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="push-title">Web push availability</h3>
+        <p class="hsetting-description" id="push-description">
+          Controls whether web push can be enabled for this account. Members choose their push events in communication preferences.
+        </p>
+      </div>
+      <input
+        class="hswitch"
+        type="checkbox"
+        role="switch"
+        aria-labelledby="push-title"
+        aria-describedby="push-description"
+        checked
+      />
+    </div>
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="translate-title">Inbox translation</h3>
+        <p class="hsetting-description" id="translate-description">Managed by your administrator.</p>
+      </div>
+      <input
+        class="hswitch"
+        type="checkbox"
+        role="switch"
+        aria-labelledby="translate-title"
+        aria-describedby="translate-description"
+        checked
+        disabled
+      />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Other controls" layout="wide">
+  <play-note>
+    Compact controls, such as a Checkbox or a Button, sit on the right. A
+    control that fills its container, such as a Select, goes inside
+    <code>.hsetting-text</code> under the description and spans the text.
+  </play-note>
+  <div class="hsettings">
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="digest-title">Daily digest</h3>
+        <p class="hsetting-description" id="digest-description">
+          A summary of unanswered conversations, sent at 9:00.
+        </p>
+      </div>
+      <input
+        class="hcheckbox"
+        type="checkbox"
+        aria-labelledby="digest-title"
+        aria-describedby="digest-description"
+        checked
+      />
+    </div>
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="language-title">Default language</h3>
+        <p class="hsetting-description" id="language-description">
+          Used for new templates and automated replies.
+        </p>
+        <button
+          class="hselect"
+          type="button"
+          role="combobox"
+          aria-labelledby="language-title"
+          aria-describedby="language-description"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="language-listbox"
+          popovertarget="language-popup"
+          style="anchor-name: --language"
+        >
+          <span class="hselect-value">English</span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div class="hpopup" id="language-popup" popover style="position-anchor: --language">
+          <ul class="hlistbox" id="language-listbox" role="listbox" aria-labelledby="language-title">
+            <li class="hoption" id="language-en" role="option" aria-selected="true">
+              <span class="hoption-label">English</span>
+              <play-icon name="check" class="hoption-check"></play-icon>
+            </li>
+            <li class="hoption" id="language-es" role="option" aria-selected="false">
+              <span class="hoption-label">Spanish</span>
+            </li>
+            <li class="hoption" id="language-ar" role="option" aria-selected="false">
+              <span class="hoption-label">Arabic</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="export-title">Export conversations</h3>
+        <p class="hsetting-description" id="export-description">
+          Download every conversation from the last 90 days as a CSV file.
+        </p>
+      </div>
+      <button
+        class="hbutton"
+        data-variant="secondary"
+        type="button"
+        aria-describedby="export-description"
+      >
+        <span class="hbutton-label">Export</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Narrow container" frame="22rem">
+  <play-note>
+    In a narrow container, drawn dashed here, the text wraps and the control
+    keeps its size, centered beside it.
+  </play-note>
+  <div class="hsettings">
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="away-title">Automatic away status</h3>
+        <p class="hsetting-description" id="away-description">
+          Set members as away after 15 minutes without activity, and back once they reply.
+        </p>
+      </div>
+      <input
+        class="hswitch"
+        type="checkbox"
+        role="switch"
+        aria-labelledby="away-title"
+        aria-describedby="away-description"
+        checked
+      />
+    </div>
+  </div>
+</play-example>

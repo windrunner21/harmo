@@ -1,0 +1,394 @@
+<play-example title="Single">
+  <play-note>
+    A <code>role="listbox"</code> of <code>role="option"</code> items inside a
+    Popup. The selected option has <code>aria-selected="true"</code> and a
+    check mark, and stays highlighted while nothing else is. Opening it moves
+    focus to the list: the arrow keys, Home, and End move the highlight,
+    skipping disabled options, and Enter or Space chooses. Clicking works too.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="period-popup"
+    style="anchor-name: --period-popup"
+  >
+    <span class="hbutton-label">Period</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="period-popup" popover style="position-anchor: --period-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Period" tabindex="-1">
+      <li class="hoption" id="period-7" role="option" aria-selected="false">
+        <span class="hoption-label">Last 7 days</span>
+      </li>
+      <li class="hoption" id="period-30" role="option" aria-selected="true">
+        <span class="hoption-label">Last 30 days</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="period-90" role="option" aria-selected="false">
+        <span class="hoption-label">Last 90 days</span>
+      </li>
+      <li class="hoption" id="period-year" role="option" aria-selected="false">
+        <span class="hoption-label">This year</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Single, grouped">
+  <play-note>
+    Groups are <code>role="group"</code> lists labelled by their
+    <code>.hoption-group-label</code>, with a divider above every group after
+    the first. Options outside a group sit above them.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="channel-popup"
+    style="anchor-name: --channel-popup"
+  >
+    <span class="hbutton-label">Channel</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="channel-popup" popover style="position-anchor: --channel-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Channel" tabindex="-1">
+      <li class="hoption" id="channel-all" role="option" aria-selected="false">
+        <span class="hoption-label">All channels</span>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="channel-messaging">Messaging</span>
+        <ul role="group" aria-labelledby="channel-messaging">
+          <li class="hoption" id="channel-whatsapp" role="option" aria-selected="true">
+            <span class="hoption-label">WhatsApp</span>
+            <play-icon name="check" class="hoption-check"></play-icon>
+          </li>
+          <li class="hoption" id="channel-telegram" role="option" aria-selected="false">
+            <span class="hoption-label">Telegram</span>
+          </li>
+          <li class="hoption" id="channel-viber" role="option" aria-selected="false">
+            <span class="hoption-label">Viber</span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="channel-email">Email</span>
+        <ul role="group" aria-labelledby="channel-email">
+          <li class="hoption" id="channel-gmail" role="option" aria-selected="false">
+            <span class="hoption-label">Gmail</span>
+          </li>
+          <li class="hoption" id="channel-outlook" role="option" aria-selected="false">
+            <span class="hoption-label">Outlook</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Single, with search">
+  <play-note>
+    A <code>.hlistbox-search</code> row above the list. Opening it moves focus
+    to the search field, which keeps it while its
+    <code>aria-activedescendant</code> names the highlighted option. Typing
+    hides the options whose name doesn't contain the text and highlights the
+    first match.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="assignee-popup"
+    style="anchor-name: --assignee-popup"
+  >
+    <span class="hbutton-label">Assignee</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="assignee-popup" popover style="position-anchor: --assignee-popup">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        placeholder="Search agents"
+        aria-label="Search agents"
+        data-example-empty="No agents found"
+        aria-expanded="true"
+        aria-controls="assignee-listbox"
+        aria-autocomplete="list"
+      />
+    </div>
+    <ul class="hlistbox" id="assignee-listbox" role="listbox" aria-label="Assignee">
+      <li class="hoption" id="assignee-none" role="option" aria-selected="false">
+        <span class="hoption-label">Unassigned</span>
+      </li>
+      <li class="hoption" id="assignee-jane" role="option" aria-selected="true">
+        <span class="hoption-label">Jane Smith</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="assignee-omar" role="option" aria-selected="false">
+        <span class="hoption-label">Omar Haddad</span>
+      </li>
+      <li class="hoption" id="assignee-li" role="option" aria-selected="false">
+        <span class="hoption-label">Li Wei</span>
+      </li>
+      <li class="hoption" id="assignee-ana" role="option" aria-selected="false">
+        <span class="hoption-label">Ana Souza</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Multiple">
+  <play-note>
+    <code>aria-multiselectable="true"</code> on the list, and a
+    <code>.hoption-checkbox</code> at the start of each option instead of the
+    check mark. Clicking toggles an option. The checkbox is a drawing, not an
+    input, so nothing inside the list takes focus.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="status-popup"
+    style="anchor-name: --status-popup"
+  >
+    <span class="hbutton-label">Status</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="status-popup" popover style="position-anchor: --status-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Status" aria-multiselectable="true" tabindex="-1">
+      <li class="hoption" id="status-delivered" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Delivered</span>
+      </li>
+      <li class="hoption" id="status-read" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Read</span>
+      </li>
+      <li class="hoption" id="status-failed" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Failed</span>
+      </li>
+      <li class="hoption" id="status-pending" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Pending</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Multiple, grouped">
+  <play-note>
+    Groups work the same way in a multi-select.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="tags-popup"
+    style="anchor-name: --tags-popup"
+  >
+    <span class="hbutton-label">Tags</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="tags-popup" popover style="position-anchor: --tags-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Tags" aria-multiselectable="true" tabindex="-1">
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="tags-billing">Billing</span>
+        <ul role="group" aria-labelledby="tags-billing">
+          <li class="hoption" id="tag-refund" role="option" aria-selected="true">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Refund</span>
+          </li>
+          <li class="hoption" id="tag-invoice" role="option" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Invoice</span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="tags-support">Support</span>
+        <ul role="group" aria-labelledby="tags-support">
+          <li class="hoption" id="tag-bug" role="option" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Bug report</span>
+          </li>
+          <li class="hoption" id="tag-feature" role="option" aria-selected="true">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Feature request</span>
+          </li>
+          <li class="hoption" id="tag-onboarding" role="option" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Onboarding</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Multiple, with a footer">
+  <play-note>
+    A <code>.hlistbox-footer</code> below the list holds a full-width action,
+    such as clearing the filter. Here it clears the selection.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="language-popup"
+    style="anchor-name: --language-popup"
+  >
+    <span class="hbutton-label">Language</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="language-popup" popover style="position-anchor: --language-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Language" aria-multiselectable="true" tabindex="-1">
+      <li class="hoption" id="language-en" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">English</span>
+      </li>
+      <li class="hoption" id="language-es" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Spanish</span>
+      </li>
+      <li class="hoption" id="language-ar" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Arabic</span>
+      </li>
+      <li class="hoption" id="language-de" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">German</span>
+      </li>
+    </ul>
+    <div class="hlistbox-footer">
+      <button class="hbutton" data-variant="tertiary" type="button" data-example-clear>
+        <span class="hbutton-label">Clear filters</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Disabled options">
+  <play-note>
+    <code>aria-disabled="true"</code> grays an option and leaves it out of the
+    highlight and selection. A <code>.hoption-badge</code> after the label
+    says why, such as Soon.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="source-popup"
+    style="anchor-name: --source-popup"
+  >
+    <span class="hbutton-label">Source</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="source-popup" popover style="position-anchor: --source-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Source" tabindex="-1">
+      <li class="hoption" id="source-whatsapp" role="option" aria-selected="true">
+        <span class="hoption-label">WhatsApp</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="source-instagram" role="option" aria-selected="false">
+        <span class="hoption-label">Instagram</span>
+      </li>
+      <li class="hoption" id="source-viber" role="option" aria-selected="false" aria-disabled="true">
+        <span class="hoption-label">Viber</span> <span class="hoption-badge">Soon</span>
+      </li>
+      <li class="hoption" id="source-sms" role="option" aria-selected="false" aria-disabled="true">
+        <span class="hoption-label">SMS</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Long options">
+  <play-note>
+    Options stay one line. A long one widens the list up to 32rem; beyond
+    that it ends with an ellipsis, and hovering it shows the full text.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="number-popup"
+    style="anchor-name: --number-popup"
+  >
+    <span class="hbutton-label">Sender number</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="number-popup" popover style="position-anchor: --number-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Sender number" tabindex="-1">
+      <li class="hoption" id="number-support" role="option" aria-selected="true">
+        <span class="hoption-label">+49 30 1234567 · Support</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="number-dach" role="option" aria-selected="false">
+        <span class="hoption-label">
+          +41 44 7654321 · Customer support for Germany, Austria, Switzerland, Liechtenstein, and Luxembourg
+        </span>
+      </li>
+      <li class="hoption" id="number-sales" role="option" aria-selected="false">
+        <span class="hoption-label">+44 20 7946 0000 · Sales</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="No results">
+  <play-note>
+    When a search matches nothing, the list stays in place with nothing inside
+    it, not even whitespace, so it collapses, and
+    <code>.hlistbox-empty</code> says so.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="empty-popup"
+    style="anchor-name: --empty-popup"
+  >
+    <span class="hbutton-label">Channel</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="empty-popup" popover style="position-anchor: --empty-popup">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        value="fax"
+        placeholder="Search channels"
+        aria-label="Search channels"
+        aria-expanded="true"
+        aria-controls="empty-listbox"
+        aria-autocomplete="list"
+      />
+    </div>
+    <ul class="hlistbox" id="empty-listbox" role="listbox" aria-label="Channel"></ul>
+    <p class="hlistbox-empty">No channels found</p>
+  </div>
+</play-example>

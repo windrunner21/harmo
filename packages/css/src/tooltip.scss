@@ -1,0 +1,148 @@
+@use "shortcuts" as *;
+
+.htooltip-trigger {
+  anchor-name: --htooltip;
+  anchor-scope: --htooltip;
+
+  display: inline-block;
+
+  vertical-align: middle;
+}
+
+.htooltip {
+  --htooltip-gap: 8px;
+
+  position: fixed;
+  z-index: 1000;
+  position-anchor: --htooltip;
+  position-area: bottom;
+  position-try-fallbacks: flip-block, flip-inline;
+
+  // Not rendered while hidden: a tooltip picks its side when it starts being
+  // displayed, so showing one picks afresh. Hidden with visibility instead,
+  // Firefox kept the side chosen at page load (flipped while the trigger was
+  // below the fold) through scrolling. Firefox can't animate display, so
+  // there a tooltip fades in but hides at once.
+  display: none;
+
+  box-sizing: border-box;
+  inline-size: max-content;
+  max-inline-size: 240px;
+  margin: var(--htooltip-gap);
+  padding: 7px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+
+  color: $tooltip-color-text;
+  background-color: $tooltip-color-background;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  box-shadow: $tooltip-box-shadow;
+  visibility: hidden;
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform: scale(0.95);
+  transform-origin: top center;
+  transition:
+    opacity $duration-faster $ease-out-cubic,
+    transform $duration-faster $ease-out-cubic,
+    visibility $duration-faster,
+    display $duration-faster allow-discrete;
+
+  &::before {
+    content: "";
+
+    position: absolute;
+    inset: calc(-1 * var(--htooltip-gap));
+  }
+
+  &[data-side="top"] {
+    position-area: top;
+
+    transform-origin: bottom center;
+  }
+
+  &[data-side="left"] {
+    position-area: left;
+
+    transform-origin: right center;
+  }
+
+  &[data-side="right"] {
+    position-area: right;
+
+    transform-origin: left center;
+  }
+
+  &[data-variant="hint"] {
+    max-inline-size: 280px;
+    padding: 8px 12px;
+
+    font-size: $font-size-xs;
+    line-height: 1.45;
+    text-align: start;
+
+    color: $color-text-secondary;
+    background-color: $color-background;
+    border: 1px solid $color-border;
+    box-shadow: $tooltip-hint-box-shadow;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
+}
+
+// Rendered at once, so it picks its side, then fades in from its hidden look
+// after the delay.
+@mixin shown($delay) {
+  display: block;
+
+  visibility: visible;
+  opacity: 1;
+
+  pointer-events: auto;
+
+  transform: none;
+  transition:
+    opacity $duration-fast $ease-out-cubic $delay,
+    transform $duration-fast $ease-out-cubic $delay,
+    visibility 0s $delay;
+
+  @starting-style {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @starting-style {
+      transform: scale(0.95);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .htooltip-trigger:hover > .htooltip {
+    @include shown(var(--htooltip-delay, #{$tooltip-delay}));
+  }
+}
+
+.htooltip-trigger:has(:focus-visible) > .htooltip {
+  @include shown(0s);
+}
+
+.htooltip-trigger > .htooltip[data-dismissed] {
+  visibility: hidden;
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: none;
+}

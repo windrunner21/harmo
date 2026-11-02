@@ -1,0 +1,67 @@
+@use "shortcuts" as *;
+
+.hpopup {
+  --hpopup-slide: 12px;
+  --hpopup-slide-direction: -1;
+
+  inset: auto;
+  position-area: block-end span-inline-end;
+  position-try-fallbacks:
+    flip-block,
+    flip-inline,
+    flip-block flip-inline,
+    --hpopup-shrink;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  min-inline-size: anchor-size(inline);
+  max-block-size: 400px;
+  margin-block: 8px;
+  margin-inline: 0;
+  padding: 0;
+  overflow: auto;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+
+  // Visible at once on opening, so what's inside can take focus right away;
+  // closing keeps it visible until the fade ends (the duration below).
+  transition:
+    opacity $duration-normal $ease-out-cubic,
+    transform $duration-normal $ease-out-cubic,
+    visibility 0s,
+    overlay $duration-normal allow-discrete;
+
+  &[popover]:not(:popover-open) {
+    visibility: hidden;
+    opacity: 0;
+
+    transform: translateY(
+      calc(var(--hpopup-slide-direction) * var(--hpopup-slide))
+    );
+    transition-duration: $duration-fast;
+  }
+
+  &[data-side="top"] {
+    --hpopup-slide-direction: 1;
+  }
+
+  // A closed popup stays rendered for its fade, so pause any spinner inside.
+  &:where(:not(:popover-open)) .hspinner {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    --hpopup-slide: 0px;
+  }
+}
+
+@position-try --hpopup-shrink {
+  position-area: block-end span-inline-end;
+  max-block-size: calc(100% - 16px);
+}

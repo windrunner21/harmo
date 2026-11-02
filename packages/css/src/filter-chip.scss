@@ -1,0 +1,92 @@
+@use "shortcuts" as *;
+
+// A filter in a toolbar above a list or table: a dashed, fully rounded chip
+// with a plus and a label that opens a Popup, and once something is chosen,
+// the chosen values after a divider.
+.hfilter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  margin: 0;
+  padding: 2px 8px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+  white-space: nowrap;
+
+  color: $color-text-secondary;
+  background-color: transparent;
+  border: 1px dashed $color-border;
+  border-radius: $border-radius-full;
+
+  cursor: pointer;
+
+  transition: background-color $duration-fast ease;
+
+  // The plus: 18px at 14px text.
+  & > .hicon {
+    flex-shrink: 0;
+
+    inline-size: calc(18em / 14);
+    block-size: calc(18em / 14);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:enabled {
+      background-color: $color-background-hover;
+    }
+  }
+
+  &[aria-expanded="true"] {
+    background-color: $color-background-hover;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+  }
+}
+
+.hfilter-chip-label {
+  flex-shrink: 0;
+}
+
+// Left out, or left empty, until something is chosen.
+.hfilter-chip-values {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  min-inline-size: 0;
+  padding-inline-start: 4px;
+
+  border-inline-start: 1px solid $color-border;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.hfilter-chip-value {
+  min-inline-size: 0;
+  max-inline-size: 12rem;
+  padding: 2px 4px;
+  overflow: hidden;
+
+  font-size: $font-size-3xs;
+  line-height: $font-line-height;
+  text-overflow: ellipsis;
+
+  background-color: $color-background-hover;
+  border-radius: $border-radius-sm;
+}

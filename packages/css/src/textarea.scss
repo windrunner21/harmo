@@ -1,0 +1,54 @@
+@use "shortcuts" as *;
+@use "control";
+
+.htextarea {
+  @extend %control;
+
+  --htextarea-max-height: min(400px, 50dvh);
+
+  display: block;
+
+  field-sizing: content;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: calc(1.25rem + 18px);
+  max-block-size: var(--htextarea-max-height);
+  padding: 8px 12px;
+
+  border-end-end-radius: 2px;
+
+  resize: vertical;
+
+  // Grows to 150px until the user drags its corner, which sets an inline
+  // height; then it can reach the maximum. "height" must start the style or
+  // follow a space or semicolon, so line-height and custom properties don't
+  // count.
+  &:not([style^="height"], [style*=" height"], [style*=";height"]) {
+    max-block-size: min(150px, var(--htextarea-max-height));
+  }
+
+  &::placeholder {
+    color: $color-text-tertiary;
+    opacity: 1;
+  }
+
+  &[readonly] {
+    background-color: $color-background-secondary;
+  }
+
+  &:disabled::placeholder {
+    color: $color-text-tertiary;
+  }
+}
+
+.htextarea-counter {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  font-variant-numeric: tabular-nums;
+  line-height: 1rem;
+  text-align: end;
+
+  color: $color-text-tertiary;
+}

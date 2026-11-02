@@ -1,0 +1,73 @@
+@use "shortcuts" as *;
+
+// An inline notice: an icon colored by data-status, a message, and an optional
+// compact action. A banner present on load needs no role; one that appears
+// later takes role="status" (non-urgent) or role="alert" (urgent).
+.hbanner {
+  --hbanner-color: #{$status-color-info};
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-sizing: border-box;
+  padding: 12px 16px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-status="success"] {
+    --hbanner-color: #{$status-color-success};
+  }
+
+  &[data-status="warning"] {
+    --hbanner-color: #{$status-color-warning};
+  }
+
+  &[data-status="error"] {
+    --hbanner-color: #{$status-color-error};
+  }
+}
+
+.hbanner-icon {
+  flex-shrink: 0;
+
+  inline-size: calc(18em / 14);
+  block-size: calc(18em / 14);
+
+  color: var(--hbanner-color);
+}
+
+.hbanner-message {
+  flex: 1;
+
+  min-inline-size: 0;
+  margin: 0;
+
+  overflow-wrap: anywhere;
+}
+
+.hbanner > .hbutton[data-variant="secondary"] {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]) {
+      background-color: $color-background-secondary;
+      border-color: $button-secondary-color-border;
+    }
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    background-color: $color-background-secondary;
+    border-color: $button-secondary-color-border;
+  }
+}

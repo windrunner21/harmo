@@ -1,0 +1,56 @@
+@use "shortcuts" as *;
+
+.hmeter {
+  --hmeter-color: #{$color-text-tertiary};
+
+  display: flex;
+  gap: 12px;
+
+  margin: 0;
+  padding: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-status="success"] {
+    --hmeter-color: #{$status-color-success};
+  }
+
+  &[data-status="warning"] {
+    --hmeter-color: #{$status-color-warning};
+  }
+
+  &[data-status="info"] {
+    --hmeter-color: #{$status-color-info};
+  }
+
+  &[data-status="error"] {
+    --hmeter-color: #{$status-color-error};
+  }
+}
+
+.hmeter-segment {
+  flex: 1;
+
+  block-size: 4px;
+
+  background-color: color-mix(in srgb, $color-border-control 50%, transparent);
+  border-radius: $border-radius-full;
+
+  transition: background-color $duration-fast ease;
+
+  &[data-filled] {
+    background-color: var(--hmeter-color);
+  }
+
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+
+    &[data-filled] {
+      background-color: CanvasText;
+
+      forced-color-adjust: none;
+    }
+  }
+}

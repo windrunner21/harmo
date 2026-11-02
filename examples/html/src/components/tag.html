@@ -1,0 +1,45 @@
+<play-example title="Default">
+  <play-note>
+    A rectangle with 13px text, for what something is: a ticket tag, a kind of
+    run, or an email address in a list.
+  </play-note>
+  <span class="htag">Default</span>
+  <span class="htag">Test run</span>
+  <span class="htag">jane@example.com</span>
+</play-example>
+
+<play-example title="With a color">
+  <play-note>
+    Set <code>--htag-color</code> and add a <code>.htag-dot</code>: the dot
+    and the border take the color. Any color works, since a tag's color
+    carries no meaning.
+  </play-note>
+  <span class="htag" style="--htag-color: var(--harmo-amber)">
+    <span class="htag-dot" aria-hidden="true"></span>Billing
+  </span>
+  <span class="htag" style="--htag-color: var(--harmo-cyan)">
+    <span class="htag-dot" aria-hidden="true"></span>Onboarding
+  </span>
+  <span class="htag" style="--htag-color: #d0488f">
+    <span class="htag-dot" aria-hidden="true"></span>Partner
+  </span>
+</play-example>
+
+<play-example title="Accent">
+  <play-note>
+    <code>data-variant="accent"</code> draws the border and text in the
+    primary color, for emphasis such as Unread.
+  </play-note>
+  <span class="htag" data-variant="accent">Unread</span>
+</play-example>
+
+<play-example title="Long text" frame="10rem">
+  <play-note>
+    In a narrow container, drawn dashed here, a tag wraps its text, breaking
+    long words such as an email address, rather than overflowing.
+  </play-note>
+  <span class="htag">campaign-reports@example.com</span>
+  <span class="htag" style="--htag-color: var(--harmo-cyan)">
+    <span class="htag-dot" aria-hidden="true"></span>Enterprise onboarding
+  </span>
+</play-example>

@@ -1,0 +1,30 @@
+@use "shortcuts" as *;
+
+.havatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: $avatar-size;
+  block-size: $avatar-size;
+  margin: 0;
+  overflow: hidden;
+
+  font-family: $font-family;
+  font-size: calc($avatar-size * 0.4);
+  line-height: $font-line-height;
+  vertical-align: middle;
+
+  color: $color-text-secondary;
+  background-color: $avatar-color-background;
+  border: 1px solid $color-border;
+  border-radius: 50%;
+  object-fit: cover;
+
+  & > svg {
+    inline-size: 62.5%;
+    block-size: 62.5%;
+  }
+}

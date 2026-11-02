@@ -1,0 +1,67 @@
+<play-example title="Static chevron">
+  <play-note>
+    The chevron is drawn in the middle third of its box. <code>.hchevron</code>
+    pulls it in so the gap to the text matches other icons: the first link has
+    the class, and the second, without it, leaves a wider gap.
+  </play-note>
+  <a class="hlink" href="/settings">
+    Settings
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </a>
+  <a class="hlink" href="/settings">
+    Settings
+    <play-icon name="chevron" class="hicon"></play-icon>
+  </a>
+</play-example>
+
+<play-example title="Following the text">
+  <play-note>
+    Sized in <code>em</code> and drawn in <code>currentColor</code>, an icon
+    takes the size and color of the text beside it. <code>.hicon</code> keeps
+    it from shrinking, and <code>aria-hidden="true"</code> leaves the naming
+    to the text.
+  </play-note>
+  <a class="hlink" href="/settings" style="font-size: 0.875rem">
+    Settings
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </a>
+  <a class="hlink" href="/settings">
+    Settings
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </a>
+  <a class="hlink" href="/settings" style="font-size: 1.25rem">
+    Settings
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </a>
+</play-example>
+
+<play-example title="Direction">
+  <play-note>
+    The static chevron points forward, toward the end of the line.
+    <code>data-direction="back"</code> points it toward the start, as for a
+    previous-month button.
+  </play-note>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Previous month">
+    <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Next month">
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </button>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    The same chevrons in Arabic. Both mirror: forward points left, toward the
+    end of the line, and back points right.
+  </play-note>
+  <a class="hlink" href="/settings">
+    الإعدادات
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </a>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="الشهر السابق">
+    <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="الشهر التالي">
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </button>
+</play-example>

@@ -1,0 +1,38 @@
+<play-example title="Statuses">
+  <play-note>
+    <code>data-status</code> picks one of four meanings; without it the dot is
+    gray. The text carries the meaning and the dot supports it. A plain status
+    takes the font size and line height of the text around it.
+  </play-note>
+  <span class="hstatus" data-status="success">Active</span>
+  <span class="hstatus" data-status="warning">Pending review</span>
+  <span class="hstatus" data-status="info">Scheduled</span>
+  <span class="hstatus" data-status="error">Failed</span>
+  <span class="hstatus">Draft</span>
+</play-example>
+
+<play-example title="Bordered">
+  <play-note>
+    <code>data-variant="bordered"</code> makes a pill with 13px text, for
+    headers and summaries.
+  </play-note>
+  <span class="hstatus" data-status="success" data-variant="bordered">Active</span>
+  <span class="hstatus" data-status="warning" data-variant="bordered">Pending review</span>
+  <span class="hstatus" data-status="info" data-variant="bordered">Scheduled</span>
+  <span class="hstatus" data-status="error" data-variant="bordered">Failed</span>
+  <span class="hstatus" data-variant="bordered">Draft</span>
+</play-example>
+
+<play-example title="Next to a tag">
+  <play-note>
+    A tag says what something is, and a status what state it's in. A tag is a
+    rectangle with a dot only when it has a color; a status always has a dot,
+    and is a pill when bordered.
+  </play-note>
+  <span class="htag" style="--htag-color: var(--harmo-green)">
+    <span class="htag-dot" aria-hidden="true"></span>Billing
+  </span>
+  <span class="hstatus" data-status="success" data-variant="bordered">Active</span>
+  <span class="htag">Default</span>
+  <span class="hstatus" data-status="success">Active</span>
+</play-example>

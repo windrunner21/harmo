@@ -1,0 +1,13 @@
+// The check mark inside a checked box, shared by Checkbox and a multi-select
+// Listbox's option checkbox: two borders of an L, turned 45°, all sized from
+// the box. Place it on a centered, absolutely positioned ::after.
+@mixin tick($size, $color) {
+  width: calc($size * 0.2);
+  height: calc($size * 0.4);
+  margin-block-start: calc($size * -0.05);
+
+  border: solid $color;
+  border-width: 0 calc($size * 0.1) calc($size * 0.1) 0;
+
+  transform: translate(-50%, -50%) rotate(45deg);
+}

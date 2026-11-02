@@ -1,0 +1,82 @@
+@use "shortcuts" as *;
+
+.hspinner {
+  --hspinner-size: 1.5rem;
+  --hspinner-stroke: 2px;
+  --hspinner-motion: hspinner-rotate 1s linear infinite;
+  --hspinner-appear: none;
+
+  position: relative;
+
+  display: inline-block;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: var(--hspinner-size);
+  block-size: var(--hspinner-size);
+
+  vertical-align: middle;
+
+  color: $color-primary;
+  border: var(--hspinner-stroke) solid $color-border;
+  border-block-end-color: currentColor;
+  border-radius: 50%;
+
+  animation: var(--hspinner-motion), var(--hspinner-appear);
+
+  &[data-size="small"] {
+    --hspinner-size: 1rem;
+  }
+
+  &[data-size="large"] {
+    --hspinner-size: 2.5rem;
+    --hspinner-stroke: 3px;
+  }
+
+  &[data-delay] {
+    --hspinner-appear: hspinner-appear 0s 300ms both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    --hspinner-motion: hspinner-pulse 1s ease-in-out infinite alternate;
+  }
+
+  @media (forced-colors: active) {
+    border-color: GrayText;
+    border-block-end-color: CanvasText;
+
+    forced-color-adjust: none;
+  }
+}
+
+.hspinner-label {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  clip-path: inset(50%);
+}
+
+@keyframes hspinner-rotate {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes hspinner-pulse {
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes hspinner-appear {
+  from {
+    visibility: hidden;
+  }
+}

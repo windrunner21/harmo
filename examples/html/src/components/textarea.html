@@ -1,0 +1,77 @@
+<play-example title="With a counter" layout="stack">
+  <play-note>
+    It starts one line tall and grows as you type, up to 150px, then scrolls.
+    The counter under it, connected with <code>aria-describedby</code>, counts
+    toward <code>maxlength</code>.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="message">Message</label>
+    <textarea
+      class="htextarea"
+      id="message"
+      name="message"
+      maxlength="500"
+      placeholder="Hello, your order has shipped…"
+      aria-describedby="message-counter"
+      data-example-counter
+    ></textarea>
+    <p class="htextarea-counter" id="message-counter">0/500</p>
+  </div>
+</play-example>
+
+<play-example title="Long text" layout="stack">
+  <play-note>
+    Already tall with its text. Dragging the corner handle can make it taller,
+    up to 400px or half the window, whichever is less.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="reply">Saved reply</label>
+    <textarea class="htextarea" id="reply" name="reply">Thanks for reaching out! Your order left our warehouse this morning and should arrive within three working days. You can follow it with the tracking link in your confirmation email, and reply here if anything looks off.</textarea>
+  </div>
+</play-example>
+
+<play-example title="Custom maximum height" layout="stack">
+  <play-note>
+    <code>--htextarea-max-height</code> sets how tall dragging the corner can
+    make it; here 200px instead of 400px or half the window.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="footer-text">Email footer</label>
+    <textarea class="htextarea" id="footer-text" name="footer-text" style="--htextarea-max-height: 200px">Acme Support · Mon–Fri, 9:00–18:00</textarea>
+  </div>
+</play-example>
+
+<play-example title="Invalid" layout="stack">
+  <play-note>
+    <code>aria-invalid="true"</code> turns the border red, as for an Input.
+  </play-note>
+  <div class="hfield">
+    <div class="hfield-label-row">
+      <label class="hlabel" for="internal-note">Internal note</label>
+      <span class="hfield-optional" id="internal-note-optional">Optional</span>
+    </div>
+    <textarea
+      class="htextarea"
+      id="internal-note"
+      name="internal-note"
+      aria-describedby="internal-note-optional internal-note-error"
+      aria-invalid="true"
+    >Customer paid with card 4242 4242 4242 4242.</textarea>
+    <p class="herror" id="internal-note-error">Remove card numbers from notes.</p>
+  </div>
+</play-example>
+
+<play-example title="Read-only and disabled" layout="stack">
+  <play-note>
+    As for an Input: both get a gray background, and only the read-only one
+    can be focused and copied from.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="original-message">Original message</label>
+    <textarea class="htextarea" id="original-message" name="original-message" readonly>Where is my order?</textarea>
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="signature">Signature</label>
+    <textarea class="htextarea" id="signature" name="signature" disabled>The Acme team</textarea>
+  </div>
+</play-example>

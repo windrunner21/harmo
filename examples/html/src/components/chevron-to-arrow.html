@@ -1,0 +1,53 @@
+<play-example title="Forward and back">
+  <play-note>
+    It rests as a chevron and turns into an arrow while its button or link is
+    hovered or focused from the keyboard. Forward is the default;
+    <code>data-direction="back"</code> mirrors it. A back arrow leads the
+    label and a forward arrow follows it.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow" data-direction="back"></play-icon>
+    <span class="hbutton-label">Go back</span>
+  </button>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">Continue</span>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </button>
+</play-example>
+
+<play-example title="In a link">
+  <play-note>
+    Any enabled <code>&lt;a href&gt;</code> or <code>&lt;button&gt;</code>
+    works: hovering anywhere on it reveals the arrow.
+  </play-note>
+  <a class="hlink" href="/blog/automations">
+    Read the story
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </a>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    In right-to-left text both directions mirror again: back always points
+    toward the start of the line, here right, and forward toward its end.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow" data-direction="back"></play-icon>
+    <span class="hbutton-label">رجوع</span>
+  </button>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">متابعة</span>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </button>
+</play-example>
+
+<play-example title="Without animation">
+  <play-note>
+    In a disabled control it shows the finished arrow and doesn't move, as it
+    does on touch screens and with reduced motion.
+  </play-note>
+  <button class="hbutton" type="button" disabled>
+    <span class="hbutton-label">Continue</span>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </button>
+</play-example>

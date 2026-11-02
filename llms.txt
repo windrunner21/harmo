@@ -1,0 +1,64 @@
+# Harmo
+
+> A CSS-first UI library for dashboards and applications: native HTML elements styled by `.h<name>` classes, with variants and states as attributes and theming through `--harmo-*` custom properties. Use it as HTML and CSS, or through the React components in `@harmo/react`, which render the same markup; each component page's React section lists their props. Neither package is on npm yet.
+
+Rules for writing Harmo markup:
+
+- Load `tokens.css` once, then each component's file, or `index.css` for everything. Each component page's Contract table lists the files it needs.
+- One class per component, such as `.hbutton`; its parts are `.h<name>-<part>`, such as `.hbutton-label`. Variants and states are attributes, never extra classes: `data-variant="secondary"`, `data-size="small"`, `disabled`, `aria-invalid="true"`.
+- Use the native elements shown in each page's Markup (`<button type="button">`, `<a href>`, `<input>`), with the ARIA attributes shown there.
+- Ids must be unique on a page, and so must each popup trigger's `anchor-name` (Tooltip reuses one name, scoped to each trigger). Every `aria-labelledby`, `aria-describedby`, `aria-controls`, `for`, and `popovertarget` must point to an id that exists. A popup trigger's `anchor-name` matches its popup's `position-anchor`.
+- The CSS ships no script. Where a Contract's Script row says "Required", HTML without React must keep the listed attributes current itself: Select, Listbox, Popup, Filter chip, Meter, Password input, Tabs with panels, and Tooltip (Escape must hide it). The example scripts in `examples/html/src/scripts` show how; the React components do it for you.
+- In a form, a Select's trigger is a button and sends nothing: give it `data-name`, give each option a `data-value`, and keep one hidden input per chosen value. A single select with nothing chosen keeps one hidden input with an empty value; a multi-select with nothing chosen has none. Disable the inputs with the trigger.
+- Theme by overriding `--harmo-*` tokens on `:root` or a containing element, not by restyling classes. On a containing element, also redeclare tokens built from the ones you change, such as `--harmo-focus-outline`.
+
+Rules for using the React components (`@harmo/react`):
+
+- Import the CSS once (`@harmo/css`), then the components. Each component page's React section lists its props; every other prop is the named element's native attribute, and `ref` reaches that element.
+- Harmo builds in no text. Pass every word a component shows or announces: Breadcrumb's `aria-label`, Spinner's label as children, Password input's `showPasswordLabel` and `hidePasswordLabel` (and `strengthLabel` with `strength`), Filter chip's `clearLabel` and `formatCount` with `multiple`, and `emptyMessage` with `searchLabel`. TypeScript requires each where it's needed.
+- Wrap a form control in `<Field label=…>` for its label, description, Optional marker, and error; Field connects their ids. Pass `error` to every field you validate, even while it's `undefined`, so the error can animate in. Checkbox, Radio, and Switch use `<Field orientation="horizontal">`.
+- Choices are children: `<Select>`, `<Listbox>`, and `<FilterChip>` take `<Option value=…>` and `<OptionGroup label=…>`. Selection is `value` or `defaultValue` with `onValueChange`: a string, or an array with `multiple`.
+- Set the app's router link and image components once with `<HarmoProvider linkComponent={…} imageComponent={…}>`; Link, Button with `href`, TabLink, and Avatar use them.
+
+## Docs
+
+- [Components overview](docs/components/README.md): conventions, which files to load together, and what scripts handle
+- [Avatar](docs/components/avatar.md): a round user image, or a placeholder when there is none
+- [Banner](docs/components/banner.md): an inline notice: an icon, a message, and an optional action
+- [Breadcrumb](docs/components/breadcrumb.md): a navigation trail ending at the current page
+- [Button](docs/components/button.md): an action, as a button or as a link styled like one
+- [Checkbox](docs/components/checkbox.md): a native checkbox with Harmo's appearance
+- [ChevronToArrow](docs/components/chevron-to-arrow.md): a chevron that turns into an arrow while its link or button is hovered or focused
+- [Expand chevron](docs/components/expand-chevron.md): a chevron that folds from down to up while its control is expanded
+- [Field](docs/components/field.md): arranges and connects a label, description, control, and error message
+- [Filter chip](docs/components/filter-chip.md): narrows a list or table: a dashed chip that opens a Popup and shows what's chosen
+- [Icons](docs/components/icons.md): SVG icons placed next to text in buttons, links, and breadcrumbs
+- [Input](docs/components/input.md): single-line native inputs: text, email, search, tel, url, and similar
+- [Link](docs/components/link.md): navigation, inside text or on its own
+- [Listbox](docs/components/listbox.md): the option list inside a popup, with groups, search, and multiple selection
+- [Meter](docs/components/meter.md): how much of something on a fixed scale, such as password strength
+- [Password input](docs/components/password.md): a password field with a show/hide toggle and an optional strength meter
+- [Popup](docs/components/popup.md): a floating surface for option lists and small panels
+- [Radio](docs/components/radio.md): a native radio with Harmo's appearance
+- [Segmented control](docs/components/segmented.md): one choice from a few options shown side by side
+- [Select](docs/components/select.md): a form field that picks one or more options from a list
+- [Spinner](docs/components/spinner.md): a loading indicator, sized to match what is loading
+- [Status](docs/components/status.md): what state something is in, such as a ticket or a campaign run
+- [Switch](docs/components/switch.md): an on/off switch for settings that apply immediately
+- [Tabs](docs/components/tabs.md): switches between sibling pages or panels, with a sliding hover pill and underline
+- [Tag](docs/components/tag.md): what something is, such as a ticket tag or "Test run"
+- [TextArea](docs/components/textarea.md): multi-line text that grows as you type
+- [Tooltip](docs/components/tooltip.md): a short description shown on hover and keyboard focus
+
+## Patterns
+
+- [Patterns overview](docs/patterns/README.md): compositions of components for recurring screens
+- [Settings list](docs/patterns/settings.md): settings with a title, a description, and a control beside or under them
+
+## Optional
+
+- [README](README.md): status, installation, quick start, and theming
+- [Philosophy](docs/philosophy.md): design principles and API guidelines
+- [Playground examples](examples/html/src/components): live examples of every component and variation, in HTML
+- [React examples](examples/react/src/components): the same examples written with `@harmo/react`
+- [SCSS source](packages/css/src): the source of truth for every style

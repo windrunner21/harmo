@@ -1,0 +1,127 @@
+<play-example title="Group" layout="stack">
+  <play-note>
+    Radios that share a <code>name</code> form one group: Tab reaches the
+    chosen one and the arrow keys move the choice. A Field with
+    <code>role="radiogroup"</code> names the group, with one horizontal Field
+    per option.
+  </play-note>
+  <div class="hfield" role="radiogroup" aria-labelledby="export-format-label">
+    <span class="hlabel" id="export-format-label">Export format</span>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="export-format" id="export-csv" value="csv" checked />
+      <label class="hlabel" for="export-csv">CSV</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="export-format" id="export-xlsx" value="xlsx" />
+      <label class="hlabel" for="export-xlsx">Excel workbook</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="export-format" id="export-pdf" value="pdf" />
+      <label class="hlabel" for="export-pdf">PDF report</label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With descriptions" layout="stack">
+  <play-note>
+    <code>.hfield-content</code> holds an option's label and description,
+    connected to the radio with <code>aria-describedby</code>.
+  </play-note>
+  <div class="hfield" role="radiogroup" aria-labelledby="delivery-label">
+    <span class="hlabel" id="delivery-label">Delivery</span>
+    <div class="hfield" data-orientation="horizontal">
+      <input
+        class="hradio"
+        type="radio"
+        name="delivery"
+        id="delivery-now"
+        value="now"
+        aria-describedby="delivery-now-description"
+        checked
+      />
+      <div class="hfield-content">
+        <label class="hlabel" for="delivery-now">Send now</label>
+        <p class="hdescription" id="delivery-now-description">Starts delivering as soon as you publish.</p>
+      </div>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input
+        class="hradio"
+        type="radio"
+        name="delivery"
+        id="delivery-scheduled"
+        value="scheduled"
+        aria-describedby="delivery-scheduled-description"
+      />
+      <div class="hfield-content">
+        <label class="hlabel" for="delivery-scheduled">Schedule</label>
+        <p class="hdescription" id="delivery-scheduled-description">
+          Pick a date and time in your account's time zone.
+        </p>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    <code>disabled</code> dims an option, and its label turns gray, whether or
+    not it's chosen.
+  </play-note>
+  <div class="hfield" role="radiogroup" aria-labelledby="category-label">
+    <span class="hlabel" id="category-label">Template category</span>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="category" id="category-marketing" value="marketing" checked />
+      <label class="hlabel" for="category-marketing">Marketing</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="category" id="category-utility" value="utility" />
+      <label class="hlabel" for="category-utility">Utility</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input
+        class="hradio"
+        type="radio"
+        name="category"
+        id="category-authentication"
+        value="authentication"
+        disabled
+      />
+      <label class="hlabel" for="category-authentication">Authentication</label>
+    </div>
+  </div>
+  <div class="hfield" role="radiogroup" aria-labelledby="region-label">
+    <span class="hlabel" id="region-label">Data region, set by your administrator</span>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="region" id="region-eu" value="eu" checked disabled />
+      <label class="hlabel" for="region-eu">European Union</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="region" id="region-us" value="us" disabled />
+      <label class="hlabel" for="region-us">United States</label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Required" layout="stack">
+  <play-note>
+    <code>required</code> on the radios asks for an answer before the form
+    submits. It changes nothing visible; mark the question as required in its
+    wording.
+  </play-note>
+  <div class="hfield" role="radiogroup" aria-labelledby="reason-label">
+    <span class="hlabel" id="reason-label">Why are you closing your account?</span>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="reason" id="reason-cost" value="cost" required />
+      <label class="hlabel" for="reason-cost">It costs too much</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="reason" id="reason-features" value="features" required />
+      <label class="hlabel" for="reason-features">It's missing features I need</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hradio" type="radio" name="reason" id="reason-other" value="other" required />
+      <label class="hlabel" for="reason-other">Something else</label>
+    </div>
+  </div>
+</play-example>

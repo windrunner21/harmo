@@ -1,0 +1,210 @@
+# Components
+
+Markup and styling contracts for `@harmo/css`. Each page lists the markup, the
+hooks and attributes that style it, the tokens it reads, and what a script must
+handle. Its React section shows the component from `@harmo/react` that renders
+the same markup and does what the script would.
+
+| Component | Page |
+| --- | --- |
+| Avatar | [avatar.md](avatar.md) |
+| Banner | [banner.md](banner.md) |
+| Breadcrumb | [breadcrumb.md](breadcrumb.md) |
+| Button | [button.md](button.md) |
+| Checkbox | [checkbox.md](checkbox.md) |
+| ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
+| Expand chevron | [expand-chevron.md](expand-chevron.md) |
+| Field, Label, Description, Optional, Error | [field.md](field.md) |
+| Filter chip | [filter-chip.md](filter-chip.md) |
+| Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
+| Input | [input.md](input.md) |
+| Link | [link.md](link.md) |
+| Listbox | [listbox.md](listbox.md) |
+| Meter | [meter.md](meter.md) |
+| Password input | [password.md](password.md) |
+| Popup | [popup.md](popup.md) |
+| Radio | [radio.md](radio.md) |
+| Segmented control | [segmented.md](segmented.md) |
+| Select | [select.md](select.md) |
+| Spinner | [spinner.md](spinner.md) |
+| Status | [status.md](status.md) |
+| Switch | [switch.md](switch.md) |
+| Tabs | [tabs.md](tabs.md) |
+| Tag | [tag.md](tag.md) |
+| TextArea | [textarea.md](textarea.md) |
+| Tooltip | [tooltip.md](tooltip.md) |
+
+Reusable compositions built from these primitives live separately under
+[Patterns](../patterns/README.md).
+
+## Page structure
+
+Every component page has the same sections, in this order; a page leaves out
+Options when nothing changes the component.
+
+1. **Purpose**, under the title: what it's for, and what to use instead.
+2. **Contract**: a table with the same six rows on every page, so an agent or
+   a person can build correct markup at a glance:
+   - **CSS**: the files to load besides `tokens.css`;
+   - **Element**: the root element and its class;
+   - **Parts**: the classes inside it;
+   - **Required**: attributes that must be present;
+   - **Unique**: what must not repeat on a page, such as ids and anchor names;
+   - **Script**: "None", or what a script must do.
+
+   A row with nothing to say reads "None".
+3. **Markup**: complete, copyable HTML. Harmo's own drawings, such as the
+   chevrons, are written out in full, since the CSS styles their parts; an
+   icon the app chooses is shown as `…`.
+4. **Options**: a `Hook | Effect` table of the attributes, classes, and
+   custom properties that change it.
+5. **Appearance and states**: sizes, colors, motion, and every state.
+6. **Accessibility**: semantics, naming, keyboard, and screen readers.
+7. **What a script does**: a `Change | When` table of what a page must change
+   from script, or "None." when CSS covers it; then the example script in
+   `examples/html/src/scripts`, if any.
+8. **React**: the React component, what it renders, a `Prop | Effect` table
+   of its own props, and an example. Other props are the attributes of the
+   element named there.
+9. **Tokens**: every `--harmo-*` it reads, taken from its stylesheet.
+
+## Loading the CSS
+
+`@harmo/css` (`index.css`) contains the token defaults and every component. For
+per-component imports, load `tokens.css` once and then the components you use.
+Each component file uses `--harmo-*` properties without defining them.
+
+Token defaults are declared on `:where(:root)`, so an application's own `:root`
+overrides win regardless of which stylesheet loads last.
+
+Some components are built from others, so their files need company:
+
+| File | Also load |
+| --- | --- |
+| `breadcrumb.css` | `link.css`, `chevron.css` |
+| `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
+| `banner.css` | `button.css` for its action |
+| `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
+| `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
+| `listbox.css` | `popup.css`; `button.css` for a footer |
+| `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
+| `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
+| `input.css`, `textarea.css`, `checkbox.css`, `radio.css`, `switch.css`, `segmented.css` | `field.css` for labels and messages |
+
+## Shared conventions
+
+- **Class names.** Every component has one class, `.h<name>`, which opts an
+  element into its styling and names its React component, if it has one:
+  `.hoption` is `<Option>`, `.hsetting` is `<Setting>`. A part that another
+  component renders, such as a Field's `.hlabel`, has none. Components used
+  inside others keep their own name, so a label is `.hlabel` in a Field and
+  in a radio group alike.
+- **Parts** that exist only inside one component are `.h<name>-<part>`,
+  nesting further for parts of parts: `.hbutton-label`, `.hfield-optional`,
+  `.hlistbox-search-input`.
+- **Variants and states are attributes, never classes** (`.hchevron`, which
+  marks a particular icon, is the one exception).
+- **Low specificity.** Most selectors carry their target class plus at most a
+  state, about (0,2,0), with any context they depend on in `:where()`, which
+  counts as nothing. An app's rule of the same weight, loaded after Harmo,
+  wins: `.hoption[aria-selected="true"]` overrides Harmo's selected option
+  without `!important`. A few rules that combine states are heavier, such as a
+  banner's action button on hover; override those with a matching selector.
+- **Token names** follow Stripe's Elements Appearance API: what is colored,
+  then the variant, then the state (`--harmo-color-text-secondary`,
+  `--harmo-color-primary-hover`); component tokens start with the component
+  (`--harmo-input-color-background`). Text runs `color-text`, `-secondary`,
+  `-tertiary`, from most to least prominent. The `$shortcuts` in
+  `_shortcuts.scss` have the same names.
+- **State comes from native attributes and ARIA** wherever one exists:
+  `disabled`, `checked`, `hidden`, `aria-invalid`, `aria-expanded`,
+  `aria-selected`, `aria-disabled`, `aria-busy`, `aria-pressed`,
+  `aria-current`. The rest are data attributes:
+
+  | Attribute | Meaning | Used by |
+  | --- | --- | --- |
+  | `data-variant` | Appearance | Button, Tag, Status, Tooltip |
+  | `data-status` | `success`, `warning`, `info`, or `error` (Password input's word and hint: no `info`) | Status, Banner, Meter, Password input |
+  | `data-size` | `small` or `large` | Spinner, Button (`small` only) |
+  | `data-orientation` | `horizontal` | Field |
+  | `data-direction` | `back` | ChevronToArrow |
+  | `data-side` | Preferred or actual side | Tooltip, Popup |
+  | `data-delay` | Wait 300ms before showing | Spinner |
+  | `data-placeholder` | No value chosen | Select |
+  | `data-filled` | A filled segment | Meter |
+  | `data-active` | Highlighted option (script) | Listbox |
+| `data-value`, `data-name` | An option's value, and the name a form sends it under | Listbox, Select |
+  | `data-ready`, `data-on-current` | Measured, pill over current (script) | Tabs |
+  | `data-dismissed` | Hidden by Escape (script) | Tooltip |
+  | `data-underlined`, `data-visited` | Opt-in underline / visited color | Link |
+- **Text sizes are in rem**, so text follows the browser's default font-size
+  setting as well as zoom. The scale runs `--harmo-font-size-base` (16px),
+  `-sm` (14px), `-xs` (13px), `-2xs` (12px), and `-3xs` (11px); line heights
+  are unitless or rem, never px. Pixel sizes in these docs are at the default
+  16px.
+- **Control height.** Buttons, inputs, and select triggers share
+  `--harmo-control-height` (34px), so they line up in a row. Inputs and select
+  triggers also share their box, border, focus ring, and states through the
+  `%control` placeholder in `_control.scss`.
+- **Icons scale with text.** Inline icons are sized in `em`; ChevronToArrow,
+  a fixed 24px, is the exception. The space between text and an icon's box is
+  `--harmo-icon-gap` (6px); icons with wide blank margins, such as the static
+  chevron, offset them so every visible gap matches.
+- **Motion.** Durations come from `--harmo-duration-*` and curves from
+  `--harmo-ease-*`. Most entrances take 200ms and exits 150ms; the others,
+  such as Tooltip's 150ms in and 100ms out or a Field error's 300ms in, are on
+  their pages. Exits are always quicker than entrances. Reduced motion keeps
+  the state change and drops the movement.
+- **Hiding.** `hidden` hides Banner, Meter, the password toggle and details,
+  a Field's error, and Listbox options, which style it (the details and the
+  error animate closed). It also hides the components that leave `display`
+  alone: Breadcrumb, Input, Link without an icon, Listbox, Tabs, Label,
+  Description, the Optional marker, and icons. Every other component class
+  sets its own `display`, which overrides `hidden`, so leave those out of the
+  page instead.
+- **Hover** styles apply only on devices that hover with a fine pointer.
+- **Focus rings** are `--harmo-focus-outline` (2px solid `--harmo-color-focus`),
+  named after Stripe's `focusOutline`, at `--harmo-focus-outline-offset`
+  (2px). Two exceptions keep their own offset: tabs (always 2px, so the ring
+  stays above the divider) and the password toggle (0, since it sits inside
+  the input). Text
+  fields and select triggers instead turn their border the focus color and add
+  a 3px tinted ring.
+
+## What scripts handle
+
+CSS covers appearance and everything the platform already does. Scripts, or
+the React components, set:
+
+| Attribute | Where | Purpose |
+| --- | --- | --- |
+| `indeterminate` (property) | Checkbox | Mixed state |
+| `aria-busy`, `aria-disabled` | Button | Loading state; scripts also ignore presses while busy |
+| `--htabs-*`, `data-ready` | Tabs | Sliding hover pill and underline |
+| `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
+| `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
+| `aria-expanded` | Popup triggers, select triggers | Open ring, chevron direction |
+| `.hfilter-chip-value` items | Filter chip | The chosen values, or a count past two |
+| `data-side="top"` | Popup | Slide away from a trigger it opened above |
+| `data-active` | Listbox option | Highlight that follows keyboard and pointer |
+| `aria-selected` | Listbox option | Selection |
+| `aria-activedescendant` | Select trigger, search field, or the list | Announces the highlighted option |
+| Hidden inputs | Select in a form | The chosen values, kept in step, restored on reset, disabled with the trigger |
+| Error text, `hidden` | Field | Shows a validation error; `hidden` closes it, then the text is cleared |
+| Counter text | TextArea | Characters used |
+| `aria-pressed`, input `type`, `hidden`, `data-status`, `aria-invalid` | Password input | Show/hide, reveal the strength, color it |
+| `aria-valuenow`, `aria-valuetext`, `data-filled`, `data-status` | Meter | The value |
+| `role="status"` or `role="alert"` | Banner | Announce a banner that appears after load |
+
+Each component page's "What a script does" section has the details.
+
+## Browser features used
+
+The popover attribute; CSS anchor positioning, including `anchor-scope` and
+`@position-try` (in all major browsers since January 2026);
+`field-sizing: content` (since June 2026); `@starting-style` and
+`allow-discrete` transitions, for Popup and Tooltip; `interpolate-size`, for
+Field's error, with a fallback where it's missing; `:has()`, `:where()`,
+`:dir()`, `color-mix()`, and logical properties.
+Firefox cannot yet keep a closing popup in the top layer during its fade, so
+the fade may briefly pass under other content there.

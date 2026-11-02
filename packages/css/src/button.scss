@@ -1,0 +1,209 @@
+@use "shortcuts" as *;
+
+// Enabled and actionable. aria-disabled keeps a button focusable, so a tooltip
+// can explain why or focus survives loading, while it looks and acts disabled.
+$actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([aria-disabled="true"]))';
+
+.hbutton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  min-block-size: $control-height;
+  max-inline-size: 100%;
+  padding: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $button-font-weight;
+  line-height: $button-font-line-height;
+
+  vertical-align: middle;
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+
+  background-color: $color-primary;
+  color: $color-on-primary;
+  border: 1px solid $color-primary;
+  border-radius: $border-radius;
+
+  cursor: pointer;
+
+  transition:
+    background-color $button-duration ease,
+    color $button-duration ease,
+    border-color $button-duration ease,
+    transform $button-duration $ease-out-quad;
+
+  & > .hicon {
+    flex-shrink: 0;
+  }
+
+  // The label spaces itself from icons and the border. Its block padding only
+  // shows when a long label wraps past the control height.
+  & > .hbutton-label {
+    padding: 0.25rem $icon-gap;
+  }
+
+  // A loading spinner follows the label. Its ring fills its box, so 3px more
+  // than the label's padding matches the ~9px visible gap other icons leave
+  // after text; it ends 6px from the border. The ring takes the text color
+  // with a gap, so it suits every variant.
+  & > .hspinner {
+    --hspinner-size: 1rem;
+
+    margin-inline: 3px $icon-gap;
+
+    color: inherit;
+    border-color: currentColor;
+    border-block-end-color: transparent;
+
+    @media (forced-colors: active) {
+      border-color: ButtonText;
+      border-block-end-color: transparent;
+    }
+  }
+
+  // Icon only: without a label the button is a square, as wide as it is tall.
+  // Name it with aria-label, or with a tooltip through aria-labelledby.
+  &:where(:not(:has(> .hbutton-label))) {
+    min-inline-size: $control-height;
+
+    & > .hicon {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+
+    & > .hspinner {
+      margin-inline: 0;
+    }
+  }
+
+  // A resting ChevronToArrow sits 15px from the border on its side, keeping
+  // room to slide into an arrow. Back arrows lead the label and forward arrows
+  // follow it; match that space on the label's other side so the button is
+  // balanced at rest. Icon-only buttons stay square.
+  &:where(
+    :has(> .hbutton-label):has(> .hchevron-to-arrow[data-direction="back"])
+  ) {
+    padding-inline-end: calc(15px - #{$icon-gap});
+  }
+
+  &:where(
+    :has(> .hbutton-label):has(
+      > .hchevron-to-arrow:not([data-direction="back"])
+    )
+  ) {
+    padding-inline-start: calc(15px - #{$icon-gap});
+  }
+
+  // An Expand chevron's drawing fills its box, so a trailing one keeps the
+  // label's spacing from the border, as in a menu button.
+  & > .hexpand-chevron:last-child {
+    margin-inline-end: $icon-gap;
+  }
+
+  // Anchors retain link behavior; native disabled state belongs to buttons.
+  &#{$actionable} {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $color-primary-hover;
+        border-color: $color-primary-hover;
+      }
+    }
+
+    &:active {
+      background-color: $color-primary-active;
+      border-color: $color-primary-active;
+    }
+  }
+
+  &[data-variant="secondary"] {
+    background-color: transparent;
+    color: $button-secondary-color-text;
+    border-color: $button-secondary-color-border;
+    box-shadow: $button-secondary-box-shadow;
+
+    &#{$actionable} {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: transparent;
+          border-color: $button-secondary-hover-color-border;
+        }
+      }
+
+      &:active {
+        background-color: $color-background-hover;
+        border-color: $button-secondary-hover-color-border;
+      }
+    }
+  }
+
+  &[data-variant="tertiary"] {
+    background-color: transparent;
+    color: $color-text-secondary;
+    border-color: transparent;
+    box-shadow: none;
+
+    &#{$actionable} {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: $color-background-hover;
+          border-color: transparent;
+        }
+      }
+
+      &:active {
+        background-color: $color-primary-tint;
+        color: $color-text;
+        border-color: transparent;
+      }
+    }
+  }
+
+  &[data-size="small"] {
+    min-block-size: 1.8125rem;
+
+    font-size: $font-size-xs;
+    line-height: 1.2;
+
+    // Between the small and default radii, following the small one.
+    border-radius: calc(#{$border-radius-sm} + 2px);
+
+    &:where(:not(:has(> .hbutton-label))) {
+      min-inline-size: 1.8125rem;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+
+    transition: none;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+  }
+
+  &[aria-busy="true"] {
+    cursor: progress;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &#{$actionable}:active:not(:focus-visible) {
+      transform: scale(0.98);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: background-color, color, border-color;
+  }
+}

@@ -1,0 +1,8 @@
+{
+       "name": "harmo-workspace",
+       "private": true,
+       "workspaces": [
+              "packages/*",
+              "examples/react"
+       ]
+}

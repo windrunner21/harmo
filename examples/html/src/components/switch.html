@@ -1,0 +1,85 @@
+<play-example title="Off and on" layout="stack">
+  <play-note>
+    A checkbox with <code>role="switch"</code>, for a setting that applies at
+    once. Screen readers announce it as a switch, and Space toggles it.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="away" />
+    <label class="hlabel" for="away">Set me as away</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="message-sound" checked />
+    <label class="hlabel" for="message-sound">Play a sound for new messages</label>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    <code>disabled</code> dims the switch, and its label turns gray.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="auto-translate" disabled />
+    <label class="hlabel" for="auto-translate">Translate incoming messages</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="two-factor" checked disabled />
+    <label class="hlabel" for="two-factor">Two-factor sign-in, required by your administrator</label>
+  </div>
+</play-example>
+
+<play-example title="With a description" layout="stack">
+  <play-note>
+    <code>.hfield-content</code> holds the label and a description; the switch
+    stays centered on the label's first line.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input
+      class="hswitch"
+      type="checkbox"
+      role="switch"
+      id="read-receipts"
+      aria-describedby="read-receipts-description"
+      checked
+    />
+    <div class="hfield-content">
+      <label class="hlabel" for="read-receipts">Send read receipts</label>
+      <p class="hdescription" id="read-receipts-description">
+        Customers see when you've read their messages.
+      </p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="stack" dir="rtl" lang="ar">
+  <play-note>
+    The same switches in Arabic: the thumb travels toward the end of the line,
+    so on is at the left.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="away-ar" />
+    <label class="hlabel" for="away-ar">تعيين حالتي كغائب</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="message-sound-ar" checked />
+    <label class="hlabel" for="message-sound-ar">تشغيل صوت للرسائل الجديدة</label>
+  </div>
+</play-example>
+
+<play-example title="Custom size" layout="stack">
+  <play-note>
+    <code>--harmo-switch-height</code>, <code>--hswitch-width</code>, and
+    <code>--hswitch-thumb</code> resize the track and thumb; here 36×20 with a
+    16px thumb.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input
+      class="hswitch"
+      type="checkbox"
+      role="switch"
+      id="compact-view"
+      style="--harmo-switch-height: 20px; --hswitch-width: 36px; --hswitch-thumb: 16px"
+      checked
+    />
+    <label class="hlabel" for="compact-view">Compact conversation list</label>
+  </div>
+</play-example>

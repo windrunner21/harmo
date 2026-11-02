@@ -1,0 +1,27 @@
+<play-example title="Collapsed and expanded">
+  <play-note>
+    It points down while its control is collapsed and up while it's expanded,
+    following the control's <code>aria-expanded</code>. It must be a direct
+    child of that control.
+  </play-note>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-expanded="false">
+    <span class="hbutton-label">Filters</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-expanded="true">
+    <span class="hbutton-label">Filters</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+</play-example>
+
+<play-example title="Toggling">
+  <play-note>
+    Press the button to watch the strokes fold through flat over 200ms. With
+    reduced motion it flips at once. Here a small script toggles
+    <code>aria-expanded</code>, as the control's own script would.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button" aria-expanded="false" data-example-expand>
+    <span class="hbutton-label">More options</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+</play-example>

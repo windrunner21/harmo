@@ -1,0 +1,68 @@
+<play-example title="Options" layout="stack">
+  <play-note>
+    Each option wraps a native radio, so the group works in forms, Tab reaches
+    the chosen option, and the arrow keys move the choice.
+    <code>role="radiogroup"</code> names the group from its label.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="header-type-label">Message header</span>
+    <div class="hsegmented" role="radiogroup" aria-labelledby="header-type-label">
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type" value="none" checked />No header
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type" value="text" />Text
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type" value="media" />Media
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type" value="location" />Location
+      </label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Disabled option" layout="stack">
+  <play-note>
+    <code>disabled</code> on an option's radio dims that option.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="assign-label">Assign to</span>
+    <div class="hsegmented" role="radiogroup" aria-labelledby="assign-label">
+      <label class="hsegmented-option">
+        <input type="radio" name="assign" value="team" checked />Team
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="assign" value="agent" />Agent
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="assign" value="ai" disabled />AI agent
+      </label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Narrow container" frame="16rem">
+  <play-note>
+    Labels never wrap. When the options can't all fit on one row, drawn dashed
+    here, they move to a new one.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="header-type-narrow-label">Message header</span>
+    <div class="hsegmented" role="radiogroup" aria-labelledby="header-type-narrow-label">
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type-narrow" value="none" checked />No header
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type-narrow" value="text" />Text
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type-narrow" value="media" />Media
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="header-type-narrow" value="location" />Location
+      </label>
+    </div>
+  </div>
+</play-example>

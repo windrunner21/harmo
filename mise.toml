@@ -1,0 +1,56 @@
+[tools]
+bun = "latest"
+
+# Standalone Dart Sass. The aqua registry lists only the musl build for Linux,
+# which cannot run on glibc systems, so name the glibc builds explicitly.
+[tools."github:sass/dart-sass"]
+version = "1.105.1"
+version_prefix = ""
+
+[tools."github:sass/dart-sass".platforms]
+linux-x64 = { asset_pattern = "dart-sass-*-linux-x64.tar.gz" }
+linux-arm64 = { asset_pattern = "dart-sass-*-linux-arm64.tar.gz" }
+
+[tasks."build:css"]
+description = "Compile Harmo SCSS into CSS"
+# Start clean so removed sources leave no stale CSS, and fail without writing
+# error stylesheets. Every non-partial file in src becomes dist/<name>.css.
+run = [
+  "rm -rf packages/css/dist",
+  "sass --no-source-map --no-error-css packages/css/src:packages/css/dist",
+]
+
+[tasks."watch:css"]
+description = "Recompile Harmo SCSS on change"
+run = "sass --watch --no-source-map packages/css/src:packages/css/dist"
+
+[tasks."build:playground"]
+description = "Build the HTML playground into examples/html/dist"
+depends = ["build:css"]
+run = "bun examples/html/build.ts"
+
+[tasks."watch:playground"]
+description = "Rebuild the HTML playground on change (run watch:css alongside)"
+run = "bun examples/html/build.ts --watch"
+
+[tasks."build:react-playground"]
+description = "Build the React playground into examples/react/dist"
+depends = ["build:css"]
+run = "bun examples/react/build.ts"
+
+[tasks."watch:react-playground"]
+description = "Rebuild the React playground on change (run watch:css alongside)"
+run = "bun examples/react/build.ts --watch"
+
+[tasks."test:react"]
+description = "Compare the React examples' markup with the HTML examples"
+dir = "{{config_root}}/examples/react"
+run = "bun test"
+
+[tasks."check:react"]
+description = "Type-check the React package and the React playground"
+# bun check, Bun's built-in type checker, needs Bun 1.4.3 or later.
+run = [
+  "cd packages/react && bun check",
+  "cd examples/react && bun check",
+]

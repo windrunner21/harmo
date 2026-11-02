@@ -1,0 +1,87 @@
+<play-example title="Password strength" layout="stack">
+  <play-note>
+    Too weak, medium, and strong. <code>data-filled</code> fills a segment and
+    <code>data-status</code> colors the filled ones; without it they are gray.
+    <code>role="meter"</code> and its <code>aria-value*</code> attributes give
+    screen readers the value, such as "Password strength, Medium".
+  </play-note>
+  <div
+    class="hmeter"
+    data-status="error"
+    role="meter"
+    aria-label="Password strength"
+    aria-valuemin="0"
+    aria-valuemax="3"
+    aria-valuenow="1"
+    aria-valuetext="Too weak"
+  >
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment"></span>
+    <span class="hmeter-segment"></span>
+  </div>
+  <div
+    class="hmeter"
+    role="meter"
+    aria-label="Password strength"
+    aria-valuemin="0"
+    aria-valuemax="3"
+    aria-valuenow="2"
+    aria-valuetext="Medium"
+  >
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment"></span>
+  </div>
+  <div
+    class="hmeter"
+    data-status="success"
+    role="meter"
+    aria-label="Password strength"
+    aria-valuemin="0"
+    aria-valuemax="3"
+    aria-valuenow="3"
+    aria-valuetext="Strong"
+  >
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment" data-filled></span>
+  </div>
+</play-example>
+
+<play-example title="Other scales" layout="stack">
+  <play-note>
+    Use as many segments as the scale has steps. <code>warning</code> and
+    <code>info</code> color the fill too.
+  </play-note>
+  <div
+    class="hmeter"
+    data-status="info"
+    role="meter"
+    aria-label="Profile completeness"
+    aria-valuemin="0"
+    aria-valuemax="5"
+    aria-valuenow="3"
+    aria-valuetext="3 of 5 steps"
+  >
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment"></span>
+    <span class="hmeter-segment"></span>
+  </div>
+  <div
+    class="hmeter"
+    data-status="warning"
+    role="meter"
+    aria-label="Message quality"
+    aria-valuemin="0"
+    aria-valuemax="4"
+    aria-valuenow="1"
+    aria-valuetext="Low"
+  >
+    <span class="hmeter-segment" data-filled></span>
+    <span class="hmeter-segment"></span>
+    <span class="hmeter-segment"></span>
+    <span class="hmeter-segment"></span>
+  </div>
+</play-example>

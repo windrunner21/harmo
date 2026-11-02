@@ -1,0 +1,65 @@
+<play-example title="Trail">
+  <play-note>
+    A <code>&lt;nav&gt;</code> named "Breadcrumb" around an ordered list, so
+    screen readers announce the trail and its length. Every item after the
+    first starts with a separator, hidden from screen readers, and the last is
+    marked <code>aria-current="page"</code>.
+  </play-note>
+  <nav class="hbreadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a class="hlink" href="/settings">Settings</a></li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <a class="hlink" href="/settings/users">Users</a>
+      </li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <span aria-current="page">Jane Smith</span>
+      </li>
+    </ol>
+  </nav>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    The same trail in Arabic: the separators point left, in the reading
+    direction.
+  </play-note>
+  <nav class="hbreadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a class="hlink" href="/settings">الإعدادات</a></li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <a class="hlink" href="/settings/users">المستخدمون</a>
+      </li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <span aria-current="page">جين سميث</span>
+      </li>
+    </ol>
+  </nav>
+</play-example>
+
+<play-example title="Long trail" frame="13rem">
+  <play-note>
+    In a narrow container, drawn dashed here, the trail wraps onto more lines,
+    and a long item wraps within itself.
+  </play-note>
+  <nav class="hbreadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a class="hlink" href="/settings">Settings</a></li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <a class="hlink" href="/settings/channels">Channels</a>
+      </li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <a class="hlink" href="/settings/channels/whatsapp">WhatsApp</a>
+      </li>
+      <li>
+        <play-icon name="chevron" class="hbreadcrumb-separator hchevron" width="24" height="24"></play-icon>
+        <span aria-current="page">Order shipped notification template</span>
+      </li>
+    </ol>
+  </nav>
+</play-example>

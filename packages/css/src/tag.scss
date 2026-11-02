@@ -1,0 +1,43 @@
+@use "shortcuts" as *;
+
+// What something is: a label such as a ticket tag, "Default", or "Test run".
+// Always a rectangle; a dot appears only to show the tag's own color
+// (--htag-color), which also tints the border. States use .hstatus instead.
+.htag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  padding: 2px 6px;
+
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+
+  &:has(> .htag-dot) {
+    border-color: var(--htag-color, #{$color-border});
+  }
+
+  // Emphasis, such as "Unread".
+  &[data-variant="accent"] {
+    color: $color-primary;
+    border-color: $color-primary;
+  }
+}
+
+.htag-dot {
+  flex-shrink: 0;
+
+  inline-size: 6px;
+  block-size: 6px;
+
+  background-color: var(--htag-color, #{$color-border});
+  border-radius: 50%;
+}

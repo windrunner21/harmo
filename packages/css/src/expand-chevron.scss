@@ -1,0 +1,62 @@
+@use "shortcuts" as *;
+
+.hexpand-chevron {
+  flex-shrink: 0;
+
+  // 14×10.5 at 14px text: its strokes come out about as heavy as the
+  // letters beside it.
+  inline-size: 1em;
+  block-size: 0.75em;
+
+  stroke: currentColor;
+
+  .hexpand-chevron-left,
+  .hexpand-chevron-right {
+    stroke-width: 2;
+    stroke-linecap: round;
+
+    transform-box: view-box;
+    transform-origin: 8px 6px;
+
+    transition: transform $duration-normal $ease-in-out-cubic;
+  }
+
+  // The 8-unit strokes rise 8 × sin 40° ≈ 5.14 units from the tip, so the
+  // head shifts half that toward the tip to center the chevron in its box,
+  // plus 1 unit down: lowercase text sits about that far below the middle of
+  // its line, and the chevron lines up with the text rather than the line.
+  .hexpand-chevron-head {
+    transform: translateY(3.57px);
+    transition: transform $duration-normal $ease-in-out-cubic;
+  }
+
+  .hexpand-chevron-left {
+    transform: rotate(40deg);
+  }
+
+  .hexpand-chevron-right {
+    transform: rotate(-40deg);
+  }
+
+  [aria-expanded="true"] > & {
+    .hexpand-chevron-head {
+      transform: translateY(-1.57px);
+    }
+
+    .hexpand-chevron-left {
+      transform: rotate(-40deg);
+    }
+
+    .hexpand-chevron-right {
+      transform: rotate(40deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hexpand-chevron-head,
+    .hexpand-chevron-left,
+    .hexpand-chevron-right {
+      transition: none;
+    }
+  }
+}

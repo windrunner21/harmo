@@ -1,0 +1,112 @@
+<play-example title="Tabs" layout="wide">
+  <play-note>
+    Links between sibling pages: a <code>&lt;nav&gt;</code> with
+    <code>aria-current="page"</code> on the current link. A script slides the
+    hover pill after the pointer and the underline to a new current tab. Here
+    clicking moves the current tab instead of leaving the page.
+  </play-note>
+  <nav class="htabs" aria-label="Analytics">
+    <ul>
+      <li><a href="/analytics/tickets" aria-current="page">Tickets</a></li>
+      <li><a href="/analytics/campaigns">Campaigns</a></li>
+      <li><a href="/analytics/ai-agents">AI agents</a></li>
+      <li><a href="/analytics/satisfaction">Customer satisfaction</a></li>
+    </ul>
+    <span class="htabs-highlight" aria-hidden="true"></span>
+    <span class="htabs-indicator" aria-hidden="true"></span>
+  </nav>
+</play-example>
+
+<play-example title="Switching panels" layout="wide">
+  <play-note>
+    The same look for content switched on one page: a
+    <code>role="tablist"</code> of <code>role="tab"</code> buttons, each
+    controlling a <code>role="tabpanel"</code>. The selected tab has
+    <code>aria-selected="true"</code> and the others
+    <code>tabindex="-1"</code>, so Tab moves on into the panel while the arrow
+    keys move between tabs. A script selects tabs and shows their panels.
+  </play-note>
+  <div class="htabs">
+    <div role="tablist" aria-label="Quick replies">
+      <button type="button" role="tab" id="replies-all" aria-selected="true" aria-controls="replies-all-panel">
+        All
+      </button>
+      <button
+        type="button"
+        role="tab"
+        id="replies-private"
+        aria-selected="false"
+        aria-controls="replies-private-panel"
+        tabindex="-1"
+      >
+        Private
+      </button>
+      <button
+        type="button"
+        role="tab"
+        id="replies-team"
+        aria-selected="false"
+        aria-controls="replies-team-panel"
+        tabindex="-1"
+      >
+        Team
+      </button>
+      <button
+        type="button"
+        role="tab"
+        id="replies-account"
+        aria-selected="false"
+        aria-controls="replies-account-panel"
+        tabindex="-1"
+      >
+        Account
+      </button>
+    </div>
+    <span class="htabs-highlight" aria-hidden="true"></span>
+    <span class="htabs-indicator" aria-hidden="true"></span>
+  </div>
+  <div role="tabpanel" id="replies-all-panel" aria-labelledby="replies-all" tabindex="0">
+    Every quick reply you can use.
+  </div>
+  <div role="tabpanel" id="replies-private-panel" aria-labelledby="replies-private" tabindex="0" hidden>
+    Replies only you can see.
+  </div>
+  <div role="tabpanel" id="replies-team-panel" aria-labelledby="replies-team" tabindex="0" hidden>
+    Replies shared with your team.
+  </div>
+  <div role="tabpanel" id="replies-account-panel" aria-labelledby="replies-account" tabindex="0" hidden>
+    Replies everyone in the account can use.
+  </div>
+</play-example>
+
+<play-example title="Without the script" layout="wide">
+  <play-note>
+    Before the script runs, or without it, the current tab shows a fixed
+    underline and each tab its own hover background.
+  </play-note>
+  <nav class="htabs" aria-label="Settings" data-example-no-script>
+    <ul>
+      <li><a href="/settings/account" aria-current="page">Account details</a></li>
+      <li><a href="/settings/hours">Business hours</a></li>
+      <li><a href="/settings/messaging">Messaging</a></li>
+    </ul>
+    <span class="htabs-highlight" aria-hidden="true"></span>
+    <span class="htabs-indicator" aria-hidden="true"></span>
+  </nav>
+</play-example>
+
+<play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
+  <play-note>
+    The same tabs in Arabic, starting from the right.
+  </play-note>
+  <nav class="htabs" aria-label="التحليلات">
+    <ul>
+      <li><a href="/analytics/tickets" aria-current="page">التذاكر</a></li>
+      <li><a href="/analytics/campaigns">الحملات</a></li>
+      <li><a href="/analytics/ai-agents">وكلاء الذكاء الاصطناعي</a></li>
+      <li><a href="/analytics/satisfaction">رضا العملاء</a></li>
+    </ul>
+    <span class="htabs-highlight" aria-hidden="true"></span>
+    <span class="htabs-indicator" aria-hidden="true"></span>
+  </nav>
+</play-example>

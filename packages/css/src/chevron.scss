@@ -1,0 +1,15 @@
+.hchevron {
+  margin-inline: -0.1875em;
+
+  // Forward by default, toward the end of the line; data-direction="back"
+  // points toward its start. Right-to-left text mirrors both, as for
+  // ChevronToArrow.
+  &[data-direction="back"],
+  &:dir(rtl) {
+    scale: -1 1;
+  }
+
+  &[data-direction="back"]:dir(rtl) {
+    scale: none;
+  }
+}

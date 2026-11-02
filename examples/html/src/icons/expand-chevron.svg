@@ -1,0 +1,6 @@
+<svg viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+  <g class="hexpand-chevron-head">
+    <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
+    <line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" />
+  </g>
+</svg>

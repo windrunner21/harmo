@@ -1,0 +1,86 @@
+@use "shortcuts" as *;
+
+.hswitch:where(input[type="checkbox"]) {
+  --hswitch-width: 44px;
+  --hswitch-thumb: 20px;
+  --hswitch-inset: 2px;
+  --hswitch-travel: calc(
+    var(--hswitch-width) - var(--hswitch-thumb) - 2 * var(--hswitch-inset)
+  );
+
+  position: relative;
+
+  display: inline-block;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: var(--hswitch-width);
+  block-size: $switch-height;
+  margin: 0;
+  padding: 0;
+
+  vertical-align: middle;
+
+  appearance: none;
+  background-color: $switch-color-background;
+  border: none;
+  border-radius: $border-radius-full;
+
+  cursor: pointer;
+
+  transition: background-color $duration-normal ease;
+
+  &::before {
+    content: "";
+
+    position: absolute;
+    inset-block-start: var(--hswitch-inset);
+    inset-inline-start: var(--hswitch-inset);
+
+    inline-size: var(--hswitch-thumb);
+    block-size: var(--hswitch-thumb);
+
+    background-color: $switch-thumb-color-background;
+    border-radius: 50%;
+    box-shadow: $switch-thumb-box-shadow;
+
+    transition: transform $duration-normal $ease-in-out-cubic;
+  }
+
+  &:checked {
+    background-color: $color-primary;
+
+    &::before {
+      transform: translateX(var(--hswitch-travel));
+    }
+
+    &:dir(rtl)::before {
+      transform: translateX(calc(-1 * var(--hswitch-travel)));
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    appearance: auto;
+
+    &::before {
+      content: none;
+    }
+  }
+}

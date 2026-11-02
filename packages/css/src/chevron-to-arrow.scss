@@ -1,0 +1,93 @@
+@use "shortcuts" as *;
+
+.hchevron-to-arrow {
+  position: relative;
+
+  stroke: currentColor;
+
+  .hchevron-to-arrow-upper,
+  .hchevron-to-arrow-lower,
+  .hchevron-to-arrow-shaft {
+    stroke: inherit;
+    stroke-width: 2;
+    stroke-linecap: round;
+
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+  }
+
+  // Completed arrow by default: touch, reduced motion, and disabled controls.
+  .hchevron-to-arrow-head {
+    transform: translateX(4px);
+  }
+
+  .hchevron-to-arrow-upper {
+    transform: rotate(-40deg);
+  }
+
+  .hchevron-to-arrow-lower {
+    transform: rotate(40deg);
+  }
+
+  .hchevron-to-arrow-shaft {
+    opacity: 1;
+  }
+
+  // Forward by default; data-direction="back" mirrors the whole arrow, shaft
+  // included, so both directions draw and animate identically. Right-to-left
+  // text mirrors both again: back always points toward the line's start.
+  &[data-direction="back"],
+  &:dir(rtl) {
+    scale: -1 1;
+  }
+
+  &[data-direction="back"]:dir(rtl) {
+    scale: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    :where(
+        a[href]:not([aria-disabled="true"]),
+        button:enabled:not([aria-disabled="true"])
+      )
+      & {
+      .hchevron-to-arrow-head {
+        transition: transform $chevron-to-arrow-duration $ease-out-cubic;
+      }
+
+      .hchevron-to-arrow-upper,
+      .hchevron-to-arrow-lower,
+      .hchevron-to-arrow-shaft {
+        transition: opacity $chevron-to-arrow-duration $ease-out-cubic;
+      }
+    }
+
+    // Rest as a chevron; hovering any part of the control reveals the arrow.
+    :where(
+        a[href]:not([aria-disabled="true"]),
+        button:enabled:not([aria-disabled="true"])
+      ):not(:hover):not(:focus-visible)
+      & {
+      .hchevron-to-arrow-head {
+        transform: translateX(-4px);
+      }
+
+      .hchevron-to-arrow-shaft {
+        opacity: 0;
+      }
+    }
+  }
+
+  :where(
+      a[href]:not([aria-disabled="true"]),
+      button:enabled:not([aria-disabled="true"])
+    ):focus-visible
+    & {
+    .hchevron-to-arrow-head,
+    .hchevron-to-arrow-upper,
+    .hchevron-to-arrow-lower,
+    .hchevron-to-arrow-shaft {
+      transition: none;
+    }
+  }
+}

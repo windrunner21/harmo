@@ -1,0 +1,180 @@
+<play-example title="Variants">
+  <play-note>
+    Primary for the main action, secondary for the others, and tertiary for the
+    least prominent.
+  </play-note>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">Save changes</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <span class="hbutton-label">Cancel</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button">
+    <span class="hbutton-label">Show details</span>
+  </button>
+</play-example>
+
+<play-example title="Small">
+  <play-note>
+    <code>data-size="small"</code>: 29px tall with 13px text, for notices, table
+    rows, and cards.
+  </play-note>
+  <button class="hbutton" data-size="small" type="button">
+    <span class="hbutton-label">Save changes</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+    <span class="hbutton-label">Cancel</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" data-size="small" type="button">
+    <span class="hbutton-label">Show details</span>
+  </button>
+</play-example>
+
+<play-example title="Disabled">
+  <play-note>
+    <code>disabled</code> dims a button and takes it out of the tab order.
+    <code>aria-disabled="true"</code> looks the same but stays focusable, so a
+    tooltip can say why: Tab reaches the last button here.
+  </play-note>
+  <button class="hbutton" type="button" disabled>
+    <span class="hbutton-label">Save changes</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button" disabled>
+    <span class="hbutton-label">Cancel</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button" disabled>
+    <span class="hbutton-label">Show details</span>
+  </button>
+  <button class="hbutton" data-size="small" type="button" disabled>
+    <span class="hbutton-label">Save changes</span>
+  </button>
+  <button class="hbutton" type="button" aria-disabled="true">
+    <span class="hbutton-label">Publish</span>
+  </button>
+</play-example>
+
+<play-example title="Links">
+  <play-note>
+    When the action is navigation, put <code>.hbutton</code> on an
+    <code>&lt;a href&gt;</code>: it keeps link behavior, such as opening in a
+    new tab, with a button's look.
+  </play-note>
+  <a class="hbutton" href="/campaigns/new">
+    <span class="hbutton-label">Create campaign</span>
+  </a>
+  <a class="hbutton" data-variant="secondary" href="/reports">
+    <span class="hbutton-label">View reports</span>
+  </a>
+  <a class="hbutton" data-variant="tertiary" href="/help">
+    <span class="hbutton-label">Read more</span>
+  </a>
+</play-example>
+
+<play-example title="Icon only">
+  <play-note>
+    Without a label, a button is a square as wide as it is tall, with its icon
+    drawn at 20px. <code>aria-label</code> gives it the name a label would.
+    Where the icon alone might not be clear, a Tooltip can show that name too.
+  </play-note>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Close">
+    <play-icon name="close" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button" aria-label="More actions">
+    <play-icon name="more" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" type="button" aria-label="Add contact">
+    <play-icon name="plus" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="secondary" data-size="small" type="button" aria-label="More actions">
+    <play-icon name="more" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" type="button" aria-label="Add contact" disabled>
+    <play-icon name="plus" class="hicon"></play-icon>
+  </button>
+</play-example>
+
+<play-example title="Side by side">
+  <play-note>
+    Labeled and icon-only buttons share <code>--harmo-control-height</code>, so
+    they line up in a row.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <span class="hbutton-label">Export</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button" aria-label="More actions">
+    <play-icon name="more" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">Save changes</span>
+  </button>
+</play-example>
+
+<play-example title="With an arrow">
+  <play-note>
+    A ChevronToArrow turns into an arrow on hover or keyboard focus. A back
+    arrow leads the label and a forward arrow follows it; the button balances
+    the space on the other side.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow" data-direction="back"></play-icon>
+    <span class="hbutton-label">Go back</span>
+  </button>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">Continue</span>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </button>
+  <a class="hbutton" data-variant="tertiary" href="/reports">
+    <span class="hbutton-label">All reports</span>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </a>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    The same buttons in Arabic. Arrows follow the reading direction: back
+    points right and forward points left.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow" data-direction="back"></play-icon>
+    <span class="hbutton-label">رجوع</span>
+  </button>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">متابعة</span>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </button>
+</play-example>
+
+<play-example title="Long labels" frame="13rem">
+  <play-note>
+    In a narrow container, drawn dashed here, a long label wraps and the button
+    grows taller instead of overflowing.
+  </play-note>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">Save changes and notify everyone</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button">
+    <span class="hbutton-label">Export every conversation</span>
+  </button>
+</play-example>
+
+<play-example title="Loading">
+  <play-note>
+    <code>aria-busy</code> with <code>aria-disabled</code> keeps a loading
+    button focusable, and a spinner follows its label or takes its icon's
+    place. Press the last button to watch it load for two seconds.
+  </play-note>
+  <button class="hbutton" type="button" aria-busy="true" aria-disabled="true">
+    <span class="hbutton-label">Saving changes</span>
+    <span class="hspinner" aria-hidden="true"></span>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button" aria-busy="true" aria-disabled="true">
+    <span class="hbutton-label">Exporting</span>
+    <span class="hspinner" aria-hidden="true"></span>
+  </button>
+  <button class="hbutton" type="button" aria-label="Adding contact" aria-busy="true" aria-disabled="true">
+    <span class="hspinner" aria-hidden="true"></span>
+  </button>
+  <button class="hbutton" type="button" data-example-loading>
+    <span class="hbutton-label">Save changes</span>
+  </button>
+</play-example>

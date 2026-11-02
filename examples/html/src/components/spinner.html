@@ -1,0 +1,53 @@
+<play-example title="Sizes">
+  <play-note>
+    Match the spinner to what is loading: <code>data-size="small"</code> (16px)
+    inline and in table cells, the default (24px) for a section, and
+    <code>data-size="large"</code> (40px) for a whole page or tab. On its own,
+    each takes <code>role="status"</code> and is announced as "Loading".
+  </play-note>
+  <span class="hspinner" data-size="small" role="status">
+    <span class="hspinner-label">Loading</span>
+  </span>
+  <span class="hspinner" role="status">
+    <span class="hspinner-label">Loading</span>
+  </span>
+  <span class="hspinner" data-size="large" role="status">
+    <span class="hspinner-label">Loading</span>
+  </span>
+</play-example>
+
+<play-example title="Delayed" replay>
+  <play-note>
+    <code>data-delay</code> keeps it hidden for 300ms, so quick loads never
+    flash a spinner. Replay to watch it appear.
+  </play-note>
+  <span class="hspinner" data-delay role="status">
+    <span class="hspinner-label">Loading</span>
+  </span>
+</play-example>
+
+<play-example title="Inside a button">
+  <play-note>
+    When the control's label already explains the wait, the spinner is
+    <code>aria-hidden</code>, and the button draws it at 16px in its text
+    color. Button covers loading states in full.
+  </play-note>
+  <button class="hbutton" type="button" aria-busy="true" aria-disabled="true">
+    <span class="hbutton-label">Saving changes</span>
+    <span class="hspinner" aria-hidden="true"></span>
+  </button>
+</play-example>
+
+<play-example title="Custom size and color">
+  <play-note>
+    <code>--hspinner-size</code> and <code>--hspinner-stroke</code> set the
+    size and ring width, and the arc follows the element's
+    <code>color</code>.
+  </play-note>
+  <span class="hspinner" style="--hspinner-size: 3.5rem; --hspinner-stroke: 4px" role="status">
+    <span class="hspinner-label">Loading</span>
+  </span>
+  <span class="hspinner" style="color: var(--harmo-green)" role="status">
+    <span class="hspinner-label">Loading</span>
+  </span>
+</play-example>

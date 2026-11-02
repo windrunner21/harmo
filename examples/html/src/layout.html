@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='9' height='9' rx='2.5' fill='%235e3de8'/%3E%3Crect x='13' y='2' width='9' height='20' rx='2.5' fill='%232e1a8f'/%3E%3Crect x='2' y='13' width='9' height='9' rx='2.5' fill='%23a796f3'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="{{harmo}}" />
+    <link rel="stylesheet" href="playground.css" />
+    <script src="playground.js" defer></script>
+    {{scripts}}
+  </head>
+  <body>
+    <a class="play-skip" href="#play-main">Skip to content</a>
+    <header class="play-header">
+      <button
+        class="hbutton play-menu-button"
+        data-variant="tertiary"
+        type="button"
+        popovertarget="play-nav"
+        aria-label="Components"
+      >
+        <play-icon name="menu" class="hicon"></play-icon>
+      </button>
+      <a class="play-brand" href="index.html">
+        <play-icon name="mark" class="play-mark"></play-icon>
+        Harmo
+      </a>
+      <span class="htag">{{version}}</span>
+      <a class="hlink play-header-link" href="{{docs}}">Docs</a>
+    </header>
+    <div class="play-layout">
+      <nav class="play-nav" id="play-nav" aria-label="Components" popover>
+        {{nav}}
+      </nav>
+      <main class="play-main" id="play-main" tabindex="-1">
+        {{content}}
+      </main>
+    </div>
+    <footer class="play-footer">
+      <p>
+        Harmo {{version}}. {{about}}
+      </p>
+    </footer>
+  </body>
+</html>

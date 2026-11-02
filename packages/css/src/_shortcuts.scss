@@ -1,0 +1,112 @@
+// Use with @use "shortcuts" as *.
+// $variables are authoring shortcuts, not fixed Sass colors: they emit var(...).
+// Use CSS color-mix() rather than Sass color functions on these references.
+// Every component uses this file, so it must not emit CSS; defaults live in
+// tokens.scss. Palette colors have no shortcuts on purpose: components use
+// roles, so re-theming a role always reaches them. Order mirrors tokens.scss.
+
+// Text roles.
+$color-text: var(--harmo-color-text);
+$color-text-secondary: var(--harmo-color-text-secondary);
+$color-text-tertiary: var(--harmo-color-text-tertiary);
+
+// Background and border roles.
+$color-background: var(--harmo-color-background);
+$color-background-secondary: var(--harmo-color-background-secondary);
+$color-background-hover: var(--harmo-color-background-hover);
+$color-border: var(--harmo-color-border);
+$color-border-control: var(--harmo-color-border-control);
+
+// Primary and focus roles.
+$color-primary: var(--harmo-color-primary);
+$color-primary-hover: var(--harmo-color-primary-hover);
+$color-primary-active: var(--harmo-color-primary-active);
+$color-primary-tint: var(--harmo-color-primary-tint);
+$color-on-primary: var(--harmo-color-on-primary);
+$color-focus: var(--harmo-color-focus);
+$focus-outline: var(--harmo-focus-outline);
+$focus-outline-offset: var(--harmo-focus-outline-offset);
+
+// Feedback roles.
+$color-success: var(--harmo-color-success);
+$color-warning: var(--harmo-color-warning);
+$color-danger: var(--harmo-color-danger);
+
+// Link roles.
+$link-color-text: var(--harmo-link-color-text);
+$link-hover-color-text: var(--harmo-link-hover-color-text);
+$link-active-color-text: var(--harmo-link-active-color-text);
+$link-visited-color-text: var(--harmo-link-visited-color-text);
+
+// Status roles.
+$status-color-success: var(--harmo-status-color-success);
+$status-color-warning: var(--harmo-status-color-warning);
+$status-color-info: var(--harmo-status-color-info);
+$status-color-error: var(--harmo-status-color-error);
+
+// Component roles: input.
+$input-color-background: var(--harmo-input-color-background);
+$input-color-border: var(--harmo-input-color-border);
+$input-box-shadow: var(--harmo-input-box-shadow);
+
+// Component roles: switch.
+$switch-color-background: var(--harmo-switch-color-background);
+$switch-thumb-color-background: var(--harmo-switch-thumb-color-background);
+$switch-thumb-box-shadow: var(--harmo-switch-thumb-box-shadow);
+
+// Component roles: tooltip.
+$tooltip-color-background: var(--harmo-tooltip-color-background);
+$tooltip-color-text: var(--harmo-tooltip-color-text);
+$tooltip-box-shadow: var(--harmo-tooltip-box-shadow);
+$tooltip-hint-box-shadow: var(--harmo-tooltip-hint-box-shadow);
+
+// Component roles: avatar and icons.
+$avatar-color-background: var(--harmo-avatar-color-background);
+$icon-color: var(--harmo-icon-color);
+$icon-hover-color: var(--harmo-icon-hover-color);
+
+// Component roles: secondary button.
+$button-secondary-color-text: var(--harmo-button-secondary-color-text);
+$button-secondary-color-border: var(--harmo-button-secondary-color-border);
+$button-secondary-hover-color-border: var(--harmo-button-secondary-hover-color-border);
+$button-secondary-box-shadow: var(--harmo-button-secondary-box-shadow);
+
+// Typography.
+$font-family: var(--harmo-font-family);
+$font-size-base: var(--harmo-font-size-base);
+$font-size-sm: var(--harmo-font-size-sm);
+$font-size-xs: var(--harmo-font-size-xs);
+$font-size-2xs: var(--harmo-font-size-2xs);
+$font-size-3xs: var(--harmo-font-size-3xs);
+$font-weight-normal: var(--harmo-font-weight-normal);
+$font-weight-medium: var(--harmo-font-weight-medium);
+$font-weight-bold: var(--harmo-font-weight-bold);
+$font-line-height: var(--harmo-font-line-height);
+$button-font-weight: var(--harmo-button-font-weight);
+$button-font-line-height: var(--harmo-button-font-line-height);
+
+// Sizes and spacing.
+$control-height: var(--harmo-control-height);
+$avatar-size: var(--harmo-avatar-size);
+$checkbox-size: var(--harmo-checkbox-size);
+$switch-height: var(--harmo-switch-height);
+$icon-gap: var(--harmo-icon-gap);
+$opacity-disabled: var(--harmo-opacity-disabled);
+
+// Shape and elevation.
+$border-radius: var(--harmo-border-radius);
+$border-radius-sm: var(--harmo-border-radius-sm);
+$border-radius-full: var(--harmo-border-radius-full);
+$box-shadow-sm: var(--harmo-box-shadow-sm);
+
+// Motion.
+$ease-out-quad: var(--harmo-ease-out-quad);
+$ease-out-cubic: var(--harmo-ease-out-cubic);
+$ease-in-out-cubic: var(--harmo-ease-in-out-cubic);
+$duration-faster: var(--harmo-duration-faster);
+$duration-fast: var(--harmo-duration-fast);
+$duration-normal: var(--harmo-duration-normal);
+$duration-slow: var(--harmo-duration-slow);
+$button-duration: var(--harmo-button-duration);
+$chevron-to-arrow-duration: var(--harmo-chevron-to-arrow-duration);
+$tooltip-delay: var(--harmo-tooltip-delay);

@@ -1,0 +1,216 @@
+<play-example title="Nothing chosen">
+  <play-note>
+    A dashed, fully rounded chip with a plus and the filter's name. It opens a
+    Popup through <code>popovertarget</code>, like any trigger, and carries
+    <code>aria-expanded</code>. Choose options to see them appear on the chip.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="status-filter"
+    style="anchor-name: --status-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Status</span>
+  </button>
+  <div class="hpopup" id="status-filter" popover style="position-anchor: --status-filter">
+    <ul class="hlistbox" role="listbox" aria-label="Status" aria-multiselectable="true" tabindex="-1">
+      <li class="hoption" id="status-delivered" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Delivered</span>
+      </li>
+      <li class="hoption" id="status-read" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Read</span>
+      </li>
+      <li class="hoption" id="status-failed" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Failed</span>
+      </li>
+      <li class="hoption" id="status-pending" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Pending</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="One value">
+  <play-note>
+    Once something is chosen, <code>.hfilter-chip-values</code> follows the
+    label after a divider, with each value in a
+    <code>.hfilter-chip-value</code>. The values become part of the chip's
+    name: "Channel WhatsApp". A single-select chip closes when an option is
+    chosen.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="channel-filter"
+    style="anchor-name: --channel-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Channel</span>
+    <span class="hfilter-chip-values">
+      <span class="hfilter-chip-value">WhatsApp</span>
+    </span>
+  </button>
+  <div class="hpopup" id="channel-filter" popover style="position-anchor: --channel-filter">
+    <ul class="hlistbox" role="listbox" aria-label="Channel" tabindex="-1">
+      <li class="hoption" id="channel-whatsapp" role="option" aria-selected="true">
+        <span class="hoption-label">WhatsApp</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="channel-telegram" role="option" aria-selected="false">
+        <span class="hoption-label">Telegram</span>
+      </li>
+      <li class="hoption" id="channel-email" role="option" aria-selected="false">
+        <span class="hoption-label">Email</span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Two values">
+  <play-note>
+    A multi-select chip shows each chosen value, up to two. While anything is
+    chosen, its list ends with Clear filters in a
+    <code>.hlistbox-footer</code>, so values don't have to be removed one by
+    one. Render the footer only then.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="priority-filter"
+    style="anchor-name: --priority-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Priority</span>
+    <span class="hfilter-chip-values">
+      <span class="hfilter-chip-value">High</span>
+      <span class="hfilter-chip-value">Urgent</span>
+    </span>
+  </button>
+  <div class="hpopup" id="priority-filter" popover style="position-anchor: --priority-filter">
+    <ul class="hlistbox" role="listbox" aria-label="Priority" aria-multiselectable="true" tabindex="-1">
+      <li class="hoption" id="priority-low" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Low</span>
+      </li>
+      <li class="hoption" id="priority-medium" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Medium</span>
+      </li>
+      <li class="hoption" id="priority-high" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">High</span>
+      </li>
+      <li class="hoption" id="priority-urgent" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Urgent</span>
+      </li>
+    </ul>
+    <div class="hlistbox-footer">
+      <button class="hbutton" data-variant="tertiary" type="button">
+        <span class="hbutton-label">Clear filters</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="More than two">
+  <play-note>
+    Beyond two values the chip shows a count instead.
+    The app supplies the wording.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="tags-filter"
+    style="anchor-name: --tags-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Tags</span>
+    <span class="hfilter-chip-values">
+      <span class="hfilter-chip-value">3 selected</span>
+    </span>
+  </button>
+  <div class="hpopup" id="tags-filter" popover style="position-anchor: --tags-filter">
+    <ul class="hlistbox" role="listbox" aria-label="Tags" aria-multiselectable="true" tabindex="-1">
+      <li class="hoption" id="tag-refund" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Refund</span>
+      </li>
+      <li class="hoption" id="tag-invoice" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Invoice</span>
+      </li>
+      <li class="hoption" id="tag-bug" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Bug report</span>
+      </li>
+      <li class="hoption" id="tag-feature" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Feature request</span>
+      </li>
+    </ul>
+    <div class="hlistbox-footer">
+      <button class="hbutton" data-variant="tertiary" type="button">
+        <span class="hbutton-label">Clear filters</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Text filter">
+  <play-note>
+    A chip can open a small panel instead of a list, such as a text filter.
+    The popup has no padding, so the panel lays itself out with
+    <code>style</code> here. Type a name and press Apply or Enter.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-expanded="false"
+    popovertarget="name-filter"
+    style="anchor-name: --name-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Name contains</span>
+  </button>
+  <div class="hpopup" id="name-filter" popover style="position-anchor: --name-filter">
+    <div style="display: grid; gap: 16px; padding: 12px">
+      <div class="hfield">
+        <label class="hlabel" for="name-filter-value">Name contains</label>
+        <input class="hinput" id="name-filter-value" name="name" type="text" />
+      </div>
+      <button
+        class="hbutton"
+        type="button"
+        popovertarget="name-filter"
+        popovertargetaction="hide"
+        data-example-apply
+      >
+        <span class="hbutton-label">Apply</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Disabled">
+  <play-note>
+    <code>disabled</code> dims the chip and stops it opening.
+  </play-note>
+  <button class="hfilter-chip" type="button" disabled>
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Assignee</span>
+  </button>
+</play-example>

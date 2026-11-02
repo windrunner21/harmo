@@ -1,0 +1,59 @@
+@use "shortcuts" as *;
+
+.hstatus {
+  --hstatus-color: #{$color-border-control};
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  font-family: $font-family;
+  font-size: inherit;
+  line-height: inherit;
+
+  color: $color-text-secondary;
+
+  &::before {
+    content: "";
+
+    flex-shrink: 0;
+
+    inline-size: 8px;
+    block-size: 8px;
+
+    background-color: var(--hstatus-color);
+    border-radius: 50%;
+  }
+
+  &[data-status="success"] {
+    --hstatus-color: #{$status-color-success};
+  }
+
+  &[data-status="warning"] {
+    --hstatus-color: #{$status-color-warning};
+  }
+
+  &[data-status="info"] {
+    --hstatus-color: #{$status-color-info};
+  }
+
+  &[data-status="error"] {
+    --hstatus-color: #{$status-color-error};
+  }
+
+  &[data-variant="bordered"] {
+    padding: 4px 10px;
+
+    font-size: $font-size-xs;
+    line-height: 1;
+
+    border: 1px solid $color-border;
+    border-radius: $border-radius-full;
+  }
+
+  @media (forced-colors: active) {
+    &::before {
+      background-color: CanvasText;
+    }
+  }
+}

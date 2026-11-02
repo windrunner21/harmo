@@ -1,0 +1,184 @@
+@use "shortcuts" as *;
+
+.hfield {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  min-inline-size: 0;
+
+  font-family: $font-family;
+  font-weight: $font-weight-normal;
+
+  & > .hlabel + .hdescription,
+  & > .hfield-label-row + .hdescription {
+    margin-block-start: -8px;
+  }
+
+  &[data-orientation="horizontal"] {
+    flex-direction: row;
+    align-items: flex-start;
+
+    & > :is(.hcheckbox, .hradio, .hswitch) {
+      flex-shrink: 0;
+    }
+
+    & > .hswitch {
+      margin-block: calc((1.25rem - $switch-height) / 2);
+    }
+
+    & > .hfield-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 4px;
+
+      min-inline-size: 0;
+    }
+  }
+}
+
+$horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .hradio, .hswitch)';
+
+:where(#{$horizontal-control}:enabled) + .hlabel,
+:where(#{$horizontal-control}:enabled + .hfield-content) > .hlabel {
+  cursor: pointer;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-primary-hover;
+    }
+  }
+}
+
+:where(#{$horizontal-control}):disabled + .hlabel,
+:where(#{$horizontal-control}):disabled + :where(.hfield-content) > .hlabel {
+  color: $color-text-tertiary;
+
+  cursor: not-allowed;
+}
+
+.hfield-label-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hlabel {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: 1.25rem;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+}
+
+.hdescription {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-tertiary;
+}
+
+.herror {
+  interpolate-size: allow-keywords;
+
+  margin: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-normal;
+  line-height: 1rem;
+
+  color: $color-danger;
+
+  // Opening grows the error to its text's height while it fades and slides
+  // in; closing reverses it, quicker.
+  transition:
+    block-size $duration-slow $ease-out-cubic,
+    line-height $duration-slow $ease-out-cubic,
+    margin-block-start $duration-slow $ease-out-cubic,
+    opacity $duration-slow $ease-out-cubic,
+    transform $duration-slow $ease-out-cubic,
+    visibility $duration-slow;
+
+  // Empty: no error. Hidden: closing, with the text kept until it has gone.
+  &:empty,
+  &[hidden] {
+    display: block;
+    block-size: 0;
+    margin-block-start: -8px;
+
+    opacity: 0;
+    transform: translateY(-0.25rem);
+
+    transition-duration: $duration-fast;
+  }
+
+  &[hidden] {
+    visibility: hidden;
+  }
+
+  // Without interpolate-size (Firefox), a height can't animate to or from
+  // auto. Collapsing the lines can: a 0 line height takes the height with it.
+  @supports not (interpolate-size: allow-keywords) {
+    &:empty,
+    &[hidden] {
+      block-size: auto;
+
+      line-height: 0px;
+    }
+  }
+
+  // Reduced motion: only the fade. A closing error keeps its height and place
+  // until it has faded (step-end), then closes.
+  @media (prefers-reduced-motion: reduce) {
+    transition:
+      opacity $duration-normal $ease-out-cubic,
+      visibility $duration-normal;
+
+    &:empty,
+    &[hidden] {
+      transform: none;
+    }
+
+    &[hidden] {
+      transition:
+        block-size $duration-fast step-end,
+        line-height $duration-fast step-end,
+        margin-block-start $duration-fast step-end,
+        opacity $duration-fast $ease-out-cubic,
+        visibility $duration-fast;
+    }
+  }
+}
+
+.hfield-optional {
+  margin: 0;
+  padding-inline: 4px;
+
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-normal;
+  line-height: 1.25rem;
+
+  background-color: color-mix(
+    in srgb,
+    $color-background-hover 40%,
+    transparent
+  );
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+}

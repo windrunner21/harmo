@@ -1,0 +1,613 @@
+/* The playground's own layout; not part of Harmo. It styles only .play-*
+   elements and never resets Harmo's components, so the examples look exactly
+   as they would in an application. Colors and type come from Harmo's tokens,
+   so re-theming Harmo re-themes the playground too. */
+
+:root {
+  --play-header-height: 3.5rem;
+  --play-nav-width: 15rem;
+  --play-content-width: 50rem;
+  --play-radius: 12px;
+  --play-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  scroll-padding-block-start: calc(var(--play-header-height) + 1.5rem);
+}
+
+body {
+  margin: 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-base);
+  line-height: var(--harmo-font-line-height);
+
+  color: var(--harmo-color-text-secondary);
+  background-color: var(--harmo-color-background);
+}
+
+/* Skip link: hidden until focused, for keyboard users past the sidebar. */
+.play-skip {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 20;
+
+  padding: 0.5rem 0.75rem;
+
+  font-weight: var(--harmo-font-weight-medium);
+  text-decoration: none;
+
+  color: var(--harmo-color-on-primary);
+  background-color: var(--harmo-color-primary);
+  border-radius: var(--harmo-border-radius);
+
+  &:not(:focus) {
+    clip-path: inset(50%);
+  }
+
+  &:focus-visible {
+    outline: var(--harmo-focus-outline);
+    outline-offset: var(--harmo-focus-outline-offset);
+  }
+}
+
+.play-main:focus {
+  outline: none;
+}
+
+/* Header ------------------------------------------------------------------ */
+
+.play-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  box-sizing: border-box;
+  block-size: var(--play-header-height);
+  padding-inline: 1rem;
+
+  background-color: color-mix(in srgb, var(--harmo-color-background) 88%, transparent);
+  border-block-end: 1px solid var(--harmo-color-border);
+  backdrop-filter: blur(12px);
+}
+
+.play-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  font-size: 1.0625rem;
+  font-weight: var(--harmo-font-weight-bold);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+
+  color: var(--harmo-color-text);
+  border-radius: var(--harmo-border-radius-sm);
+
+  &:focus-visible {
+    outline: var(--harmo-focus-outline);
+    outline-offset: var(--harmo-focus-outline-offset);
+  }
+}
+
+.play-mark {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.play-mark-start {
+  fill: var(--harmo-color-primary);
+}
+
+.play-mark-end {
+  fill: var(--harmo-color-primary-hover);
+}
+
+.play-mark-below {
+  fill: color-mix(in srgb, var(--harmo-color-primary) 50%, var(--harmo-color-background));
+}
+
+.play-header-link {
+  margin-inline-start: auto;
+
+  font-size: var(--harmo-font-size-sm);
+  font-weight: var(--harmo-font-weight-medium);
+}
+
+/* Layout and navigation ---------------------------------------------------- */
+
+.play-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.play-nav {
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+
+  & ul {
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  & a,
+  & .play-nav-pending {
+    display: block;
+
+    padding: 0.3125rem 0.625rem;
+
+    text-decoration: none;
+
+    color: var(--harmo-color-text-secondary);
+    border-radius: var(--harmo-border-radius-sm);
+  }
+
+  & a {
+    transition: color var(--harmo-duration-fast) ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--harmo-color-text);
+        background-color: var(--harmo-color-background-hover);
+      }
+    }
+
+    &[aria-current="page"] {
+      font-weight: var(--harmo-font-weight-medium);
+
+      color: var(--harmo-color-primary);
+      background-color: var(--harmo-color-primary-tint);
+    }
+
+    &:focus-visible {
+      outline: var(--harmo-focus-outline);
+      outline-offset: 0;
+    }
+  }
+}
+
+/* Not in the playground yet; as specific as the shared rule above, and later. */
+.play-nav .play-nav-pending {
+  color: var(--harmo-color-text-tertiary);
+  opacity: 0.6;
+}
+
+.play-nav-group {
+  margin-block-start: 1.5rem;
+}
+
+/* After Listbox's group labels. */
+.play-nav-group-title {
+  margin: 0 0 0.375rem;
+  padding-inline: 0.625rem;
+
+  font-size: var(--harmo-font-size-3xs);
+  font-weight: var(--harmo-font-weight-bold);
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: var(--harmo-color-primary);
+}
+
+/* Wide screens: the nav is a sidebar. Its popover attribute only matters on
+   narrow screens, so override the browser's popover styles here. */
+@media (width >= 60rem) {
+  .play-layout {
+    grid-template-columns: var(--play-nav-width) minmax(0, 1fr);
+  }
+
+  .play-nav {
+    position: sticky;
+    inset: auto;
+    inset-block-start: var(--play-header-height);
+
+    display: block;
+
+    box-sizing: border-box;
+    inline-size: auto;
+    block-size: calc(100dvh - var(--play-header-height));
+    margin: 0;
+    padding: 1.5rem 1rem 3rem;
+    overflow-y: auto;
+
+    color: inherit;
+    background: none;
+    border: 0;
+    border-inline-end: 1px solid var(--harmo-color-border);
+  }
+
+  .play-menu-button {
+    display: none;
+  }
+}
+
+/* Narrow screens: the menu button opens the nav as a sheet from the side,
+   sliding in over 200ms and out over 150ms, as Popup does. */
+@media (width < 60rem) {
+  .play-nav {
+    --play-nav-hidden: -100%;
+
+    inset: 0 auto 0 0;
+
+    box-sizing: border-box;
+    inline-size: min(18rem, 85vw);
+    block-size: 100dvh;
+    margin: 0;
+    padding: 1.25rem 1rem 3rem;
+    overflow-y: auto;
+
+    color: inherit;
+    background-color: var(--harmo-color-background);
+    border: 0;
+    border-inline-end: 1px solid var(--harmo-color-border);
+    box-shadow: var(--harmo-box-shadow-sm);
+
+    translate: var(--play-nav-hidden) 0;
+    transition:
+      translate var(--harmo-duration-fast) var(--harmo-ease-out-cubic),
+      overlay var(--harmo-duration-fast) allow-discrete,
+      display var(--harmo-duration-fast) allow-discrete;
+
+    &:dir(rtl) {
+      --play-nav-hidden: 100%;
+
+      inset: 0 0 0 auto;
+    }
+
+    &::backdrop {
+      background-color: transparent;
+
+      transition:
+        background-color var(--harmo-duration-fast) ease,
+        overlay var(--harmo-duration-fast) allow-discrete,
+        display var(--harmo-duration-fast) allow-discrete;
+    }
+
+    &:popover-open {
+      translate: none;
+      transition-duration: var(--harmo-duration-normal);
+
+      @starting-style {
+        translate: var(--play-nav-hidden) 0;
+      }
+    }
+
+    &:popover-open::backdrop {
+      background-color: rgb(0 0 0 / 20%);
+
+      transition-duration: var(--harmo-duration-normal);
+
+      @starting-style {
+        background-color: transparent;
+      }
+    }
+
+    /* No slide; the backdrop still fades. */
+    @media (prefers-reduced-motion: reduce) {
+      transition-property: overlay, display;
+    }
+  }
+}
+
+.play-nav-overview {
+  font-weight: var(--harmo-font-weight-medium);
+}
+
+/* Content ------------------------------------------------------------------ */
+
+.play-main {
+  min-inline-size: 0;
+  padding: 2.5rem 1rem 5rem;
+
+  & > * {
+    max-inline-size: var(--play-content-width);
+    margin-inline: auto;
+  }
+
+  @media (width >= 40rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+.play-eyebrow {
+  margin: 0 0 0.5rem;
+
+  font-size: var(--harmo-font-size-2xs);
+  font-weight: var(--harmo-font-weight-bold);
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: var(--harmo-color-primary);
+}
+
+.play-hero {
+  padding-block-end: 3rem;
+}
+
+.play-hero-title {
+  margin: 0;
+
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  font-weight: var(--harmo-font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+
+  color: var(--harmo-color-text);
+}
+
+.play-lead {
+  max-inline-size: 36rem;
+  margin: 1rem 0 0;
+
+  font-size: 1.125rem;
+  line-height: 1.55;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+.play-hero > .play-note {
+  margin-block-start: 1rem;
+}
+
+/* minmax(0, 1fr) keeps a long line of code from widening the column. */
+.play-component {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+.play-component-title {
+  margin: 0;
+
+  font-size: 2rem;
+  font-weight: var(--harmo-font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+
+  color: var(--harmo-color-text);
+}
+
+.play-purpose {
+  max-inline-size: 36rem;
+  margin: 0.5rem 0 0;
+
+  font-size: var(--harmo-font-size-base);
+}
+
+.play-docs-link {
+  margin-block-start: 0.75rem;
+
+  font-size: var(--harmo-font-size-sm);
+  font-weight: var(--harmo-font-weight-medium);
+}
+
+.play-example {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.375rem;
+}
+
+.play-example-title {
+  margin: 0;
+
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+
+  color: var(--harmo-color-text);
+}
+
+.play-note {
+  max-inline-size: 40rem;
+  margin: 0;
+
+  font-size: var(--harmo-font-size-sm);
+
+  color: var(--harmo-color-text-secondary);
+
+  & code {
+    padding: 0.1em 0.35em;
+
+    font-family: var(--play-font-mono);
+    font-size: 0.875em;
+
+    color: var(--harmo-color-text);
+    background-color: var(--harmo-color-background-secondary);
+    border-radius: var(--harmo-border-radius-sm);
+  }
+}
+
+/* Examples ----------------------------------------------------------------- */
+
+.play-specimen {
+  position: relative;
+
+  margin-block-start: 0.75rem;
+
+  border: 1px solid var(--harmo-color-border);
+  border-radius: var(--play-radius);
+}
+
+.play-demo,
+.play-frame {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.play-demo {
+  padding: 2rem 1.5rem;
+
+  /* The demo's padding spaces a paragraph of running text; its own margins
+     would double it. */
+  & > p {
+    margin: 0;
+  }
+
+  &[data-layout="stack"],
+  &[data-layout="wide"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* A stack suits form controls, at most 24rem wide; a wide stack suits
+     elements that fill their container, such as banners. */
+  &[data-layout="stack"] > * {
+    max-inline-size: 24rem;
+  }
+}
+
+/* Physical, like the Copy button. */
+.play-replay {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+/* A narrow container, drawn so its edge is visible. */
+.play-frame {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  padding: 0.75rem;
+
+  border: 1px dashed var(--harmo-color-border-control);
+  border-radius: var(--harmo-border-radius);
+}
+
+.play-code {
+  border-block-start: 1px solid var(--harmo-color-border);
+
+  & > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    padding: 0.5rem 1rem;
+
+    font-size: var(--harmo-font-size-xs);
+    font-weight: var(--harmo-font-weight-medium);
+    line-height: 1.25rem;
+    list-style: none;
+
+    color: var(--harmo-color-text-secondary);
+    border-radius: 0 0 calc(var(--play-radius) - 1px) calc(var(--play-radius) - 1px);
+
+    cursor: pointer;
+    user-select: none;
+
+    transition: color var(--harmo-duration-fast) ease;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--harmo-color-text);
+      }
+    }
+
+    &:focus-visible {
+      outline: var(--harmo-focus-outline);
+      outline-offset: -2px;
+    }
+  }
+
+  &[open] > summary {
+    border-radius: 0;
+  }
+}
+
+.play-code-chevron {
+  margin-inline-start: -0.25rem;
+
+  transition: rotate var(--harmo-duration-fast) var(--harmo-ease-out-cubic);
+
+  .play-code[open] & {
+    rotate: 90deg;
+
+    transition-duration: var(--harmo-duration-normal);
+  }
+
+  &:dir(rtl) {
+    scale: -1 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.play-code-body {
+  position: relative;
+
+  border-block-start: 1px solid var(--harmo-color-border);
+
+  /* Physical, like the code, which is always left to right. */
+  & > .play-copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  & > pre {
+    max-block-size: 28rem;
+    margin: 0;
+    padding: 1rem 5rem 1rem 1rem;
+    overflow: auto;
+
+    font-family: var(--play-font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    text-align: left;
+    direction: ltr;
+    font-variant-ligatures: none;
+    tab-size: 2;
+
+    color: var(--harmo-color-text);
+    background-color: var(--harmo-color-background-secondary);
+    border-radius: 0 0 calc(var(--play-radius) - 1px) calc(var(--play-radius) - 1px);
+  }
+}
+
+.play-code-tag {
+  color: var(--harmo-color-primary);
+}
+
+.play-code-attribute {
+  color: var(--harmo-color-warning);
+}
+
+.play-code-value {
+  color: var(--harmo-color-success);
+}
+
+.play-code-punctuation {
+  color: var(--harmo-color-text-tertiary);
+}
+
+/* Footer ------------------------------------------------------------------- */
+
+.play-footer {
+  padding: 1.5rem 1rem;
+
+  font-size: var(--harmo-font-size-xs);
+  text-align: center;
+
+  color: var(--harmo-color-text-tertiary);
+  border-block-start: 1px solid var(--harmo-color-border);
+
+  & > p {
+    max-inline-size: 40rem;
+    margin: 0 auto;
+  }
+}

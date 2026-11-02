@@ -1,0 +1,7 @@
+<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <g class="hchevron-to-arrow-head">
+    <line class="hchevron-to-arrow-upper" x1="12" y1="6" x2="12" y2="12" />
+    <line class="hchevron-to-arrow-lower" x1="12" y1="18" x2="12" y2="12" />
+  </g>
+  <line class="hchevron-to-arrow-shaft" x1="6" y1="12" x2="15" y2="12" />
+</svg>

@@ -1,0 +1,43 @@
+@use "shortcuts" as *;
+@use "control";
+
+.hselect {
+  @extend %control;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-block-size: $control-height;
+  padding: 0 12px;
+  padding-inline-end: 20px;
+
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  text-align: start;
+
+  cursor: pointer;
+
+  & > .hexpand-chevron {
+    color: $color-text-secondary;
+  }
+
+  &:disabled > .hexpand-chevron {
+    color: inherit;
+  }
+}
+
+.hselect-value {
+  flex: 1;
+
+  min-inline-size: 0;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &[data-placeholder] {
+    color: $color-text-tertiary;
+  }
+}

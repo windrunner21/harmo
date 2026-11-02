@@ -1,0 +1,166 @@
+@use "shortcuts" as *;
+
+// One look, two shapes: links between pages in a <nav> (ul > li > a, the
+// current one aria-current="page"), and tabs that switch panels on one page
+// (a tablist of role="tab" buttons, the selected one aria-selected="true").
+$current: ':is([aria-current="page"], [aria-selected="true"])';
+
+.htabs {
+  --htabs-highlight-x: 0px;
+  --htabs-highlight-width: 0px;
+  --htabs-highlight-opacity: 0;
+  --htabs-indicator-x: 0px;
+  --htabs-indicator-width: 0px;
+
+  position: relative;
+
+  padding-block-end: 4px;
+
+  font-family: $font-family;
+
+  border-block-end: 1px solid $color-border;
+
+  & > ul,
+  & > [role="tablist"] {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    gap: 16px;
+
+    inline-size: fit-content;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  & > ul > li > a,
+  & > [role="tablist"] > [role="tab"] {
+    position: relative;
+
+    display: block;
+
+    margin: 0;
+    padding: 4px 8px;
+
+    font-family: inherit;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    line-height: $font-line-height;
+    text-decoration: none;
+
+    color: $color-text-secondary;
+    background-color: transparent;
+    border: 0;
+    border-radius: $border-radius-sm;
+
+    cursor: pointer;
+
+    &#{$current} {
+      color: $color-primary;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: $color-text;
+      }
+    }
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: 2px;
+    }
+  }
+
+  &:not([data-ready]) > ul > li > a,
+  &:not([data-ready]) > [role="tablist"] > [role="tab"] {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $color-background-hover;
+      }
+
+      &#{$current}:hover {
+        background-color: $color-primary-tint;
+      }
+    }
+
+    &#{$current}::after {
+      content: "";
+
+      position: absolute;
+      inset-inline: 0;
+      bottom: -5px;
+
+      block-size: 2px;
+
+      background-color: $color-primary;
+      border-radius: 1px;
+
+      @media (forced-colors: active) {
+        background-color: Highlight;
+
+        forced-color-adjust: none;
+      }
+    }
+  }
+}
+
+// The pill and underline span the whole bar and are clipped to one tab, so
+// sliding and resizing animate a single property that needs no layout, and
+// the corners stay round. The script measures --htabs-*-x from the bar's
+// left edge, like the clip.
+.htabs-highlight,
+.htabs-indicator {
+  position: absolute;
+  inset-inline: 0;
+
+  pointer-events: none;
+
+  transition:
+    clip-path $duration-normal $ease-in-out-cubic,
+    opacity $duration-normal $ease-in-out-cubic;
+
+  .htabs:not([data-ready]) > & {
+    display: none;
+  }
+
+  // No sliding; the pill and underline still fade.
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: opacity;
+  }
+}
+
+.htabs-highlight {
+  top: 0;
+  bottom: 4px;
+
+  background-color: $color-background-hover;
+  opacity: var(--htabs-highlight-opacity);
+  clip-path: inset(
+    0 calc(100% - var(--htabs-highlight-x) - var(--htabs-highlight-width)) 0
+      var(--htabs-highlight-x) round $border-radius-sm
+  );
+
+  &[data-on-current] {
+    background-color: $color-primary-tint;
+  }
+}
+
+.htabs-indicator {
+  bottom: -1px;
+
+  height: 2px;
+
+  background-color: $color-primary;
+  clip-path: inset(
+    0 calc(100% - var(--htabs-indicator-x) - var(--htabs-indicator-width)) 0
+      var(--htabs-indicator-x) round 1px
+  );
+
+  @media (forced-colors: active) {
+    background-color: Highlight;
+
+    forced-color-adjust: none;
+  }
+}

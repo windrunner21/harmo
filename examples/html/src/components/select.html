@@ -1,0 +1,375 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    A trigger that looks like an Input, a Popup, and a Listbox. The popup opens
+    and closes without a script. Focus stays on the trigger: the arrow keys
+    open the list and move the highlight, and Enter or Space chooses.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="channel-label">Channel</span>
+    <button
+      class="hselect"
+      id="channel"
+      type="button"
+      data-name="channel"
+      role="combobox"
+      aria-labelledby="channel-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="channel-listbox"
+      popovertarget="channel-popup"
+      style="anchor-name: --channel"
+    >
+      <span class="hselect-value">WhatsApp</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="channel-popup" popover style="position-anchor: --channel">
+      <ul class="hlistbox" id="channel-listbox" role="listbox" aria-labelledby="channel-label">
+        <li class="hoption" id="channel-whatsapp" role="option" data-value="whatsapp" aria-selected="true">
+          <span class="hoption-label">WhatsApp</span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="channel-telegram" role="option" data-value="telegram" aria-selected="false">
+          <span class="hoption-label">Telegram</span>
+        </li>
+        <li class="hoption" id="channel-viber" role="option" data-value="viber" aria-selected="false">
+          <span class="hoption-label">Viber</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="channel" value="whatsapp" />
+  </div>
+</play-example>
+
+<play-example title="Placeholder" layout="stack">
+  <play-note>
+    <code>data-placeholder</code> on the value grays it while nothing is
+    chosen. The trigger takes a Field's Optional marker and description like
+    any control.
+  </play-note>
+  <div class="hfield">
+    <div class="hfield-label-row">
+      <span class="hlabel" id="fallback-label">Fallback channel</span>
+      <span class="hfield-optional" id="fallback-optional">Optional</span>
+    </div>
+    <p class="hdescription" id="fallback-description">Used when a message can't be delivered on the main channel.</p>
+    <button
+      class="hselect"
+      id="fallback"
+      type="button"
+      data-name="fallback"
+      role="combobox"
+      aria-labelledby="fallback-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="fallback-listbox"
+      aria-describedby="fallback-optional fallback-description"
+      popovertarget="fallback-popup"
+      style="anchor-name: --fallback"
+    >
+      <span class="hselect-value" data-placeholder>Select a channel</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="fallback-popup" popover style="position-anchor: --fallback">
+      <ul class="hlistbox" id="fallback-listbox" role="listbox" aria-labelledby="fallback-label">
+        <li class="hoption" id="fallback-email" role="option" data-value="email" aria-selected="false">
+          <span class="hoption-label">Email</span>
+        </li>
+        <li class="hoption" id="fallback-sms" role="option" data-value="sms" aria-selected="false">
+          <span class="hoption-label">SMS</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="fallback" value="" />
+  </div>
+</play-example>
+
+<play-example title="Multiple" layout="stack">
+  <play-note>
+    With <code>aria-multiselectable="true"</code> on the list, each option
+    starts with a <code>.hoption-checkbox</code>, the value lists the chosen
+    labels, and the popup stays open while you choose.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="statuses-label">Message statuses</span>
+    <button
+      class="hselect"
+      id="statuses"
+      type="button"
+      data-name="statuses"
+      role="combobox"
+      aria-labelledby="statuses-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="statuses-listbox"
+      popovertarget="statuses-popup"
+      style="anchor-name: --statuses"
+    >
+      <span class="hselect-value" data-example-placeholder="Any status">Delivered, Read</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="statuses-popup" popover style="position-anchor: --statuses">
+      <ul
+        class="hlistbox"
+        id="statuses-listbox"
+        role="listbox"
+        aria-labelledby="statuses-label"
+        aria-multiselectable="true"
+      >
+        <li class="hoption" id="statuses-delivered" role="option" data-value="delivered" aria-selected="true">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Delivered</span>
+        </li>
+        <li class="hoption" id="statuses-read" role="option" data-value="read" aria-selected="true">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Read</span>
+        </li>
+        <li class="hoption" id="statuses-failed" role="option" data-value="failed" aria-selected="false">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Failed</span>
+        </li>
+        <li class="hoption" id="statuses-pending" role="option" data-value="pending" aria-selected="false">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Pending</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="statuses" value="delivered" />
+    <input type="hidden" name="statuses" value="read" />
+  </div>
+</play-example>
+
+<play-example title="Long value" frame="15rem">
+  <play-note>
+    In a narrow container, drawn dashed here, the value stays on one line and
+    ends with an ellipsis.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="sender-label">Sender number</span>
+    <button
+      class="hselect"
+      id="sender"
+      type="button"
+      data-name="sender"
+      role="combobox"
+      aria-labelledby="sender-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="sender-listbox"
+      popovertarget="sender-popup"
+      style="anchor-name: --sender"
+    >
+      <span class="hselect-value">+41 44 7654321 · Customer support for Switzerland</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="sender-popup" popover style="position-anchor: --sender">
+      <ul class="hlistbox" id="sender-listbox" role="listbox" aria-labelledby="sender-label">
+        <li class="hoption" id="sender-support" role="option" data-value="support" aria-selected="true">
+          <span class="hoption-label">+41 44 7654321 · Customer support for Switzerland</span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="sender-sales" role="option" data-value="sales" aria-selected="false">
+          <span class="hoption-label">+44 20 7946 0000 · Sales</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="sender" value="support" />
+  </div>
+</play-example>
+
+<play-example title="Invalid" layout="stack">
+  <play-note>
+    <code>aria-invalid="true"</code> turns the border red, as for an Input.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="language-label">Template language</span>
+    <button
+      class="hselect"
+      id="language"
+      type="button"
+      data-name="language"
+      role="combobox"
+      aria-labelledby="language-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="language-listbox"
+      aria-describedby="language-error"
+      aria-invalid="true"
+      popovertarget="language-popup"
+      style="anchor-name: --language"
+    >
+      <span class="hselect-value" data-placeholder>Select a language</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="language-popup" popover style="position-anchor: --language">
+      <ul class="hlistbox" id="language-listbox" role="listbox" aria-labelledby="language-label">
+        <li class="hoption" id="language-en" role="option" data-value="en" aria-selected="false">
+          <span class="hoption-label">English</span>
+        </li>
+        <li class="hoption" id="language-es" role="option" data-value="es" aria-selected="false">
+          <span class="hoption-label">Spanish</span>
+        </li>
+        <li class="hoption" id="language-ar" role="option" data-value="ar" aria-selected="false">
+          <span class="hoption-label">Arabic</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="language" value="" />
+    <p class="herror" id="language-error">Choose a language for the template.</p>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    <code>disabled</code> grays the trigger and its chevron, as for an Input.
+    Disable its hidden input too, so the form doesn't send it, as with a
+    disabled native select.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="region-label">Region</span>
+    <button
+      class="hselect"
+      id="region"
+      type="button"
+      data-name="region"
+      role="combobox"
+      aria-labelledby="region-label"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      disabled
+    >
+      <span class="hselect-value">Europe</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <input type="hidden" name="region" value="europe" disabled />
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    The trigger is a button, so it submits nothing itself. Its
+    <code>data-name</code> names a hidden input for each chosen option's
+    <code>data-value</code>, which the script keeps in step. Reset restores
+    the first choices. Here, Save shows what the form would send.
+  </play-note>
+  <form data-example-form style="display: flex; flex-direction: column; gap: 16px">
+    <div class="hfield">
+      <span class="hlabel" id="form-channel-label">Channel</span>
+      <button
+        class="hselect"
+        id="form-channel"
+        type="button"
+        data-name="channel"
+        role="combobox"
+        aria-labelledby="form-channel-label"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        aria-controls="form-channel-listbox"
+        popovertarget="form-channel-popup"
+        style="anchor-name: --form-channel"
+      >
+        <span class="hselect-value">WhatsApp</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="form-channel-popup" popover style="position-anchor: --form-channel">
+        <ul class="hlistbox" id="form-channel-listbox" role="listbox" aria-labelledby="form-channel-label">
+          <li class="hoption" id="form-channel-whatsapp" role="option" data-value="whatsapp" aria-selected="true">
+            <span class="hoption-label">WhatsApp</span>
+            <play-icon name="check" class="hoption-check"></play-icon>
+          </li>
+          <li class="hoption" id="form-channel-telegram" role="option" data-value="telegram" aria-selected="false">
+            <span class="hoption-label">Telegram</span>
+          </li>
+          <li class="hoption" id="form-channel-viber" role="option" data-value="viber" aria-selected="false">
+            <span class="hoption-label">Viber</span>
+          </li>
+        </ul>
+      </div>
+      <input type="hidden" name="channel" value="whatsapp" />
+    </div>
+    <div class="hfield">
+      <span class="hlabel" id="form-statuses-label">Notify me about</span>
+      <button
+        class="hselect"
+        id="form-statuses"
+        type="button"
+        data-name="statuses"
+        role="combobox"
+        aria-labelledby="form-statuses-label"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        aria-controls="form-statuses-listbox"
+        popovertarget="form-statuses-popup"
+        style="anchor-name: --form-statuses"
+      >
+        <span class="hselect-value" data-example-placeholder="No statuses">Failed</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="form-statuses-popup" popover style="position-anchor: --form-statuses">
+        <ul
+          class="hlistbox"
+          id="form-statuses-listbox"
+          role="listbox"
+          aria-labelledby="form-statuses-label"
+          aria-multiselectable="true"
+        >
+          <li class="hoption" id="form-statuses-delivered" role="option" data-value="delivered" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Delivered</span>
+          </li>
+          <li class="hoption" id="form-statuses-read" role="option" data-value="read" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Read</span>
+          </li>
+          <li class="hoption" id="form-statuses-failed" role="option" data-value="failed" aria-selected="true">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Failed</span>
+          </li>
+        </ul>
+      </div>
+      <input type="hidden" name="statuses" value="failed" />
+    </div>
+    <div style="display: flex; gap: 8px">
+      <button class="hbutton" type="submit">
+        <span class="hbutton-label">Save</span>
+      </button>
+      <button class="hbutton" data-variant="secondary" type="reset">
+        <span class="hbutton-label">Reset</span>
+      </button>
+    </div>
+    <output class="hdescription" data-example-submitted>Save to see what the form sends.</output>
+  </form>
+</play-example>
+
+<play-example title="Next to an input" layout="stack">
+  <play-note>
+    A select and an input share the same box, so they line up in a row. The
+    row here is a plain flex container of your own.
+  </play-note>
+  <div style="display: flex; gap: 8px">
+    <input class="hinput" type="search" aria-label="Search messages" placeholder="Search messages" />
+    <button
+      class="hselect"
+      type="button"
+      role="combobox"
+      aria-label="Status"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="status-listbox"
+      popovertarget="status-popup"
+      style="anchor-name: --status"
+    >
+      <span class="hselect-value" data-placeholder>Any status</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="status-popup" popover style="position-anchor: --status">
+      <ul class="hlistbox" id="status-listbox" role="listbox" aria-label="Status">
+        <li class="hoption" id="status-delivered" role="option" aria-selected="false">
+          <span class="hoption-label">Delivered</span>
+        </li>
+        <li class="hoption" id="status-failed" role="option" aria-selected="false">
+          <span class="hoption-label">Failed</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</play-example>

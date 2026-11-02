@@ -1,0 +1,65 @@
+@use "shortcuts" as *;
+
+.hbreadcrumb {
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+
+  & > ol {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $icon-gap;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    & > li {
+      display: inline-flex;
+      align-items: center;
+      gap: $icon-gap;
+
+      min-inline-size: 0;
+      max-inline-size: 100%;
+
+      overflow-wrap: anywhere;
+
+      & > a,
+      & > [aria-current="page"] {
+        min-inline-size: 0;
+      }
+
+      & > .hbreadcrumb-separator {
+        flex-shrink: 0;
+
+        inline-size: 1.125em;
+        block-size: 1.125em;
+
+        color: $color-text-secondary;
+
+        pointer-events: none;
+      }
+
+      &:first-child > .hbreadcrumb-separator {
+        display: none;
+      }
+
+      & > [aria-current="page"] {
+        color: $color-text;
+      }
+
+      & > a {
+        @media (hover: hover) and (pointer: fine) {
+          &:hover {
+            color: $color-text;
+          }
+        }
+      }
+    }
+  }
+}

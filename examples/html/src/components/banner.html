@@ -1,0 +1,70 @@
+<play-example title="Statuses" layout="wide">
+  <play-note>
+    <code>data-status</code> colors the icon. <code>info</code> is the
+    default, so the first banner leaves it out. Any SVG drawn in
+    <code>currentColor</code> takes the color.
+  </play-note>
+  <div class="hbanner">
+    <play-icon name="info" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">Translation settings apply to new conversations only.</p>
+  </div>
+  <div class="hbanner" data-status="success">
+    <play-icon name="success" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">Your WhatsApp number is connected and ready to send.</p>
+  </div>
+  <div class="hbanner" data-status="warning">
+    <play-icon name="warning" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">Your message quality is low. Fewer people will receive your campaigns.</p>
+  </div>
+  <div class="hbanner" data-status="error">
+    <play-icon name="error" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">We couldn't reach WhatsApp. Check the connection in your business settings.</p>
+  </div>
+</play-example>
+
+<play-example title="With an action" layout="wide">
+  <play-note>
+    The action is a small secondary Button. Inside a banner, hovering fills its
+    background instead of darkening its border.
+  </play-note>
+  <div class="hbanner" data-status="warning">
+    <play-icon name="warning" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">The 24-hour reply window has closed. Send a template to reply.</p>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+      <span class="hbutton-label">Send template</span>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="Added after the page loads" layout="wide">
+  <play-note>
+    The banners above are on the page from the start, so they have no
+    <code>role</code>. One shown later must announce itself:
+    <code>role="alert"</code> when it's urgent, as here, or
+    <code>role="status"</code> when it can wait. Keep it in the page with
+    <code>hidden</code> and remove that to show it. Press Send message.
+  </play-note>
+  <div>
+    <button class="hbutton" data-variant="secondary" type="button" data-example-show="send-error">
+      <span class="hbutton-label">Send message</span>
+    </button>
+  </div>
+  <div class="hbanner" data-status="error" role="alert" id="send-error" hidden>
+    <play-icon name="error" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">The message wasn't sent. Check your connection and try again.</p>
+  </div>
+</play-example>
+
+<play-example title="Long message" frame="20rem">
+  <play-note>
+    In a narrow container, drawn dashed here, the message wraps and the icon
+    and action keep their size.
+  </play-note>
+  <div class="hbanner" data-status="warning">
+    <play-icon name="warning" class="hbanner-icon"></play-icon>
+    <p class="hbanner-message">The 24-hour reply window has closed. Send a template to reply.</p>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+      <span class="hbutton-label">Send template</span>
+    </button>
+  </div>
+</play-example>

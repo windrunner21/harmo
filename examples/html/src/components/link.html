@@ -1,0 +1,72 @@
+<play-example title="Standalone">
+  <play-note>
+    On its own, a link needs no underline: its color and place set it apart.
+    It takes the font of the text around it.
+  </play-note>
+  <a class="hlink" href="/settings">Settings</a>
+  <a class="hlink" href="/campaigns">All campaigns</a>
+  <a class="hlink" href="/help">Help center</a>
+</play-example>
+
+<play-example title="In running text">
+  <play-note>
+    Inside a sentence, color is the only cue, and the link purple is 2.03:1
+    against body text, short of WCAG 1.4.1. <code>data-underlined</code> adds
+    the underline that tells a link apart.
+  </play-note>
+  <p>
+    Contacts who unsubscribe stop receiving campaigns. Read the
+    <a class="hlink" data-underlined href="/help/unsubscribes">unsubscribe policy</a>
+    for the details.
+  </p>
+</play-example>
+
+<play-example title="Visited">
+  <play-note>
+    <code>data-visited</code> turns a link dark purple once its page is in the
+    browser's history. Both links carry it; the first stands in for a page
+    you have opened.
+  </play-note>
+  <a class="hlink" data-visited href="/help/getting-started" data-example-visited>Getting started</a>
+  <a class="hlink" data-visited href="/release-notes">Release notes</a>
+</play-example>
+
+<play-example title="With an icon">
+  <play-note>
+    A <code>.hicon</code> child lines the icon up with the text,
+    <code>--harmo-icon-gap</code> apart. Put icons after the text: the link
+    keeps the text's baseline, so an icon first would sit slightly high. A
+    ChevronToArrow turns into an arrow on hover or keyboard focus.
+  </play-note>
+  <a class="hlink" href="/settings">
+    Settings
+    <play-icon name="chevron" class="hicon hchevron"></play-icon>
+  </a>
+  <a class="hlink" href="/reports">
+    All reports
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </a>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    The same links in Arabic. The ChevronToArrow follows the reading direction
+    and points left.
+  </play-note>
+  <a class="hlink" href="/settings">الإعدادات</a>
+  <a class="hlink" href="/reports">
+    كل التقارير
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </a>
+</play-example>
+
+<play-example title="Long text" frame="13rem">
+  <play-note>
+    In a narrow container, drawn dashed here, an icon link wraps its text and
+    keeps the icon beside it.
+  </play-note>
+  <a class="hlink" href="/help/automations">
+    Set up your first automated campaign
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+  </a>
+</play-example>

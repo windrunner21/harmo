@@ -1,0 +1,50 @@
+@use "shortcuts" as *;
+
+.hlink {
+  font: inherit;
+  text-decoration: none;
+
+  color: $link-color-text;
+
+  transition: color $duration-fast ease;
+
+  &[data-underlined] {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  &[data-visited] {
+    transition: none;
+
+    &:where(:visited) {
+      color: $link-visited-color-text;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $link-hover-color-text;
+    }
+  }
+
+  &:active {
+    color: $link-active-color-text;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  &:has(> .hicon) {
+    display: inline-flex;
+    align-items: center;
+    gap: $icon-gap;
+
+    max-inline-size: 100%;
+
+    > .hicon {
+      flex-shrink: 0;
+    }
+  }
+}

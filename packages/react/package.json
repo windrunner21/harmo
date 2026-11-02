@@ -1,0 +1,23 @@
+{
+       "name": "@harmo/react",
+       "version": "0.1.0",
+       "license": "MIT",
+       "files": [
+              "src"
+       ],
+       "exports": {
+              ".": "./src/index.ts"
+       },
+       "sideEffects": false,
+       "peerDependencies": {
+              "react": "^19.3.0",
+              "react-dom": "^19.3.0"
+       },
+       "devDependencies": {
+              "react": "19.3.0",
+              "react-dom": "19.3.0",
+              "@types/react": "^19",
+              "@types/react-dom": "^19",
+              "typescript": "^5"
+       }
+}

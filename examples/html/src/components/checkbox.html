@@ -1,0 +1,124 @@
+<play-example title="States" layout="stack">
+  <play-note>
+    Unchecked, checked, and mixed, each in a horizontal Field with its label.
+    Mixed is the <code>indeterminate</code> DOM property, which has no HTML
+    attribute: a script sets it, so it doesn't show in the markup.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="email-updates" name="email-updates" />
+    <label class="hlabel" for="email-updates">Email me updates</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="weekly-summary" name="weekly-summary" checked />
+    <label class="hlabel" for="weekly-summary">Send a weekly summary</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="all-reports" name="all-reports" data-example-indeterminate />
+    <label class="hlabel" for="all-reports">Select all reports</label>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    <code>disabled</code> dims the checkbox in any state, and its label turns
+    gray.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="updates-unavailable" disabled />
+    <label class="hlabel" for="updates-unavailable">Updates unavailable</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="managed-summary" checked disabled />
+    <label class="hlabel" for="managed-summary">Summary enabled by your administrator</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="managed-reports" disabled data-example-indeterminate />
+    <label class="hlabel" for="managed-reports">Some reports shared by your administrator</label>
+  </div>
+</play-example>
+
+<play-example title="Custom size" layout="stack">
+  <play-note>
+    <code>--harmo-checkbox-size</code> resizes the box, and the marks scale
+    with it; here 24px instead of 20px.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input
+      class="hcheckbox"
+      type="checkbox"
+      id="large-summary"
+      name="large-summary"
+      style="--harmo-checkbox-size: 24px"
+      checked
+    />
+    <label class="hlabel" for="large-summary">Send a weekly summary</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal">
+    <input
+      class="hcheckbox"
+      type="checkbox"
+      id="large-reports"
+      name="large-reports"
+      style="--harmo-checkbox-size: 24px"
+      data-example-indeterminate
+    />
+    <label class="hlabel" for="large-reports">Select all reports</label>
+  </div>
+</play-example>
+
+<play-example title="With a description" layout="stack">
+  <play-note>
+    <code>.hfield-content</code> holds the label and a description, connected
+    to the checkbox with <code>aria-describedby</code>.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input
+      class="hcheckbox"
+      type="checkbox"
+      id="activity-updates"
+      name="activity-updates"
+      aria-describedby="activity-updates-description"
+    />
+    <div class="hfield-content">
+      <label class="hlabel" for="activity-updates">Email me about activity across my teams</label>
+      <p class="hdescription" id="activity-updates-description">
+        A weekly summary. You can change this at any time.
+      </p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Group" layout="stack">
+  <play-note>
+    Related checkboxes go in a Field with <code>role="group"</code>, named by
+    its label.
+  </play-note>
+  <div class="hfield" role="group" aria-labelledby="notify-label">
+    <span class="hlabel" id="notify-label">Notify me about</span>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hcheckbox" type="checkbox" id="notify-messages" name="notify" value="messages" checked />
+      <label class="hlabel" for="notify-messages">New messages</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hcheckbox" type="checkbox" id="notify-mentions" name="notify" value="mentions" checked />
+      <label class="hlabel" for="notify-mentions">Mentions</label>
+    </div>
+    <div class="hfield" data-orientation="horizontal">
+      <input class="hcheckbox" type="checkbox" id="notify-failures" name="notify" value="failures" />
+      <label class="hlabel" for="notify-failures">Failed campaigns</label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Long label" frame="20rem">
+  <play-note>
+    In a narrow container, drawn dashed here, the label wraps and the checkbox
+    stays beside its first line.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="detailed-updates" name="detailed-updates" />
+    <label class="hlabel" for="detailed-updates">
+      Send me detailed updates about changes to reports and activity across every team in my account
+    </label>
+  </div>
+</play-example>

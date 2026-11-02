@@ -1,0 +1,73 @@
+<play-example title="Panel">
+  <play-note>
+    A Filter chip opening a text filter. The trigger's
+    <code>popovertarget</code> opens and closes the popup without a script,
+    and an outside click or Escape closes it too.
+    <code>anchor-name</code> and <code>position-anchor</code> tie the two
+    together. The popup has no padding: lay out its content yourself, as the
+    <code>style</code> does here. A button inside with
+    <code>popovertargetaction="hide"</code> closes it.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-expanded="false"
+    popovertarget="contains-filter"
+    style="anchor-name: --contains-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Name contains</span>
+  </button>
+  <div class="hpopup" id="contains-filter" popover style="position-anchor: --contains-filter">
+    <div style="display: grid; gap: 16px; padding: 12px">
+      <div class="hfield">
+        <label class="hlabel" for="contains-value">Name contains</label>
+        <input class="hinput" id="contains-value" name="contains" type="text" />
+      </div>
+      <button
+        class="hbutton"
+        type="button"
+        popovertarget="contains-filter"
+        popovertargetaction="hide"
+        data-example-apply
+      >
+        <span class="hbutton-label">Apply</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Placement">
+  <play-note>
+    8px below its trigger, aligned to its start, and at least as wide. Without
+    room below it opens above, sliding up instead of down; without room at
+    the end it aligns to the trigger's other edge. Scroll until this button is
+    near the bottom of the window to see it open above.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="date-filter"
+    style="anchor-name: --date-filter"
+  >
+    <span class="hbutton-label">Last 30 days</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="date-filter" popover style="position-anchor: --date-filter">
+    <ul class="hlistbox" role="listbox" aria-label="Period" tabindex="-1">
+      <li class="hoption" id="period-7" role="option" aria-selected="false">
+        <span class="hoption-label">Last 7 days</span>
+      </li>
+      <li class="hoption" id="period-30" role="option" aria-selected="true">
+        <span class="hoption-label">Last 30 days</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="period-90" role="option" aria-selected="false">
+        <span class="hoption-label">Last 90 days</span>
+      </li>
+    </ul>
+  </div>
+</play-example>

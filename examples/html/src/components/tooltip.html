@@ -1,0 +1,119 @@
+<play-example title="Describing a control">
+  <play-note>
+    Hover a button and its tooltip shows after 300ms, then its neighbors at
+    once; Tab to it and it shows immediately. Escape hides it.
+    <code>aria-describedby</code> reads the tooltip after the button's name.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="export-tip">
+      <span class="hbutton-label">Export</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="export-tip">Download the current view as a CSV file</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="archive-tip">
+      <span class="hbutton-label">Archive</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="archive-tip">Hide resolved tickets from the inbox</span>
+  </span>
+</play-example>
+
+<play-example title="Naming an icon button">
+  <play-note>
+    Without a label, a button can take its name from its tooltip through
+    <code>aria-labelledby</code>, so screen readers say "Close, button" once
+    instead of a name and then the same description.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="tertiary" type="button" aria-labelledby="close-tip">
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+    <span class="htooltip" role="tooltip" id="close-tip">Close</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="more-tip">
+      <play-icon name="more" class="hicon"></play-icon>
+    </button>
+    <span class="htooltip" role="tooltip" id="more-tip">More actions</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" type="button" aria-labelledby="add-tip">
+      <play-icon name="plus" class="hicon"></play-icon>
+    </button>
+    <span class="htooltip" role="tooltip" id="add-tip">Add contact</span>
+  </span>
+</play-example>
+
+<play-example title="Explaining an unavailable action">
+  <play-note>
+    <code>aria-disabled="true"</code> looks disabled but stays focusable and
+    hoverable, so the tooltip can say why. A <code>disabled</code> button
+    could never show it.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton" type="button" aria-disabled="true" aria-describedby="analyze-tip">
+      <span class="hbutton-label">Analyze</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="analyze-tip">You don't have permission to analyze campaigns.</span>
+  </span>
+</play-example>
+
+<play-example title="Sides">
+  <play-note>
+    Below by default; <code>data-side</code> prefers another side, and the
+    tooltip flips when there isn't room. Sides are physical: left stays left
+    in right-to-left text.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-top-tip">
+      <span class="hbutton-label">Top</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="side-top-tip" data-side="top">Above the button</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-bottom-tip">
+      <span class="hbutton-label">Bottom</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="side-bottom-tip">Below the button</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-left-tip">
+      <span class="hbutton-label">Left</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="side-left-tip" data-side="left">To the left</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-right-tip">
+      <span class="hbutton-label">Right</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="side-right-tip" data-side="right">To the right</span>
+  </span>
+</play-example>
+
+<play-example title="Hint">
+  <play-note>
+    <code>data-variant="hint"</code> explains something, such as a KPI: a
+    white card with smaller, start-aligned text, up to 280px wide.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="tertiary" type="button" aria-describedby="csat-tip">
+      <span class="hbutton-label">What is CSAT?</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="csat-tip" data-variant="hint">
+      Customer satisfaction: the share of rated conversations scored 4 or 5 out of 5 in the selected period.
+    </span>
+  </span>
+</play-example>
+
+<play-example title="Inside a clipping container" frame="16rem" clip>
+  <play-note>
+    The dashed container here hides whatever overflows it. The tooltip is
+    positioned against the window, so it still shows in full.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="clip-tip">
+      <span class="hbutton-label">Hover me</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="clip-tip">Fixed positioning escapes the clipping container.</span>
+  </span>
+</play-example>

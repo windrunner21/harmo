@@ -1,0 +1,78 @@
+@use "shortcuts" as *;
+
+.hsegmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  min-inline-size: 0;
+}
+
+.hsegmented-option {
+  position: relative;
+
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+
+  box-sizing: border-box;
+  min-block-size: $control-height;
+  padding: 0 12px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.25rem;
+  white-space: nowrap;
+
+  color: $color-text-secondary;
+  border: 1px solid $input-color-border;
+  border-radius: $border-radius;
+
+  cursor: pointer;
+
+  & > input {
+    position: absolute;
+
+    inline-size: 1px;
+    block-size: 1px;
+    margin: 0;
+
+    opacity: 0;
+
+    pointer-events: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:has(:disabled)) {
+      border-color: $color-primary;
+    }
+  }
+
+  &:has(:checked) {
+    color: $color-primary;
+    border-color: $color-primary;
+
+    @media (forced-colors: active) {
+      color: HighlightText;
+      background-color: Highlight;
+      border-color: Highlight;
+
+      forced-color-adjust: none;
+    }
+  }
+
+  &:has(:focus-visible) {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+
+    @media (forced-colors: active) {
+      outline-color: CanvasText;
+    }
+  }
+
+  &:has(:disabled) {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+  }
+}

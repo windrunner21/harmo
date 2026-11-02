@@ -1,0 +1,89 @@
+@use "shortcuts" as *;
+@use "tick" as *;
+
+.hcheckbox:where(input[type="checkbox"]) {
+  position: relative;
+
+  display: inline-block;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: $checkbox-size;
+  block-size: $checkbox-size;
+  margin: 0;
+  padding: 0;
+
+  vertical-align: middle;
+
+  appearance: none;
+  background-color: transparent;
+  border: 1px solid $color-border-control;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+
+  transition:
+    background-color $duration-fast ease,
+    border-color $duration-fast ease;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:where(:not(:disabled, :checked, :indeterminate)) {
+      border-color: $color-primary-hover;
+    }
+  }
+
+  &:checked,
+  &:indeterminate {
+    background-color: $color-primary-tint;
+    border-color: $color-primary;
+  }
+
+  &:checked::after,
+  &:indeterminate::after {
+    content: "";
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    pointer-events: none;
+  }
+
+  &:checked:not(:indeterminate)::after {
+    @include tick($checkbox-size, $color-primary);
+  }
+
+  &:indeterminate::after {
+    width: calc($checkbox-size * 0.5);
+    height: calc($checkbox-size * 0.1);
+
+    background-color: $color-primary;
+    border-radius: calc($checkbox-size * 0.05);
+
+    transform: translate(-50%, -50%);
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+
+    transition: none;
+  }
+
+  &:disabled {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+
+    transition: none;
+  }
+
+  @media (forced-colors: active) {
+    appearance: auto;
+
+    &:checked::after,
+    &:indeterminate::after {
+      content: none;
+    }
+  }
+}

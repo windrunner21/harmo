@@ -1,0 +1,62 @@
+@use "shortcuts" as *;
+
+// The box shared by Input, Select, and TextArea (@extend %control):
+// typography, colors, border, shadow, and states. Height and block padding
+// stay with each control; a growing multi-line box has no fixed height.
+%control {
+  // One variable for the focused/open border, so the invalid state below
+  // can recolor the border and the ring together.
+  --hcontrol-focus-border: #{$color-focus};
+
+  box-sizing: border-box;
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: 1.25rem;
+
+  color: $color-text;
+  background-color: $input-color-background;
+  border: 1px solid $input-color-border;
+  border-radius: $border-radius;
+  box-shadow: $input-box-shadow;
+
+  transition: border-color $duration-fast ease;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:where(:not(:disabled, [readonly], [aria-invalid="true"])) {
+      border-color: var(--hcontrol-focus-border);
+    }
+  }
+
+  &:focus,
+  &[aria-expanded="true"] {
+    border-color: var(--hcontrol-focus-border);
+  }
+
+  // Ring flush with the border. No transition: keyboard focus is instant.
+  &:focus-visible,
+  &[aria-expanded="true"] {
+    outline: 3px solid
+      color-mix(in srgb, var(--hcontrol-focus-border) 20%, transparent);
+    outline-offset: 0;
+
+    transition: none;
+  }
+
+  &[aria-invalid="true"] {
+    --hcontrol-focus-border: #{$color-danger};
+
+    border-color: $color-danger;
+  }
+
+  &:disabled {
+    color: $color-text-tertiary;
+    background-color: $color-background-secondary;
+    box-shadow: none;
+    opacity: 1;
+
+    cursor: not-allowed;
+  }
+}

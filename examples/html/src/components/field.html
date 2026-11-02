@@ -1,0 +1,109 @@
+<play-example title="Label and control" layout="stack">
+  <play-note>
+    A column with the label above the control, connected with
+    <code>for</code> and <code>id</code>. <code>required</code> marks a field
+    that must be filled.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="full-name">Full name</label>
+    <input class="hinput" id="full-name" name="full-name" type="text" autocomplete="name" required />
+  </div>
+</play-example>
+
+<play-example title="Optional" layout="stack">
+  <play-note>
+    <code>.hfield-label-row</code> places a marker beside the label. The app
+    supplies the wording, and <code>aria-describedby</code> reads it with the
+    control.
+  </play-note>
+  <div class="hfield">
+    <div class="hfield-label-row">
+      <label class="hlabel" for="company">Company</label>
+      <span class="hfield-optional" id="company-optional">Optional</span>
+    </div>
+    <input
+      class="hinput"
+      id="company"
+      name="company"
+      type="text"
+      autocomplete="organization"
+      placeholder="Acme Inc."
+      aria-describedby="company-optional"
+    />
+  </div>
+</play-example>
+
+<play-example title="With a description" layout="stack">
+  <play-note>
+    A description sits close under the label and is connected with
+    <code>aria-describedby</code>.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="work-email">Work email</label>
+    <p class="hdescription" id="work-email-description">We'll send sign-in links to this address.</p>
+    <input
+      class="hinput"
+      id="work-email"
+      name="work-email"
+      type="email"
+      autocomplete="email"
+      required
+      aria-describedby="work-email-description"
+    />
+  </div>
+</play-example>
+
+<play-example title="With an error" layout="stack">
+  <play-note>
+    Every part together. After validating, the app sets
+    <code>aria-invalid="true"</code> on the control and the error's text, and
+    connects the error with <code>aria-describedby</code>.
+  </play-note>
+  <div class="hfield">
+    <div class="hfield-label-row">
+      <label class="hlabel" for="receipt-email">Email address</label>
+      <span class="hfield-optional" id="receipt-email-optional">Optional</span>
+    </div>
+    <p class="hdescription" id="receipt-email-description">We'll send your receipt here.</p>
+    <input
+      class="hinput"
+      id="receipt-email"
+      name="receipt-email"
+      type="email"
+      autocomplete="email"
+      value="not-an-email"
+      aria-describedby="receipt-email-optional receipt-email-description receipt-email-error"
+      aria-invalid="true"
+    />
+    <p class="herror" id="receipt-email-error">Enter a valid email address or leave this field empty.</p>
+  </div>
+</play-example>
+
+<play-example title="Validating" layout="stack">
+  <play-note>
+    The error element is always there, with nothing inside it. Setting its
+    text reveals it. To hide it, the script adds <code>hidden</code>, which
+    closes it, and clears the text once it has gone. Type a code and leave
+    the field to see it; <code>SPRING25</code> is valid.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="coupon">Coupon code</label>
+    <input class="hinput" id="coupon" name="coupon" type="text" aria-describedby="coupon-error" data-example-coupon />
+    <p class="herror" id="coupon-error"></p>
+  </div>
+</play-example>
+
+<play-example title="Horizontal" layout="stack">
+  <play-note>
+    <code>data-orientation="horizontal"</code> puts the control first, for
+    checkboxes, radios, and switches. <code>.hfield-content</code> holds the
+    label and a description.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hcheckbox" type="checkbox" id="summary" name="summary" aria-describedby="summary-description" />
+    <div class="hfield-content">
+      <label class="hlabel" for="summary">Send a weekly summary</label>
+      <p class="hdescription" id="summary-description">You can change this at any time.</p>
+    </div>
+  </div>
+</play-example>

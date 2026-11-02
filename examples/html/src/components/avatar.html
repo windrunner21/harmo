@@ -1,0 +1,36 @@
+<play-example title="Image, icon, or initials">
+  <play-note>
+    An image covers the circle. Without one, a placeholder shows an icon or
+    initials on light gray. Name an image with <code>alt</code>, and a
+    placeholder with <code>role="img"</code> and <code>aria-label</code>.
+  </play-note>
+  <img class="havatar" src="images/jane.svg" alt="Jane Smith" />
+  <span class="havatar" role="img" aria-label="Jane Smith">
+    <play-icon name="user"></play-icon>
+  </span>
+  <span class="havatar" role="img" aria-label="Jane Smith">JS</span>
+</play-example>
+
+<play-example title="Sizes">
+  <play-note>
+    40px by default. Override <code>--harmo-avatar-size</code> on the element
+    and its content scales with it: initials are 40% of the size, and an icon
+    62.5%.
+  </play-note>
+  <span class="havatar" style="--harmo-avatar-size: 4rem" role="img" aria-label="Jane Smith">JS</span>
+  <span class="havatar" style="--harmo-avatar-size: 4rem" role="img" aria-label="Jane Smith">
+    <play-icon name="user"></play-icon>
+  </span>
+  <span class="havatar" role="img" aria-label="Jane Smith">JS</span>
+  <span class="havatar" style="--harmo-avatar-size: 1.5rem" role="img" aria-label="Jane Smith">JS</span>
+</play-example>
+
+<play-example title="Next to a name">
+  <play-note>
+    When the name is shown beside it, hide the avatar from screen readers so
+    the name isn't read twice: <code>alt=""</code> on an image, or
+    <code>aria-hidden="true"</code> on a placeholder.
+  </play-note>
+  <img class="havatar" src="images/jane.svg" alt="" />
+  <span>Jane Smith</span>
+</play-example>
