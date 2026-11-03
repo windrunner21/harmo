@@ -7,8 +7,8 @@ import { open, pages, playgrounds, test } from "./playgrounds.ts";
 const axe = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
 
 // Every page of both playgrounds loads without an error, gets ready (React),
-// and passes axe's automated WCAG 2.2 A and AA checks, as it loads and with
-// each example's popup open.
+// passes axe's automated WCAG 2.2 A and AA checks, as it loads and with each
+// example's popup open, and hides any part of a component that gets hidden.
 for (const playground of playgrounds) {
   test.describe(playground, () => {
     for (const slug of pages(playground)) {
@@ -21,6 +21,8 @@ for (const playground of playgrounds) {
         for (const { trigger, violations } of popups) {
           expect.soft(violations, `accessibility violations with ${trigger} open`).toEqual([]);
         }
+        // Last, as this restarts what's animating on the page.
+        expect.soft(await stillShownWhenHidden(page), "elements that stay rendered with hidden").toEqual([]);
       });
     }
   });
@@ -77,4 +79,25 @@ const checkAccessibility = (page: Page) =>
       popup.hidePopover();
     }
     return { loaded, popups };
+  });
+
+// docs/components/README.md: hidden hides any part of any component, at once.
+// Field's error and the password details are the exceptions: they stay rendered
+// and collapse, which is how they animate closed. Browsers ignore hidden on SVG.
+// The examples' own layout around and inside components isn't Harmo's.
+const stillShownWhenHidden = (page: Page) =>
+  page.evaluate(() => {
+    const elements = [...document.querySelectorAll(".play-demo *")].filter(
+      (element): element is HTMLElement =>
+        element instanceof HTMLElement &&
+        Boolean(element.closest('[class^="h"], [class*=" h"]')) &&
+        !element.matches('.herror, .hpassword-details, [class*="play-"], [style*="display"]'),
+    );
+    return elements.flatMap((element) => {
+      const before = element.hidden;
+      element.hidden = true;
+      const { display } = getComputedStyle(element);
+      element.hidden = before;
+      return display === "none" ? [] : [(element.cloneNode(false) as Element).outerHTML];
+    });
   });

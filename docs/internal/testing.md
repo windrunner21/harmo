@@ -126,11 +126,13 @@ mise run test:browser    # builds both playgrounds, then tests them in Chromium
   violation, as the page loads and with each example's popup open, its
   trigger included. axe is loaded into the page once, and the whole check,
   each popup opened and checked once it's fully open, runs in one call to
-  the page.
+  the page;
+- `hidden` hides every part of every example, except Field's error and the
+  password details, which stay rendered to animate closed.
 
 The other files test one component each, from the "What a script does"
 table on its page in `docs/components`, except `hidden.spec.ts`, which tests
-what every component does:
+what `hidden` does across components:
 
 | File | Tests |
 | --- | --- |
@@ -145,7 +147,7 @@ what every component does:
 | `textarea.spec.ts` | The counter counting toward `maxlength`, and describing the textarea |
 | `button.spec.ts` | Loading: busy, a spinner, focus kept; a press while loading ignored |
 | `banner.spec.ts` | A hidden banner staying hidden, then showing as an alert |
-| `hidden.spec.ts` | `hidden` hiding every part of every example, on each page; the password details and Field's error still animating closed; Settings rows and Breadcrumb items taking the first or last one's look, and the arrow keys skipping a tab, when one is hidden |
+| `hidden.spec.ts` | The password details still animating closed; Settings rows and Breadcrumb items taking the first or last one's look, and the arrow keys skipping a tab, when one is hidden |
 | `checkbox.spec.ts` | The mixed state, until it's checked |
 | `expand-chevron.spec.ts` | Each stroke and the head folding with `aria-expanded`, and back |
 

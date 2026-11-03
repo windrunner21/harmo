@@ -104,7 +104,7 @@ stay in step:
 
 1. **CSS:** its SCSS in `packages/css/src`, and its `@use` in `index.scss`. A
    rule that sets `display` also needs `&[hidden] { display: none; }`, as a
-   class's `display` overrides the attribute; `tests/hidden.spec.ts` checks
+   class's `display` overrides the attribute; `tests/pages.spec.ts` checks
    every part of every example.
 2. **HTML examples:** `examples/html/src/components/<slug>.html`, any example
    script it needs in `examples/html/src/scripts`, and its entry in
