@@ -1,4 +1,4 @@
-import { Tag } from "@harmo/react";
+import { Tag } from "@harmo-ui/react";
 
 export const examples = {
   Default: () => (

@@ -1,4 +1,4 @@
-# @harmo/css
+# @harmo-ui/css
 
 The styles of [Harmo](https://github.com/windrunner21/harmo), a CSS-first UI
 library for dashboards and applications. Every component is a native HTML
@@ -7,8 +7,8 @@ element with one class, themed with `--harmo-*` custom properties.
 ## Install
 
 ```sh
-bun add @harmo/css
-# or: npm install @harmo/css
+bun add @harmo-ui/css
+# or: npm install @harmo-ui/css
 ```
 
 ## Use
@@ -16,20 +16,20 @@ bun add @harmo/css
 Load everything at once:
 
 ```css
-@import "@harmo/css";
+@import "@harmo-ui/css";
 ```
 
 Or load `tokens.css` once, then only the components you use:
 
 ```css
-@import "@harmo/css/tokens.css";
-@import "@harmo/css/button.css";
+@import "@harmo-ui/css/tokens.css";
+@import "@harmo-ui/css/button.css";
 ```
 
 Without a build step, load it from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo/css@0.1/dist/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.1/dist/index.css" />
 ```
 
 Then write the markup:
@@ -40,7 +40,7 @@ Then write the markup:
 </button>
 ```
 
-For React, use [`@harmo/react`](https://www.npmjs.com/package/@harmo/react).
+For React, use [`@harmo-ui/react`](https://www.npmjs.com/package/@harmo-ui/react).
 
 ## Learn more
 

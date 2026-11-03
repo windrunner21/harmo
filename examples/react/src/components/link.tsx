@@ -1,4 +1,4 @@
-import { Chevron, ChevronToArrow, Link } from "@harmo/react";
+import { Chevron, ChevronToArrow, Link } from "@harmo-ui/react";
 
 export const examples = {
   Standalone: () => (

@@ -1,4 +1,4 @@
-import { Breadcrumb, Link } from "@harmo/react";
+import { Breadcrumb, Link } from "@harmo-ui/react";
 
 export const examples = {
   Trail: () => (

@@ -1,4 +1,4 @@
-import { Button, Checkbox, Field, Input, Option, Select } from "@harmo/react";
+import { Button, Checkbox, Field, Input, Option, Select } from "@harmo-ui/react";
 import { useState, type FormEvent } from "react";
 
 export const examples = {

@@ -43,12 +43,12 @@ The principles behind these choices are in
 ## Installation
 
 ```sh
-bun add @harmo/css @harmo/react
-# or: npm install @harmo/css @harmo/react
+bun add @harmo-ui/css @harmo-ui/react
+# or: npm install @harmo-ui/css @harmo-ui/react
 ```
 
-`@harmo/react` needs React 19.3 or later. For HTML and CSS alone, install only
-`@harmo/css`, or load it from a CDN as below.
+`@harmo-ui/react` needs React 19.3 or later. For HTML and CSS alone, install only
+`@harmo-ui/css`, or load it from a CDN as below.
 
 ## Quick start
 
@@ -58,7 +58,7 @@ Load the full stylesheet, tokens and every component, then use the `.h*`
 classes:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo/css@0.1/dist/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.1/dist/index.css" />
 
 <button class="hbutton" type="button">
   <span class="hbutton-label">Save changes</span>
@@ -74,9 +74,9 @@ classes:
 To load only what you need, import `tokens.css` once, then each component:
 
 ```css
-@import "@harmo/css/tokens.css";
-@import "@harmo/css/button.css";
-@import "@harmo/css/link.css";
+@import "@harmo-ui/css/tokens.css";
+@import "@harmo-ui/css/button.css";
+@import "@harmo-ui/css/link.css";
 ```
 
 Component files use the `--harmo-*` properties without defining them, so
@@ -91,12 +91,12 @@ for you.
 
 ### React
 
-`@harmo/react` renders the same markup and does what the scripts do. Load the
+`@harmo-ui/react` renders the same markup and does what the scripts do. Load the
 CSS once, then use the components:
 
 ```tsx
-import "@harmo/css";
-import { Button, Field, Input, Link } from "@harmo/react";
+import "@harmo-ui/css";
+import { Button, Field, Input, Link } from "@harmo-ui/react";
 
 <Button type="submit">Save changes</Button>
 <Button variant="secondary">Cancel</Button>

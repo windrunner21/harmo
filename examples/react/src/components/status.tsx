@@ -1,4 +1,4 @@
-import { Status, Tag } from "@harmo/react";
+import { Status, Tag } from "@harmo-ui/react";
 
 export const examples = {
   Statuses: () => (

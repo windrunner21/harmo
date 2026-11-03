@@ -1,4 +1,4 @@
-import { Meter } from "@harmo/react";
+import { Meter } from "@harmo-ui/react";
 
 export const examples = {
   "Password strength": () => (

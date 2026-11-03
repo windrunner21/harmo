@@ -5,7 +5,7 @@ import {
   TabNav,
   TabPanel,
   Tabs,
-} from "@harmo/react";
+} from "@harmo-ui/react";
 import { useState } from "react";
 
 export const examples = {

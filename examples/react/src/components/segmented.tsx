@@ -1,4 +1,4 @@
-import { Segmented, SegmentedOption } from "@harmo/react";
+import { Segmented, SegmentedOption } from "@harmo-ui/react";
 
 export const examples = {
   Options: () => (

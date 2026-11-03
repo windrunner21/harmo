@@ -1,4 +1,4 @@
-# @harmo/react
+# @harmo-ui/react
 
 React components for [Harmo](https://github.com/windrunner21/harmo), a CSS-first
 UI library for dashboards and applications. They render the same markup as
@@ -7,8 +7,8 @@ Harmo's HTML examples, with the behavior built in.
 ## Install
 
 ```sh
-bun add @harmo/css @harmo/react
-# or: npm install @harmo/css @harmo/react
+bun add @harmo-ui/css @harmo-ui/react
+# or: npm install @harmo-ui/css @harmo-ui/react
 ```
 
 It needs React 19.3 or later, and ships as both ES modules and CommonJS.
@@ -18,8 +18,8 @@ It needs React 19.3 or later, and ships as both ES modules and CommonJS.
 Load the CSS once, then use the components:
 
 ```tsx
-import "@harmo/css";
-import { Button, Field, Input } from "@harmo/react";
+import "@harmo-ui/css";
+import { Button, Field, Input } from "@harmo-ui/react";
 
 <Field label="Email address" description="We'll send your receipt here.">
   <Input name="email" type="email" />

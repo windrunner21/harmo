@@ -37,8 +37,8 @@ Consumers of the compiled CSS need none of this.
 ## Project layout
 
 ```text
-packages/css/          @harmo/css: SCSS in src/, compiled to dist/
-packages/react/        @harmo/react: TypeScript in src/, compiled to dist/esm and dist/cjs
+packages/css/          @harmo-ui/css: SCSS in src/, compiled to dist/
+packages/react/        @harmo-ui/react: TypeScript in src/, compiled to dist/esm and dist/cjs
 examples/catalog.ts    the playgrounds' table of contents
 examples/playground.ts builds the pages of both playgrounds
 examples/html/         the HTML playground: the examples (the contract), example
@@ -55,7 +55,7 @@ mise.toml              tool versions and tasks
 ```
 
 The packages are a Bun workspace: `examples/react` depends on
-`@harmo/react` and imports it as an app would, and `tests` holds the
+`@harmo-ui/react` and imports it as an app would, and `tests` holds the
 browser tests' own dependencies.
 
 ## Commands
@@ -124,7 +124,7 @@ stay in step:
 
 ## Releasing
 
-`@harmo/css` and `@harmo/react` are released together, at the same version.
+`@harmo-ui/css` and `@harmo-ui/react` are released together, at the same version.
 
 1. Set the version in both `package.json` files, then run `bun install`.
 2. Run `mise run check:react`, `mise run test:react`, and
@@ -132,7 +132,7 @@ stay in step:
 3. Check what would be published: `bunx publint packages/css`,
    `bunx publint packages/react`, and
    `bunx @arethetypeswrong/cli --pack packages/react`. `publint`'s suggestion
-   of `engines.node` for `@harmo/react` is expected: the components run in the
+   of `engines.node` for `@harmo-ui/react` is expected: the components run in the
    browser, so it's left out, as most UI libraries leave it out.
 4. Commit, push, and wait for CI to pass.
 5. From each of `packages/css` and `packages/react`, run `npm publish`, which
@@ -212,7 +212,7 @@ and why.
   markup, hooks, states, and tokens are documented in
   [docs/components](docs/components/README.md).
 - In `packages/css/src`, each file without a leading underscore compiles to
-  `dist/<name>.css` and is exported as `@harmo/css/<name>.css`; partials
+  `dist/<name>.css` and is exported as `@harmo-ui/css/<name>.css`; partials
   such as `_shortcuts.scss` and `_control.scss` (the box shared by inputs
   and select triggers) are internal.
 - Author with `$variables` from `_shortcuts.scss` that reference the
@@ -253,7 +253,7 @@ after the base declarations.
 
 ## Dependency policy
 
-- Target zero runtime dependencies for `@harmo/css`.
+- Target zero runtime dependencies for `@harmo-ui/css`.
 - Keep the React adapter minimal. React and React DOM are
   application-supplied peer dependencies; simple primitives do not need
   third-party UI or styling helpers.

@@ -16,7 +16,7 @@ go to an element inside, such as PasswordInput's to its input, and checks that
 `hidden` still reaches the whole component. No example shows that.
 
 `examples/react/test/package.test.tsx` checks what an app gets from npm. The
-playground already imports `@harmo/react` as compiled, so every test runs on the
+playground already imports `@harmo-ui/react` as compiled, so every test runs on the
 published ES modules; this adds that each source file became one JavaScript file
 and one types file in each format, that each keeps its `"use client"` or lack of
 one, that no JavaScript import still ends in `.ts` or `.tsx`, that every entry

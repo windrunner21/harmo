@@ -6,7 +6,7 @@ import {
   Input,
   Option,
   Popup,
-} from "@harmo/react";
+} from "@harmo-ui/react";
 
 export const examples = {
   "Nothing chosen": () => (

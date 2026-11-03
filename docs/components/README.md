@@ -1,8 +1,8 @@
 # Components
 
-Markup and styling contracts for `@harmo/css`. Each page lists the markup, the
+Markup and styling contracts for `@harmo-ui/css`. Each page lists the markup, the
 hooks and attributes that style it, the tokens it reads, and what a script must
-handle. Its React section shows the component from `@harmo/react` that renders
+handle. Its React section shows the component from `@harmo-ui/react` that renders
 the same markup and does what the script would.
 
 | Component | Page |
@@ -70,7 +70,7 @@ Options when nothing changes the component.
 
 ## Loading the CSS
 
-`@harmo/css` (`index.css`) contains the token defaults and every component. For
+`@harmo-ui/css` (`index.css`) contains the token defaults and every component. For
 per-component imports, load `tokens.css` once and then the components you use.
 Each component file uses `--harmo-*` properties without defining them.
 

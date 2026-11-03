@@ -10,7 +10,7 @@ and do not replace the individual components they contain.
 
 ## Loading the CSS
 
-`@harmo/css` (`index.css`) contains the token defaults, every component, and
+`@harmo-ui/css` (`index.css`) contains the token defaults, every component, and
 every pattern. For per-file imports, load `tokens.css` once, then the pattern
 and the controls it holds.
 

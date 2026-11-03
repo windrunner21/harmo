@@ -9,7 +9,7 @@
       "name": "harmo-react-example",
       "version": "0.1.0",
       "dependencies": {
-        "@harmo/react": "workspace:*",
+        "@harmo-ui/react": "workspace:*",
         "react": "19.3.0",
         "react-dom": "19.3.0",
       },
@@ -20,11 +20,11 @@
       },
     },
     "packages/css": {
-      "name": "@harmo/css",
+      "name": "@harmo-ui/css",
       "version": "0.1.1",
     },
     "packages/react": {
-      "name": "@harmo/react",
+      "name": "@harmo-ui/react",
       "version": "0.1.1",
       "devDependencies": {
         "@types/react": "^19",
@@ -48,9 +48,9 @@
     },
   },
   "packages": {
-    "@harmo/css": ["@harmo/css@workspace:packages/css"],
+    "@harmo-ui/css": ["@harmo-ui/css@workspace:packages/css"],
 
-    "@harmo/react": ["@harmo/react@workspace:packages/react"],
+    "@harmo-ui/react": ["@harmo-ui/react@workspace:packages/react"],
 
     "@playwright/test": ["@playwright/test@1.64.1", "", { "dependencies": { "playwright": "1.64.1" }, "bin": { "playwright": "cli.js" } }, "sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg=="],
 

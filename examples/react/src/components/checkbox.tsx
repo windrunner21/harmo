@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Checkbox, CheckboxGroup, Field } from "@harmo/react";
+import { Checkbox, CheckboxGroup, Field } from "@harmo-ui/react";
 
 export const examples = {
   States: () => (

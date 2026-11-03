@@ -8,7 +8,7 @@ import {
   Listbox,
   Option,
   Popup,
-} from "@harmo/react";
+} from "@harmo-ui/react";
 
 export const examples = {
   Panel: () => {

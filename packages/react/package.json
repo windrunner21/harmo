@@ -1,5 +1,5 @@
 {
-       "name": "@harmo/react",
+       "name": "@harmo-ui/react",
        "version": "0.1.1",
        "description": "React components for Harmo: the same markup as its HTML examples, with the behavior built in.",
        "license": "MIT",

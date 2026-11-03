@@ -1,4 +1,4 @@
-import { Button, Tooltip } from "@harmo/react";
+import { Button, Tooltip } from "@harmo-ui/react";
 import { CloseIcon, MoreIcon, PlusIcon } from "../app-icons.tsx";
 
 export const examples = {

@@ -1,4 +1,4 @@
-import { Button, ChevronToArrow, Link } from "@harmo/react";
+import { Button, ChevronToArrow, Link } from "@harmo-ui/react";
 
 export const examples = {
   "Forward and back": () => (

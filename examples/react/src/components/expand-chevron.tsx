@@ -1,4 +1,4 @@
-import { Button, ExpandChevron } from "@harmo/react";
+import { Button, ExpandChevron } from "@harmo-ui/react";
 import { useState } from "react";
 
 export const examples = {

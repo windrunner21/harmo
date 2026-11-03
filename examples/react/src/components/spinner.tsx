@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Button, Spinner } from "@harmo/react";
+import { Button, Spinner } from "@harmo-ui/react";
 
 export const examples = {
   Sizes: () => (

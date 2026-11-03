@@ -1,4 +1,4 @@
-import { Switch } from "@harmo/react";
+import { Switch } from "@harmo-ui/react";
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -41,8 +41,8 @@ describe("the compiled package", () => {
     const script = `
       const { createElement } = require("react");
       const { renderToStaticMarkup } = require("react-dom/server");
-      const required = require("@harmo/react");
-      import("@harmo/react").then((imported) => {
+      const required = require("@harmo-ui/react");
+      import("@harmo-ui/react").then((imported) => {
         console.log(required.Tag !== imported.Tag);
         for (const { Tag } of [required, imported]) console.log(renderToStaticMarkup(createElement(Tag, null, "New")));
       });

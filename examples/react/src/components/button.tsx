@@ -1,4 +1,4 @@
-import { Button, ChevronToArrow } from "@harmo/react";
+import { Button, ChevronToArrow } from "@harmo-ui/react";
 import { useState } from "react";
 import { CloseIcon, MoreIcon, PlusIcon } from "../app-icons.tsx";
 

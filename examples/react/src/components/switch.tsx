@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Field, Switch } from "@harmo/react";
+import { Field, Switch } from "@harmo-ui/react";
 
 export const examples = {
   "Off and on": () => (

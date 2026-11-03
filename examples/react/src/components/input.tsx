@@ -1,4 +1,4 @@
-import { Button, Field, Input } from "@harmo/react";
+import { Button, Field, Input } from "@harmo-ui/react";
 
 export const examples = {
   Default: () => (

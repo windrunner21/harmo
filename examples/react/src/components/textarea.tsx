@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Field, TextArea } from "@harmo/react";
+import { Field, TextArea } from "@harmo-ui/react";
 
 export const examples = {
   "With a counter": () => (

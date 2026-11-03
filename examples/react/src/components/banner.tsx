@@ -1,4 +1,4 @@
-import { Banner, Button } from "@harmo/react";
+import { Banner, Button } from "@harmo-ui/react";
 import { useState } from "react";
 import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from "../app-icons.tsx";
 

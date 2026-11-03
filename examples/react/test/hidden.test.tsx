@@ -12,7 +12,7 @@ import {
   TabNav,
   Tabs,
   TextArea,
-} from "@harmo/react";
+} from "@harmo-ui/react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 // hidden on a component hides all of it, also where its other props go to an

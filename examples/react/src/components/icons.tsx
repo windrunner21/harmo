@@ -1,4 +1,4 @@
-import { Button, Chevron, Link } from "@harmo/react";
+import { Button, Chevron, Link } from "@harmo-ui/react";
 import { ChevronIcon } from "../app-icons.tsx";
 
 export const examples = {

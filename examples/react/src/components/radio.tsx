@@ -1,4 +1,4 @@
-import { Field, Radio, RadioGroup } from "@harmo/react";
+import { Field, Radio, RadioGroup } from "@harmo-ui/react";
 
 export const examples = {
   Group: () => (

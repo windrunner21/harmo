@@ -5,7 +5,7 @@ import {
   Option,
   OptionGroup,
   Popup,
-} from "@harmo/react";
+} from "@harmo-ui/react";
 import { useState } from "react";
 
 export const examples = {

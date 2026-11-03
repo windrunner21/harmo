@@ -1,4 +1,4 @@
-import { Checkbox, Field, PasswordInput, type PasswordStrength } from "@harmo/react";
+import { Checkbox, Field, PasswordInput, type PasswordStrength } from "@harmo-ui/react";
 import { useState } from "react";
 
 export const examples = {

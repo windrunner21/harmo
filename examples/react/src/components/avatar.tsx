@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Avatar } from "@harmo/react";
+import { Avatar } from "@harmo-ui/react";
 import { UserIcon } from "../app-icons.tsx";
 
 export const examples = {

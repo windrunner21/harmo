@@ -1,4 +1,4 @@
-import { Checkbox, Field, Input } from "@harmo/react";
+import { Checkbox, Field, Input } from "@harmo-ui/react";
 import { useState } from "react";
 
 export const examples = {

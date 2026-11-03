@@ -6,7 +6,7 @@ import {
   Setting,
   Settings,
   Switch,
-} from "@harmo/react";
+} from "@harmo-ui/react";
 
 export const examples = {
   Switches: () => (
