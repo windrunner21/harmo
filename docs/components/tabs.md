@@ -75,8 +75,8 @@ The panels are the application's own; Tabs doesn't style them.
   keeps its corners round. The pill appears in place rather than sliding in
   from its last position.
 - The current tab slides to the middle of the strip, or as near as the strip
-  scrolls, with the underline. On load and from the keyboard, it moves at
-  once.
+  scrolls, with the underline. On load, from the keyboard, and after a resize,
+  it moves at once.
 - From the keyboard, and after a resize, the underline moves at once: arrow
   keys repeat quickly, and the moment a tab is chosen is what matters. With no
   current tab, it shrinks away.
@@ -113,7 +113,7 @@ The panels are the application's own; Tabs doesn't style them.
 | `--htabs-highlight-x`, `--htabs-highlight-width`, `--htabs-highlight-opacity` on `.htabs` | As the pointer moves over the tabs |
 | `--htabs-indicator-x`, `--htabs-indicator-width` on `.htabs` | On load, resize, and a change of current tab; at once (no transition) after a key press or a resize, and a width of `0px` while no tab is current |
 | `--htabs-list-width` on `.htabs` | With the underline: the width of the `<ul>` or tablist, so the pill and underline reach every tab |
-| Scroll the strip, and only the strip, to bring the current tab to its middle | On load and on a change of current tab: at once on load, after a key press, or with reduced motion; otherwise smoothly |
+| Scroll the strip, and only the strip, to bring the current tab to its middle | On load, on a resize, and on a change of current tab: at once on load, on a resize, after a key press, or with reduced motion; otherwise smoothly |
 | `data-on-current` on `.htabs-highlight` | When the pill is over the current tab |
 | `data-ready` on `.htabs` | Once measured |
 

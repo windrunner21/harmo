@@ -38,7 +38,7 @@ Consumers of the compiled CSS need none of this.
 
 ```text
 packages/css/          @harmo/css: SCSS in src/, compiled to dist/
-packages/react/        @harmo/react: the React components, as TypeScript in src/
+packages/react/        @harmo/react: TypeScript in src/, compiled to dist/esm and dist/cjs
 examples/catalog.ts    the playgrounds' table of contents
 examples/playground.ts builds the pages of both playgrounds
 examples/html/         the HTML playground: the examples (the contract), example
@@ -63,12 +63,14 @@ browser tests' own dependencies.
 ```sh
 mise run build:css                # clean build: packages/css/src -> packages/css/dist
 mise run watch:css                # rebuild on change while working on examples
+mise run build:react              # clean build: packages/react/src -> packages/react/dist, as ES modules and CommonJS
+mise run watch:react              # recompile the ES modules on change while working on the React playground
 mise run build:playground         # build the CSS, then the HTML playground into examples/html/dist
 mise run watch:playground         # rebuild the HTML playground on change (run watch:css alongside)
-mise run build:react-playground   # build the CSS, then the React playground into examples/react/dist
-mise run watch:react-playground   # rebuild the React playground on change (run watch:css alongside)
+mise run build:react-playground   # build the CSS and React, then the React playground into examples/react/dist
+mise run watch:react-playground   # rebuild the React playground on change (run watch:css and watch:react alongside)
 mise run check:react              # type-check the React package, the React playground, and the tests
-mise run test:react               # compare the React examples' markup with the HTML examples
+mise run test:react               # compare the React examples' markup with the HTML examples, and check the compiled package
 mise run test:browser             # build both playgrounds, then test them in Chromium
 mise run test:browser:all         # the same in Chromium, Firefox, and WebKit, in Docker
 ```
@@ -119,6 +121,23 @@ stay in step:
 6. **Browser tests:** for a component with behavior, `tests/<slug>.spec.ts`,
    testing what its page's "What a script does" table says, on both
    playgrounds.
+
+## Releasing
+
+`@harmo/css` and `@harmo/react` are released together, at the same version.
+
+1. Set the version in both `package.json` files, then run `bun install`.
+2. Run `mise run check:react`, `mise run test:react`, and
+   `mise run test:browser:all`.
+3. Check what would be published: `bunx publint packages/css`,
+   `bunx publint packages/react`, and
+   `bunx @arethetypeswrong/cli --pack packages/react`. `publint`'s suggestion
+   of `engines.node` for `@harmo/react` is expected: the components run in the
+   browser, so it's left out, as most UI libraries leave it out.
+4. Commit, push, and wait for CI to pass.
+5. From each of `packages/css` and `packages/react`, run `npm publish`, which
+   builds the package first.
+6. Tag the commit `v<version>`, and push the tag.
 
 ## Playground
 

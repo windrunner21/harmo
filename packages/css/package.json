@@ -1,16 +1,41 @@
 {
        "name": "@harmo/css",
-       "version": "0.1.0",
+       "version": "0.1.1",
+       "description": "CSS-first UI components for dashboards and applications: native HTML elements, one class each, themed with custom properties.",
        "license": "MIT",
+       "author": "Imran Hajiyev",
+       "homepage": "https://github.com/windrunner21/harmo#readme",
+       "repository": {
+              "type": "git",
+              "url": "git+https://github.com/windrunner21/harmo.git",
+              "directory": "packages/css"
+       },
+       "bugs": "https://github.com/windrunner21/harmo/issues",
+       "keywords": [
+              "css",
+              "ui",
+              "components",
+              "design-system"
+       ],
+       "type": "commonjs",
        "files": [
               "src",
               "dist"
        ],
+       "main": "./dist/index.css",
+       "style": "./dist/index.css",
        "exports": {
               ".": "./dist/index.css",
-              "./*.css": "./dist/*.css"
+              "./*.css": "./dist/*.css",
+              "./package.json": "./package.json"
        },
        "sideEffects": [
               "**/*.css"
-       ]
+       ],
+       "publishConfig": {
+              "access": "public"
+       },
+       "scripts": {
+              "prepack": "mise run build:css"
+       }
 }

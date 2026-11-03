@@ -22,7 +22,7 @@ if (process.argv.includes("--watch")) {
   watchPlayground(import.meta.path, [
     src,
     join(import.meta.dir, "..", "html", "src"),
-    join(import.meta.dir, "..", "..", "packages", "react", "src"),
+    join(import.meta.dir, "..", "..", "packages", "react", "dist"),
   ]);
 } else {
   // A classic script rather than a module, so the pages work opened from

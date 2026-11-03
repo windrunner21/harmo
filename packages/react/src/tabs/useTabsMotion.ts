@@ -84,6 +84,7 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
     const pointer = () => (instant.current = false);
     const observer = new ResizeObserver(() => {
       instant.current = true;
+      revealed.current = null;
       place();
     });
     observer.observe(root, { box: "border-box" });

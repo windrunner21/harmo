@@ -10,9 +10,8 @@ components, or by copying the source into your project and making it yours.
 Its name comes from the Greek idea of fitting things together: small, useful
 pieces that compose into more capable interfaces.
 
-> **Status:** Early development. The CSS and React packages are usable from
-> source today; neither is published to npm yet. APIs may still change before
-> the first release.
+> **Status:** Early development, at `0.x`: APIs may still change between
+> releases.
 
 [Components](docs/components/README.md) ·
 [Patterns](docs/patterns/README.md) ·
@@ -43,30 +42,23 @@ The principles behind these choices are in
 
 ## Installation
 
-Harmo isn't on npm yet. The planned packages are:
-
 ```sh
 bun add @harmo/css @harmo/react
 # or: npm install @harmo/css @harmo/react
 ```
 
-Until the first release, use Harmo from source:
-
-- **CSS:** build it with `mise run build:css` (see
-  [CONTRIBUTING.md](CONTRIBUTING.md#setup)) and copy `packages/css/dist` into
-  your project, or copy components from `packages/css/src` and adapt them.
-- **React:** the components in `packages/react/src` are TypeScript source.
-  Copy them into a React 19 project whose bundler compiles TypeScript.
+`@harmo/react` needs React 19.3 or later. For HTML and CSS alone, install only
+`@harmo/css`, or load it from a CDN as below.
 
 ## Quick start
 
 ### HTML and CSS
 
 Load the full stylesheet, tokens and every component, then use the `.h*`
-classes. With `packages/css/dist` copied into your project as `harmo/`:
+classes:
 
 ```html
-<link rel="stylesheet" href="harmo/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo/css@0.1/dist/index.css" />
 
 <button class="hbutton" type="button">
   <span class="hbutton-label">Save changes</span>

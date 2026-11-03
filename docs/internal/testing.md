@@ -15,9 +15,14 @@ fails the test with a line-by-line diff.
 go to an element inside, such as PasswordInput's to its input, and checks that
 `hidden` still reaches the whole component. No example shows that.
 
-```sh
-mise run test:react
-```
+`examples/react/test/package.test.tsx` checks what an app gets from npm. The
+playground already imports `@harmo/react` as compiled, so every test runs on the
+published ES modules; this adds that each source file became one JavaScript file
+and one types file in each format, that each keeps its `"use client"` or lack of
+one, that no JavaScript import still ends in `.ts` or `.tsx`, that every entry
+point in `package.json` exists, and that Node can load the package through both
+`import` and `require`. A deliberately wrong prop, marked `@ts-expect-error`,
+makes `mise run check:react` fail if the types stop working.
 
 ### Why this, and not the usual tools
 
@@ -132,7 +137,7 @@ what every component does:
 | `listbox.spec.ts` | Focus and the highlight on opening; the arrow keys, Home, and End; type-ahead with one letter, several, and a pause; Enter, Space, and clicks choosing, and a single-select closing; disabled options; the pointer; the highlight scrolling into view; titles on truncated options, as the window resizes; search, groups it empties, the empty message, and Enter with no match; reopening after a search, on the side the whole list fits |
 | `select.spec.ts` | Focus staying on the trigger; the keys that open it, and keys sent straight after, even in one task; the value text, the placeholder, and the hidden inputs; Space not reopening it; Tab closing it; disabling and enabling it; a form's submit and reset, list included |
 | `filter-chip.spec.ts` | The values, then a count; the values in the chip's name; Clear filters; a single choice closing; the text filter's Enter and Apply |
-| `tabs.spec.ts` | Selecting with clicks and keys, wrapping, right to left, and skipping a disabled tab, with each tab's own panel; Tab into the panel; the underline sliding on a click and moving at once on a key or a resize, and with no width when no tab is current; links; the pill; right-to-left placement; tabs that don't fit staying on one line, with only the strip scrolling; the current tab in view on load, sliding to the middle on a click, and moving at once on a key or with reduced motion; room for the focus ring at both ends; lining up with what's around it when the tabs fit; the divider in forced colors |
+| `tabs.spec.ts` | Selecting with clicks and keys, wrapping, right to left, and skipping a disabled tab, with each tab's own panel; Tab into the panel; the underline sliding on a click and moving at once on a key or a resize, and with no width when no tab is current; links; the pill; right-to-left placement; tabs that don't fit staying on one line, with only the strip scrolling; the current tab in view on load and after a resize, sliding to the middle on a click, and moving at once on a key or with reduced motion; room for the focus ring at both ends; lining up with what's around it when the tabs fit; the divider in forced colors |
 | `popup.spec.ts` | `aria-expanded` with the trigger, Escape (focus returning), and a click outside; 8px below, aligned to the start, and at least as wide; above without room below; the other edge without room at the end; each opening starting fresh, even after being squeezed while closed; closing in place, sliding back toward its trigger |
 | `tooltip.spec.ts` | Naming and describing; the delay on hover and none on keyboard focus; no delay right after another closes, until a pause; the pointer moving onto it; Escape until the pointer or focus leaves; an unavailable action; 8px from each side; escaping a clipping container |
 | `field.spec.ts` | A validation error showing, marking the control, and describing it; its text kept while it closes, then cleared; shown again while it closes |

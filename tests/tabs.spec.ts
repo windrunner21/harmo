@@ -1,5 +1,5 @@
 import { expect, type Locator } from "@playwright/test";
-import { example, onEachPlayground, pointAt, settled, test, watchTransitions } from "./playgrounds.ts";
+import { example, onEachPlayground, pointAt, rendered, settled, test, watchTransitions } from "./playgrounds.ts";
 
 // What docs/components/tabs.md says a script does, on the Tabs page.
 onEachPlayground("tabs", () => {
@@ -137,11 +137,34 @@ onEachPlayground("tabs", () => {
   test("on load, the current tab is in view, and the page hasn't moved", async ({ page }) => {
     const tabs = page.locator('[id="tabs-many-tabs"] .htabs');
     const current = tabs.locator('[aria-current="page"]');
-    const { start, end } = await room(tabs, current);
-    expect(start, "before it").toBeGreaterThan(0);
-    expect(end, "after it").toBeGreaterThan(0);
+    await expect.poll(async () => (await room(tabs, current)).end, "after it").toBeGreaterThan(0);
+    expect((await room(tabs, current)).start, "before it").toBeGreaterThan(0);
     await expectPlaced(tabs, "indicator", current);
     expect(await page.evaluate(() => [window.scrollX, window.scrollY]), "the page's scroll").toEqual([0, 0]);
+  });
+
+  test("after a resize, the current tab comes back into view", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    const current = container.locator('[aria-current="page"]');
+    await expect.poll(async () => (await room(tabs, current)).end, "in view on load").toBeGreaterThan(0);
+    await tabs.evaluate((strip) => strip.scrollTo({ left: 0, behavior: "instant" }));
+    expect((await room(tabs, current)).end, "scrolled away").toBeLessThan(0);
+
+    // A wider tab before it, as a web font loading would.
+    await container.getByRole("link", { name: "Account details" }).evaluate((link) => ((link as HTMLElement).style.paddingInline = "40px"));
+    await expect.poll(async () => (await room(tabs, current)).end, "after it").toBeGreaterThan(0);
+  });
+
+  test("a resize in one strip leaves another where it's been scrolled to", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    await expect.poll(async () => (await room(tabs, container.locator('[aria-current="page"]'))).end, "in view on load").toBeGreaterThan(0);
+    await tabs.evaluate((strip) => strip.scrollTo({ left: 0, behavior: "instant" }));
+
+    await page.locator('[id="tabs-tabs"]').getByRole("link", { name: "Tickets" }).evaluate((link) => ((link as HTMLElement).style.paddingInline = "40px"));
+    await rendered(page);
+    expect(await tabs.evaluate((strip) => strip.scrollLeft), "its scroll").toBe(0);
   });
 
   test("a click slides the tab to the middle of the strip, with the underline under it", async ({ page }) => {

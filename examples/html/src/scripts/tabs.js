@@ -11,10 +11,14 @@
   // placement immediate.
   const indicators = [];
   // After a resize, measure every Tabs first and then place their underlines
-  // at once, so no measurement waits on another's update.
-  const observer = new ResizeObserver(() => {
+  // at once, so no measurement waits on another's update. Then bring the
+  // current tab of each one that resized back into view: a phone may have
+  // turned, or the script may have run before the page's stylesheets applied.
+  const observer = new ResizeObserver((entries) => {
+    const resized = new Set(entries.map(({ target }) => target.closest(".htabs")));
     for (const tabs of indicators) tabs.jump();
     for (const place of indicators.map((tabs) => tabs.read())) place();
+    for (const tabs of indicators) if (resized.has(tabs.root)) tabs.reveal();
   });
 
   for (const tabs of document.querySelectorAll(".htabs:not([data-example-no-script])")) {
@@ -64,7 +68,12 @@
       };
     };
     const placeIndicator = () => readIndicator()();
-    indicators.push({ read: readIndicator, jump: () => (instant = true) });
+    indicators.push({
+      root: tabs,
+      read: readIndicator,
+      jump: () => (instant = true),
+      reveal: () => current() && reveal(current(), true),
+    });
     const choose = (item) => {
       if (isTablist) {
         for (const tab of items()) {

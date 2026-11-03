@@ -26,6 +26,24 @@ run = [
 description = "Recompile Harmo SCSS on change"
 run = "sass --watch --no-source-map packages/css/src:packages/css/dist"
 
+[tasks."build:react"]
+description = "Compile the React package into packages/react/dist, as ES modules and CommonJS"
+# One file for each source file, so each keeps its own "use client". Start clean
+# so removed sources leave nothing stale. The package is "type": "module", so
+# the CommonJS folder says what it is, for Node and TypeScript.
+dir = "{{config_root}}/packages/react"
+run = [
+  "rm -rf dist",
+  "bunx tsc -p tsconfig.esm.json",
+  "bunx tsc -p tsconfig.cjs.json",
+  "echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json",
+]
+
+[tasks."watch:react"]
+description = "Recompile the React package's ES modules on change"
+dir = "{{config_root}}/packages/react"
+run = "bunx tsc -p tsconfig.esm.json --watch --preserveWatchOutput"
+
 [tasks."build:playground"]
 description = "Build the HTML playground into examples/html/dist"
 depends = ["build:css"]
@@ -37,15 +55,17 @@ run = "bun examples/html/build.ts --watch"
 
 [tasks."build:react-playground"]
 description = "Build the React playground into examples/react/dist"
-depends = ["build:css"]
+depends = ["build:css", "build:react"]
 run = "bun examples/react/build.ts"
 
 [tasks."watch:react-playground"]
-description = "Rebuild the React playground on change (run watch:css alongside)"
+description = "Rebuild the React playground on change (run watch:css and watch:react alongside)"
+depends = ["build:react"]
 run = "bun examples/react/build.ts --watch"
 
 [tasks."test:react"]
-description = "Compare the React examples' markup with the HTML examples"
+description = "Compare the React examples' markup with the HTML examples, and check the compiled package"
+depends = ["build:react"]
 dir = "{{config_root}}/examples/react"
 run = "bun test"
 
@@ -66,7 +86,9 @@ run = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp
 
 [tasks."check:react"]
 description = "Type-check the React package, the React playground, and the browser tests"
-# bun check, Bun's built-in type checker, needs Bun 1.4.3 or later.
+# bun check, Bun's built-in type checker, needs Bun 1.4.3 or later. The
+# playground imports the package's compiled types, as an app would.
+depends = ["build:react"]
 run = [
   "cd packages/react && bun check",
   "cd examples/react && bun check",
