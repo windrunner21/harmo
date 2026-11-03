@@ -24,6 +24,7 @@ export const Segmented = ({
   required,
   disabled,
   className,
+  hidden,
   ...props
 }: SegmentedProps) => {
   const id = useId();
@@ -44,6 +45,7 @@ export const Segmented = ({
       <div
         {...props}
         className={withClass("hsegmented", className)}
+        hidden={label ? undefined : hidden}
         role="radiogroup"
         aria-labelledby={label ? labelId : field["aria-labelledby"]}
         aria-describedby={field["aria-describedby"]}
@@ -54,7 +56,7 @@ export const Segmented = ({
   if (!label) return control;
 
   return (
-    <div className="hfield">
+    <div className="hfield" hidden={hidden}>
       <span className="hlabel" id={labelId}>
         {label}
       </span>
@@ -68,13 +70,18 @@ export type SegmentedOptionProps = Omit<ComponentPropsWithRef<"input">, "type">;
 export const SegmentedOption = ({
   className,
   style,
+  hidden,
   children,
   ...props
 }: SegmentedOptionProps) => {
   const group = useRadioGroupInput(props);
 
   return (
-    <label className={withClass("hsegmented-option", className)} style={style}>
+    <label
+      className={withClass("hsegmented-option", className)}
+      style={style}
+      hidden={hidden}
+    >
       <input {...group} {...props} onChange={group.onChange} type="radio" />
       {children}
     </label>

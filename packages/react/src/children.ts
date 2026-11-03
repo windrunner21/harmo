@@ -6,3 +6,9 @@ export const flatChildren = (children: ReactNode): ReactNode[] =>
       ? flatChildren(child.props.children)
       : [child],
   );
+
+export const shownChildren = (children: ReactNode): ReactNode[] =>
+  flatChildren(children).filter(
+    (child) =>
+      !(isValidElement<{ hidden?: boolean }>(child) && child.props.hidden),
+  );

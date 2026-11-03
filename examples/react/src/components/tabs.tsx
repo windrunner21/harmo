@@ -51,6 +51,35 @@ export const examples = {
     </Tabs>
   ),
 
+  "Many tabs": () => {
+    const [current, setCurrent] = useState("/settings/billing");
+    const links = [
+      ["/settings/account", "Account details"],
+      ["/settings/hours", "Business hours"],
+      ["/settings/messaging", "Messaging"],
+      ["/settings/notifications", "Notifications"],
+      ["/settings/team", "Team members"],
+      ["/settings/billing", "Billing"],
+      ["/settings/integrations", "Integrations"],
+      ["/settings/developers", "Developers"],
+    ];
+
+    return (
+      <TabNav aria-label="Settings">
+        {links.map(([href, text]) => (
+          <TabLink
+            key={href}
+            href={href}
+            current={href === current}
+            onClick={() => setCurrent(href)}
+          >
+            {text}
+          </TabLink>
+        ))}
+      </TabNav>
+    );
+  },
+
   "Without the script": () => (
     <TabNav aria-label="Settings">
       <TabLink href="/settings/account" current>

@@ -23,6 +23,10 @@
   border-radius: 50%;
   object-fit: cover;
 
+  &[hidden] {
+    display: none;
+  }
+
   & > svg {
     inline-size: 62.5%;
     block-size: 62.5%;

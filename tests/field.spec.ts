@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { animations, example, onEachPlayground, release, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/field.md says a validating script does, on the Field
 // page's Validating example, where SPRING25 is the valid code. The example
@@ -64,17 +64,3 @@ const enter = async (input: Locator, code: string) => {
   await input.fill(code);
   await input.press("Tab");
 };
-
-// Makes an element's transitions last 100 seconds, so a test sees them
-// halfway on any machine, then ends them with release.
-const slowDown = (element: Locator) =>
-  element.evaluate((node) => ((node as HTMLElement).style.transitionDuration = "100s"));
-
-// How many animations and transitions an element is running.
-const animations = (element: Locator) => element.evaluate((node) => node.getAnimations().length);
-
-// Finishes an element's animations and transitions.
-const release = (element: Locator) =>
-  element.evaluate((node) => {
-    for (const animation of node.getAnimations()) animation.finish();
-  });

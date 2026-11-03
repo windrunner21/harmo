@@ -9,6 +9,7 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
   const tabs = useRef<Root>(null);
   const hovered = useRef<HTMLElement | null>(null);
   const instant = useRef(false);
+  const revealed = useRef<HTMLElement | null>(null);
 
   const part = (name: "highlight" | "indicator") =>
     tabs.current?.querySelector<HTMLElement>(`:scope > .htabs-${name}`);
@@ -17,20 +18,44 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
       '[aria-current="page"], [aria-selected="true"]',
     );
 
+  const list = () =>
+    tabs.current?.querySelector<HTMLElement>(
+      ':scope > ul, :scope > [role="tablist"]',
+    );
+
   const measure = (item: HTMLElement) => {
-    const root = tabs.current as Root;
     const box = item.getBoundingClientRect();
-    const left = box.left - root.getBoundingClientRect().left - root.clientLeft;
+    const left = box.left - (list()?.getBoundingClientRect().left ?? 0);
     return { x: `${left}px`, width: `${box.width}px` };
+  };
+
+  const reveal = (root: Root, item: HTMLElement, atOnce: boolean) => {
+    const box = item.getBoundingClientRect();
+    const strip = root.getBoundingClientRect();
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    root.scrollBy({
+      left: box.left + box.width / 2 - (strip.left + strip.width / 2),
+      behavior: atOnce || reduced ? "instant" : "smooth",
+    });
   };
 
   const place = () => {
     const root = tabs.current;
     if (!root) return;
     const item = currentItem();
-    const indicator = instant.current ? part("indicator") : undefined;
+    const atOnce = instant.current;
+    const indicator = atOnce ? part("indicator") : undefined;
     instant.current = false;
 
+    if (item && item !== revealed.current) {
+      reveal(root, item, atOnce || !root.hasAttribute("data-ready"));
+    }
+    revealed.current = item ?? null;
+
+    root.style.setProperty(
+      "--htabs-list-width",
+      `${list()?.getBoundingClientRect().width ?? 0}px`,
+    );
     if (indicator) indicator.style.transition = "none";
     if (item) {
       const { x, width } = measure(item);

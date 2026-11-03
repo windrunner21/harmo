@@ -26,6 +26,10 @@
     background-color $duration-fast ease,
     border-color $duration-fast ease;
 
+  &[hidden] {
+    display: none;
+  }
+
   @media (hover: hover) and (pointer: fine) {
     &:hover:where(:not(:disabled, :checked, :indeterminate)) {
       border-color: $color-primary-hover;

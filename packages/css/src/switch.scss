@@ -30,6 +30,10 @@
 
   transition: background-color $duration-normal ease;
 
+  &[hidden] {
+    display: none;
+  }
+
   &::before {
     content: "";
 

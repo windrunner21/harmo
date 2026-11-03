@@ -14,7 +14,7 @@ tabs. For one choice among a few options in a form, use a
 | Parts | `.htabs-highlight` and `.htabs-indicator`, after the list |
 | Required | `aria-label` on the nav or tablist; links: `aria-current="page"` on the current one; buttons: `role="tab"`, `aria-selected`, `aria-controls`, and `tabindex="-1"` on unselected tabs |
 | Unique | The tabs' and panels' ids |
-| Script | Optional for links (the sliding pill and underline); required for panels; see [What a script does](#what-a-script-does) |
+| Script | Optional for links (the sliding pill and underline, and keeping the current tab in view); required for panels; see [What a script does](#what-a-script-does) |
 
 ## Markup
 
@@ -55,11 +55,15 @@ The panels are the application's own; Tabs doesn't style them.
 | --- | --- |
 | `aria-current="page"` on a link | The current tab |
 | `aria-selected="true"` on a `role="tab"` button | The selected tab, drawn like the current link |
+| `hidden` on a `<li>` or a `role="tab"` button | Hides that tab, with no gap left |
 | `data-ready` on `.htabs` | Set by the script: the sliding pill and underline take over |
 | `data-on-current` on `.htabs-highlight` | Set by the script: the pill is over the current tab |
 
 ## Appearance and states
 
+- Tabs stay on one line. When they don't fit, the strip scrolls sideways on
+  its own, with no scrollbar, and the page stays still; a tab cut off at the
+  edge shows there's more. A flex or grid parent doesn't widen for the tabs.
 - 14px medium `--harmo-color-text-secondary` text, `--harmo-color-text` on
   hover; the current or selected tab is `--harmo-color-primary` with a 2px
   underline over the divider. Links and buttons look the same.
@@ -70,17 +74,25 @@ The panels are the application's own; Tabs doesn't style them.
   tab with `clip-path`, which moves and resizes it without layout work and
   keeps its corners round. The pill appears in place rather than sliding in
   from its last position.
+- The current tab slides to the middle of the strip, or as near as the strip
+  scrolls, with the underline. On load and from the keyboard, it moves at
+  once.
 - From the keyboard, and after a resize, the underline moves at once: arrow
   keys repeat quickly, and the moment a tab is chosen is what matters. With no
   current tab, it shrinks away.
 - Reduced motion: the pill still fades in and out but jumps between tabs, and
-  the underline jumps.
+  the underline and the strip jump.
 - Without the script, the current tab shows a static underline and each tab
-  its own hover background.
+  its own hover background. The strip still scrolls, but doesn't move to the
+  current tab.
 - Focus: `--harmo-focus-outline` at a fixed 2px offset, so the ring stays
-  above the divider even if `--harmo-focus-outline-offset` changes.
+  above the divider even if `--harmo-focus-outline-offset` changes. So that
+  scrolling doesn't clip the ring, the strip reaches 4px past its container at
+  the top and the start, with padding to match. Set the space around it on a
+  wrapper, or add those 4px back if you change its margin there.
 - Forced colors (Windows contrast themes): the underline is drawn in the
-  system highlight color, since backgrounds are removed.
+  system highlight color, since backgrounds are removed, and the divider is a
+  border, with the underline just above it.
 
 ## Accessibility
 
@@ -100,15 +112,21 @@ The panels are the application's own; Tabs doesn't style them.
 | --- | --- |
 | `--htabs-highlight-x`, `--htabs-highlight-width`, `--htabs-highlight-opacity` on `.htabs` | As the pointer moves over the tabs |
 | `--htabs-indicator-x`, `--htabs-indicator-width` on `.htabs` | On load, resize, and a change of current tab; at once (no transition) after a key press or a resize, and a width of `0px` while no tab is current |
+| `--htabs-list-width` on `.htabs` | With the underline: the width of the `<ul>` or tablist, so the pill and underline reach every tab |
+| Scroll the strip, and only the strip, to bring the current tab to its middle | On load and on a change of current tab: at once on load, after a key press, or with reduced motion; otherwise smoothly |
 | `data-on-current` on `.htabs-highlight` | When the pill is over the current tab |
 | `data-ready` on `.htabs` | Once measured |
+
+Measure each `-x` from the left edge of the `<ul>` or tablist, whichever the
+reading direction: the pill and underline start there, and scroll with it, so
+scrolling needs no measuring.
 
 On one page it also:
 
 | Change | When |
 | --- | --- |
 | `aria-selected` and `tabindex` on the tabs, `hidden` on the panels | When a tab is chosen |
-| Focus and select the next or previous enabled tab, following the reading direction; Home and End go to the first and last enabled one | Arrow keys on a tab |
+| Focus and select the next or previous enabled tab that's shown, following the reading direction; Home and End go to the first and last such tab | Arrow keys on a tab |
 
 `examples/html/src/scripts/tabs.js` is an example script. For the playground,
 it stops links from leaving the page and moves the current tab instead; on a
@@ -121,7 +139,7 @@ For links, `<TabNav>` renders the `<nav>`, with a `<TabLink>` for each link.
 For panels, `<Tabs>` holds the selection, `<TabList>` renders the strip, and
 each `<Tab>` and its `<TabPanel>` share a `value`, from which their ids and
 connections are built. Both strips run the highlight and underline, and are
-`hidden` when there's one tab or none, so a lone panel keeps its name.
+`hidden` when one tab or none is shown, so a lone panel keeps its name.
 `<TabList>` handles the arrow keys, Home, and End. Other props are each
 element's attributes, except that a `<TabList>`'s `className` and `style` go to
 the `.htabs` wrapper, and its other props and `ref` to the `role="tablist"`

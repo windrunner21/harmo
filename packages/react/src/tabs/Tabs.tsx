@@ -9,7 +9,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { flatChildren } from "../children.ts";
+import { shownChildren } from "../children.ts";
 import { withClass } from "../withClass.ts";
 import { useTabsMotion } from "./useTabsMotion.ts";
 
@@ -73,14 +73,14 @@ export const TabList = ({
 }: TabListProps) => {
   useTabs();
   const motion = useTabsMotion<HTMLDivElement>();
-  const alone = !alwaysShow && flatChildren(children).length <= 1;
+  const alone = !alwaysShow && shownChildren(children).length <= 1;
 
   const move = (event: KeyboardEvent<HTMLDivElement>) => {
     const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
     if (!step && event.key !== "Home" && event.key !== "End") return;
     const all = Array.from(
       event.currentTarget.querySelectorAll<HTMLElement>(
-        ':scope > [role="tab"]:not(:disabled)',
+        ':scope > [role="tab"]:not(:disabled, [hidden])',
       ),
     );
     const index = all.indexOf(document.activeElement as HTMLElement);

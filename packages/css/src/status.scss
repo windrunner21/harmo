@@ -13,6 +13,10 @@
 
   color: $color-text-secondary;
 
+  &[hidden] {
+    display: none;
+  }
+
   &::before {
     content: "";
 

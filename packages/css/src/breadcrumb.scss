@@ -19,6 +19,10 @@
 
     list-style: none;
 
+    &[hidden] {
+      display: none;
+    }
+
     & > li {
       display: inline-flex;
       align-items: center;
@@ -28,6 +32,10 @@
       max-inline-size: 100%;
 
       overflow-wrap: anywhere;
+
+      &[hidden] {
+        display: none;
+      }
 
       & > a,
       & > [aria-current="page"] {
@@ -45,7 +53,8 @@
         pointer-events: none;
       }
 
-      &:first-child > .hbreadcrumb-separator {
+      // The first item still shown.
+      &:nth-child(1 of :not([hidden])) > .hbreadcrumb-separator {
         display: none;
       }
 

@@ -37,6 +37,10 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink;
     visibility 0s,
     overlay $duration-normal allow-discrete;
 
+  &[hidden] {
+    display: none;
+  }
+
   &[popover]:not(:popover-open) {
     visibility: hidden;
     opacity: 0;

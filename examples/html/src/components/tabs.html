@@ -79,6 +79,29 @@
   </div>
 </play-example>
 
+<play-example title="Many tabs" frame="22rem">
+  <play-note>
+    Tabs that don't fit stay on one line, and the strip scrolls on its own
+    while the page stays still. A script keeps the current tab in view, in the
+    middle of the strip where it can: at once on load or after a key press, and
+    with a slide after a click.
+  </play-note>
+  <nav class="htabs" aria-label="Settings">
+    <ul>
+      <li><a href="/settings/account">Account details</a></li>
+      <li><a href="/settings/hours">Business hours</a></li>
+      <li><a href="/settings/messaging">Messaging</a></li>
+      <li><a href="/settings/notifications">Notifications</a></li>
+      <li><a href="/settings/team">Team members</a></li>
+      <li><a href="/settings/billing" aria-current="page">Billing</a></li>
+      <li><a href="/settings/integrations">Integrations</a></li>
+      <li><a href="/settings/developers">Developers</a></li>
+    </ul>
+    <span class="htabs-highlight" aria-hidden="true"></span>
+    <span class="htabs-indicator" aria-hidden="true"></span>
+  </nav>
+</play-example>
+
 <play-example title="Without the script" layout="wide">
   <play-note>
     Before the script runs, or without it, the current tab shows a fixed

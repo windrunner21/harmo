@@ -338,7 +338,7 @@ export const Listbox = ({
       }}
     >
       {searchable && (
-        <div className="hlistbox-search">
+        <div className="hlistbox-search" hidden={props.hidden}>
           {searchIcon}
           <input
             ref={search}
@@ -377,9 +377,15 @@ export const Listbox = ({
         {children}
       </ul>
       {empty && emptyMessage !== undefined && (
-        <p className="hlistbox-empty">{emptyMessage}</p>
+        <p className="hlistbox-empty" hidden={props.hidden}>
+          {emptyMessage}
+        </p>
       )}
-      {footer && <div className="hlistbox-footer">{footer}</div>}
+      {footer && (
+        <div className="hlistbox-footer" hidden={props.hidden}>
+          {footer}
+        </div>
+      )}
     </ListboxContext>
   );
 };

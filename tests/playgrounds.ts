@@ -91,6 +91,20 @@ export const settled = (element: Locator, closest?: string) =>
     );
   }, closest);
 
+// Makes an element's transitions last 100 seconds, so a test sees them
+// halfway on any machine, then ends them with release.
+export const slowDown = (element: Locator) =>
+  element.evaluate((node) => ((node as HTMLElement).style.transitionDuration = "100s"));
+
+// How many animations and transitions an element is running.
+export const animations = (element: Locator) => element.evaluate((node) => node.getAnimations().length);
+
+// Finishes an element's animations and transitions.
+export const release = (element: Locator) =>
+  element.evaluate((node) => {
+    for (const animation of node.getAnimations()) animation.finish();
+  });
+
 // Moves the mouse to the middle of an element, without scrolling, once the
 // popup it's in has stopped sliding. Playwright's own hover and click scroll
 // the page first, even for an element in an open popup that's already in

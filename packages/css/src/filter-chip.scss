@@ -27,6 +27,10 @@
 
   transition: background-color $duration-fast ease;
 
+  &[hidden] {
+    display: none;
+  }
+
   // The plus: 18px at 14px text.
   & > .hicon {
     flex-shrink: 0;
@@ -71,6 +75,10 @@
   padding-inline-start: 4px;
 
   border-inline-start: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
 
   &:empty {
     display: none;

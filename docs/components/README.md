@@ -155,13 +155,12 @@ Some components are built from others, so their files need company:
   such as Tooltip's 150ms in and 100ms out or a Field error's 300ms in, are on
   their pages. Exits are always quicker than entrances. Reduced motion keeps
   the state change and drops the movement.
-- **Hiding.** `hidden` hides Banner, Meter, the password toggle and details,
-  a Field's error, and Listbox options, which style it (the details and the
-  error animate closed). It also hides the components that leave `display`
-  alone: Breadcrumb, Input, Link without an icon, Listbox, Tabs, Label,
-  Description, the Optional marker, and icons. Every other component class
-  sets its own `display`, which overrides `hidden`, so leave those out of the
-  page instead.
+- **Hiding.** `hidden` hides any component or part of one, at once, since
+  `display: none` can't animate. A Field's error and the password details are
+  the exceptions: with `hidden` they stay rendered and collapse, which is how
+  they animate closed. Popups and tooltips close through their own states
+  instead, so don't add `hidden` to one that should fade. Browsers ignore
+  `hidden` on SVG, so leave an icon out to hide it.
 - **Hover** styles apply only on devices that hover with a fine pointer.
 - **Focus rings** are `--harmo-focus-outline` (2px solid `--harmo-color-focus`),
   named after Stripe's `focusOutline`, at `--harmo-focus-outline-offset`
@@ -180,7 +179,7 @@ the React components, set:
 | --- | --- | --- |
 | `indeterminate` (property) | Checkbox | Mixed state |
 | `aria-busy`, `aria-disabled` | Button | Loading state; scripts also ignore presses while busy |
-| `--htabs-*`, `data-ready` | Tabs | Sliding hover pill and underline |
+| `--htabs-*`, `data-ready`, the strip's scroll position | Tabs | Sliding hover pill and underline; the current tab in view |
 | `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
 | `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
 | `aria-expanded` | Popup triggers, select triggers | Open ring, chevron direction |

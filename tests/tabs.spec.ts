@@ -122,6 +122,114 @@ onEachPlayground("tabs", () => {
     await expect(tabs).toHaveCSS("--htabs-highlight-opacity", "0");
   });
 
+  test("tabs that don't fit stay on one line, and only the strip scrolls", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    const heights = await container.getByRole("link").evaluateAll((links) => links.map((link) => link.getBoundingClientRect().height));
+    expect(new Set(heights).size, "tab heights").toBe(1);
+    expect(await tabs.evaluate((strip) => strip.scrollWidth > strip.clientWidth), "the strip scrolls").toBe(true);
+
+    const pageWidth = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
+    expect(pageWidth[0], "the page's width").toBeLessThanOrEqual(pageWidth[1] as number);
+  });
+
+  test("on load, the current tab is in view, and the page hasn't moved", async ({ page }) => {
+    const tabs = page.locator('[id="tabs-many-tabs"] .htabs');
+    const current = tabs.locator('[aria-current="page"]');
+    const { start, end } = await room(tabs, current);
+    expect(start, "before it").toBeGreaterThan(0);
+    expect(end, "after it").toBeGreaterThan(0);
+    await expectPlaced(tabs, "indicator", current);
+    expect(await page.evaluate(() => [window.scrollX, window.scrollY]), "the page's scroll").toEqual([0, 0]);
+  });
+
+  test("a click slides the tab to the middle of the strip, with the underline under it", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    const link = container.getByRole("link", { name: "Notifications" });
+
+    expect(await movedAtOnce(tabs, link), "moved before drawing").toBe(0);
+    await expect.poll(() => offCenter(tabs, link), "off the middle").toBeLessThan(2);
+    await settled(container.locator(".htabs-indicator"));
+    await expectUnderline(container, "Notifications");
+  });
+
+  test("a key press, or reduced motion, moves the strip at once", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    expect(await movedAtOnce(tabs, container.getByRole("link", { name: "Notifications" }), { key: true }), "after a key").toBeGreaterThan(0);
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await movedAtOnce(tabs, container.getByRole("link", { name: "Team members" })), "with reduced motion").toBeGreaterThan(0);
+  });
+
+  test("a tab's focus ring has room at both ends of the strip", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+
+    const first = container.getByRole("link", { name: "Account details" });
+    await first.click();
+    const start = await room(tabs, first);
+    expect(start.start, "before the first tab").toBeGreaterThanOrEqual(4);
+    expect(start.top, "above it").toBeGreaterThanOrEqual(4);
+    expect(start.bottom, "below it").toBeGreaterThanOrEqual(4);
+
+    const last = container.getByRole("link", { name: "Developers" });
+    await last.click();
+    // Less a fraction: a browser may round where a strip's scrolling ends.
+    expect((await room(tabs, last)).end, "after the last tab").toBeGreaterThan(3);
+  });
+
+  test("the pill stays over its tab once the strip has scrolled", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const link = container.getByRole("link", { name: "Team members" });
+    await expect.poll(() => container.locator(".htabs").evaluate((strip) => strip.scrollLeft), "scrolled on load").toBeGreaterThan(0);
+    await pointAt(page, link);
+    await expectPlaced(container.locator(".htabs"), "highlight", link);
+  });
+
+  test("right to left, a tab past the edge slides to the middle, with the underline under it", async ({ page }) => {
+    const container = await example(page, "tabs-many-tabs");
+    const tabs = container.locator(".htabs");
+    await container.locator(".play-demo").evaluate((demo) => demo.setAttribute("dir", "rtl"));
+
+    const link = container.getByRole("link", { name: "Team members" });
+    await link.evaluate((element) => (element as HTMLElement).click());
+    await expect.poll(() => offCenter(tabs, link), "off the middle").toBeLessThan(2);
+    await settled(container.locator(".htabs-indicator"));
+    await expectUnderline(container, "Team members");
+  });
+
+  test("when the tabs fit, the strip doesn't scroll, and lines up with what's around it", async ({ page }) => {
+    const container = await example(page, "tabs-tabs");
+    const tabs = container.locator(".htabs");
+    const lines = await tabs.evaluate((strip) => {
+      const box = strip.getBoundingClientRect();
+      const parent = strip.parentElement as Element;
+      const edges = parent.getBoundingClientRect();
+      const style = getComputedStyle(parent);
+      return {
+        scrolls: strip.scrollWidth > strip.clientWidth,
+        start: box.left - (edges.left + parseFloat(style.paddingLeft)),
+        end: edges.right - parseFloat(style.paddingRight) - box.right,
+        firstTab: (strip.querySelector("a") as Element).getBoundingClientRect().left - (edges.left + parseFloat(style.paddingLeft)),
+        underline: box.bottom - (strip.querySelector(".htabs-indicator") as Element).getBoundingClientRect().bottom,
+      };
+    });
+    expect(lines).toEqual({ scrolls: false, start: -4, end: 0, firstTab: 0, underline: 0 });
+  });
+
+  test("in forced colors, the divider is a border, with the underline above it", async ({ page }) => {
+    const container = await example(page, "tabs-tabs");
+    const tabs = container.locator(".htabs");
+    await page.emulateMedia({ forcedColors: "active" });
+    await expect(tabs).toHaveCSS("border-block-end-style", "solid");
+    await expect(tabs).toHaveCSS("background-image", "none");
+    await expect(container.locator(".htabs-indicator")).toHaveCSS("bottom", "-4px");
+  });
+
   test("right to left, the underline sits under the current link", async ({ page }) => {
     const container = await example(page, "tabs-right-to-left");
     await expectPlaced(container.locator(".htabs"), "indicator", container.locator('[aria-current="page"]'));
@@ -156,7 +264,8 @@ const expectUnderline = (container: Locator, name: string) =>
   );
 
 // The pill or underline over an item: the --htabs-* position and width the
-// script sets, measured from the bar's left edge, within a pixel. Both are
+// script sets, measured from the part's own left edge, like its clip, within a
+// pixel, and inside the part, which draws nothing outside itself. Both are
 // measured each time, in case layout is still settling.
 const expectPlaced = async (tabs: Locator, part: "highlight" | "indicator", item: Locator) => {
   const target = await item.elementHandle();
@@ -166,14 +275,50 @@ const expectPlaced = async (tabs: Locator, part: "highlight" | "indicator", item
         (root, [part, target]) => {
           const style = getComputedStyle(root);
           const box = (target as Element).getBoundingClientRect();
-          const left = box.left - root.getBoundingClientRect().left - root.clientLeft;
-          return Math.max(
-            Math.abs(parseFloat(style.getPropertyValue(`--htabs-${part}-x`)) - left),
-            Math.abs(parseFloat(style.getPropertyValue(`--htabs-${part}-width`)) - box.width),
-          );
+          const own = (root.querySelector(`.htabs-${part}`) as Element).getBoundingClientRect();
+          const x = parseFloat(style.getPropertyValue(`--htabs-${part}-x`));
+          const width = parseFloat(style.getPropertyValue(`--htabs-${part}-width`));
+          return Math.max(Math.abs(x - (box.left - own.left)), Math.abs(width - box.width), x + width - own.width);
         },
         [part, target] as const,
       ),
     )
     .toBeLessThan(1);
 };
+
+// How far a tab's middle is from the strip's.
+const offCenter = async (tabs: Locator, item: Locator) =>
+  tabs.evaluate((strip, element) => {
+    const box = element.getBoundingClientRect();
+    const { left, width } = strip.getBoundingClientRect();
+    return Math.abs(box.left + box.width / 2 - (left + width / 2));
+  }, await item.elementHandle());
+
+// A tab's distance from each of the strip's edges, negative where it's cut off.
+const room = async (tabs: Locator, item: Locator) =>
+  tabs.evaluate((strip, element) => {
+    const box = element.getBoundingClientRect();
+    const edges = strip.getBoundingClientRect();
+    return {
+      start: box.left - edges.left,
+      end: edges.right - box.right,
+      top: box.top - edges.top,
+      bottom: edges.bottom - box.bottom,
+    };
+  }, await item.elementHandle());
+
+// Clicks a link from the page's script, then says how far the strip had moved
+// before the browser could draw: nothing if it's sliding. A key press first, if
+// asked, as that makes the next move immediate.
+const movedAtOnce = async (tabs: Locator, item: Locator, { key = false } = {}) =>
+  tabs.evaluate(
+    async (strip, [element, key]) => {
+      const before = strip.scrollLeft;
+      if (key) element.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true }));
+      (element as HTMLElement).click();
+      // React updates the page straight after the event.
+      await Promise.resolve();
+      return Math.abs(strip.scrollLeft - before);
+    },
+    [await item.elementHandle(), key] as const,
+  );

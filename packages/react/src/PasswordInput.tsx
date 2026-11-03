@@ -50,6 +50,7 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
     value,
     defaultValue,
     onChange,
+    hidden,
     ...props
   } = passwordProps;
   const id = useId();
@@ -78,6 +79,7 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
       optional={optional}
       labelAccessory={word}
       description={description}
+      hidden={hidden}
       {...("error" in passwordProps && { error })}
     >
       <div className="hpassword">

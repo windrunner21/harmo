@@ -1,9 +1,11 @@
 // Example only: what the React TabNav and Tabs do. The script measures
-// the tabs so the hover pill and underline slide. Links move the current tab
-// here instead of leaving the page; in a tablist, choosing a tab selects it
-// and shows its panel, and the arrow keys, Home, and End move between tabs.
+// the tabs so the hover pill and underline slide, and keeps the current tab in
+// view when they don't all fit. Links move the current tab here instead of
+// leaving the page; in a tablist, choosing a tab selects it and shows its
+// panel, and the arrow keys, Home, and End move between tabs.
 {
   const canHover = matchMedia("(hover: hover) and (pointer: fine)");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   // Each Tabs' underline: a read of the current tab's box, which returns the
   // write that places the underline there, and a way to make the next
   // placement immediate.
@@ -26,8 +28,17 @@
 
     const measure = (item) => {
       const box = item.getBoundingClientRect();
-      const left = box.left - tabs.getBoundingClientRect().left - tabs.clientLeft;
-      return { x: `${left}px`, width: `${box.width}px` };
+      return { x: `${box.left - list.getBoundingClientRect().left}px`, width: `${box.width}px` };
+    };
+    // Moves a tab to the middle of the strip, or as near as the strip scrolls.
+    // Only the strip moves; scrollIntoView could move the page too.
+    const reveal = (item, atOnce) => {
+      const box = item.getBoundingClientRect();
+      const strip = tabs.getBoundingClientRect();
+      tabs.scrollBy({
+        left: box.left + box.width / 2 - (strip.left + strip.width / 2),
+        behavior: atOnce || reducedMotion.matches ? "instant" : "smooth",
+      });
     };
     // A key press places the underline at once; the pointer slides it. With
     // no current tab, the underline shrinks away.
@@ -37,9 +48,11 @@
     const readIndicator = () => {
       const item = current();
       const box = item && measure(item);
+      const listWidth = list.getBoundingClientRect().width;
       const jump = instant;
       instant = false;
       return () => {
+        tabs.style.setProperty("--htabs-list-width", `${listWidth}px`);
         if (jump) indicator.style.transition = "none";
         if (box) tabs.style.setProperty("--htabs-indicator-x", box.x);
         tabs.style.setProperty("--htabs-indicator-width", box ? box.width : "0px");
@@ -64,6 +77,7 @@
         current()?.removeAttribute("aria-current");
         item.setAttribute("aria-current", "page");
       }
+      reveal(item, instant);
       placeIndicator();
     };
 
@@ -99,7 +113,7 @@
       list.addEventListener("keydown", (event) => {
         const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
         if (!step && event.key !== "Home" && event.key !== "End") return;
-        const all = items().filter((tab) => !tab.disabled);
+        const all = items().filter((tab) => !tab.disabled && !tab.hidden);
         const index = all.indexOf(document.activeElement);
         if (index < 0) return;
         let next;
@@ -115,6 +129,7 @@
       });
     }
 
+    if (current()) reveal(current(), true);
     placeIndicator();
     tabs.setAttribute("data-ready", "");
     // Their whole boxes, so a change of padding counts as well as of text.

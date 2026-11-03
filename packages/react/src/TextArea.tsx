@@ -34,7 +34,7 @@ export const TextArea = ({
         className={withClass("htextarea", className)}
       />
       {counted && (
-        <p className="htextarea-counter" id={counterId}>
+        <p className="htextarea-counter" id={counterId} hidden={props.hidden}>
           {current.value.length}/{props.maxLength}
         </p>
       )}

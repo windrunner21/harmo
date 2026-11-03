@@ -11,6 +11,10 @@ it does what the HTML example's script does. Harmo tests the two separately.
 HTML and compares it with the HTML example of the same title. A difference
 fails the test with a line-by-line diff.
 
+`examples/react/test/hidden.test.tsx` renders the components whose other props
+go to an element inside, such as PasswordInput's to its input, and checks that
+`hidden` still reaches the whole component. No example shows that.
+
 ```sh
 mise run test:react
 ```
@@ -120,14 +124,15 @@ mise run test:browser    # builds both playgrounds, then tests them in Chromium
   the page.
 
 The other files test one component each, from the "What a script does"
-table on its page in `docs/components`:
+table on its page in `docs/components`, except `hidden.spec.ts`, which tests
+what every component does:
 
 | File | Tests |
 | --- | --- |
 | `listbox.spec.ts` | Focus and the highlight on opening; the arrow keys, Home, and End; type-ahead with one letter, several, and a pause; Enter, Space, and clicks choosing, and a single-select closing; disabled options; the pointer; the highlight scrolling into view; titles on truncated options, as the window resizes; search, groups it empties, the empty message, and Enter with no match; reopening after a search, on the side the whole list fits |
 | `select.spec.ts` | Focus staying on the trigger; the keys that open it, and keys sent straight after, even in one task; the value text, the placeholder, and the hidden inputs; Space not reopening it; Tab closing it; disabling and enabling it; a form's submit and reset, list included |
 | `filter-chip.spec.ts` | The values, then a count; the values in the chip's name; Clear filters; a single choice closing; the text filter's Enter and Apply |
-| `tabs.spec.ts` | Selecting with clicks and keys, wrapping, right to left, and skipping a disabled tab, with each tab's own panel; Tab into the panel; the underline sliding on a click and moving at once on a key or a resize, and with no width when no tab is current; links; the pill; right-to-left placement |
+| `tabs.spec.ts` | Selecting with clicks and keys, wrapping, right to left, and skipping a disabled tab, with each tab's own panel; Tab into the panel; the underline sliding on a click and moving at once on a key or a resize, and with no width when no tab is current; links; the pill; right-to-left placement; tabs that don't fit staying on one line, with only the strip scrolling; the current tab in view on load, sliding to the middle on a click, and moving at once on a key or with reduced motion; room for the focus ring at both ends; lining up with what's around it when the tabs fit; the divider in forced colors |
 | `popup.spec.ts` | `aria-expanded` with the trigger, Escape (focus returning), and a click outside; 8px below, aligned to the start, and at least as wide; above without room below; the other edge without room at the end; each opening starting fresh, even after being squeezed while closed; closing in place, sliding back toward its trigger |
 | `tooltip.spec.ts` | Naming and describing; the delay on hover and none on keyboard focus; no delay right after another closes, until a pause; the pointer moving onto it; Escape until the pointer or focus leaves; an unavailable action; 8px from each side; escaping a clipping container |
 | `field.spec.ts` | A validation error showing, marking the control, and describing it; its text kept while it closes, then cleared; shown again while it closes |
@@ -135,6 +140,7 @@ table on its page in `docs/components`:
 | `textarea.spec.ts` | The counter counting toward `maxlength`, and describing the textarea |
 | `button.spec.ts` | Loading: busy, a spinner, focus kept; a press while loading ignored |
 | `banner.spec.ts` | A hidden banner staying hidden, then showing as an alert |
+| `hidden.spec.ts` | `hidden` hiding every part of every example, on each page; the password details and Field's error still animating closed; Settings rows and Breadcrumb items taking the first or last one's look, and the arrow keys skipping a tab, when one is hidden |
 | `checkbox.spec.ts` | The mixed state, until it's checked |
 | `expand-chevron.spec.ts` | Each stroke and the head folding with `aria-expanded`, and back |
 
@@ -235,3 +241,8 @@ engine only on macOS.
   until its version changes. Each job keeps its report,
   `playwright-report-<browser>`, as an artifact; its traces open with
   `bunx playwright show-trace`.
+
+Local runs use a quarter of the CPU's cores for workers, so the computer stays
+usable during a run. Each worker runs a whole browser, so Playwright's default
+of half the cores kept a 16-core machine about 95% busy. For a faster run, add
+`--workers=8`. CI's runners do nothing else, so they keep the default.

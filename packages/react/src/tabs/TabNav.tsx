@@ -1,7 +1,7 @@
 "use client";
 
 import { useImperativeHandle, type ComponentPropsWithRef } from "react";
-import { flatChildren } from "../children.ts";
+import { shownChildren } from "../children.ts";
 import { useLinkComponent } from "../HarmoProvider.tsx";
 import { withClass } from "../withClass.ts";
 import { useTabsMotion } from "./useTabsMotion.ts";
@@ -20,7 +20,7 @@ export const TabNav = ({
 }: TabNavProps) => {
   const motion = useTabsMotion<HTMLElement>();
   useImperativeHandle(ref, () => motion.ref.current as HTMLElement, []);
-  const alone = !alwaysShow && flatChildren(children).length <= 1;
+  const alone = !alwaysShow && shownChildren(children).length <= 1;
 
   return (
     <nav
@@ -46,11 +46,11 @@ export interface TabLinkProps extends ComponentPropsWithRef<"a"> {
   current?: boolean;
 }
 
-export const TabLink = ({ current, ...props }: TabLinkProps) => {
+export const TabLink = ({ current, hidden, ...props }: TabLinkProps) => {
   const Anchor = useLinkComponent();
 
   return (
-    <li>
+    <li hidden={hidden}>
       <Anchor {...props} aria-current={current ? "page" : undefined} />
     </li>
   );

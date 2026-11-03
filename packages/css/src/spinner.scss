@@ -24,6 +24,10 @@
 
   animation: var(--hspinner-motion), var(--hspinner-appear);
 
+  &[hidden] {
+    display: none;
+  }
+
   &[data-size="small"] {
     --hspinner-size: 1rem;
   }

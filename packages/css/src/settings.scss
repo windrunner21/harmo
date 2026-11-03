@@ -5,6 +5,10 @@
   flex-direction: column;
 
   font-family: $font-family;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 .hsetting {
@@ -17,11 +21,16 @@
 
   border-block-end: 1px solid $color-border;
 
-  &:first-child {
+  &[hidden] {
+    display: none;
+  }
+
+  // The first and last ones still shown.
+  &:nth-child(1 of :not([hidden])) {
     padding-block-start: 0;
   }
 
-  &:last-child {
+  &:nth-last-child(1 of :not([hidden])) {
     padding-block-end: 0;
 
     border-block-end: none;
@@ -47,6 +56,10 @@
   gap: 4px;
 
   min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
 
   // A control that fills its container sits under the description and spans
   // the text; compact ones stay on the right.

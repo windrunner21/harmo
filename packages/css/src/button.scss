@@ -39,6 +39,10 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-color $button-duration ease,
     transform $button-duration $ease-out-quad;
 
+  &[hidden] {
+    display: none;
+  }
+
   & > .hicon {
     flex-shrink: 0;
   }

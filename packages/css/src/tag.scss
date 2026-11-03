@@ -21,6 +21,10 @@
   border: 1px solid $color-border;
   border-radius: $border-radius-sm;
 
+  &[hidden] {
+    display: none;
+  }
+
   &:has(> .htag-dot) {
     border-color: var(--htag-color, #{$color-border});
   }

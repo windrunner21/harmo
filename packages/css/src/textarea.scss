@@ -19,6 +19,10 @@
 
   resize: vertical;
 
+  &[hidden] {
+    display: none;
+  }
+
   // Grows to 150px until the user drags its corner, which sets an inline
   // height; then it can reach the maximum. "height" must start the style or
   // follow a space or semicolon, so line-height and custom properties don't

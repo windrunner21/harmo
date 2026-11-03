@@ -40,7 +40,8 @@ A navigation trail ending at the current page. For a single link back, use a
 
 - 14px medium text that wraps onto more lines when space runs out; a long item
   wraps within itself.
-- A separator in the first item is hidden.
+- A separator in the first item is hidden; with `hidden` on a `<li>`, in the
+  first one still shown.
 - Separators are `1.125em` in `--harmo-color-text-secondary`, with
   `--harmo-icon-gap` (6px) between them and the text. In right-to-left text
   they point left.
@@ -63,7 +64,8 @@ None.
 `<Breadcrumb>` renders this markup from its children, one item each, in
 order: it adds the separators and marks the last item as the current page.
 Name it with `aria-label`, which is required, such as "Breadcrumb". Other
-props are the `<nav>`'s attributes.
+props are the `<nav>`'s attributes. To hide an item, leave it out: `hidden` on
+a child would leave its separator behind.
 
 ```tsx
 <Breadcrumb aria-label="Breadcrumb">

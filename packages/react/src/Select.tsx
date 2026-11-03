@@ -45,8 +45,8 @@ type SelectField =
 export type SelectProps = SelectControlProps & SelectField;
 
 export const Select = (selectProps: SelectProps) => {
-  const { label, optional, description, error, ...props } = selectProps;
-  if (label === undefined) return <SelectControl {...props} />;
+  const { label, optional, description, error, hidden, ...props } = selectProps;
+  if (label === undefined) return <SelectControl {...props} hidden={hidden} />;
 
   return (
     <Field
@@ -54,6 +54,7 @@ export const Select = (selectProps: SelectProps) => {
       control="button"
       optional={optional}
       description={description}
+      hidden={hidden}
       {...("error" in selectProps && { error })}
     >
       <SelectControl {...props} />

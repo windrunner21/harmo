@@ -188,6 +188,10 @@
 
   cursor: default;
 
+  &[hidden] {
+    display: none;
+  }
+
   // The divider goes above every group but the first one still shown.
   .hoption-group:where(:not(:nth-child(1 of :not([hidden])))) > & {
     margin-block-start: 8px;
@@ -210,6 +214,10 @@
   color: $color-text;
   background-color: $color-background;
   border-block-end: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
 
   & > .hicon {
     flex-shrink: 0;
@@ -256,6 +264,10 @@
   padding: 4px;
 
   border-block-start: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
 
   & > .hbutton {
     flex: 1;

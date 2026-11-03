@@ -11,14 +11,56 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
   --htabs-highlight-opacity: 0;
   --htabs-indicator-x: 0px;
   --htabs-indicator-width: 0px;
+  --htabs-list-width: 100%;
 
   position: relative;
 
-  padding-block-end: 4px;
+  // The tabs stay on one line at their full width, and scroll inside the strip
+  // when they don't fit. The column can shrink to nothing, so a flex or grid
+  // parent that sizes to its content doesn't widen for them and push the page
+  // sideways.
+  display: grid;
+  grid-template-columns: minmax(0, max-content);
+
+  // Room for a tab's focus ring, which scrolling would clip, without moving
+  // the tabs. The list has the room at its end: a negative margin there can
+  // make the page scroll sideways.
+  margin-block-start: -4px;
+  margin-inline-start: -4px;
+  padding-block: 4px 5px;
+  padding-inline-start: 4px;
+  overflow: auto hidden;
 
   font-family: $font-family;
 
-  border-block-end: 1px solid $color-border;
+  // The divider. Scrolling would clip the underline off a border; a background
+  // stays put as the tabs move over it.
+  background: linear-gradient($color-border, $color-border) right bottom /
+    calc(100% - 4px) 1px no-repeat;
+
+  scrollbar-width: none;
+
+  overscroll-behavior-x: contain;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:dir(rtl) {
+    background-position: left bottom;
+  }
+
+  // Backgrounds are removed, so the divider goes back to a border.
+  @media (forced-colors: active) {
+    padding-block-end: 4px;
+
+    background: none;
+    border-block-end: 1px solid $color-border;
+  }
 
   & > ul,
   & > [role="tablist"] {
@@ -28,11 +70,16 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
     display: flex;
     gap: 16px;
 
-    inline-size: fit-content;
+    inline-size: max-content;
     margin: 0;
     padding: 0;
+    padding-inline-end: 4px;
 
     list-style: none;
+
+    &[hidden] {
+      display: none;
+    }
   }
 
   & > ul > li > a,
@@ -49,6 +96,7 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
     font-weight: $font-weight-medium;
     line-height: $font-line-height;
     text-decoration: none;
+    white-space: nowrap;
 
     color: $color-text-secondary;
     background-color: transparent;
@@ -56,6 +104,10 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
     border-radius: $border-radius-sm;
 
     cursor: pointer;
+
+    &[hidden] {
+      display: none;
+    }
 
     &#{$current} {
       color: $color-primary;
@@ -98,6 +150,8 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
       border-radius: 1px;
 
       @media (forced-colors: active) {
+        bottom: -4px;
+
         background-color: Highlight;
 
         forced-color-adjust: none;
@@ -106,14 +160,17 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
   }
 }
 
-// The pill and underline span the whole bar and are clipped to one tab, so
-// sliding and resizing animate a single property that needs no layout, and
-// the corners stay round. The script measures --htabs-*-x from the bar's
-// left edge, like the clip.
+// The pill and underline are as wide as the list, scrolling with it, and are
+// clipped to one tab, so sliding and resizing animate a single property that
+// needs no layout, and the corners stay round. The script measures
+// --htabs-*-x from the list's left edge, which is theirs, like the clip.
 .htabs-highlight,
 .htabs-indicator {
   position: absolute;
-  inset-inline: 0;
+  grid-area: 1 / 1 / 2 / 2;
+  inset-inline-start: 0;
+
+  inline-size: var(--htabs-list-width);
 
   pointer-events: none;
 
@@ -132,8 +189,7 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
 }
 
 .htabs-highlight {
-  top: 0;
-  bottom: 4px;
+  inset-block: 0;
 
   background-color: $color-background-hover;
   opacity: var(--htabs-highlight-opacity);
@@ -148,7 +204,7 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
 }
 
 .htabs-indicator {
-  bottom: -1px;
+  bottom: -5px;
 
   height: 2px;
 
@@ -159,6 +215,8 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
   );
 
   @media (forced-colors: active) {
+    bottom: -4px;
+
     background-color: Highlight;
 
     forced-color-adjust: none;
