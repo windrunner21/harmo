@@ -11,7 +11,7 @@ const reactSource = join(root, "..", "react", "src");
 const cssSource = join(root, "..", "css", "dist");
 const registry = join(root, "registry");
 
-// Each component is a folder of its own in the copy, named as harmo add names it,
+// Each component is a folder of its own in the copy, named as harmo-ui add names it,
 // with a stylesheet of the same name beside its code.
 const components: Record<string, string[]> = {
   avatar: ["Avatar.tsx"],
@@ -61,7 +61,7 @@ const alsoStyledBy: Record<string, string[]> = {
   breadcrumb: ["chevron"],
 };
 
-// What harmo list says about a component, from the index of the docs. These have
+// What harmo-ui list says about a component, from the index of the docs. These have
 // no page of their own there.
 const descriptions = new Map<string, string>([
   ["chevron", "a static chevron icon, for buttons and links"],

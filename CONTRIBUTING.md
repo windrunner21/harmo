@@ -129,7 +129,7 @@ stay in step:
 
 ## Releasing
 
-`@harmo-ui/css`, `@harmo-ui/react`, and `harmo` are released together, at the same
+`@harmo-ui/css`, `@harmo-ui/react`, and `harmo-ui` are released together, at the same
 version, so the CLI copies the code of the packages with its version.
 
 1. Set the version in the three `package.json` files, then run `bun install`.

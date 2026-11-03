@@ -59,11 +59,11 @@ CDN as below.
 **Copy it,** and make it yours:
 
 ```sh
-npx harmo add tabs
+npx harmo-ui add tabs
 ```
 
-[`harmo`](https://www.npmjs.com/package/harmo) copies a component, its styles, and
-what it needs into your project, so you can change anything. Copied files don't
+[`harmo-ui`](https://www.npmjs.com/package/harmo-ui) copies a component, its styles,
+and what it needs into your project, so you can change anything. Copied files don't
 get updates on their own.
 
 ## Quick start

@@ -1,4 +1,4 @@
-# harmo
+# harmo-ui
 
 Copy the components of [Harmo](https://github.com/windrunner21/harmo), a CSS-first
 UI library for dashboards and applications, into your project, with their styles,
@@ -9,7 +9,7 @@ and make them yours.
 From your project's root:
 
 ```sh
-npx harmo add tabs
+npx harmo-ui add tabs
 ```
 
 That copies Tabs, its styles, and whatever it needs:
@@ -28,7 +28,7 @@ src/components/harmo/
 ```
 
 Import `harmo.css` once, in your root layout or entry file. It lists the tokens and
-each component's styles, and `harmo add` keeps it up to date. Then use the
+each component's styles, and `npx harmo-ui add` keeps it up to date. Then use the
 component:
 
 ```tsx
@@ -46,9 +46,9 @@ The files are yours to change, and only React is left to depend on. They need Re
 
 | Command | Effect |
 | --- | --- |
-| `harmo add <component...>` | Copies components, with their styles and what they need |
-| `harmo add --all` | Copies every component |
-| `harmo list` | Lists the components |
+| `npx harmo-ui add <component...>` | Copies components, with their styles and what they need |
+| `npx harmo-ui add --all` | Copies every component |
+| `npx harmo-ui list` | Lists the components |
 
 | Option for `add` | Effect |
 | --- | --- |
@@ -59,7 +59,7 @@ The files are yours to change, and only React is left to depend on. They need Re
 ## Updates
 
 Copied files don't update on their own, so they don't get Harmo's fixes either.
-To take a newer version, run `npx harmo@latest add <component>`. It never replaces a
+To take a newer version, run `npx harmo-ui@latest add <component>`. It never replaces a
 file you've changed without asking, and files it can't ask about stay as they are.
 
 For updates through your package manager instead, install the packages:

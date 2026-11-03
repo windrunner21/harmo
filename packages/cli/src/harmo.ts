@@ -8,9 +8,9 @@ import { parseArgs } from "node:util";
 const usage = `Copy Harmo's components and styles into your project, and make them yours.
 
 Usage:
-  harmo add <component...>   Copy components, with their styles and what they need
-  harmo add --all            Copy every component
-  harmo list                 List the components
+  npx harmo-ui add <component...>   Copy components, with their styles and what they need
+  npx harmo-ui add --all            Copy every component
+  npx harmo-ui list                 List the components
 
 Options for add:
   -p, --path <folder>   Where to copy them. By default components/harmo, or
@@ -46,7 +46,7 @@ const plural = (count: number, noun: string) =>
 
 // harmo.css, which a project imports once: the tokens first, then each component,
 // in the order of the full bundle. Only adds imports, so anything else in it stays.
-const stylesHeader = `/* Harmo's styles. Import this file once. harmo add keeps this list up to date. */`;
+const stylesHeader = `/* Harmo's styles. Import this file once. harmo-ui add keeps this list up to date. */`;
 const styleOrder = (path: string) => {
   const folder = path.split("/")[0] as string;
   return [
@@ -112,19 +112,19 @@ const add = async (
   const manifestPath = join(project, "package.json");
   if (!existsSync(manifestPath))
     fail(
-      "There's no package.json here. Run harmo add from your project's root.",
+      "There's no package.json here. Run this from your project's root.",
     );
 
   const available = listings().map(({ name }) => name);
   const requested = options.all ? available : [...new Set(names)];
   if (requested.length === 0)
     fail(
-      "Name a component to add, such as harmo add button. harmo list shows them all.",
+      "Name a component to add, such as npx harmo-ui add button. npx harmo-ui list shows them all.",
     );
   const unknown = requested.filter((name) => !available.includes(name));
   if (unknown.length > 0)
     fail(
-      `There's no component called ${unknown.join(", ")}. harmo list shows them all.`,
+      `There's no component called ${unknown.join(", ")}. npx harmo-ui list shows them all.`,
     );
 
   const folder =
