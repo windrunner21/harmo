@@ -44,6 +44,12 @@ description = "Recompile the React package's ES modules on change"
 dir = "{{config_root}}/packages/react"
 run = "bunx tsc -p tsconfig.esm.json --watch --preserveWatchOutput"
 
+[tasks."build:cli"]
+description = "Build the CLI: the components it copies into packages/cli/registry, and its code into packages/cli/dist"
+depends = ["build:css"]
+dir = "{{config_root}}/packages/cli"
+run = ["rm -rf dist registry", "bun build-registry.ts", "bunx tsc -p tsconfig.build.json"]
+
 [tasks."build:playground"]
 description = "Build the HTML playground into examples/html/dist"
 depends = ["build:css"]
@@ -69,6 +75,12 @@ depends = ["build:react"]
 dir = "{{config_root}}/examples/react"
 run = "bun test"
 
+[tasks."test:cli"]
+description = "Test the CLI: what it copies, and that the copies type-check"
+depends = ["build:cli"]
+dir = "{{config_root}}/packages/cli"
+run = "bun test"
+
 [tasks."test:browser"]
 description = "Build both playgrounds, then test them in Chromium"
 # CI runs every browser the config lists: bunx playwright test.
@@ -85,12 +97,13 @@ depends = ["build:playground", "build:react-playground"]
 run = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp -v "{{config_root}}:{{config_root}}" -w "{{config_root}}/tests" mcr.microsoft.com/playwright:v1.64.1-noble npx playwright test'
 
 [tasks."check:react"]
-description = "Type-check the React package, the React playground, and the browser tests"
+description = "Type-check the React package, the React playground, the CLI, and the browser tests"
 # bun check, Bun's built-in type checker, needs Bun 1.4.3 or later. The
 # playground imports the package's compiled types, as an app would.
 depends = ["build:react"]
 run = [
   "cd packages/react && bun check",
   "cd examples/react && bun check",
+  "cd packages/cli && bun check",
   "cd tests && bun check",
 ]

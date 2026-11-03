@@ -1,0 +1,44 @@
+{
+       "name": "harmo",
+       "version": "0.1.1",
+       "description": "Copy Harmo's components and styles into your project, and make them yours.",
+       "license": "MIT",
+       "author": "Imran Hajiyev",
+       "homepage": "https://github.com/windrunner21/harmo#readme",
+       "repository": {
+              "type": "git",
+              "url": "git+https://github.com/windrunner21/harmo.git",
+              "directory": "packages/cli"
+       },
+       "bugs": "https://github.com/windrunner21/harmo/issues",
+       "keywords": [
+              "cli",
+              "react",
+              "ui",
+              "components",
+              "design-system"
+       ],
+       "type": "module",
+       "bin": {
+              "harmo": "dist/harmo.js"
+       },
+       "files": [
+              "dist",
+              "registry"
+       ],
+       "engines": {
+              "node": ">=20"
+       },
+       "scripts": {
+              "prepack": "mise run build:cli"
+       },
+       "devDependencies": {
+              "@types/bun": "1.4.4",
+              "@types/node": "26.6.6",
+              "@types/react": "^19",
+              "@types/react-dom": "^19",
+              "react": "19.3.0",
+              "react-dom": "19.3.0",
+              "typescript": "^5"
+       }
+}

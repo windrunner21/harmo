@@ -3,6 +3,8 @@ dist/
 coverage/
 test-results/
 playwright-report/
+packages/cli/registry/
+packages/cli/test-output/
 mise.local.toml
 .DS_Store
 

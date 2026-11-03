@@ -42,13 +42,29 @@ The principles behind these choices are in
 
 ## Installation
 
+There are two ways to use Harmo in a project. Choose one.
+
+**Install it,** and get updates through your package manager:
+
 ```sh
 bun add @harmo-ui/css @harmo-ui/react
 # or: npm install @harmo-ui/css @harmo-ui/react
 ```
 
-`@harmo-ui/react` needs React 19.3 or later. For HTML and CSS alone, install only
-`@harmo-ui/css`, or load it from a CDN as below.
+[`@harmo-ui/react`](https://www.npmjs.com/package/@harmo-ui/react) needs React 19.3
+or later. For HTML and CSS alone, install only
+[`@harmo-ui/css`](https://www.npmjs.com/package/@harmo-ui/css), or load it from a
+CDN as below.
+
+**Copy it,** and make it yours:
+
+```sh
+npx harmo add tabs
+```
+
+[`harmo`](https://www.npmjs.com/package/harmo) copies a component, its styles, and
+what it needs into your project, so you can change anything. Copied files don't
+get updates on their own.
 
 ## Quick start
 

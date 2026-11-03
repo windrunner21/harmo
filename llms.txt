@@ -1,6 +1,6 @@
 # Harmo
 
-> A CSS-first UI library for dashboards and applications: native HTML elements styled by `.h<name>` classes, with variants and states as attributes and theming through `--harmo-*` custom properties. Use it as HTML and CSS, or through the React components in `@harmo-ui/react`, which render the same markup; each component page's React section lists their props. Neither package is on npm yet.
+> A CSS-first UI library for dashboards and applications: native HTML elements styled by `.h<name>` classes, with variants and states as attributes and theming through `--harmo-*` custom properties. Use it as HTML and CSS, or through the React components in `@harmo-ui/react`, which render the same markup; each component page's React section lists their props. Both `@harmo-ui/css` and `@harmo-ui/react` are on npm.
 
 Rules for writing Harmo markup:
 
@@ -11,6 +11,8 @@ Rules for writing Harmo markup:
 - The CSS ships no script. Where a Contract's Script row says "Required", HTML without React must keep the listed attributes current itself: Select, Listbox, Popup, Filter chip, Meter, Password input, Tabs with panels, and Tooltip (Escape must hide it). The example scripts in `examples/html/src/scripts` show how; the React components do it for you.
 - In a form, a Select's trigger is a button and sends nothing: give it `data-name`, give each option a `data-value`, and keep one hidden input per chosen value. A single select with nothing chosen keeps one hidden input with an empty value; a multi-select with nothing chosen has none. Disable the inputs with the trigger.
 - Theme by overriding `--harmo-*` tokens on `:root` or a containing element, not by restyling classes. On a containing element, also redeclare tokens built from the ones you change, such as `--harmo-focus-outline`.
+
+To copy components into a project instead of installing them, run `npx harmo add <component>`. It copies each one to `components/harmo/<component>/`, or `src/components/harmo/<component>/` with a `src` folder, with its styles and what it needs; import `harmo.css` from that folder once. `npx harmo list` lists the components. Copied components import from those files, not `@harmo-ui/react`; everything else below applies to them too.
 
 Rules for using the React components (`@harmo-ui/react`):
 

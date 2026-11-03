@@ -253,3 +253,18 @@ Local runs use a quarter of the CPU's cores for workers, so the computer stays
 usable during a run. Each worker runs a whole browser, so Playwright's default
 of half the cores kept a 16-core machine about 95% busy. For a faster run, add
 `--workers=8`. CI's runners do nothing else, so they keep the default.
+
+## 3. The CLI
+
+```sh
+mise run test:cli
+```
+
+`packages/cli/test/harmo.test.ts` runs the built CLI in Node, as `npx` would, in
+throwaway projects inside `packages/cli/test-output`, so their copies find that
+package's React and TypeScript. It checks, for every component, that each copied
+file's imports point to copied files and that each `.h*` class it uses has styles
+in the copied CSS; then that `--all` type-checks under a default Next.js setup. It
+also covers the folders, `harmo.css`, the overwrite rules, `--dry-run`, and the
+errors. It can't answer the CLI's question about a changed file, which needs a
+terminal, so try that by hand after changing it.

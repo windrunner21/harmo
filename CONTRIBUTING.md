@@ -39,6 +39,8 @@ Consumers of the compiled CSS need none of this.
 ```text
 packages/css/          @harmo-ui/css: SCSS in src/, compiled to dist/
 packages/react/        @harmo-ui/react: TypeScript in src/, compiled to dist/esm and dist/cjs
+packages/cli/          harmo: the CLI that copies components into a project, and the
+                       script that builds what it copies
 examples/catalog.ts    the playgrounds' table of contents
 examples/playground.ts builds the pages of both playgrounds
 examples/html/         the HTML playground: the examples (the contract), example
@@ -65,12 +67,14 @@ mise run build:css                # clean build: packages/css/src -> packages/cs
 mise run watch:css                # rebuild on change while working on examples
 mise run build:react              # clean build: packages/react/src -> packages/react/dist, as ES modules and CommonJS
 mise run watch:react              # recompile the ES modules on change while working on the React playground
+mise run build:cli                # build the CSS, then what the CLI copies, and the CLI itself
 mise run build:playground         # build the CSS, then the HTML playground into examples/html/dist
 mise run watch:playground         # rebuild the HTML playground on change (run watch:css alongside)
 mise run build:react-playground   # build the CSS and React, then the React playground into examples/react/dist
 mise run watch:react-playground   # rebuild the React playground on change (run watch:css and watch:react alongside)
-mise run check:react              # type-check the React package, the React playground, and the tests
+mise run check:react              # type-check the React package, the React playground, the CLI, and the tests
 mise run test:react               # compare the React examples' markup with the HTML examples, and check the compiled package
+mise run test:cli                 # test what the CLI copies, and that the copies type-check
 mise run test:browser             # build both playgrounds, then test them in Chromium
 mise run test:browser:all         # the same in Chromium, Firefox, and WebKit, in Docker
 ```
@@ -114,7 +118,8 @@ stay in step:
    the tables in that README, the README's component table, and
    [llms.txt](llms.txt).
 4. **React:** the component in `packages/react/src`, exported from
-   `src/index.ts`.
+   `src/index.ts`, and its entry in `packages/cli/build-registry.ts`, whose build
+   fails until every source file has a place in the copy.
 5. **React examples:** `examples/react/src/components/<slug>.tsx`, listed in
    `examples/react/src/examples.ts`, until `mise run test:react` shows no
    failure and no to-do for it.
@@ -124,19 +129,20 @@ stay in step:
 
 ## Releasing
 
-`@harmo-ui/css` and `@harmo-ui/react` are released together, at the same version.
+`@harmo-ui/css`, `@harmo-ui/react`, and `harmo` are released together, at the same
+version, so the CLI copies the code of the packages with its version.
 
-1. Set the version in both `package.json` files, then run `bun install`.
-2. Run `mise run check:react`, `mise run test:react`, and
+1. Set the version in the three `package.json` files, then run `bun install`.
+2. Run `mise run check:react`, `mise run test:react`, `mise run test:cli`, and
    `mise run test:browser:all`.
 3. Check what would be published: `bunx publint packages/css`,
-   `bunx publint packages/react`, and
+   `bunx publint packages/react`, `bunx publint packages/cli`, and
    `bunx @arethetypeswrong/cli --pack packages/react`. `publint`'s suggestion
    of `engines.node` for `@harmo-ui/react` is expected: the components run in the
    browser, so it's left out, as most UI libraries leave it out.
 4. Commit, push, and wait for CI to pass.
-5. From each of `packages/css` and `packages/react`, run `npm publish`, which
-   builds the package first.
+5. From each of `packages/css`, `packages/react`, and `packages/cli`, run
+   `npm publish`, which builds the package first.
 6. Tag the commit `v<version>`, and push the tag.
 
 ## Playground
@@ -185,6 +191,10 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
 - Both playground builds check every page: no repeated ids, and every
   `aria-labelledby`, `aria-describedby`, `aria-controls`, `for`, and
   `popovertarget` points to an element.
+- `mise run test:cli` runs the built CLI in throwaway projects: each component
+  brings every file it imports and the styles of every class it uses, everything
+  copied type-checks under a default Next.js setup, and a file you've changed is
+  never replaced without asking.
 - `mise run test:browser` opens every page of both playgrounds in Chromium:
   no console errors, every React example gets ready, and axe finds no WCAG
   2.2 A or AA violation, as the page loads and with each popup open. Then it

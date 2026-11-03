@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "ES2023"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "types": [
+      "node",
+      "bun"
+    ]
+  },
+  "include": [
+    "src",
+    "test",
+    "build-registry.ts"
+  ]
+}

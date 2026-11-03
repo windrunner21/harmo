@@ -30,6 +30,7 @@ jobs:
 
       - run: mise run check:react
       - run: mise run test:react
+      - run: mise run test:cli
 
   browser:
     name: Browser tests (${{ matrix.browser }})
