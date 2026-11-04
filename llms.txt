@@ -20,7 +20,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - Harmo builds in no text. Pass every word a component shows or announces: Breadcrumb's `aria-label`, Spinner's label as children, Password input's `showPasswordLabel` and `hidePasswordLabel` (and `strengthLabel` with `strength`), Filter chip's `clearLabel` and `formatCount` with `multiple`, and `emptyMessage` with `searchLabel`. TypeScript requires each where it's needed.
 - Wrap a form control in `<Field label=…>` for its label, description, Optional marker, and error; Field connects their ids. Pass `error` to every field you validate, even while it's `undefined`, so the error can animate in. Checkbox, Radio, and Switch use `<Field orientation="horizontal">`.
 - Choices are children: `<Select>`, `<Listbox>`, and `<FilterChip>` take `<Option value=…>` and `<OptionGroup label=…>`. Selection is `value` or `defaultValue` with `onValueChange`: a string, or an array with `multiple`.
-- Set the app's router link and image components once with `<HarmoProvider linkComponent={…} imageComponent={…}>`; Link, Button with `href`, TabLink, and Avatar use them.
+- Set the app's router link and image components once with `<HarmoProvider linkComponent={…} imageComponent={…}>`; Link, Button with `href`, TabLink, and Avatar use them. In the Next.js App Router, do it in a `"use client"` component that wraps the root layout's `children`: passing them directly from a Server Component fails the build.
 
 ## Docs
 

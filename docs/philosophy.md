@@ -90,6 +90,7 @@ These examples show the React API:
 </Link>
 
 // Once, at the app's root, so links navigate on the client and images load optimized.
+// In the Next.js App Router, from a Client Component that wraps the root layout's children.
 <HarmoProvider linkComponent={NextLink} imageComponent={NextImage}>
   {children}
 </HarmoProvider>

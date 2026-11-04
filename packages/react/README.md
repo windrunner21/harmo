@@ -29,12 +29,24 @@ import { Button, Field, Input } from "@harmo-ui/react";
 ```
 
 Set your router's link component and your framework's image component once, at
-the root:
+the root. In the Next.js App Router, do it in a Client Component, because a Server
+Component can't pass functions to one, and wrap your root layout's `{children}` in
+it:
 
 ```tsx
-<HarmoProvider linkComponent={NextLink} imageComponent={NextImage}>
-  {children}
-</HarmoProvider>
+"use client";
+
+import NextImage from "next/image";
+import NextLink from "next/link";
+import { HarmoProvider } from "@harmo-ui/react";
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <HarmoProvider linkComponent={NextLink} imageComponent={NextImage}>
+      {children}
+    </HarmoProvider>
+  );
+}
 ```
 
 Harmo builds in no text: every word a component shows or announces comes from
