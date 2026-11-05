@@ -46,7 +46,9 @@ in place of the static chevron.
 - Inherits the surrounding font, in `--harmo-link-color-text` (purple).
 - Hover (hover devices) and press: `--harmo-link-hover-color-text` and
   `--harmo-link-active-color-text` (both the text color), over 150ms
-  (`--harmo-duration-fast`).
+  (`--harmo-duration-fast`). `--harmo-link-hover-text-decoration` (`none`)
+  set to `underline` also underlines a link on hover, as the mono accent does,
+  whose links already have the text color.
 - With an icon, the link stays on the text's baseline, so put icons after the
   text; an icon first would sit slightly high.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
@@ -90,4 +92,5 @@ link's attributes; `href` is required.
 `--harmo-duration-fast`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-icon-gap`,
 `--harmo-link-active-color-text`, `--harmo-link-color-text`,
-`--harmo-link-hover-color-text`, `--harmo-link-visited-color-text`.
+`--harmo-link-hover-color-text`, `--harmo-link-hover-text-decoration`,
+`--harmo-link-visited-color-text`.

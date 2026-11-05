@@ -48,6 +48,11 @@ For dark mode, set `color-scheme`. Without it, Harmo stays light:
 }
 ```
 
+For another accent color, set `data-harmo-accent` on `<html>` or any section:
+`purple` (the default), `blue`, `teal`, `green`, `amber`, `red`, `pink`, or
+`mono`, which is black, or near-white in dark mode. `index.css` includes the
+accents; otherwise load `accents.css` after `tokens.css`.
+
 For React, use [`@harmo-ui/react`](https://www.npmjs.com/package/@harmo-ui/react).
 
 ## Learn more

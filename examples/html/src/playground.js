@@ -57,4 +57,20 @@
       localStorage.setItem("harmo-playground-color-scheme", scheme);
     } catch {}
   });
+
+  // The Accent picker in the HTML playground, a Select like any other: once
+  // an accent is chosen, set it on the page and remember it. The React
+  // playground's picker does the same in AccentPicker.tsx.
+  const accents = document.getElementById("play-accent-listbox");
+  if (accents) {
+    new MutationObserver(() => {
+      const accent = accents.querySelector('.hoption[aria-selected="true"]')?.dataset.value;
+      if (!accent) return;
+      if (accent === "purple") delete document.documentElement.dataset.harmoAccent;
+      else document.documentElement.dataset.harmoAccent = accent;
+      try {
+        localStorage.setItem("harmo-playground-accent", accent);
+      } catch {}
+    }).observe(accents, { subtree: true, attributeFilter: ["aria-selected"] });
+  }
 }

@@ -3,8 +3,13 @@
 // which restarts its animations.
 
 import { hydrateRoot } from "react-dom/client";
+import { AccentPicker } from "./AccentPicker.tsx";
 import { components } from "./examples.ts";
 import { Ready } from "./Ready.tsx";
+
+// The playground's own Accent picker, in the sidebar.
+const accent = document.getElementById("play-accent-root");
+if (accent) hydrateRoot(accent, <AccentPicker />, { identifierPrefix: "play-accent-" });
 
 for (const element of document.querySelectorAll<HTMLElement>("[data-play-root]")) {
   const { playRoot = "", playExample = "" } = element.dataset;

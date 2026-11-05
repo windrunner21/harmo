@@ -72,23 +72,40 @@ onEachPlayground("button", () => {
     expect(await textColor(page, "color-scheme: dark")).toBe("rgb(1, 2, 3)");
   });
 
-  test("a filled button is deeper in dark, so white reads on it", async ({ page }) => {
+  test("a filled button is one step darker on hover in light, not the text hover", async ({ page }) => {
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     await expect(button).toHaveCSS("background-color", "rgb(94, 61, 232)");
+    await pointAt(page, button);
+    const hover = await button.evaluate((element) => getComputedStyle(element).backgroundColor);
+    expect(hover).not.toBe("rgb(94, 61, 232)");
+    expect(hover).not.toBe("rgb(46, 26, 143)");
+  });
 
+  test("in dark, a filled button rests deeper and lightens on hover, with white still readable", async ({ page }) => {
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
-    await expect(button).toHaveCSS("background-color", "rgb(122, 92, 240)");
-    await expect(button).toHaveCSS("border-block-start-color", "rgb(122, 92, 240)");
+    const button = (await example(page, "button-variants")).locator(".hbutton").first();
+    await expect(button).toHaveCSS("background-color", "rgb(107, 77, 230)");
+    await expect(button).toHaveCSS("border-block-start-color", "rgb(107, 77, 230)");
     await expect(button).toHaveCSS("color", "rgb(255, 255, 255)");
 
     await pointAt(page, button);
-    await expect(button).toHaveCSS("background-color", "rgb(107, 77, 230)");
+    await expect(button).toHaveCSS("background-color", "rgb(122, 92, 240)");
   });
 
-  test("a light theme's primary still reaches a filled button", async ({ page }) => {
-    await page.addStyleTag({ content: ":root { --harmo-color-primary: rgb(1, 2, 3); }" });
+  test("a light theme's primary still reaches a filled button, and its hover", async ({ page }) => {
+    await page.addStyleTag({ content: ":root { --harmo-color-primary: rgb(200, 0, 0); }" });
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
-    await expect(button).toHaveCSS("background-color", "rgb(1, 2, 3)");
+    await expect(button).toHaveCSS("background-color", "rgb(200, 0, 0)");
+    await pointAt(page, button);
+    // The theme's own red, one step darker: the same mix, worked out by the browser.
+    const expected = await page.evaluate(() => {
+      const probe = document.body.appendChild(document.createElement("div"));
+      probe.style.backgroundColor = "color-mix(in oklab, rgb(200, 0, 0) 85%, black)";
+      const value = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return value;
+    });
+    await expect(button).toHaveCSS("background-color", expected);
   });
 
   test("a theme sets the fill for dark itself", async ({ page }) => {
@@ -107,7 +124,7 @@ onEachPlayground("switch", () => {
     const on = (await example(page, "switch-off-and-on")).locator(".hswitch:checked").first();
     await expect(on).toHaveCSS("background-color", "rgb(94, 61, 232)");
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
-    await expect(on).toHaveCSS("background-color", "rgb(122, 92, 240)");
+    await expect(on).toHaveCSS("background-color", "rgb(107, 77, 230)");
   });
 });
 

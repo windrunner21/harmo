@@ -50,13 +50,18 @@ jobs:
       - run: mise run build:playground
       - run: mise run build:react-playground
 
-      # This job's browser, kept between runs until Playwright's version
-      # changes, and the system libraries it needs, installed each time.
+      # This job's browser, kept between runs until Playwright's version or
+      # the runner's Ubuntu changes, and the system libraries it needs,
+      # installed each time. Playwright downloads a build for each Ubuntu:
+      # one cached on a newer Ubuntu can't start on an older one, as WebKit
+      # couldn't when the runner was pinned to 24.04.
+      - id: system
+        run: echo "ubuntu=$(. /etc/os-release && echo "$VERSION_ID")" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@v6
         id: browser
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ hashFiles('tests/package.json') }}
+          key: playwright-${{ runner.os }}-${{ steps.system.outputs.ubuntu }}-${{ matrix.browser }}-${{ hashFiles('tests/package.json') }}
       - if: steps.browser.outputs.cache-hit != 'true'
         working-directory: tests
         run: bunx playwright install --with-deps ${{ matrix.browser }}

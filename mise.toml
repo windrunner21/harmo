@@ -13,6 +13,10 @@ version_prefix = ""
 linux-x64 = { asset_pattern = "dart-sass-*-linux-x64.tar.gz" }
 linux-arm64 = { asset_pattern = "dart-sass-*-linux-arm64.tar.gz" }
 
+[tasks."build:accents"]
+description = "Regenerate packages/css/src/accents.scss from packages/css/accents/palettes.ts"
+run = "bun packages/css/accents/generate.ts"
+
 [tasks."build:css"]
 description = "Compile Harmo SCSS into CSS"
 # Start clean so removed sources leave no stale CSS, and fail without writing

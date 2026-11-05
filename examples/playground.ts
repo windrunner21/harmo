@@ -71,6 +71,8 @@ export interface Playground {
   scripts: string[];
   // Files and folders copied from html/src, and files written as they are.
   copy: string[];
+  // The Accent picker at the top of the sidebar, in this playground's kind.
+  accent: string;
   write?: Record<string, string>;
   // An example's demo and code, or undefined to leave it out.
   render: (example: Example) => Rendered | undefined;
@@ -106,6 +108,7 @@ export function buildPlayground(playground: Playground) {
         docs: href(join(repo, "docs/components/README.md")),
         scripts: playground.scripts.map((script) => `<script src="${script}" defer></script>`).join("\n"),
         about: playground.about,
+        accent: playground.accent,
         nav: renderNav(playground.components, current),
         content,
       }),

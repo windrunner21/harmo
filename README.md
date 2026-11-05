@@ -209,6 +209,26 @@ The built tokens are `--harmo-focus-outline`, the primary fills, the link,
 input, switch, icon, and secondary-button tokens, and the button and chevron
 durations; see `tokens.css`. Each component page lists every token it reads.
 
+### Accents
+
+For another color, choose an accent rather than setting each color yourself.
+`data-harmo-accent` recolors everything inside it, in light and dark mode: text
+and links in the primary, checked marks and their tints, buttons, switches, and
+the focus ring.
+
+```html
+<html data-harmo-accent="blue">
+```
+
+The accents are `purple` (the default), `blue`, `teal`, `green`, `amber`, `red`,
+`pink`, and `mono`, which is black, or near-white in dark mode. Each has the
+same contrast as the purple in every role, so text, and the text on buttons,
+pass WCAG AA in both modes. Put the attribute on any element to recolor only
+that part of the page. Your own token values still win,
+so you can start from an accent and change one color. `index.css` includes
+`accents.css`; with per-component imports, load `accents.css` after
+`tokens.css`.
+
 ### Dark mode
 
 Harmo's colors come in light and dark pairs, through CSS's `light-dark()`. A

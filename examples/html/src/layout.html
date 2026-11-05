@@ -18,6 +18,16 @@
         const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
         document.documentElement.style.colorScheme = dark ? "dark" : "light";
       }
+      // The accent last chosen in the sidebar; purple, the default, needs none.
+      {
+        let accent;
+        try {
+          accent = localStorage.getItem("harmo-playground-accent");
+        } catch {}
+        if (accent && accent !== "purple" && /^[a-z]+$/.test(accent)) {
+          document.documentElement.dataset.harmoAccent = accent;
+        }
+      }
     </script>
     <link rel="stylesheet" href="{{harmo}}" />
     <link rel="stylesheet" href="playground.css" />
@@ -54,6 +64,7 @@
     </header>
     <div class="play-layout">
       <nav class="play-nav" id="play-nav" aria-label="Components" popover>
+        {{accent}}
         {{nav}}
       </nav>
       <main class="play-main" id="play-main" tabindex="-1">

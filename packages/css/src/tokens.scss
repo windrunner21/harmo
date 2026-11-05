@@ -45,10 +45,19 @@
   --harmo-color-primary-tint: light-dark(var(--harmo-light-purple), #2a2352);
   // Behind white: Button and Switch. On a dark page the primary is light, to read
   // as text and marks, which is too light for white on top (2.57:1), so these are
-  // deeper there (at least 4.55:1). In light mode, they're the primary.
-  --harmo-color-primary-fill: light-dark(var(--harmo-color-primary), #7a5cf0);
-  --harmo-color-primary-fill-hover: light-dark(var(--harmo-color-primary-hover), #6b4de6);
-  --harmo-color-primary-fill-active: light-dark(var(--harmo-color-primary-active), var(--harmo-purple));
+  // deeper there. Light: the primary, one step darker on hover and another when
+  // pressed, mixed in, so a theme's own primary reaches them. Dark: one step
+  // lighter on hover, so the fill rests deeper, and white stays at 4.55:1 or
+  // more.
+  --harmo-color-primary-fill: light-dark(var(--harmo-color-primary), #6b4de6);
+  --harmo-color-primary-fill-hover: light-dark(
+    color-mix(in oklab, var(--harmo-color-primary) 85%, black),
+    #7a5cf0
+  );
+  --harmo-color-primary-fill-active: light-dark(
+    color-mix(in oklab, var(--harmo-color-primary) 74%, black),
+    var(--harmo-purple)
+  );
   --harmo-color-on-primary: var(--harmo-white);
   --harmo-color-focus: light-dark(var(--harmo-purple), #a594f7);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
@@ -61,10 +70,13 @@
 
   // Link roles: navigation is purple at rest, black on hover and pressed.
   // Visited is dark purple, only where a link opts in with data-visited.
+  // `underline` underlines a link on hover too, for links that are already
+  // black, as the mono accent's are.
   --harmo-link-color-text: light-dark(var(--harmo-purple), #a594f7);
   --harmo-link-hover-color-text: var(--harmo-color-text);
   --harmo-link-active-color-text: var(--harmo-color-text);
   --harmo-link-visited-color-text: light-dark(var(--harmo-dark-purple), #c7bcfa);
+  --harmo-link-hover-text-decoration: none;
 
   // Status roles (dots, icons, bars; text beside them carries the meaning).
   --harmo-status-color-success: var(--harmo-green);

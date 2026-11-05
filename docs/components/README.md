@@ -110,7 +110,7 @@ Some components are built from others, so their files need company:
   wins: `.hoption[aria-selected="true"]` overrides Harmo's selected option
   without `!important`. A few rules that combine states are heavier, such as a
   banner's action button on hover; override those with a matching selector.
-- **Token names** follow Stripe's Elements Appearance API: what is colored,
+- **Token names** are inspired by Stripe's Elements Appearance API: what is colored,
   then the variant, then the state (`--harmo-color-text-secondary`,
   `--harmo-color-primary-hover`); component tokens start with the component
   (`--harmo-input-color-background`). Text runs `color-text`, `-secondary`,
@@ -121,6 +121,13 @@ Some components are built from others, so their files need company:
   `color-scheme: dark`, or `light dark` to follow the system. The primary is
   lighter on a dark page, so text and marks read, so whatever has white text on
   it uses `--harmo-color-primary-fill` instead: Button and Switch.
+- **Accents** recolor the primary roles for everything inside an element with
+  `data-harmo-accent`: `purple` (the default), `blue`, `teal`, `green`,
+  `amber`, `red`, `pink`, or `mono`, which is black, or near-white in dark mode,
+  with dark text on its buttons there, and links underlined on hover. They come
+  from `accents.css`. Each has
+  the purple's contrast in every role, in both modes. They're set with
+  `:where()`, so an app's own values still win.
 - **State comes from native attributes and ARIA** wherever one exists:
   `disabled`, `checked`, `hidden`, `aria-invalid`, `aria-expanded`,
   `aria-selected`, `aria-disabled`, `aria-busy`, `aria-pressed`,

@@ -1,6 +1,7 @@
-// The full bundle: token defaults first, then the primitive components in
-// alphabetical order, then the patterns built from them.
+// The full bundle: token defaults and the accent palettes first, then the
+// primitive components in alphabetical order, then the patterns built from them.
 @use "tokens";
+@use "accents";
 @use "avatar";
 @use "banner";
 @use "breadcrumb";

@@ -13,6 +13,7 @@ import { join } from "node:path";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import { buildPlayground, dedent, runBuild, watchPlayground } from "../playground.ts";
+import { AccentPicker } from "./src/AccentPicker.tsx";
 import { components } from "./src/examples.ts";
 import { Ready } from "./src/Ready.tsx";
 
@@ -52,6 +53,7 @@ if (process.argv.includes("--watch")) {
       scripts: ["client.js"],
       copy: ["playground.css", "playground.js", "images"],
       write: { "client.js": script },
+      accent: `<div id="play-accent-root">${renderToString(createElement(AccentPicker), { identifierPrefix: "play-accent-" })}</div>`,
       render: ({ slug, title, id }) => {
         const Example = components[slug]?.[title];
         if (!Example) return undefined;

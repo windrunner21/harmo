@@ -63,6 +63,7 @@ browser tests' own dependencies.
 ## Commands
 
 ```sh
+mise run build:accents            # regenerate packages/css/src/accents.scss from packages/css/accents/palettes.ts
 mise run build:css                # clean build: packages/css/src -> packages/css/dist
 mise run watch:css                # rebuild on change while working on examples
 mise run build:react              # clean build: packages/react/src -> packages/react/dist, as ES modules and CommonJS

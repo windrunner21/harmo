@@ -8,6 +8,7 @@
 
 import { readdirSync } from "node:fs";
 import { basename, join } from "node:path";
+import { accentPickerHtml } from "../accents.ts";
 import { buildPlayground, runBuild, stripExampleHooks, watchPlayground } from "../playground.ts";
 
 const src = join(import.meta.dir, "src");
@@ -32,6 +33,7 @@ if (process.argv.includes("--watch")) {
         .sort()
         .map((file) => `scripts/${file}`),
       copy: ["playground.css", "playground.js", "scripts", "images"],
+      accent: accentPickerHtml(),
       render: (example) => ({ demo: example.markup, code: stripExampleHooks(example.markup) }),
     }),
   );

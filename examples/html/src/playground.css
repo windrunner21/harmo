@@ -72,6 +72,10 @@ body {
   background-color: color-mix(in srgb, var(--harmo-color-background) 88%, transparent);
   border-block-end: 1px solid var(--harmo-color-border);
   backdrop-filter: blur(12px);
+
+  @media (width < 40rem) {
+    gap: 0.5rem;
+  }
 }
 
 .play-brand {
@@ -120,8 +124,9 @@ body {
 .play-header .htag {
   white-space: nowrap;
 
-  /* Below 360px there isn't room for the version beside the Dark switch. */
-  @media (width < 22.5rem) {
+  /* On phones there isn't room for the version beside the Dark switch, with
+     room to spare for fonts wider than ours, as Ubuntu's are. */
+  @media (width < 26rem) {
     display: none;
   }
 }
@@ -193,6 +198,25 @@ body {
 
 .play-nav-group {
   margin-block-start: 1.5rem;
+}
+
+/* The Accent picker, above the components. Each option's dot is colored by its
+   own data-harmo-accent, so it shows that accent's button color in either mode. */
+.play-accent {
+  margin-block-end: 1.25rem;
+  padding-inline: 0.625rem;
+}
+
+.play-accent-dot {
+  display: inline-block;
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  margin-inline-end: 0.5rem;
+
+  vertical-align: 0.0625rem;
+
+  background-color: var(--harmo-color-primary-fill);
+  border-radius: 50%;
 }
 
 /* After Listbox's group labels. */

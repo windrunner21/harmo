@@ -112,7 +112,7 @@ These examples show the React API:
   purple, alongside roles such as text, border, focus, and secondary
   background. Different roles may share a default while remaining
   independently customizable.
-- **Predictable token names.** Token names follow Stripe's Elements
+- **Predictable token names.** Token names are inspired by Stripe's Elements
   Appearance API: what is colored comes first, then the variant, then the
   state — `--harmo-color-text-secondary`, `--harmo-color-background-hover`,
   `--harmo-color-primary-active`. Components prefix their own tokens the
