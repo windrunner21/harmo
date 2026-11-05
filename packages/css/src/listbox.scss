@@ -7,10 +7,17 @@
   box-sizing: border-box;
   min-block-size: 0;
   max-block-size: 300px;
-  max-inline-size: min(32rem, calc(100vw - 16px));
+  // The cap applies to the list's own content: under a wider trigger, the popup
+  // is wider than the cap, and the list fills it. On a phone, the cap leaves 8px
+  // on each side of the popup, whose border adds 2px.
+  min-inline-size: 100%;
+  max-inline-size: min(32rem, calc(100vw - 18px));
   margin: 0;
   padding: 4px;
   overflow: auto;
+
+  // The highlighted option shows where focus is.
+  outline: none;
 
   font-family: $font-family;
 

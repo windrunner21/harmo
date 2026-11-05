@@ -94,7 +94,7 @@ focus.
 
 | Part | Appearance |
 | --- | --- |
-| `.hlistbox` | 4px padding, at most 300px tall and `min(32rem, 100vw - 16px)` wide, scrolls with a hidden scrollbar |
+| `.hlistbox` | 4px padding, at most 300px tall and `min(32rem, 100vw - 18px)` wide unless its popup is wider, which it then fills, scrolls with a hidden scrollbar |
 | `.hoption` | 8px 12px padding, 14px `--harmo-color-text-secondary`, one line |
 | `.hoption-label` | The option text; ends with an ellipsis rather than wrapping, so rows keep one height |
 | `.hoption-badge` | Uppercase 11px pill, 20px after the label |
@@ -120,7 +120,8 @@ focus.
   `aria-activedescendant` names the highlighted option, so screen readers
   announce it as the highlight moves: a [Select](select.md) trigger keeps
   focus; a list with a search row moves it to the search field; otherwise the
-  list itself takes focus (with `tabindex="-1"`).
+  list itself takes focus (with `tabindex="-1"`). It has no focus ring of its
+  own, since the highlighted option shows where focus is.
 - Keys: Down and Up move the highlight, Home and End go to the first and last
   option, and typing jumps to the next option whose label starts with the
   typed letters (except in a search field). Enter chooses; in a multi-select,

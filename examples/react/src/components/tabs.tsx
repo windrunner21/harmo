@@ -80,16 +80,6 @@ export const examples = {
     );
   },
 
-  "Without the script": () => (
-    <TabNav aria-label="Settings">
-      <TabLink href="/settings/account" current>
-        Account details
-      </TabLink>
-      <TabLink href="/settings/hours">Business hours</TabLink>
-      <TabLink href="/settings/messaging">Messaging</TabLink>
-    </TabNav>
-  ),
-
   "Right to left": () => {
     const [current, setCurrent] = useState("/analytics/tickets");
     const links = [

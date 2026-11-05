@@ -48,7 +48,7 @@ export const examples = {
       label="API secret, managed by your administrator"
       showPasswordLabel="Show password"
       hidePasswordLabel="Hide password"
-      defaultValue="sk_live_51Hc2kq"
+      defaultValue="example-api-secret"
       disabled
     />
   ),

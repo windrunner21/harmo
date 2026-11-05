@@ -2,7 +2,8 @@
 
 // Below the trigger and aligned to its start; without room, the browser tries
 // these in order.
-$fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink;
+$fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
+  --hpopup-center;
 
 .hpopup {
   --hpopup-slide: 12px;
@@ -19,7 +20,9 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink;
   min-inline-size: anchor-size(inline);
   max-block-size: 400px;
   margin-block: 8px;
-  margin-inline: 0;
+  // A popup that would end within 8px of the window's edge doesn't fit, so the
+  // browser moves on to the next position. Flipping flips the margin too.
+  margin-inline: 0 8px;
   padding: 0;
   overflow: auto;
 
@@ -92,4 +95,14 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink;
 @position-try --hpopup-shrink {
   position-area: block-end span-inline-end;
   max-block-size: calc(100% - 16px);
+}
+
+// Too wide for either side of the trigger, as a long list can be on a phone.
+// Left to the browser, the popup would be moved back into the window, but Firefox
+// leaves out the margin when it does.
+@position-try --hpopup-center {
+  position-area: block-end span-all;
+  justify-self: center;
+  max-block-size: calc(100% - 16px);
+  margin-inline: 0;
 }

@@ -49,10 +49,12 @@ panel lays out its own content.
 
 - Renders in the top layer: no portal, no `z-index`.
 - Placed 8px below the trigger, aligned to its start edge, at least as wide as
-  the trigger, and at most 400px tall.
+  the trigger, and at most 400px tall, ending at least 8px from the window's
+  edge.
 - Without room, it tries in order: above the trigger; below, aligned to the
-  trigger's other edge; above, aligned to the other edge; then below, shrunk to
-  the window and scrolling.
+  trigger's other edge; above, aligned to the other edge; below, shrunk to the
+  window and scrolling; then, if it's too wide for either side of the trigger,
+  below and centered in the window.
 - Each opening starts from below. Browsers keep the last position that fit
   while it still fits, so an open popup doesn't jump as the page scrolls. A
   change to the fallback list makes them forget it, so `data-refit`, which a

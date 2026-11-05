@@ -4,7 +4,7 @@
        "description": "React components for Harmo: the same markup as its HTML examples, with the behavior built in.",
        "license": "MIT",
        "author": "Imran Hajiyev",
-       "homepage": "https://github.com/windrunner21/harmo#readme",
+       "homepage": "https://harmo-ui.com",
        "repository": {
               "type": "git",
               "url": "git+https://github.com/windrunner21/harmo.git",

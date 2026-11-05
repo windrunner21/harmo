@@ -1,6 +1,6 @@
 # @harmo-ui/react
 
-React components for [Harmo](https://github.com/windrunner21/harmo), a CSS-first
+React components for [Harmo](https://harmo-ui.com), a CSS-first
 UI library for dashboards and applications. They render the same markup as
 Harmo's HTML examples, with the behavior built in.
 

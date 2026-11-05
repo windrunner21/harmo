@@ -1,6 +1,6 @@
 # @harmo-ui/css
 
-The styles of [Harmo](https://github.com/windrunner21/harmo), a CSS-first UI
+The styles of [Harmo](https://harmo-ui.com), a CSS-first UI
 library for dashboards and applications. Every component is a native HTML
 element with one class, themed with `--harmo-*` custom properties.
 

@@ -4,7 +4,7 @@
        "description": "Copy Harmo's components and styles into your project, and make them yours.",
        "license": "MIT",
        "author": "Imran Hajiyev",
-       "homepage": "https://github.com/windrunner21/harmo#readme",
+       "homepage": "https://harmo-ui.com",
        "repository": {
               "type": "git",
               "url": "git+https://github.com/windrunner21/harmo.git",

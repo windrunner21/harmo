@@ -1,6 +1,6 @@
 # harmo-ui
 
-Copy the components of [Harmo](https://github.com/windrunner21/harmo), a CSS-first
+Copy the components of [Harmo](https://harmo-ui.com), a CSS-first
 UI library for dashboards and applications, into your project, with their styles,
 and make them yours.
 

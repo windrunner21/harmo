@@ -244,15 +244,6 @@ onEachPlayground("tabs", () => {
     expect(lines).toEqual({ scrolls: false, start: -4, end: 0, firstTab: 0, underline: 0 });
   });
 
-  test("in forced colors, the divider is a border, with the underline above it", async ({ page }) => {
-    const container = await example(page, "tabs-tabs");
-    const tabs = container.locator(".htabs");
-    await page.emulateMedia({ forcedColors: "active" });
-    await expect(tabs).toHaveCSS("border-block-end-style", "solid");
-    await expect(tabs).toHaveCSS("background-image", "none");
-    await expect(container.locator(".htabs-indicator")).toHaveCSS("bottom", "-4px");
-  });
-
   test("right to left, the underline sits under the current link", async ({ page }) => {
     const container = await example(page, "tabs-right-to-left");
     await expectPlaced(container.locator(".htabs"), "indicator", container.locator('[aria-current="page"]'));

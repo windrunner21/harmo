@@ -164,6 +164,30 @@ onEachPlayground("listbox", () => {
     await expect(label("+49")).not.toHaveAttribute("title");
   });
 
+  test("a focused list has no ring of its own", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-single", "Period");
+    await expect(listbox).toHaveCSS("outline-style", "none");
+  });
+
+  test("a list fills a popup wider than its cap", async ({ page }) => {
+    const { container, trigger, listbox } = await openList(page, "listbox-long-options", "Sender number");
+    await trigger.evaluate((button) => {
+      button.style.inlineSize = "40rem";
+    });
+    const popup = openPopup(container);
+    await expect.poll(async () => (await boxes(popup))[0].width).toBeCloseTo(640, 0);
+    const [{ width: popupWidth }, { width: listWidth }] = await boxes(popup, listbox);
+    expect(listWidth).toBeCloseTo(popupWidth - 2, 0);
+  });
+
+  test("on a phone, a long list stays 8px from each edge of the window", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 720 });
+    const { container } = await openList(page, "listbox-long-options", "Sender number");
+    const [popup] = await boxes(openPopup(container));
+    expect(popup.x).toBeCloseTo(8, 0);
+    expect(popup.x + popup.width).toBeCloseTo(382, 0);
+  });
+
   test("a search row takes focus, filters, and highlights the first match", async ({ page }) => {
     const { container, trigger, listbox, search } = await openList(page, "listbox-single-with-search", "Assignee");
     await expectActive(search, listbox.getByRole("option", { name: "Jane Smith" }));
