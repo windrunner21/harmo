@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { theme as themeFor } from "./palettes/palette.js";
 
 const usage = `Copy Harmo's components and styles into your project, and make them yours.
 
@@ -11,9 +12,11 @@ Usage:
   npx harmo-ui add <component...>   Copy components, with their styles and what they need
   npx harmo-ui add --all            Copy every component
   npx harmo-ui list                 List the components
+  npx harmo-ui theme <color>        Write harmo-theme.css: your brand color, as a hex
+                                    code, in every role, in light and dark mode
 
-Options for add:
-  -p, --path <folder>   Where to copy them. By default components/harmo, or
+Options for add and theme:
+  -p, --path <folder>   Where to write. By default components/harmo, or
                         src/components/harmo if the project has a src folder
   -o, --overwrite       Replace files that differ from Harmo's, without asking
       --dry-run         Show what would change, and change nothing
@@ -237,6 +240,104 @@ const add = async (
   }
 };
 
+// harmo-theme.css: a brand color adapted to every role, as :root overrides of
+// Harmo's tokens, which are at zero specificity, so it works wherever it loads.
+const themeFile = "harmo-theme.css";
+
+// Adds the theme's import after the last import in harmo.css, once. Imports
+// add puts in later go before it, since add only places Harmo's own.
+const withTheme = (css: string) => {
+  if (/@import\s+(?:url\(\s*)?["']?(?:\.\/)?harmo-theme\.css/.test(css)) return css;
+  const lineEnding = css.includes("\r\n") ? "\r\n" : "\n";
+  const line = `@import "./${themeFile}";`;
+  const last = [...css.matchAll(/\/\*[\s\S]*?\*\/|@import\s[^;]*;/g)]
+    .filter((match) => match[0].startsWith("@import"))
+    .at(-1);
+  if (!last) return `${line}${lineEnding}${css}`;
+  const end = last.index + last[0].length;
+  return `${css.slice(0, end)}${lineEnding}${line}${css.slice(end)}`;
+};
+
+const theme = async (
+  colors: string[],
+  options: { path?: string; overwrite: boolean; dryRun: boolean },
+) => {
+  const project = process.cwd();
+  if (!existsSync(join(project, "package.json")))
+    fail("There's no package.json here. Run this from your project's root.");
+  if (colors.length !== 1)
+    fail('Give one color, as a hex code, such as npx harmo-ui theme "#0f75b6".');
+
+  let generated;
+  try {
+    generated = themeFor(colors[0] as string);
+  } catch (error) {
+    return fail((error as Error).message);
+  }
+
+  const folder =
+    options.path ??
+    (existsSync(join(project, "src"))
+      ? "src/components/harmo"
+      : "components/harmo");
+  const base = resolve(project, folder);
+  const target = join(base, themeFile);
+  const existed = existsSync(target);
+  const same = existed && sameText(readFileSync(target, "utf8"), generated.css);
+
+  // A theme that differs may hold the project's own edits, so it's replaced
+  // only when asked. Without a terminal to ask in, it's kept.
+  let write = !existed;
+  if (existed && !same) {
+    if (options.overwrite) write = true;
+    else if (!options.dryRun && process.stdin.isTTY && process.stdout.isTTY) {
+      const prompt = createInterface({ input: process.stdin, output: process.stdout });
+      const answer = await prompt.question(
+        `${folder}/${themeFile} differs from this theme. Replace it? [y/N] `,
+      );
+      prompt.close();
+      write = answer.trim().toLowerCase().startsWith("y");
+    }
+  }
+
+  const stylesPath = join(base, "harmo.css");
+  const stylesBefore = existsSync(stylesPath) ? readFileSync(stylesPath, "utf8") : undefined;
+  const stylesAfter = stylesBefore === undefined ? undefined : withTheme(stylesBefore);
+  const stylesUpdated = stylesAfter !== stylesBefore;
+
+  if (options.dryRun) console.log(generated.css);
+  else {
+    if (write) {
+      mkdirSync(base, { recursive: true });
+      writeFileSync(target, generated.css);
+    }
+    if (stylesUpdated) writeFileSync(stylesPath, stylesAfter as string);
+  }
+
+  const from = generated.basis.includes(" and ")
+    ? `Harmo's ${generated.basis} accents`
+    : `Harmo's ${generated.basis} accent`;
+  if (same) console.log(`${folder}/${themeFile} already has this theme.`);
+  else if (write || options.dryRun)
+    console.log(
+      `${options.dryRun ? "Would write" : existed ? "Replaced" : "Created"} ${folder}/${themeFile}, adapted from ${from}.`,
+    );
+  else {
+    console.log(`Kept ${folder}/${themeFile}, which differs from this theme.`);
+    console.log("Run again with --overwrite to replace it.");
+  }
+  if (generated.darkened)
+    console.log(
+      `${colors[0]} is too light for white text, so text and buttons use ${generated.darkened}.`,
+    );
+  if (stylesUpdated)
+    console.log(`${options.dryRun ? "Would add" : "Added"} it to ${folder}/harmo.css.`);
+  else if (stylesBefore === undefined && !same)
+    console.log(
+      `\nImport ${folder}/${themeFile} once, alongside Harmo's styles. Its colors win wherever it loads.`,
+    );
+};
+
 const list = () => {
   const items = listings();
   const width = Math.max(...items.map(({ name }) => name.length));
@@ -271,6 +372,13 @@ const main = async () => {
   if (command === "add") {
     return add(names, {
       all: values.all,
+      path: values.path,
+      overwrite: values.overwrite,
+      dryRun: values["dry-run"],
+    });
+  }
+  if (command === "theme") {
+    return theme(names, {
       path: values.path,
       overwrite: values.overwrite,
       dryRun: values["dry-run"],

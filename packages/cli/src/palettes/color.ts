@@ -48,8 +48,8 @@ export const contrast = (a: string, b: string) => {
     const [r, g, b] = linearOfHex(hex);
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
-  const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
-  return (x + 0.05) / (y + 0.05);
+  const [x, y] = [lum(a), lum(b)];
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 };
 
 export const oklchOfHex = (hex: string) => {

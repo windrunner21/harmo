@@ -1,5 +1,6 @@
 // Harmo's accent palettes: two picked by hand, the purple and mono, and the hue
-// of each other accent at each role. generate.ts works out the rest.
+// of each other accent at each role. palette.ts works out the rest, for the
+// built-in accents and for harmo-ui theme alike.
 //
 // Inspired by Stripe's writing on color, "Designing accessible color systems"
 // (2019):

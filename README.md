@@ -170,48 +170,12 @@ component, and the tokens it reads.
 
 ## Theming
 
-Theme Harmo by overriding `--harmo-*` custom properties. Token names say what
-is colored, then the variant, then the state (`--harmo-color-primary-hover`).
-`--harmo-color-*` names are semantic roles; plain names such as
-`--harmo-purple` are the palette they default to, so you can re-theme by
-changing roles without touching components:
-
-```css
-:root {
-  --harmo-color-primary: #0f75b6;
-  --harmo-color-primary-hover: #0265a0;
-  --harmo-color-primary-active: #005589;
-}
-```
-
-The font is the system's by default. To match an existing app, set it once:
-
-```css
-:root {
-  --harmo-font-family: "Helvetica Neue", Helvetica, sans-serif;
-}
-```
-
-Token defaults are declared on `:where(:root)`, so your overrides win
-whichever stylesheet loads last. For a local theme, override the role on the
-component or a containing element instead of `:root`. Tokens built from
-another token are worked out on `:root`, so a local override doesn't reach
-them: redeclare those in the same place.
-
-```css
-.dark-panel {
-  --harmo-color-focus: #8ab4ff;
-  --harmo-focus-outline: 2px solid var(--harmo-color-focus);
-}
-```
-
-The built tokens are `--harmo-focus-outline`, the primary fills, the link,
-input, switch, icon, and secondary-button tokens, and the button and chevron
-durations; see `tokens.css`. Each component page lists every token it reads.
+Harmo's colors, type, and shapes are `--harmo-*` custom properties. The quickest
+way to change its color is an accent. For your own brand color, generate a
+theme. Any token can also be set by hand.
 
 ### Accents
 
-For another color, choose an accent rather than setting each color yourself.
 `data-harmo-accent` recolors everything inside it, in light and dark mode: text
 and links in the primary, checked marks and their tints, buttons, switches, and
 the focus ring.
@@ -224,10 +188,52 @@ The accents are `purple` (the default), `blue`, `teal`, `green`, `amber`, `red`,
 `pink`, and `mono`, which is black, or near-white in dark mode. Each has the
 same contrast as the purple in every role, so text, and the text on buttons,
 pass WCAG AA in both modes. Put the attribute on any element to recolor only
-that part of the page. Your own token values still win,
-so you can start from an accent and change one color. `index.css` includes
-`accents.css`; with per-component imports, load `accents.css` after
-`tokens.css`.
+that part of the page. `index.css` includes `accents.css`; with per-component
+imports, load `accents.css` after `tokens.css`.
+
+### Your brand color
+
+```sh
+npx harmo-ui theme "#0f75b6"
+```
+
+That writes `harmo-theme.css`: your color in every role, in light and dark
+mode, adapted from the nearest accent at the same contrast, so text and buttons
+pass WCAG AA too. A color too light for white text, such as a bright yellow, is
+darkened for text and buttons, and the file says so. It's ordinary CSS: change
+any line you like, since your values win over Harmo's wherever the file loads.
+In a project with a `harmo.css` from `npx harmo-ui add`, it's added there.
+
+### Tokens
+
+Token names say what is colored, then the variant, then the state
+(`--harmo-color-primary-hover`). `--harmo-color-*` names are semantic roles;
+plain names such as `--harmo-purple` are the palette they default to, so you can
+re-theme by changing roles without touching components. The font is the
+system's by default. To match an existing app, set it once:
+
+```css
+:root {
+  --harmo-font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+```
+
+Token defaults are declared on `:where(:root)`, so your overrides win
+whichever stylesheet loads last, accents included. For a local theme, override
+the role on the component or a containing element instead of `:root`. Tokens
+built from another token are worked out on `:root`, so a local override doesn't
+reach them: redeclare those in the same place.
+
+```css
+.dark-panel {
+  --harmo-color-focus: #8ab4ff;
+  --harmo-focus-outline: 2px solid var(--harmo-color-focus);
+}
+```
+
+The built tokens are `--harmo-focus-outline`, the primary fills, the link,
+input, switch, icon, and secondary-button tokens, and the button and chevron
+durations; see `tokens.css`. Each component page lists every token it reads.
 
 ### Dark mode
 
@@ -240,27 +246,12 @@ page stays light until it opts in with `color-scheme`, even on a dark system:
 .sidebar { color-scheme: dark; }     /* one part of the page */
 ```
 
-A theme that should work in both modes sets each color as a pair. On a dark
-page the primary is light, so text and marks read on it, which makes it too
-light for white text. Button and Switch use the fill colors instead, which stay
-dark enough:
-
-```css
-:root {
-  /* Text, links, and checked marks: dark on light, light on dark */
-  --harmo-color-primary: light-dark(#0f75b6, #5cb8f0);
-  --harmo-color-primary-hover: light-dark(#0265a0, #8ccdf5);
-  --harmo-color-primary-active: light-dark(#005589, #8ccdf5);
-
-  /* Behind white text, on Button and Switch */
-  --harmo-color-primary-fill: #0f75b6;
-  --harmo-color-primary-fill-hover: #0265a0;
-  --harmo-color-primary-fill-active: #005589;
-}
-```
-
-In light mode, the fills follow the primary, so a light-only theme needs none
-of this.
+Every accent, and every theme `harmo-ui theme` writes, covers both modes. To set
+colors by hand for both, give each as a pair, such as
+`light-dark(#0f75b6, #30aed9)`. Button and Switch use the
+`--harmo-color-primary-fill` tokens rather than the primary: a dark-mode primary
+light enough to read as text on a dark page is too light to sit behind white
+text.
 
 ## Browser support
 

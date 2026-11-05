@@ -49,12 +49,26 @@ The files are yours to change, and only React is left to depend on. They need Re
 | `npx harmo-ui add <component...>` | Copies components, with their styles and what they need |
 | `npx harmo-ui add --all` | Copies every component |
 | `npx harmo-ui list` | Lists the components |
+| `npx harmo-ui theme <color>` | Writes `harmo-theme.css`: your brand color, as a hex code, in every role, in light and dark mode |
 
-| Option for `add` | Effect |
+| Option for `add` and `theme` | Effect |
 | --- | --- |
-| `-p`, `--path <folder>` | Where to copy them. By default `components/harmo`, or `src/components/harmo` if the project has a `src` folder. Pass it each time you use another folder |
+| `-p`, `--path <folder>` | Where to write. By default `components/harmo`, or `src/components/harmo` if the project has a `src` folder. Pass it each time you use another folder |
 | `-o`, `--overwrite` | Replaces files that differ from Harmo's, without asking |
 | `--dry-run` | Shows what would change, and changes nothing |
+
+## Your brand color
+
+```sh
+npx harmo-ui theme "#0f75b6"
+```
+
+That writes `harmo-theme.css` next to `harmo.css`, and adds it there: your color in
+every role, in light and dark mode, adapted from the nearest of Harmo's accents at
+the same contrast, so text and buttons pass WCAG AA. A color too light for white
+text, such as a bright yellow, is darkened for text and buttons, and the file says
+so. Change any line you like; running it again asks before replacing a file you've
+changed.
 
 ## Updates
 
