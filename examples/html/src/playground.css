@@ -423,6 +423,21 @@ body {
     background-color: var(--harmo-color-background-secondary);
     border-radius: var(--harmo-border-radius-sm);
   }
+
+  & kbd {
+    padding: 0.125em 0.3125em;
+
+    font-family: var(--harmo-font-family);
+    font-size: 0.8125em;
+    font-weight: var(--harmo-font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+
+    color: var(--harmo-color-text);
+    background: var(--harmo-color-background);
+    border: 1px solid var(--harmo-color-border);
+    border-radius: var(--harmo-border-radius-sm);
+  }
 }
 
 /* Examples ----------------------------------------------------------------- */
