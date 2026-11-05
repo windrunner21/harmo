@@ -40,6 +40,14 @@ Then write the markup:
 </button>
 ```
 
+For dark mode, set `color-scheme`. Without it, Harmo stays light:
+
+```css
+:root {
+  color-scheme: light dark; /* follows the system; or dark, for always */
+}
+```
+
 For React, use [`@harmo-ui/react`](https://www.npmjs.com/package/@harmo-ui/react).
 
 ## Learn more

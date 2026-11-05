@@ -43,7 +43,7 @@ colors it.
 
 ## Appearance and states
 
-- A white card: 1px `--harmo-color-border` border, 8px radius,
+- A card on `--harmo-color-background`: 1px `--harmo-color-border` border, 8px radius,
   `--harmo-box-shadow-sm`, 12px 16px padding, and 12px gaps.
 - A 14px `--harmo-color-text-secondary` message that wraps; the icon is 18px
   at that size and scales with it.

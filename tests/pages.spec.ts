@@ -21,6 +21,24 @@ for (const playground of playgrounds) {
         for (const { trigger, violations } of popups) {
           expect.soft(violations, `accessibility violations with ${trigger} open`).toEqual([]);
         }
+
+        // Dark mode changes only colors, so only contrast is checked again.
+        // Waits for the color transitions it starts; other animations, such as
+        // a paused spinner's, may never finish.
+        await page.evaluate(async () => {
+          document.documentElement.style.colorScheme = "dark";
+          await new Promise(requestAnimationFrame);
+          const fading = document.getAnimations().filter((animation) => animation instanceof CSSTransition);
+          await Promise.race([
+            Promise.all(fading.map((animation) => animation.finished.catch(() => {}))),
+            new Promise((resolve) => setTimeout(resolve, 1000)),
+          ]);
+        });
+        const dark = await checkAccessibility(page, ["color-contrast"]);
+        expect.soft(dark.loaded, "contrast in dark mode").toEqual([]);
+        for (const { trigger, violations } of dark.popups) {
+          expect.soft(violations, `contrast in dark mode with ${trigger} open`).toEqual([]);
+        }
         // Last, as this restarts what's animating on the page.
         expect.soft(await stillShownWhenHidden(page), "elements that stay rendered with hidden").toEqual([]);
       });
@@ -32,16 +50,18 @@ for (const playground of playgrounds) {
 // trigger included: each popup is opened as a click opens it, and checked
 // once it has finished opening. All in one call to the page, since in WebKit
 // each call takes about a tenth of a second.
-const checkAccessibility = (page: Page) =>
-  page.evaluate(async () => {
+const checkAccessibility = (page: Page, only?: string[]) =>
+  page.evaluate(async (only) => {
     const { axe } = window as unknown as { axe: typeof import("axe-core") };
 
-    // axe's WCAG 2.2 A and AA rules, less any named. Without preloading: axe
-    // would fetch the stylesheets again, which a page opened from disk isn't
-    // allowed to.
+    // axe's WCAG 2.2 A and AA rules, or only the rules named, less any named
+    // as exceptions. Without preloading: axe would fetch the stylesheets
+    // again, which a page opened from disk isn't allowed to.
     const run = async (context: import("axe-core").ElementContext, except: string[] = []) => {
       const { violations } = await axe.run(context, {
-        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
+        runOnly: only
+          ? { type: "rule", values: only }
+          : { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] },
         rules: Object.fromEntries(except.map((rule) => [rule, { enabled: false }])),
         resultTypes: ["violations"],
         preload: false,
@@ -79,7 +99,7 @@ const checkAccessibility = (page: Page) =>
       popup.hidePopover();
     }
     return { loaded, popups };
-  });
+  }, only);
 
 // docs/components/README.md: hidden hides any part of any component, at once.
 // Field's error and the password details are the exceptions: they stay rendered

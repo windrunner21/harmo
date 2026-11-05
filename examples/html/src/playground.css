@@ -93,26 +93,40 @@ body {
   }
 }
 
+/* As on harmo-ui.com: the cap height times the golden ratio, centered on the
+   name, in the deeper purple on a dark page. */
 .play-mark {
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
+  flex: none;
+  block-size: calc(0.71em * 1.618);
+  inline-size: auto;
+
+  fill: var(--harmo-color-primary-fill);
 }
 
-.play-mark-start {
-  fill: var(--harmo-color-primary);
+.play-header-end {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+
+  margin-inline-start: auto;
+
+  white-space: nowrap;
+
+  @media (width < 40rem) {
+    gap: 0.75rem;
+  }
 }
 
-.play-mark-end {
-  fill: var(--harmo-color-primary-hover);
-}
+.play-header .htag {
+  white-space: nowrap;
 
-.play-mark-below {
-  fill: color-mix(in srgb, var(--harmo-color-primary) 50%, var(--harmo-color-background));
+  /* Below 360px there isn't room for the version beside the Dark switch. */
+  @media (width < 22.5rem) {
+    display: none;
+  }
 }
 
 .play-header-link {
-  margin-inline-start: auto;
-
   font-size: var(--harmo-font-size-sm);
   font-weight: var(--harmo-font-weight-medium);
 }

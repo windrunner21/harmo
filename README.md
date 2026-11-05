@@ -205,9 +205,42 @@ them: redeclare those in the same place.
 }
 ```
 
-The built tokens are `--harmo-focus-outline`, the link, input, switch, icon,
-and secondary-button tokens, and the button and chevron durations; see
-`tokens.css`. Each component page lists every token it reads.
+The built tokens are `--harmo-focus-outline`, the primary fills, the link,
+input, switch, icon, and secondary-button tokens, and the button and chevron
+durations; see `tokens.css`. Each component page lists every token it reads.
+
+### Dark mode
+
+Harmo's colors come in light and dark pairs, through CSS's `light-dark()`. A
+page stays light until it opts in with `color-scheme`, even on a dark system:
+
+```css
+:root { color-scheme: dark; }        /* always dark */
+:root { color-scheme: light dark; }  /* follows the system */
+.sidebar { color-scheme: dark; }     /* one part of the page */
+```
+
+A theme that should work in both modes sets each color as a pair. On a dark
+page the primary is light, so text and marks read on it, which makes it too
+light for white text. Button and Switch use the fill colors instead, which stay
+dark enough:
+
+```css
+:root {
+  /* Text, links, and checked marks: dark on light, light on dark */
+  --harmo-color-primary: light-dark(#0f75b6, #5cb8f0);
+  --harmo-color-primary-hover: light-dark(#0265a0, #8ccdf5);
+  --harmo-color-primary-active: light-dark(#005589, #8ccdf5);
+
+  /* Behind white text, on Button and Switch */
+  --harmo-color-primary-fill: #0f75b6;
+  --harmo-color-primary-fill-hover: #0265a0;
+  --harmo-color-primary-fill-active: #005589;
+}
+```
+
+In light mode, the fills follow the primary, so a light-only theme needs none
+of this.
 
 ## Browser support
 

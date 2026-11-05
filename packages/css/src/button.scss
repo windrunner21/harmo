@@ -26,9 +26,9 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   white-space: normal;
   overflow-wrap: anywhere;
 
-  background-color: $color-primary;
+  background-color: $color-primary-fill;
   color: $color-on-primary;
-  border: 1px solid $color-primary;
+  border: 1px solid $color-primary-fill;
   border-radius: $border-radius;
 
   cursor: pointer;
@@ -115,14 +115,14 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   &#{$actionable} {
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background-color: $color-primary-hover;
-        border-color: $color-primary-hover;
+        background-color: $color-primary-fill-hover;
+        border-color: $color-primary-fill-hover;
       }
     }
 
     &:active {
-      background-color: $color-primary-active;
-      border-color: $color-primary-active;
+      background-color: $color-primary-fill-active;
+      border-color: $color-primary-fill-active;
     }
   }
 

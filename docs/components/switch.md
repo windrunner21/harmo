@@ -42,8 +42,8 @@ With a description, put the label and description in `.hfield-content`, as
 - 44×24 track with a 20px white thumb and a soft shadow
   (`--harmo-switch-thumb-color-background`, `--harmo-switch-thumb-box-shadow`).
 - Off: `--harmo-switch-color-background`, the control border gray, so the
-  track stands out from white at 3.42:1. On: `--harmo-color-primary`, with the
-  thumb 20px toward the end of the line (to the left in right-to-left text).
+  track stands out from white at 3.42:1. On: `--harmo-color-primary-fill`, with
+  the thumb 20px toward the end of the line (to the left in right-to-left text).
 - The thumb slides in 200ms (`--harmo-ease-in-out-cubic`) while the color fades
   in 200ms. Under reduced motion the thumb jumps; the color change stays.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
@@ -76,7 +76,7 @@ attributes, such as `checked`, `defaultChecked`, and `onChange`.
 
 ## Tokens
 
-`--harmo-border-radius-full`, `--harmo-color-primary`,
+`--harmo-border-radius-full`, `--harmo-color-primary-fill`,
 `--harmo-duration-normal`, `--harmo-ease-in-out-cubic`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-opacity-disabled`, `--harmo-switch-color-background`,

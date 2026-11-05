@@ -3,6 +3,8 @@
 // specificity, so an app's own :root overrides always win.
 // Naming: --harmo-color-* are roles; plain names are the palette they
 // default to. Within a name: what is colored, variant, then state.
+// Colors that differ in dark mode use light-dark(), light first. An app opts in
+// with color-scheme; until it does, they stay light, even on a dark system.
 :where(:root) {
   // Palette: identity purple (6.35:1 with white).
   --harmo-purple: #5e3de8;
@@ -25,38 +27,44 @@
 
   // Text roles: black for titles, headings, labels, and typed values;
   // secondary for normal text; tertiary for descriptions and placeholders.
-  --harmo-color-text: var(--harmo-black);
-  --harmo-color-text-secondary: var(--harmo-dark-gray);
-  --harmo-color-text-tertiary: var(--harmo-medium-gray);
+  --harmo-color-text: light-dark(var(--harmo-black), #f1f2f6);
+  --harmo-color-text-secondary: light-dark(var(--harmo-dark-gray), #c5c8d2);
+  --harmo-color-text-tertiary: light-dark(var(--harmo-medium-gray), #9298a6);
 
   // Background and border roles.
-  --harmo-color-background: var(--harmo-white);
-  --harmo-color-background-secondary: var(--harmo-dark-white);
-  --harmo-color-background-hover: var(--harmo-dark-white);
-  --harmo-color-border: #e3e8ee;
-  --harmo-color-border-control: #858b98;
+  --harmo-color-background: light-dark(var(--harmo-white), #14151b);
+  --harmo-color-background-secondary: light-dark(var(--harmo-dark-white), #1c1e26);
+  --harmo-color-background-hover: light-dark(var(--harmo-dark-white), #242631);
+  --harmo-color-border: light-dark(#e3e8ee, #30323e);
+  --harmo-color-border-control: light-dark(#858b98, #767c8a);
 
   // Primary (actions, checked, selected) and focus.
-  --harmo-color-primary: var(--harmo-purple);
-  --harmo-color-primary-hover: var(--harmo-dark-purple);
-  --harmo-color-primary-active: var(--harmo-darker-purple);
-  --harmo-color-primary-tint: var(--harmo-light-purple);
+  --harmo-color-primary: light-dark(var(--harmo-purple), #a594f7);
+  --harmo-color-primary-hover: light-dark(var(--harmo-dark-purple), #c7bcfa);
+  --harmo-color-primary-active: light-dark(var(--harmo-darker-purple), #c7bcfa);
+  --harmo-color-primary-tint: light-dark(var(--harmo-light-purple), #2a2352);
+  // Behind white: Button and Switch. On a dark page the primary is light, to read
+  // as text and marks, which is too light for white on top (2.57:1), so these are
+  // deeper there (at least 4.55:1). In light mode, they're the primary.
+  --harmo-color-primary-fill: light-dark(var(--harmo-color-primary), #7a5cf0);
+  --harmo-color-primary-fill-hover: light-dark(var(--harmo-color-primary-hover), #6b4de6);
+  --harmo-color-primary-fill-active: light-dark(var(--harmo-color-primary-active), var(--harmo-purple));
   --harmo-color-on-primary: var(--harmo-white);
-  --harmo-color-focus: var(--harmo-purple);
+  --harmo-color-focus: light-dark(var(--harmo-purple), #a594f7);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-focus-outline-offset: 2px;
 
   // Feedback text (darker than the status marks; not background fills).
-  --harmo-color-success: #206b38;
-  --harmo-color-warning: #865900;
-  --harmo-color-danger: #b6303e;
+  --harmo-color-success: light-dark(#206b38, #5cc97f);
+  --harmo-color-warning: light-dark(#865900, #e3b04b);
+  --harmo-color-danger: light-dark(#b6303e, #f2808c);
 
   // Link roles: navigation is purple at rest, black on hover and pressed.
   // Visited is dark purple, only where a link opts in with data-visited.
-  --harmo-link-color-text: var(--harmo-purple);
+  --harmo-link-color-text: light-dark(var(--harmo-purple), #a594f7);
   --harmo-link-hover-color-text: var(--harmo-color-text);
   --harmo-link-active-color-text: var(--harmo-color-text);
-  --harmo-link-visited-color-text: var(--harmo-dark-purple);
+  --harmo-link-visited-color-text: light-dark(var(--harmo-dark-purple), #c7bcfa);
 
   // Status roles (dots, icons, bars; text beside them carries the meaning).
   --harmo-status-color-success: var(--harmo-green);
@@ -67,10 +75,11 @@
   // Component roles: input. The light border is 1.23:1 on white, below
   // WCAG's 3:1 for a field's edge; the faint shadow doesn't make that up.
   // For 3.42:1, set the border to --harmo-color-border-control.
-  --harmo-input-color-background: var(--harmo-white);
+  --harmo-input-color-background: light-dark(var(--harmo-white), var(--harmo-color-background));
   --harmo-input-color-border: var(--harmo-color-border);
   --harmo-input-box-shadow:
-    0 1px 1px rgb(0 0 0 / 3%), 0 3px 6px rgb(48 49 61 / 2%);
+    0 1px 1px light-dark(rgb(0 0 0 / 3%), transparent),
+    0 3px 6px light-dark(rgb(48 49 61 / 2%), transparent);
 
   // Component roles: switch.
   --harmo-switch-color-background: var(--harmo-color-border-control);
@@ -79,22 +88,26 @@
 
   // Component roles: tooltip (rich black; the hint variant uses the
   // background, border, and secondary text roles with its own shadow).
-  --harmo-tooltip-color-background: #1a1d23;
-  --harmo-tooltip-color-text: var(--harmo-white);
-  --harmo-tooltip-box-shadow: 0 0 2px rgb(229 229 229);
+  --harmo-tooltip-color-background: light-dark(#1a1d23, #2a2c36);
+  --harmo-tooltip-color-text: light-dark(var(--harmo-white), #f1f2f6);
+  --harmo-tooltip-box-shadow: 0 0 2px light-dark(rgb(229 229 229), rgb(0 0 0 / 60%));
   --harmo-tooltip-hint-box-shadow:
-    0 1px 2px rgb(0 0 0 / 4%), 0 4px 12px rgb(0 0 0 / 8%);
+    0 1px 2px light-dark(rgb(0 0 0 / 4%), rgb(0 0 0 / 30%)),
+    0 4px 12px light-dark(rgb(0 0 0 / 8%), rgb(0 0 0 / 40%));
 
   // Component roles: avatar placeholder and bare icon controls.
-  --harmo-avatar-color-background: color-mix(in srgb, #d9d9d9 40%, transparent);
+  --harmo-avatar-color-background: light-dark(
+    color-mix(in srgb, #d9d9d9 40%, transparent),
+    color-mix(in srgb, #d9d9d9 15%, transparent)
+  );
   --harmo-icon-color: var(--harmo-color-border-control);
   --harmo-icon-hover-color: var(--harmo-color-text);
 
   // Component roles: secondary button.
-  --harmo-button-secondary-color-text: var(--harmo-dark-gray);
+  --harmo-button-secondary-color-text: light-dark(var(--harmo-dark-gray), #c5c8d2);
   --harmo-button-secondary-color-border: var(--harmo-color-border);
   --harmo-button-secondary-hover-color-border: var(--harmo-color-text);
-  --harmo-button-secondary-box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+  --harmo-button-secondary-box-shadow: 0 1px 2px light-dark(rgb(0 0 0 / 5%), transparent);
 
   // Typography (sizes in rem: 16, 14, 13, 12, 11px at the default setting).
   --harmo-font-family: system-ui, sans-serif;
@@ -122,7 +135,7 @@
   --harmo-border-radius: 8px;
   --harmo-border-radius-sm: 4px;
   --harmo-border-radius-full: 999px;
-  --harmo-box-shadow-sm: 0 4px 8px 0 rgb(0 0 0 / 8%);
+  --harmo-box-shadow-sm: 0 4px 8px 0 light-dark(rgb(0 0 0 / 8%), rgb(0 0 0 / 40%));
 
   // Motion: ease-out for entrances and presses, ease-in-out on screen;
   // never ease-in.

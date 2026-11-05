@@ -46,4 +46,15 @@
   matchMedia("(width >= 60rem)").addEventListener("change", (event) => {
     if (event.matches && isOpen()) nav.hidePopover();
   });
+
+  // Light or dark for the whole playground, remembered for the next page.
+  // Harmo itself only follows color-scheme; the head of each page sets it.
+  const dark = document.getElementById("play-dark");
+  dark.addEventListener("change", () => {
+    const scheme = dark.checked ? "dark" : "light";
+    document.documentElement.style.colorScheme = scheme;
+    try {
+      localStorage.setItem("harmo-playground-color-scheme", scheme);
+    } catch {}
+  });
 }

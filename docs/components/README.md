@@ -116,6 +116,11 @@ Some components are built from others, so their files need company:
   (`--harmo-input-color-background`). Text runs `color-text`, `-secondary`,
   `-tertiary`, from most to least prominent. The `$shortcuts` in
   `_shortcuts.scss` have the same names.
+- **Dark mode** comes from CSS's `color-scheme`. Colors that differ are
+  `light-dark()` pairs, light first, and a page stays light until it sets
+  `color-scheme: dark`, or `light dark` to follow the system. The primary is
+  lighter on a dark page, so text and marks read, so whatever has white text on
+  it uses `--harmo-color-primary-fill` instead: Button and Switch.
 - **State comes from native attributes and ARIA** wherever one exists:
   `disabled`, `checked`, `hidden`, `aria-invalid`, `aria-expanded`,
   `aria-selected`, `aria-disabled`, `aria-busy`, `aria-pressed`,
@@ -204,6 +209,6 @@ The popover attribute; CSS anchor positioning, including `anchor-scope` and
 `field-sizing: content` (since June 2026); `@starting-style` and
 `allow-discrete` transitions, for Popup and Tooltip; `interpolate-size`, for
 Field's error, with a fallback where it's missing; `:has()`, `:where()`,
-`:dir()`, `color-mix()`, and logical properties.
+`:dir()`, `color-mix()`, `light-dark()`, for dark mode, and logical properties.
 Firefox cannot yet keep a closing popup in the top layer during its fade, so
 the fade may briefly pass under other content there.

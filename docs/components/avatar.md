@@ -37,7 +37,7 @@ none.
 - A `--harmo-avatar-size` (40px) circle with a 1px `--harmo-color-border`
   border; an image covers it.
 - A placeholder centers its content on `--harmo-avatar-color-background`
-  (light gray at 40%), in `--harmo-color-text-secondary`. Initials are 40% of
+  (gray at 40%, or 15% in dark mode), in `--harmo-color-text-secondary`. Initials are 40% of
   the size, and a direct-child SVG 62.5% of the space inside the border.
 
 ## Accessibility

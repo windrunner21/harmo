@@ -52,7 +52,7 @@
   }
 
   &:checked {
-    background-color: $color-primary;
+    background-color: $color-primary-fill;
 
     &::before {
       transform: translateX(var(--hswitch-travel));

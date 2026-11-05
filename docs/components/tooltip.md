@@ -32,7 +32,7 @@ someone opens and interacts with, use a [Popup](popup.md).
 | --- | --- |
 | (default) | Below the trigger |
 | `data-side="top"`, `"left"`, or `"right"` | Preferred side; it flips when there isn't room. Sides are physical, as in Radix and Floating UI: `left` stays left in right-to-left text |
-| `data-variant="hint"` | Explains something, such as a KPI: a white card with 13px `--harmo-color-text-secondary` text, a border, and a soft shadow, up to 280px wide, start-aligned |
+| `data-variant="hint"` | Explains something, such as a KPI: a card in the page's background color with 13px `--harmo-color-text-secondary` text, a border, and a soft shadow, up to 280px wide, start-aligned |
 
 ## Appearance and states
 
@@ -86,7 +86,7 @@ neighbors show at once. Other props are the trigger `<span>`'s attributes.
 | `label` | The control's name |
 | `description` | The control's description |
 | `side` | `top`, `left`, or `right`; below when left out |
-| `variant` | `hint`, a white card that explains something |
+| `variant` | `hint`, a card that explains something |
 
 ```tsx
 <Tooltip label="Close">

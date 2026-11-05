@@ -66,7 +66,7 @@ Loading:
 
 | Hook | Effect |
 | --- | --- |
-| (default) | Primary: filled `--harmo-color-primary` |
+| (default) | Primary: filled `--harmo-color-primary-fill` |
 | `data-variant="secondary"` | Outlined, lightly raised |
 | `data-variant="tertiary"` | Text only; tinted background on hover |
 | `data-size="small"` | Compact: 29px, 13px text, 6px radius, for notices, rows, and cards |
@@ -156,8 +156,8 @@ link's attributes, so `type="submit"` makes a submit button.
 `--harmo-button-secondary-box-shadow`, `--harmo-button-secondary-color-border`,
 `--harmo-button-secondary-color-text`,
 `--harmo-button-secondary-hover-color-border`, `--harmo-color-background-hover`,
-`--harmo-color-on-primary`, `--harmo-color-primary`,
-`--harmo-color-primary-active`, `--harmo-color-primary-hover`,
+`--harmo-color-on-primary`, `--harmo-color-primary-fill`,
+`--harmo-color-primary-fill-active`, `--harmo-color-primary-fill-hover`,
 `--harmo-color-primary-tint`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-control-height`,
 `--harmo-ease-out-quad`, `--harmo-focus-outline`,

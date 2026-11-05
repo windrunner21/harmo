@@ -6,8 +6,19 @@
     <title>{{title}}</title>
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='9' height='9' rx='2.5' fill='%235e3de8'/%3E%3Crect x='13' y='2' width='9' height='20' rx='2.5' fill='%232e1a8f'/%3E%3Crect x='2' y='13' width='9' height='9' rx='2.5' fill='%23a796f3'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%235e3de8' d='M5 0H11C14.2 0 16 1.8 16 5V11C16 14.2 14.2 16 11 16H5C1.8 16 0 14.2 0 11V5C0 1.8 1.8 0 5 0Z'/%3E%3Cpath fill='%23fff' d='M9 12H1A8 8 0 0 1 9 4ZM10 9V4A5 5 0 0 1 15 9ZM13 10H15A2 2 0 0 1 13 12ZM10 11a1 1 0 1 0 2 0a1 1 0 1 0 -2 0Z'/%3E%3C/svg%3E"
     />
+    <script>
+      // Light or dark, set before anything shows: the last choice, or else the system's.
+      {
+        let saved;
+        try {
+          saved = localStorage.getItem("harmo-playground-color-scheme");
+        } catch {}
+        const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      }
+    </script>
     <link rel="stylesheet" href="{{harmo}}" />
     <link rel="stylesheet" href="playground.css" />
     <script src="playground.js" defer></script>
@@ -30,7 +41,16 @@
         Harmo
       </a>
       <span class="htag">{{version}}</span>
-      <a class="hlink play-header-link" href="{{docs}}">Docs</a>
+      <div class="play-header-end">
+        <div class="hfield" data-orientation="horizontal">
+          <input class="hswitch" type="checkbox" role="switch" id="play-dark" />
+          <label class="hlabel" for="play-dark">Dark</label>
+        </div>
+        <script>
+          document.getElementById("play-dark").checked = document.documentElement.style.colorScheme === "dark";
+        </script>
+        <a class="hlink play-header-link" href="{{docs}}">Docs</a>
+      </div>
     </header>
     <div class="play-layout">
       <nav class="play-nav" id="play-nav" aria-label="Components" popover>
