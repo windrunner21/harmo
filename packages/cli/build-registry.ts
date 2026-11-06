@@ -18,6 +18,7 @@ const components: Record<string, string[]> = {
   banner: ["Banner.tsx"],
   breadcrumb: ["Breadcrumb.tsx"],
   button: ["Button.tsx"],
+  card: ["Card.tsx"],
   checkbox: ["Checkbox.tsx", "CheckboxGroup.tsx"],
   chevron: ["Chevron.tsx"],
   "chevron-to-arrow": ["ChevronToArrow.tsx"],
@@ -25,6 +26,7 @@ const components: Record<string, string[]> = {
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
   "filter-chip": ["FilterChip.tsx"],
   input: ["Input.tsx"],
+  kbd: ["Kbd.tsx"],
   link: ["Link.tsx"],
   listbox: [
     "listbox/Listbox.tsx",

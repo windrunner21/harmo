@@ -1,0 +1,36 @@
+<play-example title="In text">
+  <play-note>
+    A key in an instruction, in 13px text that keeps the line's height. Screen
+    readers read it as part of the sentence.
+  </play-note>
+  <p>
+    Press <kbd class="hkbd">Enter</kbd> to choose an option, or
+    <kbd class="hkbd">Esc</kbd> to close the list.
+  </p>
+</play-example>
+
+<play-example title="Shortcuts">
+  <play-note>
+    One <code>.hkbd</code> for keys pressed together, such as
+    <code>⌘K</code>; one each for keys used one after another, such as the
+    arrows.
+  </play-note>
+  <p><kbd class="hkbd">⌘K</kbd> Search</p>
+  <p><kbd class="hkbd">↑</kbd> <kbd class="hkbd">↓</kbd> Move through the results</p>
+  <p><kbd class="hkbd">↵</kbd> Open the result</p>
+</play-example>
+
+<play-example title="On a button">
+  <play-note>
+    Inside the label. On a filled button, the key is an outline in the label's
+    color, so its text has the label's contrast. The shortcut goes in
+    <code>aria-keyshortcuts</code>, and the key is hidden from screen readers,
+    so the button is named “Create”. The app handles the key itself.
+  </play-note>
+  <button class="hbutton" type="button" aria-keyshortcuts="N">
+    <span class="hbutton-label">Create <kbd class="hkbd" aria-hidden="true">N</kbd></span>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button" aria-keyshortcuts="E">
+    <span class="hbutton-label">Export <kbd class="hkbd" aria-hidden="true">E</kbd></span>
+  </button>
+</play-example>

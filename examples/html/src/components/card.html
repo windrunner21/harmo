@@ -1,0 +1,51 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Tinted, in the page's secondary background, with no border: a panel for a
+    group of content. The card frames it and lays nothing out. Use secondary
+    text or darker on it: tertiary text is 4.4:1 on the tint.
+  </play-note>
+  <div class="hcard">
+    <p>
+      Your trial ends in 12 days. Add a payment method to keep your campaigns
+      running.
+    </p>
+    <button class="hbutton" data-variant="secondary" type="button">
+      <span class="hbutton-label">Add payment method</span>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="Raised" layout="stack">
+  <play-note>
+    <code>data-variant="raised"</code>: the page's background, with a border
+    and a shadow, for an item that stands apart from what's around it, such as
+    a ticket on a board.
+  </play-note>
+  <div class="hcard" data-variant="raised">
+    <p>Refund not received for order 1042</p>
+    <span class="htag">Billing</span>
+  </div>
+</play-example>
+
+<play-example title="Ghost" layout="stack">
+  <play-note>
+    <code>data-variant="ghost"</code>: no frame until a link or button card is
+    hovered, for rows that each lead somewhere. The whole card is the link, so
+    its content is its name.
+  </play-note>
+  <nav aria-label="Settings">
+    <a class="hcard" data-variant="ghost" href="#team">Team members</a>
+    <a class="hcard" data-variant="ghost" href="#billing">Billing</a>
+    <a class="hcard" data-variant="ghost" href="#developers">Developers</a>
+  </nav>
+</play-example>
+
+<play-example title="Padding" layout="stack">
+  <play-note>
+    16px by default. <code>--harmo-card-padding</code> on a card makes it
+    tighter, as for a compact list.
+  </play-note>
+  <div class="hcard" style="--harmo-card-padding: 8px">
+    <p>Last synced 5 minutes ago</p>
+  </div>
+</play-example>

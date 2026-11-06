@@ -48,6 +48,16 @@ const groups: CatalogGroup[] = [
         purpose: "A round user image, or a placeholder when there is none.",
       },
       {
+        slug: "card",
+        title: "Card",
+        purpose: "A frame around a group of content: tinted, raised, or ghost.",
+      },
+      {
+        slug: "kbd",
+        title: "Kbd",
+        purpose: "A key or shortcut, such as Enter or ⌘K.",
+      },
+      {
         slug: "status",
         title: "Status",
         purpose:

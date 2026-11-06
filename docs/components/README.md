@@ -11,6 +11,7 @@ the same markup and does what the script would.
 | Banner | [banner.md](banner.md) |
 | Breadcrumb | [breadcrumb.md](breadcrumb.md) |
 | Button | [button.md](button.md) |
+| Card | [card.md](card.md) |
 | Checkbox | [checkbox.md](checkbox.md) |
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
 | Expand chevron | [expand-chevron.md](expand-chevron.md) |
@@ -18,6 +19,7 @@ the same markup and does what the script would.
 | Filter chip | [filter-chip.md](filter-chip.md) |
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
 | Input | [input.md](input.md) |
+| Kbd | [kbd.md](kbd.md) |
 | Link | [link.md](link.md) |
 | Listbox | [listbox.md](listbox.md) |
 | Meter | [meter.md](meter.md) |

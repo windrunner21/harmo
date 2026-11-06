@@ -1,0 +1,80 @@
+@use "shortcuts" as *;
+
+// A card that leads somewhere: a link, or an enabled button.
+$actionable: ':where(a[href], button:enabled)';
+
+// A frame around a group of content: tinted by default, raised, or ghost. It
+// lays nothing out, so what's inside keeps its own layout.
+.hcard {
+  box-sizing: border-box;
+  padding: $card-padding;
+
+  font-family: $font-family;
+
+  background-color: $color-background-secondary;
+  // Transparent, so every variant is the same size, and forced-colors mode,
+  // which drops backgrounds, still draws the frame.
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The card's padding spaces its content; the first and last child's own
+  // margins would double it.
+  & > :where(:first-child) {
+    margin-block-start: 0;
+  }
+
+  & > :where(:last-child) {
+    margin-block-end: 0;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  // The page's background, bordered and lifted off the page, like an item on
+  // a board.
+  &[data-variant="raised"] {
+    background-color: $color-background;
+    border-color: $color-border;
+    box-shadow: $box-shadow-sm;
+  }
+
+  // No frame until a link or button card is hovered, like a row in a list of
+  // pages.
+  &[data-variant="ghost"] {
+    background-color: transparent;
+
+    transition: background-color $duration-fast ease;
+
+    &#{$actionable} {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: $color-background-hover;
+        }
+      }
+    }
+  }
+}
+
+// A link or button card is a block that reads like its content. At zero
+// specificity, so an app's own layout class still wins.
+:where(a.hcard, button.hcard) {
+  display: block;
+
+  color: inherit;
+  text-align: start;
+  text-decoration: none;
+}
+
+:where(button.hcard) {
+  inline-size: 100%;
+
+  font: inherit;
+
+  cursor: pointer;
+}

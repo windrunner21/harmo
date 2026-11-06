@@ -7,9 +7,9 @@ action is navigation. For navigation inside text, use [Link](link.md).
 
 | Item | Requirement |
 | --- | --- |
-| CSS | `button.css`; `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
+| CSS | `button.css`; `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, `kbd.css`, or `tooltip.css` when used |
 | Element | `<button class="hbutton" type="…">`, or `<a class="hbutton" href="…">` |
-| Parts | `.hbutton-label` for the text; optional direct `.hicon`, `.hspinner`, `.hexpand-chevron` |
+| Parts | `.hbutton-label` for the text, which may end with a [`.hkbd`](kbd.md) for a shortcut; optional direct `.hicon`, `.hspinner`, `.hexpand-chevron` |
 | Required | `type` on a `<button>`; an icon-only button needs `aria-label` or `aria-labelledby` |
 | Unique | Ids that `aria-labelledby` or `aria-describedby` point to |
 | Script | Only for `aria-disabled` and loading; see [What a script does](#what-a-script-does) |

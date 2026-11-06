@@ -32,6 +32,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Banner](docs/components/banner.md): an inline notice: an icon, a message, and an optional action
 - [Breadcrumb](docs/components/breadcrumb.md): a navigation trail ending at the current page
 - [Button](docs/components/button.md): an action, as a button or as a link styled like one
+- [Card](docs/components/card.md): a frame around a group of content: tinted, raised, or ghost for rows that lead somewhere
 - [Checkbox](docs/components/checkbox.md): a native checkbox with Harmo's appearance
 - [ChevronToArrow](docs/components/chevron-to-arrow.md): a chevron that turns into an arrow while its link or button is hovered or focused
 - [Expand chevron](docs/components/expand-chevron.md): a chevron that folds from down to up while its control is expanded
@@ -39,6 +40,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Filter chip](docs/components/filter-chip.md): narrows a list or table: a dashed chip that opens a Popup and shows what's chosen
 - [Icons](docs/components/icons.md): SVG icons placed next to text in buttons, links, and breadcrumbs
 - [Input](docs/components/input.md): single-line native inputs: text, email, search, tel, url, and similar
+- [Kbd](docs/components/kbd.md): a key or shortcut, such as Enter or ⌘K, in text or on a button
 - [Link](docs/components/link.md): navigation, inside text or on its own
 - [Listbox](docs/components/listbox.md): the option list inside a popup, with groups, search, and multiple selection
 - [Meter](docs/components/meter.md): how much of something on a fixed scale, such as password strength

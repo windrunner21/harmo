@@ -260,7 +260,7 @@ onEachPlayground("index", () => {
 // in both modes, as the page loads and with each example's popup open. One
 // playground is enough: both use the same CSS. A test per accent, as opening
 // every popup of the Listbox page sixteen times took over a minute.
-for (const slug of ["button", "checkbox", "tabs", "listbox"]) {
+for (const slug of ["button", "checkbox", "kbd", "tabs", "listbox"]) {
   for (const accent of accents) {
     test(`axe finds no contrast problems on ${slug} in ${accent}, popups open too`, async ({ page }) => {
       await page.goto(`file://${import.meta.dirname}/../examples/html/dist/${slug}.html`);
