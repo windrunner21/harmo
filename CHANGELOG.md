@@ -24,10 +24,22 @@ minor version may change an API, and says how to upgrade when it does.
   opens, closes, and takes focus as Dialog does, slides in and out, and has a
   body that scrolls, a footer under it, and an optional aside beside them,
   such as a preview. `<DrawerClose>` makes a button close it.
+- Toast: `toast()` and `<Toaster>`, or `<section class="htoaster">` with a
+  script, a short message at the bottom of the window that goes away by
+  itself, with an icon by status, an optional description, and an optional
+  action. Toasts stack, newest in front, spread out on hover, a tap, or F8,
+  and leave one at a time; the same id changes a toast in place, and its box
+  changes shape with a spring. They show at the bottom center, or at the top
+  or bottom, at the start, center, or end. While a Dialog or Drawer is open,
+  toasts show inside it, where they can be used. Inspired by
+  [Sonner](https://sonner.emilkowal.ski), by
+  [Emil Kowalski](https://emilkowal.ski).
 - Button's `commandfor` and `command` props, for the button's command on
   another element, such as opening a dialog.
 - Tokens: `--harmo-dialog-backdrop-color`, and `--harmo-font-size-lg`, 20px,
-  for a dialog's title.
+  for a dialog's title; `--harmo-ease-spring`, a spring with about 3%
+  overshoot; and `--harmo-toast-duration`, `--harmo-toast-ease`, and
+  `--harmo-toast-morph-duration`.
 
 ## [0.2.0] - 2026-11-06
 

@@ -32,6 +32,7 @@ import { examples as switchExamples } from "./components/switch.tsx";
 import { examples as tabs } from "./components/tabs.tsx";
 import { examples as tag } from "./components/tag.tsx";
 import { examples as textarea } from "./components/textarea.tsx";
+import { examples as toast } from "./components/toast.tsx";
 import { examples as tooltip } from "./components/tooltip.tsx";
 
 export const components: Record<string, Record<string, ComponentType>> = {
@@ -65,5 +66,6 @@ export const components: Record<string, Record<string, ComponentType>> = {
   tabs,
   tag,
   textarea,
+  toast,
   tooltip,
 };

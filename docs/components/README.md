@@ -36,6 +36,7 @@ the same markup and does what the script would.
 | Tabs | [tabs.md](tabs.md) |
 | Tag | [tag.md](tag.md) |
 | TextArea | [textarea.md](textarea.md) |
+| Toast | [toast.md](toast.md) |
 | Tooltip | [tooltip.md](tooltip.md) |
 
 Reusable compositions built from these primitives live separately under
@@ -146,6 +147,7 @@ Some components are built from others, so their files need company:
   | `data-orientation` | `horizontal` | Field |
   | `data-direction` | `back` | ChevronToArrow |
   | `data-side` | Preferred or actual side | Tooltip, Popup |
+  | `data-position` | Where the region is: `top-start`, `top-center`, `top-end`, `bottom-start`, `bottom-end` | Toast |
   | `data-delay` | Wait 300ms before showing | Spinner |
   | `data-placeholder` | No value chosen | Select |
   | `data-filled` | A filled segment | Meter |
@@ -211,6 +213,8 @@ the React components, set:
 | `aria-pressed`, input `type`, `hidden`, `data-status`, `aria-invalid` | Password input | Show/hide, reveal the strength, color it |
 | `aria-valuenow`, `aria-valuetext`, `data-filled`, `data-status` | Meter | The value |
 | `role="status"` or `role="alert"` | Banner | Announce a banner that appears after load |
+| `data-closing` | Dialog, Drawer | Hold the close while the exit plays |
+| The toasts, the announcers' text, `--htoast-*`, `--htoaster-*`, `data-front`, `data-beyond`, `data-expanded`, `data-removed`, `data-leaving`, `data-moved`, `inert` | Toast | Show, announce, measure, stack, spread out, time, and move them into an open dialog |
 
 Each component page's "What a script does" section has the details.
 

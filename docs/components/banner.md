@@ -1,8 +1,8 @@
 # Banner
 
 An inline notice: an icon, a message, and an optional action, such as "The
-24-hour reply window has closed". For a passing confirmation, use a toast
-(planned).
+24-hour reply window has closed". For a passing confirmation, use a
+[Toast](toast.md).
 
 ## Contract
 

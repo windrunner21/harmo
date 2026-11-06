@@ -1,0 +1,373 @@
+@use "shortcuts" as *;
+
+// A short message at the edge of the window that goes away by itself, such as
+// "Quick reply saved": an icon, a title, an optional description, and an
+// optional action. Toasts stack, newest in front, and spread out on hover or
+// focus. Inspired by Sonner, by Emil Kowalski.
+//
+// The region, <section class="htoaster" popover="manual">, is in the top
+// layer; a script shows it, adds and removes toasts, measures them, and sets
+// the custom properties and data attributes below.
+
+// The region, at the bottom center of the window, or where data-position puts
+// it. A manual popover, so it's above the page; while a Dialog or Drawer is
+// open, the script moves it inside, where it isn't inert.
+.htoaster {
+  // Which way is away from the edge: up from the bottom, down from the top.
+  --htoaster-lift: 1;
+  // How wide a toast can be: the window, less the room on each side.
+  --htoaster-room: calc(100vw - 32px);
+
+  position: fixed;
+  inset: auto 0 calc(24px + env(safe-area-inset-bottom, 0px)) 0;
+
+  box-sizing: border-box;
+  // As wide as the widest toast shown at its own size, which the script sets:
+  // fitted to its content instead, the region kept a width from partway
+  // through a toast's change of size, and the toasts drifted off center.
+  inline-size: var(--htoaster-width, fit-content);
+  max-inline-size: var(--htoaster-room);
+  block-size: auto;
+  max-block-size: none;
+  margin: 0 auto;
+  padding: 0;
+  overflow: visible;
+
+  color: inherit;
+  background: transparent;
+  border: 0;
+  outline: none;
+
+  // Its own, so a closing dialog it's in doesn't turn its toasts off.
+  pointer-events: auto;
+
+  // At the top: toasts come in from above, stack downward, and leave upward.
+  &[data-position^="top"] {
+    --htoaster-lift: -1;
+
+    inset-block: calc(24px + env(safe-area-inset-top, 0px)) auto;
+  }
+
+  // At the start or end edge, 24px in: toasts line up on that edge.
+  &[data-position$="-start"],
+  &[data-position$="-end"] {
+    --htoaster-room: calc(100vw - 48px);
+  }
+
+  &[data-position$="-start"] {
+    margin-inline: 24px auto;
+  }
+
+  &[data-position$="-end"] {
+    margin-inline: auto 24px;
+  }
+}
+
+// The toasts, stacked in one cell the region's width, each at the edge.
+.htoaster-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// What screen readers announce: one region for success and info, read when
+// the reader is free, and one for warnings and errors, read at once. Each is
+// in the page, empty, from the start, since a live region that arrives with
+// its text isn't always read; the script adds each toast's text to one.
+.htoaster-announce {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  border: 0;
+  clip-path: inset(50%);
+}
+
+// Spread out, the list reaches behind the toasts, away from the edge, so the
+// pointer stays on it between them.
+.htoaster[data-expanded] .htoaster-list {
+  padding-block-start: var(--htoaster-spread, 0px);
+}
+
+.htoaster[data-expanded][data-position^="top"] .htoaster-list {
+  padding-block: 0 var(--htoaster-spread, 0px);
+}
+
+// The box: its size comes from its content's, which the script measures, so
+// it can change from one size to another with a little spring.
+.htoast {
+  --htoast-color: #{$status-color-info};
+
+  grid-area: 1 / 1;
+  align-self: end;
+  // Centered even while the spring takes it a little past the region's width.
+  justify-self: center;
+  justify-self: unsafe center;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  inline-size: var(--htoast-width, auto);
+  block-size: var(--htoast-height, auto);
+  overflow: hidden;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+
+  // Collapsed, each one further back is 5% smaller and 14px further from the
+  // edge.
+  transform: scale(calc(1 - var(--htoast-index, 0) * 0.05))
+    translateY(calc(var(--htoast-index, 0) * -14px * var(--htoaster-lift)));
+  transition:
+    transform $toast-duration $toast-ease,
+    opacity $toast-duration $toast-ease,
+    inline-size $toast-morph-duration $ease-spring,
+    block-size $toast-morph-duration $ease-spring;
+
+  // In from the edge.
+  @starting-style {
+    opacity: 0;
+
+    transform: scale(1) translateY(calc(100% * var(--htoaster-lift)));
+  }
+
+  &[data-status="success"] {
+    --htoast-color: #{$status-color-success};
+  }
+
+  &[data-status="warning"] {
+    --htoast-color: #{$status-color-warning};
+  }
+
+  &[data-status="error"] {
+    --htoast-color: #{$status-color-error};
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.htoaster[data-position^="top"] .htoast {
+  align-self: start;
+}
+
+.htoaster[data-position$="-start"] .htoast {
+  justify-self: start;
+}
+
+.htoaster[data-position$="-end"] .htoast {
+  justify-self: end;
+}
+
+// The content, at its own size, centered in the box: while the box changes
+// size, it shows more or less of it, rather than wrapping it again.
+.htoast-body {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-sizing: border-box;
+  inline-size: var(--htoast-body-width, max-content);
+  max-inline-size: calc(var(--htoaster-room) - 2px);
+  padding: 12px 16px;
+
+  transition:
+    opacity $toast-duration $toast-ease,
+    filter $toast-duration $toast-ease;
+
+  @starting-style {
+    opacity: 0;
+    filter: blur(2px);
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// What a toast showed before it changed, fading out over what it shows now:
+// centered with left, not inset-inline-start, since translate is physical
+// and on a right-to-left page the two would pull opposite ways.
+.htoast-body[data-leaving] {
+  position: absolute;
+  inset-block-start: 50%;
+  left: 50%;
+
+  pointer-events: none;
+
+  translate: -50% -50%;
+  // Only its fade: moved into or out of a dialog, it would otherwise start
+  // the content's way in, too, which outranks the fade.
+  transition: none;
+  animation: htoast-leave 250ms $toast-ease forwards;
+}
+
+@keyframes htoast-leave {
+  to {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+// Drawn with currentColor; the toast colors it by its status.
+.htoast-icon {
+  flex-shrink: 0;
+
+  inline-size: calc(20em / 14);
+  block-size: calc(20em / 14);
+
+  color: var(--htoast-color);
+}
+
+// The title and description, wrapping at 480px.
+.htoast-content {
+  display: flex;
+  flex-direction: column;
+
+  min-inline-size: 0;
+  max-inline-size: 480px;
+
+  overflow-wrap: anywhere;
+}
+
+.htoast-title {
+  font-weight: $font-weight-medium;
+
+  color: $color-text;
+}
+
+// Behind the front one, collapsed: the front one's size, with its content
+// hidden, so the stack reads as one shape that changes with the front.
+.htoaster:not([data-expanded]) .htoast:not([data-front]) {
+  inline-size: var(--htoaster-front-width);
+  block-size: var(--htoaster-front-height);
+
+  & > .htoast-body {
+    opacity: 0;
+    filter: blur(2px);
+  }
+}
+
+// More than three back, collapsed: hidden.
+.htoaster:not([data-expanded]) .htoast[data-beyond] {
+  opacity: 0;
+}
+
+// Spread out, on hover, focus, or a tap: a list, newest at the edge, each at
+// its own size.
+.htoaster[data-expanded] .htoast {
+  transform: scale(1)
+    translateY(calc(var(--htoast-offset, 0px) * -1 * var(--htoaster-lift)));
+}
+
+// Leaving: the front one slides back to the edge, the way it came.
+.htoast[data-removed] {
+  opacity: 0;
+
+  pointer-events: none;
+
+  &[data-front] {
+    transform: scale(1) translateY(calc(100% * var(--htoaster-lift)));
+  }
+}
+
+// One further back sinks behind the front one as it fades.
+.htoaster:not([data-expanded]) .htoast[data-removed]:not([data-front]) {
+  transform: scale(calc(1 - var(--htoast-index, 0) * 0.05))
+    translateY(calc(40% * var(--htoaster-lift)));
+  transition:
+    transform calc($toast-duration + 100ms) $toast-ease,
+    opacity $duration-normal $toast-ease;
+}
+
+// Moving into or out of a dialog puts each toast in the page again, where it
+// would start over, in from the edge. The script notes where each one was,
+// as --htoast-moved-*, and marks it, and its content, data-moved, so it starts
+// from there instead, and whatever it was doing, coming in, changing size, or
+// leaving, carries on. Only what it noted: a toast that comes during the move
+// comes in as usual. Important, so the noted values win over the rules for
+// where it's going, such as the front one's size for one going behind it;
+// inside @starting-style, that's only where it starts.
+.htoast[data-moved] {
+  @starting-style {
+    opacity: var(--htoast-moved-opacity) !important;
+
+    inline-size: var(--htoast-moved-width) !important;
+    block-size: var(--htoast-moved-height) !important;
+
+    transform: var(--htoast-moved-transform) !important;
+  }
+}
+
+.htoast-body[data-moved] {
+  @starting-style {
+    opacity: var(--htoast-moved-body-opacity) !important;
+    filter: var(--htoast-moved-body-filter) !important;
+  }
+}
+
+// It fades where it is, and its size changes at once.
+@media (prefers-reduced-motion: reduce) {
+  .htoast {
+    transition: opacity $duration-normal $toast-ease;
+
+    @starting-style {
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .htoast-body {
+    transition: opacity $duration-normal $toast-ease;
+
+    @starting-style {
+      filter: none;
+    }
+  }
+
+  .htoast-body[data-leaving] {
+    animation-name: htoast-fade;
+  }
+
+  .htoaster:not([data-expanded]) .htoast:not([data-front]) > .htoast-body {
+    filter: none;
+  }
+
+  .htoast[data-removed][data-front],
+  .htoaster:not([data-expanded]) .htoast[data-removed]:not([data-front]) {
+    transform: scale(calc(1 - var(--htoast-index, 0) * 0.05))
+      translateY(calc(var(--htoast-index, 0) * -14px * var(--htoaster-lift)));
+    transition: opacity $duration-normal $toast-ease;
+  }
+}
+
+@keyframes htoast-fade {
+  to {
+    opacity: 0;
+  }
+}

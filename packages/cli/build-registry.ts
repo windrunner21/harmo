@@ -49,6 +49,7 @@ const components: Record<string, string[]> = {
   tabs: ["tabs/Tabs.tsx", "tabs/TabNav.tsx", "tabs/useTabsMotion.ts"],
   tag: ["Tag.tsx"],
   textarea: ["TextArea.tsx"],
+  toast: ["Toast.tsx"],
   tooltip: ["Tooltip.tsx"],
 };
 

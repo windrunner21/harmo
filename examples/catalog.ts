@@ -91,6 +91,12 @@ const groups: CatalogGroup[] = [
         title: "Spinner",
         purpose: "A loading indicator, sized to match what is loading.",
       },
+      {
+        slug: "toast",
+        title: "Toast",
+        purpose:
+          "A short message at the edge of the window that goes away by itself, with an optional action.",
+      },
     ],
   },
   {

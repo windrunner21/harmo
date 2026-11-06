@@ -57,6 +57,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Tabs](docs/components/tabs.md): switches between sibling pages or panels, with a sliding hover pill and underline
 - [Tag](docs/components/tag.md): what something is, such as a ticket tag or "Test run"
 - [TextArea](docs/components/textarea.md): multi-line text that grows as you type
+- [Toast](docs/components/toast.md): a short message at the edge of the window that goes away by itself, with an optional action
 - [Tooltip](docs/components/tooltip.md): a short description shown on hover and keyboard focus
 
 ## Patterns

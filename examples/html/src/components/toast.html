@@ -1,0 +1,241 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    The region, <code>&lt;section class="htoaster" popover="manual"&gt;</code>,
+    goes once in the page; a script adds each toast to its list. A toast
+    comes in from below, stays 4 seconds, and slides back down. Hover the
+    stack, tap it, or press <kbd class="hkbd">F8</kbd> to spread it out and
+    hold it.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-status="success"
+    data-example-toast-title="Quick reply saved"
+    data-example-toast-description="Type /ship in a chat to use it."
+  >
+    <span class="hbutton-label">Save quick reply</span>
+  </button>
+  <section class="htoaster" popover="manual" tabindex="-1" aria-label="Notifications (F8)">
+    <ol class="htoaster-list"></ol>
+    <div class="htoaster-announce" role="status" aria-atomic="false"></div>
+    <div class="htoaster-announce" role="alert" aria-atomic="false"></div>
+  </section>
+</play-example>
+
+<play-example title="Each status">
+  <play-note>
+    <code>data-status</code> colors the icon. Screen readers read success and
+    info when they're free, and warnings and errors at once. A long
+    description wraps at 480px; the details stay in the page too, since the
+    toast goes. Sent one after another, the one in front changes shape into
+    the next.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-status="success"
+    data-example-toast-title="Contact added"
+    data-example-toast-description="Sam Rivera, +44 7700 900123"
+  >
+    <span class="hbutton-label">Success</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-status="error"
+    data-example-toast-title="Couldn't send the campaign"
+    data-example-toast-description="WhatsApp rejected the template. Edit it and try again."
+  >
+    <span class="hbutton-label">Error</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-status="warning"
+    data-example-toast-title="3 contacts weren't imported"
+    data-example-toast-description="Their phone numbers have no country code, so they were skipped. The import report lists them."
+  >
+    <span class="hbutton-label">Warning</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-status="info"
+    data-example-toast-title="Export started"
+  >
+    <span class="hbutton-label">Info</span>
+  </button>
+</play-example>
+
+<play-example title="A stack">
+  <play-note>
+    Three of different sizes: the newest in front, the others behind it in its
+    shape. Each counts its own 4 seconds; they leave one at a time, the oldest
+    first, 0.7 seconds apart.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button" data-example-toast-stack>
+    <span class="hbutton-label">Send three</span>
+  </button>
+</play-example>
+
+<play-example title="With an action">
+  <play-note>
+    A small secondary button, as in a Banner. Press <kbd class="hkbd">F8</kbd>
+    to reach it from the keyboard before it goes.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-status="success"
+    data-example-toast-title="Campaign run scheduled"
+    data-example-toast-description="Order shipped · 1,240 recipients · Today at 14:00"
+    data-example-toast-action="View run"
+  >
+    <span class="hbutton-label">Schedule a campaign run</span>
+  </button>
+</play-example>
+
+<play-example title="Kept open, then changed">
+  <play-note>
+    With no time limit, a toast stays until it's dismissed or changed. Sent
+    again with the same id, it changes in place, and its shape follows.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-id="connection"
+    data-example-toast-status="error"
+    data-example-toast-title="You're offline"
+    data-example-toast-description="New messages will show when you reconnect."
+    data-example-toast-duration="Infinity"
+    data-example-toast-action="Try again"
+  >
+    <span class="hbutton-label">Go offline</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-id="connection"
+    data-example-toast-status="success"
+    data-example-toast-title="Back online"
+    data-example-toast-duration="2000"
+  >
+    <span class="hbutton-label">Reconnect</span>
+  </button>
+</play-example>
+
+<play-example title="Positions">
+  <play-note>
+    <code>data-position</code> on the region puts it at the top or bottom of the
+    window, at the start, center, or end: <code>top-start</code>,
+    <code>top-center</code>, <code>top-end</code>, <code>bottom-start</code>,
+    <code>bottom-end</code>, or the bottom center when left out. At the top,
+    toasts come in from above and stack downward; at the start or end, they
+    line up on that edge, 24px in.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-position="top-start"
+    data-example-toast-title="Shown at the top start"
+  >
+    <span class="hbutton-label">Top start</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-position="top-center"
+    data-example-toast-title="Shown at the top center"
+  >
+    <span class="hbutton-label">Top center</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-position="top-end"
+    data-example-toast-title="Shown at the top end"
+  >
+    <span class="hbutton-label">Top end</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-position="bottom-start"
+    data-example-toast-title="Shown at the bottom start"
+  >
+    <span class="hbutton-label">Bottom start</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-position="bottom-center"
+    data-example-toast-title="Shown at the bottom center"
+  >
+    <span class="hbutton-label">Bottom center</span>
+  </button>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    data-example-toast-position="bottom-end"
+    data-example-toast-title="Shown at the bottom end"
+  >
+    <span class="hbutton-label">Bottom end</span>
+  </button>
+</play-example>
+
+<play-example title="Over a drawer">
+  <play-note>
+    While a Dialog or Drawer is open, the page behind it is inert, so the
+    region moves inside it. Save with the shortcut as it is: it's taken, so an
+    error toast shows over the drawer, which stays open. Change it and save:
+    the drawer closes, and the toast that it's saved shows over the page.
+  </play-note>
+  <button class="hbutton" type="button" commandfor="toast-reply-drawer" command="show-modal">
+    <span class="hbutton-label">New quick reply</span>
+  </button>
+  <dialog class="hdrawer" id="toast-reply-drawer" closedby="closerequest" aria-labelledby="toast-reply-drawer-title">
+    <header class="hdrawer-header">
+      <h2 class="hdrawer-title" id="toast-reply-drawer-title">New quick reply</h2>
+      <button
+        class="hbutton hdrawer-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="toast-reply-drawer"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <form method="dialog" data-example-taken="/ship">
+      <div class="hdrawer-body">
+        <div class="hfield">
+          <label class="hlabel" for="toast-reply-shortcut">Shortcut</label>
+          <input class="hinput" id="toast-reply-shortcut" name="shortcut" type="text" value="/ship" autofocus />
+        </div>
+      </div>
+      <footer class="hdrawer-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="toast-reply-drawer" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Save</span>
+        </button>
+      </footer>
+    </form>
+  </dialog>
+</play-example>

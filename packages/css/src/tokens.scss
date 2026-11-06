@@ -165,5 +165,13 @@
   --harmo-duration-slow: 300ms;
   --harmo-button-duration: var(--harmo-duration-fast);
   --harmo-chevron-to-arrow-duration: var(--harmo-duration-fast);
+  // A spring with about 3% overshoot, for a shape that changes size; it
+  // settles within the duration it's given.
+  --harmo-ease-spring: linear(0, 0.037, 0.126, 0.244, 0.372, 0.497, 0.612, 0.713, 0.798, 0.867, 0.92, 0.96, 0.989, 1.008, 1.02, 1.026, 1.028, 1.028, 1.026, 1.022, 1.019, 1.015, 1.012, 1.009, 1.006, 1.004, 1.003, 1.001, 1.001, 1, 1, 0.999, 1);
+  // Toasts move softly and a little slower, with ease, as small elements
+  // feel rushed at 200ms; they change size with the spring.
+  --harmo-toast-duration: 400ms;
+  --harmo-toast-ease: ease;
+  --harmo-toast-morph-duration: 500ms;
   --harmo-tooltip-delay: 300ms;
 }

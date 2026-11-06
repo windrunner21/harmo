@@ -160,7 +160,7 @@ section lists its props.
 | Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Tabs](docs/components/tabs.md) |
 | Data | [Filter chip](docs/components/filter-chip.md) |
-| Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md) |
+| Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
 | Display | [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md) |
 | Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand chevron](docs/components/expand-chevron.md) |
 | Patterns | [Settings list](docs/patterns/settings.md) |
