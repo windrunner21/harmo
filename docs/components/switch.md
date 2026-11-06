@@ -1,7 +1,7 @@
 # Switch
 
 An on/off switch for a setting that applies at once. On settings screens, put
-it in a [Settings list](../patterns/settings.md); in a form, pair it with a
+it in a [Settings list](settings.md); in a form, pair it with a
 label in a horizontal [Field](field.md). For a choice that applies on submit,
 use a [Checkbox](checkbox.md).
 
@@ -65,7 +65,7 @@ None.
 
 `<Switch>` renders the `<input type="checkbox" role="switch">`. Put it in a
 horizontal [Field](field.md#react) for its label and description, or in a
-[Setting](../patterns/settings.md#react). Its props are the input's
+[Setting](settings.md#react). Its props are the input's
 attributes, such as `checked`, `defaultChecked`, and `onChange`.
 
 ```tsx

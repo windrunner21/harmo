@@ -123,7 +123,7 @@ that do all of this.
 
 `<Select>` renders this markup and does all of the above. With `label`, it
 renders the Field too; without one, name it with `aria-label`, or place it in
-a [Setting](../patterns/settings.md#react), which names it. A disabled Select
+a [Setting](settings.md#react), which names it. A disabled Select
 has no popup. Its children are `<Option>`s and `<OptionGroup>`s, as in a
 [Listbox](listbox.md#react). Other props are the trigger `<button>`'s
 attributes.

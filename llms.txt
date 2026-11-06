@@ -51,6 +51,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Radio](docs/components/radio.md): a native radio with Harmo's appearance
 - [Segmented control](docs/components/segmented.md): one choice from a few options shown side by side
 - [Select](docs/components/select.md): a form field that picks one or more options from a list
+- [Settings list](docs/components/settings.md): settings with a title, a description, and a control beside or under them
 - [Spinner](docs/components/spinner.md): a loading indicator, sized to match what is loading
 - [Status](docs/components/status.md): what state something is in, such as a ticket or a campaign run
 - [Switch](docs/components/switch.md): an on/off switch for settings that apply immediately
@@ -59,11 +60,6 @@ Rules for using the React components (`@harmo-ui/react`):
 - [TextArea](docs/components/textarea.md): multi-line text that grows as you type
 - [Toast](docs/components/toast.md): a short message at the edge of the window that goes away by itself, with an optional action
 - [Tooltip](docs/components/tooltip.md): a short description shown on hover and keyboard focus
-
-## Patterns
-
-- [Patterns overview](docs/patterns/README.md): compositions of components for recurring screens
-- [Settings list](docs/patterns/settings.md): settings with a title, a description, and a control beside or under them
 
 ## Optional
 

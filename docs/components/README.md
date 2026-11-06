@@ -30,6 +30,7 @@ the same markup and does what the script would.
 | Radio | [radio.md](radio.md) |
 | Segmented control | [segmented.md](segmented.md) |
 | Select | [select.md](select.md) |
+| Settings list | [settings.md](settings.md) |
 | Spinner | [spinner.md](spinner.md) |
 | Status | [status.md](status.md) |
 | Switch | [switch.md](switch.md) |
@@ -38,9 +39,6 @@ the same markup and does what the script would.
 | TextArea | [textarea.md](textarea.md) |
 | Toast | [toast.md](toast.md) |
 | Tooltip | [tooltip.md](tooltip.md) |
-
-Reusable compositions built from these primitives live separately under
-[Patterns](../patterns/README.md).
 
 ## Page structure
 
@@ -94,6 +92,7 @@ Some components are built from others, so their files need company:
 | `listbox.css` | `popup.css`; `button.css` for a footer |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
+| `settings.css` | The controls it holds, such as `switch.css` |
 | `input.css`, `textarea.css`, `checkbox.css`, `radio.css`, `switch.css`, `segmented.css` | `field.css` for labels and messages |
 
 ## Shared conventions

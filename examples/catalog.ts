@@ -4,7 +4,6 @@ export interface CatalogEntry {
   slug: string;
   title: string;
   purpose: string;
-  docs?: string;
 }
 
 export interface CatalogGroup {
@@ -142,6 +141,12 @@ const groups: CatalogGroup[] = [
         purpose: "A form field that picks one or more options from a list.",
       },
       {
+        slug: "settings",
+        title: "Settings list",
+        purpose:
+          "Settings with a title, a description, and a control beside or under them.",
+      },
+      {
         slug: "switch",
         title: "Switch",
         purpose: "An on/off switch for settings that apply immediately.",
@@ -222,18 +227,6 @@ const groups: CatalogGroup[] = [
         slug: "tooltip",
         title: "Tooltip",
         purpose: "A short description shown on hover and keyboard focus.",
-      },
-    ],
-  },
-  {
-    title: "Patterns",
-    entries: [
-      {
-        slug: "settings",
-        title: "Settings list",
-        purpose:
-          "Settings with a title, a description, and a control beside or under them.",
-        docs: "patterns/settings.md",
       },
     ],
   },

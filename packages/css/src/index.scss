@@ -1,5 +1,5 @@
-// The full bundle: token defaults and the accent palettes first, then the
-// primitive components in alphabetical order, then the patterns built from them.
+// The full bundle: token defaults and the accent palettes first, then every
+// component in alphabetical order.
 @use "tokens";
 @use "accents";
 @use "avatar";
@@ -12,7 +12,6 @@
 @use "chevron-to-arrow";
 @use "dialog";
 @use "drawer";
-@use "toast";
 @use "expand-chevron";
 @use "field";
 @use "filter-chip";
@@ -26,13 +25,12 @@
 @use "radio";
 @use "segmented";
 @use "select";
+@use "settings";
 @use "spinner";
 @use "status";
 @use "switch";
 @use "tabs";
 @use "tag";
 @use "textarea";
+@use "toast";
 @use "tooltip";
-
-// Patterns
-@use "settings";

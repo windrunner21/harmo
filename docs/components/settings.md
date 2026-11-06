@@ -2,7 +2,7 @@
 
 A list of settings on a settings screen: each row has a title and a
 description, with its control on the right or under the text. Inside a form,
-use [Field](../components/field.md) instead.
+use [Field](field.md) instead.
 
 ## Contract
 
@@ -79,7 +79,7 @@ None.
 
 `<Settings>` renders the list, and `<Setting>` each row. A Setting's children
 are its control, named by the row's title and described by its description;
-a [Button](../components/button.md#react) keeps its own label and takes only
+a [Button](button.md#react) keeps its own label and takes only
 the description, and so does a control given its own `aria-label` or
 `aria-labelledby`. Other props are the `<div>`'s attributes.
 

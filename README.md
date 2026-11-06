@@ -15,7 +15,6 @@ pieces that compose into more capable interfaces.
 
 [Website](https://harmo-ui.com) ·
 [Components](docs/components/README.md) ·
-[Patterns](docs/patterns/README.md) ·
 [Playground](#playground) ·
 [Philosophy](docs/philosophy.md) ·
 [For AI agents](llms.txt) ·
@@ -156,14 +155,13 @@ section lists its props.
 | Group | Components |
 | --- | --- |
 | Actions | [Button](docs/components/button.md), [Link](docs/components/link.md) |
-| Forms | [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password input](docs/components/password.md), [Select](docs/components/select.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented control](docs/components/segmented.md) |
+| Forms | [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password input](docs/components/password.md), [Select](docs/components/select.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented control](docs/components/segmented.md), [Settings list](docs/components/settings.md) |
 | Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Tabs](docs/components/tabs.md) |
 | Data | [Filter chip](docs/components/filter-chip.md) |
 | Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
 | Display | [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md) |
 | Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand chevron](docs/components/expand-chevron.md) |
-| Patterns | [Settings list](docs/patterns/settings.md) |
 
 Every page has the same sections: a Contract table, copyable markup, the
 options, appearance and states, accessibility, what a script does, the React

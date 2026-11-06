@@ -188,7 +188,7 @@ function renderComponent(
   const rest = source.replace(pattern, "").trim();
   if (rest) throw new Error(`components/${entry.slug}.html has content outside an example: "${rest.slice(0, 60)}"`);
 
-  const docs = href(join(repo, "docs", entry.docs ?? `components/${entry.slug}.md`));
+  const docs = href(join(repo, "docs", `components/${entry.slug}.md`));
   return [
     `<article class="play-component" id="${entry.slug}" aria-labelledby="${entry.slug}-title">`,
     `  <header class="play-component-header">`,

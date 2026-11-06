@@ -69,7 +69,7 @@ None.
 `<Segmented>` renders the group, with a `<SegmentedOption>` for each option;
 with `label`, it also renders the Field and label above it. Without `label`,
 name it with `aria-label`, or place it in a
-[Setting](../patterns/settings.md#react), which names it. Other props are the
+[Setting](settings.md#react), which names it. Other props are the
 group `<div>`'s attributes.
 
 | Prop | Effect |

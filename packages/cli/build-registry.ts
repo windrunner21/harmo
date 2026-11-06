@@ -84,7 +84,7 @@ for (const line of readFileSync(
   "utf8",
 ).split("\n")) {
   const page =
-    /^- \[[^\]]+\]\(docs\/(?:components|patterns)\/([a-z-]+)\.md\): (.+)$/.exec(
+    /^- \[[^\]]+\]\(docs\/components\/([a-z-]+)\.md\): (.+)$/.exec(
       line,
     );
   if (page?.[1] && page[2] && page[1] in components)
