@@ -8,6 +8,22 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Dialog: `<dialog class="hdialog">`, or `<Dialog>`, a modal window for a task
+  or a decision. A button opens it with `commandfor` and
+  `command="show-modal"`, or with React's `trigger`; code or a URL can open it
+  with `open` and `onOpenChange`. The browser holds the page behind, moves
+  focus in and back out, and closes it on Escape, and with `closedby="any"`, on
+  a click outside. It opens in 200ms, growing from 95%, and fades out in 150ms
+  before it closes, in every browser: the React Dialog, or the example script
+  with plain HTML, holds the close until the fade has played.
+  `<DialogClose>` makes a button close it.
+- Button's `commandfor` and `command` props, for the button's command on
+  another element, such as opening a dialog.
+- Tokens: `--harmo-dialog-backdrop-color`, and `--harmo-font-size-lg`, 20px,
+  for a dialog's title.
+
 ## [0.2.0] - 2026-11-06
 
 Dark mode, eight accents, a theme for any brand color with

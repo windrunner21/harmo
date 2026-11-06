@@ -22,6 +22,7 @@ const components: Record<string, string[]> = {
   checkbox: ["Checkbox.tsx", "CheckboxGroup.tsx"],
   chevron: ["Chevron.tsx"],
   "chevron-to-arrow": ["ChevronToArrow.tsx"],
+  dialog: ["Dialog.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
   "filter-chip": ["FilterChip.tsx"],

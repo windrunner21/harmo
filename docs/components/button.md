@@ -137,6 +137,7 @@ link's attributes, so `type="submit"` makes a submit button.
 | `loading` | Shows the spinner after the label, sets `aria-busy` and `aria-disabled`, and ignores clicks |
 | `href` | Renders a link, through `HarmoProvider`'s `linkComponent` (an `<a>` by default) |
 | `aria-disabled` | `"true"` keeps it focusable but ignores clicks, so a [Tooltip](tooltip.md) can explain why |
+| `commandfor`, `command` | The button's command for another element, such as `command="show-modal"` to open the [Dialog](dialog.md) whose id `commandfor` names |
 
 ```tsx
 <Button loading>Saving changes</Button>

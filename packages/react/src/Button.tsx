@@ -19,6 +19,15 @@ interface ButtonOptions {
   variant?: "secondary" | "tertiary";
   size?: "small";
   loading?: boolean;
+  commandfor?: string;
+  command?:
+    | "show-modal"
+    | "close"
+    | "request-close"
+    | "show-popover"
+    | "hide-popover"
+    | "toggle-popover"
+    | `--${string}`;
 }
 
 export type ButtonProps =

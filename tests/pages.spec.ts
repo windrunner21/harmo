@@ -46,19 +46,28 @@ for (const playground of playgrounds) {
 // Field's error and the password details are the exceptions: they stay rendered
 // and collapse, which is how they animate closed. Browsers ignore hidden on SVG.
 // The examples' own layout around and inside components isn't Harmo's.
+// A closed dialog isn't rendered, and WebKit doesn't apply [hidden] inside one,
+// so each is shown, not as a modal, while its parts are checked.
 const stillShownWhenHidden = (page: Page) =>
   page.evaluate(() => {
+    const closed = [...document.querySelectorAll<HTMLDialogElement>(".play-demo dialog:not([open])")];
+    for (const dialog of closed) dialog.show();
     const elements = [...document.querySelectorAll(".play-demo *")].filter(
       (element): element is HTMLElement =>
         element instanceof HTMLElement &&
         Boolean(element.closest('[class^="h"], [class*=" h"]')) &&
         !element.matches('.herror, .hpassword-details, [class*="play-"], [style*="display"]'),
     );
-    return elements.flatMap((element) => {
+    const shown = elements.flatMap((element) => {
       const before = element.hidden;
       element.hidden = true;
       const { display } = getComputedStyle(element);
       element.hidden = before;
       return display === "none" ? [] : [(element.cloneNode(false) as Element).outerHTML];
     });
+    for (const dialog of closed) {
+      dialog.close();
+      for (const animation of dialog.getAnimations()) animation.finish();
+    }
+    return shown;
   });

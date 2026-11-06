@@ -189,6 +189,12 @@ const groups: CatalogGroup[] = [
     title: "Overlays",
     entries: [
       {
+        slug: "dialog",
+        title: "Dialog",
+        purpose:
+          "A modal window for a task or a decision, opened by a button, code, or a link.",
+      },
+      {
         slug: "listbox",
         title: "Listbox",
         purpose:

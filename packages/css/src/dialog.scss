@@ -1,0 +1,232 @@
+@use "shortcuts" as *;
+
+// A modal dialog, opened with showModal() or a button's command="show-modal".
+// The browser puts it above the page, makes the page behind inert, moves focus
+// in and back out, and closes it on Escape and, with closedby="any", on a click
+// outside.
+.hdialog {
+  --hdialog-max-inline-size: 600px;
+  --hdialog-scale: 0.95;
+  --hdialog-margin: 24px;
+
+  // Placed here rather than by the browser's modal styles, so it keeps its
+  // place and size while it fades out, outside them.
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+
+  // Not rendered when closed, as the browser's own dialog isn't: hidden with
+  // visibility instead, Safari couldn't move focus inside as it opens.
+  display: none;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  inline-size: fit-content;
+  block-size: fit-content;
+  min-inline-size: min(400px, 100% - 2 * var(--hdialog-margin));
+  max-inline-size: min(
+    var(--hdialog-max-inline-size),
+    100% - 2 * var(--hdialog-margin)
+  );
+  max-block-size: calc(100% - 2 * var(--hdialog-margin));
+  margin: auto;
+  padding: 24px;
+  overflow: hidden;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+
+  opacity: 0;
+
+  // A closed one that's still showing, as Chromium keeps one while it fades,
+  // doesn't take the clicks meant for the page.
+  pointer-events: none;
+
+  transform: scale(var(--hdialog-scale));
+  // Opens in 200ms in every browser. Closes in 150ms: with data-closing, which
+  // the example script or the React Dialog sets while it holds the close, as a
+  // library keeps a closing element until its exit has played. Without either,
+  // Chromium still fades it (display and overlay), and Firefox and Safari close
+  // it at once.
+  transition:
+    opacity $duration-fast $ease-out-cubic,
+    transform $duration-fast $ease-out-cubic,
+    display $duration-fast allow-discrete,
+    overlay $duration-fast allow-discrete;
+
+  &[open] {
+    display: flex;
+
+    opacity: 1;
+
+    pointer-events: auto;
+
+    transform: none;
+    transition-duration: $duration-normal;
+
+    @starting-style {
+      opacity: 0;
+
+      transform: scale(var(--hdialog-scale));
+    }
+  }
+
+  // Still open while it fades out; then the script closes it.
+  &[open][data-closing] {
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform: scale(var(--hdialog-scale));
+    transition-duration: $duration-fast;
+  }
+
+  // At once, as hidden hides anything, rather than after a fade.
+  &[hidden] {
+    display: none;
+
+    transition: none;
+  }
+
+  &::backdrop {
+    background-color: $dialog-backdrop-color;
+    opacity: 0;
+
+    transition:
+      opacity $duration-fast $ease-out-cubic,
+      display $duration-fast allow-discrete,
+      overlay $duration-fast allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+
+    transition-duration: $duration-normal;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  &[open][data-closing]::backdrop {
+    opacity: 0;
+
+    transition-duration: $duration-fast;
+  }
+
+  // It still fades, but doesn't grow.
+  @media (prefers-reduced-motion: reduce) {
+    --hdialog-scale: 1;
+  }
+
+  @media (max-width: 30rem) {
+    --hdialog-margin: 12px;
+
+    padding: 20px;
+  }
+}
+
+// The page behind stays where it is while a dialog is open. A page that
+// scrolls as a whole, where scrollbars take room, can set scrollbar-gutter:
+// stable on its root, so it doesn't shift as the scrollbar goes and comes back.
+:root:has(.hdialog:modal) {
+  overflow: hidden;
+}
+
+// A form can hold the body and footer, so its submit button is inside it; it
+// lays nothing out itself.
+.hdialog > form {
+  display: contents;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The title and description, with the close button at their end.
+.hdialog-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  flex-shrink: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hdialog-title {
+  grid-column: 1;
+
+  margin: 0;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+}
+
+.hdialog-description {
+  grid-column: 1;
+
+  margin: 8px 0 0;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+}
+
+// Its icon, not its padding, lines up with the title's first line and the
+// dialog's padding.
+.hdialog-close {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: start;
+
+  margin-block-start: -3px;
+  margin-inline-end: -7px;
+}
+
+// What scrolls when the dialog is taller than the window. Its 4px of padding,
+// taken back by the margin, keeps the focus rings of what's inside from being
+// clipped at its edges.
+.hdialog-body {
+  flex: 1 1 auto;
+
+  min-block-size: 0;
+  margin: 16px -4px 0;
+  padding: 4px;
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  // With tabindex="0", when nothing inside takes focus.
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+}
+
+// The dialog's actions, at its end.
+.hdialog-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+
+  margin-block-start: 16px;
+
+  &[hidden] {
+    display: none;
+  }
+}

@@ -33,7 +33,12 @@
   // Example links point at application routes such as /reports, so following
   // them would only leave the playground.
   document.addEventListener("click", (event) => {
-    if (event.target.closest?.(".play-demo a[href]")) event.preventDefault();
+    const link = event.target.closest?.(".play-demo a[href]");
+    if (!link) return;
+    // A link to a dialog that an example's script opens is that script's.
+    const named = new URL(link.href).searchParams.get("dialog");
+    if (named && document.getElementById(named)?.hasAttribute("data-example-url-dialog")) return;
+    event.preventDefault();
   });
 
   // On narrow screens the nav is a popover: close it once a link is chosen,

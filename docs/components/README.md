@@ -14,6 +14,7 @@ the same markup and does what the script would.
 | Card | [card.md](card.md) |
 | Checkbox | [checkbox.md](checkbox.md) |
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
+| Dialog | [dialog.md](dialog.md) |
 | Expand chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
 | Filter chip | [filter-chip.md](filter-chip.md) |

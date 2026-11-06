@@ -5,9 +5,9 @@ import { createRequire } from "node:module";
 // every check made each one about three times slower.
 export const axe = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
 
-// Runs axe on the page as it loads, then on each example with its popup open,
-// trigger included: each popup is opened as a click opens it, and checked
-// once it has finished opening. All in one call to the page, since in WebKit
+// Runs axe on the page as it loads, then on each example with its popup or
+// dialog open, trigger included: each is opened as a click opens it, and
+// checked once it has finished opening. All in one call to the page, since in WebKit
 // each call takes about a tenth of a second.
 export const checkAccessibility = (page: Page, only?: string[]) =>
   page.evaluate(async (only) => {
@@ -56,6 +56,31 @@ export const checkAccessibility = (page: Page, only?: string[]) =>
       const violations = await run({ include: [[`[id="${example.id}"]`]] }, listbox ? ["scrollable-region-focusable"] : []);
       popups.push({ trigger: trigger.innerText.trim(), violations });
       popup.hidePopover();
+    }
+
+    // Each example's dialog, opened by its button, or else by its script's
+    // showModal(), as a link opens one, and checked once it has finished
+    // opening, as a popup is. One that doesn't open as a modal fails.
+    for (const dialog of document.querySelectorAll<HTMLDialogElement>(".play-demo dialog")) {
+      const example = dialog.closest(".play-example");
+      if (!example) continue;
+      const opener = example.querySelector<HTMLElement>(`[commandfor="${dialog.id}"][command="show-modal"]:enabled`);
+      if (opener) {
+        opener.scrollIntoView({ block: "center" });
+        opener.click();
+      } else dialog.showModal();
+      for (let frame = 0; frame < 120; frame++) {
+        await new Promise(requestAnimationFrame);
+        const moving = dialog.getAnimations().some((animation) => animation.playState !== "finished");
+        if (dialog.open && !moving && getComputedStyle(dialog).opacity === "1") break;
+      }
+      const shown = dialog.matches(":modal") && getComputedStyle(dialog).opacity === "1";
+      const violations = shown
+        ? await run({ include: [[`[id="${example.id}"]`]] })
+        : [{ rule: "the dialog didn't open as a modal", elements: [`#${dialog.id}`] }];
+      popups.push({ trigger: opener?.innerText.trim() ?? `#${dialog.id}`, violations });
+      dialog.close();
+      for (const animation of dialog.getAnimations()) animation.finish();
     }
     return { loaded, popups };
   }, only);

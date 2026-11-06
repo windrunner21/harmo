@@ -1,0 +1,213 @@
+<play-example title="Default">
+  <play-note>
+    A <code>&lt;dialog&gt;</code> that a button opens with
+    <code>commandfor</code> and <code>command="show-modal"</code>, without a
+    script. The browser makes the page behind inert, moves focus inside, to
+    the field with <code>autofocus</code>, and closes it on
+    <kbd class="hkbd">Escape</kbd>, returning focus to the button.
+    <code>closedby="any"</code> closes it on a click outside too, and the form's
+    <code>method="dialog"</code> closes it when it's sent.
+  </play-note>
+  <button class="hbutton" type="button" commandfor="invite-dialog" command="show-modal">
+    <span class="hbutton-label">Invite people</span>
+  </button>
+  <dialog
+    class="hdialog"
+    id="invite-dialog"
+    closedby="any"
+    aria-labelledby="invite-dialog-title"
+    aria-describedby="invite-dialog-description"
+  >
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="invite-dialog-title">Invite people</h2>
+      <p class="hdialog-description" id="invite-dialog-description">
+        They get an email with a link to join this workspace.
+      </p>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="invite-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <form method="dialog">
+      <div class="hdialog-body">
+        <div class="hfield">
+          <label class="hlabel" for="invite-email">Email</label>
+          <input class="hinput" id="invite-email" name="email" type="email" autocomplete="email" autofocus />
+        </div>
+      </div>
+      <footer class="hdialog-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="invite-dialog" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Send invite</span>
+        </button>
+      </footer>
+    </form>
+  </dialog>
+</play-example>
+
+<play-example title="Closing only on purpose">
+  <play-note>
+    <code>closedby="closerequest"</code>: a click outside doesn't close it, so a
+    half-filled form isn't lost to a stray click; <kbd class="hkbd">Escape</kbd>
+    and its buttons still do. A Select inside opens above the dialog, and
+    <kbd class="hkbd">Escape</kbd> closes its list first.
+  </play-note>
+  <button class="hbutton" type="button" commandfor="team-dialog" command="show-modal">
+    <span class="hbutton-label">New team</span>
+  </button>
+  <dialog
+    class="hdialog"
+    id="team-dialog"
+    closedby="closerequest"
+    aria-labelledby="team-dialog-title"
+    aria-describedby="team-dialog-description"
+  >
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="team-dialog-title">New team</h2>
+      <p class="hdialog-description" id="team-dialog-description">
+        Teams share an inbox and the conversations assigned to it.
+      </p>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="team-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <form method="dialog">
+      <div class="hdialog-body">
+        <div style="display: grid; gap: 16px">
+          <div class="hfield">
+            <label class="hlabel" for="team-name">Name</label>
+            <input class="hinput" id="team-name" name="name" type="text" autofocus />
+          </div>
+          <div class="hfield">
+            <span class="hlabel" id="team-visibility-label">Visibility</span>
+            <button
+              class="hselect"
+              id="team-visibility"
+              type="button"
+              data-name="visibility"
+              role="combobox"
+              aria-labelledby="team-visibility-label"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="team-visibility-listbox"
+              popovertarget="team-visibility-popup"
+              style="anchor-name: --team-visibility"
+            >
+              <span class="hselect-value">Everyone in the workspace</span>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </button>
+            <div class="hpopup" id="team-visibility-popup" popover style="position-anchor: --team-visibility">
+              <ul class="hlistbox" id="team-visibility-listbox" role="listbox" aria-labelledby="team-visibility-label">
+                <li class="hoption" id="team-visibility-everyone" role="option" data-value="everyone" aria-selected="true">
+                  <span class="hoption-label">Everyone in the workspace</span>
+                  <play-icon name="check" class="hoption-check"></play-icon>
+                </li>
+                <li class="hoption" id="team-visibility-members" role="option" data-value="members" aria-selected="false">
+                  <span class="hoption-label">Its members only</span>
+                </li>
+              </ul>
+            </div>
+            <input type="hidden" name="visibility" value="everyone" />
+          </div>
+        </div>
+      </div>
+      <footer class="hdialog-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="team-dialog" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Create team</span>
+        </button>
+      </footer>
+    </form>
+  </dialog>
+</play-example>
+
+<play-example title="Long content">
+  <play-note>
+    Taller than the window, the body scrolls, and the header and footer stay
+    put. A body with nothing inside that takes focus has
+    <code>tabindex="0"</code>, so the keyboard can scroll it too.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button" commandfor="terms-dialog" command="show-modal">
+    <span class="hbutton-label">Read the terms</span>
+  </button>
+  <dialog class="hdialog" id="terms-dialog" closedby="any" aria-labelledby="terms-dialog-title">
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="terms-dialog-title">Terms of service</h2>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="terms-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdialog-body" tabindex="0">
+      <p>These terms cover your use of the workspace, the messages you send through it, and the data it keeps about your contacts.</p>
+      <p>You're responsible for the content of your campaigns and for having your contacts' consent to message them on each channel you use.</p>
+      <p>Messages you send are kept for as long as your plan allows, then deleted. Exports you download are yours to keep and protect.</p>
+      <p>We may change these terms. When we do, we'll tell the workspace's owners by email at least 30 days before the change applies.</p>
+      <p>Either side can end the agreement at any time. When it ends, your workspace stays readable for 30 days, so you can export what you need.</p>
+      <p>Your plan's price is billed in advance, each month or each year. Unused time isn't refunded, except where the law requires it.</p>
+      <p>These terms are governed by the law of the country where your workspace was created, unless your contract says otherwise.</p>
+      <p>Questions about these terms go to the address on your invoice, and we'll answer within five working days.</p>
+    </div>
+    <footer class="hdialog-footer">
+      <button class="hbutton" data-variant="secondary" type="button" commandfor="terms-dialog" command="request-close">
+        <span class="hbutton-label">Decline</span>
+      </button>
+      <button class="hbutton" type="button" commandfor="terms-dialog" command="request-close">
+        <span class="hbutton-label">Accept</span>
+      </button>
+    </footer>
+  </dialog>
+</play-example>
+
+<play-example title="Opened from a link">
+  <play-note>
+    A link can open a dialog, as an app's router does with a URL such as
+    <code>?dialog=shortcuts-dialog</code>, so the link, a reload, and Back all
+    work, and closing it goes back. The example script stands in for the
+    router; in React, the dialog's <code>open</code> comes from it.
+  </play-note>
+  <a class="hlink" href="?dialog=shortcuts-dialog">Keyboard shortcuts</a>
+  <dialog class="hdialog" id="shortcuts-dialog" closedby="any" aria-labelledby="shortcuts-dialog-title" data-example-url-dialog>
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="shortcuts-dialog-title">Keyboard shortcuts</h2>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="shortcuts-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdialog-body">
+      <p><kbd class="hkbd">⌘K</kbd> Search</p>
+      <p><kbd class="hkbd">N</kbd> New conversation</p>
+      <p><kbd class="hkbd">Esc</kbd> Close this dialog</p>
+    </div>
+  </dialog>
+</play-example>
