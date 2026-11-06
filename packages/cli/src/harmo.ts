@@ -63,16 +63,41 @@ const isBefore = (a: string, b: string) => {
   return rankA === rankB ? folderA < folderB : rankA < rankB;
 };
 
+// Every @import in a stylesheet, with where it starts and ends. Comments, quoted
+// strings, and parentheses are read whole, so an import inside a comment doesn't
+// count, and a semicolon inside a URL doesn't end one.
+const cssImports = (css: string) => {
+  const found: { text: string; start: number; end: number }[] = [];
+  let start = -1;
+  let parens = 0;
+  let braces = 0;
+  for (let i = 0; i < css.length; i++) {
+    const char = css[i];
+    if (char === "/" && css[i + 1] === "*") {
+      const close = css.indexOf("*/", i + 2);
+      i = close === -1 ? css.length : close + 1;
+    } else if (char === '"' || char === "'") {
+      for (i++; i < css.length && css[i] !== char; i++) if (css[i] === "\\") i++;
+    } else if (char === "(") parens++;
+    else if (char === ")") parens = Math.max(0, parens - 1);
+    else if (char === "{") braces++;
+    else if (char === "}") braces = Math.max(0, braces - 1);
+    else if (start === -1 && braces === 0 && css.startsWith("@import", i) && /[\s"'u]/.test(css[i + 7] ?? ""))
+      start = i;
+    else if (char === ";" && start !== -1 && parens === 0) {
+      found.push({ text: css.slice(start, i + 1), start, end: i + 1 });
+      start = -1;
+    }
+  }
+  return found;
+};
+
 // The imports of Harmo's own stylesheets, however a formatter or a person wrote them.
-// Comments match first, so an import inside one doesn't count.
 const harmoImports = (css: string) =>
-  [...css.matchAll(/\/\*[\s\S]*?\*\/|@import\s[^;]*;/g)].flatMap((match) => {
+  cssImports(css).flatMap(({ text, start, end }) => {
     const path =
-      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|([a-z-]+)\/\2\.css)/.exec(
-        match[0],
-      )?.[1];
-    const end = match.index + match[0].length;
-    return path ? [{ path, start: match.index, end }] : [];
+      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|([a-z-]+)\/\2\.css)/.exec(text)?.[1];
+    return path ? [{ path, start, end }] : [];
   });
 
 const withStyles = (existing: string | undefined, paths: string[]) => {
@@ -247,15 +272,14 @@ const themeFile = "harmo-theme.css";
 // Adds the theme's import after the last import in harmo.css, once. Imports
 // add puts in later go before it, since add only places Harmo's own.
 const withTheme = (css: string) => {
-  if (/@import\s+(?:url\(\s*)?["']?(?:\.\/)?harmo-theme\.css/.test(css)) return css;
+  const imports = cssImports(css);
+  const theme = /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?harmo-theme\.css/;
+  if (imports.some(({ text }) => theme.test(text))) return css;
   const lineEnding = css.includes("\r\n") ? "\r\n" : "\n";
   const line = `@import "./${themeFile}";`;
-  const last = [...css.matchAll(/\/\*[\s\S]*?\*\/|@import\s[^;]*;/g)]
-    .filter((match) => match[0].startsWith("@import"))
-    .at(-1);
+  const last = imports.at(-1);
   if (!last) return `${line}${lineEnding}${css}`;
-  const end = last.index + last[0].length;
-  return `${css.slice(0, end)}${lineEnding}${line}${css.slice(end)}`;
+  return `${css.slice(0, last.end)}${lineEnding}${line}${css.slice(last.end)}`;
 };
 
 const theme = async (

@@ -16,7 +16,8 @@
   padding: 4px;
   overflow: auto;
 
-  // The highlighted option shows where focus is.
+  // The highlighted option shows where focus is; with none, the popup does
+  // (below). A ring on the list would be clipped by the popup's border.
   outline: none;
 
   font-family: $font-family;
@@ -35,6 +36,14 @@
   &:where(:not(:has(.hoption:not([hidden])))) {
     padding: 0;
   }
+}
+
+// A list that has keyboard focus itself, with no option highlighted, such as
+// after the pointer leaves it: its popup shows the focus ring, outside its
+// border.
+.hpopup:has(.hlistbox:focus-visible):not(:has(.hoption[data-active])) {
+  outline: $focus-outline;
+  outline-offset: $focus-outline-offset;
 }
 
 .hoption {

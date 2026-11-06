@@ -121,7 +121,9 @@ focus.
   announce it as the highlight moves: a [Select](select.md) trigger keeps
   focus; a list with a search row moves it to the search field; otherwise the
   list itself takes focus (with `tabindex="-1"`). It has no focus ring of its
-  own, since the highlighted option shows where focus is.
+  own, since the highlighted option shows where focus is. With keyboard focus
+  on the list and no option highlighted, such as after the pointer leaves it,
+  its popup shows the focus ring.
 - Keys: Down and Up move the highlight, Home and End go to the first and last
   option, and typing jumps to the next option whose label starts with the
   typed letters (except in a search field). Enter chooses; in a multi-select,

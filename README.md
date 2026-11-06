@@ -218,11 +218,14 @@ system's by default. To match an existing app, set it once:
 }
 ```
 
-Token defaults are declared on `:where(:root)`, so your overrides win
-whichever stylesheet loads last, accents included. For a local theme, override
-the role on the component or a containing element instead of `:root`. Tokens
-built from another token are worked out on `:root`, so a local override doesn't
-reach them: redeclare those in the same place.
+Token defaults are declared on `:where(:root)`, and accents with `:where()`
+too, so your overrides on `:root` win whichever stylesheet loads last, over an
+accent on `<html>` as well. An accent on a section sets its colors on that
+section, which win inside it over what it inherits from `:root`: to change one,
+override it on the section. For a local theme, override the role on the
+component or a containing element instead of `:root`. Tokens built from another
+token are worked out on `:root`, so a local override doesn't reach them:
+redeclare those in the same place.
 
 ```css
 .dark-panel {

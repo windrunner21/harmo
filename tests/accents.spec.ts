@@ -1,9 +1,8 @@
-import { expect, type Page } from "@playwright/test";
-import { createRequire } from "node:module";
+import { expect, type Locator, type Page } from "@playwright/test";
+import { axe, checkAccessibility } from "./axe.ts";
 import { example, onEachPlayground, pointAt, ready, test } from "./playgrounds.ts";
 
 const accents = ["purple", "blue", "green", "red", "amber", "teal", "pink", "mono"] as const;
-const axe = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
 
 // The playground sets color-scheme itself; these tests set it and the accent.
 const use = (page: Page, accent: string, scheme: "light" | "dark") =>
@@ -65,6 +64,27 @@ const roles = (page: Page) =>
     };
   });
 
+// The WCAG contrast of an element's text on its own background.
+const contrast = (element: Locator) =>
+  element.evaluate((element) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 1;
+    const context = canvas.getContext("2d", { willReadFrequently: true })!;
+    const luminance = (css: string) => {
+      context.clearRect(0, 0, 1, 1);
+      context.fillStyle = css;
+      context.fillRect(0, 0, 1, 1);
+      const [r, g, b] = [...context.getImageData(0, 0, 1, 1).data].map((v) => {
+        const s = v / 255;
+        return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
+    };
+    const style = getComputedStyle(element);
+    const [x, y] = [luminance(style.color), luminance(style.backgroundColor)];
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  });
+
 // What docs/components/README.md promises for every accent, in both modes.
 onEachPlayground("button", () => {
   for (const accent of accents) {
@@ -104,6 +124,42 @@ onEachPlayground("button", () => {
     await use(page, "blue", "light");
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     await expect(button).toHaveCSS("background-color", "rgb(1, 2, 3)");
+  });
+
+  test("an app's value on :root doesn't reach inside a section with its own accent, and one on the section does", async ({ page }) => {
+    await page.addStyleTag({
+      content: ":root { --harmo-color-primary-fill: rgb(1, 2, 3); } .own-fill { --harmo-color-primary-fill: rgb(4, 5, 6); }",
+    });
+    const section = await example(page, "button-variants");
+    const button = section.locator(".hbutton").first();
+    await section.evaluate((element) => {
+      element.dataset.harmoAccent = "green";
+    });
+    await expect(button).toHaveCSS("background-color", "rgb(36, 109, 30)");
+    await section.evaluate((element) => element.classList.add("own-fill"));
+    await expect(button).toHaveCSS("background-color", "rgb(4, 5, 6)");
+  });
+
+  // Mono alone has dark text on its dark-mode buttons, a dark Switch thumb,
+  // and underlined links; an accent inside it has none of them.
+  test("an accent inside mono has its own button text, thumb, and links, in dark mode", async ({ page }) => {
+    await use(page, "mono", "dark");
+    const section = await example(page, "button-variants");
+    const button = section.locator(".hbutton").first();
+    for (const accent of ["purple", "green"]) {
+      await section.evaluate((element, accent) => {
+        element.dataset.harmoAccent = accent;
+      }, accent);
+      await expect(button).toHaveCSS("color", "rgb(255, 255, 255)");
+      const inside = await section.evaluate((element) => {
+        const probe = element.appendChild(document.createElement("div"));
+        probe.style.backgroundColor = "var(--harmo-switch-thumb-color-background)";
+        const thumb = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return { thumb, decoration: getComputedStyle(element).getPropertyValue("--harmo-link-hover-text-decoration").trim() };
+      });
+      expect(inside).toEqual({ thumb: "rgb(255, 255, 255)", decoration: "none" });
+    }
   });
 
   test("a button gets one step darker on hover in light, and lighter in dark, mono too", async ({ page }) => {
@@ -169,6 +225,17 @@ onEachPlayground("link", () => {
 
 // The playgrounds' own Accent picker, at the top of the sidebar.
 onEachPlayground("index", () => {
+  test("the skip link reads in every accent, in both modes", async ({ page }) => {
+    const skip = page.locator(".play-skip");
+    await skip.focus();
+    for (const accent of accents) {
+      for (const scheme of ["light", "dark"] as const) {
+        await use(page, accent, scheme);
+        await expect.poll(() => contrast(skip), `${accent}, ${scheme}`).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+
   test("the Accent picker recolors the playground, and the choice is remembered", async ({ page }) => {
     const root = page.locator("html");
     const picker = page.getByRole("combobox", { name: "Accent" });
@@ -190,28 +257,24 @@ onEachPlayground("index", () => {
 });
 
 // axe's contrast check on pages full of accented components, for every accent
-// in both modes. One playground is enough: both use the same CSS.
+// in both modes, as the page loads and with each example's popup open. One
+// playground is enough: both use the same CSS. A test per accent, as opening
+// every popup of the Listbox page sixteen times took over a minute.
 for (const slug of ["button", "checkbox", "tabs", "listbox"]) {
-  test(`axe finds no contrast problems on ${slug} with any accent`, async ({ page }) => {
-    await page.goto(`file://${import.meta.dirname}/../examples/html/dist/${slug}.html`);
-    await page.addScriptTag({ path: axe });
-    const failures: string[] = [];
-    for (const accent of accents) {
+  for (const accent of accents) {
+    test(`axe finds no contrast problems on ${slug} in ${accent}, popups open too`, async ({ page }) => {
+      await page.goto(`file://${import.meta.dirname}/../examples/html/dist/${slug}.html`);
+      await page.addScriptTag({ path: axe });
+      const failures: string[] = [];
       for (const scheme of ["light", "dark"] as const) {
         await use(page, accent, scheme);
-        const violations = await page.evaluate(async () => {
-          await new Promise((resolve) => setTimeout(resolve, 260));
-          const { axe } = window as unknown as { axe: typeof import("axe-core") };
-          const result = await axe.run(document, {
-            runOnly: { type: "rule", values: ["color-contrast"] },
-            resultTypes: ["violations"],
-            preload: false,
-          });
-          return result.violations.flatMap((v) => v.nodes.map((n) => n.target.join(" ")));
-        });
-        failures.push(...violations.map((target) => `${accent} ${scheme}: ${target}`));
+        await page.waitForTimeout(260);
+        const { loaded, popups } = await checkAccessibility(page, ["color-contrast"]);
+        failures.push(...loaded.flatMap(({ elements }) => elements.map((element) => `${scheme}: ${element}`)));
+        for (const { trigger, violations } of popups)
+          failures.push(...violations.flatMap(({ elements }) => elements.map((element) => `${scheme}, ${trigger} open: ${element}`)));
       }
-    }
-    expect(failures).toEqual([]);
-  });
+      expect(failures).toEqual([]);
+    });
+  }
 }

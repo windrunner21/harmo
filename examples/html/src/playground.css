@@ -37,7 +37,7 @@ body {
   text-decoration: none;
 
   color: var(--harmo-color-on-primary);
-  background-color: var(--harmo-color-primary);
+  background-color: var(--harmo-color-primary-fill);
   border-radius: var(--harmo-border-radius);
 
   &:not(:focus) {

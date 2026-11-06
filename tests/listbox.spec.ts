@@ -169,6 +169,24 @@ onEachPlayground("listbox", () => {
     await expect(listbox).toHaveCSS("outline-style", "none");
   });
 
+  test("with keyboard focus on the list and nothing highlighted, its popup shows the focus ring", async ({ page }) => {
+    const container = await example(page, "listbox-single");
+    const listbox = container.getByRole("listbox", { includeHidden: true });
+    const popup = container.locator(".hpopup");
+    await container.getByRole("button", { name: "Period" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(listbox).toBeFocused();
+    await expect(popup).toHaveCSS("outline-style", "none");
+
+    await pointAt(page, listbox.getByRole("option", { name: "This year" }));
+    await page.mouse.move(0, 0);
+    await expect(listbox.locator("[data-active]")).toHaveCount(0);
+    await expect(popup).toHaveCSS("outline-style", "solid");
+
+    await page.keyboard.press("ArrowDown");
+    await expect(popup).toHaveCSS("outline-style", "none");
+  });
+
   test("a list fills a popup wider than its cap", async ({ page }) => {
     const { container, trigger, listbox } = await openList(page, "listbox-long-options", "Sender number");
     await trigger.evaluate((button) => {

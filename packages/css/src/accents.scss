@@ -7,7 +7,9 @@
 // the fills behind the text on Button and Switch, and the focus ring. Every
 // accent has the same contrast as the purple, in light and dark mode; mono is
 // black, or near-white in dark mode. :where() keeps them at zero specificity,
-// so an app's own values still win.
+// so an app's own values on the same element still win. An accent on a section
+// sets its values there, over what the section inherits, so an app overrides
+// those on the section.
 
 :where([data-harmo-accent="purple"]) {
   --harmo-color-primary: light-dark(#5e3de8, #a594f7);
@@ -17,10 +19,13 @@
   --harmo-color-primary-fill: light-dark(#5e3de8, #6b4de6);
   --harmo-color-primary-fill-hover: light-dark(#4a2fbb, #7a5cf0);
   --harmo-color-primary-fill-active: light-dark(#3c259b, #5e3de8);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#5e3de8, #a594f7);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#5e3de8, #a594f7);
   --harmo-link-visited-color-text: light-dark(#2e1a8f, #c7bcfa);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="blue"]) {
@@ -31,10 +36,13 @@
   --harmo-color-primary-fill: light-dark(#1f5eb2, #1e68c2);
   --harmo-color-primary-fill-hover: light-dark(#174a8f, #2274d8);
   --harmo-color-primary-fill-active: light-dark(#113c76, #1a5eb1);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#1f5eb2, #2faedc);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#1f5eb2, #2faedc);
   --harmo-link-visited-color-text: light-dark(#0d335c, #7ad1e2);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="green"]) {
@@ -45,10 +53,13 @@
   --harmo-color-primary-fill: light-dark(#246d1e, #2a781c);
   --harmo-color-primary-fill-hover: light-dark(#1b5616, #308621);
   --harmo-color-primary-fill-active: light-dark(#144610, #256d19);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#246d1e, #6db359);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#246d1e, #6db359);
   --harmo-link-visited-color-text: light-dark(#0e3b19, #a6cf99);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="red"]) {
@@ -59,10 +70,13 @@
   --harmo-color-primary-fill: light-dark(#b22a40, #c72841);
   --harmo-color-primary-fill-hover: light-dark(#8f2032, #dd2e49);
   --harmo-color-primary-fill-active: light-dark(#761828, #b6243a);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#b22a40, #f17f95);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#b22a40, #f17f95);
   --harmo-link-visited-color-text: light-dark(#621234, #f7b1c8);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="amber"]) {
@@ -73,10 +87,13 @@
   --harmo-color-primary-fill: light-dark(#a1411f, #b0491e);
   --harmo-color-primary-fill-hover: light-dark(#813217, #c35222);
   --harmo-color-primary-fill-active: light-dark(#6a2811, #a0421a);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#a1411f, #e58d3d);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#a1411f, #e58d3d);
   --harmo-link-visited-color-text: light-dark(#5d1e0c, #e2bf83);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="teal"]) {
@@ -87,10 +104,13 @@
   --harmo-color-primary-fill: light-dark(#226963, #20746d);
   --harmo-color-primary-fill-hover: light-dark(#19534e, #25827a);
   --harmo-color-primary-fill-active: light-dark(#134440, #1d6a63);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#226963, #30b59d);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#226963, #30b59d);
   --harmo-link-visited-color-text: light-dark(#0e3937, #84d3ba);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="pink"]) {
@@ -101,10 +121,13 @@
   --harmo-color-primary-fill: light-dark(#ac2970, #bf277d);
   --harmo-color-primary-fill-hover: light-dark(#8a1f59, #d3308a);
   --harmo-color-primary-fill-active: light-dark(#721848, #af2372);
+  --harmo-color-on-primary: var(--harmo-white);
+  --harmo-switch-thumb-color-background: var(--harmo-white);
   --harmo-color-focus: light-dark(#ac2970, #e681ba);
   --harmo-focus-outline: 2px solid var(--harmo-color-focus);
   --harmo-link-color-text: light-dark(#ac2970, #e681ba);
   --harmo-link-visited-color-text: light-dark(#621236, #eeb2d9);
+  --harmo-link-hover-text-decoration: none;
 }
 
 :where([data-harmo-accent="mono"]) {

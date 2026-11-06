@@ -4,8 +4,10 @@
 // leaving the page; in a tablist, choosing a tab selects it and shows its
 // panel, and the arrow keys, Home, and End move between tabs.
 {
-  const canHover = matchMedia("(hover: hover) and (pointer: fine)");
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  // Asked each time, as the React version does: in WebKit, a query kept from
+  // earlier can be a frame late to see a change of setting.
+  const canHover = () => matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
   // Each Tabs' underline: a read of the current tab's box, which returns the
   // write that places the underline there, and a way to make the next
   // placement immediate.
@@ -41,7 +43,7 @@
       const strip = tabs.getBoundingClientRect();
       tabs.scrollBy({
         left: box.left + box.width / 2 - (strip.left + strip.width / 2),
-        behavior: atOnce || reducedMotion.matches ? "instant" : "smooth",
+        behavior: atOnce || reducedMotion() ? "instant" : "smooth",
       });
     };
     // A key press places the underline at once; the pointer slides it. With
@@ -92,7 +94,7 @@
 
     list.addEventListener("pointerover", (event) => {
       const item = event.target.closest('a, [role="tab"]');
-      if (!item || !canHover.matches) return;
+      if (!item || !canHover()) return;
       const { x, width } = measure(item);
       // Appear in place rather than sliding in from where it last was.
       if (!hovered) highlight.style.transition = "none";

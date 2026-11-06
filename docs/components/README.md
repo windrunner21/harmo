@@ -125,9 +125,10 @@ Some components are built from others, so their files need company:
   `data-harmo-accent`: `purple` (the default), `blue`, `teal`, `green`,
   `amber`, `red`, `pink`, or `mono`, which is black, or near-white in dark mode,
   with dark text on its buttons there, and links underlined on hover. They come
-  from `accents.css`. Each has
-  the purple's contrast in every role, in both modes. They're set with
-  `:where()`, so an app's own values still win.
+  from `accents.css`. Each has the purple's contrast in every role, in both
+  modes, and sets every role itself, so an accent inside another inherits
+  nothing from it. They're set with `:where()`, so an app's own values on the
+  same element still win; an accent on a section is overridden on that section.
 - **State comes from native attributes and ARIA** wherever one exists:
   `disabled`, `checked`, `hidden`, `aria-invalid`, `aria-expanded`,
   `aria-selected`, `aria-disabled`, `aria-busy`, `aria-pressed`,

@@ -77,6 +77,13 @@ describe("theme's colors", () => {
     expect(yellow.css).toContain(`#ffd400 is too light for white text, so text and buttons use ${yellow.darkened}.`);
   });
 
+  test("a colored theme sets white text on buttons, a white thumb, and no underline itself, so mono on the page doesn't reach them", () => {
+    const { css } = theme("#0f75b6");
+    expect(css).toContain("--harmo-color-on-primary: var(--harmo-white);");
+    expect(css).toContain("--harmo-switch-thumb-color-background: var(--harmo-white);");
+    expect(css).toContain("--harmo-link-hover-text-decoration: none;");
+  });
+
   test("a gray adapts from mono, with dark text on dark mode's buttons and links underlined on hover", () => {
     const gray = theme("#6b7280");
     expect(gray.basis).toBe("mono");
@@ -122,6 +129,20 @@ describe("harmo-ui theme", () => {
     expect(imports.filter((path) => path === "harmo-theme.css")).toHaveLength(1);
     expect(imports.at(-1)).toBe("harmo-theme.css");
     expect(imports).toContain("link/link.css");
+  });
+
+  test("an import in a comment doesn't count, and a semicolon in a URL doesn't end an import", () => {
+    run("add", "button");
+    const styles = join(project, "components/harmo/harmo.css");
+    const custom = `@import url("./custom.css?a=1;b=2");`;
+    writeFileSync(styles, `${read("components/harmo/harmo.css")}/* @import "./harmo-theme.css"; */\n${custom}\n`);
+    run("theme", "#0f75b6");
+    run("add", "link");
+    const css = read("components/harmo/harmo.css");
+    expect(css).toContain(`${custom}\n@import "./harmo-theme.css";`);
+    expect(css).toContain(`/* @import "./harmo-theme.css"; */`);
+    expect(css).toContain(`@import "./link/link.css";`);
+    expect(css.match(/^@import "\.\/harmo-theme\.css";$/gm)).toHaveLength(1);
   });
 
   test("keeps a theme that differs, until told to replace it", () => {

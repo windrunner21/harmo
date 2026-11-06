@@ -102,11 +102,15 @@ const fromHues = (h: Hues, { k = 1, amber = 0, primary }: Tuning = {}): HandPick
   return { light, dark };
 };
 
-// The custom properties of a palette, for a selector.
+// The custom properties of a palette, for a selector. Every palette sets every
+// one, those it shares with tokens.scss included, so an accent inside another
+// inherits nothing from it: a purple section inside a mono page has white
+// text on its buttons, not mono's dark text.
 const block = (selector: string, { light, dark, underlineLinksOnHover }: HandPicked) => {
   const pair = (a: string, b: string) => `light-dark(${a}, ${b})`;
   const fillHover = mixWithBlack(light.primary, LIGHT_HOVER_SHARE);
   const fillActive = mixWithBlack(light.primary, LIGHT_PRESSED_SHARE);
+  const onFill = dark.onFill ? pair(WHITE, dark.onFill) : "var(--harmo-white)";
   return [
     `${selector} {`,
     `  --harmo-color-primary: ${pair(light.primary, dark.primary)};`,
@@ -116,17 +120,13 @@ const block = (selector: string, { light, dark, underlineLinksOnHover }: HandPic
     `  --harmo-color-primary-fill: ${pair(light.primary, dark.fill)};`,
     `  --harmo-color-primary-fill-hover: ${pair(fillHover, dark.fillHover)};`,
     `  --harmo-color-primary-fill-active: ${pair(fillActive, dark.fillActive)};`,
-    ...(dark.onFill
-      ? [
-          `  --harmo-color-on-primary: ${pair(WHITE, dark.onFill)};`,
-          `  --harmo-switch-thumb-color-background: ${pair(WHITE, dark.onFill)};`,
-        ]
-      : []),
+    `  --harmo-color-on-primary: ${onFill};`,
+    `  --harmo-switch-thumb-color-background: ${onFill};`,
     `  --harmo-color-focus: ${pair(light.primary, dark.primary)};`,
     `  --harmo-focus-outline: 2px solid var(--harmo-color-focus);`,
     `  --harmo-link-color-text: ${pair(light.primary, dark.primary)};`,
     `  --harmo-link-visited-color-text: ${pair(light.hover, dark.hover)};`,
-    ...(underlineLinksOnHover ? [`  --harmo-link-hover-text-decoration: underline;`] : []),
+    `  --harmo-link-hover-text-decoration: ${underlineLinksOnHover ? "underline" : "none"};`,
     `}`,
   ].join("\n");
 };
@@ -149,7 +149,9 @@ export const accentsScss = () => {
 // the fills behind the text on Button and Switch, and the focus ring. Every
 // accent has the same contrast as the purple, in light and dark mode; mono is
 // black, or near-white in dark mode. :where() keeps them at zero specificity,
-// so an app's own values still win.
+// so an app's own values on the same element still win. An accent on a section
+// sets its values there, over what the section inherits, so an app overrides
+// those on the section.
 
 ${blocks.join("\n\n")}
 `;
