@@ -8,6 +8,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-07
+
+Three overlays, Dialog, Drawer, and Toast, and destructive buttons, with
+hold to confirm.
+
 ### Added
 
 - Dialog: `<dialog class="hdialog">`, or `<Dialog>`, a modal window for a task
@@ -19,11 +24,84 @@ minor version may change an API, and says how to upgrade when it does.
   before it closes, in every browser: the React Dialog, or the example script
   with plain HTML, holds the close until the fade has played.
   `<DialogClose>` makes a button close it.
+
+  ```html preview
+  <div>
+    <button class="hbutton" type="button" commandfor="invite-dialog" command="show-modal">
+      <span class="hbutton-label">Invite people</span>
+    </button>
+    <dialog class="hdialog" id="invite-dialog" closedby="any"
+      aria-labelledby="invite-dialog-title" aria-describedby="invite-dialog-description">
+      <header class="hdialog-header">
+        <h2 class="hdialog-title" id="invite-dialog-title">Invite people</h2>
+        <p class="hdialog-description" id="invite-dialog-description">
+          They get an email with a link to join this workspace.
+        </p>
+        <button class="hbutton hdialog-close" data-variant="tertiary" type="button"
+          commandfor="invite-dialog" command="request-close" aria-label="Close">
+          <svg class="hicon" width="24" height="24" viewBox="0 0 25 25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18.1183 18.5318L6.80463 7.21814" /><path d="M18.1183 7.21814L6.80463 18.5318" /></svg>
+        </button>
+      </header>
+      <form method="dialog">
+        <div class="hdialog-body">
+          <div class="hfield">
+            <label class="hlabel" for="invite-email">Email</label>
+            <input class="hinput" id="invite-email" name="email" type="email" autocomplete="email" autofocus />
+          </div>
+        </div>
+        <footer class="hdialog-footer">
+          <button class="hbutton" data-variant="secondary" type="button"
+            commandfor="invite-dialog" command="request-close">
+            <span class="hbutton-label">Cancel</span>
+          </button>
+          <button class="hbutton" type="submit">
+            <span class="hbutton-label">Send invite</span>
+          </button>
+        </footer>
+      </form>
+    </dialog>
+  </div>
+  ```
 - Drawer: `<dialog class="hdrawer">`, or `<Drawer>`, a modal panel at the
   window's end edge, the full height of the window, for a form or details. It
   opens, closes, and takes focus as Dialog does, slides in and out, and has a
   body that scrolls, a footer under it, and an optional aside beside them,
   such as a preview. `<DrawerClose>` makes a button close it.
+
+  ```html preview
+  <div>
+    <button class="hbutton" type="button" commandfor="reply-drawer" command="show-modal">
+      <span class="hbutton-label">New quick reply</span>
+    </button>
+    <dialog class="hdrawer" id="reply-drawer" closedby="closerequest"
+      aria-labelledby="reply-drawer-title">
+      <header class="hdrawer-header">
+        <h2 class="hdrawer-title" id="reply-drawer-title">New quick reply</h2>
+        <button class="hbutton hdrawer-close" data-variant="tertiary" type="button"
+          commandfor="reply-drawer" command="request-close" aria-label="Close">
+          <svg class="hicon" width="24" height="24" viewBox="0 0 25 25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18.1183 18.5318L6.80463 7.21814" /><path d="M18.1183 7.21814L6.80463 18.5318" /></svg>
+        </button>
+      </header>
+      <form method="dialog">
+        <div class="hdrawer-body">
+          <div class="hfield">
+            <label class="hlabel" for="reply-shortcut">Shortcut</label>
+            <input class="hinput" id="reply-shortcut" name="shortcut" type="text" autofocus />
+          </div>
+        </div>
+        <footer class="hdrawer-footer">
+          <button class="hbutton" data-variant="secondary" type="button"
+            commandfor="reply-drawer" command="request-close">
+            <span class="hbutton-label">Cancel</span>
+          </button>
+          <button class="hbutton" type="submit">
+            <span class="hbutton-label">Save</span>
+          </button>
+        </footer>
+      </form>
+    </dialog>
+  </div>
+  ```
 - Toast: `toast()` and `<Toaster>`, or `<section class="htoaster">` with a
   script, a short message at the bottom of the window that goes away by
   itself, with an icon by status, an optional description, and an optional
@@ -33,18 +111,109 @@ minor version may change an API, and says how to upgrade when it does.
   or bottom, at the start, center, or end. While a Dialog or Drawer is open,
   toasts show inside it, where they can be used. Inspired by
   [Sonner](https://sonner.emilkowal.ski), by
-  [Emil Kowalski](https://emilkowal.ski).
+  [Emil Kowalski](https://emilkowal.ski), and its change of shape by the
+  Dynamic Island in his [Animations on the Web](https://animations.dev)
+  course.
+
+  A toast as it shows. Its script times it, stacks it, and adds and removes
+  it; this one has none, so it stays until it's hidden again:
+
+  ```html preview
+  <div>
+    <button class="hbutton" data-variant="secondary" type="button"
+      popovertarget="toaster" popovertargetaction="toggle">
+      <span class="hbutton-label">Show the toast</span>
+    </button>
+    <section class="htoaster" id="toaster" popover="manual" tabindex="-1"
+      aria-label="Notifications (F8)">
+      <ol class="htoaster-list">
+        <li class="htoast" data-status="success" data-front>
+          <div class="htoast-body">
+            <svg class="htoast-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="9" /><path d="M6.5 10.25L8.75 12.5L13.5 7.75" /></svg>
+            <div class="htoast-content">
+              <span class="htoast-title">Quick reply saved</span>
+              <span class="htoast-description">Type /ship in a chat to use it.</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+      <div class="htoaster-announce" role="status" aria-atomic="false"></div>
+      <div class="htoaster-announce" role="alert" aria-atomic="false"></div>
+    </section>
+  </div>
+  ```
+
+  In an app, `toast()` sends one, with `<Toaster>` once near the root:
+
+  ```tsx
+  toast({
+    status: "success",
+    title: "Quick reply saved",
+    description: "Type /ship in a chat to use it.",
+  });
+  ```
 - Destructive buttons: Button's `destructive`, or `data-destructive`, red in
   any variant, for an action that destroys something.
+
+  ```html preview
+  <div>
+    <button class="hbutton" data-destructive type="button">
+      <span class="hbutton-label">Delete workspace</span>
+    </button>
+    <button class="hbutton" data-variant="secondary" data-destructive type="button">
+      <span class="hbutton-label">Remove member</span>
+    </button>
+    <button class="hbutton" data-variant="tertiary" data-destructive type="button">
+      <span class="hbutton-label">Discard draft</span>
+    </button>
+  </div>
+  ```
 - Hold to confirm: Button's `onHold`, or `data-hold` with a `.hbutton-hold`
   fill, for an action that's hard to undo, such as "Hold to delete". Held
   for 1.5 seconds (`holdDuration`), by pointer or by Enter or Space, its
   fill wipes across, red on a destructive button and the accent on any
   other, and the action runs. A screen reader's press runs it at once.
-- A Button's width changes over 200ms when its text or loading state does,
-  rather than jumping, and its spinner fades in.
+
+  At rest, and held all the way (`data-held`). Its script does the holding;
+  this one has none, so it shows the two looks without holding:
+
+  ```html preview
+  <div>
+    <button class="hbutton" data-variant="secondary" data-size="small" data-destructive type="button" data-hold>
+      <svg class="hicon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 6.75H19.5" /><path d="M9.75 6.75V5.25C9.75 4.42 10.42 3.75 11.25 3.75H12.75C13.58 3.75 14.25 4.42 14.25 5.25V6.75" /><path d="M6.75 6.75L7.5 18C7.56 19.24 8.34 20.25 9.75 20.25H14.25C15.66 20.25 16.44 19.24 16.5 18L17.25 6.75" /><path d="M10.5 10.5V16.5" /><path d="M13.5 10.5V16.5" /></svg>
+      <span class="hbutton-label">Hold to delete</span>
+      <span class="hbutton-hold" aria-hidden="true">
+        <svg class="hicon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 6.75H19.5" /><path d="M9.75 6.75V5.25C9.75 4.42 10.42 3.75 11.25 3.75H12.75C13.58 3.75 14.25 4.42 14.25 5.25V6.75" /><path d="M6.75 6.75L7.5 18C7.56 19.24 8.34 20.25 9.75 20.25H14.25C15.66 20.25 16.44 19.24 16.5 18L17.25 6.75" /><path d="M10.5 10.5V16.5" /><path d="M13.5 10.5V16.5" /></svg>
+        <span class="hbutton-label">Hold to delete</span>
+      </span>
+    </button>
+    <button class="hbutton" data-variant="secondary" data-size="small" data-destructive type="button" data-hold data-held>
+      <svg class="hicon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 6.75H19.5" /><path d="M9.75 6.75V5.25C9.75 4.42 10.42 3.75 11.25 3.75H12.75C13.58 3.75 14.25 4.42 14.25 5.25V6.75" /><path d="M6.75 6.75L7.5 18C7.56 19.24 8.34 20.25 9.75 20.25H14.25C15.66 20.25 16.44 19.24 16.5 18L17.25 6.75" /><path d="M10.5 10.5V16.5" /><path d="M13.5 10.5V16.5" /></svg>
+      <span class="hbutton-label">Hold to delete</span>
+      <span class="hbutton-hold" aria-hidden="true">
+        <svg class="hicon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 6.75H19.5" /><path d="M9.75 6.75V5.25C9.75 4.42 10.42 3.75 11.25 3.75H12.75C13.58 3.75 14.25 4.42 14.25 5.25V6.75" /><path d="M6.75 6.75L7.5 18C7.56 19.24 8.34 20.25 9.75 20.25H14.25C15.66 20.25 16.44 19.24 16.5 18L17.25 6.75" /><path d="M10.5 10.5V16.5" /><path d="M13.5 10.5V16.5" /></svg>
+        <span class="hbutton-label">Hold to delete</span>
+      </span>
+    </button>
+  </div>
+  ```
+
+  In React:
+
+  ```tsx
+  <Button variant="secondary" size="small" destructive loading={deleting} onHold={remove}>
+    <TrashIcon className="hicon" />
+    {deleting ? "Deleting" : "Hold to delete"}
+  </Button>
+  ```
 - Button's `commandfor` and `command` props, for the button's command on
-  another element, such as opening a dialog.
+  another element, such as opening a dialog:
+
+  ```tsx
+  <Button commandfor="invite-dialog" command="show-modal">
+    Invite people
+  </Button>
+  ```
 - Tokens: `--harmo-dialog-backdrop-color`, and `--harmo-font-size-lg`, 20px,
   for a dialog's title; `--harmo-ease-spring`, a spring with about 3%
   overshoot; and `--harmo-toast-duration`, `--harmo-toast-ease`, and
@@ -52,6 +221,15 @@ minor version may change an API, and says how to upgrade when it does.
   `--harmo-color-danger-border`, a tint and border around danger text; and
   `--harmo-color-danger-fill`, `-hover`, `-active`, and
   `--harmo-color-on-danger`, for a destructive button.
+
+### Changed
+
+- A Button's width changes over 200ms when its text or loading state does,
+  rather than jumping, and its spinner fades in.
+- An icon beside a Button's label sits 3px further in, so it looks as far
+  from the border as the label's text.
+- The Settings list is a component, under Forms, rather than a pattern. Its
+  page moved to `docs/components/settings.md`.
 
 ## [0.2.0] - 2026-11-06
 
@@ -191,6 +369,7 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/windrunner21/harmo/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/windrunner21/harmo/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/windrunner21/harmo/releases/tag/v0.1.1

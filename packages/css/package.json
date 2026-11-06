@@ -1,6 +1,6 @@
 {
        "name": "@harmo-ui/css",
-       "version": "0.2.0",
+       "version": "0.3.0",
        "description": "CSS-first UI components for dashboards and applications: native HTML elements, one class each, themed with custom properties.",
        "license": "MIT",
        "author": "Imran Hajiyev",
