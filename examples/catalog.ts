@@ -19,7 +19,8 @@ const groups: CatalogGroup[] = [
       {
         slug: "button",
         title: "Button",
-        purpose: "An action, as a button or as a link styled like one.",
+        purpose:
+          "An action, as a button or as a link styled like one, or held to confirm one that's hard to undo.",
       },
       {
         slug: "link",

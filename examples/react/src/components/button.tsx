@@ -1,6 +1,6 @@
 import { Button, ChevronToArrow } from "@harmo-ui/react";
 import { useState } from "react";
-import { CloseIcon, MoreIcon, PlusIcon } from "../app-icons.tsx";
+import { CloseIcon, MoreIcon, PlusIcon, TrashIcon } from "../app-icons.tsx";
 
 export const examples = {
   Variants: () => (
@@ -36,6 +36,18 @@ export const examples = {
         Save changes
       </Button>
       <Button aria-disabled="true">Publish</Button>
+    </>
+  ),
+
+  Destructive: () => (
+    <>
+      <Button destructive>Delete workspace</Button>
+      <Button variant="secondary" destructive>
+        Remove member
+      </Button>
+      <Button variant="tertiary" destructive>
+        Discard draft
+      </Button>
     </>
   ),
 
@@ -136,6 +148,32 @@ export const examples = {
         </Button>
         <Button loading={saving} onClick={save}>
           Save changes
+        </Button>
+      </>
+    );
+  },
+
+  "Hold to confirm": () => {
+    const [deleting, setDeleting] = useState(false);
+    const [sending, setSending] = useState(false);
+    const work = (set: (on: boolean) => void) => () => {
+      set(true);
+      setTimeout(() => set(false), 1500);
+    };
+    return (
+      <>
+        <Button
+          variant="secondary"
+          size="small"
+          destructive
+          loading={deleting}
+          onHold={work(setDeleting)}
+        >
+          <TrashIcon className="hicon" />
+          {deleting ? "Deleting" : "Hold to delete"}
+        </Button>
+        <Button loading={sending} onHold={work(setSending)}>
+          {sending ? "Sending" : "Hold to send the campaign"}
         </Button>
       </>
     );

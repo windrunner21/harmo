@@ -53,6 +53,23 @@
   </button>
 </play-example>
 
+<play-example title="Destructive">
+  <play-note>
+    <code>data-destructive</code>, for an action that destroys something, such
+    as deleting, turns any variant red: filled, outlined with red text, or
+    red text alone. The focus ring keeps the accent.
+  </play-note>
+  <button class="hbutton" data-destructive type="button">
+    <span class="hbutton-label">Delete workspace</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" data-destructive type="button">
+    <span class="hbutton-label">Remove member</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" data-destructive type="button">
+    <span class="hbutton-label">Discard draft</span>
+  </button>
+</play-example>
+
 <play-example title="Links">
   <play-note>
     When the action is navigation, put <code>.hbutton</code> on an
@@ -176,5 +193,40 @@
   </button>
   <button class="hbutton" type="button" data-example-loading>
     <span class="hbutton-label">Save changes</span>
+  </button>
+</play-example>
+
+<play-example title="Hold to confirm">
+  <play-note>
+    <code>data-hold</code> asks for a hold before an action that's hard to
+    undo. Hold it for 1.5 seconds, with the pointer or with
+    <kbd class="hkbd">Enter</kbd> or <kbd class="hkbd">Space</kbd>: its fill,
+    a copy of its content in <code>.hbutton-hold</code>, wipes across as you
+    do, stays full for a moment, and the action starts; let go early and it
+    snaps back. The fill is red on a destructive button, and the accent on
+    any other. A screen reader presses with a click, which can't hold, so its
+    click runs the action.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    data-size="small"
+    data-destructive
+    type="button"
+    data-hold
+    data-example-working="Deleting"
+  >
+    <play-icon name="trash" class="hicon"></play-icon>
+    <span class="hbutton-label">Hold to delete</span>
+    <span class="hbutton-hold" aria-hidden="true">
+      <play-icon name="trash" class="hicon"></play-icon>
+      <span class="hbutton-label">Hold to delete</span>
+    </span>
+  </button>
+  <button class="hbutton" type="button" data-hold data-example-working="Sending">
+    <span class="hbutton-label">Hold to send the campaign</span>
+    <span class="hbutton-hold" aria-hidden="true">
+      <span class="hbutton-label">Hold to send the campaign</span>
+    </span>
   </button>
 </play-example>

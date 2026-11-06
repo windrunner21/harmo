@@ -31,7 +31,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Avatar](docs/components/avatar.md): a round user image, or a placeholder when there is none
 - [Banner](docs/components/banner.md): an inline notice: an icon, a message, and an optional action
 - [Breadcrumb](docs/components/breadcrumb.md): a navigation trail ending at the current page
-- [Button](docs/components/button.md): an action, as a button or as a link styled like one
+- [Button](docs/components/button.md): an action, as a button or as a link styled like one, or held to confirm one that's hard to undo
 - [Card](docs/components/card.md): a frame around a group of content: tinted, raised, or ghost for rows that lead somewhere
 - [Checkbox](docs/components/checkbox.md): a native checkbox with Harmo's appearance
 - [ChevronToArrow](docs/components/chevron-to-arrow.md): a chevron that turns into an arrow while its link or button is hovered or focused

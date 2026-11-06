@@ -59,6 +59,9 @@ const helpers = [
   "icons.ts",
   "modal.tsx",
   "useCurrentValue.ts",
+  "useHold.ts",
+  "useMergedRef.ts",
+  "useWidthChange.ts",
   "withClass.ts",
 ];
 

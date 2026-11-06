@@ -15,6 +15,7 @@ import {
   type ModalCommand,
   type ModalState,
 } from "./modal.tsx";
+import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
 export interface DialogProps
@@ -58,6 +59,7 @@ export const Dialog = ({
   const titleId = `${dialogId}-title`;
   const descriptionId = `${dialogId}-description`;
   const dialog = useModal({ open, onOpenChange, onToggle, onBeforeToggle });
+  const dialogRef = useMergedRef(dialog, ref);
 
   const content = (
     <>
@@ -74,11 +76,7 @@ export const Dialog = ({
         cloneElement(trigger, { commandfor: dialogId, command: "show-modal" })}
       <dialog
         {...props}
-        ref={(node) => {
-          dialog.current = node;
-          if (typeof ref === "function") return ref(node);
-          if (ref) ref.current = node;
-        }}
+        ref={dialogRef}
         id={dialogId}
         className={withClass("hdialog", className)}
         closedby={closedby}

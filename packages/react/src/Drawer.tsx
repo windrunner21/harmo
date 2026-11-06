@@ -15,6 +15,7 @@ import {
   type ModalCommand,
   type ModalState,
 } from "./modal.tsx";
+import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
 export interface DrawerProps
@@ -62,6 +63,7 @@ export const Drawer = ({
   const titleId = `${drawerId}-title`;
   const descriptionId = `${drawerId}-description`;
   const drawer = useModal({ open, onOpenChange, onToggle, onBeforeToggle });
+  const drawerRef = useMergedRef(drawer, ref);
 
   const content = (
     <>
@@ -78,11 +80,7 @@ export const Drawer = ({
         cloneElement(trigger, { commandfor: drawerId, command: "show-modal" })}
       <dialog
         {...props}
-        ref={(node) => {
-          drawer.current = node;
-          if (typeof ref === "function") return ref(node);
-          if (ref) ref.current = node;
-        }}
+        ref={drawerRef}
         id={drawerId}
         className={withClass("hdrawer", className)}
         closedby={closedby}

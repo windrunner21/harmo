@@ -47,6 +47,17 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     flex-shrink: 0;
   }
 
+  // An icon beside the label sits 3px from the border: with the space drawn
+  // around a 24px icon, it looks as far in as the label's text, 6px.
+  // ChevronToArrow and the Expand chevron keep their own spacing.
+  & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label) {
+    margin-inline-start: 3px;
+  }
+
+  & > .hbutton-label + .hicon:not(.hchevron-to-arrow, .hexpand-chevron) {
+    margin-inline-end: 3px;
+  }
+
   // The label spaces itself from icons and the border. Its block padding only
   // shows when a long label wraps past the control height.
   & > .hbutton-label {
@@ -66,6 +77,13 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-color: currentColor;
     border-block-end-color: transparent;
 
+    // It fades in as loading starts, rather than appearing at once.
+    transition: opacity 0.2s ease-out;
+
+    @starting-style {
+      opacity: 0;
+    }
+
     @media (forced-colors: active) {
       border-color: ButtonText;
       border-block-end-color: transparent;
@@ -77,12 +95,14 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   &:where(:not(:has(> .hbutton-label))) {
     min-inline-size: $control-height;
 
-    & > .hicon {
+    & > .hicon,
+    & > .hbutton-hold > .hicon {
       inline-size: 1.25rem;
       block-size: 1.25rem;
     }
 
-    & > .hspinner {
+    & > .hspinner,
+    & > .hbutton-hold > .hspinner {
       margin-inline: 0;
     }
   }
@@ -107,7 +127,9 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   // An Expand chevron's drawing fills its box, so a trailing one keeps the
   // label's spacing from the border, as in a menu button.
-  & > .hexpand-chevron:last-child {
+  // Last but for a hold button's fill, which is last itself.
+  & > .hexpand-chevron:is(:last-child, :has(+ .hbutton-hold:last-child)),
+  & > .hbutton-hold > .hexpand-chevron:last-child {
     margin-inline-end: $icon-gap;
   }
 
@@ -209,5 +231,290 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   @media (prefers-reduced-motion: reduce) {
     transition-property: background-color, color, border-color;
+  }
+}
+
+// Destructive, for an action that destroys something, such as deleting:
+// data-destructive, in the danger colors, in any variant. The focus ring
+// keeps the accent.
+.hbutton[data-destructive] {
+  color: $color-on-danger;
+  background-color: $color-danger-fill;
+  border-color: $color-danger-fill;
+
+  &#{$actionable} {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $color-danger-fill-hover;
+        border-color: $color-danger-fill-hover;
+      }
+    }
+
+    &:active {
+      background-color: $color-danger-fill-active;
+      border-color: $color-danger-fill-active;
+    }
+  }
+
+  // Outlined: red text; the border turns red on hover.
+  &[data-variant="secondary"] {
+    color: $color-danger;
+    background-color: transparent;
+    border-color: $button-secondary-color-border;
+
+    &#{$actionable} {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: transparent;
+          border-color: $color-danger-border;
+        }
+      }
+
+      &:active {
+        background-color: $color-danger-background;
+        border-color: $color-danger-border;
+      }
+    }
+  }
+
+  // Text only: red text, on a red tint on hover.
+  &[data-variant="tertiary"] {
+    color: $color-danger;
+    background-color: transparent;
+    border-color: transparent;
+
+    &#{$actionable} {
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: $color-danger-background;
+          border-color: transparent;
+        }
+      }
+
+      &:active {
+        color: $color-danger;
+        background-color: $color-danger-background;
+        border-color: transparent;
+      }
+    }
+  }
+}
+
+// Hold to confirm, such as "Hold to delete": data-hold, the animations.dev
+// course's hold to delete. While it's held (data-holding), by pointer, Enter,
+// or Space, its fill, a copy of its content a clear step into its color,
+// wipes across from the start, linear, as time passing is, and snaps back in
+// 0.2s,
+// ease-out, when let go early. Held all the way (data-held), it stays full
+// for a moment, then the action starts. A script runs it.
+.hbutton[data-hold] {
+  --hbutton-hold-duration: 1.5s;
+  // The fill. An outlined or text button fills with its color's tint, with
+  // that color's text and border, as in the course's recipe; a filled one
+  // deepens, a clear step darker, keeping its white text.
+  --hbutton-hold-color: #{$color-primary};
+  --hbutton-hold-background: #{$color-primary-tint};
+  --hbutton-hold-border: #{$color-primary};
+
+  position: relative;
+
+  // The course's press, a little deeper than other buttons'.
+  transition:
+    background-color $button-duration ease,
+    color $button-duration ease,
+    border-color $button-duration ease,
+    transform 160ms $ease-out-quad;
+
+  // A long press on a touch screen would select its text or open a menu.
+  -webkit-touch-callout: none;
+  user-select: none;
+
+  &[data-destructive] {
+    --hbutton-hold-color: #{$color-danger};
+    --hbutton-hold-background: #{$color-danger-background};
+    --hbutton-hold-border: #{$color-danger-border};
+  }
+
+  &:not([data-variant]) {
+    --hbutton-hold-color: #{$color-on-primary};
+    --hbutton-hold-background: color-mix(in oklab, #{$color-primary-fill} 62%, black);
+    --hbutton-hold-border: var(--hbutton-hold-background);
+  }
+
+  &[data-destructive]:not([data-variant]) {
+    --hbutton-hold-color: #{$color-on-danger};
+    --hbutton-hold-background: color-mix(in oklab, #{$color-danger-fill} 62%, black);
+    --hbutton-hold-border: var(--hbutton-hold-background);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &#{$actionable}:active:not(:focus-visible) {
+      transform: scale(0.97);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: background-color, color, border-color;
+  }
+
+  // Working, as the action runs: full strength, rather than dimmed as a
+  // loading button is, with its spinner and the progress cursor.
+  &[aria-busy="true"] {
+    opacity: 1;
+  }
+}
+
+// Pressed, a hold button keeps its resting colors, as in the course's recipe:
+// the fill is its feedback, and a pressed color would hide it, since the fill
+// is that same step deeper.
+.hbutton[data-hold]#{$actionable}:active {
+  background-color: $color-primary-fill;
+  border-color: $color-primary-fill;
+}
+
+.hbutton[data-hold][data-variant="secondary"]#{$actionable}:active {
+  background-color: transparent;
+  border-color: $button-secondary-color-border;
+}
+
+.hbutton[data-hold][data-variant="tertiary"]#{$actionable}:active {
+  color: $color-text-secondary;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.hbutton[data-hold][data-destructive]#{$actionable}:active {
+  background-color: $color-danger-fill;
+  border-color: $color-danger-fill;
+}
+
+.hbutton[data-hold][data-destructive][data-variant="secondary"]#{$actionable}:active {
+  background-color: transparent;
+  border-color: $button-secondary-color-border;
+}
+
+.hbutton[data-hold][data-destructive][data-variant="tertiary"]#{$actionable}:active {
+  color: $color-danger;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+// Over the whole button, its border too, with a border of its own, so the
+// wipe colors the border as it goes.
+.hbutton-hold {
+  position: absolute;
+  inset: -1px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Its content placed as the button's is: the button's padding, such as
+  // ChevronToArrow's, inside its border.
+  padding: inherit;
+
+  color: var(--hbutton-hold-color);
+  background-color: var(--hbutton-hold-background);
+  border: 1px solid var(--hbutton-hold-border);
+  border-radius: inherit;
+
+  pointer-events: none;
+
+  // Hidden past its end edge; let go early, it snaps back in 0.2s.
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.2s ease-out;
+
+  &:dir(rtl) {
+    clip-path: inset(0 0 0 100%);
+  }
+
+  // Laid out as the button's own content is.
+  & > .hicon {
+    flex-shrink: 0;
+  }
+
+  & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label) {
+    margin-inline-start: 3px;
+  }
+
+  & > .hbutton-label + .hicon:not(.hchevron-to-arrow, .hexpand-chevron) {
+    margin-inline-end: 3px;
+  }
+
+  & > .hbutton-label {
+    padding: 0.25rem $icon-gap;
+  }
+
+  & > .hspinner {
+    --hspinner-size: 1rem;
+
+    margin-inline: 3px $icon-gap;
+
+    color: inherit;
+    border-color: currentColor;
+    border-block-end-color: transparent;
+
+    transition: opacity 0.2s ease-out;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  @media (forced-colors: active) {
+    color: HighlightText;
+    background-color: Highlight;
+    border-color: Highlight;
+
+    forced-color-adjust: none;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Held: across in the whole hold, linear, since it shows time passing.
+.hbutton[data-holding] > .hbutton-hold {
+  clip-path: inset(0);
+  transition: clip-path var(--hbutton-hold-duration) linear;
+}
+
+// Held all the way, then working: whole.
+.hbutton[data-held] > .hbutton-hold,
+.hbutton[data-hold][aria-busy="true"] > .hbutton-hold {
+  clip-path: inset(0);
+}
+
+// And the button's own border and background take the fill's colors: while
+// its width changes, its content, the fill's border with it, is clipped to
+// inside its border, which would otherwise flash its usual color. After the
+// pressed look, so it holds while the pointer is still down.
+.hbutton[data-hold][data-held],
+.hbutton[data-hold][aria-busy="true"] {
+  background-color: var(--hbutton-hold-background);
+  border-color: var(--hbutton-hold-border);
+}
+
+// The fill fades in over the hold instead of wiping across, so the hold
+// still shows its time passing, and nothing sweeps across the screen.
+@media (prefers-reduced-motion: reduce) {
+  .hbutton-hold,
+  .hbutton-hold:dir(rtl) {
+    opacity: 0;
+
+    clip-path: none;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .hbutton[data-holding] > .hbutton-hold {
+    opacity: 1;
+
+    transition: opacity var(--hbutton-hold-duration) linear;
+  }
+
+  .hbutton[data-held] > .hbutton-hold,
+  .hbutton[data-hold][aria-busy="true"] > .hbutton-hold {
+    opacity: 1;
   }
 }

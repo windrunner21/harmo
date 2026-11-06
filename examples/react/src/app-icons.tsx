@@ -9,6 +9,7 @@ import info from "../../html/src/icons/info.svg" with { type: "text" };
 import more from "../../html/src/icons/more.svg" with { type: "text" };
 import plus from "../../html/src/icons/plus.svg" with { type: "text" };
 import success from "../../html/src/icons/success.svg" with { type: "text" };
+import trash from "../../html/src/icons/trash.svg" with { type: "text" };
 import user from "../../html/src/icons/user.svg" with { type: "text" };
 import warning from "../../html/src/icons/warning.svg" with { type: "text" };
 
@@ -49,5 +50,6 @@ export const InfoIcon = icon(info);
 export const MoreIcon = icon(more);
 export const PlusIcon = icon(plus);
 export const SuccessIcon = icon(success);
+export const TrashIcon = icon(trash);
 export const UserIcon = icon(user);
 export const WarningIcon = icon(warning);

@@ -67,6 +67,14 @@
   --harmo-color-success: light-dark(#206b38, #5cc97f);
   --harmo-color-warning: light-dark(#865900, #e3b04b);
   --harmo-color-danger: light-dark(#b6303e, #f2808c);
+  // A tint behind danger text, and its border, such as a hold button's fill.
+  --harmo-color-danger-background: light-dark(#fde3e6, #3c1f26);
+  --harmo-color-danger-border: light-dark(#f2b3bb, #7a2f3a);
+  // A destructive button's fill, under white text.
+  --harmo-color-danger-fill: light-dark(#c43442, #b93a47);
+  --harmo-color-danger-fill-hover: light-dark(#ad2c39, #a3323e);
+  --harmo-color-danger-fill-active: light-dark(#9a2532, #8f2b36);
+  --harmo-color-on-danger: var(--harmo-white);
 
   // Link roles: navigation is purple at rest, black on hover and pressed.
   // Visited is dark purple, only where a link opts in with data-visited.

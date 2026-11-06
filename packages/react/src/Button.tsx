@@ -4,8 +4,10 @@ import {
   Children,
   isValidElement,
   type ComponentPropsWithRef,
+  type CSSProperties,
   type MouseEvent,
   type ReactNode,
+  type Ref,
 } from "react";
 import { Chevron } from "./Chevron.tsx";
 import { ChevronToArrow } from "./ChevronToArrow.tsx";
@@ -13,11 +15,15 @@ import { ExpandChevron } from "./ExpandChevron.tsx";
 import { useField } from "./field/Field.tsx";
 import { useLinkComponent } from "./HarmoProvider.tsx";
 import { Spinner } from "./Spinner.tsx";
+import { useHold } from "./useHold.ts";
+import { useMergedRef } from "./useMergedRef.ts";
+import { useWidthChange } from "./useWidthChange.ts";
 import { withClass } from "./withClass.ts";
 
 interface ButtonOptions {
   variant?: "secondary" | "tertiary";
   size?: "small";
+  destructive?: boolean;
   loading?: boolean;
   commandfor?: string;
   command?:
@@ -31,13 +37,26 @@ interface ButtonOptions {
 }
 
 export type ButtonProps =
-  | (ButtonOptions & ComponentPropsWithRef<"button"> & { href?: undefined })
-  | (ButtonOptions & ComponentPropsWithRef<"a"> & { href: string });
+  | (ButtonOptions &
+      ComponentPropsWithRef<"button"> & {
+        href?: undefined;
+        onHold?: () => void;
+        holdDuration?: number;
+      })
+  | (ButtonOptions &
+      ComponentPropsWithRef<"a"> & {
+        href: string;
+        onHold?: undefined;
+        holdDuration?: undefined;
+      });
 
 export const Button = ({
   variant,
   size,
+  destructive,
   loading,
+  onHold,
+  holdDuration,
   className,
   children,
   ...props
@@ -48,11 +67,15 @@ export const Button = ({
     loading ||
     props["aria-disabled"] === true ||
     props["aria-disabled"] === "true";
+  const held = useHold(onHold, !!inactive || !!(props as { disabled?: boolean }).disabled);
+  // Its own ref, for its width, and yours.
+  const ref = useMergedRef(useWidthChange(loading), props.ref as Ref<HTMLElement> | undefined);
 
   const attributes = {
     className: withClass("hbutton", className),
     "data-variant": variant,
     "data-size": size,
+    "data-destructive": destructive ? "" : undefined,
     "aria-busy": loading || undefined,
     "aria-disabled": inactive || undefined,
     "aria-labelledby": field["aria-labelledby"],
@@ -66,18 +89,81 @@ export const Button = ({
 
   if (props.href !== undefined) {
     return (
-      <Anchor {...props} {...attributes}>
+      <Anchor {...props} {...attributes} ref={ref}>
         {content}
       </Anchor>
     );
   }
 
+  if (!held) {
+    return (
+      <button type="button" {...props} {...attributes} ref={ref}>
+        {content}
+      </button>
+    );
+  }
+
+  const own = props as ComponentPropsWithRef<"button">;
+  const handlers = held.handlers;
   return (
-    <button type="button" {...props} {...attributes}>
-      {content}
-    </button>
+      <button
+        type="button"
+        {...own}
+        {...attributes}
+        ref={ref}
+        data-hold=""
+        data-holding={held.holding ? "" : undefined}
+        data-held={held.held ? "" : undefined}
+        style={
+          holdDuration === undefined
+            ? own.style
+            : ({ ...own.style, "--hbutton-hold-duration": `${holdDuration}ms` } as CSSProperties)
+        }
+        onPointerDown={(event) => {
+          own.onPointerDown?.(event);
+          handlers.onPointerDown(event);
+        }}
+        onPointerUp={(event) => {
+          own.onPointerUp?.(event);
+          handlers.onPointerUp();
+        }}
+        onPointerLeave={(event) => {
+          own.onPointerLeave?.(event);
+          handlers.onPointerLeave();
+        }}
+        onPointerCancel={(event) => {
+          own.onPointerCancel?.(event);
+          handlers.onPointerCancel();
+        }}
+        onContextMenu={(event) => {
+          own.onContextMenu?.(event);
+          handlers.onContextMenu(event);
+        }}
+        onClick={(event) => {
+          attributes.onClick(event as MouseEvent<HTMLButtonElement & HTMLAnchorElement>);
+          handlers.onClick(event);
+        }}
+        onKeyDown={(event) => {
+          own.onKeyDown?.(event);
+          handlers.onKeyDown(event);
+        }}
+        onKeyUp={(event) => {
+          own.onKeyUp?.(event);
+          handlers.onKeyUp(event);
+        }}
+        onBlur={(event) => {
+          own.onBlur?.(event);
+          handlers.onBlur();
+        }}
+      >
+        {content}
+        <span className="hbutton-hold" aria-hidden="true">
+          {content}
+        </span>
+      </button>
   );
 };
+
 
 const spinner = <Spinner aria-hidden="true" />;
 

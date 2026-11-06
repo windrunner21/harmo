@@ -14,6 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "./Button.tsx";
+import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
 export type ToastStatus = "success" | "warning" | "info" | "error";
@@ -226,6 +227,7 @@ export const Toaster = ({
 }: ToasterProps) => {
   const toasts = useSyncExternalStore(subscribe, () => shown, () => none);
   const region = useRef<HTMLElement | null>(null);
+  const regionRef = useMergedRef(region, ref);
   const polite = useRef<HTMLDivElement | null>(null);
   const assertive = useRef<HTMLDivElement | null>(null);
   const [host, setHost] = useState<HTMLDivElement | null>(null);
@@ -640,11 +642,7 @@ export const Toaster = ({
   const section = (
     <section
       {...props}
-      ref={(node) => {
-        region.current = node;
-        if (typeof ref === "function") return ref(node);
-        if (ref) ref.current = node;
-      }}
+      ref={regionRef}
       className={withClass("htoaster", className)}
       popover="manual"
       tabIndex={-1}

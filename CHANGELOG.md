@@ -34,12 +34,24 @@ minor version may change an API, and says how to upgrade when it does.
   toasts show inside it, where they can be used. Inspired by
   [Sonner](https://sonner.emilkowal.ski), by
   [Emil Kowalski](https://emilkowal.ski).
+- Destructive buttons: Button's `destructive`, or `data-destructive`, red in
+  any variant, for an action that destroys something.
+- Hold to confirm: Button's `onHold`, or `data-hold` with a `.hbutton-hold`
+  fill, for an action that's hard to undo, such as "Hold to delete". Held
+  for 1.5 seconds (`holdDuration`), by pointer or by Enter or Space, its
+  fill wipes across, red on a destructive button and the accent on any
+  other, and the action runs. A screen reader's press runs it at once.
+- A Button's width changes over 200ms when its text or loading state does,
+  rather than jumping, and its spinner fades in.
 - Button's `commandfor` and `command` props, for the button's command on
   another element, such as opening a dialog.
 - Tokens: `--harmo-dialog-backdrop-color`, and `--harmo-font-size-lg`, 20px,
   for a dialog's title; `--harmo-ease-spring`, a spring with about 3%
   overshoot; and `--harmo-toast-duration`, `--harmo-toast-ease`, and
-  `--harmo-toast-morph-duration`.
+  `--harmo-toast-morph-duration`; `--harmo-color-danger-background` and
+  `--harmo-color-danger-border`, a tint and border around danger text; and
+  `--harmo-color-danger-fill`, `-hover`, `-active`, and
+  `--harmo-color-on-danger`, for a destructive button.
 
 ## [0.2.0] - 2026-11-06
 
