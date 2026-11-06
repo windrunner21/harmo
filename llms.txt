@@ -46,6 +46,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Meter](docs/components/meter.md): how much of something on a fixed scale, such as password strength
 - [Password input](docs/components/password.md): a password field with a show/hide toggle and an optional strength meter
 - [Dialog](docs/components/dialog.md): a modal window for a task or a decision, opened by a button, code, or a link
+- [Drawer](docs/components/drawer.md): a modal panel at the window's edge for a form or details, with an optional preview beside it
 - [Popup](docs/components/popup.md): a floating surface for option lists and small panels
 - [Radio](docs/components/radio.md): a native radio with Harmo's appearance
 - [Segmented control](docs/components/segmented.md): one choice from a few options shown side by side

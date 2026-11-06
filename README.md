@@ -157,7 +157,7 @@ section lists its props.
 | --- | --- |
 | Actions | [Button](docs/components/button.md), [Link](docs/components/link.md) |
 | Forms | [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password input](docs/components/password.md), [Select](docs/components/select.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented control](docs/components/segmented.md) |
-| Overlays | [Dialog](docs/components/dialog.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
+| Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Tabs](docs/components/tabs.md) |
 | Data | [Filter chip](docs/components/filter-chip.md) |
 | Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md) |

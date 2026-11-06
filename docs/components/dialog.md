@@ -116,7 +116,7 @@ None to open, close, or focus it. The example script:
 
 | Behavior | What it does |
 | --- | --- |
-| Fading out | Holds the dialog's `cancel` event, which Escape, a click outside, and `command="request-close"` send first, and a `<form method="dialog">` as it's sent, unless the app's own handler has stopped it; sets `data-closing` until the fade has played, then closes it. The browser lets a page hold Escape only after the person has used it, so a dialog that opened by itself closes at once on its first Escape. |
+| Fading out | Holds the dialog's `cancel` event, which Escape, a click outside, and `command="request-close"` send first, and a form sent with `method="dialog"`, its own or its submit button's `formmethod`, unless the app's own handler has stopped it, such as to confirm unsaved changes; sets `data-closing` until the fade has played, then closes it. The browser lets a page hold Escape only after the person has used it, so a dialog that opened by itself closes at once on its first Escape. |
 | Opening from a link | See below |
 
 For the "Opened from a link" example, it stands in for an app's router: it opens the dialog that `?dialog=` names on load and
@@ -147,7 +147,9 @@ description's id, and an `aria-labelledby` replaces the title's.
 
 `<DialogClose>` makes the button inside it close the dialog. Every way it
 closes fades it out first, as the example script does, setting `open` to
-`false` included; setting it back to `true` while it fades keeps it open.
+`false` included; setting it back to `true` while it fades keeps it open. An
+`onCancel` that calls `preventDefault()`, such as to confirm unsaved changes,
+keeps it open on Escape, a click outside, and `command="request-close"`.
 
 A button opens it, beside it with `trigger` or anywhere else by its `id`:
 

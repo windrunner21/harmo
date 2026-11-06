@@ -1,0 +1,343 @@
+@use "shortcuts" as *;
+
+// A modal panel at the window's end edge, the full height of the window, for a
+// form or details beside the page: <dialog class="hdrawer">, opened as Dialog
+// is. Its body scrolls, its footer stays under the body, and an optional aside,
+// such as a preview, sits beside them.
+.hdrawer {
+  --hdrawer-inline-size: 480px;
+  --hdrawer-aside-inline-size: 480px;
+  // Which way is out: the end edge, so right, or left on a right-to-left page.
+  --hdrawer-direction: 1;
+  // Closed, it waits just past the edge; with reduced motion, it fades instead.
+  --hdrawer-shift: calc(100% * var(--hdrawer-direction));
+  --hdrawer-closed-opacity: 1;
+
+  // Placed here rather than by the browser's modal styles.
+  position: fixed;
+  inset-block: 0;
+  inset-inline: auto 0;
+  z-index: 100;
+
+  // Not rendered when closed, as the browser's own dialog isn't: hidden with
+  // visibility instead, Safari couldn't move focus inside as it opens.
+  display: none;
+  // 480px, or wider when something inside needs it, such as a table or an
+  // image with a set width; never wider than the window, where the body
+  // scrolls sideways instead. Text, fields, and buttons wrap or shrink, so
+  // they don't widen it: text even within a long word, such as a key or a
+  // link, as the body and aside set below.
+  // On a narrow window, its border and the body fill the width together.
+  --hdrawer-column: minmax(min(var(--hdrawer-inline-size), calc(100vw - 1px)), min-content);
+  grid-template-columns: var(--hdrawer-column);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "header"
+    "body"
+    "footer";
+
+  box-sizing: border-box;
+  inline-size: fit-content;
+  block-size: auto;
+  max-inline-size: 100%;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-inline-end: none;
+  border-start-start-radius: $border-radius;
+  border-end-start-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+  opacity: var(--hdrawer-closed-opacity);
+
+  // A closed one that's still showing, as Chromium keeps one while it slides,
+  // doesn't take the clicks meant for the page.
+  pointer-events: none;
+
+  translate: var(--hdrawer-shift);
+  // Slides in in 200ms and out in 150ms, as Dialog fades: with data-closing,
+  // which the example script or the React Drawer sets while it holds the
+  // close. Without either, Chromium still slides it out, and Firefox and
+  // Safari close it at once.
+  transition:
+    translate $duration-fast $ease-out-cubic,
+    opacity $duration-fast $ease-out-cubic,
+    display $duration-fast allow-discrete,
+    overlay $duration-fast allow-discrete;
+
+  &:dir(rtl) {
+    --hdrawer-direction: -1;
+  }
+
+  &[open] {
+    display: grid;
+
+    opacity: 1;
+
+    pointer-events: auto;
+
+    translate: 0;
+    transition-duration: $duration-normal;
+
+    @starting-style {
+      opacity: var(--hdrawer-closed-opacity);
+
+      translate: var(--hdrawer-shift);
+    }
+  }
+
+  // Still open while it slides out; then the script closes it.
+  &[open][data-closing] {
+    opacity: var(--hdrawer-closed-opacity);
+
+    pointer-events: none;
+
+    translate: var(--hdrawer-shift);
+    transition-duration: $duration-fast;
+  }
+
+  // At once, as hidden hides anything, rather than after it slides.
+  &[hidden] {
+    display: none;
+
+    transition: none;
+  }
+
+  // An aside sits beside the body and footer, below the header, as wide as
+  // its content up to its cap.
+  &:has(> .hdrawer-aside) {
+    grid-template-columns:
+      var(--hdrawer-column)
+      fit-content(var(--hdrawer-aside-inline-size));
+    grid-template-areas:
+      "header header"
+      "body aside"
+      "footer aside";
+  }
+
+  &::backdrop {
+    background-color: $dialog-backdrop-color;
+    opacity: 0;
+
+    transition:
+      opacity $duration-fast $ease-out-cubic,
+      display $duration-fast allow-discrete,
+      overlay $duration-fast allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+
+    transition-duration: $duration-normal;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  &[open][data-closing]::backdrop {
+    opacity: 0;
+
+    transition-duration: $duration-fast;
+  }
+
+  // It fades in and out where it is, without sliding.
+  @media (prefers-reduced-motion: reduce) {
+    --hdrawer-shift: 0;
+    --hdrawer-closed-opacity: 0;
+  }
+
+  // Where the body and aside don't fit side by side, the aside goes below the
+  // body, the drawer scrolls as a whole, and its header and footer stay put.
+  @media (max-width: 68rem) {
+    &:has(> .hdrawer-aside) {
+      grid-template-columns: var(--hdrawer-column);
+      // The aside takes what's left, so the header and footer keep their
+      // height, and the footer sits at the bottom.
+      grid-template-rows: auto auto 1fr auto;
+      grid-template-areas:
+        "header"
+        "body"
+        "aside"
+        "footer";
+      overflow-y: auto;
+
+      overscroll-behavior: contain;
+
+      & > .hdrawer-header,
+      & > .hdrawer-footer,
+      & > form > .hdrawer-footer {
+        position: sticky;
+        z-index: 1;
+
+        background-color: $color-background;
+      }
+
+      & > .hdrawer-header {
+        inset-block-start: 0;
+      }
+
+      & > .hdrawer-footer,
+      & > form > .hdrawer-footer {
+        inset-block-end: 0;
+      }
+
+      // Each as tall as its content, which the drawer scrolls.
+      & > .hdrawer-body,
+      & > form > .hdrawer-body,
+      & > .hdrawer-aside {
+        min-block-size: auto;
+        overflow: visible;
+      }
+    }
+  }
+}
+
+// The page behind stays where it is while a drawer is open.
+:root:has(.hdrawer:modal) {
+  overflow: hidden;
+}
+
+// A form can hold the body and footer, so its submit button is inside it; it
+// lays nothing out itself.
+.hdrawer > form {
+  display: contents;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The title and description, with the close button at their end, and a line
+// under them.
+.hdrawer-header {
+  grid-area: header;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 32px;
+
+  padding: 16px 20px;
+
+  border-block-end: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hdrawer-title {
+  grid-column: 1;
+
+  margin: 0;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+}
+
+.hdrawer-description {
+  grid-column: 1;
+
+  margin: 4px 0 0;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+}
+
+// Its icon, not its padding, lines up with the header's padding.
+.hdrawer-close {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+
+  margin-inline-end: -7px;
+}
+
+// The padding of the body and aside spaces their content; the first and last
+// child's own margins would add to it. A long word, such as a key or a link,
+// breaks where it must, rather than widening the drawer.
+:where(.hdrawer-body, .hdrawer-aside) {
+  overflow-wrap: anywhere;
+
+  & > :first-child {
+    margin-block-start: 0;
+  }
+
+  & > :last-child {
+    margin-block-end: 0;
+  }
+}
+
+// What scrolls, with 20px of padding, which also keeps the focus rings of
+// what's inside from being clipped at its edges.
+.hdrawer-body {
+  grid-area: body;
+
+  min-block-size: 0;
+  padding: 20px;
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  // With tabindex="0", when nothing inside takes focus.
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: -2px;
+  }
+}
+
+// The drawer's actions, under the body, with a line above them.
+.hdrawer-footer {
+  grid-area: footer;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+
+  padding: 20px;
+
+  border-block-start: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Beside the body and footer, below the header: a tinted panel, such as a
+// preview, that scrolls on its own, with a line on its start side.
+.hdrawer-aside {
+  grid-area: aside;
+
+  min-block-size: 0;
+  padding: 40px;
+  overflow-y: auto;
+
+  overscroll-behavior: contain;
+
+  background-color: $color-background-secondary;
+  border-inline-start: 1px solid $color-border;
+
+  // With tabindex="0", when it scrolls with nothing inside that takes focus.
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: -2px;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}

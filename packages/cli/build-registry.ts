@@ -23,6 +23,7 @@ const components: Record<string, string[]> = {
   chevron: ["Chevron.tsx"],
   "chevron-to-arrow": ["ChevronToArrow.tsx"],
   dialog: ["Dialog.tsx"],
+  drawer: ["Drawer.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
   "filter-chip": ["FilterChip.tsx"],
@@ -55,6 +56,7 @@ const components: Record<string, string[]> = {
 const helpers = [
   "children.ts",
   "icons.ts",
+  "modal.tsx",
   "useCurrentValue.ts",
   "withClass.ts",
 ];

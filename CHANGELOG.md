@@ -19,6 +19,11 @@ minor version may change an API, and says how to upgrade when it does.
   before it closes, in every browser: the React Dialog, or the example script
   with plain HTML, holds the close until the fade has played.
   `<DialogClose>` makes a button close it.
+- Drawer: `<dialog class="hdrawer">`, or `<Drawer>`, a modal panel at the
+  window's end edge, the full height of the window, for a form or details. It
+  opens, closes, and takes focus as Dialog does, slides in and out, and has a
+  body that scrolls, a footer under it, and an optional aside beside them,
+  such as a preview. `<DrawerClose>` makes a button close it.
 - Button's `commandfor` and `command` props, for the button's command on
   another element, such as opening a dialog.
 - Tokens: `--harmo-dialog-backdrop-color`, and `--harmo-font-size-lg`, 20px,

@@ -195,6 +195,12 @@ const groups: CatalogGroup[] = [
           "A modal window for a task or a decision, opened by a button, code, or a link.",
       },
       {
+        slug: "drawer",
+        title: "Drawer",
+        purpose:
+          "A modal panel at the window's edge for a form or details, with an optional preview beside it.",
+      },
+      {
         slug: "listbox",
         title: "Listbox",
         purpose:

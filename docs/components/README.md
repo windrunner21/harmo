@@ -15,6 +15,7 @@ the same markup and does what the script would.
 | Checkbox | [checkbox.md](checkbox.md) |
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
 | Dialog | [dialog.md](dialog.md) |
+| Drawer | [drawer.md](drawer.md) |
 | Expand chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
 | Filter chip | [filter-chip.md](filter-chip.md) |

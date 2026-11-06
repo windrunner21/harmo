@@ -1,60 +1,82 @@
-// Example only: what the React Dialog does.
+// Example only: what the React Dialog and Drawer do, for both.
 //
-// A closing dialog fades out in every browser, as an opening one fades in:
+// A closing dialog fades out in every browser, as an opening one fades in, and
+// a drawer slides out as it slid in:
 // the script holds the close while data-closing fades it, then closes it, as
 // a library keeps a closing element until its exit has played. Escape, a click
 // outside, and buttons with command="request-close" all send the dialog's
-// cancel event first, which it holds; a <form method="dialog"> it holds as
-// it's sent, unless the app has already stopped that. Without the script, the
-// dialog still closes, at once in Firefox and Safari.
+// cancel event first, which it holds; a form sent with method="dialog" it holds
+// as it's sent. Either one the app has already stopped, such as to confirm
+// unsaved changes, it leaves alone. Without the script, the dialog still
+// closes, at once in Firefox and Safari.
 //
 // It also opens the dialog that the URL names, as an app's router would
 // (?dialog=its-id), so a link to it, a reload, and Back all work.
 {
+  // Each dialog's exit that's playing, so one that stops early, because the
+  // dialog was closed some other way or is wanted open again, doesn't close it.
+  const exits = new Map();
+
   // Waits for what data-closing starts, then closes the dialog. A frame first,
   // since WebKit may start a transition only then; never much longer than its
   // longest transition, so a dialog whose fade doesn't run still closes.
   const closeAfterFade = (dialog, returnValue) => {
-    if (dialog.hasAttribute("data-closing")) return;
+    if (exits.has(dialog)) return;
+    const exit = {};
+    exits.set(dialog, exit);
     dialog.setAttribute("data-closing", "");
     requestAnimationFrame(() => {
       const fading = dialog.getAnimations().map((animation) => animation.finished.catch(() => {}));
       const seconds = Math.max(0, ...getComputedStyle(dialog).transitionDuration.split(",").map(parseFloat));
       const longest = new Promise((resolve) => setTimeout(resolve, seconds * 1000 + 100));
       Promise.race([Promise.all(fading), longest]).then(() => {
+        if (exits.get(dialog) !== exit) return;
+        exits.delete(dialog);
         dialog.close(returnValue);
         dialog.removeAttribute("data-closing");
       });
     });
   };
 
-  for (const dialog of document.querySelectorAll(".hdialog")) {
+  // Ends an exit without closing, so it stays open and slides or fades back.
+  const stopExit = (dialog) => {
+    exits.delete(dialog);
+    dialog.removeAttribute("data-closing");
+  };
+
+  for (const dialog of document.querySelectorAll(".hdialog, .hdrawer")) {
     dialog.addEventListener("cancel", (event) => {
       // The browser lets a page hold Escape only after the person has used
       // it; otherwise, it closes at once.
-      if (!event.cancelable) return;
+      if (!event.cancelable || event.defaultPrevented) return;
       event.preventDefault();
       closeAfterFade(dialog);
+    });
+    dialog.addEventListener("beforetoggle", (event) => {
+      if (event.newState === "closed" && exits.has(dialog)) stopExit(dialog);
     });
   }
 
   // On the document, so an app's own handler on the form runs first.
   document.addEventListener("submit", (event) => {
     const form = event.target;
-    const dialog = form.closest(".hdialog");
-    if (event.defaultPrevented || form.method !== "dialog" || !dialog) return;
-    event.preventDefault();
     const submitter = event.submitter;
+    // A submit button's own formmethod wins over its form's method.
+    const method = submitter?.hasAttribute("formmethod") ? submitter.formMethod : form.method;
+    const dialog = form.closest("dialog");
+    if (event.defaultPrevented || method !== "dialog" || !dialog?.matches(".hdialog, .hdrawer")) return;
+    event.preventDefault();
     closeAfterFade(dialog, submitter?.hasAttribute("value") ? submitter.value : undefined);
   });
 
   // The dialogs a URL opens.
-  const linked = [...document.querySelectorAll(".hdialog[data-example-url-dialog]")];
+  const linked = [...document.querySelectorAll("dialog[data-example-url-dialog]")];
   const named = () => new URL(location.href).searchParams.get("dialog");
 
   const sync = () => {
     for (const dialog of linked) {
       const wanted = dialog.id === named();
+      if (wanted && exits.has(dialog)) stopExit(dialog);
       if (wanted && !dialog.open) dialog.showModal();
       if (!wanted && dialog.open) closeAfterFade(dialog);
     }

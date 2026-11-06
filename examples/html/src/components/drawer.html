@@ -1,0 +1,144 @@
+<play-example title="Default">
+  <play-note>
+    A <code>&lt;dialog&gt;</code> at the window's end edge, opened as a
+    Dialog is, by a button with <code>commandfor</code> and
+    <code>command="show-modal"</code>. It slides in, and out again before it
+    closes. The body scrolls, and the footer stays under it.
+    <code>closedby="closerequest"</code> keeps a click outside from losing a
+    half-filled form; <kbd class="hkbd">Escape</kbd> and its buttons still
+    close it.
+  </play-note>
+  <button class="hbutton" type="button" commandfor="reply-drawer" command="show-modal">
+    <span class="hbutton-label">New quick reply</span>
+  </button>
+  <dialog class="hdrawer" id="reply-drawer" closedby="closerequest" aria-labelledby="reply-drawer-title">
+    <header class="hdrawer-header">
+      <h2 class="hdrawer-title" id="reply-drawer-title">New quick reply</h2>
+      <button
+        class="hbutton hdrawer-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="reply-drawer"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <form method="dialog">
+      <div class="hdrawer-body">
+        <div style="display: grid; gap: 24px">
+          <div class="hfield">
+            <label class="hlabel" for="reply-shortcut">Shortcut</label>
+            <input class="hinput" id="reply-shortcut" name="shortcut" type="text" autofocus />
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="reply-message">Message</label>
+            <textarea class="htextarea" id="reply-message" name="message"></textarea>
+          </div>
+        </div>
+      </div>
+      <footer class="hdrawer-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="reply-drawer" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Save</span>
+        </button>
+      </footer>
+    </form>
+  </dialog>
+</play-example>
+
+<play-example title="With an aside">
+  <play-note>
+    <code>.hdrawer-aside</code> sits beside the body and footer, below the
+    header, for a preview of what the form makes. It scrolls on its own, and
+    the drawer widens to fit it. Where the window is too narrow for both, it
+    goes below the body.
+  </play-note>
+  <button class="hbutton" type="button" commandfor="template-drawer" command="show-modal">
+    <span class="hbutton-label">Edit template</span>
+  </button>
+  <dialog
+    class="hdrawer"
+    id="template-drawer"
+    closedby="closerequest"
+    aria-labelledby="template-drawer-title"
+    aria-describedby="template-drawer-description"
+  >
+    <header class="hdrawer-header">
+      <h2 class="hdrawer-title" id="template-drawer-title">Edit template</h2>
+      <p class="hdrawer-description" id="template-drawer-description">
+        Changes apply to the next campaign that uses it.
+      </p>
+      <button
+        class="hbutton hdrawer-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="template-drawer"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <form method="dialog">
+      <div class="hdrawer-body">
+        <div style="display: grid; gap: 24px">
+          <div class="hfield">
+            <label class="hlabel" for="template-name">Name</label>
+            <input class="hinput" id="template-name" name="template-name" type="text" value="Order shipped" />
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="template-body">Message</label>
+            <textarea class="htextarea" id="template-body" name="template-body">Hi Sam, your order #1042 is on its way. Track it with the link in your confirmation email.</textarea>
+          </div>
+        </div>
+      </div>
+      <footer class="hdrawer-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="template-drawer" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Save template</span>
+        </button>
+      </footer>
+    </form>
+    <div class="hdrawer-aside">
+      <p>How it looks to a customer:</p>
+      <div class="hcard" data-variant="raised">
+        <p>Hi Sam, your order #1042 is on its way. Track it with the link in your confirmation email.</p>
+      </div>
+    </div>
+  </dialog>
+</play-example>
+
+<play-example title="Opened from a link">
+  <play-note>
+    A link can open a drawer, as an app's router does with a URL such as
+    <code>?dialog=profile-drawer</code>, so the link, a reload, and Back all
+    work, and closing it goes back. The example script stands in for the
+    router; in React, the drawer's <code>open</code> comes from it.
+  </play-note>
+  <a class="hlink" href="?dialog=profile-drawer">Your profile</a>
+  <dialog class="hdrawer" id="profile-drawer" closedby="any" aria-labelledby="profile-drawer-title" data-example-url-dialog>
+    <header class="hdrawer-header">
+      <h2 class="hdrawer-title" id="profile-drawer-title">Your profile</h2>
+      <button
+        class="hbutton hdrawer-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="profile-drawer"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdrawer-body">
+      <p>Sam Rivera, Support lead</p>
+      <p>sam@example.com</p>
+    </div>
+  </dialog>
+</play-example>

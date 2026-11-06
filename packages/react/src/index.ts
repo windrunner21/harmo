@@ -8,6 +8,7 @@ export { CheckboxGroup, type CheckboxGroupProps } from "./CheckboxGroup.tsx";
 export { Chevron, type ChevronProps } from "./Chevron.tsx";
 export { ChevronToArrow, type ChevronToArrowProps } from "./ChevronToArrow.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
+export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
 export { Field, type FieldProps } from "./field/Field.tsx";
 export { FilterChip, type FilterChipProps } from "./FilterChip.tsx";

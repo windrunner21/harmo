@@ -10,6 +10,7 @@ import { examples as card } from "./components/card.tsx";
 import { examples as checkbox } from "./components/checkbox.tsx";
 import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
+import { examples as drawer } from "./components/drawer.tsx";
 import { examples as expandChevron } from "./components/expand-chevron.tsx";
 import { examples as field } from "./components/field.tsx";
 import { examples as filterChip } from "./components/filter-chip.tsx";
@@ -42,6 +43,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   checkbox,
   "chevron-to-arrow": chevronToArrow,
   dialog,
+  drawer,
   "expand-chevron": expandChevron,
   field,
   "filter-chip": filterChip,
