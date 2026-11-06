@@ -1,7 +1,7 @@
 # Checks every push to master and every pull request: the types and the
-# markup test in one job, and the browser tests in a job per browser, side by
-# side. A failed browser job keeps Playwright's report, with a trace of each
-# failed test.
+# markup test in one job, and the browser tests in two jobs per browser, each
+# running half of them, all side by side. Each browser job keeps Playwright's
+# report, with a trace of each failed test.
 name: CI
 
 on:
@@ -33,14 +33,17 @@ jobs:
       - run: mise run test:cli
 
   browser:
-    name: Browser tests (${{ matrix.browser }})
+    name: Browser tests (${{ matrix.browser }}, ${{ matrix.shard }}/2)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     strategy:
-      # One browser failing doesn't stop the others.
+      # One job failing doesn't stop the others.
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
+        # Half of the browser's tests each, at the same time: the whole run
+        # takes about half as long, with none left out.
+        shard: [1, 2]
     steps:
       - uses: actions/checkout@v7
 
@@ -70,12 +73,12 @@ jobs:
         run: bunx playwright install-deps ${{ matrix.browser }}
 
       - working-directory: tests
-        run: bunx playwright test --project=${{ matrix.browser }}
+        run: bunx playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shard }}/2
 
       # However the job ends, also when it runs out of time.
       - if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report-${{ matrix.browser }}
+          name: playwright-report-${{ matrix.browser }}-${{ matrix.shard }}
           path: tests/playwright-report
           retention-days: 14

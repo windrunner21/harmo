@@ -13,6 +13,14 @@ version_prefix = ""
 linux-x64 = { asset_pattern = "dart-sass-*-linux-x64.tar.gz" }
 linux-arm64 = { asset_pattern = "dart-sass-*-linux-arm64.tar.gz" }
 
+[vars]
+# The browser tests run in Playwright's image, with the browsers CI uses, on
+# any system, Arch included, where Playwright can't install them. Its
+# Chromium is Playwright's headless build, lighter than a system's full
+# Chromium. Its version must match @playwright/test in tests/package.json.
+# Each run's container is removed when it ends.
+playwright = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp -v "{{config_root}}:{{config_root}}" -w "{{config_root}}/tests" mcr.microsoft.com/playwright:v1.64.1-noble npx playwright test'
+
 [tasks."build:accents"]
 description = "Regenerate packages/css/src/accents.scss from packages/cli/src/palettes/palettes.ts"
 run = "bun packages/css/accents/generate.ts"
@@ -86,19 +94,14 @@ dir = "{{config_root}}/packages/cli"
 run = "bun test"
 
 [tasks."test:browser"]
-description = "Build both playgrounds, then test them in Chromium"
-# CI runs every browser the config lists: bunx playwright test.
+description = "Build both playgrounds, then test them in Chromium, in Docker"
 depends = ["build:playground", "build:react-playground"]
-dir = "{{config_root}}/tests"
-run = "bunx playwright test --project=chromium"
+run = "{{vars.playwright}} --project=chromium"
 
 [tasks."test:browser:all"]
 description = "Build both playgrounds, then test them in Chromium, Firefox, and WebKit, in Docker"
-# Playwright's image, with the same browsers CI uses, for systems Playwright
-# doesn't support, such as Arch. Its version must match @playwright/test in
-# tests/package.json. Each run's container is removed when it ends.
 depends = ["build:playground", "build:react-playground"]
-run = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp -v "{{config_root}}:{{config_root}}" -w "{{config_root}}/tests" mcr.microsoft.com/playwright:v1.64.1-noble npx playwright test'
+run = "{{vars.playwright}}"
 
 [tasks."check:react"]
 description = "Type-check the React package, the React playground, the CLI, and the browser tests"

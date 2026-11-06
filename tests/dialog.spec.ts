@@ -226,13 +226,14 @@ onEachPlayground("dialog", () => {
 
     await page.goBack();
     await expect.poll(() => isOpen(dialog)).toBe(false);
-    expect(new URL(page.url()).search).toBe("");
+    await expect.poll(() => new URL(page.url()).search).toBe("");
 
     await page.goto(`${page.url()}?dialog=shortcuts-dialog`);
     await ready(page);
     await expect.poll(() => isOpen(page.locator("#shortcuts-dialog"))).toBe(true);
     await page.locator("#shortcuts-dialog").getByRole("button", { name: "Close" }).click();
     await expect.poll(() => isOpen(page.locator("#shortcuts-dialog"))).toBe(false);
-    expect(new URL(page.url()).search).toBe("");
+    // Taken off the URL as it closes: a moment after it's closed.
+    await expect.poll(() => new URL(page.url()).search).toBe("");
   });
 });

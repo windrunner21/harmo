@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { axe } from "./axe.ts";
-import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, settled, test } from "./playgrounds.ts";
 
 // What docs/components/toast.md says, on the Toast page: a toast comes in at
 // the bottom center, above everything, and leaves after 4 seconds; toasts
@@ -45,6 +45,17 @@ const overflowing = (page: Page) =>
   );
 
 const front = (page: Page) => page.locator(".htoast[data-front]:not([data-removed])");
+
+// Playwright's clock, running as time does, so a test can skip the seconds a
+// toast waits before it leaves with fastForward, rather than wait them out.
+// Its fake timers must be in place before the page's scripts run. Only for
+// the tests that wait those seconds: the others are about frames and
+// transitions, which stay the browser's own.
+const fakeClock = async (page: Page) => {
+  await page.clock.install();
+  await page.reload();
+  await ready(page);
+};
 const announcer = (page: Page, role: "status" | "alert") => page.locator(`.htoaster-announce[role="${role}"]`);
 
 // Where the first toast to come in, and the first to leave, are 100ms into
@@ -152,6 +163,7 @@ onEachPlayground("toast", () => {
   });
 
   test("it comes in from below, fading in, and after 4 seconds slides back down, fading out, and goes", async ({ page }) => {
+    await fakeClock(page);
     await watchExits(page);
     await recordMotion(page);
     await send(page, "toast-default", "Save quick reply");
@@ -159,7 +171,7 @@ onEachPlayground("toast", () => {
     const { entering } = await motion(page);
     expect(entering!.y).toBeGreaterThan(1);
     expect(entering!.opacity).toBeLessThan(1);
-    await page.waitForTimeout(3500);
+    await page.clock.fastForward(3500);
     await expect(live(page)).toHaveCount(1);
     await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 3000 });
     const [[, at] = ["", 0]] = await exits(page);
@@ -171,6 +183,7 @@ onEachPlayground("toast", () => {
   });
 
   test("a stack: newest in front, the others behind in its shape; they leave one at a time, oldest first", async ({ page }) => {
+    await fakeClock(page);
     await watchExits(page);
     await send(page, "toast-a-stack", "Send three");
     await expect(live(page)).toHaveCount(3);
@@ -187,7 +200,9 @@ onEachPlayground("toast", () => {
     expect(middle.y).toBeLessThan(frontBox.y);
     expect(back.y).toBeLessThan(middle.y);
 
-    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 8000 });
+    // To just before the first leaves; then each in its turn, as time does.
+    await page.clock.fastForward(2800);
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 5000 });
     const left = await exits(page);
     expect(left.map(([title]) => title)).toEqual([
       "Contact added",
@@ -230,6 +245,7 @@ onEachPlayground("toast", () => {
 
   test("hovered, the stack spreads out, each toast at its own size, and none leaves until the pointer does", async ({ page, isMobile }) => {
     test.skip(isMobile, "a tap spreads it on touch");
+    await fakeClock(page);
     await send(page, "toast-a-stack", "Send three");
     await expect(live(page)).toHaveCount(3);
     await page.waitForTimeout(900);
@@ -244,13 +260,15 @@ onEachPlayground("toast", () => {
 
     // Moving up the list, over the gaps, keeps it spread out.
     await page.mouse.move(oldest.x + oldest.width / 2, oldest.y + oldest.height / 2, { steps: 8 });
-    await page.waitForTimeout(4000);
+    // Longer than a toast lasts.
+    await page.clock.fastForward(4000);
     await expect(live(page)).toHaveCount(3);
     await expect(region(page)).toHaveAttribute("data-expanded");
 
     await page.mouse.move(5, 5);
     await expect(region(page)).not.toHaveAttribute("data-expanded");
-    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 7000 });
+    await page.clock.fastForward(3000);
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 5000 });
   });
 
   test("F8 moves focus to the toasts and holds them; Tab reaches the action, which works; Escape goes back", async ({ page }) => {
@@ -370,10 +388,12 @@ onEachPlayground("toast", () => {
   });
 
   test("with no time limit it stays; the same id changes it in place, and its box takes the new size", async ({ page }) => {
+    await fakeClock(page);
     await send(page, "toast-kept-open-then-changed", "Go offline");
     const toast = live(page).first();
     await expect(announcer(page, "alert")).toContainText("You're offline");
-    await page.waitForTimeout(4500);
+    // Longer than a toast with a limit lasts.
+    await page.clock.fastForward(4500);
     await expect(live(page)).toHaveCount(1);
     const before = await toast.evaluate((node) => (node as HTMLElement).offsetWidth);
     const handle = await toast.elementHandle();
@@ -391,7 +411,8 @@ onEachPlayground("toast", () => {
     expect(after[0]).toBeLessThan(before);
     expect(after[0]).toBeCloseTo(after[1]!, 0);
     await expect(toast.locator(".htoast-body[data-leaving]")).toHaveCount(0);
-    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 4000 });
+    await page.clock.fastForward(4000);
+    await expect(page.locator(".htoast")).toHaveCount(0);
   });
 
   test("over an open drawer, a toast moves inside it, where it can be used; as the drawer closes, it moves back out", async ({ page }) => {
@@ -493,6 +514,7 @@ onEachPlayground("toast", () => {
   });
 
   test("with reduced motion, it fades in and out where it is, without sliding", async ({ page }) => {
+    await fakeClock(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await recordMotion(page);
     await send(page, "toast-default", "Save quick reply");
@@ -500,7 +522,8 @@ onEachPlayground("toast", () => {
     const { entering } = await motion(page);
     expect(entering!.y).toBeCloseTo(0, 1);
     expect(entering!.opacity).toBeLessThan(1);
-    await expect.poll(async () => (await motion(page)).leaving, { timeout: 6000 }).toBeTruthy();
+    await page.clock.fastForward(3800);
+    await expect.poll(async () => (await motion(page)).leaving).toBeTruthy();
     const { leaving } = await motion(page);
     expect(leaving!.y).toBeCloseTo(0, 1);
     expect(leaving!.opacity).toBeLessThan(1);

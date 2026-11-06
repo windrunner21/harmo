@@ -19,17 +19,15 @@ bun install                 # link the workspace's packages
 mise run build:css          # compile the CSS
 mise run check:react        # type-check the React package, playground, and tests
 mise run test:react         # compare the React examples with the HTML examples
-mise run test:browser       # test both playgrounds in Chromium
+mise run test:browser       # test both playgrounds in Chromium, in Docker
 ```
 
-The browser tests need a Chromium: either Playwright's own, downloaded once
-into your user cache with `bunx playwright install chromium` (run it in
-`tests/`), or one you already have, named in a `mise.local.toml` at the
-root, which git ignores:
+The browser tests run in Playwright's Docker image, with the browsers CI
+uses, on any system. They need Docker, and the image, pulled once at the
+version of `@playwright/test` in `tests/package.json`:
 
-```toml
-[env]
-CHROMIUM_PATH = "/usr/bin/chromium"
+```sh
+docker pull mcr.microsoft.com/playwright:v1.64.1-noble
 ```
 
 Consumers of the compiled CSS need none of this.
@@ -76,8 +74,8 @@ mise run watch:react-playground   # rebuild the React playground on change (run 
 mise run check:react              # type-check the React package, the React playground, the CLI, and the tests
 mise run test:react               # compare the React examples' markup with the HTML examples, and check the compiled package
 mise run test:cli                 # test what the CLI copies, and that the copies type-check
-mise run test:browser             # build both playgrounds, then test them in Chromium
-mise run test:browser:all         # the same in Chromium, Firefox, and WebKit, in Docker
+mise run test:browser             # build both playgrounds, then test them in Chromium, in Docker
+mise run test:browser:all         # the same in Chromium, Firefox, and WebKit
 ```
 
 Package dependencies belong in the appropriate `package.json`; tools belong
@@ -213,17 +211,16 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   2.2 A or AA violation, as the page loads and with each popup open. Then it
   tests what each component's scripts do, such as Listbox's keys and Tabs'
   underline. Each test in `tests/` runs on both playgrounds, and the
-  config lists Chromium, Firefox, and WebKit; `bunx playwright test`, in
-  `tests/`, runs all three, if you've installed them, and
-  `mise run test:browser:all` runs them in Playwright's Docker image, where
-  Playwright can't install its browsers, such as on Arch. Pull the image
-  first: `docker pull mcr.microsoft.com/playwright:v1.64.1-noble`, at the
-  version of `@playwright/test` in `tests/package.json`. A failed test keeps a
-  trace in `tests/test-results`, to open with `bunx playwright show-trace`.
+  config lists Chromium, Firefox, and WebKit; `mise run test:browser:all`
+  runs all three. Both tasks run in Playwright's Docker image (see Setup);
+  `bunx playwright test`, in `tests/`, runs without it, if you've installed
+  Playwright's browsers. A failed test runs once more, recording a trace,
+  kept in `tests/test-results` to open with `bunx playwright show-trace`.
 - GitHub Actions (`.github/workflows/ci.yml`) runs all of these on every push
-  to `master` and every pull request, the browser tests in a job per
-  browser, side by side. A failure shows on the pull request, and each job
-  keeps Playwright's report, with each failed test's trace.
+  to `master` and every pull request, the browser tests in two jobs per
+  browser, each running half of them, all side by side. A failure shows on
+  the pull request, and each job keeps Playwright's report, with each failed
+  test's trace.
 
 [docs/internal/testing.md](docs/internal/testing.md) explains the approach
 and why.

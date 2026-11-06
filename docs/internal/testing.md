@@ -232,27 +232,35 @@ engine only on macOS.
 
 ### Browsers
 
-- **Locally,** `mise run test:browser` runs Chromium only: Playwright's own,
-  or the one `CHROMIUM_PATH` names (see CONTRIBUTING).
-- **All three:** `bunx playwright test` in `tests/` runs every browser the
-  config lists, once installed with `bunx playwright install`. Playwright
-  supports Ubuntu and Debian officially; on other Linux distributions,
-  WebKit may need system libraries.
-- **In Docker:** `mise run test:browser:all` runs all three in Playwright's
-  image, `mcr.microsoft.com/playwright`, at the version of `@playwright/test`
-  in `tests/package.json`: the same Ubuntu and browsers as CI, on any system.
-  Pass Playwright's options after `--`, such as
+- **Locally, in Docker:** `mise run test:browser` runs Chromium, and
+  `mise run test:browser:all` all three, in Playwright's image,
+  `mcr.microsoft.com/playwright`, at the version of `@playwright/test` in
+  `tests/package.json`: the same Ubuntu and browsers as CI, on any system.
+  Name specs, then pass Playwright's options after `--`, such as
+  `mise run test:browser button -- --grep hold` or
   `mise run test:browser:all -- --project=webkit`.
-- **On CI,** `.github/workflows/ci.yml` runs each browser in its own job on
-  Ubuntu, side by side, with Playwright's own browser, kept between runs
-  until its version changes. Each job keeps its report,
-  `playwright-report-<browser>`, as an artifact; its traces open with
-  `bunx playwright show-trace`.
+- **Without Docker:** `bunx playwright test` in `tests/` runs every browser
+  the config lists, once installed with `bunx playwright install`.
+  Playwright supports Ubuntu, Debian, and macOS officially; elsewhere, such
+  as on Arch, its browsers may not install.
+- **On CI,** `.github/workflows/ci.yml` runs each browser in two jobs on
+  Ubuntu, each running half its tests (Playwright's `--shard`), all side by
+  side, with Playwright's own browser, kept between runs until its version
+  changes. Each job keeps its report, `playwright-report-<browser>-<half>`,
+  as an artifact; its traces open with `bunx playwright show-trace`.
 
 Local runs use a quarter of the CPU's cores for workers, so the computer stays
 usable during a run. Each worker runs a whole browser, so Playwright's default
 of half the cores kept a 16-core machine about 95% busy. For a faster run, add
 `--workers=8`. CI's runners do nothing else, so they keep the default.
+
+Locally, passing tests record no trace: a failed test runs once more, and
+that run records one. A test that fails and then passes shows as flaky.
+Recording every test, to keep only the failures' traces, took about 40% of a
+run's CPU. On 40 Button tests: about 46 CPU-seconds in a system's full
+Chromium, recording every test; 27 without recording; 16 in the image's
+Chromium, Playwright's headless build. CI records every test, and keeps a
+failure's trace.
 
 ## 3. The CLI
 

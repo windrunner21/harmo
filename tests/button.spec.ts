@@ -109,6 +109,23 @@ const luminance = ([r, g, b]: number[]) => {
 
 const inHtml = () => test.info().titlePath.includes("html");
 
+// A button whose width changes are caught, paused, as they begin, so a test
+// sees one however slow the machine: a 200ms change can end before a test's
+// next step reaches the page.
+type WithChanges = HTMLElement & { changes: Animation[] };
+const catchWidthChanges = (button: Locator) =>
+  button.evaluate((node) => {
+    const caught = node as WithChanges;
+    const animate = node.animate.bind(node);
+    caught.changes = [];
+    caught.animate = (...args: Parameters<Element["animate"]>) => {
+      const animation = animate(...args);
+      animation.pause();
+      caught.changes.push(animation);
+      return animation;
+    };
+  });
+
 // What docs/components/button.md says about destructive buttons and holding
 // to confirm.
 onEachPlayground("button", () => {
@@ -326,19 +343,20 @@ onEachPlayground("button", () => {
     const container = await example(page, "button-loading");
     const button = container.getByRole("button", { name: "Save changes" });
     const before = await button.evaluate((node) => (node as HTMLElement).offsetWidth);
+    await catchWidthChanges(button);
     await button.click();
     await expect(button).toHaveAttribute("aria-busy", "true");
-    // Held 100ms into its 200ms: partway.
-    const partway = await button.evaluate((node) => {
-      const [change] = node.getAnimations().filter((animation) => !(animation instanceof CSSTransition));
-      if (!change) return null;
-      change.pause();
+    // Caught as it began, then 100ms into its 200ms: partway.
+    const { count, partway } = await button.evaluate((node) => {
+      const [change] = (node as WithChanges).changes;
+      if (!change) return { count: 0, partway: null };
       change.currentTime = 100;
-      const width = node.getBoundingClientRect().width;
-      change.play();
-      return width;
+      const partway = node.getBoundingClientRect().width;
+      change.finish();
+      return { count: (node as WithChanges).changes.length, partway };
     });
-    await expect.poll(() => button.evaluate((node) => node.getAnimations().filter((animation) => !(animation instanceof CSSTransition)).length)).toBe(0);
+    expect(count).toBe(1);
+    await expect.poll(() => button.evaluate((node) => (node as HTMLElement).style.overflow)).toBe("");
     const after = await button.evaluate((node) => (node as HTMLElement).offsetWidth);
     expect(after).toBeGreaterThan(before + 5);
     expect(partway).toBeGreaterThan(before + 1);
@@ -347,9 +365,10 @@ onEachPlayground("button", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload();
     const again = (await example(page, "button-loading")).getByRole("button", { name: "Save changes" });
+    await catchWidthChanges(again);
     await again.click();
     await expect(again).toHaveAttribute("aria-busy", "true");
-    expect(await again.evaluate((node) => node.getAnimations().filter((animation) => !(animation instanceof CSSTransition)).length)).toBe(0);
+    expect(await again.evaluate((node) => (node as WithChanges).changes.length)).toBe(0);
   });
 
   test("changed again while its width changes, it carries on toward the newest width, and keeps its own inline styles", async ({ page }) => {
