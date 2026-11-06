@@ -1,6 +1,6 @@
 {
        "name": "@harmo-ui/css",
-       "version": "0.1.1",
+       "version": "0.2.0",
        "description": "CSS-first UI components for dashboards and applications: native HTML elements, one class each, themed with custom properties.",
        "license": "MIT",
        "author": "Imran Hajiyev",
@@ -20,7 +20,8 @@
        "type": "commonjs",
        "files": [
               "src",
-              "dist"
+              "dist",
+              "CHANGELOG.md"
        ],
        "main": "./dist/index.css",
        "style": "./dist/index.css",
@@ -36,6 +37,6 @@
               "access": "public"
        },
        "scripts": {
-              "prepack": "mise run build:css"
+              "prepack": "cp ../../CHANGELOG.md CHANGELOG.md && mise run build:css"
        }
 }

@@ -1,6 +1,6 @@
 {
        "name": "@harmo-ui/react",
-       "version": "0.1.1",
+       "version": "0.2.0",
        "description": "React components for Harmo: the same markup as its HTML examples, with the behavior built in.",
        "license": "MIT",
        "author": "Imran Hajiyev",
@@ -20,7 +20,8 @@
        "type": "module",
        "files": [
               "dist",
-              "src"
+              "src",
+              "CHANGELOG.md"
        ],
        "main": "./dist/cjs/index.js",
        "module": "./dist/esm/index.js",
@@ -47,7 +48,7 @@
               "access": "public"
        },
        "scripts": {
-              "prepack": "mise run build:react"
+              "prepack": "cp ../../CHANGELOG.md CHANGELOG.md && mise run build:react"
        },
        "peerDependencies": {
               "react": "^19.3.0",

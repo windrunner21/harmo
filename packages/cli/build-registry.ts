@@ -134,10 +134,11 @@ const copyOf = (source: string) => {
 };
 
 // A component's files: its own folder, every component it imports, whole, the
-// helpers those use, and the tokens.
+// helpers those use, the tokens, and the accents, as index.css has them.
 const itemFiles = (name: string) => {
   const files = new Map<string, string>([
     ["tokens.css", readFileSync(join(cssSource, "tokens.css"), "utf8")],
+    ["accents.css", readFileSync(join(cssSource, "accents.css"), "utf8")],
   ]);
   const seen = new Set<string>();
 

@@ -5,6 +5,8 @@ test-results/
 playwright-report/
 packages/cli/registry/
 packages/cli/test-output/
+# Copied from the root CHANGELOG.md when a package is packed.
+packages/*/CHANGELOG.md
 mise.local.toml
 .DS_Store
 

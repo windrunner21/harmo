@@ -47,13 +47,14 @@ const fail = (message: string): never => {
 const plural = (count: number, noun: string) =>
   `${count} ${noun}${count === 1 ? "" : "s"}`;
 
-// harmo.css, which a project imports once: the tokens first, then each component,
-// in the order of the full bundle. Only adds imports, so anything else in it stays.
+// harmo.css, which a project imports once: the tokens first, then the accents, then
+// each component, in the order of the full bundle. Only adds imports, so anything
+// else in it stays.
 const stylesHeader = `/* Harmo's styles. Import this file once. harmo-ui add keeps this list up to date. */`;
 const styleOrder = (path: string) => {
   const folder = path.split("/")[0] as string;
   return [
-    path === "tokens.css" ? 0 : folder === "settings" ? 2 : 1,
+    path === "tokens.css" ? 0 : path === "accents.css" ? 1 : folder === "settings" ? 3 : 2,
     folder,
   ] as const;
 };
@@ -96,7 +97,7 @@ const cssImports = (css: string) => {
 const harmoImports = (css: string) =>
   cssImports(css).flatMap(({ text, start, end }) => {
     const path =
-      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|([a-z-]+)\/\2\.css)/.exec(text)?.[1];
+      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|accents\.css|([a-z-]+)\/\2\.css)/.exec(text)?.[1];
     return path ? [{ path, start, end }] : [];
   });
 

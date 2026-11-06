@@ -75,7 +75,7 @@ describe("add", () => {
   test("copies a component, its styles, and what it needs, each in its folder", () => {
     const { code, out } = run("add", "tabs");
     expect(code).toBe(0);
-    expect(out).toContain(`Created 9 files in ${harmo}`);
+    expect(out).toContain(`Created 10 files in ${harmo}`);
     expect(out).toContain(`Import ${harmo}/harmo.css once`);
     expect(copied()).toEqual(
       [
@@ -88,10 +88,12 @@ describe("add", () => {
         "tabs/tabs.css",
         "tabs/useTabsMotion.ts",
         "tokens.css",
+        "accents.css",
       ].sort(),
     );
     expect(importsIn(read(`${harmo}/harmo.css`))).toEqual([
       "tokens.css",
+      "accents.css",
       "tabs/tabs.css",
     ]);
   });
@@ -100,6 +102,9 @@ describe("add", () => {
     run("add", "password", "tag");
     expect(read(`${harmo}/tag/tag.css`)).toBe(
       readFileSync(join(cssFolder, "tag.css"), "utf8"),
+    );
+    expect(read(`${harmo}/accents.css`)).toBe(
+      readFileSync(join(cssFolder, "accents.css"), "utf8"),
     );
     expect(
       read(`${harmo}/password/PasswordInput.tsx`).startsWith('"use client"'),
@@ -225,6 +230,7 @@ describe("add", () => {
     const styles = read(`${harmo}/harmo.css`);
     expect(importsIn(styles)).toEqual([
       "tokens.css",
+      "accents.css",
       "avatar/avatar.css",
       "chevron/chevron.css",
       "chevron-to-arrow/chevron-to-arrow.css",
@@ -276,7 +282,7 @@ describe("add", () => {
     write(`${harmo}/harmo.css`, `@import "./tokens.css";\n${off}`);
     run("add", "avatar");
     expect(read(`${harmo}/harmo.css`)).toBe(
-      `@import "./tokens.css";\n@import "./avatar/avatar.css";\n${off}`,
+      `@import "./tokens.css";\n@import "./accents.css";\n@import "./avatar/avatar.css";\n${off}`,
     );
   });
 
@@ -296,6 +302,7 @@ describe("add", () => {
     expect(importsIn(read(`${harmo}/harmo.css`))).toEqual([
       "reset.css",
       "tokens.css",
+      "accents.css",
       "avatar/avatar.css",
       "tag/tag.css",
       "tooltip/tooltip.css",
@@ -313,6 +320,7 @@ describe("add", () => {
     expect(read(`${harmo}/harmo.css`).split("\r\n")).toEqual([
       header as string,
       '@import "./tokens.css";',
+      '@import "./accents.css";',
       '@import "./avatar/avatar.css";',
       '@import "./tag/tag.css";',
       ".mine { color: red; }",
@@ -332,7 +340,7 @@ describe("add", () => {
     mkdirSync(join(project, harmo), { recursive: true });
     write(`${harmo}/harmo.css`, ".mine { color: red; }\n");
     run("add", "tag");
-    expect(read(`${harmo}/harmo.css`).startsWith('@import "./tokens.css";\n@import "./tag/tag.css";\n.mine')).toBe(true);
+    expect(read(`${harmo}/harmo.css`).startsWith('@import "./tokens.css";\n@import "./accents.css";\n@import "./tag/tag.css";\n.mine')).toBe(true);
   });
 
   test("doesn't take other line endings for a file you changed", () => {
@@ -346,7 +354,7 @@ describe("add", () => {
   test("uses an absolute --path as it is", () => {
     const outside = mkdtempSync(join(output, "outside-"));
     const { out } = run("add", "tag", "--path", outside);
-    expect(out).toContain(`Created 5 files in ${outside}`);
+    expect(out).toContain(`Created 6 files in ${outside}`);
     expect(existsSync(join(outside, "tag/Tag.tsx"))).toBe(true);
     expect(copied(".").filter((file) => file !== "package.json")).toEqual([]);
     rmSync(outside, { recursive: true, force: true });
@@ -354,7 +362,7 @@ describe("add", () => {
 
   test("--dry-run says what would change, and changes nothing", () => {
     const { out } = run("add", "tag", "--dry-run");
-    expect(out).toContain(`Would create 5 files in ${harmo}`);
+    expect(out).toContain(`Would create 6 files in ${harmo}`);
     expect(existsSync(join(project, harmo))).toBe(false);
   });
 
@@ -367,7 +375,7 @@ describe("add", () => {
     expect(read(`${harmo}/harmo.css`)).toBe(without);
 
     expect(run("add", "tag").out.trim()).toBe(`Updated ${harmo}/harmo.css`);
-    expect(importsIn(read(`${harmo}/harmo.css`))).toEqual(["tokens.css", "tag/tag.css"]);
+    expect(importsIn(read(`${harmo}/harmo.css`))).toEqual(["tokens.css", "accents.css", "tag/tag.css"]);
   });
 
   test("refuses an unknown component, or no component, and writes nothing", () => {

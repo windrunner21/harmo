@@ -18,6 +18,7 @@ That copies Tabs, its styles, and whatever it needs:
 src/components/harmo/
   harmo.css
   tokens.css
+  accents.css
   tabs/Tabs.tsx
   tabs/TabNav.tsx
   tabs/useTabsMotion.ts
@@ -27,8 +28,9 @@ src/components/harmo/
   lib/withClass.ts
 ```
 
-Import `harmo.css` once, in your root layout or entry file. It lists the tokens and
-each component's styles, and `npx harmo-ui add` keeps it up to date. Then use the
+Import `harmo.css` once, in your root layout or entry file. It lists the tokens, the
+[accents](https://github.com/windrunner21/harmo#accents), and each component's styles,
+and `npx harmo-ui add` keeps it up to date. Then use the
 component:
 
 ```tsx

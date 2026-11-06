@@ -19,6 +19,7 @@ pieces that compose into more capable interfaces.
 [Playground](#playground) ·
 [Philosophy](docs/philosophy.md) ·
 [For AI agents](llms.txt) ·
+[Changelog](CHANGELOG.md) ·
 [Contributing](CONTRIBUTING.md)
 
 ## Why Harmo
@@ -188,8 +189,9 @@ The accents are `purple` (the default), `blue`, `teal`, `green`, `amber`, `red`,
 `pink`, and `mono`, which is black, or near-white in dark mode. Each has the
 same contrast as the purple in every role, so text, and the text on buttons,
 pass WCAG AA in both modes. Put the attribute on any element to recolor only
-that part of the page. `index.css` includes `accents.css`; with per-component
-imports, load `accents.css` after `tokens.css`.
+that part of the page. `index.css` includes `accents.css`, and
+`npx harmo-ui add` copies it with `tokens.css`; with per-component imports,
+load `accents.css` after `tokens.css`.
 
 ### Your brand color
 
