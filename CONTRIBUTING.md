@@ -95,8 +95,12 @@ narrow layouts, long content, zoom, disabled/error states, reduced motion,
 and token overrides.
 
 Note each change people using Harmo would notice under Unreleased in
-[CHANGELOG.md](CHANGELOG.md), as it lands: Added, Changed, or Fixed, and under
-Upgrading what they need to do, if anything.
+[CHANGELOG.md](CHANGELOG.md), as it lands: Added, Changed, or Fixed. A change
+that asks something of them goes under Upgrading: what it is, what they'll
+notice if they do nothing, and the code before and after. After a code block's
+language, `title="globals.css"` names its file, and `preview` shows its HTML
+live on the website's changelog, as the second 0.2.0 entry does; GitHub shows
+both as plain code.
 
 For assisted development, agree on the scope of each patch. Run
 installations, builds, and other toolchain commands only with explicit
@@ -139,7 +143,8 @@ version, so the CLI copies the code of the packages with its version.
 
 1. Set the version in the three `package.json` files, then run `bun install`.
    In `CHANGELOG.md`, move what's under Unreleased to a new section for the
-   version, with the date, and update the links at the end. Packing copies the
+   version, with the date and a one-line summary under its heading, and update
+   the links at the end. Packing copies the
    changelog into each package, for npm and for the website's changelog page.
 2. Run `mise run check:react`, `mise run test:react`, `mise run test:cli`, and
    `mise run test:browser:all`.

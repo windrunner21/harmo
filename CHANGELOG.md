@@ -10,18 +10,84 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [0.2.0] - 2026-11-06
 
+Dark mode, eight accents, a theme for any brand color with
+`npx harmo-ui theme`, and two new components, Kbd and Card.
+
 ### Upgrading
 
-- A primary button's colors are now `--harmo-color-primary-fill`,
-  `--harmo-color-primary-fill-hover`, and `--harmo-color-primary-fill-active`,
-  and a switch's is `--harmo-color-primary-fill`. On `:root` they follow your
+- **Buttons and switches use the new fill tokens.** A primary button's colors
+  are now `--harmo-color-primary-fill`, `--harmo-color-primary-fill-hover`, and
+  `--harmo-color-primary-fill-active`, and a switch's is
+  `--harmo-color-primary-fill`. On `:root` they follow your
   `--harmo-color-primary`: the fill is the primary, one step darker on hover and
-  another when pressed. If you set `--harmo-color-primary-hover` or
-  `--harmo-color-primary-active` to restyle buttons, set the fill tokens
-  instead; those two still color text and links.
-- A theme set on an element rather than on `:root` needs the fill tokens there
-  too, since a token built from another is worked out on `:root`. An accent, or
-  a theme from `npx harmo-ui theme`, sets them for you.
+  another when pressed.
+
+  What you'll notice: if you set `--harmo-color-primary-hover` or
+  `--harmo-color-primary-active` to restyle buttons, they now hover one step
+  darker than your primary, not in your hover color. Set the fill tokens
+  instead; the other two still color text and links.
+
+  In 0.1.1:
+
+  ```css title="globals.css"
+  :root {
+    --harmo-color-primary: #0f75b6;
+    --harmo-color-primary-hover: #0265a0;
+    --harmo-color-primary-active: #005589;
+  }
+  ```
+
+  In 0.2.0:
+
+  ```css title="globals.css"
+  :root {
+    --harmo-color-primary: #0f75b6;
+    --harmo-color-primary-fill-hover: #0265a0;
+    --harmo-color-primary-fill-active: #005589;
+  }
+  ```
+
+  Or run `npx harmo-ui theme "#0f75b6"`, which sets every role, in light and
+  dark mode.
+- **A theme on an element needs the fill tokens there too.** A token built from
+  another is worked out on `:root`, so on an element, the fills don't follow a
+  primary set there.
+
+  What you'll notice: in a section you colored with `--harmo-color-primary`,
+  what uses the primary itself takes the color, such as an accent tag, but
+  buttons and switches stay purple:
+
+  ```html preview
+  <section style="--harmo-color-primary: light-dark(#0f75b6, #30aed9)">
+    <span class="htag" data-variant="accent">Unread</span>
+    <button class="hbutton" type="button">
+      <span class="hbutton-label">Save</span>
+    </button>
+    <input class="hswitch" type="checkbox" role="switch" checked aria-label="Email recaps" />
+  </section>
+  ```
+
+  Set the fills on the section as well:
+
+  ```html preview
+  <section
+    style="
+      --harmo-color-primary: light-dark(#0f75b6, #30aed9);
+      --harmo-color-primary-fill: light-dark(#0f75b6, #1f6bb0);
+      --harmo-color-primary-fill-hover: light-dark(#0a5d92, #2478c4);
+      --harmo-color-primary-fill-active: light-dark(#064c79, #1b62a0);
+    "
+  >
+    <span class="htag" data-variant="accent">Unread</span>
+    <button class="hbutton" type="button">
+      <span class="hbutton-label">Save</span>
+    </button>
+    <input class="hswitch" type="checkbox" role="switch" checked aria-label="Email recaps" />
+  </section>
+  ```
+
+  An accent on the section, such as `data-harmo-accent="blue"`, sets them for
+  you.
 
 ### Added
 
@@ -66,7 +132,8 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [0.1.1] - 2026-11-03
 
-The first release on npm.
+The first release on npm: 26 components and the Settings list pattern, in
+CSS and React, and `npx harmo-ui add`.
 
 ### Added
 
