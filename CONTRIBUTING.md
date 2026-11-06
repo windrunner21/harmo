@@ -47,7 +47,6 @@ examples/react/        the React playground: the same examples in React, its
                        build, and the markup test
 tests/                 the browser tests, run with Playwright on both playgrounds
 docs/components/       one page per component
-docs/patterns/         compositions of components, such as the Settings list
 docs/philosophy.md     design principles and API guidelines
 docs/internal/         notes for contributors, such as how testing works
 llms.txt               the index of the docs for AI agents
@@ -217,10 +216,10 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   Playwright's browsers. A failed test runs once more, recording a trace,
   kept in `tests/test-results` to open with `bunx playwright show-trace`.
 - GitHub Actions (`.github/workflows/ci.yml`) runs all of these on every push
-  to `master` and every pull request, the browser tests in two jobs per
-  browser, each running half of them, all side by side. A failure shows on
-  the pull request, and each job keeps Playwright's report, with each failed
-  test's trace.
+  to `master` and every pull request, the browser tests in three jobs per
+  browser, each running a third of them, all side by side, in Playwright's
+  Docker image. A failure shows on the pull request, and one report, merged
+  from every job, keeps each failed test's trace.
 
 [docs/internal/testing.md](docs/internal/testing.md) explains the approach
 and why.

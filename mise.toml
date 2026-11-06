@@ -17,7 +17,8 @@ linux-arm64 = { asset_pattern = "dart-sass-*-linux-arm64.tar.gz" }
 # The browser tests run in Playwright's image, with the browsers CI uses, on
 # any system, Arch included, where Playwright can't install them. Its
 # Chromium is Playwright's headless build, lighter than a system's full
-# Chromium. Its version must match @playwright/test in tests/package.json.
+# Chromium. Its version must match @playwright/test in tests/package.json,
+# and the one CI runs in, in .github/workflows/ci.yml.
 # Each run's container is removed when it ends.
 playwright = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp -v "{{config_root}}:{{config_root}}" -w "{{config_root}}/tests" mcr.microsoft.com/playwright:v1.64.1-noble npx playwright test'
 

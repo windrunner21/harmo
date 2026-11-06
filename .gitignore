@@ -3,6 +3,8 @@ dist/
 coverage/
 test-results/
 playwright-report/
+blob-report/
+all-blob-reports/
 packages/cli/registry/
 packages/cli/test-output/
 # Copied from the root CHANGELOG.md when a package is packed.

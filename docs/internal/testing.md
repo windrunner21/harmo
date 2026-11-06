@@ -243,11 +243,16 @@ engine only on macOS.
   the config lists, once installed with `bunx playwright install`.
   Playwright supports Ubuntu, Debian, and macOS officially; elsewhere, such
   as on Arch, its browsers may not install.
-- **On CI,** `.github/workflows/ci.yml` runs each browser in two jobs on
-  Ubuntu, each running half its tests (Playwright's `--shard`), all side by
-  side, with Playwright's own browser, kept between runs until its version
-  changes. Each job keeps its report, `playwright-report-<browser>-<half>`,
-  as an artifact; its traces open with `bunx playwright show-trace`.
+- **On CI,** `.github/workflows/ci.yml` follows Playwright's CI and sharding
+  guides. Each browser runs in three jobs, each with a third of its tests
+  (`--shard`), all side by side, in the same Playwright image as local runs,
+  with the browsers and their system libraries already in it; installing
+  those with apt on each run took from 11 seconds to 13 minutes. Each job
+  writes a blob report, and a last job merges them into one HTML report,
+  `html-report--attempt-<n>`, kept as an artifact for 14 days, and notes
+  each failure once on the pull request. A failure's trace is in the report;
+  it opens with `bunx playwright show-trace`. A job's tests stop after 15
+  minutes, so a stuck run still writes its report.
 
 Local runs use a quarter of the CPU's cores for workers, so the computer stays
 usable during a run. Each worker runs a whole browser, so Playwright's default
