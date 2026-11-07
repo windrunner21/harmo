@@ -115,31 +115,18 @@ hold to confirm.
   Dynamic Island in his [Animations on the Web](https://animations.dev)
   course.
 
-  A toast as it shows. Its script times it, stacks it, and adds and removes
-  it; this one has none, so it stays until it's hidden again:
-
   ```html preview
   <div>
-    <button class="hbutton" data-variant="secondary" type="button"
-      popovertarget="toaster" popovertargetaction="toggle">
-      <span class="hbutton-label">Show the toast</span>
+    <button
+      class="hbutton"
+      data-variant="secondary"
+      type="button"
+      data-example-toast-status="success"
+      data-example-toast-title="Quick reply saved"
+      data-example-toast-description="Type /ship in a chat to use it."
+    >
+      <span class="hbutton-label">Save quick reply</span>
     </button>
-    <section class="htoaster" id="toaster" popover="manual" tabindex="-1"
-      aria-label="Notifications (F8)">
-      <ol class="htoaster-list">
-        <li class="htoast" data-status="success" data-front>
-          <div class="htoast-body">
-            <svg class="htoast-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="9" /><path d="M6.5 10.25L8.75 12.5L13.5 7.75" /></svg>
-            <div class="htoast-content">
-              <span class="htoast-title">Quick reply saved</span>
-              <span class="htoast-description">Type /ship in a chat to use it.</span>
-            </div>
-          </div>
-        </li>
-      </ol>
-      <div class="htoaster-announce" role="status" aria-atomic="false"></div>
-      <div class="htoaster-announce" role="alert" aria-atomic="false"></div>
-    </section>
   </div>
   ```
 
