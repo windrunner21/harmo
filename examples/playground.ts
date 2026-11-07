@@ -308,27 +308,30 @@ function renderExample(
     .join("\n");
 }
 
-// Every group, linking to each component's page. Components without a
-// page yet are listed but not linked.
+// The playground's own Sidebar: the overview, then every group of the
+// catalog, linking to each component's page. Components without a page yet
+// are listed but not linked.
 function renderNav(components: Set<string>, current: string) {
-  const overview = current === "index" ? ` aria-current="page"` : "";
+  const link = (href: string, label: string, isCurrent: boolean) =>
+    `<li><a class="hsidebar-item" href="${href}"${isCurrent ? ` aria-current="page"` : ""}><span class="hsidebar-label">${label}</span></a></li>`;
   const groups = catalog.map((group) => {
     const id = `nav-${slugify(group.title)}`;
-    const items = group.entries.map((entry) => {
-      if (!components.has(entry.slug)) return `    <li><span class="play-nav-pending">${entry.title}</span></li>`;
-      const currentPage = entry.slug === current ? ` aria-current="page"` : "";
-      return `    <li><a href="${entry.slug}.html"${currentPage}>${entry.title}</a></li>`;
-    });
+    const items = group.entries.map((entry) =>
+      components.has(entry.slug)
+        ? `    ${link(`${entry.slug}.html`, entry.title, entry.slug === current)}`
+        : `    <li><span class="hsidebar-item play-nav-pending"><span class="hsidebar-label">${entry.title}</span></span></li>`,
+    );
     return [
-      `<div class="play-nav-group">`,
-      `  <p class="play-nav-group-title" id="${id}">${group.title}</p>`,
-      `  <ul aria-labelledby="${id}">`,
+      `<div class="hsidebar-group">`,
+      `  <p class="hsidebar-group-label" id="${id}">${group.title}</p>`,
+      `  <ul class="hsidebar-list" aria-labelledby="${id}">`,
       ...items,
       `  </ul>`,
       `</div>`,
     ].join("\n");
   });
-  return [`<a class="play-nav-overview" href="index.html"${overview}>Overview</a>`, ...groups].join("\n");
+  const overview = [`<div class="hsidebar-group">`, `  <ul class="hsidebar-list">`, `    ${link("index.html", "Overview", current === "index")}`, `  </ul>`, `</div>`].join("\n");
+  return [overview, ...groups].join("\n");
 }
 
 // Icons -----------------------------------------------------------------------

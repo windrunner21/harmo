@@ -63,10 +63,14 @@
       </div>
     </header>
     <div class="play-layout">
-      <nav class="play-nav" id="play-nav" aria-label="Components" popover>
-        {{accent}}
-        {{nav}}
-      </nav>
+      <div class="hsidebar play-nav" id="play-nav" popover>
+        <div class="hsidebar-header">
+          {{accent}}
+        </div>
+        <nav class="hsidebar-nav" aria-label="Components">
+          {{nav}}
+        </nav>
+      </div>
       <main class="play-main" id="play-main" tabindex="-1">
         {{content}}
       </main>
