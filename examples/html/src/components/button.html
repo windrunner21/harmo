@@ -53,21 +53,63 @@
   </button>
 </play-example>
 
-<play-example title="Destructive">
+<play-example title="Destructive" layout="wide">
   <play-note>
-    <code>data-destructive</code>, for an action that destroys something, such
-    as deleting, turns any variant red: filled, outlined with red text, or
-    red text alone. The focus ring keeps the accent.
+    <code>data-destructive</code>, for an action that destroys something,
+    turns any variant red: filled, outlined with red text, or red text alone.
+    The more an action destroys, the more weight its button gets, as in a
+    workspace's danger zone, here a raised Card around a Settings list. The
+    focus ring keeps the accent.
   </play-note>
-  <button class="hbutton" data-destructive type="button">
-    <span class="hbutton-label">Delete workspace</span>
-  </button>
-  <button class="hbutton" data-variant="secondary" data-destructive type="button">
-    <span class="hbutton-label">Remove member</span>
-  </button>
-  <button class="hbutton" data-variant="tertiary" data-destructive type="button">
-    <span class="hbutton-label">Discard draft</span>
-  </button>
+  <div class="hcard" data-variant="raised">
+    <div class="hsettings">
+      <div class="hsetting">
+        <div class="hsetting-text">
+          <h3 class="hsetting-title" id="clear-imports-title">Clear the import history</h3>
+          <p class="hsetting-description" id="clear-imports-description">
+            Removes the list of past contact imports. The contacts stay.
+          </p>
+        </div>
+        <button
+          class="hbutton"
+          data-variant="tertiary"
+          data-destructive
+          type="button"
+          aria-describedby="clear-imports-description"
+        >
+          <span class="hbutton-label">Clear history</span>
+        </button>
+      </div>
+      <div class="hsetting">
+        <div class="hsetting-text">
+          <h3 class="hsetting-title" id="remove-members-title">Remove every member</h3>
+          <p class="hsetting-description" id="remove-members-description">
+            Everyone but you loses access. Their conversations stay.
+          </p>
+        </div>
+        <button
+          class="hbutton"
+          data-variant="secondary"
+          data-destructive
+          type="button"
+          aria-describedby="remove-members-description"
+        >
+          <span class="hbutton-label">Remove members</span>
+        </button>
+      </div>
+      <div class="hsetting">
+        <div class="hsetting-text">
+          <h3 class="hsetting-title" id="delete-workspace-title">Delete this workspace</h3>
+          <p class="hsetting-description" id="delete-workspace-description">
+            Deletes its conversations, contacts, and campaigns. This can't be undone.
+          </p>
+        </div>
+        <button class="hbutton" data-destructive type="button" aria-describedby="delete-workspace-description">
+          <span class="hbutton-label">Delete workspace</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </play-example>
 
 <play-example title="Links">
@@ -196,7 +238,7 @@
   </button>
 </play-example>
 
-<play-example title="Hold to confirm">
+<play-example title="Hold to confirm" layout="wide">
   <play-note>
     <code>data-hold</code> asks for a hold before an action that's hard to
     undo. Hold it for 1.5 seconds, with the pointer or with
@@ -207,26 +249,51 @@
     any other. A screen reader presses with a click, which can't hold, so its
     click runs the action.
   </play-note>
-  <button
-    class="hbutton"
-    data-variant="secondary"
-    data-size="small"
-    data-destructive
-    type="button"
-    data-hold
-    data-example-working="Deleting"
-  >
-    <play-icon name="trash" class="hicon"></play-icon>
-    <span class="hbutton-label">Hold to delete</span>
-    <span class="hbutton-hold" aria-hidden="true">
-      <play-icon name="trash" class="hicon"></play-icon>
-      <span class="hbutton-label">Hold to delete</span>
-    </span>
-  </button>
-  <button class="hbutton" type="button" data-hold data-example-working="Sending">
-    <span class="hbutton-label">Hold to send the campaign</span>
-    <span class="hbutton-hold" aria-hidden="true">
-      <span class="hbutton-label">Hold to send the campaign</span>
-    </span>
-  </button>
+  <div class="hsettings">
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="delete-campaign-title">Delete the Spring sale campaign</h3>
+        <p class="hsetting-description" id="delete-campaign-description">
+          Its 3 scheduled runs are canceled, and its reports are deleted.
+        </p>
+      </div>
+      <button
+        class="hbutton"
+        data-variant="secondary"
+        data-size="small"
+        data-destructive
+        type="button"
+        aria-describedby="delete-campaign-description"
+        data-hold
+        data-example-working="Deleting"
+      >
+        <play-icon name="trash" class="hicon"></play-icon>
+        <span class="hbutton-label">Hold to delete</span>
+        <span class="hbutton-hold" aria-hidden="true">
+          <play-icon name="trash" class="hicon"></play-icon>
+          <span class="hbutton-label">Hold to delete</span>
+        </span>
+      </button>
+    </div>
+    <div class="hsetting">
+      <div class="hsetting-text">
+        <h3 class="hsetting-title" id="send-campaign-title">Send the Spring sale campaign</h3>
+        <p class="hsetting-description" id="send-campaign-description">
+          To 1,240 recipients, now. A sent message can't be called back.
+        </p>
+      </div>
+      <button
+        class="hbutton"
+        type="button"
+        aria-describedby="send-campaign-description"
+        data-hold
+        data-example-working="Sending"
+      >
+        <span class="hbutton-label">Hold to send</span>
+        <span class="hbutton-hold" aria-hidden="true">
+          <span class="hbutton-label">Hold to send</span>
+        </span>
+      </button>
+    </div>
+  </div>
 </play-example>

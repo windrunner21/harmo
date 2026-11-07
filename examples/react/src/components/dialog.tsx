@@ -29,39 +29,46 @@ export const examples = {
         </>
       }
     >
-      <Field label="Email">
-        <Input name="email" type="email" autoComplete="email" autoFocus />
-      </Field>
+      <div style={{ display: "grid", gap: 16 }}>
+        <Field label="Email">
+          <Input name="email" type="email" autoComplete="email" autoFocus />
+        </Field>
+        <Select label="Role" name="role" defaultValue="member">
+          <Option value="member">Member</Option>
+          <Option value="admin">Admin</Option>
+        </Select>
+      </div>
     </Dialog>
   ),
 
-  "Closing only on purpose": () => (
+  "Confirm before deleting": () => (
     <Dialog
-      id="team-dialog"
-      label="New team"
+      id="delete-campaign-dialog"
+      label="Delete the Spring sale campaign?"
       closeLabel="Close"
-      description="Teams share an inbox and the conversations assigned to it."
+      description="This can't be undone."
       closedby="closerequest"
-      trigger={<Button>New team</Button>}
+      trigger={
+        <Button variant="secondary" destructive>
+          Delete campaign
+        </Button>
+      }
       form={{ method: "dialog" }}
       footer={
         <>
           <DialogClose>
             <Button variant="secondary">Cancel</Button>
           </DialogClose>
-          <Button type="submit">Create team</Button>
+          <Button type="submit" destructive>
+            Delete campaign
+          </Button>
         </>
       }
     >
-      <div style={{ display: "grid", gap: 16 }}>
-        <Field label="Name">
-          <Input id="team-name" name="name" type="text" autoFocus />
-        </Field>
-        <Select label="Visibility" name="visibility" defaultValue="everyone">
-          <Option value="everyone">Everyone in the workspace</Option>
-          <Option value="members">Its members only</Option>
-        </Select>
-      </div>
+      <p>
+        Its 3 scheduled runs are canceled, and the reports from its 12 past runs
+        are deleted. The contacts it messaged stay.
+      </p>
     </Dialog>
   ),
 

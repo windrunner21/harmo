@@ -36,9 +36,42 @@
     </header>
     <form method="dialog">
       <div class="hdialog-body">
-        <div class="hfield">
-          <label class="hlabel" for="invite-email">Email</label>
-          <input class="hinput" id="invite-email" name="email" type="email" autocomplete="email" autofocus />
+        <div style="display: grid; gap: 16px">
+          <div class="hfield">
+            <label class="hlabel" for="invite-email">Email</label>
+            <input class="hinput" id="invite-email" name="email" type="email" autocomplete="email" autofocus />
+          </div>
+          <div class="hfield">
+            <span class="hlabel" id="invite-role-label">Role</span>
+            <button
+              class="hselect"
+              id="invite-role"
+              type="button"
+              data-name="role"
+              role="combobox"
+              aria-labelledby="invite-role-label"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="invite-role-listbox"
+              popovertarget="invite-role-popup"
+              style="anchor-name: --invite-role"
+            >
+              <span class="hselect-value">Member</span>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </button>
+            <div class="hpopup" id="invite-role-popup" popover style="position-anchor: --invite-role">
+              <ul class="hlistbox" id="invite-role-listbox" role="listbox" aria-labelledby="invite-role-label">
+                <li class="hoption" id="invite-role-member" role="option" data-value="member" aria-selected="true">
+                  <span class="hoption-label">Member</span>
+                  <play-icon name="check" class="hoption-check"></play-icon>
+                </li>
+                <li class="hoption" id="invite-role-admin" role="option" data-value="admin" aria-selected="false">
+                  <span class="hoption-label">Admin</span>
+                </li>
+              </ul>
+            </div>
+            <input type="hidden" name="role" value="member" />
+          </div>
         </div>
       </div>
       <footer class="hdialog-footer">
@@ -53,33 +86,39 @@
   </dialog>
 </play-example>
 
-<play-example title="Closing only on purpose">
+<play-example title="Confirm before deleting">
   <play-note>
-    <code>closedby="closerequest"</code>: a click outside doesn't close it, so a
-    half-filled form isn't lost to a stray click; <kbd class="hkbd">Escape</kbd>
-    and its buttons still do. A Select inside opens above the dialog, and
-    <kbd class="hkbd">Escape</kbd> closes its list first.
+    A decision that can't be undone: the title asks it, the body says what it
+    destroys, and the action says it again, red. With
+    <code>closedby="closerequest"</code>, a click outside doesn't close it, so a
+    stray click doesn't answer for you; <kbd class="hkbd">Escape</kbd> and
+    Cancel still do.
   </play-note>
-  <button class="hbutton" type="button" commandfor="team-dialog" command="show-modal">
-    <span class="hbutton-label">New team</span>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    data-destructive
+    type="button"
+    commandfor="delete-campaign-dialog"
+    command="show-modal"
+  >
+    <span class="hbutton-label">Delete campaign</span>
   </button>
   <dialog
     class="hdialog"
-    id="team-dialog"
+    id="delete-campaign-dialog"
     closedby="closerequest"
-    aria-labelledby="team-dialog-title"
-    aria-describedby="team-dialog-description"
+    aria-labelledby="delete-campaign-dialog-title"
+    aria-describedby="delete-campaign-dialog-description"
   >
     <header class="hdialog-header">
-      <h2 class="hdialog-title" id="team-dialog-title">New team</h2>
-      <p class="hdialog-description" id="team-dialog-description">
-        Teams share an inbox and the conversations assigned to it.
-      </p>
+      <h2 class="hdialog-title" id="delete-campaign-dialog-title">Delete the Spring sale campaign?</h2>
+      <p class="hdialog-description" id="delete-campaign-dialog-description">This can't be undone.</p>
       <button
         class="hbutton hdialog-close"
         data-variant="tertiary"
         type="button"
-        commandfor="team-dialog"
+        commandfor="delete-campaign-dialog"
         command="request-close"
         aria-label="Close"
       >
@@ -88,50 +127,23 @@
     </header>
     <form method="dialog">
       <div class="hdialog-body">
-        <div style="display: grid; gap: 16px">
-          <div class="hfield">
-            <label class="hlabel" for="team-name">Name</label>
-            <input class="hinput" id="team-name" name="name" type="text" autofocus />
-          </div>
-          <div class="hfield">
-            <span class="hlabel" id="team-visibility-label">Visibility</span>
-            <button
-              class="hselect"
-              id="team-visibility"
-              type="button"
-              data-name="visibility"
-              role="combobox"
-              aria-labelledby="team-visibility-label"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-controls="team-visibility-listbox"
-              popovertarget="team-visibility-popup"
-              style="anchor-name: --team-visibility"
-            >
-              <span class="hselect-value">Everyone in the workspace</span>
-              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
-            </button>
-            <div class="hpopup" id="team-visibility-popup" popover style="position-anchor: --team-visibility">
-              <ul class="hlistbox" id="team-visibility-listbox" role="listbox" aria-labelledby="team-visibility-label">
-                <li class="hoption" id="team-visibility-everyone" role="option" data-value="everyone" aria-selected="true">
-                  <span class="hoption-label">Everyone in the workspace</span>
-                  <play-icon name="check" class="hoption-check"></play-icon>
-                </li>
-                <li class="hoption" id="team-visibility-members" role="option" data-value="members" aria-selected="false">
-                  <span class="hoption-label">Its members only</span>
-                </li>
-              </ul>
-            </div>
-            <input type="hidden" name="visibility" value="everyone" />
-          </div>
-        </div>
+        <p>
+          Its 3 scheduled runs are canceled, and the reports from its 12 past
+          runs are deleted. The contacts it messaged stay.
+        </p>
       </div>
       <footer class="hdialog-footer">
-        <button class="hbutton" data-variant="secondary" type="button" commandfor="team-dialog" command="request-close">
+        <button
+          class="hbutton"
+          data-variant="secondary"
+          type="button"
+          commandfor="delete-campaign-dialog"
+          command="request-close"
+        >
           <span class="hbutton-label">Cancel</span>
         </button>
-        <button class="hbutton" type="submit">
-          <span class="hbutton-label">Create team</span>
+        <button class="hbutton" data-destructive type="submit">
+          <span class="hbutton-label">Delete campaign</span>
         </button>
       </footer>
     </form>

@@ -55,7 +55,7 @@ onEachPlayground("dialog", () => {
   });
 
   test('with closedby="closerequest", a click outside doesn\'t close it, but Escape does', async ({ page }) => {
-    const { dialog } = await openFrom(page, "dialog-closing-only-on-purpose", "New team");
+    const { dialog } = await openFrom(page, "dialog-confirm-before-deleting", "Delete campaign");
     await page.mouse.click(8, 8);
     await page.waitForTimeout(200);
     expect(await isOpen(dialog)).toBe(true);
@@ -64,14 +64,14 @@ onEachPlayground("dialog", () => {
   });
 
   test("a Select inside opens above it, choosing keeps it open, and Escape closes the list first", async ({ page }) => {
-    const { dialog } = await openFrom(page, "dialog-closing-only-on-purpose", "New team");
-    const select = dialog.getByRole("combobox", { name: "Visibility" });
+    const { dialog } = await openFrom(page, "dialog-default", "Invite people");
+    const select = dialog.getByRole("combobox", { name: "Role" });
     const popup = dialog.locator(".hpopup");
     await select.click();
     await expect.poll(() => popup.evaluate((node) => node.matches(":popover-open"))).toBe(true);
     await settled(popup);
-    await dialog.getByRole("option", { name: "Its members only" }).click();
-    await expect(select).toHaveText(/Its members only/);
+    await dialog.getByRole("option", { name: "Admin" }).click();
+    await expect(select).toHaveText(/Admin/);
     expect(await isOpen(dialog)).toBe(true);
 
     await select.click();

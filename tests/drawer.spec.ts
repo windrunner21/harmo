@@ -129,13 +129,11 @@ onEachPlayground("drawer", () => {
     await page.keyboard.press("Escape");
     await expect.poll(() => isOpen(drawer)).toBe(false);
 
-    const container = await example(page, "drawer-opened-from-a-link");
-    const profile = container.locator("dialog");
-    await container.getByRole("link", { name: "Your profile" }).click();
-    await expect.poll(() => isOpen(profile)).toBe(true);
-    await settled(profile);
+    // The examples are forms, which close only on purpose; set to "any".
+    await drawer.evaluate((node) => node.setAttribute("closedby", "any"));
+    await openFrom(page, "drawer-default", "New quick reply");
     await page.mouse.click(8, 400);
-    await expect.poll(() => isOpen(profile)).toBe(false);
+    await expect.poll(() => isOpen(drawer)).toBe(false);
   });
 
   test("its close button, Cancel, and sending its form each close it", async ({ page }) => {
@@ -276,9 +274,9 @@ onEachPlayground("drawer", () => {
   test("from a link: the link opens it, closing goes back, and a reload with ?dialog opens it", async ({ page }) => {
     const container = await example(page, "drawer-opened-from-a-link");
     const drawer = container.locator("dialog");
-    await container.getByRole("link", { name: "Your profile" }).click();
+    await container.getByRole("link", { name: "Sam Rivera" }).click();
     await expect.poll(() => isOpen(drawer)).toBe(true);
-    expect(new URL(page.url()).searchParams.get("dialog")).toBe("profile-drawer");
+    expect(new URL(page.url()).searchParams.get("dialog")).toBe("contact-drawer");
     await settled(drawer);
     await drawer.getByRole("button", { name: "Close" }).click();
     await expect.poll(() => new URL(page.url()).search).toBe("");
@@ -286,7 +284,7 @@ onEachPlayground("drawer", () => {
     expect(await isOpen(drawer)).toBe(false);
 
     // Back, then Forward, while it slides out: it stays open.
-    await container.getByRole("link", { name: "Your profile" }).click();
+    await container.getByRole("link", { name: "Sam Rivera" }).click();
     await expect.poll(() => isOpen(drawer)).toBe(true);
     await settled(drawer);
     await slowDown(drawer);
@@ -302,8 +300,8 @@ onEachPlayground("drawer", () => {
     await page.keyboard.press("Escape");
     await expect.poll(() => new URL(page.url()).search).toBe("");
 
-    await page.goto(`${page.url()}?dialog=profile-drawer`);
+    await page.goto(`${page.url()}?dialog=contact-drawer`);
     await ready(page);
-    await expect.poll(() => isOpen(page.locator("#profile-drawer"))).toBe(true);
+    await expect.poll(() => isOpen(page.locator("#contact-drawer"))).toBe(true);
   });
 });

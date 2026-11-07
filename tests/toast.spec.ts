@@ -142,7 +142,7 @@ onEachPlayground("toast", () => {
 
   test("with toasts showing, one with an action and one changed in place, axe finds nothing wrong in the region", async ({ page }) => {
     await page.addScriptTag({ path: axe });
-    await send(page, "toast-with-an-action", "Schedule a campaign run");
+    await send(page, "toast-with-an-action", "Archive conversation");
     await send(page, "toast-kept-open-then-changed", "Go offline");
     await page.waitForTimeout(300);
     await send(page, "toast-kept-open-then-changed", "Reconnect");
@@ -273,14 +273,14 @@ onEachPlayground("toast", () => {
 
   test("F8 moves focus to the toasts and holds them; Tab reaches the action, which works; Escape goes back", async ({ page }) => {
     const container = await example(page, "toast-with-an-action");
-    const button = container.getByRole("button", { name: "Schedule a campaign run" });
+    const button = container.getByRole("button", { name: "Archive conversation" });
     await button.click();
     await expect(live(page)).toHaveCount(1);
     await page.keyboard.press("F8");
     await expect(region(page)).toBeFocused();
     await expect(region(page)).toHaveAttribute("data-expanded");
     await page.keyboard.press("Tab");
-    const action = live(page).getByRole("button", { name: "View run" });
+    const action = live(page).getByRole("button", { name: "Undo" });
     await expect(action).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(button).toBeFocused();
@@ -344,8 +344,8 @@ onEachPlayground("toast", () => {
 
   test("its exit lasts as long as the tokens say, before it goes", async ({ page }) => {
     await page.addStyleTag({ content: ":root { --harmo-toast-duration: 1s; }" });
-    await send(page, "toast-with-an-action", "Schedule a campaign run");
-    await live(page).getByRole("button", { name: "View run" }).click();
+    await send(page, "toast-with-an-action", "Archive conversation");
+    await live(page).getByRole("button", { name: "Undo" }).click();
     await page.waitForTimeout(800);
     await expect(page.locator(".htoast[data-removed]")).toHaveCount(1);
     await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 2000 });
@@ -538,7 +538,7 @@ onEachPlayground("toast", () => {
         await page.waitForTimeout(100);
       }
       await send(page, "toast-default", "Save quick reply");
-      await send(page, "toast-with-an-action", "Schedule a campaign run");
+      await send(page, "toast-with-an-action", "Archive conversation");
       await page.waitForTimeout(600);
       expect(await overflowing(page)).toEqual([]);
     });

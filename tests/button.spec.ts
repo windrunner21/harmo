@@ -56,7 +56,7 @@ const pausedClock = async (page: Page) => {
 
 // A Hold to confirm example's button, on a paused clock, so its 1.5 seconds
 // pass only when a test says: the destructive "Hold to delete", or the
-// accent "Hold to send the campaign".
+// accent "Hold to send".
 const holdButton = async (page: Page, which: "delete" | "send" = "delete") => {
   await pausedClock(page);
   const container = await example(page, "button-hold-to-confirm");
@@ -131,7 +131,9 @@ const catchWidthChanges = (button: Locator) =>
 onEachPlayground("button", () => {
   test("destructive: filled red with white text, outlined with red text, or red text alone", async ({ page }) => {
     const container = await example(page, "button-destructive");
-    const [filled, outlined, text] = [0, 1, 2].map((index) => container.locator(".hbutton").nth(index));
+    const [filled, outlined, text] = ["Delete workspace", "Remove members", "Clear history"].map((name) =>
+      container.getByRole("button", { name }),
+    );
     expect(await styleOf(filled, "background-color")).toBe(await token(page, "--harmo-color-danger-fill"));
     expect(await styleOf(filled, "color")).toBe(await token(page, "--harmo-color-on-danger"));
     expect(await styleOf(outlined, "color")).toBe(await token(page, "--harmo-color-danger"));

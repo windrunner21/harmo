@@ -1,4 +1,4 @@
-import { Button, ChevronToArrow } from "@harmo-ui/react";
+import { Button, Card, ChevronToArrow, Setting, Settings } from "@harmo-ui/react";
 import { useState } from "react";
 import { CloseIcon, MoreIcon, PlusIcon, TrashIcon } from "../app-icons.tsx";
 
@@ -40,15 +40,32 @@ export const examples = {
   ),
 
   Destructive: () => (
-    <>
-      <Button destructive>Delete workspace</Button>
-      <Button variant="secondary" destructive>
-        Remove member
-      </Button>
-      <Button variant="tertiary" destructive>
-        Discard draft
-      </Button>
-    </>
+    <Card variant="raised">
+      <Settings>
+        <Setting
+          label="Clear the import history"
+          description="Removes the list of past contact imports. The contacts stay."
+        >
+          <Button variant="tertiary" destructive>
+            Clear history
+          </Button>
+        </Setting>
+        <Setting
+          label="Remove every member"
+          description="Everyone but you loses access. Their conversations stay."
+        >
+          <Button variant="secondary" destructive>
+            Remove members
+          </Button>
+        </Setting>
+        <Setting
+          label="Delete this workspace"
+          description="Deletes its conversations, contacts, and campaigns. This can't be undone."
+        >
+          <Button destructive>Delete workspace</Button>
+        </Setting>
+      </Settings>
+    </Card>
   ),
 
   Links: () => (
@@ -161,21 +178,31 @@ export const examples = {
       setTimeout(() => set(false), 1500);
     };
     return (
-      <>
-        <Button
-          variant="secondary"
-          size="small"
-          destructive
-          loading={deleting}
-          onHold={work(setDeleting)}
+      <Settings>
+        <Setting
+          label="Delete the Spring sale campaign"
+          description="Its 3 scheduled runs are canceled, and its reports are deleted."
         >
-          <TrashIcon className="hicon" />
-          {deleting ? "Deleting" : "Hold to delete"}
-        </Button>
-        <Button loading={sending} onHold={work(setSending)}>
-          {sending ? "Sending" : "Hold to send the campaign"}
-        </Button>
-      </>
+          <Button
+            variant="secondary"
+            size="small"
+            destructive
+            loading={deleting}
+            onHold={work(setDeleting)}
+          >
+            <TrashIcon className="hicon" />
+            {deleting ? "Deleting" : "Hold to delete"}
+          </Button>
+        </Setting>
+        <Setting
+          label="Send the Spring sale campaign"
+          description="To 1,240 recipients, now. A sent message can't be called back."
+        >
+          <Button loading={sending} onHold={work(setSending)}>
+            {sending ? "Sending" : "Hold to send"}
+          </Button>
+        </Setting>
+      </Settings>
     );
   },
 };

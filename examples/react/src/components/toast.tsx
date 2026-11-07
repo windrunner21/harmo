@@ -145,13 +145,13 @@ export const examples = {
       onClick={() => {
         const id = toast({
           status: "success",
-          title: "Campaign run scheduled",
-          description: "Order shipped · 1,240 recipients · Today at 14:00",
-          action: { label: "View run", onClick: () => toast.dismiss(id) },
+          title: "Conversation archived",
+          description: "Sam Rivera · Order #1042",
+          action: { label: "Undo", onClick: () => toast.dismiss(id) },
         });
       }}
     >
-      Schedule a campaign run
+      Archive conversation
     </Button>
   ),
 

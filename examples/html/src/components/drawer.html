@@ -116,29 +116,65 @@
 
 <play-example title="Opened from a link">
   <play-note>
-    A link can open a drawer, as an app's router does with a URL such as
-    <code>?dialog=profile-drawer</code>, so the link, a reload, and Back all
-    work, and closing it goes back. The example script stands in for the
-    router; in React, the drawer's <code>open</code> comes from it.
+    A contact's name opens their details, as an app's router does with a URL
+    such as <code>?dialog=contact-drawer</code>, so the link, a reload, and
+    Back all work, and closing it goes back. The example script stands in for
+    the router; in React, the drawer's <code>open</code> comes from it.
   </play-note>
-  <a class="hlink" href="?dialog=profile-drawer">Your profile</a>
-  <dialog class="hdrawer" id="profile-drawer" closedby="any" aria-labelledby="profile-drawer-title" data-example-url-dialog>
+  <a class="hlink" href="?dialog=contact-drawer">Sam Rivera</a>
+  <dialog
+    class="hdrawer"
+    id="contact-drawer"
+    closedby="closerequest"
+    aria-labelledby="contact-drawer-title"
+    aria-describedby="contact-drawer-description"
+    data-example-url-dialog
+  >
     <header class="hdrawer-header">
-      <h2 class="hdrawer-title" id="profile-drawer-title">Your profile</h2>
+      <h2 class="hdrawer-title" id="contact-drawer-title">Sam Rivera</h2>
+      <p class="hdrawer-description" id="contact-drawer-description">
+        Added on 12 March, from WhatsApp.
+      </p>
       <button
         class="hbutton hdrawer-close"
         data-variant="tertiary"
         type="button"
-        commandfor="profile-drawer"
+        commandfor="contact-drawer"
         command="request-close"
         aria-label="Close"
       >
         <play-icon name="close" class="hicon"></play-icon>
       </button>
     </header>
-    <div class="hdrawer-body">
-      <p>Sam Rivera, Support lead</p>
-      <p>sam@example.com</p>
-    </div>
+    <form method="dialog">
+      <div class="hdrawer-body">
+        <div style="display: grid; gap: 24px">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <span class="havatar" role="img" aria-label="Sam Rivera">SR</span>
+            <span class="hstatus" data-status="success">Subscribed</span>
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="contact-name">Name</label>
+            <input class="hinput" id="contact-name" name="name" type="text" value="Sam Rivera" />
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="contact-phone">Phone</label>
+            <input class="hinput" id="contact-phone" name="phone" type="tel" value="+44 7700 900123" />
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="contact-email">Email</label>
+            <input class="hinput" id="contact-email" name="email" type="email" value="sam@example.com" />
+          </div>
+        </div>
+      </div>
+      <footer class="hdrawer-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="contact-drawer" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Save</span>
+        </button>
+      </footer>
+    </form>
   </dialog>
 </play-example>

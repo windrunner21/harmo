@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Card,
   Drawer,
@@ -6,6 +7,7 @@ import {
   Field,
   Input,
   Link,
+  Status,
   TextArea,
 } from "@harmo-ui/react";
 import { useEffect, useState } from "react";
@@ -90,7 +92,7 @@ export const examples = {
 
   "Opened from a link": () => {
     const named = () =>
-      new URLSearchParams(location.search).get("dialog") === "profile-drawer";
+      new URLSearchParams(location.search).get("dialog") === "contact-drawer";
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -103,7 +105,7 @@ export const examples = {
     return (
       <>
         <Link
-          href="?dialog=profile-drawer"
+          href="?dialog=contact-drawer"
           onClick={(event) => {
             if (
               event.defaultPrevented ||
@@ -116,17 +118,28 @@ export const examples = {
               return;
             event.preventDefault();
             const url = new URL(location.href);
-            url.searchParams.set("dialog", "profile-drawer");
+            url.searchParams.set("dialog", "contact-drawer");
             history.pushState({ dialog: true }, "", url);
             setOpen(true);
           }}
         >
-          Your profile
+          Sam Rivera
         </Link>
         <Drawer
-          id="profile-drawer"
-          label="Your profile"
+          id="contact-drawer"
+          label="Sam Rivera"
+          description="Added on 12 March, from WhatsApp."
           closeLabel="Close"
+          closedby="closerequest"
+          form={{ method: "dialog" }}
+          footer={
+            <>
+              <DrawerClose>
+                <Button variant="secondary">Cancel</Button>
+              </DrawerClose>
+              <Button type="submit">Save</Button>
+            </>
+          }
           open={open}
           onOpenChange={(next) => {
             if (next || !named()) return;
@@ -139,8 +152,21 @@ export const examples = {
             }
           }}
         >
-          <p>Sam Rivera, Support lead</p>
-          <p>sam@example.com</p>
+          <div style={{ display: "grid", gap: 24 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <Avatar alt="Sam Rivera">SR</Avatar>
+              <Status status="success">Subscribed</Status>
+            </div>
+            <Field label="Name">
+              <Input id="contact-name" name="name" type="text" defaultValue="Sam Rivera" />
+            </Field>
+            <Field label="Phone">
+              <Input id="contact-phone" name="phone" type="tel" defaultValue="+44 7700 900123" />
+            </Field>
+            <Field label="Email">
+              <Input id="contact-email" name="email" type="email" defaultValue="sam@example.com" />
+            </Field>
+          </div>
         </Drawer>
       </>
     );
