@@ -179,7 +179,7 @@ sends it.
 
 | Change | When |
 | --- | --- |
-| Show the popup, set `aria-expanded`, and hide the options whose label doesn't hold the text, and the groups left with none; put the message in the status when there are none, and empty it otherwise | On typing; the list stays closed when nothing matches and there's no status, however it's opened: typing, a click, or Down |
+| Show the popup, set `aria-expanded`, and hide the options whose label, description, and keywords don't hold the text, and the groups left with none; put the message in the status when there are none, and empty it otherwise | On typing; the list stays closed when nothing matches and there's no status, however it's opened: typing, a click, or Down |
 | Highlight the first match (`data-active`, and `aria-activedescendant` on the field) | On typing, in pick mode |
 | Show the option's label in the field; in pick mode, select it and put its `data-value` in the hidden input | On a pick, by Enter or a click |
 | Text naming an option that isn't disabled picks it; an empty field clears the pick; other text goes back to the picked label | On leaving the field after typing, in pick mode |

@@ -15,20 +15,31 @@
   };
 
   const labelOf = (option) => (option.querySelector(".hoption-label") ?? option).textContent.trim().toLowerCase();
+  // What a search finds an option by: its label, its description, and its
+  // keywords, the words that mean the same, such as "billing" for Plans.
+  const searchTextOf = (option) =>
+    [...option.querySelectorAll(".hoption-label, .hoption-description")].map((part) => part.textContent.trim()).concat(option.dataset.exampleKeywords ?? "").join(" ").toLowerCase();
   const listboxes = [...document.querySelectorAll(".hlistbox")];
 
   for (const listbox of listboxes) {
     const popup = listbox.closest(".hpopup");
     const trigger = popup && [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find((element) => !popup.contains(element));
-    // Focus stays on a select trigger (a combobox) or a Combobox's field,
-    // moves to the search field when there is one, and otherwise to the list
-    // itself. A Combobox's field is the text field that controls the list;
-    // combobox.js does the rest of what it needs.
+    // Focus stays on a select trigger (a combobox) or a field that controls
+    // the list, moves to the search field when there is one, and otherwise
+    // to the list itself. A Combobox's field, or a Command Menu's, is the
+    // text field that controls the list; combobox.js and command-menu.js do
+    // the rest of what each needs.
     const search = popup?.querySelector(".hlistbox-search-input");
-    const field = listbox.id ? document.querySelector(`.hcombobox > input[aria-controls="${listbox.id}"]`) : null;
+    const field = !search && listbox.id ? document.querySelector(`input[role="combobox"][aria-controls="${listbox.id}"]`) : null;
     const freeText = field?.hasAttribute("data-free-text") ?? false;
+    // A Command Menu's options are places to go, so none is ever selected.
+    const commands = listbox.closest(".hcommand-menu") !== null;
     const owner = search ?? field ?? (trigger?.getAttribute("role") === "combobox" ? trigger : listbox);
-    const enabled = () => [...listbox.querySelectorAll('.hoption:not([aria-disabled="true"], [hidden])')];
+    // What shows the list and hides it: its popup, or the dialog a field and
+    // its list share, such as a Command Menu's.
+    const container = popup ?? (field ? listbox.closest("dialog") : null);
+    const isOpen = () => (popup ? popup.matches(":popover-open") : (container?.open ?? false));
+    const enabled = () => [...listbox.querySelectorAll('.hoption:not([aria-disabled="true"], [hidden], .hoption-group[hidden] .hoption)')];
 
     // Highlight one option, or none. Disabled and hidden options are never
     // highlighted.
@@ -68,7 +79,8 @@
       return ordered.find((option) => labelOf(option).startsWith(text));
     };
 
-    // Search: hide the options whose label doesn't contain the typed text,
+    // Search: hide the options whose label, description, or keywords don't
+    // contain the typed text,
     // and the groups left with none, so the selection stays in the page for
     // every script. When nothing matches, .hlistbox-empty follows the list.
     // The first match is highlighted, and labels shown again are measured.
@@ -80,7 +92,7 @@
       const empty = listbox.nextElementSibling?.matches(".hlistbox-empty") ? listbox.nextElementSibling : null;
       search.addEventListener("input", () => {
         const query = search.value.trim().toLowerCase();
-        for (const option of options) option.hidden = !labelOf(option).includes(query);
+        for (const option of options) option.hidden = !searchTextOf(option).includes(query);
         for (const group of groups) group.hidden = !group.querySelector(".hoption:not([hidden])");
         if (empty && options.length) {
           empty.textContent = options.every((option) => option.hidden) ? (search.dataset.exampleEmpty ?? "No results") : "";
@@ -134,7 +146,7 @@
     // chip scripts react to the same click.
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.getAttribute("aria-disabled") === "true") return;
+      if (!option || option.getAttribute("aria-disabled") === "true" || commands) return;
 
       if (listbox.getAttribute("aria-multiselectable") === "true") {
         option.setAttribute("aria-selected", String(option.getAttribute("aria-selected") !== "true"));
@@ -155,14 +167,14 @@
       popup?.hidePopover();
     });
 
-    if (!popup) continue;
+    if (!container) continue;
 
     // As it opens, highlight the option a key asked for, else the selected
     // option, else the first enabled one. This runs while the popup opens, so
     // a key pressed straight after moves on from it. As it closes, clear the
     // highlight.
     let opening = null;
-    popup.addEventListener("beforetoggle", (event) => {
+    container.addEventListener("beforetoggle", (event) => {
       // An opening another script cancelled, such as a Combobox's with
       // nothing to show.
       if (event.defaultPrevented) {
@@ -184,7 +196,7 @@
 
     // Once it shows: move focus to its owner, scroll the highlighted option
     // into view, and measure the labels now that the list has its width.
-    popup.addEventListener("toggle", (event) => {
+    container.addEventListener("toggle", (event) => {
       if (event.newState !== "open") return;
       if (owner !== trigger && owner !== field) owner.focus();
       active?.scrollIntoView({ block: "nearest" });
@@ -204,7 +216,7 @@
     owner.addEventListener("keydown", (event) => {
       // Keys that confirm an input method's text belong to the search field.
       if (event.isComposing || event.keyCode === 229) return;
-      const open = popup.matches(":popover-open");
+      const open = isOpen();
       const typing = owner === search || owner === field;
       // Printable keys type ahead, except in the search field; Space counts
       // only in the middle of a search, and otherwise chooses.
@@ -256,7 +268,7 @@
             return;
           case "Tab":
             // A select trigger closes its list when focus moves on.
-            if (open && (owner === trigger || owner === field)) popup.hidePopover();
+            if (open && (owner === trigger || owner === field)) popup?.hidePopover();
             return;
           default:
             return;

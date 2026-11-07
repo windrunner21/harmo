@@ -497,9 +497,10 @@ body {
     align-items: stretch;
   }
 
-  /* A stack suits form controls, at most 24rem wide; a wide stack suits
-     elements that fill their container, such as banners. */
-  &[data-layout="stack"] > * {
+  /* A stack suits form controls, at most 24rem wide, though not a dialog,
+     which isn't laid out in the page; a wide stack suits elements that fill
+     their container, such as banners. */
+  &[data-layout="stack"] > :not(dialog) {
     max-inline-size: 24rem;
   }
 

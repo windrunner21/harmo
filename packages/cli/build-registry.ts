@@ -23,6 +23,7 @@ const components: Record<string, string[]> = {
   chevron: ["Chevron.tsx"],
   "chevron-to-arrow": ["ChevronToArrow.tsx"],
   combobox: ["Combobox.tsx"],
+  "command-menu": ["CommandMenu.tsx"],
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
@@ -73,6 +74,7 @@ const helpers = [
 const alsoStyledBy: Record<string, string[]> = {
   breadcrumb: ["chevron"],
   combobox: ["input"],
+  "command-menu": ["dialog"],
   "tag-list": ["tag"],
 };
 

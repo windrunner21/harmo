@@ -31,11 +31,61 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Command Menu: `.hcommand-menu`, or `<CommandMenu>`, places to go and
+  things to do, found by typing, such as pages, settings, and "New ticket",
+  and results your app finds as you type, such as customers. Under a Search
+  field, its list opens in a popup, as in a dashboard's header; with `modal`,
+  a button that looks like a Search field opens it in a dialog near the top
+  of the window, as on a website. Typing filters by each option's label,
+  description, and keywords, and marks what matched; the arrow keys move
+  while focus stays in the field, and Enter goes to the highlighted one. A
+  shortcut, such as ⌘K or /, reaches it from anywhere on the page. Under a
+  field, its list opens and closes at once, as it's opened many times a day;
+  the dialog fades in as a Dialog does.
+
+  ```html preview
+  <div style="display: grid; gap: 12px; inline-size: 20rem">
+    <div class="hsearch">
+      <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor" /><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor" /></svg>
+      <input class="hinput" type="text" aria-label="Search" placeholder="Search" />
+      <kbd class="hkbd" aria-hidden="true">/</kbd>
+    </div>
+    <button class="hcommand-menu-trigger" type="button">
+      <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor" /><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor" /></svg>
+      <span class="hcommand-menu-trigger-label">Search documentation</span>
+      <kbd class="hkbd" aria-hidden="true">Ctrl K</kbd>
+    </button>
+  </div>
+  ```
+
+- Listbox: an option's description under its label, as `.hoption-text`
+  holding the label and a `.hoption-description`, or `<Option description>`,
+  and `<mark class="hoption-match">` for what a search found in either.
+  `<Option keywords>` are words a search finds it by that it doesn't show,
+  such as "billing" for Plans, and `<OptionGroup filter={false}>` keeps a
+  search from hiding its options, such as results your app found for it. A
+  search, in a Select, a Combobox, or a Command Menu, finds an option by its
+  label, description, and keywords.
+
+  ```html preview
+  <div>
+    <ul class="hlistbox" role="listbox" aria-label="Go to" style="inline-size: 18rem">
+      <li class="hoption" role="option" aria-selected="false" data-active>
+        <span class="hoption-text"><span class="hoption-label"><mark class="hoption-match">An</mark>alytics</span> <span class="hoption-description">Reports</span></span>
+      </li>
+      <li class="hoption" role="option" aria-selected="false">
+        <span class="hoption-text"><span class="hoption-label">Pl<mark class="hoption-match">an</mark>s</span> <span class="hoption-description">Settings</span></span>
+      </li>
+    </ul>
+  </div>
+  ```
+
 - Search: `<div class="hsearch">` around an Input with `type="search"`, or
   `<Search>`, a field for searching, such as above a list: filled in gray,
   with a magnifier at its start and an optional clear button at its end once
   there's text. Escape empties it too, and stops there, so a dialog around it
-  stays open.
+  stays open. A Kbd after the input shows the shortcut that reaches it, such
+  as /.
 
   ```html preview
   <div>
@@ -166,6 +216,9 @@ minor version may change an API, and says how to upgrade when it does.
 - A list, in a Select or a popup, keeps its keyboard highlight when it opens
   or moves under a pointer at rest; leaving it clears the highlight only once
   the pointer has moved in it.
+- `<OptionGroup hidden>` hides the group and its options: it showed them,
+  and the arrow keys reached them. The example script, `listbox.js`, skips
+  the options of a hidden group too.
 
 ## [0.3.0] - 2026-11-07
 

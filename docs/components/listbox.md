@@ -10,7 +10,7 @@ it. Scripts own the behavior; CSS styles the state they set.
 | --- | --- |
 | CSS | `listbox.css`, `popup.css`; `button.css` for a footer or a button that opens it |
 | Element | `<ul class="hlistbox" role="listbox">` inside a `.hpopup` |
-| Parts | `.hoption`, `.hoption-label`, `.hoption-check`, `.hoption-checkbox`, `.hoption-badge`, `.hoption-group`, `.hoption-group-label`, `.hlistbox-search`, `.hlistbox-search-input`, `.hlistbox-empty`, `.hlistbox-footer` |
+| Parts | `.hoption`, `.hoption-label`, `.hoption-text`, `.hoption-description`, `.hoption-match`, `.hoption-check`, `.hoption-checkbox`, `.hoption-badge`, `.hoption-group`, `.hoption-group-label`, `.hlistbox-search`, `.hlistbox-search-input`, `.hlistbox-empty`, `.hlistbox-footer` |
 | Required | `aria-label` or `aria-labelledby` on the list, and `tabindex="-1"` when the list takes focus itself (no search row, and not a [Select](select.md)'s); `role="option"`, an `id`, and `aria-selected` on each option; `role="group"` and `aria-labelledby` (its label's id) on each group |
 | Unique | Every id |
 | Script | Required: highlight, keyboard, selection, and search; see [What a script does](#what-a-script-does) |
@@ -77,6 +77,21 @@ whitespace), loses its padding and collapses:
 Put each option's text in `.hoption-label`. The check mark goes only in the
 selected option.
 
+An option can say more under its label, such as where a page is: put the
+label and a `.hoption-description` in a `.hoption-text`, with a space between
+them, so the option is read "Plans, Settings". A search can mark what it
+found in either with `<mark class="hoption-match">`, as a
+[Command Menu](command-menu.md) does:
+
+```html
+<li class="hoption" id="search-plans" role="option" aria-selected="false">
+  <span class="hoption-text">
+    <span class="hoption-label">Pl<mark class="hoption-match">an</mark>s</span>
+    <span class="hoption-description">Settings</span>
+  </span>
+</li>
+```
+
 For multi-select, set `aria-multiselectable="true"` on the list and start each
 option with `<span class="hoption-checkbox" aria-hidden="true"></span>`. It is
 drawn like `.hcheckbox` but is not an input, so nothing inside the list takes
@@ -90,7 +105,7 @@ focus.
 | `aria-selected="true"` on an option | Shows `.hoption-check` (single) or the ticked `.hoption-checkbox` (multiple) |
 | `aria-disabled="true"` on an option | Gray text, not-allowed cursor, no check |
 | `aria-multiselectable="true"` on the list | Multi-select: `.hoption-checkbox` and no check mark |
-| `hidden` on an option or group | Hidden, such as by a search; skipped by the keyboard |
+| `hidden` on an option or group | Hidden, such as by a search; skipped by the keyboard, with the options of a hidden group |
 | `data-value` on an option | No style: the value it stands for, which a script reports or a [Select](select.md) submits |
 
 ## Appearance and states
@@ -100,6 +115,9 @@ focus.
 | `.hlistbox` | 4px padding, at most 300px tall and `min(32rem, 100vw - 18px)` wide unless its popup is wider, which it then fills, scrolls with a hidden scrollbar |
 | `.hoption` | 8px 12px padding, 14px `--harmo-color-text-secondary`, one line |
 | `.hoption-label` | The option text; ends with an ellipsis rather than wrapping, so rows keep one height |
+| `.hoption-text` | The label in `--harmo-color-text` over its description, 2px apart |
+| `.hoption-description` | 13px, in the option's color; ends with an ellipsis, as the label does |
+| `.hoption-match` | `--harmo-color-primary-tint` behind the text, with 2px corners; in forced-colors mode, the system's mark colors |
 | `.hoption-badge` | Uppercase 11px pill, 20px after the label |
 | `.hoption-check` | A check mark at `1em` in `--harmo-color-primary` |
 | `.hoption-checkbox` | A 16px checkbox drawing; its mark uses Checkbox's fractions of the box; fill and border fade in 150ms |
@@ -144,12 +162,12 @@ focus.
 | Close the popup, which returns focus to what opened it; a multi-select stays open | After a single-select choice, even of the selected option |
 | Move focus to the search field | When a list with a search row opens |
 | Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup), so each opening starts from the whole list |
-| Set `hidden` on the options and groups that don't match, and put the message in `.hlistbox-empty` when none do, emptying it once some do | As the search text changes |
+| Set `hidden` on the options and groups that don't match, by their label, description, or keywords, and put the message in `.hlistbox-empty` when none do, emptying it once some do | As the search text changes |
 | Set a truncated `.hoption-label`'s `title` to its full text, and remove it when it fits | When the list opens or resizes, so hovering shows the whole option |
 
 `examples/html/src/scripts/listbox.js` is an example script that does all of
-this; its search hides the options whose label doesn't contain the typed
-text. An app with a long or remote list may filter on its server and render
+this; its search hides the options whose label, description, and keywords
+(`data-example-keywords`) don't contain the typed text. An app with a long or remote list may filter on its server and render
 only the matches instead.
 
 ## React
@@ -169,9 +187,14 @@ attributes.
 | `footer` | Placed in the footer, such as a tertiary `<Button>` |
 
 `<Option>` takes its `value`, its label as children, and optionally
-`disabled` and a `badge`, such as "Soon". `<OptionGroup>` takes a `label`.
+`disabled`, a `badge`, such as "Soon", a `description` under its label, and
+`keywords`, words a search finds it by that it doesn't show, such as
+`["billing"]` for Plans. A search finds an option by its label, description,
+and keywords. `<OptionGroup>` takes a `label`, and `filter={false}` for
+options a search shouldn't hide, such as results your app found for it.
 Other props are the `<li>`'s attributes: an `id` replaces the generated one,
-and `hidden` hides the option as a search does.
+and `hidden` hides the option, or a group with its options, as a search does.
+A group inside another takes its `hidden` and `filter={false}` too.
 
 ```tsx
 <Popup

@@ -6,21 +6,32 @@ import {
   type ComponentPropsWithRef,
   type ReactNode,
 } from "react";
+import { renders } from "../children.ts";
 import { check as checkPaths } from "../icons.ts";
 import { withClass } from "../withClass.ts";
-import { matches, SelectContext, useListbox } from "./Listbox.tsx";
+import {
+  GroupContext,
+  matches,
+  searchText,
+  SelectContext,
+  useListbox,
+} from "./Listbox.tsx";
 
 export interface OptionProps
   extends Omit<ComponentPropsWithRef<"li">, "value"> {
   value: string;
   disabled?: boolean;
   badge?: ReactNode;
+  description?: ReactNode;
+  keywords?: readonly string[];
 }
 
 export const Option = ({
   value,
   disabled,
   badge,
+  description,
+  keywords,
   id: ownId,
   hidden,
   className,
@@ -34,7 +45,14 @@ export const Option = ({
   const id = ownId ?? generatedId;
   const listbox = useListbox();
   const select = useContext(SelectContext);
+  const group = useContext(GroupContext);
   const selected = listbox.isSelected(value);
+  const shown =
+    !group.filter ||
+    matches(listbox.query, searchText(children, description, keywords));
+  const label = (
+    <span className="hoption-label">{marked(children, listbox.mark)}</span>
+  );
 
   return (
     <li
@@ -46,7 +64,7 @@ export const Option = ({
       aria-disabled={disabled || undefined}
       data-value={select?.named ? value : undefined}
       data-active={listbox.activeId === id ? "" : undefined}
-      hidden={hidden || !matches(listbox.query, children) || undefined}
+      hidden={hidden || group.hidden || !shown || undefined}
       onPointerMove={(event) => {
         listbox.highlight(disabled ? null : id);
         onPointerMove?.(event);
@@ -63,7 +81,16 @@ export const Option = ({
       {listbox.multiple && (
         <span className="hoption-checkbox" aria-hidden="true" />
       )}
-      <span className="hoption-label">{children}</span>
+      {renders(description) ? (
+        <span className="hoption-text">
+          {label}{" "}
+          <span className="hoption-description">
+            {marked(description, listbox.mark)}
+          </span>
+        </span>
+      ) : (
+        label
+      )}
       {badge && (
         <>
           {" "}
@@ -72,6 +99,24 @@ export const Option = ({
       )}
       {selected && !listbox.multiple && check}
     </li>
+  );
+};
+
+// The first place a text holds what's typed, marked.
+const marked = (node: ReactNode, typed: string) => {
+  const wanted = typed.trim().toLowerCase();
+  if (typeof node !== "string" || wanted === "") return node;
+  const lower = node.toLowerCase();
+  const at = lower.indexOf(wanted);
+  if (at < 0 || lower.length !== node.length) return node;
+  return (
+    <>
+      {node.slice(0, at)}
+      <mark className="hoption-match">
+        {node.slice(at, at + wanted.length)}
+      </mark>
+      {node.slice(at + wanted.length)}
+    </>
   );
 };
 

@@ -70,6 +70,31 @@
   &:has(> .hsearch-clear:not([hidden])) > .hinput {
     padding-inline-end: 40px;
   }
+
+  // The shortcut that reaches the field, such as ⌘K, at its end, as a hint;
+  // without a keyboard to press it, there's none.
+  & > .hkbd {
+    z-index: 1;
+    justify-self: end;
+
+    margin-inline-end: 10px;
+
+    pointer-events: none;
+  }
+
+  &:has(> .hkbd:not([hidden])) > .hinput {
+    padding-inline-end: 72px;
+  }
+
+  @media (hover: none) {
+    & > .hkbd {
+      display: none;
+    }
+
+    &:has(> .hkbd:not([hidden])) > .hinput {
+      padding-inline-end: 12px;
+    }
+  }
 }
 
 .hsearch-clear {

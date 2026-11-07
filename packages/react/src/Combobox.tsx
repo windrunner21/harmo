@@ -17,9 +17,9 @@ import { Field, useField, type StackedFieldProps } from "./field/Field.tsx";
 import {
   ComboboxContext,
   Listbox,
-  matches,
   optionsOf,
   SelectContext,
+  shownFor,
   type ListboxSelection,
 } from "./listbox/Listbox.tsx";
 import { placePopup } from "./Popup.tsx";
@@ -323,12 +323,11 @@ const ComboboxControl = ({
   const isReadOnly = () => input.current?.readOnly ?? false;
   const shows = (forQuery: string) => {
     if (isReadOnly()) return false;
-    const showing = options.filter((option) => !option.hidden);
     return (
       emptyMessage !== undefined ||
-      (filter
-        ? showing.some((option) => matches(forQuery, option.label))
-        : showing.length > 0)
+      options.some((option) =>
+        shownFor(filter ? forQuery : "", option),
+      )
     );
   };
 

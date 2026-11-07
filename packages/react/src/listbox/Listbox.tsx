@@ -47,6 +47,7 @@ export type ListboxProps = Omit<ComponentPropsWithRef<"ul">, "defaultValue"> &
 interface ListboxState {
   multiple: boolean;
   query: string;
+  mark: string;
   activeId: string | null;
   isSelected: (value: string) => boolean;
   highlight: (id: string | null) => void;
@@ -59,13 +60,22 @@ export const SelectContext = createContext<{ named: boolean } | undefined>(
   undefined,
 );
 
+// An OptionGroup around an option: whether a query filters it, and whether
+// the app hides the group, and so the option.
+export const GroupContext = createContext<{ filter: boolean; hidden: boolean }>(
+  { filter: true, hidden: false },
+);
+
 // A Combobox around the list: its field takes the list's keys and names the
 // active option, and its text filters the options. In pick mode, the first
 // match is highlighted as you type; every pick is reported, even of the
-// option already chosen, so the field can show it again.
+// option already chosen, so the field can show it again. A CommandMenu
+// marks what's typed in the options, and its list may be in a dialog
+// rather than a popup.
 export interface ComboboxState {
   input: RefObject<HTMLInputElement | null>;
   query: string;
+  mark?: string;
   autoHighlight: boolean;
   onChoose: (value: string) => void;
   // Whether the list has anything to show: an option, or a message.
@@ -140,11 +150,16 @@ export const Listbox = ({
   const pointing = useRef(false);
 
   const popupOf = () => list.current?.closest<HTMLElement>(".hpopup") ?? null;
+  // What shows the list and hides it: its popup, or the dialog a
+  // Combobox's field and list share, such as a CommandMenu's.
+  const containerOf = () =>
+    popupOf() ??
+    (combobox ? (list.current?.closest<HTMLElement>("dialog") ?? null) : null);
 
   const enabled = () =>
     Array.from(
       list.current?.querySelectorAll<HTMLElement>(
-        '.hoption:not([aria-disabled="true"], [hidden])',
+        '.hoption:not([aria-disabled="true"], [hidden], .hoption-group[hidden] .hoption)',
       ) ?? [],
     );
 
@@ -281,9 +296,9 @@ export const Listbox = ({
   });
 
   useEffect(() => {
-    const popup = popupOf();
+    const popup = containerOf();
     if (!popup) return;
-    const opener = popupTrigger(popup);
+    const opener = popup.matches(".hpopup") ? popupTrigger(popup) : undefined;
     const owned = !typing && opener?.getAttribute("role") === "combobox";
     trigger.current = combobox
       ? combobox.input.current
@@ -335,7 +350,7 @@ export const Listbox = ({
     const resize = () => {
       frame ||= requestAnimationFrame(() => {
         frame = 0;
-        if (popup.matches(":popover-open")) updateTitles(list.current);
+        if (isShown(popup)) updateTitles(list.current);
       });
     };
 
@@ -368,7 +383,7 @@ export const Listbox = ({
 
   useLayoutEffect(() => {
     setEmpty(!list.current?.querySelector(".hoption:not([hidden])"));
-    const open = popupOf()?.matches(":popover-open");
+    const open = isShown(containerOf());
     const options = enabled();
     const shown = options.map((option) => option.id).join(" ");
     const changed = shown !== shownBefore.current;
@@ -381,23 +396,26 @@ export const Listbox = ({
   });
 
   const listQuery = combobox ? combobox.query : query;
+  // What's typed: the query, or a Command Menu's text, which changes even
+  // when it doesn't filter.
+  const typedText = combobox?.mark ?? listQuery;
 
   // A new query highlights the first match. A Combobox's emptied one, such
   // as after a pick of one of several, keeps the highlighted option where it
   // still shows, rather than move it to the first.
   useLayoutEffect(() => {
-    if (!list.current?.closest(".hpopup:popover-open")) return;
+    if (!isShown(containerOf())) return;
     const options = enabled();
     const autoHighlight = !combobox || combobox.autoHighlight;
     const kept =
       combobox !== undefined &&
-      listQuery === "" &&
+      typedText === "" &&
       autoHighlight &&
       options.some((option) => option.id === active.current);
     if (kept) highlight(document.getElementById(active.current as string));
     else highlight(autoHighlight ? options[0] : null);
     requestAnimationFrame(() => updateTitles(list.current));
-  }, [listQuery]);
+  }, [listQuery, typedText]);
 
   const listOwned = !typing && !triggerOwned;
 
@@ -406,6 +424,7 @@ export const Listbox = ({
       value={{
         multiple,
         query: listQuery,
+        mark: combobox?.mark ?? "",
         activeId,
         isSelected: (item) => selected.includes(item),
         highlight: setActive,
@@ -485,21 +504,33 @@ export const textOf = (node: ReactNode): string => {
   return "";
 };
 
-export const optionsOf = (
-  node: ReactNode,
-): { value: string; label: string; disabled: boolean; hidden: boolean }[] =>
+export interface OptionSummary {
+  value: string;
+  label: string;
+  disabled: boolean;
+  hidden: boolean;
+  // What a query is matched against: the label, description, and keywords;
+  // or nothing, in a group that isn't filtered.
+  text: string | null;
+}
+
+export const optionsOf = (node: ReactNode): OptionSummary[] =>
   Children.toArray(node).flatMap((child) => {
     if (
       !isValidElement<{
         value?: unknown;
         disabled?: boolean;
         hidden?: boolean;
+        filter?: boolean;
+        description?: ReactNode;
+        keywords?: readonly string[];
         children?: ReactNode;
       }>(child)
     ) {
       return [];
     }
-    const { value, disabled, hidden, children } = child.props;
+    const { value, disabled, hidden, filter, description, keywords, children } =
+      child.props;
     return typeof value === "string"
       ? [
           {
@@ -507,15 +538,36 @@ export const optionsOf = (
             label: textOf(children),
             disabled: Boolean(disabled),
             hidden: Boolean(hidden),
+            text: searchText(children, description, keywords),
           },
         ]
-      : optionsOf(children).map((option) =>
-          hidden ? { ...option, hidden: true } : option,
-        );
+      : optionsOf(children).map((option) => ({
+          ...option,
+          hidden: option.hidden || Boolean(hidden),
+          text: filter === false ? null : option.text,
+        }));
   });
 
-export const matches = (query: string, label: ReactNode) =>
-  textOf(label).toLowerCase().includes(query.trim().toLowerCase());
+// An option's label, description, and keywords, as one text a query is
+// found in.
+export const searchText = (
+  label: ReactNode,
+  description?: ReactNode,
+  keywords?: readonly string[],
+) => [textOf(label), textOf(description), ...(keywords ?? [])].join(" ");
+
+export const matches = (query: string, text: ReactNode) =>
+  textOf(text).toLowerCase().includes(query.trim().toLowerCase());
+
+// Whether an option shows for a query: always in a group that isn't
+// filtered.
+export const shownFor = (query: string, option: OptionSummary) =>
+  !option.hidden && (option.text === null || matches(query, option.text));
+
+const isShown = (container: HTMLElement | null) =>
+  container instanceof HTMLDialogElement
+    ? container.open
+    : (container?.matches(":popover-open") ?? false);
 
 const labelOf = (option: HTMLElement) =>
   (option.querySelector(".hoption-label") ?? option).textContent

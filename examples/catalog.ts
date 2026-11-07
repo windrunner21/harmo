@@ -212,6 +212,12 @@ const groups: CatalogGroup[] = [
         purpose: "A navigation trail ending at the current page.",
       },
       {
+        slug: "command-menu",
+        title: "Command Menu",
+        purpose:
+          "Places to go and things to do, found by typing: under a search field, or in a dialog.",
+      },
+      {
         slug: "tabs",
         title: "Tabs",
         purpose:

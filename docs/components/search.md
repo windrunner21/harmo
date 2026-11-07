@@ -40,6 +40,7 @@ field colors them.
 | `disabled` on the input and the clear button | Disabled, as for an Input; disable both together |
 | `readonly` on the input | Read-only, as for an Input: no clear button, and Escape leaves it as it is |
 | `aria-invalid="true"` on the input | Invalid, as for an Input |
+| A [Kbd](kbd.md) after the input | The shortcut that reaches the field, such as `/`, as a hint: `aria-keyshortcuts` on the input, and `aria-hidden="true"` on the `.hkbd`. The app handles the key itself, as a [Command Menu](command-menu.md) does |
 
 ## Appearance and states
 
@@ -54,6 +55,9 @@ field colors them.
 - The clear button, 24px with a 16px cross in `--harmo-icon-color`, sits 8px
   in from its end, darkening to `--harmo-icon-hover-color` on hover. While it
   shows, the text stops before it.
+- A shortcut's Kbd sits 10px in from its end, and the text stops 72px from
+  it. A device that can't hover, such as a phone, has no keyboard to press
+  it, so there it isn't shown.
 - The browsers' own clear buttons and decorations for `type="search"` are
   hidden, so every browser shows the same field.
 - On a right-to-left page, the magnifier is at the right and the clear button

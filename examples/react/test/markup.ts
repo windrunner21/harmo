@@ -71,6 +71,7 @@ const idAttributes = new Set([
   "aria-controls",
   "aria-describedby",
   "aria-labelledby",
+  "commandfor",
   "popovertarget",
 ]);
 

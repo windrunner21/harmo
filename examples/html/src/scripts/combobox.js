@@ -38,6 +38,10 @@
     // Options and groups the page hides stay hidden, whatever is typed.
     const kept = new Set([...options, ...groups].filter((element) => element.hidden));
     const labelOf = (option) => option.querySelector(".hoption-label").textContent.trim();
+    // What typing finds an option by: its label, its description, and its
+    // keywords (data-example-keywords).
+    const searchTextOf = (option) =>
+      [...option.querySelectorAll(".hoption-label, .hoption-description")].map((part) => part.textContent.trim()).concat(option.dataset.exampleKeywords ?? "").join(" ").toLowerCase();
     const chosen = () => listbox.querySelector('.hoption[aria-selected="true"]');
     // The app's status for no matches, after the list, in the page from the
     // start so a screen reader reads it as it fills; without one, the list
@@ -60,11 +64,11 @@
     const open = () => isOpen() || popup.showPopover();
     const close = () => isOpen() && popup.hidePopover();
 
-    // The options whose label holds the query, the groups left with any, and
-    // the empty message when there are none.
+    // The options whose label, description, or keywords hold the query, the
+    // groups left with any, and the empty message when there are none.
     const filter = (text) => {
       const wanted = text.trim().toLowerCase();
-      for (const option of options) option.hidden = kept.has(option) || !labelOf(option).toLowerCase().includes(wanted);
+      for (const option of options) option.hidden = kept.has(option) || !searchTextOf(option).includes(wanted);
       for (const group of groups) group.hidden = kept.has(group) || !group.querySelector(".hoption:not([hidden])");
       const none = options.every((option) => option.hidden);
       if (empty) empty.textContent = none ? (message ?? "") : "";

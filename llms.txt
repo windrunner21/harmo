@@ -36,6 +36,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Checkbox](docs/components/checkbox.md): a native checkbox with Harmo's appearance
 - [ChevronToArrow](docs/components/chevron-to-arrow.md): a chevron that turns into an arrow while its link or button is hovered or focused
 - [Combobox](docs/components/combobox.md): a text field that filters a list as you type, to pick one or several from it or, with free text, be helped by it
+- [Command Menu](docs/components/command-menu.md): places to go and things to do, found by typing: under a search field, or in a dialog
 - [Expand Chevron](docs/components/expand-chevron.md): a chevron that folds from down to up while its control is expanded
 - [Field](docs/components/field.md): arranges and connects a label, description, control, and error message
 - [Filter Chip](docs/components/filter-chip.md): narrows a list or table: a dashed chip that opens a Popup and shows what's chosen

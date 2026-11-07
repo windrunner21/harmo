@@ -8,6 +8,11 @@ export { CheckboxGroup, type CheckboxGroupProps } from "./CheckboxGroup.tsx";
 export { Chevron, type ChevronProps } from "./Chevron.tsx";
 export { ChevronToArrow, type ChevronToArrowProps } from "./ChevronToArrow.tsx";
 export { Combobox, type ComboboxProps } from "./Combobox.tsx";
+export {
+  CommandMenu,
+  type CommandMenuProps,
+  type CommandMenuShortcut,
+} from "./CommandMenu.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";

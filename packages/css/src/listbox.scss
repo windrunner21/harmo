@@ -97,6 +97,51 @@
   white-space: nowrap;
 }
 
+// A label with a description under it, such as where a command goes: the
+// label in the text color, the description smaller, each cut to one line.
+.hoption-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hoption-label {
+    flex: none;
+  }
+
+  .hoption:not([aria-disabled="true"]) > & > .hoption-label {
+    color: $color-text;
+  }
+}
+
+.hoption-description {
+  overflow: hidden;
+
+  font-size: $font-size-xs;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The part of an option's text that matches what's typed.
+.hoption-match {
+  padding: 0;
+
+  color: inherit;
+  background-color: $color-primary-tint;
+  border-radius: 2px;
+
+  @media (forced-colors: active) {
+    color: MarkText;
+    background-color: Mark;
+  }
+}
+
 :where(
     .hlistbox:not([aria-multiselectable="true"]):not(
         :has(.hoption[data-active])

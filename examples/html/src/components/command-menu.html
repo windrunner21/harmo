@@ -1,0 +1,172 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    A Search field in a dashboard's header: a click, typing, or
+    <kbd class="hkbd">/</kbd> opens the list of places to go to and things to
+    create. Typing filters them by name, by where they are, and by words that
+    mean the same, such as "billing" for Plans, and marks what matched. From
+    two letters, the app looks for customers too: the list says it's
+    searching, then shows what it found as it sends it, with a way to see them
+    all. <kbd class="hkbd">Enter</kbd> goes to the highlighted one, and the
+    field empties. A shortcut that's a key alone needs a way to turn it off,
+    as WCAG asks: here, the switch.
+  </play-note>
+  <div class="hsearch" style="anchor-name: --header-search">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input
+      class="hinput"
+      type="text"
+      role="combobox"
+      autocomplete="off"
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-controls="header-search-listbox"
+      aria-label="Search"
+      aria-keyshortcuts="/"
+      placeholder="Search"
+      value=""
+      data-example-shortcut="/"
+      data-example-shortcut-switch="header-search-shortcut"
+      data-example-empty="No results"
+      data-example-searching="Searching…"
+    />
+    <kbd class="hkbd" aria-hidden="true">/</kbd>
+  </div>
+  <div class="hpopup hcommand-menu" popover="manual" style="position-anchor: --header-search">
+    <ul class="hlistbox" id="header-search-listbox" role="listbox" aria-label="Search">
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="header-search-go">Go to</span>
+        <ul role="group" aria-labelledby="header-search-go">
+          <li class="hoption" id="header-search-home" role="option" aria-selected="false">
+            <span class="hoption-text"><span class="hoption-label">Home</span> <span class="hoption-description">Overview</span></span>
+          </li>
+          <li class="hoption" id="header-search-tickets" role="option" aria-selected="false">
+            <span class="hoption-text"><span class="hoption-label">Tickets</span> <span class="hoption-description">All tickets</span></span>
+            <span class="hoption-badge">Current</span>
+          </li>
+          <li class="hoption" id="header-search-analytics" role="option" aria-selected="false" data-example-keywords="metrics charts">
+            <span class="hoption-text"><span class="hoption-label">Analytics</span> <span class="hoption-description">Reports</span></span>
+          </li>
+          <li class="hoption" id="header-search-plans" role="option" aria-selected="false" data-example-keywords="billing subscription invoices">
+            <span class="hoption-text"><span class="hoption-label">Plans</span> <span class="hoption-description">Settings</span></span>
+          </li>
+          <li class="hoption" id="header-search-members" role="option" aria-selected="false" data-example-keywords="users roles invite">
+            <span class="hoption-text"><span class="hoption-label">Team members</span> <span class="hoption-description">Settings</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="header-search-create">Create</span>
+        <ul role="group" aria-labelledby="header-search-create">
+          <li class="hoption" id="header-search-new-ticket" role="option" aria-selected="false">
+            <span class="hoption-text"><span class="hoption-label">New ticket</span> <span class="hoption-description">Tickets</span></span>
+          </li>
+          <li class="hoption" id="header-search-new-team" role="option" aria-selected="false">
+            <span class="hoption-text"><span class="hoption-label">New team</span> <span class="hoption-description">Settings</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation" hidden data-example-found>
+        <span class="hoption-group-label" id="header-search-customers">Customers</span>
+        <ul role="group" aria-labelledby="header-search-customers">
+          <li class="hoption" id="header-search-ana" role="option" aria-selected="false" hidden>
+            <span class="hoption-text"><span class="hoption-label">Ana Lopez</span> <span class="hoption-description">ana@example.com</span></span>
+          </li>
+          <li class="hoption" id="header-search-sam" role="option" aria-selected="false" hidden>
+            <span class="hoption-text"><span class="hoption-label">Sam Rivera</span> <span class="hoption-description">sam@example.com</span></span>
+          </li>
+          <li class="hoption" id="header-search-lee" role="option" aria-selected="false" hidden>
+            <span class="hoption-text"><span class="hoption-label">Lee Chen</span> <span class="hoption-description">lee@partner.org</span></span>
+          </li>
+          <li class="hoption" id="header-search-customers-all" role="option" aria-selected="false" hidden data-example-view-all>
+            <span class="hoption-label">View all customers</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p class="hlistbox-empty" role="status"></p>
+    <div class="hcommand-menu-footer">
+      <span><kbd class="hkbd">Enter</kbd> to open</span>
+      <span><kbd class="hkbd">↑</kbd> <kbd class="hkbd">↓</kbd> to move</span>
+    </div>
+  </div>
+  <p hidden data-example-picked="Opened {label}"></p>
+  <div class="hfield" data-orientation="horizontal">
+    <input class="hswitch" type="checkbox" role="switch" id="header-search-shortcut" checked />
+    <label class="hlabel" for="header-search-shortcut">Single-key shortcuts</label>
+  </div>
+</play-example>
+
+<play-example title="In a dialog" layout="stack">
+  <play-note>
+    A website's search, from a button that looks like a Search field: it, or
+    <kbd class="hkbd">⌘K</kbd> (<kbd class="hkbd">Ctrl K</kbd> other than on
+    Apple devices), opens a dialog near the top of the window, with the field
+    and the whole list. The list filters as you type, as in the header.
+    <kbd class="hkbd">Enter</kbd> goes to the highlighted page and closes the
+    dialog; <kbd class="hkbd">Escape</kbd> or a click outside closes it
+    without going anywhere. Each opening starts afresh.
+  </play-note>
+  <button class="hcommand-menu-trigger" type="button" commandfor="docs-search" command="show-modal" aria-haspopup="dialog" aria-keyshortcuts="Control+K" data-example-shortcut="Mod+K">
+    <play-icon name="search" class="hicon"></play-icon>
+    <span class="hcommand-menu-trigger-label">Search documentation</span>
+    <kbd class="hkbd" aria-hidden="true" data-example-apple="⌘K">Ctrl K</kbd>
+  </button>
+  <dialog class="hdialog hcommand-menu" id="docs-search" closedby="any" aria-label="Search documentation">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="true"
+        aria-controls="docs-search-listbox"
+        aria-label="Search documentation"
+        placeholder="Search documentation"
+        value=""
+        data-example-empty="No results"
+      />
+    </div>
+    <ul class="hlistbox" id="docs-search-listbox" role="listbox" aria-label="Search documentation">
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="docs-search-start">Getting started</span>
+        <ul role="group" aria-labelledby="docs-search-start">
+          <li class="hoption" id="docs-search-install" role="option" aria-selected="false" data-example-keywords="npm package setup">
+            <span class="hoption-text"><span class="hoption-label">Installation</span> <span class="hoption-description">Add Harmo to a project</span></span>
+          </li>
+          <li class="hoption" id="docs-search-theming" role="option" aria-selected="false" data-example-keywords="tokens dark mode brand">
+            <span class="hoption-text"><span class="hoption-label">Theming</span> <span class="hoption-description">Colors, fonts, and sizes</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="docs-search-components">Components</span>
+        <ul role="group" aria-labelledby="docs-search-components">
+          <li class="hoption" id="docs-search-button" role="option" aria-selected="false">
+            <span class="hoption-text"><span class="hoption-label">Button</span> <span class="hoption-description">An action, or a link that looks like one</span></span>
+          </li>
+          <li class="hoption" id="docs-search-combobox" role="option" aria-selected="false" data-example-keywords="autocomplete">
+            <span class="hoption-text"><span class="hoption-label">Combobox</span> <span class="hoption-description">A text field that filters a list</span></span>
+          </li>
+          <li class="hoption" id="docs-search-command-menu" role="option" aria-selected="false" data-example-keywords="palette spotlight">
+            <span class="hoption-text"><span class="hoption-label">Command Menu</span> <span class="hoption-description">Places and actions, found by typing</span></span>
+          </li>
+          <li class="hoption" id="docs-search-dialog" role="option" aria-selected="false" data-example-keywords="modal">
+            <span class="hoption-text"><span class="hoption-label">Dialog</span> <span class="hoption-description">A window above the page</span></span>
+          </li>
+          <li class="hoption" id="docs-search-tag-list" role="option" aria-selected="false">
+            <span class="hoption-text"><span class="hoption-label">Tag List</span> <span class="hoption-description">Tags in one row, then +N</span></span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p class="hlistbox-empty" role="status"></p>
+    <div class="hcommand-menu-footer">
+      <span><kbd class="hkbd">Enter</kbd> to open</span>
+      <span><kbd class="hkbd">↑</kbd> <kbd class="hkbd">↓</kbd> to move</span>
+      <span><kbd class="hkbd">Esc</kbd> to close</span>
+    </div>
+  </dialog>
+  <p hidden data-example-picked="Opened {label}"></p>
+</play-example>

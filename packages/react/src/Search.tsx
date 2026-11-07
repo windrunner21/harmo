@@ -9,7 +9,7 @@ export interface SearchProps extends Omit<ComponentPropsWithRef<"input">, "type"
   clearLabel?: string;
 }
 
-const searchIcon = (
+export const searchIcon = (
   <svg
     className="hicon"
     width="1.125em"
