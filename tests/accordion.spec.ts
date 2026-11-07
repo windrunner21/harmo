@@ -109,6 +109,21 @@ onEachPlayground("accordion", () => {
     expect(await height(item)).toBeCloseTo(await height(summary), 0);
   });
 
+  test("small: 14px text with 8px above and below, and 13px content with 8px under it", async ({ page }) => {
+    const [item] = await (await items(page, "accordion-small")).all();
+    const summary = item.locator("summary");
+    await expect(summary).toHaveCSS("font-size", "14px");
+    await expect(summary).toHaveCSS("padding-top", "8px");
+    await expect(summary).toHaveCSS("padding-bottom", "8px");
+    await summary.click();
+    const content = item.locator(".haccordion-content");
+    await expect(content).toHaveCSS("font-size", "13px");
+    expect(await content.evaluate((node) => getComputedStyle(node, "::after").height)).toBe("8px");
+    // The code under each example is a small item too.
+    const code = (await example(page, "accordion-small")).locator(".play-code > summary");
+    await expect(code).toHaveCSS("font-size", "14px");
+  });
+
   test("Tab reaches what's inside as soon as it opens, while it grows", async ({ page }) => {
     const [item] = await (await items(page, "accordion-on-its-own")).all();
     const summary = item.locator("summary");

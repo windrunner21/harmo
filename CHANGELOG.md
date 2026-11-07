@@ -16,7 +16,8 @@ minor version may change an API, and says how to upgrade when it does.
   content, such as questions and their answers. Items that share a `name`, or
   `<Accordion exclusive>`, open one at a time. It needs no script: the browser
   opens and closes it, and the content grows and shrinks in CSS. One item on
-  its own is a panel to show or hide.
+  its own is a panel to show or hide. `data-size="small"`, or `size="small"`,
+  makes it compact, with 14px text.
 
   ```html preview
   <div class="haccordion" style="inline-size: 24rem">

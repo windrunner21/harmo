@@ -38,6 +38,20 @@ export const examples = {
     </Accordion>
   ),
 
+  Small: () => (
+    <Accordion size="small">
+      <AccordionItem label="Shortcuts">
+        <p>Press Enter to send, and Shift and Enter for a new line.</p>
+      </AccordionItem>
+      <AccordionItem label="Formatting">
+        <p>Wrap text in asterisks for bold, and in underscores for italics.</p>
+      </AccordionItem>
+      <AccordionItem label="Attachments">
+        <p>Files up to 25 MB, such as images, PDFs, and spreadsheets.</p>
+      </AccordionItem>
+    </Accordion>
+  ),
+
   "On its own": () => (
     <>
       <Field label="Endpoint URL">

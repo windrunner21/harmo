@@ -52,6 +52,7 @@ paragraph sits as close to the summary as plain text does.
 | `name` on each item of a group | One open at a time: opening one closes the one that was open. Without it, each opens on its own |
 | `open` on an item | Open, such as from the start |
 | `.haccordion` around the items | A line between the items that are shown; without it, an item stands alone |
+| `data-size="small"` on `.haccordion`, or on an item | Small: 14px summary text with 8px above and below it, and 13px content with 8px under it, for a panel beside other things, such as help next to a message box |
 
 ## Appearance and states
 
@@ -103,6 +104,7 @@ own. Other props are the `<div>`'s, or the `<details>`'s, attributes.
 | Prop | Effect |
 | --- | --- |
 | `exclusive` on `Accordion` | One item open at a time: its items share a generated `name` |
+| `size="small"` on `Accordion` or `AccordionItem` | Small, as `data-size="small"` |
 | `label` on `AccordionItem` | Required: the summary's text |
 | `defaultOpen` | Open from the start; read once, as the item first renders |
 | `open` | Open; a change opens or closes it. The item also opens and closes itself, as `<details>` does, and tells `onOpenChange` |

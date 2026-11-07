@@ -289,7 +289,7 @@ function renderExample(
         ].join("\n")
       : "",
     demoBlock,
-    `    <details class="haccordion-item play-code">`,
+    `    <details class="haccordion-item play-code" data-size="small">`,
     `      <summary class="haccordion-summary">`,
     `        <span class="haccordion-label">${playground.codeLabel}</span>`,
     `        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>`,

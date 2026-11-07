@@ -84,6 +84,43 @@
   </div>
 </play-example>
 
+<play-example title="Small" layout="stack">
+  <play-note>
+    <code>data-size="small"</code>, on <code>.haccordion</code> or an item:
+    14px text with 8px above and below it, for a panel beside other things,
+    such as help next to a message box, or the code under each example here.
+  </play-note>
+  <div class="haccordion" data-size="small">
+    <details class="haccordion-item">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Shortcuts</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>Press Enter to send, and Shift and Enter for a new line.</p>
+      </div>
+    </details>
+    <details class="haccordion-item">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Formatting</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>Wrap text in asterisks for bold, and in underscores for italics.</p>
+      </div>
+    </details>
+    <details class="haccordion-item">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Attachments</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>Files up to 25 MB, such as images, PDFs, and spreadsheets.</p>
+      </div>
+    </details>
+  </div>
+</play-example>
+
 <play-example title="On its own" layout="stack">
   <play-note>
     One item, without <code>.haccordion</code>, is a panel to show or hide,

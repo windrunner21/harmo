@@ -15,10 +15,12 @@ const AccordionContext = createContext<string | undefined>(undefined);
 
 export interface AccordionProps extends ComponentPropsWithRef<"div"> {
   exclusive?: boolean;
+  size?: "small";
 }
 
 export const Accordion = ({
   exclusive,
+  size,
   className,
   children,
   ...props
@@ -26,7 +28,11 @@ export const Accordion = ({
   const name = useId();
 
   return (
-    <div {...props} className={withClass("haccordion", className)}>
+    <div
+      {...props}
+      className={withClass("haccordion", className)}
+      data-size={size}
+    >
       <AccordionContext value={exclusive ? name : undefined}>
         {children}
       </AccordionContext>
@@ -37,6 +43,7 @@ export const Accordion = ({
 export interface AccordionItemProps
   extends Omit<ComponentPropsWithRef<"details">, "children"> {
   label: ReactNode;
+  size?: "small";
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   children?: ReactNode;
@@ -44,6 +51,7 @@ export interface AccordionItemProps
 
 export const AccordionItem = ({
   label,
+  size,
   open,
   defaultOpen,
   onOpenChange,
@@ -60,6 +68,7 @@ export const AccordionItem = ({
     <details
       {...props}
       className={withClass("haccordion-item", className)}
+      data-size={size}
       name={name ?? group}
       open={open ?? initiallyOpen}
       onToggle={(event) => {
