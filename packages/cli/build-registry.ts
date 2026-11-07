@@ -14,6 +14,7 @@ const registry = join(root, "registry");
 // Each component is a folder of its own in the copy, named as harmo-ui add names it,
 // with a stylesheet of the same name beside its code.
 const components: Record<string, string[]> = {
+  accordion: ["Accordion.tsx"],
   avatar: ["Avatar.tsx"],
   banner: ["Banner.tsx"],
   breadcrumb: ["Breadcrumb.tsx"],

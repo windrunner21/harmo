@@ -7,6 +7,7 @@ the same markup and does what the script would.
 
 | Component | Page |
 | --- | --- |
+| Accordion | [accordion.md](accordion.md) |
 | Avatar | [avatar.md](avatar.md) |
 | Banner | [banner.md](banner.md) |
 | Breadcrumb | [breadcrumb.md](breadcrumb.md) |
@@ -89,6 +90,7 @@ Some components are built from others, so their files need company:
 
 | File | Also load |
 | --- | --- |
+| `accordion.css` | `expand-chevron.css` |
 | `breadcrumb.css` | `link.css`, `chevron.css` |
 | `combobox.css` | `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label; `tag-list.css`, `tag.css`, and `tooltip.css` to choose several |
 | `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |

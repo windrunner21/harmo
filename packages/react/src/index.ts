@@ -1,3 +1,9 @@
+export {
+  Accordion,
+  AccordionItem,
+  type AccordionItemProps,
+  type AccordionProps,
+} from "./Accordion.tsx";
 export { Avatar, type AvatarProps } from "./Avatar.tsx";
 export { Banner, type BannerProps } from "./Banner.tsx";
 export { Breadcrumb, type BreadcrumbProps } from "./Breadcrumb.tsx";

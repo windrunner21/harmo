@@ -2,6 +2,7 @@
 // what the build renders, the browser hydrates, and the markup test checks.
 
 import type { ComponentType } from "react";
+import { examples as accordion } from "./components/accordion.tsx";
 import { examples as avatar } from "./components/avatar.tsx";
 import { examples as banner } from "./components/banner.tsx";
 import { examples as breadcrumb } from "./components/breadcrumb.tsx";
@@ -41,6 +42,7 @@ import { examples as toast } from "./components/toast.tsx";
 import { examples as tooltip } from "./components/tooltip.tsx";
 
 export const components: Record<string, Record<string, ComponentType>> = {
+  accordion,
   avatar,
   banner,
   breadcrumb,

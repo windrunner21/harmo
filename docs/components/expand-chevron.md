@@ -9,11 +9,11 @@ turns into an arrow, use [ChevronToArrow](chevron-to-arrow.md).
 | Item | Requirement |
 | --- | --- |
 | CSS | `expand-chevron.css`, and the containing control's CSS (`button.css` for the button below) |
-| Element | `<svg class="hexpand-chevron" viewBox="0 0 16 12">`, a direct child of the element with `aria-expanded` |
+| Element | `<svg class="hexpand-chevron" viewBox="0 0 16 12">`, a direct child of the element with `aria-expanded`, or of a `<details>` element's `<summary>` |
 | Parts | `.hexpand-chevron-head` holding `.hexpand-chevron-left` and `.hexpand-chevron-right` |
-| Required | `aria-hidden="true"` and `focusable="false"`; `aria-expanded` on its parent |
+| Required | `aria-hidden="true"` and `focusable="false"`; `aria-expanded` on its parent, unless it's in a `<summary>` |
 | Unique | None |
-| Script | The control's script keeps `aria-expanded` current |
+| Script | The control's script keeps `aria-expanded` current; in a `<summary>`, none |
 
 ## Markup
 
@@ -37,6 +37,7 @@ The two strokes fold while the head group shifts.
 | --- | --- |
 | `aria-expanded="false"` on the parent | Points down |
 | `aria-expanded="true"` on the parent | Points up |
+| `open` on the `<details>` whose `<summary>` holds it | Points up, as in an [Accordion](accordion.md) item |
 
 ## Appearance and states
 
@@ -55,8 +56,8 @@ The two strokes fold while the head group shifts.
 
 ## Accessibility
 
-Decorative: `aria-hidden="true"`. The control's `aria-expanded` already tells
-screen readers whether it's open.
+Decorative: `aria-hidden="true"`. The control's `aria-expanded`, or the
+`<summary>` itself, already tells screen readers whether it's open.
 
 ## What a script does
 

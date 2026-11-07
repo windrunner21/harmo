@@ -28,6 +28,7 @@ Rules for using the React components (`@harmo-ui/react`):
 ## Docs
 
 - [Components overview](docs/components/README.md): conventions, which files to load together, and what scripts handle
+- [Accordion](docs/components/accordion.md): items that each show or hide their content, such as questions and their answers, one open at a time or several, with no script
 - [Avatar](docs/components/avatar.md): a round user image, or a placeholder when there is none
 - [Banner](docs/components/banner.md): an inline notice: an icon, a message, and an optional action
 - [Breadcrumb](docs/components/breadcrumb.md): a navigation trail ending at the current page

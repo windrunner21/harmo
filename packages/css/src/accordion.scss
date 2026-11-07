@@ -1,0 +1,151 @@
+@use "shortcuts" as *;
+
+// Items that each show or hide their content, such as questions and their
+// answers: native <details>, so opening and closing need no script. Around
+// several, .haccordion draws a line between them; an item on its own is a
+// panel to show or hide.
+.haccordion {
+  display: flex;
+  flex-direction: column;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Between items that are shown: a hidden first item leaves no line above
+  // the next.
+  & > .haccordion-item:not([hidden]) ~ .haccordion-item {
+    border-block-start: 1px solid $color-border;
+  }
+}
+
+.haccordion-item {
+  display: block;
+
+  font-family: $font-family;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The content grows to its height as the item opens, and shrinks back as
+  // it closes, quicker: a grid row animates from 0fr to 1fr in every browser,
+  // where a height can't yet animate to auto outside Chromium. The box
+  // clips what's growing, so it reaches past the content, 4px on each side
+  // and 8px up into the summary's padding, so the focus ring of a control
+  // inside isn't cut off, even one that sits a little above the content, as
+  // a Switch beside its label does. Clicks there go through to the summary.
+  // Closing, the content stays shown (content-visibility) until it has
+  // shrunk; opening, it's shown at once, so Tab reaches what's inside while
+  // it grows.
+  &::details-content {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    margin-block-start: -8px;
+    margin-inline: -4px;
+    padding-block-start: 8px;
+    padding-inline: 4px;
+    overflow: hidden;
+
+    pointer-events: none;
+
+    transition:
+      grid-template-rows $duration-fast $ease-out-cubic,
+      content-visibility $duration-fast allow-discrete;
+  }
+
+  &[open]::details-content {
+    grid-template-rows: 1fr;
+
+    transition: grid-template-rows $duration-normal $ease-out-cubic;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::details-content,
+    &[open]::details-content {
+      transition: none;
+    }
+  }
+}
+
+// What's clicked: the label, with an Expand Chevron at its end that folds up
+// while the item is open.
+.haccordion-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding-block: 16px;
+
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+
+  color: $color-text;
+
+  cursor: pointer;
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Safari's own triangle; the others draw none for a flex summary.
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    border-radius: $border-radius-sm;
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  & > .hexpand-chevron {
+    color: $color-text-secondary;
+  }
+}
+
+.haccordion-label {
+  flex: 1;
+
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+// Its own margins stay inside it, so its height is all of it. The space
+// under it is a part of it rather than padding, which would keep it from
+// shrinking all the way.
+.haccordion-content {
+  display: flow-root;
+
+  min-block-size: 0;
+
+  pointer-events: auto;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &::after {
+    content: "";
+
+    display: block;
+
+    block-size: 16px;
+  }
+
+  & > :first-child {
+    margin-block-start: 0;
+  }
+
+  & > :last-child {
+    margin-block-end: 0;
+  }
+}

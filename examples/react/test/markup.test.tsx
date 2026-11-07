@@ -58,3 +58,11 @@ for (const slug of Object.keys(components).filter((slug) => !contracts.includes(
 // Rendered on its own, with no head, it writes the hints ahead of the markup.
 const withoutHints = (markup: string) =>
   markup.replace(/<link\b[^>]*\brel="preload"[^>]*>/g, "");
+
+// A <details> name is renumbered, as React generates its own, but an empty
+// one, which groups nothing, isn't made to look like one that does.
+test("normalize keeps an empty details name apart from a group's", () => {
+  const twice = (name: string) => `<details name="${name}"></details><details name="${name}"></details>`;
+  expect(normalize(twice("faq"))).toBe(normalize(twice("questions")));
+  expect(normalize(twice(""))).not.toBe(normalize(twice("faq")));
+});

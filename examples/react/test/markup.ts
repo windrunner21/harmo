@@ -84,8 +84,8 @@ const voidElements = new Set(["br", "hr", "img", "input", "meta", "link"]);
 //   (React writes popoverTarget), then sorted, and a bare attribute equals
 //   an empty one;
 // - class names are sorted, and style declarations are spaced the same way;
-// - ids and anchor names are numbered in order of appearance, since React
-//   generates its own;
+// - ids, anchor names, and the names that group <details> are numbered in
+//   order of appearance, since React generates its own;
 // - whitespace between tags is dropped and whitespace in text collapsed;
 // - <path /> equals <path></path>, and character references are decoded;
 // - data-example-* hooks, which only the playground's scripts read, are left
@@ -100,6 +100,11 @@ export const normalize = (markup: string) => {
   const anchorOf = (token: string) => {
     if (!anchors.has(token)) anchors.set(token, `--anchor-${anchors.size + 1}`);
     return anchors.get(token) as string;
+  };
+  const groups = new Map<string, string>();
+  const groupOf = (token: string) => {
+    if (!groups.has(token)) groups.set(token, `group-${groups.size + 1}`);
+    return groups.get(token) as string;
   };
 
   const attribute = (name: string, value = "") => {
@@ -148,7 +153,12 @@ export const normalize = (markup: string) => {
       .map(([key, value]) => [key.toLowerCase(), value] as const)
       .filter(([key]) => !key.startsWith("data-example-"))
       .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-      .map(([key, value]) => ` ${key}="${attribute(key, decode(value ?? ""))}"`);
+      .map(([key, value]) => {
+        const decoded = decode(value ?? "");
+        // An empty name groups nothing, so it stays as it is.
+        const group = name === "details" && key === "name" && decoded !== "";
+        return ` ${key}="${group ? groupOf(decoded) : attribute(key, decoded)}"`;
+      });
     line(`<${name}${attributes.join("")}>`);
 
     if (voidElements.has(name)) continue;

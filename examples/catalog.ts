@@ -43,6 +43,12 @@ const groups: CatalogGroup[] = [
     title: "Display",
     entries: [
       {
+        slug: "accordion",
+        title: "Accordion",
+        purpose:
+          "Items that each show or hide their content, such as questions and their answers, one open at a time or several.",
+      },
+      {
         slug: "avatar",
         title: "Avatar",
         purpose: "A round user image, or a placeholder when there is none.",

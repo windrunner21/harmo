@@ -1,0 +1,113 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    Questions and their answers, one open at a time: the items share a
+    <code>name</code>, so opening one closes the one that was open, as the
+    browser does for <code>&lt;details&gt;</code>. A click, or
+    <kbd class="hkbd">Enter</kbd> or <kbd class="hkbd">Space</kbd> on a
+    question, opens it and closes it, with no script. In Chrome and Firefox,
+    finding text on the page opens the answer it's in.
+  </play-note>
+  <div class="haccordion">
+    <details class="haccordion-item" name="billing-questions">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">How am I billed?</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>
+          Each month, for the conversations your team handled that month. Your
+          plan's conversations come first, and any beyond them are billed at
+          your plan's rate.
+        </p>
+      </div>
+    </details>
+    <details class="haccordion-item" name="billing-questions">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Can I change my plan later?</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>
+          Yes, at any time, in Settings under Plans. A bigger plan starts at
+          once; a smaller one starts with your next month.
+        </p>
+      </div>
+    </details>
+    <details class="haccordion-item" name="billing-questions">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">What happens when my trial ends?</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>
+          Your workspace stays as it is, but you can't send messages until you
+          choose a plan. Nothing is deleted.
+        </p>
+      </div>
+    </details>
+  </div>
+</play-example>
+
+<play-example title="Several open at once" layout="wide">
+  <play-note>
+    Without a <code>name</code>, each item opens on its own, such as the parts
+    of a ticket's details. <code>open</code> opens one from the start.
+  </play-note>
+  <div class="haccordion">
+    <details class="haccordion-item" open>
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Customer</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>Ana Lopez, ana@example.com. A customer since March, on the Growth plan.</p>
+      </div>
+    </details>
+    <details class="haccordion-item">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Previous tickets</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>Refund for order #1042, solved on May 2. Card declined at checkout, solved on April 18.</p>
+      </div>
+    </details>
+    <details class="haccordion-item">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Notes</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </summary>
+      <div class="haccordion-content">
+        <p>Prefers email to calls. Asked about an annual plan.</p>
+      </div>
+    </details>
+  </div>
+</play-example>
+
+<play-example title="On its own" layout="stack">
+  <play-note>
+    One item, without <code>.haccordion</code>, is a panel to show or hide,
+    such as the options of a form that most people leave alone. It's as wide
+    as what it's in, here the form's fields. What's inside can be anything,
+    such as a control; its focus ring isn't cut off at the edges.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="webhook-url">Endpoint URL</label>
+    <input class="hinput" id="webhook-url" name="webhook-url" type="url" placeholder="https://example.com/webhooks" />
+  </div>
+  <details class="haccordion-item">
+    <summary class="haccordion-summary">
+      <span class="haccordion-label">Advanced options</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </summary>
+    <div class="haccordion-content">
+      <div class="hfield" data-orientation="horizontal">
+        <input class="hswitch" type="checkbox" role="switch" id="retry-webhooks" checked />
+        <label class="hlabel" for="retry-webhooks">Retry failed webhooks</label>
+      </div>
+    </div>
+  </details>
+  <button class="hbutton" type="button">
+    <span class="hbutton-label">Save webhook</span>
+  </button>
+</play-example>

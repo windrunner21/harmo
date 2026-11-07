@@ -10,6 +10,37 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Accordion: `<details class="haccordion-item">` with its
+  `<summary class="haccordion-summary">`, in a `.haccordion`, or
+  `<Accordion>` with `<AccordionItem>`s: items that each show or hide their
+  content, such as questions and their answers. Items that share a `name`, or
+  `<Accordion exclusive>`, open one at a time. It needs no script: the browser
+  opens and closes it, and the content grows and shrinks in CSS. One item on
+  its own is a panel to show or hide.
+
+  ```html preview
+  <div class="haccordion" style="inline-size: 24rem">
+    <details class="haccordion-item" name="changelog-questions" open>
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">How am I billed?</span>
+        <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false"><g class="hexpand-chevron-head"><line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" /><line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" /></g></svg>
+      </summary>
+      <div class="haccordion-content">
+        <p>Each month, for the conversations your team handled that month.</p>
+      </div>
+    </details>
+    <details class="haccordion-item" name="changelog-questions">
+      <summary class="haccordion-summary">
+        <span class="haccordion-label">Can I change my plan later?</span>
+        <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false"><g class="hexpand-chevron-head"><line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" /><line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" /></g></svg>
+      </summary>
+      <div class="haccordion-content">
+        <p>Yes, at any time, in Settings under Plans.</p>
+      </div>
+    </details>
+  </div>
+  ```
+
 - Combobox: `<div class="hcombobox">` with an Input of `role="combobox"`, and a
   Listbox in a popup, or `<Combobox>`, a text field that filters a list as you
   type: to pick one of its options, or, with `freeText`, to be helped by it.
@@ -57,6 +88,9 @@ minor version may change an API, and says how to upgrade when it does.
     </button>
   </div>
   ```
+
+- Expand Chevron: in the `<summary>` of an open `<details>`, it points up,
+  with no script, as in an Accordion item.
 
 - Listbox: an option's description under its label, as `.hoption-text`
   holding the label and a `.hoption-description`, or `<Option description>`,
