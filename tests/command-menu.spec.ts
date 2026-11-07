@@ -136,7 +136,7 @@ onEachPlayground("command-menu", () => {
       await page.keyboard.press("ArrowDown");
       expect(await activeLabel(input)).toBe("Analytics");
       await page.keyboard.press("Enter");
-      await expect(picked).toHaveText("Opened Analytics");
+      await expect(picked).toHaveText("Opened /analytics");
       await expect(input).toHaveValue("");
       await expect.poll(() => isOpen(popup)).toBe(false);
       await expect(input).toBeFocused();
@@ -152,7 +152,7 @@ onEachPlayground("command-menu", () => {
       await input.click();
       await page.keyboard.type("new");
       await clickAt(page, listbox.getByRole("option", { name: "New team Settings" }));
-      await expect(picked).toHaveText("Opened New team");
+      await expect(picked).toHaveText("Opened /settings/teams/new");
       await expect(input).toHaveValue("");
     });
 
@@ -242,7 +242,7 @@ onEachPlayground("command-menu", () => {
       await page.keyboard.type("tok");
       await expect(shown).toHaveText(["Theming"]);
       await page.keyboard.press("Enter");
-      await expect(picked).toHaveText("Opened Theming");
+      await expect(picked).toHaveText("Opened /docs/theming");
       await expect(dialog).toHaveJSProperty("open", false);
       await expect(trigger).toBeFocused();
 
@@ -253,7 +253,7 @@ onEachPlayground("command-menu", () => {
       expect(await activeLabel(input)).toBe("Theming");
       await page.keyboard.press("Escape");
       await expect(dialog).toHaveJSProperty("open", false);
-      await expect(picked).toHaveText("Opened Theming");
+      await expect(picked).toHaveText("Opened /docs/theming");
 
       // Opened again after Escape, it starts at the first option.
       await trigger.click();

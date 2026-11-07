@@ -3,7 +3,8 @@
 // (data-example-keywords), marks what's typed in each, and highlights the
 // first match; with none, .hlistbox-empty says so. A pick empties the field,
 // closes the list or the dialog, and goes where it leads: here, it says so
-// (data-example-picked).
+// (data-example-picked), with the option's data-example-value, the path an
+// app's value would be.
 //
 // Under a Search field (.hpopup.hcommand-menu), a click, typing, or the
 // arrow keys open the list; Escape closes it, then empties the field, and
@@ -202,7 +203,7 @@
       const option = event.target.closest(".hoption");
       if (!option || option.getAttribute("aria-disabled") === "true") return;
       if (picked) {
-        picked.textContent = picked.dataset.examplePicked.replace("{label}", fullText(option.querySelector(".hoption-label")));
+        picked.textContent = picked.dataset.examplePicked.replace("{value}", option.dataset.exampleValue ?? "");
         picked.hidden = false;
       }
       // The dialog empties as it closes, so the list doesn't change as it

@@ -1,0 +1,475 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    A dashboard's navigation: links in groups, each an icon and its label,
+    with a count such as unread messages, between a header and a footer.
+    <code>aria-current="page"</code> marks the page you're on; here a click
+    moves it, as your router would. A link with links under it is a
+    <code>&lt;details&gt;</code> that opens them, with no script, each group
+    on its own, as here, or one at a time, as in the next example. The toggle on the edge collapses it to its icons, each naming
+    itself in a tooltip; your app keeps whether it's collapsed.
+  </play-note>
+  <div style="block-size: 36rem">
+    <div class="hsidebar" id="main-sidebar" data-example-router>
+      <span class="htooltip-trigger hsidebar-toggle">
+        <button class="hsidebar-toggle-button" type="button" aria-expanded="true" aria-controls="main-sidebar" aria-labelledby="main-sidebar-toggle" data-example-collapse-label="Collapse" data-example-expand-label="Expand">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <g class="hsidebar-toggle-head">
+              <line class="hsidebar-toggle-start" x1="12" y1="4" x2="12" y2="12" />
+              <line class="hsidebar-toggle-end" x1="12" y1="20" x2="12" y2="12" />
+            </g>
+          </svg>
+        </button>
+        <span class="htooltip" role="tooltip" id="main-sidebar-toggle" data-side="right">Collapse</span>
+      </span>
+      <div class="hsidebar-header">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/account">
+                <span class="havatar" style="--harmo-avatar-size: 20px" aria-hidden="true">A</span>
+                <span class="hsidebar-label">Acme Support</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Acme Support</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <nav class="hsidebar-nav" aria-label="Main">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/home">
+                <play-icon name="home" class="hicon"></play-icon>
+                <span class="hsidebar-label">Home</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Home</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/analytics">
+                <play-icon name="analytics" class="hicon"></play-icon>
+                <span class="hsidebar-label">Analytics</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Analytics</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/messages" aria-label="Messages 3 unread">
+                <play-icon name="messages" class="hicon"></play-icon>
+                <span class="hsidebar-label">Messages</span>
+                <span class="hsidebar-badge">3</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Messages</span>
+            </li>
+          </ul>
+        </div>
+        <div class="hsidebar-group">
+          <p class="hsidebar-group-label" id="main-sidebar-tools">Tools</p>
+          <ul class="hsidebar-list" aria-labelledby="main-sidebar-tools">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/tickets" aria-current="page">
+                <play-icon name="tickets" class="hicon"></play-icon>
+                <span class="hsidebar-label">Tickets</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Tickets</span>
+            </li>
+            <li class="htooltip-trigger">
+              <details class="hsidebar-sub">
+                <summary class="hsidebar-item">
+                  <play-icon name="campaigns" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Campaigns</span>
+                  <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                </summary>
+                <ul class="hsidebar-sub-list">
+                  <li class="hsidebar-sub-heading" aria-hidden="true">Campaigns</li>
+                  <li><a class="hsidebar-sub-item" href="/campaigns/runs">Runs</a></li>
+                  <li><a class="hsidebar-sub-item" href="/campaigns/templates">Templates</a></li>
+                </ul>
+              </details>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Campaigns</span>
+            </li>
+            <li class="htooltip-trigger">
+              <details class="hsidebar-sub">
+                <summary class="hsidebar-item">
+                  <play-icon name="more" class="hicon"></play-icon>
+                  <span class="hsidebar-label">More</span>
+                  <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                </summary>
+                <ul class="hsidebar-sub-list">
+                  <li class="hsidebar-sub-heading" aria-hidden="true">More</li>
+                  <li><a class="hsidebar-sub-item" href="/quick-replies">Quick replies</a></li>
+                  <li><a class="hsidebar-sub-item" href="/snippets">Snippets</a></li>
+                </ul>
+              </details>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">More</span>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="hsidebar-footer">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/developers">
+                <play-icon name="developers" class="hicon"></play-icon>
+                <span class="hsidebar-label">Developers</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Developers</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/settings">
+                <play-icon name="settings" class="hicon"></play-icon>
+                <span class="hsidebar-label">Settings</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Settings</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="One group at a time" layout="wide">
+  <play-note>
+    Groups of links that share a <code>name</code> open one at a time, as
+    <code>&lt;details&gt;</code> do: opening one closes the one that was open.
+  </play-note>
+  <div style="block-size: 36rem">
+    <div class="hsidebar" id="single-sidebar" data-example-router>
+      <div class="hsidebar-header">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/account">
+                <span class="havatar" style="--harmo-avatar-size: 20px" aria-hidden="true">A</span>
+                <span class="hsidebar-label">Acme Support</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Acme Support</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <nav class="hsidebar-nav" aria-label="Main">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/home">
+                <play-icon name="home" class="hicon"></play-icon>
+                <span class="hsidebar-label">Home</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Home</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/analytics">
+                <play-icon name="analytics" class="hicon"></play-icon>
+                <span class="hsidebar-label">Analytics</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Analytics</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/messages" aria-label="Messages 3 unread">
+                <play-icon name="messages" class="hicon"></play-icon>
+                <span class="hsidebar-label">Messages</span>
+                <span class="hsidebar-badge">3</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Messages</span>
+            </li>
+          </ul>
+        </div>
+        <div class="hsidebar-group">
+          <p class="hsidebar-group-label" id="single-sidebar-tools">Tools</p>
+          <ul class="hsidebar-list" aria-labelledby="single-sidebar-tools">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/tickets" aria-current="page">
+                <play-icon name="tickets" class="hicon"></play-icon>
+                <span class="hsidebar-label">Tickets</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Tickets</span>
+            </li>
+            <li class="htooltip-trigger">
+              <details class="hsidebar-sub" name="single-sidebar-groups">
+                <summary class="hsidebar-item">
+                  <play-icon name="campaigns" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Campaigns</span>
+                  <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                </summary>
+                <ul class="hsidebar-sub-list">
+                  <li class="hsidebar-sub-heading" aria-hidden="true">Campaigns</li>
+                  <li><a class="hsidebar-sub-item" href="/campaigns/runs">Runs</a></li>
+                  <li><a class="hsidebar-sub-item" href="/campaigns/templates">Templates</a></li>
+                </ul>
+              </details>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Campaigns</span>
+            </li>
+            <li class="htooltip-trigger">
+              <details class="hsidebar-sub" name="single-sidebar-groups">
+                <summary class="hsidebar-item">
+                  <play-icon name="more" class="hicon"></play-icon>
+                  <span class="hsidebar-label">More</span>
+                  <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                </summary>
+                <ul class="hsidebar-sub-list">
+                  <li class="hsidebar-sub-heading" aria-hidden="true">More</li>
+                  <li><a class="hsidebar-sub-item" href="/quick-replies">Quick replies</a></li>
+                  <li><a class="hsidebar-sub-item" href="/snippets">Snippets</a></li>
+                </ul>
+              </details>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">More</span>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="hsidebar-footer">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/developers">
+                <play-icon name="developers" class="hicon"></play-icon>
+                <span class="hsidebar-label">Developers</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Developers</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/settings">
+                <play-icon name="settings" class="hicon"></play-icon>
+                <span class="hsidebar-label">Settings</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Settings</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Collapsed" layout="wide">
+  <play-note>
+    <code>data-collapsed</code>, without the toggle, as your app might show it
+    on a narrow screen: the icons alone. Hovering or focusing one shows its
+    name; a click, <kbd class="hkbd">Enter</kbd>, or hovering a group opens its
+    links beside it, one group at a time, until
+    <kbd class="hkbd">Escape</kbd>, a click elsewhere, or focus moves on. A
+    count is a dot on its icon.
+  </play-note>
+  <div style="block-size: 36rem">
+    <div class="hsidebar" id="rail-sidebar" data-collapsed data-example-router>
+      <div class="hsidebar-header">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/account">
+                <span class="havatar" style="--harmo-avatar-size: 20px" aria-hidden="true">A</span>
+                <span class="hsidebar-label">Acme Support</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Acme Support</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <nav class="hsidebar-nav" aria-label="Main">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/home">
+                <play-icon name="home" class="hicon"></play-icon>
+                <span class="hsidebar-label">Home</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Home</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/analytics">
+                <play-icon name="analytics" class="hicon"></play-icon>
+                <span class="hsidebar-label">Analytics</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Analytics</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/messages" aria-label="Messages 3 unread">
+                <play-icon name="messages" class="hicon"></play-icon>
+                <span class="hsidebar-label">Messages</span>
+                <span class="hsidebar-badge">3</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Messages</span>
+            </li>
+          </ul>
+        </div>
+        <div class="hsidebar-group">
+          <p class="hsidebar-group-label" id="rail-sidebar-tools">Tools</p>
+          <ul class="hsidebar-list" aria-labelledby="rail-sidebar-tools">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/tickets" aria-current="page">
+                <play-icon name="tickets" class="hicon"></play-icon>
+                <span class="hsidebar-label">Tickets</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Tickets</span>
+            </li>
+            <li class="htooltip-trigger">
+              <details class="hsidebar-sub">
+                <summary class="hsidebar-item">
+                  <play-icon name="campaigns" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Campaigns</span>
+                  <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                </summary>
+                <ul class="hsidebar-sub-list">
+                  <li class="hsidebar-sub-heading" aria-hidden="true">Campaigns</li>
+                  <li><a class="hsidebar-sub-item" href="/campaigns/runs">Runs</a></li>
+                  <li><a class="hsidebar-sub-item" href="/campaigns/templates">Templates</a></li>
+                </ul>
+              </details>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Campaigns</span>
+            </li>
+            <li class="htooltip-trigger">
+              <details class="hsidebar-sub">
+                <summary class="hsidebar-item">
+                  <play-icon name="more" class="hicon"></play-icon>
+                  <span class="hsidebar-label">More</span>
+                  <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                </summary>
+                <ul class="hsidebar-sub-list">
+                  <li class="hsidebar-sub-heading" aria-hidden="true">More</li>
+                  <li><a class="hsidebar-sub-item" href="/quick-replies">Quick replies</a></li>
+                  <li><a class="hsidebar-sub-item" href="/snippets">Snippets</a></li>
+                </ul>
+              </details>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">More</span>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="hsidebar-footer">
+        <div class="hsidebar-group">
+          <ul class="hsidebar-list">
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/developers">
+                <play-icon name="developers" class="hicon"></play-icon>
+                <span class="hsidebar-label">Developers</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Developers</span>
+            </li>
+            <li class="htooltip-trigger">
+              <a class="hsidebar-item" href="/settings">
+                <play-icon name="settings" class="hicon"></play-icon>
+                <span class="hsidebar-label">Settings</span>
+              </a>
+              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Settings</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a drawer">
+  <play-note>
+    On a narrow screen, the same links can open in a Drawer from a menu
+    button, without the toggle; the sidebar fills it. Here its groups share a
+    <code>name</code>, so opening one closes the one that was open.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button" commandfor="menu-drawer" command="show-modal">
+    <play-icon name="menu" class="hicon"></play-icon>
+    <span class="hbutton-label">Menu</span>
+  </button>
+  <dialog class="hdrawer" id="menu-drawer" closedby="any" aria-labelledby="menu-drawer-title" style="--hdrawer-inline-size: 18rem">
+    <header class="hdrawer-header">
+      <h2 class="hdrawer-title" id="menu-drawer-title">Menu</h2>
+      <button class="hbutton hdrawer-close" data-variant="tertiary" type="button" commandfor="menu-drawer" command="request-close" aria-label="Close">
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdrawer-body">
+      <div class="hsidebar" id="drawer-sidebar" data-example-router>
+        <nav class="hsidebar-nav" aria-label="Main">
+          <div class="hsidebar-group">
+            <ul class="hsidebar-list">
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="/home">
+                  <play-icon name="home" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Home</span>
+                </a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Home</span>
+              </li>
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="/analytics">
+                  <play-icon name="analytics" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Analytics</span>
+                </a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Analytics</span>
+              </li>
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="/messages" aria-label="Messages 3 unread">
+                  <play-icon name="messages" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Messages</span>
+                  <span class="hsidebar-badge">3</span>
+                </a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Messages</span>
+              </li>
+            </ul>
+          </div>
+          <div class="hsidebar-group">
+            <p class="hsidebar-group-label" id="drawer-sidebar-tools">Tools</p>
+            <ul class="hsidebar-list" aria-labelledby="drawer-sidebar-tools">
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="/tickets" aria-current="page">
+                  <play-icon name="tickets" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Tickets</span>
+                </a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Tickets</span>
+              </li>
+              <li class="htooltip-trigger">
+                <details class="hsidebar-sub" name="drawer-sidebar-groups">
+                  <summary class="hsidebar-item">
+                    <play-icon name="campaigns" class="hicon"></play-icon>
+                    <span class="hsidebar-label">Campaigns</span>
+                    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                  </summary>
+                  <ul class="hsidebar-sub-list">
+                    <li class="hsidebar-sub-heading" aria-hidden="true">Campaigns</li>
+                    <li><a class="hsidebar-sub-item" href="/campaigns/runs">Runs</a></li>
+                    <li><a class="hsidebar-sub-item" href="/campaigns/templates">Templates</a></li>
+                  </ul>
+                </details>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Campaigns</span>
+              </li>
+              <li class="htooltip-trigger">
+                <details class="hsidebar-sub" name="drawer-sidebar-groups">
+                  <summary class="hsidebar-item">
+                    <play-icon name="more" class="hicon"></play-icon>
+                    <span class="hsidebar-label">More</span>
+                    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                  </summary>
+                  <ul class="hsidebar-sub-list">
+                    <li class="hsidebar-sub-heading" aria-hidden="true">More</li>
+                    <li><a class="hsidebar-sub-item" href="/quick-replies">Quick replies</a></li>
+                    <li><a class="hsidebar-sub-item" href="/snippets">Snippets</a></li>
+                  </ul>
+                </details>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">More</span>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="hsidebar-footer">
+          <div class="hsidebar-group">
+            <ul class="hsidebar-list">
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="/developers">
+                  <play-icon name="developers" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Developers</span>
+                </a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Developers</span>
+              </li>
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="/settings">
+                  <play-icon name="settings" class="hicon"></play-icon>
+                  <span class="hsidebar-label">Settings</span>
+                </a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Settings</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</play-example>

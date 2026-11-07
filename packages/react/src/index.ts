@@ -55,6 +55,16 @@ export {
   type SettingProps,
   type SettingsProps,
 } from "./Settings.tsx";
+export {
+  Sidebar,
+  SidebarGroup,
+  SidebarItem,
+  SidebarSub,
+  type SidebarGroupProps,
+  type SidebarItemProps,
+  type SidebarProps,
+  type SidebarSubProps,
+} from "./Sidebar.tsx";
 export { Spinner, type SpinnerProps } from "./Spinner.tsx";
 export { Status, type StatusProps } from "./Status.tsx";
 export { Switch, type SwitchProps } from "./Switch.tsx";

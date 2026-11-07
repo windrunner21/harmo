@@ -1,0 +1,634 @@
+@use "shortcuts" as *;
+@use "details";
+
+// The navigation down the side of an app: groups of links, each with an icon
+// and its label, between an optional header and footer, such as the account
+// and a link to settings. A link can open a group of links under it (a
+// <details>). With data-collapsed, it's a row of icons, each naming itself in
+// a tooltip, with those groups opening beside it. Its edge holds the toggle
+// between the two.
+.hsidebar {
+  --hsidebar-inline-size: 15rem;
+  --hsidebar-collapsed-inline-size: 60px;
+  // Which way the edge bends on hover: toward the start, to collapse.
+  --hsidebar-toward-start: -1;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  box-sizing: border-box;
+  inline-size: var(--hsidebar-inline-size);
+  block-size: 100%;
+  padding: 16px;
+
+  font-family: $font-family;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+
+  transition:
+    inline-size $duration-normal $ease-out-cubic,
+    padding-inline $duration-normal $ease-out-cubic;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:dir(rtl) {
+    --hsidebar-toward-start: 1;
+  }
+
+  // Its edge, a line the toggle bends: the toggle's own line sits on it, and
+  // on hover both move toward where the sidebar would go.
+  &::after {
+    content: "";
+
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+
+    inline-size: 1px;
+
+    background-color: $color-border;
+
+    transition: translate $duration-fast ease;
+  }
+
+  &[data-collapsed] {
+    inline-size: var(--hsidebar-collapsed-inline-size);
+    padding-inline: 8px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &::after {
+      transition: none;
+    }
+  }
+}
+
+.hsidebar-header,
+.hsidebar-footer {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 2px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// What scrolls when the links don't fit, with 4px on each side so a focus
+// ring isn't cut off. Collapsed too: the tooltips and the groups that open
+// beside the icons are fixed to the window and anchored to their icons, so
+// they aren't cut off by it, and follow their icons as it scrolls.
+.hsidebar-nav {
+  flex: 1 1 auto;
+
+  min-block-size: 0;
+  margin-inline: -4px;
+  padding-inline: 4px;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hsidebar-group {
+  display: flex;
+  flex-direction: column;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & + & {
+    margin-block-start: 24px;
+  }
+}
+
+.hsidebar-group-label {
+  margin: 0 0 8px;
+  padding-inline: 8px;
+  overflow: hidden;
+
+  font-size: $font-size-2xs;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: $color-text-tertiary;
+}
+
+.hsidebar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > li {
+    display: block;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+// What a link and a link in a group share: the row, its hover, its focus
+// ring, and how it shows the page you're on.
+%item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin: 0;
+  padding: 8px;
+
+  font-family: inherit;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: 1.25rem;
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+
+  color: $color-text-secondary;
+  background: none;
+  border: 0;
+  border-radius: $border-radius;
+
+  cursor: pointer;
+  list-style: none;
+
+  transition: background-color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Safari's own triangle, on a summary.
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: $color-background-hover;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+
+  // The page you're on.
+  &[aria-current="page"] {
+    font-weight: $font-weight-medium;
+
+    color: $color-primary;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $color-primary-tint;
+      }
+    }
+  }
+}
+
+// A link, or the summary of a group of links: a 20px icon, the label, and a
+// count or a chevron at its end.
+.hsidebar-item {
+  @extend %item;
+
+  & > .hicon {
+    flex-shrink: 0;
+
+    inline-size: 20px;
+    block-size: 20px;
+  }
+
+  & > .hexpand-chevron {
+    margin-inline-start: auto;
+  }
+}
+
+.hsidebar-label {
+  flex: 1;
+
+  min-inline-size: 0;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+// A count, such as unread messages, in the color of the page you're on, with
+// the background's color for its digits, which reads on it in light and dark;
+// collapsed, a dot on the icon.
+.hsidebar-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  min-inline-size: 20px;
+  block-size: 20px;
+  padding: 0 6px;
+
+  font-size: $font-size-3xs;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+
+  color: $color-background;
+  background-color: $color-primary;
+  border-radius: $border-radius-full;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A link that opens the links under it.
+.hsidebar-sub {
+  @include details.grows;
+
+  position: relative;
+
+  display: block;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hsidebar-sub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  @include details.grows-content;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > li {
+    display: block;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+// Collapsed, the group's name heads the links beside the icon; expanded, its
+// summary already shows it.
+.hsidebar-sub-list > .hsidebar-sub-heading {
+  display: none;
+}
+
+// Its text lines up with the labels above.
+.hsidebar-sub-item {
+  @extend %item;
+
+  padding-inline-start: calc(8px + 20px + 12px);
+}
+
+// A group holding the page you're on shows it on its own row while its
+// links are hidden: closed, or collapsed.
+.hsidebar-sub:not([open]):has(.hsidebar-sub-item[aria-current="page"]) > .hsidebar-item,
+.hsidebar[data-collapsed] .hsidebar-sub:has(.hsidebar-sub-item[aria-current="page"]) > .hsidebar-item {
+  font-weight: $font-weight-medium;
+
+  color: $color-primary;
+}
+
+// Collapsed: the icons alone, in the middle. The labels stay, hidden, as
+// each link's name; the tooltips show them.
+.hsidebar[data-collapsed] {
+  & .hsidebar-group-label,
+  & .hsidebar-item > .hsidebar-label {
+    position: absolute;
+
+    inline-size: 1px;
+    block-size: 1px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    clip-path: inset(50%);
+  }
+
+  & .hsidebar-item:not(.hsidebar-sub-item) {
+    justify-content: center;
+    gap: 0;
+  }
+
+  & .hsidebar-item > .hexpand-chevron {
+    display: none;
+  }
+
+  & .hsidebar-item > .hsidebar-badge {
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-start: calc(50% + 3px);
+
+    min-inline-size: 0;
+    inline-size: 10px;
+    block-size: 10px;
+    padding: 0;
+    overflow: hidden;
+
+    color: transparent;
+    border: 2px solid $color-background;
+  }
+
+  // A group opens beside the icon, as a panel, at once rather than growing,
+  // 12px past its row, so 4px clear of the edge, as the tooltips are. The
+  // panel is its list, fixed to the window and anchored to its row (the
+  // tooltip's anchor), so the nav can scroll without cutting it off; where
+  // there's no room below, it opens upward. Its ::before fills the 12px
+  // between the row and the panel, so the pointer crosses to the links
+  // without leaving the group, and the group can close the moment it does.
+  & .hsidebar-sub::details-content {
+    display: block;
+
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+
+    pointer-events: auto;
+
+    transition: none;
+  }
+
+  & .hsidebar-sub-list {
+    position: fixed;
+    z-index: 10;
+    inset: auto;
+    position-anchor: --htooltip;
+    position-area: inline-end span-block-end;
+    position-try-fallbacks: flip-block;
+
+    box-sizing: border-box;
+    min-inline-size: 160px;
+    margin: 0;
+    margin-inline-start: 12px;
+    padding: 4px;
+
+    background-color: $color-background;
+    border: 1px solid $color-border;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow-sm;
+
+    &::before {
+      content: "";
+
+      position: absolute;
+      inset-block: -1px;
+      inset-inline-end: 100%;
+
+      inline-size: 13px;
+    }
+  }
+
+  // Closed, the panel isn't drawn at all, not only its links.
+  & .hsidebar-sub:not([open])::details-content {
+    display: none;
+  }
+
+  & .hsidebar-sub-list > .hsidebar-sub-heading:not([hidden]) {
+    display: block;
+
+    padding: 8px;
+
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-medium;
+    line-height: 1.5;
+    white-space: nowrap;
+
+    color: $color-text-tertiary;
+  }
+
+  & .hsidebar-sub-item {
+    padding-inline-start: 8px;
+  }
+}
+
+// In a Drawer, such as on a narrow screen: as wide as the drawer, without an
+// edge of its own.
+.hdrawer-body > .hsidebar {
+  inline-size: auto;
+  block-size: auto;
+  padding: 0;
+
+  &::after {
+    display: none;
+  }
+}
+
+// A link's tooltip, 12px past its row, so 4px clear of the edge, and at once:
+// in a row of icons, the name is what you're looking for. As specific as
+// Tooltip's own rules, which come later, and more.
+.htooltip.hsidebar-tooltip {
+  --htooltip-gap: 12px;
+  --htooltip-delay: 0ms;
+}
+
+// The tooltips open toward the page, which is on the left on a
+// right-to-left page; their data-side="right" is physical.
+.hsidebar:dir(rtl) :is(.htooltip.hsidebar-tooltip, .hsidebar-toggle > .htooltip) {
+  position-area: left;
+
+  transform-origin: right center;
+}
+
+// A link's tooltip shows its name only while the sidebar is collapsed, and
+// not over the group it has opened.
+.hsidebar:not([data-collapsed]) .htooltip-trigger > .hsidebar-tooltip,
+.htooltip-trigger:has(> .hsidebar-sub[open]) > .hsidebar-tooltip {
+  display: none;
+}
+
+// The toggle, halfway down, just past the edge: a short line 8px beyond the
+// edge's line. On hover or keyboard focus, it bends into a chevron pointing
+// where the sidebar would go, and the edge moves 8px with it: expanded, the
+// chevron's tip comes to where the edge was; collapsed, the button moves 8px
+// further out. Placed by its offsets, not moved by a transform, so its
+// tooltip, anchored to it, lines up with it; only the button inside moves,
+// so the pointer stays over it.
+.hsidebar-toggle {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: calc(50% - 20px);
+  inset-inline-start: calc(100% - 8px);
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The tooltip starts just past the chevron, over the button's end
+  // padding.
+  & > .htooltip {
+    --htooltip-gap: -8px;
+
+    .hsidebar[data-collapsed] & {
+      --htooltip-gap: 0px;
+    }
+  }
+}
+
+.hsidebar-toggle-button {
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px;
+  padding-inline-start: 0;
+
+  color: $icon-color;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+
+  transition: translate $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+
+  & > svg {
+    inline-size: 24px;
+    block-size: 24px;
+    overflow: visible;
+
+    stroke: currentColor;
+  }
+
+  &:dir(rtl) > svg {
+    scale: -1 1;
+  }
+}
+
+.hsidebar-toggle-head {
+  translate: 4px 0;
+
+  transition: translate $duration-fast ease;
+}
+
+.hsidebar-toggle-start,
+.hsidebar-toggle-end {
+  stroke-width: 2;
+  stroke-linecap: round;
+
+  transform-box: view-box;
+  transform-origin: 12px 12px;
+
+  transition: transform $duration-fast ease;
+}
+
+// The svg is mirrored on a right-to-left page, so its own coordinates always
+// point the start's way; the button's move, outside it, takes the page's.
+@mixin bent {
+  .hsidebar-toggle-head {
+    translate: -4px 0;
+  }
+
+  .hsidebar-toggle-start {
+    transform: rotate(40deg);
+  }
+
+  .hsidebar-toggle-end {
+    transform: rotate(-40deg);
+  }
+
+  .hsidebar[data-collapsed] & {
+    .hsidebar-toggle-button {
+      translate: calc(var(--hsidebar-toward-start) * -8px) 0;
+    }
+
+    .hsidebar-toggle-head {
+      translate: 8px 0;
+    }
+
+    .hsidebar-toggle-start {
+      transform: rotate(-40deg);
+    }
+
+    .hsidebar-toggle-end {
+      transform: rotate(40deg);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hsidebar-toggle:hover {
+    @include bent;
+  }
+
+  .hsidebar:has(> .hsidebar-toggle:hover)::after {
+    translate: calc(var(--hsidebar-toward-start) * 8px) 0;
+  }
+
+  .hsidebar[data-collapsed]:has(> .hsidebar-toggle:hover)::after {
+    translate: calc(var(--hsidebar-toward-start) * -8px) 0;
+  }
+}
+
+.hsidebar-toggle:has(> .hsidebar-toggle-button:focus-visible) {
+  @include bent;
+}
+
+.hsidebar:has(> .hsidebar-toggle > .hsidebar-toggle-button:focus-visible)::after {
+  translate: calc(var(--hsidebar-toward-start) * 8px) 0;
+}
+
+.hsidebar[data-collapsed]:has(> .hsidebar-toggle > .hsidebar-toggle-button:focus-visible)::after {
+  translate: calc(var(--hsidebar-toward-start) * -8px) 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hsidebar-toggle-button,
+  .hsidebar-toggle-head,
+  .hsidebar-toggle-start,
+  .hsidebar-toggle-end {
+    transition: none;
+  }
+}

@@ -36,20 +36,20 @@
       <li class="hoption-group" role="presentation">
         <span class="hoption-group-label" id="header-search-go">Go to</span>
         <ul role="group" aria-labelledby="header-search-go">
-          <li class="hoption" id="header-search-home" role="option" aria-selected="false">
+          <li class="hoption" id="header-search-home" role="option" data-example-value="/" aria-selected="false">
             <span class="hoption-text"><span class="hoption-label">Home</span> <span class="hoption-description">Overview</span></span>
           </li>
-          <li class="hoption" id="header-search-tickets" role="option" aria-selected="false">
+          <li class="hoption" id="header-search-tickets" role="option" data-example-value="/tickets" aria-selected="false">
             <span class="hoption-text"><span class="hoption-label">Tickets</span> <span class="hoption-description">All tickets</span></span>
             <span class="hoption-badge">Current</span>
           </li>
-          <li class="hoption" id="header-search-analytics" role="option" aria-selected="false" data-example-keywords="metrics charts">
+          <li class="hoption" id="header-search-analytics" role="option" data-example-value="/analytics" aria-selected="false" data-example-keywords="metrics charts">
             <span class="hoption-text"><span class="hoption-label">Analytics</span> <span class="hoption-description">Reports</span></span>
           </li>
-          <li class="hoption" id="header-search-plans" role="option" aria-selected="false" data-example-keywords="billing subscription invoices">
+          <li class="hoption" id="header-search-plans" role="option" data-example-value="/settings/plans" aria-selected="false" data-example-keywords="billing subscription invoices">
             <span class="hoption-text"><span class="hoption-label">Plans</span> <span class="hoption-description">Settings</span></span>
           </li>
-          <li class="hoption" id="header-search-members" role="option" aria-selected="false" data-example-keywords="users roles invite">
+          <li class="hoption" id="header-search-members" role="option" data-example-value="/settings/members" aria-selected="false" data-example-keywords="users roles invite">
             <span class="hoption-text"><span class="hoption-label">Team members</span> <span class="hoption-description">Settings</span></span>
           </li>
         </ul>
@@ -57,10 +57,10 @@
       <li class="hoption-group" role="presentation">
         <span class="hoption-group-label" id="header-search-create">Create</span>
         <ul role="group" aria-labelledby="header-search-create">
-          <li class="hoption" id="header-search-new-ticket" role="option" aria-selected="false">
+          <li class="hoption" id="header-search-new-ticket" role="option" data-example-value="/tickets/new" aria-selected="false">
             <span class="hoption-text"><span class="hoption-label">New ticket</span> <span class="hoption-description">Tickets</span></span>
           </li>
-          <li class="hoption" id="header-search-new-team" role="option" aria-selected="false">
+          <li class="hoption" id="header-search-new-team" role="option" data-example-value="/settings/teams/new" aria-selected="false">
             <span class="hoption-text"><span class="hoption-label">New team</span> <span class="hoption-description">Settings</span></span>
           </li>
         </ul>
@@ -68,16 +68,16 @@
       <li class="hoption-group" role="presentation" hidden data-example-found>
         <span class="hoption-group-label" id="header-search-customers">Customers</span>
         <ul role="group" aria-labelledby="header-search-customers">
-          <li class="hoption" id="header-search-ana" role="option" aria-selected="false" hidden>
+          <li class="hoption" id="header-search-ana" role="option" data-example-value="/customers/ana" aria-selected="false" hidden>
             <span class="hoption-text"><span class="hoption-label">Ana Lopez</span> <span class="hoption-description">ana@example.com</span></span>
           </li>
-          <li class="hoption" id="header-search-sam" role="option" aria-selected="false" hidden>
+          <li class="hoption" id="header-search-sam" role="option" data-example-value="/customers/sam" aria-selected="false" hidden>
             <span class="hoption-text"><span class="hoption-label">Sam Rivera</span> <span class="hoption-description">sam@example.com</span></span>
           </li>
-          <li class="hoption" id="header-search-lee" role="option" aria-selected="false" hidden>
+          <li class="hoption" id="header-search-lee" role="option" data-example-value="/customers/lee" aria-selected="false" hidden>
             <span class="hoption-text"><span class="hoption-label">Lee Chen</span> <span class="hoption-description">lee@partner.org</span></span>
           </li>
-          <li class="hoption" id="header-search-customers-all" role="option" aria-selected="false" hidden data-example-view-all>
+          <li class="hoption" id="header-search-customers-all" role="option" data-example-value="/customers" aria-selected="false" hidden data-example-view-all>
             <span class="hoption-label">View all customers</span>
           </li>
         </ul>
@@ -89,7 +89,7 @@
       <span><kbd class="hkbd">↑</kbd> <kbd class="hkbd">↓</kbd> to move</span>
     </div>
   </div>
-  <p hidden data-example-picked="Opened {label}"></p>
+  <p hidden data-example-picked="Opened {value}"></p>
   <div class="hfield" data-orientation="horizontal">
     <input class="hswitch" type="checkbox" role="switch" id="header-search-shortcut" checked />
     <label class="hlabel" for="header-search-shortcut">Single-key shortcuts</label>
@@ -132,10 +132,10 @@
       <li class="hoption-group" role="presentation">
         <span class="hoption-group-label" id="docs-search-start">Getting started</span>
         <ul role="group" aria-labelledby="docs-search-start">
-          <li class="hoption" id="docs-search-install" role="option" aria-selected="false" data-example-keywords="npm package setup">
+          <li class="hoption" id="docs-search-install" role="option" data-example-value="/docs/installation" aria-selected="false" data-example-keywords="npm package setup">
             <span class="hoption-text"><span class="hoption-label">Installation</span> <span class="hoption-description">Add Harmo to a project</span></span>
           </li>
-          <li class="hoption" id="docs-search-theming" role="option" aria-selected="false" data-example-keywords="tokens dark mode brand">
+          <li class="hoption" id="docs-search-theming" role="option" data-example-value="/docs/theming" aria-selected="false" data-example-keywords="tokens dark mode brand">
             <span class="hoption-text"><span class="hoption-label">Theming</span> <span class="hoption-description">Colors, fonts, and sizes</span></span>
           </li>
         </ul>
@@ -143,19 +143,19 @@
       <li class="hoption-group" role="presentation">
         <span class="hoption-group-label" id="docs-search-components">Components</span>
         <ul role="group" aria-labelledby="docs-search-components">
-          <li class="hoption" id="docs-search-button" role="option" aria-selected="false">
+          <li class="hoption" id="docs-search-button" role="option" data-example-value="/docs/components/button" aria-selected="false">
             <span class="hoption-text"><span class="hoption-label">Button</span> <span class="hoption-description">An action, or a link that looks like one</span></span>
           </li>
-          <li class="hoption" id="docs-search-combobox" role="option" aria-selected="false" data-example-keywords="autocomplete">
+          <li class="hoption" id="docs-search-combobox" role="option" data-example-value="/docs/components/combobox" aria-selected="false" data-example-keywords="autocomplete">
             <span class="hoption-text"><span class="hoption-label">Combobox</span> <span class="hoption-description">A text field that filters a list</span></span>
           </li>
-          <li class="hoption" id="docs-search-command-menu" role="option" aria-selected="false" data-example-keywords="palette spotlight">
+          <li class="hoption" id="docs-search-command-menu" role="option" data-example-value="/docs/components/command-menu" aria-selected="false" data-example-keywords="palette spotlight">
             <span class="hoption-text"><span class="hoption-label">Command Menu</span> <span class="hoption-description">Places and actions, found by typing</span></span>
           </li>
-          <li class="hoption" id="docs-search-dialog" role="option" aria-selected="false" data-example-keywords="modal">
+          <li class="hoption" id="docs-search-dialog" role="option" data-example-value="/docs/components/dialog" aria-selected="false" data-example-keywords="modal">
             <span class="hoption-text"><span class="hoption-label">Dialog</span> <span class="hoption-description">A window above the page</span></span>
           </li>
-          <li class="hoption" id="docs-search-tag-list" role="option" aria-selected="false">
+          <li class="hoption" id="docs-search-tag-list" role="option" data-example-value="/docs/components/tag-list" aria-selected="false">
             <span class="hoption-text"><span class="hoption-label">Tag List</span> <span class="hoption-description">Tags in one row, then +N</span></span>
           </li>
         </ul>
@@ -168,5 +168,5 @@
       <span><kbd class="hkbd">Esc</kbd> to close</span>
     </div>
   </dialog>
-  <p hidden data-example-picked="Opened {label}"></p>
+  <p hidden data-example-picked="Opened {value}"></p>
 </play-example>

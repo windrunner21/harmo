@@ -211,25 +211,25 @@ you send them. Other props are the input's attributes.
   placeholder="Search"
   shortcut={{ keys: "Mod+K", label: { apple: "⌘K", other: "Ctrl K" } }}
   onInputChange={setQuery}
-  onPick={(value) => router.push(paths[value])}
+  onPick={(path) => router.push(path)}
   emptyMessage={searching ? "Searching…" : "No results"}
   hints={<span><Kbd>Enter</Kbd> to open</span>}
 >
   <OptionGroup label="Go to">
-    <Option value="tickets" description="All tickets" badge="Current">
+    <Option value="/tickets" description="All tickets" badge="Current">
       Tickets
     </Option>
-    <Option value="plans" description="Settings" keywords={["billing"]}>
+    <Option value="/settings/plans" description="Settings" keywords={["billing"]}>
       Plans
     </Option>
   </OptionGroup>
   <OptionGroup label="Customers" filter={false} hidden={customers.length === 0}>
     {customers.map((customer) => (
-      <Option key={customer.id} value={customer.id} description={customer.email}>
+      <Option key={customer.id} value={`/customers/${customer.id}`} description={customer.email}>
         {customer.name}
       </Option>
     ))}
-    <Option value="all-customers">View all customers</Option>
+    <Option value="/customers">View all customers</Option>
   </OptionGroup>
 </CommandMenu>
 

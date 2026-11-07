@@ -48,6 +48,7 @@ const components: Record<string, string[]> = {
   segmented: ["Segmented.tsx"],
   select: ["Select.tsx"],
   settings: ["Settings.tsx"],
+  sidebar: ["Sidebar.tsx"],
   spinner: ["Spinner.tsx"],
   status: ["Status.tsx"],
   switch: ["Switch.tsx"],

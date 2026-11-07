@@ -224,6 +224,12 @@ const groups: CatalogGroup[] = [
           "Places to go and things to do, found by typing: under a search field, or in a dialog.",
       },
       {
+        slug: "sidebar",
+        title: "Sidebar",
+        purpose:
+          "An app's navigation down the side: groups of links with icons, collapsing to the icons alone.",
+      },
+      {
         slug: "tabs",
         title: "Tabs",
         purpose:

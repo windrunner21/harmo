@@ -1,68 +1,37 @@
 import { CommandMenu, Field, Kbd, Option, OptionGroup, Switch } from "@harmo-ui/react";
 import { useEffect, useState } from "react";
 
-const customers = [
-  { id: "ana", name: "Ana Lopez", email: "ana@example.com" },
-  { id: "sam", name: "Sam Rivera", email: "sam@example.com" },
-  { id: "lee", name: "Lee Chen", email: "lee@partner.org" },
-];
-
-const places: Record<string, string> = {
-  home: "Home",
-  tickets: "Tickets",
-  analytics: "Analytics",
-  plans: "Plans",
-  members: "Team members",
-  "new-ticket": "New ticket",
-  "new-team": "New team",
-  customers: "View all customers",
-  ...Object.fromEntries(customers.map((customer) => [customer.id, customer.name])),
-  install: "Installation",
-  theming: "Theming",
-  button: "Button",
-  combobox: "Combobox",
-  "command-menu": "Command Menu",
-  dialog: "Dialog",
-  "tag-list": "Tag List",
-};
-
-// Where a pick would go, said rather than gone to.
-const Picked = ({ value }: { value: string | null }) => (
-  <p hidden={value === null}>{value !== null && `Opened ${places[value]}`}</p>
-);
-
-// The customers whose name or email holds the text, a moment after it's
-// typed, as a request to the app's server would bring them.
-const useFound = (text: string) => {
-  const [found, setFound] = useState<{ for: string; customers: typeof customers }>({
-    for: "",
-    customers: [],
-  });
-  const wanted = text.trim();
-  useEffect(() => {
-    if (wanted.length < 2) return;
-    const timer = setTimeout(() => {
-      const query = wanted.toLowerCase();
-      setFound({
-        for: wanted,
-        customers: customers.filter((customer) =>
-          `${customer.name} ${customer.email}`.toLowerCase().includes(query),
-        ),
-      });
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [wanted]);
-  const ready = wanted.length >= 2 && found.for === wanted;
-  return { searching: wanted.length >= 2 && !ready, customers: ready ? found.customers : [] };
-};
-
 export const examples = {
   Default: () => {
     const [text, setText] = useState("");
     const [picked, setPicked] = useState<string | null>(null);
     // A key alone needs a way to turn it off (WCAG 2.1.4).
     const [singleKeys, setSingleKeys] = useState(true);
-    const found = useFound(text);
+
+    // Your app's search for customers as the text changes, here pretended:
+    // from two letters, the ones whose name or email holds it, 400ms later,
+    // as a request to your server would bring them.
+    const customers = [
+      { id: "ana", name: "Ana Lopez", email: "ana@example.com" },
+      { id: "sam", name: "Sam Rivera", email: "sam@example.com" },
+      { id: "lee", name: "Lee Chen", email: "lee@partner.org" },
+    ];
+    const wanted = text.trim();
+    const [found, setFound] = useState({ for: "", ids: [] as string[] });
+    useEffect(() => {
+      if (wanted.length < 2) return;
+      const timer = setTimeout(() => {
+        const query = wanted.toLowerCase();
+        const ids = customers
+          .filter((customer) => `${customer.name} ${customer.email}`.toLowerCase().includes(query))
+          .map((customer) => customer.id);
+        setFound({ for: wanted, ids });
+      }, 400);
+      return () => clearTimeout(timer);
+    }, [wanted]);
+    const searching = wanted.length >= 2 && found.for !== wanted;
+    const shown = wanted.length >= 2 && !searching ? found.ids : [];
+
     return (
       <>
         <CommandMenu
@@ -71,7 +40,7 @@ export const examples = {
           shortcut={singleKeys ? { keys: "/", label: "/" } : undefined}
           onInputChange={setText}
           onPick={setPicked}
-          emptyMessage={found.searching ? "Searching…" : "No results"}
+          emptyMessage={searching ? "Searching…" : "No results"}
           hints={
             <>
               <span>
@@ -84,49 +53,50 @@ export const examples = {
           }
         >
           <OptionGroup label="Go to">
-            <Option value="home" description="Overview">
+            <Option value="/" description="Overview">
               Home
             </Option>
-            <Option value="tickets" description="All tickets" badge="Current">
+            <Option value="/tickets" description="All tickets" badge="Current">
               Tickets
             </Option>
-            <Option value="analytics" description="Reports" keywords={["metrics", "charts"]}>
+            <Option value="/analytics" description="Reports" keywords={["metrics", "charts"]}>
               Analytics
             </Option>
             <Option
-              value="plans"
+              value="/settings/plans"
               description="Settings"
               keywords={["billing", "subscription", "invoices"]}
             >
               Plans
             </Option>
-            <Option value="members" description="Settings" keywords={["users", "roles", "invite"]}>
+            <Option value="/settings/members" description="Settings" keywords={["users", "roles", "invite"]}>
               Team members
             </Option>
           </OptionGroup>
           <OptionGroup label="Create">
-            <Option value="new-ticket" description="Tickets">
+            <Option value="/tickets/new" description="Tickets">
               New ticket
             </Option>
-            <Option value="new-team" description="Settings">
+            <Option value="/settings/teams/new" description="Settings">
               New team
             </Option>
           </OptionGroup>
-          <OptionGroup label="Customers" filter={false} hidden={found.customers.length === 0}>
+          <OptionGroup label="Customers" filter={false} hidden={shown.length === 0}>
             {customers.map((customer) => (
               <Option
                 key={customer.id}
-                value={customer.id}
+                value={`/customers/${customer.id}`}
                 description={customer.email}
-                hidden={!found.customers.includes(customer)}
+                hidden={!shown.includes(customer.id)}
               >
                 {customer.name}
               </Option>
             ))}
-            <Option value="customers">View all customers</Option>
+            <Option value="/customers">View all customers</Option>
           </OptionGroup>
         </CommandMenu>
-        <Picked value={picked} />
+        {/* Where a pick would go, said rather than gone to. */}
+        <p hidden={picked === null}>{picked !== null && `Opened ${picked}`}</p>
         <Field orientation="horizontal" label="Single-key shortcuts">
           <Switch checked={singleKeys} onChange={(event) => setSingleKeys(event.target.checked)} />
         </Field>
@@ -161,14 +131,14 @@ export const examples = {
         >
           <OptionGroup label="Getting started">
             <Option
-              value="install"
+              value="/docs/installation"
               description="Add Harmo to a project"
               keywords={["npm", "package", "setup"]}
             >
               Installation
             </Option>
             <Option
-              value="theming"
+              value="/docs/theming"
               description="Colors, fonts, and sizes"
               keywords={["tokens", "dark mode", "brand"]}
             >
@@ -176,32 +146,33 @@ export const examples = {
             </Option>
           </OptionGroup>
           <OptionGroup label="Components">
-            <Option value="button" description="An action, or a link that looks like one">
+            <Option value="/docs/components/button" description="An action, or a link that looks like one">
               Button
             </Option>
             <Option
-              value="combobox"
+              value="/docs/components/combobox"
               description="A text field that filters a list"
               keywords={["autocomplete"]}
             >
               Combobox
             </Option>
             <Option
-              value="command-menu"
+              value="/docs/components/command-menu"
               description="Places and actions, found by typing"
               keywords={["palette", "spotlight"]}
             >
               Command Menu
             </Option>
-            <Option value="dialog" description="A window above the page" keywords={["modal"]}>
+            <Option value="/docs/components/dialog" description="A window above the page" keywords={["modal"]}>
               Dialog
             </Option>
-            <Option value="tag-list" description="Tags in one row, then +N">
+            <Option value="/docs/components/tag-list" description="Tags in one row, then +N">
               Tag List
             </Option>
           </OptionGroup>
         </CommandMenu>
-        <Picked value={picked} />
+        {/* Where a pick would go, said rather than gone to. */}
+        <p hidden={picked === null}>{picked !== null && `Opened ${picked}`}</p>
       </>
     );
   },

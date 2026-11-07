@@ -36,6 +36,7 @@ the same markup and does what the script would.
 | Segmented Control | [segmented.md](segmented.md) |
 | Select | [select.md](select.md) |
 | Settings List | [settings.md](settings.md) |
+| Sidebar | [sidebar.md](sidebar.md) |
 | Spinner | [spinner.md](spinner.md) |
 | Status | [status.md](status.md) |
 | Switch | [switch.md](switch.md) |
@@ -101,6 +102,7 @@ Some components are built from others, so their files need company:
 | `listbox.css` | `popup.css`; `button.css` for a footer |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
 | `search.css` | `input.css`; `field.css` for a label |
+| `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
 | `settings.css` | The controls it holds, such as `switch.css` |
 | `tag-list.css` | `tag.css`, `tooltip.css` |

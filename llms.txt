@@ -57,6 +57,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Segmented Control](docs/components/segmented.md): one choice from a few options shown side by side
 - [Select](docs/components/select.md): a form field that picks one or more options from a list
 - [Settings List](docs/components/settings.md): settings with a title, a description, and a control beside or under them
+- [Sidebar](docs/components/sidebar.md): an app's navigation down the side: groups of links with icons, collapsing to the icons alone, each named in a tooltip
 - [Spinner](docs/components/spinner.md): a loading indicator, sized to match what is loading
 - [Status](docs/components/status.md): what state something is in, such as a ticket or a campaign run
 - [Switch](docs/components/switch.md): an on/off switch for settings that apply immediately

@@ -163,6 +163,56 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Sidebar: `.hsidebar` around `<nav class="hsidebar-nav">`, or `<Sidebar>`,
+  an app's navigation down the side: links in groups, each an icon and its
+  label, with a count such as unread messages, and the page you're on marked
+  by `aria-current="page"`. A link can open links under it (a
+  `<details class="hsidebar-sub">`), each group on its own, or, sharing a
+  `name` or with `<Sidebar exclusive>`, one at a time, with no script.
+  A toggle just past its edge collapses it to its icons alone
+  (`data-collapsed`), each naming itself in a tooltip, with its groups
+  opening beside it, one at a time. On a narrow screen, it can go in a
+  Drawer.
+
+  ```html preview
+  <div class="hsidebar" style="block-size: auto">
+    <nav class="hsidebar-nav" aria-label="Changelog example">
+      <div class="hsidebar-group">
+        <p class="hsidebar-group-label" id="changelog-sidebar-tools">Tools</p>
+        <ul class="hsidebar-list" aria-labelledby="changelog-sidebar-tools">
+          <li class="htooltip-trigger">
+            <a class="hsidebar-item" href="#">
+              <svg class="hicon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"> <path d="M17.79 22.75H6.21C3.47 22.75 1.25 20.52 1.25 17.78V10.37C1.25 9.00997 2.09 7.29997 3.17 6.45997L8.56 2.25997C10.18 0.999974 12.77 0.939974 14.45 2.11997L20.63 6.44997C21.82 7.27997 22.75 9.05997 22.75 10.51V17.79C22.75 20.52 20.53 22.75 17.79 22.75ZM9.48 3.43997L4.09 7.63997C3.38 8.19997 2.75 9.46997 2.75 10.37V17.78C2.75 19.69 4.3 21.25 6.21 21.25H17.79C19.7 21.25 21.25 19.7 21.25 17.79V10.51C21.25 9.54997 20.56 8.21997 19.77 7.67997L13.59 3.34997C12.45 2.54997 10.57 2.58997 9.48 3.43997Z" fill="currentColor"/> <path d="M12 18.75C11.59 18.75 11.25 18.41 11.25 18V15C11.25 14.59 11.59 14.25 12 14.25C12.41 14.25 12.75 14.59 12.75 15V18C12.75 18.41 12.41 18.75 12 18.75Z" fill="currentColor"/> </svg>
+              <span class="hsidebar-label">Home</span>
+            </a>
+          </li>
+          <li class="htooltip-trigger">
+            <a class="hsidebar-item" href="#" aria-current="page">
+              <svg class="hicon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"> <path d="M17 20.75H7C2.59 20.75 1.25 19.41 1.25 15V14.5C1.25 14.09 1.59 13.75 2 13.75C2.96 13.75 3.75 12.96 3.75 12C3.75 11.04 2.96 10.25 2 10.25C1.59 10.25 1.25 9.91 1.25 9.5V9C1.25 4.59 2.59 3.25 7 3.25H17C21.41 3.25 22.75 4.59 22.75 9V10C22.75 10.41 22.41 10.75 22 10.75C21.04 10.75 20.25 11.54 20.25 12.5C20.25 13.46 21.04 14.25 22 14.25C22.41 14.25 22.75 14.59 22.75 15C22.75 19.41 21.41 20.75 17 20.75ZM2.75 15.16C2.77 18.6 3.48 19.25 7 19.25H17C20.34 19.25 21.15 18.66 21.24 15.66C19.81 15.32 18.75 14.03 18.75 12.5C18.75 10.97 19.82 9.68 21.25 9.34V9C21.25 5.43 20.58 4.75 17 4.75H7C3.48 4.75 2.77 5.4 2.75 8.84C4.18 9.18 5.25 10.47 5.25 12C5.25 13.53 4.18 14.82 2.75 15.16Z" fill="currentColor"/> <path d="M10 7.25C9.59 7.25 9.25 6.91 9.25 6.5V4C9.25 3.59 9.59 3.25 10 3.25C10.41 3.25 10.75 3.59 10.75 4V6.5C10.75 6.91 10.41 7.25 10 7.25Z" fill="currentColor"/> <path d="M10 14.58C9.59 14.58 9.25 14.24 9.25 13.83V10.16C9.25 9.75003 9.59 9.41003 10 9.41003C10.41 9.41003 10.75 9.75003 10.75 10.16V13.83C10.75 14.25 10.41 14.58 10 14.58Z" fill="currentColor"/> <path d="M10 20.75C9.59 20.75 9.25 20.41 9.25 20V17.5C9.25 17.09 9.59 16.75 10 16.75C10.41 16.75 10.75 17.09 10.75 17.5V20C10.75 20.41 10.41 20.75 10 20.75Z" fill="currentColor"/> </svg>
+              <span class="hsidebar-label">Tickets</span>
+              <span class="hsidebar-badge">3</span>
+            </a>
+          </li>
+          <li class="htooltip-trigger">
+            <details class="hsidebar-sub">
+              <summary class="hsidebar-item">
+                <svg class="hicon" width="20" height="20" viewBox="0 0 25 25" fill="none" aria-hidden="true" focusable="false"> <path d="M12.6154 14.05C12.4854 14.05 12.3554 14.02 12.2354 13.95L3.40538 8.84C3.05538 8.63 2.92538 8.17 3.13538 7.81C3.34538 7.45 3.80538 7.33 4.16538 7.54L12.6154 12.43L21.0154 7.57C21.3754 7.36 21.8354 7.49 22.0454 7.84C22.2554 8.2 22.1254 8.66 21.7754 8.87L13.0054 13.95C12.8754 14.01 12.7454 14.05 12.6154 14.05Z" fill="currentColor"/> <path d="M12.6154 23.11C12.2054 23.11 11.8654 22.77 11.8654 22.36V13.29C11.8654 12.88 12.2054 12.54 12.6154 12.54C13.0254 12.54 13.3654 12.88 13.3654 13.29V22.36C13.3654 22.77 13.0254 23.11 12.6154 23.11Z" fill="currentColor"/> <path d="M12.6154 23.5C11.7354 23.5 10.8654 23.31 10.1754 22.93L4.83539 19.96C3.38539 19.16 2.25539 17.23 2.25539 15.57V9.92C2.25539 8.26 3.38539 6.34 4.83539 5.53L10.1754 2.57C11.5454 1.81 13.6854 1.81 15.0554 2.57L20.3954 5.54C21.8454 6.34 22.9754 8.27 22.9754 9.93V15.58C22.9754 17.24 21.8454 19.16 20.3954 19.97L15.0554 22.93C14.3654 23.31 13.4954 23.5 12.6154 23.5ZM12.6154 3.5C11.9854 3.5 11.3654 3.63 10.9054 3.88L5.56539 6.85C4.60539 7.38 3.75539 8.82 3.75539 9.92V15.57C3.75539 16.67 4.60539 18.11 5.56539 18.65L10.9054 21.62C11.8154 22.13 13.4154 22.13 14.3254 21.62L19.6654 18.65C20.6254 18.11 21.4754 16.68 21.4754 15.57V9.92C21.4754 8.82 20.6254 7.38 19.6654 6.84L14.3254 3.87C13.8654 3.63 13.2454 3.5 12.6154 3.5Z" fill="currentColor"/> </svg>
+                <span class="hsidebar-label">Campaigns</span>
+                <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false"><g class="hexpand-chevron-head"><line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" /><line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" /></g></svg>
+              </summary>
+              <ul class="hsidebar-sub-list">
+                <li class="hsidebar-sub-heading" aria-hidden="true">Campaigns</li>
+                <li><a class="hsidebar-sub-item" href="#">Runs</a></li>
+                <li><a class="hsidebar-sub-item" href="#">Templates</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  ```
+
 - Tag: `.htag-remove`, or `<TagRemove>`, a button after the text that
   removes the tag, such as a filter: a 12px cross with a 24px target, named
   in your app's language.

@@ -1,0 +1,51 @@
+@use "shortcuts" as *;
+
+// A <details> whose content grows to its height as it opens, and shrinks
+// back as it closes, quicker, as Accordion items and Sidebar groups do: a
+// grid row animates from 0fr to 1fr in every browser, where a height can't
+// yet animate to auto outside Chromium. The box clips what's growing, so it
+// reaches past the content, 4px on each side and 8px up into the summary's
+// padding, so the focus ring of a control inside isn't cut off, even one
+// that sits a little above the content, as a Switch beside its label does.
+// Clicks there go through to the summary. Closing, the content stays shown
+// (content-visibility) until it has shrunk; opening, it's shown at once, so
+// Tab reaches what's inside while it grows.
+@mixin grows {
+  &::details-content {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    margin-block-start: -8px;
+    margin-inline: -4px;
+    padding-block-start: 8px;
+    padding-inline: 4px;
+    overflow: hidden;
+
+    pointer-events: none;
+
+    transition:
+      grid-template-rows $duration-fast $ease-out-cubic,
+      content-visibility $duration-fast allow-discrete;
+  }
+
+  &[open]::details-content {
+    grid-template-rows: 1fr;
+
+    transition: grid-template-rows $duration-normal $ease-out-cubic;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::details-content,
+    &[open]::details-content {
+      transition: none;
+    }
+  }
+}
+
+// The one element in the content: the grid row's item, which can shrink to
+// nothing, and takes clicks again.
+@mixin grows-content {
+  min-block-size: 0;
+
+  pointer-events: auto;
+}
