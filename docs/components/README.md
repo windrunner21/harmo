@@ -28,6 +28,7 @@ the same markup and does what the script would.
 | Password input | [password.md](password.md) |
 | Popup | [popup.md](popup.md) |
 | Radio | [radio.md](radio.md) |
+| Section | [section.md](section.md) |
 | Segmented control | [segmented.md](segmented.md) |
 | Select | [select.md](select.md) |
 | Settings list | [settings.md](settings.md) |

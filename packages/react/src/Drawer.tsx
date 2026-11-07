@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "./Button.tsx";
+import { renders } from "./children.ts";
 import {
   closeIcon,
   ModalClose,
@@ -86,7 +87,7 @@ export const Drawer = ({
         closedby={closedby}
         aria-labelledby={labelledBy ?? titleId}
         aria-describedby={
-          [description ? descriptionId : undefined, describedBy]
+          [renders(description) ? descriptionId : undefined, describedBy]
             .filter(Boolean)
             .join(" ") || undefined
         }
@@ -95,7 +96,7 @@ export const Drawer = ({
           <h2 className="hdrawer-title" id={titleId}>
             {label}
           </h2>
-          {description && (
+          {renders(description) && (
             <p className="hdrawer-description" id={descriptionId}>
               {description}
             </p>

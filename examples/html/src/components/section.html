@@ -1,0 +1,111 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    A part of a page, named by its title: a <code>&lt;section&gt;</code>
+    labelled by its <code>&lt;h2&gt;</code>, which makes it a region screen
+    readers can jump to. A line under its header, then its content, stacked
+    20px apart. It styles nothing inside, so a Settings list keeps its own
+    look.
+  </play-note>
+  <section class="hsection" aria-labelledby="notifications-title">
+    <header class="hsection-header">
+      <div class="hsection-text">
+        <h2 class="hsection-title" id="notifications-title">Notifications</h2>
+        <p class="hsection-description">What reaches your inbox and your phone.</p>
+      </div>
+    </header>
+    <div class="hsection-body">
+      <div class="hsettings">
+        <div class="hsetting">
+          <div class="hsetting-text">
+            <h3 class="hsetting-title" id="notify-new-title">New conversations</h3>
+            <p class="hsetting-description" id="notify-new-description">
+              An email when a customer starts a conversation.
+            </p>
+          </div>
+          <input
+            class="hswitch"
+            type="checkbox"
+            role="switch"
+            aria-labelledby="notify-new-title"
+            aria-describedby="notify-new-description"
+            checked
+          />
+        </div>
+        <div class="hsetting">
+          <div class="hsetting-text">
+            <h3 class="hsetting-title" id="notify-mentions-title">Mentions</h3>
+            <p class="hsetting-description" id="notify-mentions-description">
+              A push notification when a teammate mentions you.
+            </p>
+          </div>
+          <input
+            class="hswitch"
+            type="checkbox"
+            role="switch"
+            aria-labelledby="notify-mentions-title"
+            aria-describedby="notify-mentions-description"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</play-example>
+
+<play-example title="With actions" layout="wide">
+  <play-note>
+    Actions sit at the header's end, in <code>.hsection-actions</code>, each
+    Button in its own variant: here a secondary Preview and a primary Save.
+  </play-note>
+  <section class="hsection" aria-labelledby="widget-title">
+    <header class="hsection-header">
+      <div class="hsection-text">
+        <h2 class="hsection-title" id="widget-title">Chat widget</h2>
+        <p class="hsection-description">How the widget greets people on your site.</p>
+      </div>
+      <div class="hsection-actions">
+        <button class="hbutton" data-variant="secondary" type="button">
+          <span class="hbutton-label">Preview</span>
+        </button>
+        <button class="hbutton" type="button">
+          <span class="hbutton-label">Save changes</span>
+        </button>
+      </div>
+    </header>
+    <div class="hsection-body">
+      <div class="hfield">
+        <label class="hlabel" for="widget-greeting">Greeting</label>
+        <input class="hinput" id="widget-greeting" name="greeting" type="text" value="Hi! How can we help?" />
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="widget-button">Button text</label>
+        <input class="hinput" id="widget-button" name="button" type="text" value="Chat with us" />
+      </div>
+    </div>
+  </section>
+</play-example>
+
+<play-example title="In a narrow space" frame="22rem">
+  <play-note>
+    Where there isn't room beside the title and description, the actions wrap
+    under them.
+  </play-note>
+  <section class="hsection" aria-labelledby="members-title">
+    <header class="hsection-header">
+      <div class="hsection-text">
+        <h2 class="hsection-title" id="members-title">Team members</h2>
+        <p class="hsection-description">12 people can sign in to this workspace.</p>
+      </div>
+      <div class="hsection-actions">
+        <button class="hbutton" type="button">
+          <span class="hbutton-label">Invite people</span>
+        </button>
+      </div>
+    </header>
+    <div class="hsection-body">
+      <div class="hbanner">
+        <play-icon name="info" class="hbanner-icon"></play-icon>
+        <p class="hbanner-message">2 invitations haven't been accepted yet.</p>
+      </div>
+    </div>
+  </section>
+</play-example>

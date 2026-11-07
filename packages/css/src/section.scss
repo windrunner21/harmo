@@ -1,0 +1,91 @@
+@use "shortcuts" as *;
+
+// A part of a page, such as one group of settings: its title, an optional
+// description, and actions at its end, over a line, then its content,
+// stacked. It styles only its own parts, so what's inside keeps its own look.
+.hsection {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  font-family: $font-family;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The text takes the room, and the actions wrap under it once there isn't
+// enough beside it for both.
+.hsection-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+
+  padding-block-end: 12px;
+  border-block-end: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hsection-text {
+  flex: 1 1 16rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hsection-title {
+  margin: 0;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+}
+
+.hsection-description {
+  margin: 0;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+}
+
+.hsection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hsection-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}

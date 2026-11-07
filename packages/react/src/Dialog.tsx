@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "./Button.tsx";
+import { renders } from "./children.ts";
 import {
   closeIcon,
   ModalClose,
@@ -82,7 +83,7 @@ export const Dialog = ({
         closedby={closedby}
         aria-labelledby={labelledBy ?? titleId}
         aria-describedby={
-          [description ? descriptionId : undefined, describedBy]
+          [renders(description) ? descriptionId : undefined, describedBy]
             .filter(Boolean)
             .join(" ") || undefined
         }
@@ -91,7 +92,7 @@ export const Dialog = ({
           <h2 className="hdialog-title" id={titleId}>
             {label}
           </h2>
-          {description && (
+          {renders(description) && (
             <p className="hdialog-description" id={descriptionId}>
               {description}
             </p>

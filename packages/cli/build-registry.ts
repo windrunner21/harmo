@@ -40,6 +40,7 @@ const components: Record<string, string[]> = {
   popup: ["Popup.tsx"],
   provider: ["HarmoProvider.tsx"],
   radio: ["Radio.tsx", "RadioGroup.tsx"],
+  section: ["Section.tsx"],
   segmented: ["Segmented.tsx"],
   select: ["Select.tsx"],
   settings: ["Settings.tsx"],

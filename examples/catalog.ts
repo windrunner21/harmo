@@ -53,6 +53,12 @@ const groups: CatalogGroup[] = [
         purpose: "A frame around a group of content: tinted, raised, or ghost.",
       },
       {
+        slug: "section",
+        title: "Section",
+        purpose:
+          "A part of a page: its title, a description, and actions, over its content.",
+      },
+      {
         slug: "kbd",
         title: "Kbd",
         purpose: "A key or shortcut, such as Enter or ⌘K.",

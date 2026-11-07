@@ -8,6 +8,41 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Section: `<section class="hsection">`, or `<Section>`, a part of a page,
+  such as a group of settings: its title, an optional description, and
+  optional actions at its end, over a line, then its content, stacked. It
+  styles only its own parts, and names itself by its title, so screen readers
+  can jump to it.
+
+  ```html preview
+  <div>
+    <section class="hsection" aria-labelledby="widget-title">
+      <header class="hsection-header">
+        <div class="hsection-text">
+          <h2 class="hsection-title" id="widget-title">Chat widget</h2>
+          <p class="hsection-description">How the widget greets people on your site.</p>
+        </div>
+        <div class="hsection-actions">
+          <button class="hbutton" data-variant="secondary" type="button">
+            <span class="hbutton-label">Preview</span>
+          </button>
+          <button class="hbutton" type="button">
+            <span class="hbutton-label">Save changes</span>
+          </button>
+        </div>
+      </header>
+      <div class="hsection-body">
+        <div class="hfield">
+          <label class="hlabel" for="widget-greeting">Greeting</label>
+          <input class="hinput" id="widget-greeting" type="text" value="Hi! How can we help?" />
+        </div>
+      </div>
+    </section>
+  </div>
+  ```
+
 ## [0.3.0] - 2026-11-07
 
 Three overlays, Dialog, Drawer, and Toast, and destructive buttons, with

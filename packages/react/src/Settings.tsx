@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, type ComponentPropsWithRef, type ReactNode } from "react";
+import { renders } from "./children.ts";
 import { FieldContext } from "./field/Field.tsx";
 import { withClass } from "./withClass.ts";
 
@@ -35,7 +36,7 @@ export const Setting = ({
     <FieldContext
       value={{
         title: titleId,
-        "aria-describedby": description ? descriptionId : undefined,
+        "aria-describedby": renders(description) ? descriptionId : undefined,
       }}
     >
       <div {...props} className={withClass("hsetting", className)}>
@@ -43,7 +44,7 @@ export const Setting = ({
           <Label className="hsetting-title" id={titleId}>
             {label}
           </Label>
-          {description && (
+          {renders(description) && (
             <p className="hsetting-description" id={descriptionId}>
               {description}
             </p>

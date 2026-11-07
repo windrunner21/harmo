@@ -160,7 +160,7 @@ section lists its props.
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Tabs](docs/components/tabs.md) |
 | Data | [Filter chip](docs/components/filter-chip.md) |
 | Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
-| Display | [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md) |
+| Display | [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Section](docs/components/section.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md) |
 | Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand chevron](docs/components/expand-chevron.md) |
 
 Every page has the same sections: a Contract table, copyable markup, the
