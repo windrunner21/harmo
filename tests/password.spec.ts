@@ -1,7 +1,7 @@
 import { expect, type Locator } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
-// What docs/components/password.md says a script does, on the Password input
+// What docs/components/password.md says a script does, on the Password Input
 // page. The strength rule is the docs' example: under 10 characters is too
 // weak; upper case, lower case, digits, and symbols together are strong.
 onEachPlayground("password", () => {

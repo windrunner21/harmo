@@ -3,7 +3,7 @@
 A part of a page, such as one group of settings or one set of figures: its
 title, an optional description, and optional actions at its end, over a line,
 then its content, stacked. It styles only its own parts, so what's inside, such
-as a [Settings list](settings.md) or a form's fields, keeps its own look. For a
+as a [Settings List](settings.md) or a form's fields, keeps its own look. For a
 frame around content, use a [Card](card.md).
 
 ## Contract

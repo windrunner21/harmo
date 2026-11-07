@@ -1,4 +1,4 @@
-# Settings list
+# Settings List
 
 A list of settings on a settings screen: each row has a title and a
 description, with its control on the right or under the text. Inside a form,
@@ -34,7 +34,7 @@ use [Field](field.md) instead.
 
 A compact control, such as a Switch, Checkbox, or Button, sits on the right as
 the row's last child. A control that fills its container, such as an Input,
-Select, TextArea, or segmented control, goes inside `.hsetting-text` after the
+Select, TextArea, or Segmented Control, goes inside `.hsetting-text` after the
 description and spans the text:
 
 ```html
@@ -63,7 +63,7 @@ Use whichever heading level fits the page, or a `<p>`, for the title.
   text.
 - A disabled control that is a direct child of the row or of `.hsetting-text`
   turns the title and description `--harmo-color-text-tertiary`. One nested
-  deeper, such as a segmented control's radios, doesn't.
+  deeper, such as a Segmented Control's radios, doesn't.
 
 ## Accessibility
 

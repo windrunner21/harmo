@@ -2,7 +2,7 @@
 
 SVG icons placed next to text in buttons, links, and breadcrumbs. For an
 animated chevron, use [ChevronToArrow](chevron-to-arrow.md) or the
-[Expand chevron](expand-chevron.md).
+[Expand Chevron](expand-chevron.md).
 
 ## Contract
 
@@ -45,7 +45,7 @@ Any other icon, in the link or button it belongs to:
 
 | Hook | Effect |
 | --- | --- |
-| `.hicon` | Marks an icon for its container: buttons, links, and filter chips keep it from shrinking, and links switch to an icon layout |
+| `.hicon` | Marks an icon for its container: buttons, links, and Filter Chips keep it from shrinking, and links switch to an icon layout |
 | `.hchevron` | Pulls the static chevron in by `0.1875em` on both sides; leave it off any other glyph |
 | `data-direction="back"` on `.hchevron` | Points the static chevron toward the start of the line, as for a previous-month button; it points toward the end when left out |
 

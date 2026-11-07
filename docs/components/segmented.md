@@ -1,4 +1,4 @@
-# Segmented control
+# Segmented Control
 
 One choice from a few short options shown side by side, such as a message
 header type (No header / Text / Media / Location). For more options or longer

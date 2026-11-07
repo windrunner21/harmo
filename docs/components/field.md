@@ -40,7 +40,7 @@ next error. Clearing the text alone also hides it, at once.
 
 Without anything beside the label, the `.hlabel` can be a direct child; wrap it
 in `.hfield-label-row` only to place something next to it, such as the Optional
-marker or a [Password input](password.md)'s strength.
+marker or a [Password Input](password.md)'s strength.
 
 Horizontal, for checkboxes, radios, and switches:
 
@@ -135,9 +135,9 @@ is the Field's direct child; for one nested deeper, pass the same id as
 | `optional` | The Optional marker, in your wording, such as "Optional" |
 | `description` | The `.hdescription` under the label |
 | `error` | The `.herror`. Pass it to every field you validate, even while it's `undefined`, so the element is in place when the first error appears; a field without `error` has none. A message sets `aria-invalid` |
-| `labelAccessory` | Placed in the label row after the Optional marker, such as a [Password input](password.md)'s strength |
+| `labelAccessory` | Placed in the label row after the Optional marker, such as a [Password Input](password.md)'s strength |
 | `orientation` | `horizontal`, for a checkbox, radio, or switch: the control comes first, and only `label` and `description` apply |
-| `control` | `button`, for a control that's a button rather than a form field, such as a `<Button>`: the label is a `<span>` that names it through `aria-labelledby` |
+| `control` | `button`, for a control that's a button rather than a form field, such as a `<Button>`: the label is a `<span>` that names it through `aria-labelledby`. `combobox`, for a [Combobox](combobox.md): the label stays a `<label for>` and gets an `id` too, which names the field and its list |
 | `role` | `group` or `radiogroup` makes the Field the group, named by its label, for controls that each have their own; see [RadioGroup](radio.md#react) and [CheckboxGroup](checkbox.md#react) |
 
 ```tsx

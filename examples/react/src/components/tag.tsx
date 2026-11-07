@@ -1,4 +1,5 @@
-import { Tag } from "@harmo-ui/react";
+import { Tag, TagRemove } from "@harmo-ui/react";
+import { useState } from "react";
 
 export const examples = {
   Default: () => (
@@ -18,6 +19,28 @@ export const examples = {
   ),
 
   Accent: () => <Tag variant="accent">Unread</Tag>,
+
+  "With a remove button": () => {
+    const [tags, setTags] = useState(["Billing", "Onboarding", "Partner"]);
+    return tags.map((tag) => (
+      <Tag key={tag}>
+        {tag}
+        <TagRemove
+          aria-label={`Remove ${tag}`}
+          onClick={(event) => {
+            const own = event.currentTarget.closest(".htag");
+            if (document.activeElement === event.currentTarget) {
+              const next =
+                own?.nextElementSibling?.querySelector<HTMLElement>(".htag-remove") ??
+                own?.previousElementSibling?.querySelector<HTMLElement>(".htag-remove");
+              next?.focus();
+            }
+            setTags(tags.filter((other) => other !== tag));
+          }}
+        />
+      </Tag>
+    ));
+  },
 
   "Long text": () => (
     <>

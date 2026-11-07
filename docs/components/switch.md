@@ -1,7 +1,7 @@
 # Switch
 
 An on/off switch for a setting that applies at once. On settings screens, put
-it in a [Settings list](settings.md); in a form, pair it with a
+it in a [Settings List](settings.md); in a form, pair it with a
 label in a horizontal [Field](field.md). For a choice that applies on submit,
 use a [Checkbox](checkbox.md).
 
@@ -54,7 +54,7 @@ With a description, put the label and description in `.hfield-content`, as
 ## Accessibility
 
 A native checkbox with `role="switch"`: screen readers announce "switch, on" or
-"off", and Space toggles it. Its `<label>` names it, or in a Settings list the
+"off", and Space toggles it. Its `<label>` names it, or in a Settings List the
 setting's title through `aria-labelledby`.
 
 ## What a script does

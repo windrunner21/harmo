@@ -33,6 +33,34 @@
   <span class="htag" data-variant="accent">Unread</span>
 </play-example>
 
+<play-example title="With a remove button">
+  <play-note>
+    A <code>.htag-remove</code> button after the text takes the tag away,
+    such as a filter or a choice in a Combobox.
+    Name it in your app's language, such as Remove Billing. Your app removes
+    the tag, and moves focus to the next tag's button, so the keyboard keeps
+    its place.
+  </play-note>
+  <span class="htag">
+    Billing
+    <button class="htag-remove" type="button" aria-label="Remove Billing" data-example-remove>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </span>
+  <span class="htag">
+    Onboarding
+    <button class="htag-remove" type="button" aria-label="Remove Onboarding" data-example-remove>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </span>
+  <span class="htag">
+    Partner
+    <button class="htag-remove" type="button" aria-label="Remove Partner" data-example-remove>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </span>
+</play-example>
+
 <play-example title="Long text" frame="10rem">
   <play-note>
     In a narrow container, drawn dashed here, a tag wraps its text, breaking

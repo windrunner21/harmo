@@ -50,15 +50,8 @@ export const Popup = ({
         onBeforeToggle={(event) => {
           onBeforeToggle?.(event);
           if (event.defaultPrevented) return;
-          const opening = event.newState === "open";
-          const popup = event.currentTarget;
-          setOpen(opening);
-          if (opening) {
-            unpin(popup);
-            popup.toggleAttribute("data-refit");
-          }
-          placeSide(popup, opening);
-          if (!opening) pin(popup);
+          setOpen(event.newState === "open");
+          placePopup(event.currentTarget, event.newState === "open");
         }}
       >
         {children}
@@ -67,12 +60,32 @@ export const Popup = ({
   );
 };
 
-export const popupTrigger = (popup: HTMLElement) =>
-  Array.from(
+// What opens the popup, outside it: its popovertarget button, or else the
+// element it's anchored to, such as a Combobox's field.
+export const popupTrigger = (popup: HTMLElement) => {
+  const invoker = Array.from(
     popup.ownerDocument.querySelectorAll<HTMLElement>(
       `[popovertarget="${CSS.escape(popup.id)}"]`,
     ),
   ).find((element) => !popup.contains(element));
+  if (invoker) return invoker;
+  const anchor = popup.style.getPropertyValue("position-anchor").trim();
+  if (!anchor) return undefined;
+  return Array.from(
+    popup.ownerDocument.querySelectorAll<HTMLElement>('[style*="anchor-name"]'),
+  ).find((element) => element.style.getPropertyValue("anchor-name").trim() === anchor);
+};
+
+// As a popup opens: where it lands, measured afresh; as it closes: pinned
+// where it is, so it fades there.
+export const placePopup = (popup: HTMLElement, opening: boolean) => {
+  if (opening) {
+    unpin(popup);
+    popup.toggleAttribute("data-refit");
+  }
+  placeSide(popup, opening);
+  if (!opening) pin(popup);
+};
 
 const placeSide = (popup: HTMLElement, opening: boolean) => {
   const trigger = popupTrigger(popup);

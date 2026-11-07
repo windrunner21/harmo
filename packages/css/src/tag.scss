@@ -34,6 +34,10 @@
     color: $color-primary;
     border-color: $color-primary;
   }
+
+  &:has(> .htag-remove) {
+    padding-inline-end: 2px;
+  }
 }
 
 .htag-dot {
@@ -44,4 +48,67 @@
 
   background-color: var(--htag-color, #{$color-border});
   border-radius: 50%;
+}
+
+// A button after the text that removes the tag, such as a choice in a
+// Combobox: a 16px button with a 12px cross, 2px from the text, and a target
+// grown to 24px, the size WCAG 2.5.8 asks of a pointer target.
+.htag-remove {
+  position: relative;
+
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin: 0;
+  margin-inline-start: -4px;
+  padding: 0;
+
+  color: $icon-color;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+
+  transition: color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &::before {
+    content: "";
+
+    position: absolute;
+    inset: -4px;
+  }
+
+  & > svg {
+    flex-shrink: 0;
+
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:enabled:hover {
+      color: $icon-hover-color;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+
+  &:disabled {
+    color: $color-text-tertiary;
+
+    cursor: not-allowed;
+  }
 }

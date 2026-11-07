@@ -13,6 +13,7 @@ import {
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { flushSync } from "react-dom";
 import { search as searchPaths } from "../icons.ts";
@@ -58,6 +59,23 @@ export const SelectContext = createContext<{ named: boolean } | undefined>(
   undefined,
 );
 
+// A Combobox around the list: its field takes the list's keys and names the
+// active option, and its text filters the options. In pick mode, the first
+// match is highlighted as you type; every pick is reported, even of the
+// option already chosen, so the field can show it again.
+export interface ComboboxState {
+  input: RefObject<HTMLInputElement | null>;
+  query: string;
+  autoHighlight: boolean;
+  onChoose: (value: string) => void;
+  // Whether the list has anything to show: an option, or a message.
+  canOpen: () => boolean;
+}
+
+export const ComboboxContext = createContext<ComboboxState | undefined>(
+  undefined,
+);
+
 export const useListbox = () => {
   const listbox = useContext(ListboxContext);
   if (!listbox) throw new Error("Options belong inside a Listbox.");
@@ -77,6 +95,7 @@ export const Listbox = ({
   className,
   children,
   onKeyDown,
+  onPointerMove,
   onPointerLeave,
   ...props
 }: ListboxProps) => {
@@ -87,6 +106,13 @@ export const Listbox = ({
   const searchable = searchLabel !== undefined;
   const listId = id ?? (searchable ? generatedId : undefined);
   const select = useContext(SelectContext);
+  const combobox = useContext(ComboboxContext);
+  // The Combobox as it is now, for listeners set up once.
+  const comboboxNow = useRef(combobox);
+  comboboxNow.current = combobox;
+  // Typing goes to a text field, the search row's or the Combobox's, so
+  // letters don't jump through the list and Home and End move the caret.
+  const typing = searchable || combobox !== undefined;
 
   const [uncontrolled, setUncontrolled] = useState(() => toList(defaultValue));
   const selected = value === undefined ? uncontrolled : toList(value);
@@ -99,7 +125,7 @@ export const Listbox = ({
   const [query, setQuery] = useState("");
   const [empty, setEmpty] = useState(false);
   const [triggerOwned, setTriggerOwned] = useState(
-    select !== undefined && !searchable,
+    select !== undefined && !typing,
   );
 
   const trigger = useRef<HTMLElement | null>(null);
@@ -108,6 +134,10 @@ export const Listbox = ({
   const typed = useRef("");
   const typedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const keyDown = useRef<(event: KeyboardEvent) => void>(() => {});
+  // The pointer has moved in the list: only then does leaving it clear the
+  // highlight. A list that opens or shifts under a pointer at rest isn't
+  // being pointed at, so the keyboard's highlight stays.
+  const pointing = useRef(false);
 
   const popupOf = () => list.current?.closest<HTMLElement>(".hpopup") ?? null;
 
@@ -125,6 +155,7 @@ export const Listbox = ({
 
   const choose = (item: string) => {
     if (!multiple) popupOf()?.hidePopover();
+    combobox?.onChoose(item);
     if (!multiple && selected[0] === item) return;
     const next = !multiple
       ? [item]
@@ -162,7 +193,7 @@ export const Listbox = ({
     const popup = popupOf();
     const open = popup?.matches(":popover-open") ?? true;
     const typeahead =
-      !searchable &&
+      !typing &&
       event.key.length === 1 &&
       !event.altKey &&
       !event.ctrlKey &&
@@ -190,16 +221,16 @@ export const Listbox = ({
             index < 0 ? options.at(-1) : options[Math.max(index - 1, 0)];
           break;
         case "Home":
-          if (searchable) return;
+          if (typing) return;
           next = options[0];
           break;
         case "End":
-          if (searchable) return;
+          if (typing) return;
           next = options.at(-1);
           break;
         case "Enter":
         case " ":
-          if (event.key === " " && searchable) return;
+          if (event.key === " " && typing) return;
           if (!open) return;
           if (!active.current) {
             if (searchable) event.preventDefault();
@@ -210,7 +241,7 @@ export const Listbox = ({
           document.getElementById(active.current)?.click();
           return;
         case "Tab":
-          if (open && triggerOwned) popup?.hidePopover();
+          if (open && (triggerOwned || combobox)) popup?.hidePopover();
           return;
         default:
           return;
@@ -219,6 +250,19 @@ export const Listbox = ({
     }
 
     if (!open) {
+      // A Combobox's field opens on Down, at the chosen option or the first,
+      // and on Up, at the last, as in the WAI-ARIA editable combobox.
+      if (combobox) {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        const chosen = options.find(
+          (option) => option.getAttribute("aria-selected") === "true",
+        );
+        if (!combobox.canOpen()) return;
+        opening.current =
+          (event.key === "ArrowUp" ? options.at(-1) : (chosen ?? options[0])) ?? null;
+        popup?.showPopover();
+        return;
+      }
       if (!triggerOwned) return;
       const keyed: Record<string, HTMLElement | undefined> = {
         ArrowUp: options[0],
@@ -240,8 +284,12 @@ export const Listbox = ({
     const popup = popupOf();
     if (!popup) return;
     const opener = popupTrigger(popup);
-    const owned = !searchable && opener?.getAttribute("role") === "combobox";
-    trigger.current = owned ? (opener ?? null) : null;
+    const owned = !typing && opener?.getAttribute("role") === "combobox";
+    trigger.current = combobox
+      ? combobox.input.current
+      : owned
+        ? (opener ?? null)
+        : null;
     setTriggerOwned(owned);
 
     const keydown = (event: KeyboardEvent) => keyDown.current(event);
@@ -266,13 +314,17 @@ export const Listbox = ({
       const chosen = list.current?.querySelector<HTMLElement>(
         '.hoption[aria-selected="true"]:not([aria-disabled="true"], [hidden])',
       );
-      setActive((opening.current ?? chosen ?? enabled()[0])?.id ?? null);
+      // Free text highlights nothing until a key asks, so Enter keeps what
+      // was typed.
+      const now = comboboxNow.current;
+      const initial = now && !now.autoHighlight ? null : (chosen ?? enabled()[0]);
+      setActive((opening.current ?? initial)?.id ?? null);
       opening.current = null;
     };
 
     const toggle = (event: Event) => {
       if ((event as ToggleEvent).newState !== "open") return;
-      if (!owned) (search.current ?? list.current)?.focus();
+      if (!owned && !combobox) (search.current ?? list.current)?.focus();
       if (active.current) {
         document.getElementById(active.current)?.scrollIntoView({ block: "nearest" });
       }
@@ -302,7 +354,7 @@ export const Listbox = ({
       removeEventListener("resize", resize);
       cancelAnimationFrame(frame);
     };
-  }, [searchable]);
+  }, [searchable, combobox === undefined]);
 
   useEffect(() => {
     if (!trigger.current) return;
@@ -310,27 +362,50 @@ export const Listbox = ({
     else trigger.current.removeAttribute("aria-activedescendant");
   }, [activeId, triggerOwned]);
 
+  // The options showing, to notice when they change, such as results that
+  // arrive after the text was typed.
+  const shownBefore = useRef("");
+
   useLayoutEffect(() => {
     setEmpty(!list.current?.querySelector(".hoption:not([hidden])"));
-    if (active.current && !enabled().some((option) => option.id === active.current)) {
-      const open = popupOf()?.matches(":popover-open");
-      setActive(open ? (enabled()[0]?.id ?? null) : null);
+    const open = popupOf()?.matches(":popover-open");
+    const options = enabled();
+    const shown = options.map((option) => option.id).join(" ");
+    const changed = shown !== shownBefore.current;
+    shownBefore.current = shown;
+    if (active.current && !options.some((option) => option.id === active.current)) {
+      setActive(open ? (options[0]?.id ?? null) : null);
+    } else if (!active.current && open && changed && combobox?.autoHighlight) {
+      highlight(options[0]);
     }
   });
 
+  const listQuery = combobox ? combobox.query : query;
+
+  // A new query highlights the first match. A Combobox's emptied one, such
+  // as after a pick of one of several, keeps the highlighted option where it
+  // still shows, rather than move it to the first.
   useLayoutEffect(() => {
     if (!list.current?.closest(".hpopup:popover-open")) return;
-    highlight(enabled()[0]);
+    const options = enabled();
+    const autoHighlight = !combobox || combobox.autoHighlight;
+    const kept =
+      combobox !== undefined &&
+      listQuery === "" &&
+      autoHighlight &&
+      options.some((option) => option.id === active.current);
+    if (kept) highlight(document.getElementById(active.current as string));
+    else highlight(autoHighlight ? options[0] : null);
     requestAnimationFrame(() => updateTitles(list.current));
-  }, [query]);
+  }, [listQuery]);
 
-  const listOwned = !searchable && !triggerOwned;
+  const listOwned = !typing && !triggerOwned;
 
   return (
     <ListboxContext
       value={{
         multiple,
-        query,
+        query: listQuery,
         activeId,
         isSelected: (item) => selected.includes(item),
         highlight: setActive,
@@ -369,16 +444,24 @@ export const Listbox = ({
           if (listOwned) handleKeyDown(event.nativeEvent);
           onKeyDown?.(event);
         }}
+        onPointerMove={(event) => {
+          pointing.current = true;
+          onPointerMove?.(event);
+        }}
         onPointerLeave={(event) => {
-          setActive(null);
+          if (pointing.current) setActive(null);
+          pointing.current = false;
           onPointerLeave?.(event);
         }}
       >
         {children}
       </ul>
-      {empty && emptyMessage !== undefined && (
-        <p className="hlistbox-empty" hidden={props.hidden}>
-          {emptyMessage}
+      {emptyMessage !== undefined && (
+        // In the page from the start, as a status, so a screen reader reads
+        // the message as it appears: a live region added with its text isn't
+        // always read.
+        <p className="hlistbox-empty" role="status" hidden={props.hidden}>
+          {empty ? emptyMessage : null}
         </p>
       )}
       {footer && (
@@ -404,15 +487,31 @@ export const textOf = (node: ReactNode): string => {
 
 export const optionsOf = (
   node: ReactNode,
-): { value: string; label: string }[] =>
+): { value: string; label: string; disabled: boolean; hidden: boolean }[] =>
   Children.toArray(node).flatMap((child) => {
-    if (!isValidElement<{ value?: unknown; children?: ReactNode }>(child)) {
+    if (
+      !isValidElement<{
+        value?: unknown;
+        disabled?: boolean;
+        hidden?: boolean;
+        children?: ReactNode;
+      }>(child)
+    ) {
       return [];
     }
-    const { value, children } = child.props;
+    const { value, disabled, hidden, children } = child.props;
     return typeof value === "string"
-      ? [{ value, label: textOf(children) }]
-      : optionsOf(children);
+      ? [
+          {
+            value,
+            label: textOf(children),
+            disabled: Boolean(disabled),
+            hidden: Boolean(hidden),
+          },
+        ]
+      : optionsOf(children).map((option) =>
+          hidden ? { ...option, hidden: true } : option,
+        );
   });
 
 export const matches = (query: string, label: ReactNode) =>

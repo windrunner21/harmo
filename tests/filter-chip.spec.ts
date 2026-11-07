@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { clickAt, example, onEachPlayground, openPopup, test } from "./playgrounds.ts";
 
-// What docs/components/filter-chip.md says a script does, on the Filter chip
+// What docs/components/filter-chip.md says a script does, on the Filter Chip
 // page.
 onEachPlayground("filter-chip", () => {
   test("a multi-select chip shows two values, then a count, and stays open", async ({ page }) => {

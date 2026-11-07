@@ -2,7 +2,7 @@
 
 Text-like native inputs: `text`, `email`, `search`, `tel`, `url`, and similar.
 Labels and messages belong to [Field](field.md). For several lines, use
-[TextArea](textarea.md); for passwords, [Password input](password.md).
+[TextArea](textarea.md); for passwords, [Password Input](password.md).
 
 ## Contract
 

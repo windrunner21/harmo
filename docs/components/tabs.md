@@ -3,7 +3,7 @@
 Switches between sibling pages, such as the sections of Analytics or Settings,
 or between panels on one page. A hover pill and an underline slide between
 tabs. For one choice among a few options in a form, use a
-[segmented control](segmented.md).
+[Segmented Control](segmented.md).
 
 ## Contract
 

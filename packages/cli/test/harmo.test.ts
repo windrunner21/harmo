@@ -142,10 +142,18 @@ describe("add", () => {
         for (const [, used] of text.matchAll(
           /["'`\s](h[a-z][a-z0-9-]*)(?=["'`\s])/g,
         )) {
-          if (harmoClasses.has(used as string))
+          if (!harmoClasses.has(used as string)) continue;
+          // A class with a stylesheet of its own, such as .hinput and
+          // input.css, needs that stylesheet: another one that only places
+          // it, as combobox.css places .hinput, isn't its look.
+          const own = (used as string).slice(1);
+          if (existsSync(join(cssFolder, `${own}.css`))) {
+            expect(files, `${file} uses .${used}`).toContain(`${own}/${own}.css`);
+          } else {
             expect(styled.has(used as string), `${file} uses .${used}`).toBe(
               true,
             );
+          }
         }
       }
     });
@@ -354,7 +362,7 @@ describe("add", () => {
   test("uses an absolute --path as it is", () => {
     const outside = mkdtempSync(join(output, "outside-"));
     const { out } = run("add", "tag", "--path", outside);
-    expect(out).toContain(`Created 6 files in ${outside}`);
+    expect(out).toContain(`Created 7 files in ${outside}`);
     expect(existsSync(join(outside, "tag/Tag.tsx"))).toBe(true);
     expect(copied(".").filter((file) => file !== "package.json")).toEqual([]);
     rmSync(outside, { recursive: true, force: true });
@@ -362,7 +370,7 @@ describe("add", () => {
 
   test("--dry-run says what would change, and changes nothing", () => {
     const { out } = run("add", "tag", "--dry-run");
-    expect(out).toContain(`Would create 6 files in ${harmo}`);
+    expect(out).toContain(`Would create 7 files in ${harmo}`);
     expect(existsSync(join(project, harmo))).toBe(false);
   });
 

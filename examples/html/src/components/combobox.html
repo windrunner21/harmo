@@ -1,0 +1,327 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Type to filter the list, in the field itself: the first match is
+    highlighted, so <kbd class="hkbd">Enter</kbd> picks it, and the arrow keys
+    move through the rest. The field shows the pick, and a form sends its
+    value. Leaving the field with text that names no one puts the pick back;
+    an empty field clears it. An agent who's away can't be picked.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="assignee" id="assignee-label">Assign to</label>
+    <div class="hcombobox" style="anchor-name: --assignee">
+      <input
+        class="hinput"
+        id="assignee"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="assignee-listbox"
+        aria-labelledby="assignee-label"
+        placeholder="Search agents"
+        value=""
+        data-example-empty="No agents found"
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <div class="hpopup" id="assignee-popup" popover="manual" style="position-anchor: --assignee">
+      <ul class="hlistbox" id="assignee-listbox" role="listbox" aria-labelledby="assignee-label">
+        <li class="hoption-group" role="presentation">
+          <span class="hoption-group-label" id="assignee-support">Support</span>
+          <ul role="group" aria-labelledby="assignee-support">
+          <li class="hoption" id="assignee-sam" role="option" data-value="sam" aria-selected="false">
+            <span class="hoption-label">Sam Rivera</span>
+          </li>
+          <li class="hoption" id="assignee-ana" role="option" data-value="ana" aria-selected="false">
+            <span class="hoption-label">Ana Lopez</span>
+          </li>
+          </ul>
+        </li>
+        <li class="hoption-group" role="presentation">
+          <span class="hoption-group-label" id="assignee-sales">Sales</span>
+          <ul role="group" aria-labelledby="assignee-sales">
+          <li class="hoption" id="assignee-lee" role="option" data-value="lee" aria-selected="false">
+            <span class="hoption-label">Lee Chen</span>
+          </li>
+          <li class="hoption" id="assignee-priya" role="option" data-value="priya" aria-selected="false" aria-disabled="true">
+            <span class="hoption-label">Priya Shah</span> <span class="hoption-badge">Away</span>
+          </li>
+          </ul>
+        </li>
+      </ul>
+      <p class="hlistbox-empty" role="status"></p>
+    </div>
+    <input type="hidden" name="assignee" value="" />
+  </div>
+</play-example>
+
+<play-example title="Free text" layout="stack">
+  <play-note>
+    With <code>data-free-text</code>, what's typed is the value, and the list
+    suggests: a pick fills the field in, and nothing is highlighted until
+    <kbd class="hkbd">↓</kbd>, so <kbd class="hkbd">Enter</kbd> keeps what was
+    typed. The field itself has the name a form sends. With nothing to
+    suggest, the list closes.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="copy-to" id="copy-to-label">Send a copy to</label>
+    <div class="hcombobox" style="anchor-name: --copy-to">
+      <input
+        class="hinput"
+        id="copy-to"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="copy-to-listbox"
+        aria-labelledby="copy-to-label"
+        data-free-text
+        name="copy-to"
+        placeholder="Email address"
+        value=""
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <div class="hpopup" id="copy-to-popup" popover="manual" style="position-anchor: --copy-to">
+      <ul class="hlistbox" id="copy-to-listbox" role="listbox" aria-labelledby="copy-to-label">
+        <li class="hoption" id="copy-to-sam" role="option" aria-selected="false">
+          <span class="hoption-label">sam@example.com</span> <span class="hoption-badge">Sam Rivera</span>
+        </li>
+        <li class="hoption" id="copy-to-ana" role="option" aria-selected="false">
+          <span class="hoption-label">ana@example.com</span> <span class="hoption-badge">Ana Lopez</span>
+        </li>
+        <li class="hoption" id="copy-to-billing" role="option" aria-selected="false">
+          <span class="hoption-label">billing@example.com</span> <span class="hoption-badge">Billing team</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Several" layout="stack">
+  <play-note>
+    With <code>data-multiple</code> on <code>.hcombobox</code>, each choice is
+    a Tag, with a remove button, in a Tag List before the text, and the list
+    stays open while you choose: a pick adds an option, or takes it away, and
+    the text empties for the next one. <kbd class="hkbd">Backspace</kbd> in an
+    empty field takes the last choice away, and <kbd class="hkbd">←</kbd>
+    moves to the remove buttons. A form sends each choice. Required, the
+    field is valid while there's a choice, so its input is
+    <code>required</code> only while there's none, and
+    <code>aria-required</code> says so throughout.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="notify" id="notify-label">Notify</label>
+    <div class="hcombobox" data-multiple style="anchor-name: --notify">
+      <ul class="htag-list" data-example-more-label="{count} more">
+        <li>
+          <span class="htag">
+            Ana Lopez
+            <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove Ana Lopez">
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+          </span>
+        </li>
+        <li class="htag-list-more" hidden>
+          <span class="htooltip-trigger">
+            <button class="htag-list-count" type="button" tabindex="-1" aria-describedby="notify-more"></button>
+            <span class="htooltip" data-variant="hint" role="tooltip" id="notify-more">
+              <span class="htag-list-rest"></span>
+            </span>
+          </span>
+        </li>
+      </ul>
+      <input
+        class="hinput"
+        id="notify"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="notify-listbox"
+        aria-labelledby="notify-label"
+        aria-required="true"
+        placeholder="Search agents"
+        value=""
+        data-example-empty="No agents found"
+        data-example-remove-label="Remove {label}"
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <div class="hpopup" id="notify-popup" popover="manual" style="position-anchor: --notify">
+      <ul class="hlistbox" id="notify-listbox" role="listbox" aria-labelledby="notify-label" aria-multiselectable="true">
+        <li class="hoption-group" role="presentation">
+          <span class="hoption-group-label" id="notify-support">Support</span>
+          <ul role="group" aria-labelledby="notify-support">
+          <li class="hoption" id="notify-sam" role="option" data-value="sam" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Sam Rivera</span>
+          </li>
+          <li class="hoption" id="notify-ana" role="option" data-value="ana" aria-selected="true">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Ana Lopez</span>
+          </li>
+          </ul>
+        </li>
+        <li class="hoption-group" role="presentation">
+          <span class="hoption-group-label" id="notify-sales">Sales</span>
+          <ul role="group" aria-labelledby="notify-sales">
+          <li class="hoption" id="notify-lee" role="option" data-value="lee" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Lee Chen</span>
+          </li>
+          <li class="hoption" id="notify-priya" role="option" data-value="priya" aria-selected="false" aria-disabled="true">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Priya Shah</span> <span class="hoption-badge">Away</span>
+          </li>
+          </ul>
+        </li>
+      </ul>
+      <p class="hlistbox-empty" role="status"></p>
+    </div>
+    <input type="hidden" name="notify" value="ana" />
+  </div>
+</play-example>
+
+<play-example title="Several, with free text" layout="stack">
+  <play-note>
+    With <code>data-free-text</code> too, what's typed becomes a choice of
+    its own, such as an address that isn't in the list: on
+    <kbd class="hkbd">Enter</kbd>, on a comma, or on leaving the field, and
+    pasting several addresses with commas between them adds each. The list
+    suggests people by name, and a pick adds its option's value: the tag
+    shows the name, and a form sends the address. The field
+    stays one row: at rest, the tags that fit, then <code>+N</code>, which
+    shows the rest on hover; while you're in it, every tag, in a row that
+    scrolls sideways.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="send-to" id="send-to-label">Send to</label>
+    <div class="hcombobox" data-multiple style="anchor-name: --send-to">
+      <ul class="htag-list" data-example-more-label="{count} more">
+        <li>
+          <span class="htag">
+            Ana Lopez
+            <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove Ana Lopez">
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+          </span>
+        </li>
+        <li>
+          <span class="htag">
+            Sam Rivera
+            <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove Sam Rivera">
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+          </span>
+        </li>
+        <li>
+          <span class="htag">
+            lee@partner.org
+            <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove lee@partner.org">
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+          </span>
+        </li>
+        <li>
+          <span class="htag">
+            kim@partner.org
+            <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove kim@partner.org">
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+          </span>
+        </li>
+        <li class="htag-list-more" hidden>
+          <span class="htooltip-trigger">
+            <button class="htag-list-count" type="button" tabindex="-1" aria-describedby="send-to-more"></button>
+            <span class="htooltip" data-variant="hint" role="tooltip" id="send-to-more">
+              <span class="htag-list-rest"></span>
+            </span>
+          </span>
+        </li>
+      </ul>
+      <input
+        class="hinput"
+        id="send-to"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="send-to-listbox"
+        aria-labelledby="send-to-label"
+        data-free-text
+        placeholder="Email addresses"
+        value=""
+        data-example-remove-label="Remove {label}"
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <div class="hpopup" id="send-to-popup" popover="manual" style="position-anchor: --send-to">
+      <ul class="hlistbox" id="send-to-listbox" role="listbox" aria-labelledby="send-to-label" aria-multiselectable="true">
+        <li class="hoption" id="send-to-sam" role="option" data-value="sam@example.com" aria-selected="true">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Sam Rivera</span>
+        </li>
+        <li class="hoption" id="send-to-ana" role="option" data-value="ana@example.com" aria-selected="true">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Ana Lopez</span>
+        </li>
+        <li class="hoption" id="send-to-billing" role="option" data-value="billing@example.com" aria-selected="false">
+          <span class="hoption-checkbox" aria-hidden="true"></span>
+          <span class="hoption-label">Billing team</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="send-to" value="ana@example.com" />
+    <input type="hidden" name="send-to" value="sam@example.com" />
+    <input type="hidden" name="send-to" value="lee@partner.org" />
+    <input type="hidden" name="send-to" value="kim@partner.org" />
+  </div>
+</play-example>
+
+<play-example title="Picked by the app" layout="stack">
+  <play-note>
+    The app can pick too, such as Assign to me: the field shows its pick at
+    once, unless it's being typed in, and leaving the field keeps it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="owner" id="owner-label">Owner</label>
+    <div class="hcombobox" style="anchor-name: --owner">
+      <input
+        class="hinput"
+        id="owner"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="owner-listbox"
+        aria-labelledby="owner-label"
+        placeholder="Search agents"
+        value=""
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <div class="hpopup" id="owner-popup" popover="manual" style="position-anchor: --owner">
+      <ul class="hlistbox" id="owner-listbox" role="listbox" aria-labelledby="owner-label">
+        <li class="hoption" id="owner-sam" role="option" data-value="sam" aria-selected="false">
+          <span class="hoption-label">Sam Rivera</span>
+        </li>
+        <li class="hoption" id="owner-ana" role="option" data-value="ana" aria-selected="false">
+          <span class="hoption-label">Ana Lopez</span>
+        </li>
+        <li class="hoption" id="owner-lee" role="option" data-value="lee" aria-selected="false">
+          <span class="hoption-label">Lee Chen</span>
+        </li>
+      </ul>
+    </div>
+    <input type="hidden" name="owner" value="" />
+  </div>
+  <button class="hbutton" data-variant="secondary" type="button" data-example-pick="owner" data-example-pick-value="sam">
+    <span class="hbutton-label">Assign to me</span>
+  </button>
+</play-example>

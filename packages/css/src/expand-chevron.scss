@@ -38,7 +38,9 @@
     transform: rotate(-40deg);
   }
 
-  [aria-expanded="true"] > & {
+  // Inside the control that opens, or after it, as beside a Combobox's field.
+  [aria-expanded="true"] > &,
+  [aria-expanded="true"] ~ & {
     .hexpand-chevron-head {
       transform: translateY(-1.57px);
     }

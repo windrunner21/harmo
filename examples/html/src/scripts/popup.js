@@ -1,12 +1,20 @@
 // Example only: keep each trigger's aria-expanded in sync with its popup,
 // make each opening find its position afresh, record which side of the
 // trigger the popup is on, so it slides away from the trigger, and keep a
-// closing popup where it is. The React Popup does all of this itself.
+// closing popup where it is. The React Popup does all of this itself. A
+// popup with no popovertarget button, such as a Combobox's, is placed by the
+// element it's anchored to, whose own script keeps its aria-expanded.
 {
   for (const popup of document.querySelectorAll(".hpopup[popover]")) {
-    const trigger = [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find(
+    const invoker = [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find(
       (element) => !popup.contains(element),
     );
+    const anchor = popup.style.getPropertyValue("position-anchor").trim();
+    const trigger =
+      invoker ??
+      [...document.querySelectorAll('[style*="anchor-name"]')].find(
+        (element) => anchor && element.style.getPropertyValue("anchor-name").trim() === anchor,
+      );
     if (!trigger) continue;
 
     // Where an opening popup will land, from the room around its trigger, as
@@ -44,8 +52,9 @@
     };
 
     popup.addEventListener("beforetoggle", (event) => {
+      if (event.defaultPrevented) return;
       const opening = event.newState === "open";
-      trigger.setAttribute("aria-expanded", String(opening));
+      if (invoker) trigger.setAttribute("aria-expanded", String(opening));
       // A change to its fallbacks makes the browser forget where it last fit;
       // it comes first, so the popup is measured afresh.
       if (opening) {

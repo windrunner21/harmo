@@ -7,6 +7,7 @@ export { Checkbox, type CheckboxProps } from "./Checkbox.tsx";
 export { CheckboxGroup, type CheckboxGroupProps } from "./CheckboxGroup.tsx";
 export { Chevron, type ChevronProps } from "./Chevron.tsx";
 export { ChevronToArrow, type ChevronToArrowProps } from "./ChevronToArrow.tsx";
+export { Combobox, type ComboboxProps } from "./Combobox.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
@@ -62,7 +63,8 @@ export {
   type TabLinkProps,
   type TabNavProps,
 } from "./tabs/TabNav.tsx";
-export { Tag, type TagProps } from "./Tag.tsx";
+export { Tag, TagRemove, type TagProps, type TagRemoveProps } from "./Tag.tsx";
+export { TagList, type TagListProps } from "./TagList.tsx";
 export { TextArea, type TextAreaProps } from "./TextArea.tsx";
 export {
   toast,

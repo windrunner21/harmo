@@ -9,6 +9,7 @@ import { examples as button } from "./components/button.tsx";
 import { examples as card } from "./components/card.tsx";
 import { examples as checkbox } from "./components/checkbox.tsx";
 import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
+import { examples as combobox } from "./components/combobox.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
 import { examples as expandChevron } from "./components/expand-chevron.tsx";
@@ -33,6 +34,7 @@ import { examples as status } from "./components/status.tsx";
 import { examples as switchExamples } from "./components/switch.tsx";
 import { examples as tabs } from "./components/tabs.tsx";
 import { examples as tag } from "./components/tag.tsx";
+import { examples as tagList } from "./components/tag-list.tsx";
 import { examples as textarea } from "./components/textarea.tsx";
 import { examples as toast } from "./components/toast.tsx";
 import { examples as tooltip } from "./components/tooltip.tsx";
@@ -45,6 +47,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   card,
   checkbox,
   "chevron-to-arrow": chevronToArrow,
+  combobox,
   dialog,
   drawer,
   "expand-chevron": expandChevron,
@@ -69,6 +72,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   switch: switchExamples,
   tabs,
   tag,
+  "tag-list": tagList,
   textarea,
   toast,
   tooltip,

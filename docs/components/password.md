@@ -1,4 +1,4 @@
-# Password input
+# Password Input
 
 A password field with a show/hide toggle and, for new passwords, a strength
 word, [Meter](meter.md), and hint. For other text, use an [Input](input.md).

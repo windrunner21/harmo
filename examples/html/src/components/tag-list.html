@@ -1,0 +1,50 @@
+<play-example title="Default" frame="18rem">
+  <play-note>
+    Tags in one row that never wraps, such as a ticket's tags in a table: as
+    many as fit its width, then <code>+N</code> for the rest, which shows them
+    on hover and keyboard focus. Name <code>+N</code> in your app's language,
+    such as 2 more. It counts again as the width changes.
+  </play-note>
+  <ul class="htag-list" data-example-more-label="{count} more">
+    <li>
+      <span class="htag" style="--htag-color: var(--harmo-amber)">
+        <span class="htag-dot" aria-hidden="true"></span>Billing
+      </span>
+    </li>
+    <li>
+      <span class="htag" style="--htag-color: var(--harmo-cyan)">
+        <span class="htag-dot" aria-hidden="true"></span>Onboarding
+      </span>
+    </li>
+    <li><span class="htag">Refund</span></li>
+    <li><span class="htag">Partner</span></li>
+    <li><span class="htag">Urgent</span></li>
+    <li class="htag-list-more" hidden>
+      <span class="htooltip-trigger">
+        <button class="htag-list-count" type="button" aria-describedby="ticket-tags-more"></button>
+        <span class="htooltip" data-variant="hint" role="tooltip" id="ticket-tags-more">
+          <span class="htag-list-rest"></span>
+        </span>
+      </span>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Narrow" frame="9rem">
+  <play-note>
+    Where even the first tag doesn't fit beside <code>+N</code>, only
+    <code>+N</code> shows.
+  </play-note>
+  <ul class="htag-list" data-example-more-label="{count} more">
+    <li><span class="htag">campaign-reports@example.com</span></li>
+    <li><span class="htag">sam@example.com</span></li>
+    <li class="htag-list-more" hidden>
+      <span class="htooltip-trigger">
+        <button class="htag-list-count" type="button" aria-describedby="recipients-more"></button>
+        <span class="htooltip" data-variant="hint" role="tooltip" id="recipients-more">
+          <span class="htag-list-rest"></span>
+        </span>
+      </span>
+    </li>
+  </ul>
+</play-example>

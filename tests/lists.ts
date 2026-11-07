@@ -1,7 +1,7 @@
 import { expect, type Locator } from "@playwright/test";
 
 // Checks shared by the components built on Listbox: Listbox, Select, and
-// Filter chip.
+// Filter Chip.
 
 // The highlighted option: `data-active` on it, and its id in the focused
 // element's aria-activedescendant: the list, its search field, or a select's

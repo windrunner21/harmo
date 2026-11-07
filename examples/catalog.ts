@@ -33,7 +33,7 @@ const groups: CatalogGroup[] = [
     entries: [
       {
         slug: "filter-chip",
-        title: "Filter chip",
+        title: "Filter Chip",
         purpose:
           "Narrows a list or table: a dashed chip that opens a Popup and shows what's chosen.",
       },
@@ -75,6 +75,12 @@ const groups: CatalogGroup[] = [
         purpose:
           "What something is: a label such as a ticket tag or “Test run”.",
       },
+      {
+        slug: "tag-list",
+        title: "Tag List",
+        purpose:
+          "Tags in one row: those that fit, then “+N” for the rest.",
+      },
     ],
   },
   {
@@ -114,6 +120,11 @@ const groups: CatalogGroup[] = [
         purpose: "A native checkbox with Harmo's appearance.",
       },
       {
+        slug: "combobox",
+        title: "Combobox",
+        purpose: "A text field that filters a list as you type, to pick from it or be helped by it.",
+      },
+      {
         slug: "field",
         title: "Field",
         purpose:
@@ -127,7 +138,7 @@ const groups: CatalogGroup[] = [
       },
       {
         slug: "password",
-        title: "Password input",
+        title: "Password Input",
         purpose:
           "A password field with a show/hide toggle and an optional strength meter.",
       },
@@ -143,7 +154,7 @@ const groups: CatalogGroup[] = [
       },
       {
         slug: "segmented",
-        title: "Segmented control",
+        title: "Segmented Control",
         purpose: "One choice from a few options shown side by side.",
       },
       {
@@ -153,7 +164,7 @@ const groups: CatalogGroup[] = [
       },
       {
         slug: "settings",
-        title: "Settings list",
+        title: "Settings List",
         purpose:
           "Settings with a title, a description, and a control beside or under them.",
       },
@@ -180,7 +191,7 @@ const groups: CatalogGroup[] = [
       },
       {
         slug: "expand-chevron",
-        title: "Expand chevron",
+        title: "Expand Chevron",
         purpose:
           "A chevron that folds from down to up while its control is expanded.",
       },

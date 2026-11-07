@@ -1,4 +1,4 @@
-# Filter chip
+# Filter Chip
 
 A filter in a toolbar above a list or table, such as Status or Channel: a
 dashed chip with a plus that opens a [Popup](popup.md) holding a

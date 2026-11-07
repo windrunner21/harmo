@@ -502,6 +502,11 @@ body {
   &[data-layout="stack"] > * {
     max-inline-size: 24rem;
   }
+
+  /* A button in a stack keeps its own width, as beside a form's fields. */
+  &[data-layout="stack"] > .hbutton {
+    align-self: flex-start;
+  }
 }
 
 /* Physical, like the Copy button. */

@@ -1,4 +1,4 @@
-# Expand chevron
+# Expand Chevron
 
 A chevron that folds from pointing down to pointing up while its control is
 expanded, as in Select, popup triggers, and menu buttons. For a chevron that

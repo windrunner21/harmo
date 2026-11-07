@@ -155,13 +155,13 @@ section lists its props.
 | Group | Components |
 | --- | --- |
 | Actions | [Button](docs/components/button.md), [Link](docs/components/link.md) |
-| Forms | [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password input](docs/components/password.md), [Search](docs/components/search.md), [Select](docs/components/select.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented control](docs/components/segmented.md), [Settings list](docs/components/settings.md) |
+| Forms | [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password Input](docs/components/password.md), [Search](docs/components/search.md), [Select](docs/components/select.md), [Combobox](docs/components/combobox.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented Control](docs/components/segmented.md), [Settings List](docs/components/settings.md) |
 | Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Tabs](docs/components/tabs.md) |
-| Data | [Filter chip](docs/components/filter-chip.md) |
+| Data | [Filter Chip](docs/components/filter-chip.md) |
 | Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
-| Display | [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Section](docs/components/section.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md) |
-| Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand chevron](docs/components/expand-chevron.md) |
+| Display | [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Section](docs/components/section.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md), [Tag List](docs/components/tag-list.md) |
+| Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand Chevron](docs/components/expand-chevron.md) |
 
 Every page has the same sections: a Contract table, copyable markup, the
 options, appearance and states, accessibility, what a script does, the React

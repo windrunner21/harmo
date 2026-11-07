@@ -20,10 +20,14 @@
   for (const listbox of listboxes) {
     const popup = listbox.closest(".hpopup");
     const trigger = popup && [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find((element) => !popup.contains(element));
-    // Focus stays on a select trigger (a combobox), moves to the search field
-    // when there is one, and otherwise to the list itself.
+    // Focus stays on a select trigger (a combobox) or a Combobox's field,
+    // moves to the search field when there is one, and otherwise to the list
+    // itself. A Combobox's field is the text field that controls the list;
+    // combobox.js does the rest of what it needs.
     const search = popup?.querySelector(".hlistbox-search-input");
-    const owner = search ?? (trigger?.getAttribute("role") === "combobox" ? trigger : listbox);
+    const field = listbox.id ? document.querySelector(`.hcombobox > input[aria-controls="${listbox.id}"]`) : null;
+    const freeText = field?.hasAttribute("data-free-text") ?? false;
+    const owner = search ?? field ?? (trigger?.getAttribute("role") === "combobox" ? trigger : listbox);
     const enabled = () => [...listbox.querySelectorAll('.hoption:not([aria-disabled="true"], [hidden])')];
 
     // Highlight one option, or none. Disabled and hidden options are never
@@ -71,15 +75,16 @@
     if (search) {
       const options = [...listbox.querySelectorAll(".hoption")];
       const groups = [...listbox.querySelectorAll(".hoption-group")];
-      const empty = listbox.nextElementSibling?.matches(".hlistbox-empty")
-        ? listbox.nextElementSibling
-        : Object.assign(document.createElement("p"), { className: "hlistbox-empty", textContent: search.dataset.exampleEmpty ?? "No results" });
+      // The status after the list, in the page from the start so a screen
+      // reader reads the message as it appears.
+      const empty = listbox.nextElementSibling?.matches(".hlistbox-empty") ? listbox.nextElementSibling : null;
       search.addEventListener("input", () => {
         const query = search.value.trim().toLowerCase();
         for (const option of options) option.hidden = !labelOf(option).includes(query);
         for (const group of groups) group.hidden = !group.querySelector(".hoption:not([hidden])");
-        if (options.length && options.every((option) => option.hidden)) listbox.after(empty);
-        else if (options.length) empty.remove();
+        if (empty && options.length) {
+          empty.textContent = options.every((option) => option.hidden) ? (search.dataset.exampleEmpty ?? "No results") : "";
+        }
         highlight(enabled()[0] ?? null, { scroll: true });
         requestAnimationFrame(() => updateTitles(listbox));
       });
@@ -97,12 +102,24 @@
       );
     }
 
-    // Pointer: highlight the enabled option underneath; leaving clears it.
+    // A Combobox's script asks for the first match as text is typed; this
+    // script alone highlights, so one option at most is ever highlighted.
+    listbox.addEventListener("example-highlight", (event) => highlight(event.detail, { scroll: true }));
+
+    // Pointer: highlight the enabled option underneath; leaving clears it,
+    // once the pointer has moved in the list. A list that opens or shifts
+    // under a pointer at rest isn't being pointed at, so the keyboard's
+    // highlight stays.
+    let pointing = false;
     listbox.addEventListener("pointermove", (event) => {
+      pointing = true;
       const option = event.target.closest(".hoption");
       highlight(option?.getAttribute("aria-disabled") === "true" ? null : option);
     });
-    listbox.addEventListener("pointerleave", () => highlight(null));
+    listbox.addEventListener("pointerleave", () => {
+      if (pointing) highlight(null);
+      pointing = false;
+    });
     // Clicking an option mustn't take focus from the trigger, the search
     // field, or the list, so the keyboard keeps working afterwards.
     listbox.addEventListener("mousedown", (event) => {
@@ -123,6 +140,11 @@
         option.setAttribute("aria-selected", String(option.getAttribute("aria-selected") !== "true"));
         return;
       }
+      // Free text takes the option's text, and selects nothing.
+      if (freeText) {
+        popup?.hidePopover();
+        return;
+      }
       const previous = listbox.querySelector('.hoption[aria-selected="true"]');
       if (previous !== option) {
         const check = listbox.querySelector(".hoption-check") ?? template.content.firstElementChild.cloneNode(true);
@@ -141,9 +163,17 @@
     // highlight.
     let opening = null;
     popup.addEventListener("beforetoggle", (event) => {
+      // An opening another script cancelled, such as a Combobox's with
+      // nothing to show.
+      if (event.defaultPrevented) {
+        opening = null;
+        return;
+      }
       if (event.newState === "open") {
         const selected = listbox.querySelector('.hoption[aria-selected="true"]:not([aria-disabled="true"], [hidden])');
-        highlight(opening ?? selected ?? enabled()[0]);
+        // Free text highlights nothing until a key asks, so Enter keeps what
+        // was typed.
+        highlight(opening ?? (freeText ? null : (selected ?? enabled()[0])));
       } else {
         highlight(null);
         clearTimeout(typedTimer);
@@ -156,7 +186,7 @@
     // into view, and measure the labels now that the list has its width.
     popup.addEventListener("toggle", (event) => {
       if (event.newState !== "open") return;
-      if (owner !== trigger) owner.focus();
+      if (owner !== trigger && owner !== field) owner.focus();
       active?.scrollIntoView({ block: "nearest" });
       requestAnimationFrame(() => updateTitles(listbox));
     });
@@ -175,7 +205,7 @@
       // Keys that confirm an input method's text belong to the search field.
       if (event.isComposing || event.keyCode === 229) return;
       const open = popup.matches(":popover-open");
-      const typing = owner === search;
+      const typing = owner === search || owner === field;
       // Printable keys type ahead, except in the search field; Space counts
       // only in the middle of a search, and otherwise chooses.
       const typeahead =
@@ -215,9 +245,9 @@
             if (event.key === " " && typing) return;
             if (!open) return;
             // With nothing to choose, Enter in the search field must not
-            // submit the form around it.
+            // submit the form around it; a Combobox's field decides itself.
             if (!active) {
-              if (typing) event.preventDefault();
+              if (owner === search) event.preventDefault();
               return;
             }
             event.preventDefault();
@@ -226,7 +256,7 @@
             return;
           case "Tab":
             // A select trigger closes its list when focus moves on.
-            if (open && owner === trigger) popup.hidePopover();
+            if (open && (owner === trigger || owner === field)) popup.hidePopover();
             return;
           default:
             return;
@@ -238,6 +268,15 @@
       // combobox: Down keeps the selected option highlighted, Up and Home
       // highlight the first option, End the last, and typing the match.
       if (!open) {
+        // A Combobox's field opens on Down, at the selected option or the
+        // first, and on Up, at the last, as in the WAI-ARIA editable
+        // combobox.
+        if (owner === field && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+          const selected = listbox.querySelector('.hoption[aria-selected="true"]:not([aria-disabled="true"], [hidden])');
+          opening = event.key === "ArrowUp" ? options.at(-1) : (selected ?? options[0]);
+          popup.showPopover();
+          return;
+        }
         if (owner === trigger) {
           opening = typeahead ? next : ({ ArrowUp: options[0], Home: options[0], End: options.at(-1) }[event.key] ?? null);
           popup.showPopover();

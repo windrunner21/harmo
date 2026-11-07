@@ -1,4 +1,4 @@
-// Example only: show what's chosen in a filter chip, as the React FilterChip
+// Example only: show what's chosen in a Filter Chip, as the React FilterChip
 // does. Up to two values show as they are, more as a count. A multi-select
 // chip's list ends with Clear filters while anything is chosen; listbox.js
 // closes a single-select chip's list. A text filter applies and closes on

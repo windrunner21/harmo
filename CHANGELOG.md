@@ -10,6 +10,27 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Combobox: `<div class="hcombobox">` with an Input of `role="combobox"`, and a
+  Listbox in a popup, or `<Combobox>`, a text field that filters a list as you
+  type: to pick one of its options, or, with `freeText`, to be helped by it.
+  The arrow keys move through the list while focus stays in the field, Enter
+  picks, and Escape closes the list, then empties the field. Field's
+  `control="combobox"` names the field and its list. With `data-multiple`, or
+  `multiple`, it chooses several, each a Tag in the field with a remove
+  button, as in an email's To field, and stays one row high: the tags that
+  fit, then "+N" for the rest, or, while you're in it, every tag in a row
+  that scrolls. With free text too, typed text, such as an address, is a
+  choice of its own.
+
+  ```html preview
+  <div>
+    <div class="hcombobox" style="anchor-name: --changelog-assignee">
+      <input class="hinput" type="text" role="combobox" autocomplete="off" aria-autocomplete="list" aria-expanded="false" aria-label="Assign to" placeholder="Search agents" value="" />
+      <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false"><g class="hexpand-chevron-head"><line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" /><line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" /></g></svg>
+    </div>
+  </div>
+  ```
+
 - Search: `<div class="hsearch">` around an Input with `type="search"`, or
   `<Search>`, a field for searching, such as above a list: filled in gray,
   with a magnifier at its start and an optional clear button at its end once
@@ -57,6 +78,94 @@ minor version may change an API, and says how to upgrade when it does.
     </section>
   </div>
   ```
+
+- Tag: `.htag-remove`, or `<TagRemove>`, a button after the text that
+  removes the tag, such as a filter: a 12px cross with a 24px target, named
+  in your app's language.
+
+  ```html preview
+  <div>
+    <span class="htag">
+      Billing
+      <button class="htag-remove" type="button" aria-label="Remove Billing">
+        <svg class="hicon" width="24" height="24" viewBox="0 0 25 25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18.1183 18.5318L6.80463 7.21814" /><path d="M18.1183 7.21814L6.80463 18.5318" /></svg>
+      </button>
+    </span>
+  </div>
+  ```
+
+- Tag List: `<ul class="htag-list">`, or `<TagList>`, tags in one row that
+  never wraps, such as a ticket's tags in a table: as many as fit its width,
+  then "+N" for the rest, which shows them on hover and keyboard focus. It
+  counts again as the width changes.
+
+  ```html preview
+  <div>
+    <ul class="htag-list" style="inline-size: 16rem">
+      <li>
+        <span class="htag" style="--htag-color: var(--harmo-amber)">
+          <span class="htag-dot" aria-hidden="true"></span>Billing
+        </span>
+      </li>
+      <li><span class="htag">Refund</span></li>
+      <li hidden><span class="htag">Partner</span></li>
+      <li hidden><span class="htag">Urgent</span></li>
+      <li class="htag-list-more">
+        <span class="htooltip-trigger">
+          <button class="htag-list-count" type="button" aria-label="2 more" aria-describedby="changelog-tags-more">+2</button>
+          <span class="htooltip" data-variant="hint" role="tooltip" id="changelog-tags-more">
+            <span class="htag-list-rest">
+              <span class="htag">Partner</span>
+              <span class="htag">Urgent</span>
+            </span>
+          </span>
+        </span>
+      </li>
+    </ul>
+  </div>
+  ```
+
+- Tooltip: `data-open` on `.htooltip-trigger` shows it until removed, for a
+  tooltip a press pins open, as on a touch screen, which neither hovers nor
+  shows keyboard focus. A Tag List's "+N" uses it.
+
+  ```html preview
+  <div>
+    <span class="htooltip-trigger" data-open>
+      <button class="hbutton" data-variant="secondary" type="button" aria-describedby="changelog-pinned-tip">
+        <span class="hbutton-label">Export</span>
+      </button>
+      <span class="htooltip" role="tooltip" id="changelog-pinned-tip">Download the current view as CSV</span>
+    </span>
+  </div>
+  ```
+
+### Changed
+
+- A list's message for no matches is a status, so a screen reader reads it
+  as it appears: `.hlistbox-empty` gets `role="status"` and is in the page
+  from the start, empty until nothing matches. `<Listbox>`, `<Select>`,
+  `<FilterChip>`, and `<Combobox>` do this themselves. In HTML, render it
+  empty after the list, and fill it when nothing matches, rather than add it
+  then.
+
+  In 0.3.0, added when nothing matches:
+
+  ```html
+  <p class="hlistbox-empty">No agents found</p>
+  ```
+
+  In 0.4.0, in the page from the start, and filled when nothing matches:
+
+  ```html
+  <p class="hlistbox-empty" role="status"></p>
+  ```
+
+### Fixed
+
+- A list, in a Select or a popup, keeps its keyboard highlight when it opens
+  or moves under a pointer at rest; leaving it clears the highlight only once
+  the pointer has moved in it.
 
 ## [0.3.0] - 2026-11-07
 

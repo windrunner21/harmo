@@ -22,6 +22,7 @@ const components: Record<string, string[]> = {
   checkbox: ["Checkbox.tsx", "CheckboxGroup.tsx"],
   chevron: ["Chevron.tsx"],
   "chevron-to-arrow": ["ChevronToArrow.tsx"],
+  combobox: ["Combobox.tsx"],
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
@@ -50,6 +51,7 @@ const components: Record<string, string[]> = {
   switch: ["Switch.tsx"],
   tabs: ["tabs/Tabs.tsx", "tabs/TabNav.tsx", "tabs/useTabsMotion.ts"],
   tag: ["Tag.tsx"],
+  "tag-list": ["TagList.tsx"],
   textarea: ["TextArea.tsx"],
   toast: ["Toast.tsx"],
   tooltip: ["Tooltip.tsx"],
@@ -70,6 +72,8 @@ const helpers = [
 // Stylesheets a component needs without importing that component's code.
 const alsoStyledBy: Record<string, string[]> = {
   breadcrumb: ["chevron"],
+  combobox: ["input"],
+  "tag-list": ["tag"],
 };
 
 // What harmo-ui list says about a component, from the index of the docs. These have

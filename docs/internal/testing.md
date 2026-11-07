@@ -154,7 +154,7 @@ what `hidden` does across components:
 Every test fails if the page logs a console error or throws, which includes
 React's hydration mismatches; `test` in `tests/playgrounds.ts` adds that
 check. `tests/lists.ts` holds the checks shared by Listbox, Select, and
-Filter chip.
+Filter Chip.
 
 ### Writing a test
 

@@ -2,9 +2,9 @@
 
 A form field that picks one or more options from a list: a trigger that looks
 like an [Input](input.md), a [Popup](popup.md), and a [Listbox](listbox.md).
-For a few short options always in view, use a [segmented control](segmented.md)
+For a few short options always in view, use a [Segmented Control](segmented.md)
 or a [Radio](radio.md) group; to filter a list or table, use a
-[Filter chip](filter-chip.md).
+[Filter Chip](filter-chip.md).
 
 ## Contract
 
@@ -88,7 +88,7 @@ the value instead, as a native `<select>` would send it:
   the same 34px height side by side.
 - The value is one line and ends with an ellipsis when it doesn't fit,
   including several chosen labels.
-- The chevron is an [Expand chevron](expand-chevron.md) in
+- The chevron is an [Expand Chevron](expand-chevron.md) in
   `--harmo-color-text-secondary`, 20px from the end. It folds up in 200ms
   (`--harmo-ease-in-out-cubic`) while open, and flips without motion under
   reduced motion.

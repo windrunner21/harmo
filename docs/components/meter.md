@@ -26,7 +26,7 @@ loading or step indicator: for loading, use a [Spinner](spinner.md).
 ```
 
 The meter is only the bar. Words such as "Too weak", hints, and when to show
-it belong to the component using it, such as [Password input](password.md).
+it belong to the component using it, such as [Password Input](password.md).
 
 ## Options
 

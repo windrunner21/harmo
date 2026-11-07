@@ -254,7 +254,8 @@ onEachPlayground("listbox", () => {
     const { listbox, search } = await openList(page, "listbox-single-with-search", "Assignee");
     await expect(search).toHaveValue("");
     await expect(listbox.getByRole("option")).toHaveCount(5);
-    await expect(container.locator(".hlistbox-empty")).toHaveCount(0);
+    // The status for no matches stays in the page, empty.
+    await expect(container.locator(".hlistbox-empty")).toHaveText("");
   });
 
   test("after a search, it opens on the side the whole list fits", async ({ page }) => {

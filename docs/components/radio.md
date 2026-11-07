@@ -1,7 +1,7 @@
 # Radio
 
 A native radio with Harmo's appearance, the sibling of [Checkbox](checkbox.md).
-For a few short options side by side, use a [segmented control](segmented.md)
+For a few short options side by side, use a [Segmented Control](segmented.md)
 instead.
 
 ## Contract

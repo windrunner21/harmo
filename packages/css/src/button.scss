@@ -49,7 +49,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   // An icon beside the label sits 3px from the border: with the space drawn
   // around a 24px icon, it looks as far in as the label's text, 6px.
-  // ChevronToArrow and the Expand chevron keep their own spacing.
+  // ChevronToArrow and the Expand Chevron keep their own spacing.
   & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label) {
     margin-inline-start: 3px;
   }
@@ -125,7 +125,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     padding-inline-start: calc(15px - #{$icon-gap});
   }
 
-  // An Expand chevron's drawing fills its box, so a trailing one keeps the
+  // An Expand Chevron's drawing fills its box, so a trailing one keeps the
   // label's spacing from the border, as in a menu button.
   // Last but for a hold button's fill, which is last itself.
   & > .hexpand-chevron:is(:last-child, :has(+ .hbutton-hold:last-child)),

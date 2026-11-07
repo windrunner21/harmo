@@ -1,0 +1,158 @@
+@use "shortcuts" as *;
+@use "control";
+
+// A Combobox's field: an Input with Select's Expand Chevron at its end, which
+// folds while the list is open. The chevron is drawn over the field and lets
+// clicks through to it, so a click anywhere on the field opens the list.
+.hcombobox {
+  display: grid;
+  align-items: center;
+
+  // The chevron is sized in em, as in a Select, whose text is this size.
+  font-size: $font-size-sm;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > * {
+    grid-area: 1 / 1;
+  }
+
+  & > .hinput {
+    padding-inline-end: 44px;
+  }
+
+  // Where Select's chevron sits: its 20px padding and 1px border.
+  & > .hexpand-chevron {
+    z-index: 1;
+    justify-self: end;
+
+    margin-inline-end: 21px;
+
+    color: $color-text-secondary;
+
+    pointer-events: none;
+  }
+
+  & > .hinput:disabled ~ .hexpand-chevron {
+    color: $color-text-tertiary;
+  }
+}
+
+// Choosing several: the box is Input's, one row high, around the choices, a
+// Tag List, and a text field without a box of its own after them. The box
+// takes its field's states: focused or open, invalid, disabled, read-only.
+// At rest, the tags that fit show, then "+N"; while focus is in the field,
+// every tag shows, in a row that scrolls sideways rather than grow. Tags sit
+// 4px in from the border, so their 4px corners follow its 8px ones.
+.hcombobox[data-multiple] {
+  @include control.box;
+
+  position: relative;
+
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  min-block-size: $control-height;
+  padding-block: 3px;
+  padding-inline: 4px 44px;
+
+  cursor: text;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The text starts 12px in, as in an Input, and keeps 4rem to itself
+  // before it moves to a row of its own.
+  & > .hinput {
+    flex: 1 0 4rem;
+
+    min-block-size: 0;
+    block-size: 1.5rem;
+    padding: 0 8px;
+
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+  }
+
+  & > .htag-list {
+    flex: 0 1 auto;
+
+    inline-size: auto;
+  }
+
+  &:focus-within > .htag-list {
+    overflow-x: auto;
+
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  // The placeholder only asks for a first choice. With choices made, the
+  // text gives its room to the tags until focus comes in to type.
+  &:has(> .htag-list > li > .htag) > .hinput::placeholder {
+    color: transparent;
+  }
+
+  &:not(:focus-within):has(> .htag-list > li > .htag) > .hinput {
+    flex-basis: 0;
+  }
+
+  & > .hexpand-chevron {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 20px;
+
+    margin-block: auto;
+    margin-inline-end: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:where(
+        :not(
+            :has(
+                > .hinput:disabled,
+                > .hinput[readonly],
+                > .hinput[aria-invalid="true"]
+              )
+          )
+      ) {
+      @include control.focused;
+    }
+  }
+
+  &:has(> .hinput:focus),
+  &:has(> .hinput[aria-expanded="true"]) {
+    @include control.focused;
+  }
+
+  &:has(> .hinput:focus-visible),
+  &:has(> .hinput[aria-expanded="true"]) {
+    @include control.ring;
+  }
+
+  &:has(> .hinput[aria-invalid="true"]) {
+    @include control.invalid;
+  }
+
+  &:has(> .hinput[readonly]) {
+    background-color: $color-background-secondary;
+  }
+
+  &:has(> .hinput:disabled) {
+    @include control.disabled;
+
+    & .htag {
+      color: $color-text-tertiary;
+    }
+  }
+}

@@ -142,6 +142,12 @@
   @include shown(0s);
 }
 
+// Pinned open by a press, such as on a touch screen, which neither hovers
+// nor shows keyboard focus; Escape still hides it, below.
+.htooltip-trigger[data-open] > .htooltip {
+  @include shown(0s);
+}
+
 .htooltip-trigger > .htooltip[data-dismissed] {
   visibility: hidden;
   opacity: 0;

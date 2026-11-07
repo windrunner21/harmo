@@ -1,7 +1,7 @@
 # Listbox
 
 The option list inside a [Popup](popup.md), with optional groups, search, and
-multiple selection. [Select](select.md) and [Filter chip](filter-chip.md) use
+multiple selection. [Select](select.md) and [Filter Chip](filter-chip.md) use
 it. Scripts own the behavior; CSS styles the state they set.
 
 ## Contract
@@ -61,14 +61,17 @@ A button opens the popup; see [Popup](popup.md) for the trigger.
 ```
 
 To filter, set `hidden` on each option that doesn't match, and on a group
-left with none; the options stay in the page, selection included. When
-nothing matches, render `.hlistbox-empty` after the list, and only then. A
-list with every option hidden, or with nothing inside it (not even
+left with none; the options stay in the page, selection included. After the
+list, a `<p class="hlistbox-empty" role="status">` is in the page from the
+start, empty, taking no room; when nothing matches, put the message in it,
+and take it out again once something does. A screen reader reads a status
+as its text changes, but not always one added with its text already in it.
+A list with every option hidden, or with nothing inside it (not even
 whitespace), loses its padding and collapses:
 
 ```html
 <ul class="hlistbox" id="channel-listbox" role="listbox" aria-label="Channel"></ul>
-<p class="hlistbox-empty">No channels found</p>
+<p class="hlistbox-empty" role="status">No channels found</p>
 ```
 
 Put each option's text in `.hoption-label`. The check mark goes only in the
@@ -102,7 +105,7 @@ focus.
 | `.hoption-checkbox` | A 16px checkbox drawing; its mark uses Checkbox's fractions of the box; fill and border fade in 150ms |
 | `.hoption-group-label` | Uppercase 11px bold `--harmo-color-primary`; a divider above it unless its group is the list's first child |
 | `.hlistbox-search` | Search icon and borderless input above a divider |
-| `.hlistbox-empty` | Empty-state message |
+| `.hlistbox-empty` | The status for no matches, `role="status"`, in the page from the start and empty until nothing matches; empty, it takes no room |
 | `.hlistbox-footer` | Divider and a full-width button |
 
 - With nothing highlighted, a single-select keeps its selected option
@@ -141,7 +144,7 @@ focus.
 | Close the popup, which returns focus to what opened it; a multi-select stays open | After a single-select choice, even of the selected option |
 | Move focus to the search field | When a list with a search row opens |
 | Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup), so each opening starts from the whole list |
-| Set `hidden` on the options and groups that don't match, and render `.hlistbox-empty` when none do | As the search text changes |
+| Set `hidden` on the options and groups that don't match, and put the message in `.hlistbox-empty` when none do, emptying it once some do | As the search text changes |
 | Set a truncated `.hoption-label`'s `title` to its full text, and remove it when it fits | When the list opens or resizes, so hovering shows the whole option |
 
 `examples/html/src/scripts/listbox.js` is an example script that does all of

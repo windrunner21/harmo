@@ -14,30 +14,32 @@ the same markup and does what the script would.
 | Card | [card.md](card.md) |
 | Checkbox | [checkbox.md](checkbox.md) |
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
+| Combobox | [combobox.md](combobox.md) |
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
-| Expand chevron | [expand-chevron.md](expand-chevron.md) |
+| Expand Chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
-| Filter chip | [filter-chip.md](filter-chip.md) |
+| Filter Chip | [filter-chip.md](filter-chip.md) |
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
 | Link | [link.md](link.md) |
 | Listbox | [listbox.md](listbox.md) |
 | Meter | [meter.md](meter.md) |
-| Password input | [password.md](password.md) |
+| Password Input | [password.md](password.md) |
 | Popup | [popup.md](popup.md) |
 | Radio | [radio.md](radio.md) |
 | Search | [search.md](search.md) |
 | Section | [section.md](section.md) |
-| Segmented control | [segmented.md](segmented.md) |
+| Segmented Control | [segmented.md](segmented.md) |
 | Select | [select.md](select.md) |
-| Settings list | [settings.md](settings.md) |
+| Settings List | [settings.md](settings.md) |
 | Spinner | [spinner.md](spinner.md) |
 | Status | [status.md](status.md) |
 | Switch | [switch.md](switch.md) |
 | Tabs | [tabs.md](tabs.md) |
 | Tag | [tag.md](tag.md) |
+| Tag List | [tag-list.md](tag-list.md) |
 | TextArea | [textarea.md](textarea.md) |
 | Toast | [toast.md](toast.md) |
 | Tooltip | [tooltip.md](tooltip.md) |
@@ -87,6 +89,7 @@ Some components are built from others, so their files need company:
 | File | Also load |
 | --- | --- |
 | `breadcrumb.css` | `link.css`, `chevron.css` |
+| `combobox.css` | `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label; `tag-list.css`, `tag.css`, and `tooltip.css` to choose several |
 | `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
 | `banner.css` | `button.css` for its action |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
@@ -96,6 +99,7 @@ Some components are built from others, so their files need company:
 | `search.css` | `input.css`; `field.css` for a label |
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
 | `settings.css` | The controls it holds, such as `switch.css` |
+| `tag-list.css` | `tag.css`, `tooltip.css` |
 | `input.css`, `textarea.css`, `checkbox.css`, `radio.css`, `switch.css`, `segmented.css` | `field.css` for labels and messages |
 
 ## Shared conventions
@@ -144,7 +148,7 @@ Some components are built from others, so their files need company:
   | Attribute | Meaning | Used by |
   | --- | --- | --- |
   | `data-variant` | Appearance | Button, Tag, Status, Tooltip |
-  | `data-status` | `success`, `warning`, `info`, or `error` (Password input's word and hint: no `info`) | Status, Banner, Meter, Password input |
+  | `data-status` | `success`, `warning`, `info`, or `error` (Password Input's word and hint: no `info`) | Status, Banner, Meter, Password Input |
   | `data-size` | `small` or `large` | Spinner, Button (`small` only) |
   | `data-orientation` | `horizontal` | Field |
   | `data-direction` | `back` | ChevronToArrow |
@@ -204,7 +208,7 @@ the React components, set:
 | `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
 | `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
 | `aria-expanded` | Popup triggers, select triggers | Open ring, chevron direction |
-| `.hfilter-chip-value` items | Filter chip | The chosen values, or a count past two |
+| `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | `data-side="top"` | Popup | Slide away from a trigger it opened above |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
 | `aria-selected` | Listbox option | Selection |
@@ -212,7 +216,7 @@ the React components, set:
 | Hidden inputs | Select in a form | The chosen values, kept in step, restored on reset, disabled with the trigger |
 | Error text, `hidden` | Field | Shows a validation error; `hidden` closes it, then the text is cleared |
 | Counter text | TextArea | Characters used |
-| `aria-pressed`, input `type`, `hidden`, `data-status`, `aria-invalid` | Password input | Show/hide, reveal the strength, color it |
+| `aria-pressed`, input `type`, `hidden`, `data-status`, `aria-invalid` | Password Input | Show/hide, reveal the strength, color it |
 | `aria-valuenow`, `aria-valuetext`, `data-filled`, `data-status` | Meter | The value |
 | `role="status"` or `role="alert"` | Banner | Announce a banner that appears after load |
 | `data-closing` | Dialog, Drawer | Hold the close while the exit plays |

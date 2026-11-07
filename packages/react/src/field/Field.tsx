@@ -20,7 +20,7 @@ interface FieldParts extends ComponentPropsWithRef<"div"> {
 
 export interface StackedFieldProps extends FieldParts {
   orientation?: undefined;
-  control?: "button";
+  control?: "button" | "combobox";
   optional?: ReactNode;
   labelAccessory?: ReactNode;
   error?: ReactNode;
@@ -116,12 +116,16 @@ export const Field = (fieldProps: FieldProps) => {
     "aria-invalid": error ? true : undefined,
   };
 
+  // A button can't be labelled by a <label>, so a span with an id names it. A
+  // combobox's field keeps its <label>, with an id too, so its list can share
+  // the name.
   const button = controlKind === "button";
+  const combobox = controlKind === "combobox";
   const control: FieldState = group
     ? {}
     : {
         id: controlId,
-        "aria-labelledby": button ? labelId : undefined,
+        "aria-labelledby": button || combobox ? labelId : undefined,
         ...described,
       };
   const groupName = group ? { "aria-labelledby": labelId, ...described } : {};
@@ -131,7 +135,7 @@ export const Field = (fieldProps: FieldProps) => {
       {label}
     </span>
   ) : (
-    <label className="hlabel" htmlFor={controlId}>
+    <label className="hlabel" htmlFor={controlId} id={combobox ? labelId : undefined}>
       {label}
     </label>
   );

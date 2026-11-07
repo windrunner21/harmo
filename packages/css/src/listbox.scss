@@ -266,6 +266,11 @@
   margin: 0;
   padding: 12px 16px;
 
+  // In the page while there are matches, as a status, and empty: no room.
+  &:empty {
+    padding: 0;
+  }
+
   font-family: $font-family;
   font-size: $font-size-sm;
   line-height: $font-line-height;

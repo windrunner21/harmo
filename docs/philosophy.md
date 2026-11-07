@@ -33,14 +33,14 @@ without knowing product-specific details.
 - Input, TextArea, Checkbox, Radio, and Switch own their native controls.
 - Field arranges and connects labels, descriptions, controls, and errors.
   The application owns validation and values.
-- Icons, ChevronToArrow, and the Expand chevron compose through children in
+- Icons, ChevronToArrow, and the Expand Chevron compose through children in
   Links and Buttons.
 - Breadcrumb provides a complete navigation trail, while standalone
   navigation links remain useful independently.
 - Tag says what something is; Status says what state it's in.
 - More complex controls compose shared foundations: Popup owns positioning
   and dismissal, Listbox owns option selection, and Select combines them.
-  Password input combines Input, a toggle, and Meter.
+  Password Input combines Input, a toggle, and Meter.
 - Use dashboard interfaces to test these decisions.
 
 Use component families where they help organization. Composition does not

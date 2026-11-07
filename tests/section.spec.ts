@@ -86,7 +86,7 @@ onEachPlayground("section", () => {
     expect(await section.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
-  test("it styles nothing inside it: a Settings list in it looks as one outside it does", async ({ page }) => {
+  test("it styles nothing inside it: a Settings List in it looks as one outside it does", async ({ page }) => {
     const container = await example(page, "section-default");
     // The same list, outside the section, beside it: each element's look
     // should match, apart from where it lands.
