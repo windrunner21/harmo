@@ -1,0 +1,107 @@
+<play-example title="Default">
+  <play-note>
+    A list before its first item: an icon, a title that's a heading, what the
+    list is for, and the action that fills it. It's centered in the space it's
+    given.
+  </play-note>
+  <div class="hempty-state">
+    <div class="hempty-state-icon" aria-hidden="true">
+      <play-icon name="messages" class="hicon"></play-icon>
+    </div>
+    <h2 class="hempty-state-title">No quick replies yet</h2>
+    <p class="hempty-state-description">Save answers you send often, and add them to a chat in two clicks.</p>
+    <div class="hempty-state-actions">
+      <button class="hbutton" type="button">
+        <play-icon name="plus" class="hicon"></play-icon>
+        <span class="hbutton-label">Add quick reply</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="At the start">
+  <play-note>
+    <code>data-align="start"</code> lines up what's inside it at its start,
+    rather than centering it, as where a table's rows would be.
+  </play-note>
+  <div class="hempty-state" data-align="start">
+    <div class="hempty-state-icon" aria-hidden="true">
+      <play-icon name="campaigns" class="hicon"></play-icon>
+    </div>
+    <h2 class="hempty-state-title">No campaigns yet</h2>
+    <p class="hempty-state-description">Send one message to many customers at once, such as a sale or a reminder.</p>
+    <div class="hempty-state-actions">
+      <button class="hbutton" type="button">
+        <play-icon name="plus" class="hicon"></play-icon>
+        <span class="hbutton-label">Create campaign</span>
+      </button>
+      <button class="hbutton" data-variant="secondary" type="button">
+        <span class="hbutton-label">Import contacts</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Not allowed">
+  <play-note>
+    A page you're not allowed to see says why, and how to get access, with a
+    way back.
+  </play-note>
+  <div class="hempty-state">
+    <div class="hempty-state-icon" aria-hidden="true">
+      <play-icon name="lock" class="hicon"></play-icon>
+    </div>
+    <h2 class="hempty-state-title">You don't have access to Billing</h2>
+    <p class="hempty-state-description">Ask an admin of your workspace to give you access.</p>
+    <div class="hempty-state-actions">
+      <a class="hbutton" data-variant="secondary" href="/dashboard">
+        <span class="hbutton-label">Back to dashboard</span>
+      </a>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="After a search" layout="wide">
+  <play-note>
+    When a search leaves nothing, it says so in place of the results. It's
+    inside an element with <code>role="status"</code> that's in the page from
+    the start, so a screen reader reads it as it appears. Type something that
+    isn't below, such as "invoice".
+  </play-note>
+  <div class="hsearch">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input class="hinput" id="reply-search" type="search" placeholder="Search quick replies" aria-label="Search quick replies" value="" data-example-results="reply-results" />
+  </div>
+  <ul id="reply-results">
+    <li>Opening hours</li>
+    <li>Refund policy</li>
+    <li>Shipping times</li>
+  </ul>
+  <div role="status">
+    <div class="hempty-state" data-size="small" hidden>
+      <h3 class="hempty-state-title">No quick replies found</h3>
+      <p class="hempty-state-description">Try another word, or clear the search to see them all.</p>
+      <div class="hempty-state-actions">
+        <button class="hbutton" data-variant="secondary" data-size="small" type="button" data-example-clear-search="reply-search">
+          <span class="hbutton-label">Clear search</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Small and dashed" layout="wide">
+  <play-note>
+    <code>data-size="small"</code> for one inside a page, such as an empty
+    column or list, and <code>data-variant="dashed"</code> where it stands in
+    for what would be there, such as a Kanban column's cards. A description on
+    its own is enough.
+  </play-note>
+  <div class="hempty-state" data-size="small" data-variant="dashed">
+    <p class="hempty-state-description">No tickets in this column</p>
+  </div>
+  <div class="hempty-state" data-size="small" data-variant="dashed">
+    <h3 class="hempty-state-title">No files yet</h3>
+    <p class="hempty-state-description">Files sent in this chat show here.</p>
+  </div>
+</play-example>

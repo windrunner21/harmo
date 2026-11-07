@@ -159,7 +159,7 @@ section lists its props.
 | Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Command Menu](docs/components/command-menu.md), [Sidebar](docs/components/sidebar.md), [Tabs](docs/components/tabs.md) |
 | Data | [Filter Chip](docs/components/filter-chip.md) |
-| Feedback | [Banner](docs/components/banner.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
+| Feedback | [Banner](docs/components/banner.md), [Empty State](docs/components/empty-state.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
 | Display | [Accordion](docs/components/accordion.md), [Avatar](docs/components/avatar.md), [Card](docs/components/card.md), [Kbd](docs/components/kbd.md), [Section](docs/components/section.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md), [Tag List](docs/components/tag-list.md) |
 | Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand Chevron](docs/components/expand-chevron.md) |
 

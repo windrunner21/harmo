@@ -1,0 +1,139 @@
+@use "shortcuts" as *;
+
+// What shows where there's nothing yet: an icon, a title, a description, and
+// actions, such as a list before its first item, a search with no results,
+// or a page you're not allowed to see. Centered in the space it's given, or
+// with data-align="start", lined up at the start, as above a table.
+.hempty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  padding: 40px 24px;
+
+  font-family: $font-family;
+  text-align: center;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-align="start"] {
+    align-items: flex-start;
+
+    text-align: start;
+  }
+
+  // Inside a page, such as an empty column, list, or table body.
+  &[data-size="small"] {
+    padding: 24px 12px;
+  }
+
+  // Where it stands for something that would be there, such as the cards of
+  // a Kanban column.
+  &[data-variant="dashed"] {
+    border: 1px dashed $color-border-control;
+    border-radius: $border-radius;
+  }
+}
+
+// The icon in a tile, in the primary color.
+.hempty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: 40px;
+  block-size: 40px;
+  margin-block-end: 16px;
+
+  color: $color-primary;
+  background-color: $color-background-secondary;
+  // Transparent, until forced colors draw it, where the background is gone.
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // An icon, or an image, at the tile's size.
+  & > :is(svg, img) {
+    inline-size: 24px;
+    block-size: 24px;
+
+    object-fit: contain;
+  }
+
+  .hempty-state[data-size="small"] > & {
+    inline-size: 32px;
+    block-size: 32px;
+    margin-block-end: 12px;
+
+    & > :is(svg, img) {
+      inline-size: 20px;
+      block-size: 20px;
+    }
+  }
+}
+
+.hempty-state-title {
+  margin: 0;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+
+  .hempty-state[data-size="small"] > & {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    line-height: $font-line-height;
+  }
+}
+
+.hempty-state-description {
+  max-inline-size: 400px;
+  margin: 0;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+
+  .hempty-state-title + & {
+    margin-block-start: 4px;
+  }
+
+  .hempty-state[data-size="small"] > & {
+    font-size: $font-size-xs;
+  }
+}
+
+.hempty-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+
+  margin-block-start: 16px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .hempty-state[data-align="start"] > & {
+    justify-content: flex-start;
+  }
+
+  .hempty-state[data-size="small"] > & {
+    margin-block-start: 12px;
+  }
+}

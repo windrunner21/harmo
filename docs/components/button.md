@@ -94,7 +94,7 @@ of its content in `.hbutton-hold`:
 | `data-size="small"` | Compact: 29px, 13px text, 6px radius, for notices, rows, and cards |
 | `.hbutton-label` | Spaces the text 6px from the border and from icons; long labels wrap |
 | No `.hbutton-label` | Icon only: a square as wide as it is tall |
-| A direct `.hicon` | Keeps its size |
+| A direct `.hicon` | Drawn at 20px, whatever size the SVG declares, so icons from different sets match; ChevronToArrow and the Expand Chevron keep their own |
 | A trailing `.hexpand-chevron` | Kept 6px (`--harmo-icon-gap`) from the border, like the label's text |
 | `disabled` | Dimmed, not-allowed cursor (`<button>` only) |
 | `aria-disabled="true"` | Looks disabled but stays focusable; a script must ignore activation |

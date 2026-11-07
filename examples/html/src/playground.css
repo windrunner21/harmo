@@ -412,6 +412,8 @@ body {
 }
 
 .play-demo {
+  justify-content: center;
+
   padding: 2rem 1.5rem;
 
   /* The demo's padding spaces a paragraph of running text; its own margins

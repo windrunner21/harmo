@@ -8,7 +8,8 @@ onEachPlayground("expand-chevron", () => {
   test("the chevron folds with aria-expanded, and back", async ({ page }) => {
     const container = await example(page, "expand-chevron-toggling");
     const button = container.getByRole("button", { name: "More options" });
-    const parts = ["head", "left", "right"].map((name) => container.locator(`.hexpand-chevron-${name}`));
+    // The demo's: the code panel under it has one too.
+    const parts = ["head", "left", "right"].map((name) => container.locator(`.play-demo .hexpand-chevron-${name}`));
     const collapsed = await Promise.all(parts.map(transformOf));
 
     const folds = await Promise.all(parts.map((part) => watchTransitions(part, "transform")));

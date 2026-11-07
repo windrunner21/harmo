@@ -14,6 +14,7 @@ import { examples as combobox } from "./components/combobox.tsx";
 import { examples as commandMenu } from "./components/command-menu.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
+import { examples as emptyState } from "./components/empty-state.tsx";
 import { examples as expandChevron } from "./components/expand-chevron.tsx";
 import { examples as field } from "./components/field.tsx";
 import { examples as filterChip } from "./components/filter-chip.tsx";
@@ -55,6 +56,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "command-menu": commandMenu,
   dialog,
   drawer,
+  "empty-state": emptyState,
   "expand-chevron": expandChevron,
   field,
   "filter-chip": filterChip,

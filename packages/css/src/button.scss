@@ -47,8 +47,18 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     flex-shrink: 0;
   }
 
+  // Every icon a button carries is 20px, beside a label or alone, whatever
+  // its own width and height say, so icons from different sets match, and
+  // match the loading spinner. ChevronToArrow and the Expand Chevron keep
+  // their own sizes, which they're drawn for.
+  & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron),
+  & > .hbutton-hold > .hicon:not(.hchevron-to-arrow, .hexpand-chevron) {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
   // An icon beside the label sits 3px from the border: with the space drawn
-  // around a 24px icon, it looks as far in as the label's text, 6px.
+  // around a 20px icon, it looks as far in as the label's text, 6px.
   // ChevronToArrow and the Expand Chevron keep their own spacing.
   & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label) {
     margin-inline-start: 3px;

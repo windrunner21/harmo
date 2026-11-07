@@ -10,6 +10,7 @@ import developers from "../../html/src/icons/developers.svg" with { type: "text"
 import error from "../../html/src/icons/error.svg" with { type: "text" };
 import home from "../../html/src/icons/home.svg" with { type: "text" };
 import info from "../../html/src/icons/info.svg" with { type: "text" };
+import lock from "../../html/src/icons/lock.svg" with { type: "text" };
 import menu from "../../html/src/icons/menu.svg" with { type: "text" };
 import messages from "../../html/src/icons/messages.svg" with { type: "text" };
 import more from "../../html/src/icons/more.svg" with { type: "text" };
@@ -59,6 +60,7 @@ export const DevelopersIcon = icon(developers);
 export const ErrorIcon = icon(error);
 export const HomeIcon = icon(home);
 export const InfoIcon = icon(info);
+export const LockIcon = icon(lock);
 export const MenuIcon = icon(menu);
 export const MessagesIcon = icon(messages);
 export const MoreIcon = icon(more);

@@ -11,7 +11,7 @@ animated chevron, use [ChevronToArrow](chevron-to-arrow.md) or the
 | CSS | No `icons.css`: the container's CSS, such as `button.css` or `link.css`; `chevron.css` for `.hchevron` |
 | Element | `<svg class="hicon">`, a direct child of its button, link, or other container |
 | Parts | None |
-| Required | `aria-hidden="true"` and `focusable="false"`; a `width` and `height` in `em`, unless its container sizes it (an icon-only button draws its icon at 20px); [ChevronToArrow](chevron-to-arrow.md) is the exception, a fixed 24px |
+| Required | `aria-hidden="true"` and `focusable="false"`; a `width` and `height` in `em`, unless its container sizes it (a button draws its icons at 20px); [ChevronToArrow](chevron-to-arrow.md) is the exception, a fixed 24px |
 | Unique | None |
 | Script | None |
 

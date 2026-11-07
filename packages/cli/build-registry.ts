@@ -27,6 +27,7 @@ const components: Record<string, string[]> = {
   "command-menu": ["CommandMenu.tsx"],
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],
+  "empty-state": ["EmptyState.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
   "filter-chip": ["FilterChip.tsx"],

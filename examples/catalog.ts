@@ -99,6 +99,12 @@ const groups: CatalogGroup[] = [
           "An inline notice: an icon, a message, and an optional action.",
       },
       {
+        slug: "empty-state",
+        title: "Empty State",
+        purpose:
+          "What shows where there's nothing yet: a list before its first item, a search with no results, or a page you can't see.",
+      },
+      {
         slug: "meter",
         title: "Meter",
         purpose:

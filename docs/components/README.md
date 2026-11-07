@@ -19,6 +19,7 @@ the same markup and does what the script would.
 | Command Menu | [command-menu.md](command-menu.md) |
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
+| Empty State | [empty-state.md](empty-state.md) |
 | Expand Chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
 | Filter Chip | [filter-chip.md](filter-chip.md) |
@@ -97,6 +98,7 @@ Some components are built from others, so their files need company:
 | `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |
 | `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
 | `banner.css` | `button.css` for its action |
+| `empty-state.css` | `button.css` for actions |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |

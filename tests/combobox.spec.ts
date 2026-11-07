@@ -200,7 +200,8 @@ onEachPlayground("combobox", () => {
 
   test("the chevron is Select's size, whatever the text around it", async ({ page }) => {
     const container = await example(page, "combobox-default");
-    const [chevron] = await boxes(container.locator(".hexpand-chevron"));
+    // The demo's: the code panel under it has one too.
+    const [chevron] = await boxes(container.locator(".play-demo .hexpand-chevron"));
     expect(chevron.width).toBeCloseTo(14, 0);
     expect(chevron.height).toBeCloseTo(10.5, 0);
   });

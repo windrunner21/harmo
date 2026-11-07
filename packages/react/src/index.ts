@@ -21,6 +21,7 @@ export {
 } from "./CommandMenu.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
+export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
 export { Field, type FieldProps } from "./field/Field.tsx";
 export { FilterChip, type FilterChipProps } from "./FilterChip.tsx";
