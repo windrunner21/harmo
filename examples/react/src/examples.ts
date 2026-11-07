@@ -23,6 +23,7 @@ import { examples as meter } from "./components/meter.tsx";
 import { examples as password } from "./components/password.tsx";
 import { examples as popup } from "./components/popup.tsx";
 import { examples as radio } from "./components/radio.tsx";
+import { examples as search } from "./components/search.tsx";
 import { examples as section } from "./components/section.tsx";
 import { examples as segmented } from "./components/segmented.tsx";
 import { examples as select } from "./components/select.tsx";
@@ -58,6 +59,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   password,
   popup,
   radio,
+  search,
   section,
   segmented,
   select,

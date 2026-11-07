@@ -137,6 +137,11 @@ const groups: CatalogGroup[] = [
         purpose: "A native radio with Harmo's appearance.",
       },
       {
+        slug: "search",
+        title: "Search",
+        purpose: "A field for searching, with an optional clear button.",
+      },
+      {
         slug: "segmented",
         title: "Segmented control",
         purpose: "One choice from a few options shown side by side.",

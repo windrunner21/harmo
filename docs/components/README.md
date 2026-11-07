@@ -28,6 +28,7 @@ the same markup and does what the script would.
 | Password input | [password.md](password.md) |
 | Popup | [popup.md](popup.md) |
 | Radio | [radio.md](radio.md) |
+| Search | [search.md](search.md) |
 | Section | [section.md](section.md) |
 | Segmented control | [segmented.md](segmented.md) |
 | Select | [select.md](select.md) |
@@ -92,6 +93,7 @@ Some components are built from others, so their files need company:
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
+| `search.css` | `input.css`; `field.css` for a label |
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
 | `settings.css` | The controls it holds, such as `switch.css` |
 | `input.css`, `textarea.css`, `checkbox.css`, `radio.css`, `switch.css`, `segmented.css` | `field.css` for labels and messages |

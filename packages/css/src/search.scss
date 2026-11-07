@@ -1,0 +1,124 @@
+@use "shortcuts" as *;
+
+// A search field: an Input filled with the secondary background, a magnifier
+// at its start, and an optional clear button at its end once there's text.
+// It sets Input's own tokens inside it, so the Input keeps its hover, focus,
+// invalid, and disabled states.
+.hsearch {
+  --harmo-input-color-background: #{$color-background-secondary};
+  --harmo-input-color-border: transparent;
+  --harmo-input-box-shadow: none;
+
+  display: grid;
+  align-items: center;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > * {
+    grid-area: 1 / 1;
+  }
+
+  // Over the field, which comes after it and would paint over it, letting
+  // clicks through to it.
+  & > .hicon {
+    z-index: 1;
+    justify-self: start;
+
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    margin-inline-start: 12px;
+
+    color: $icon-color;
+
+    pointer-events: none;
+  }
+
+  & > .hinput {
+    padding-inline-start: 38px;
+
+    appearance: none;
+
+    // Tertiary text is 4.4:1 on the fill, below WCAG AA.
+    &::placeholder {
+      color: $color-text-secondary;
+    }
+
+    // The browsers' own clear button and decorations, so every browser shows
+    // the same field; .hsearch-clear is the clear button, when there is one.
+    // One rule each: a browser drops a whole rule over one selector it
+    // doesn't know.
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    &::-webkit-search-decoration {
+      display: none;
+    }
+
+    &::-webkit-search-results-button {
+      display: none;
+    }
+
+    &::-webkit-search-results-decoration {
+      display: none;
+    }
+  }
+
+  // Room for the clear button while it shows.
+  &:has(> .hsearch-clear:not([hidden])) > .hinput {
+    padding-inline-end: 40px;
+  }
+}
+
+.hsearch-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+
+  box-sizing: border-box;
+  inline-size: 24px;
+  block-size: 24px;
+  margin: 0;
+  margin-inline-end: 8px;
+  padding: 0;
+
+  color: $icon-color;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+
+  transition: color $duration-fast ease;
+
+  & > svg {
+    flex-shrink: 0;
+
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:enabled:hover {
+      color: $icon-hover-color;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+
+  &:disabled {
+    color: $color-text-tertiary;
+
+    cursor: not-allowed;
+  }
+}

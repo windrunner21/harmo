@@ -28,6 +28,7 @@ export {
 export { Popup, type PopupProps } from "./Popup.tsx";
 export { Radio, type RadioProps } from "./Radio.tsx";
 export { RadioGroup, type RadioGroupProps } from "./RadioGroup.tsx";
+export { Search, type SearchProps } from "./Search.tsx";
 export { Section, type SectionProps } from "./Section.tsx";
 export {
   Segmented,

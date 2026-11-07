@@ -10,6 +10,21 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Search: `<div class="hsearch">` around an Input with `type="search"`, or
+  `<Search>`, a field for searching, such as above a list: filled in gray,
+  with a magnifier at its start and an optional clear button at its end once
+  there's text. Escape empties it too, and stops there, so a dialog around it
+  stays open.
+
+  ```html preview
+  <div>
+    <div class="hsearch">
+      <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor" /><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor" /></svg>
+      <input class="hinput" type="search" placeholder="Search conversations" aria-label="Search conversations" />
+    </div>
+  </div>
+  ```
+
 - Section: `<section class="hsection">`, or `<Section>`, a part of a page,
   such as a group of settings: its title, an optional description, and
   optional actions at its end, over a line, then its content, stacked. It

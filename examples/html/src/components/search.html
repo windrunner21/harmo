@@ -1,0 +1,72 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    A field filled in gray, with a magnifier at its start, such as above a list
+    of conversations. Name it with <code>aria-label</code> where there's no
+    label to see. Once there's text, the clear button empties it;
+    <kbd class="hkbd">Escape</kbd> does too, so the button stays out of the
+    <kbd class="hkbd">Tab</kbd> order.
+  </play-note>
+  <div class="hsearch">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input class="hinput" type="search" placeholder="Search conversations" aria-label="Search conversations" />
+    <button class="hsearch-clear" type="button" tabindex="-1" aria-label="Clear" hidden>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="Without a clear button" layout="stack">
+  <play-note>
+    Leave the clear button out where a field this short doesn't need it.
+    <kbd class="hkbd">Escape</kbd> still empties it.
+  </play-note>
+  <div class="hsearch">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input class="hinput" type="search" placeholder="Search contacts" aria-label="Search contacts" />
+  </div>
+</play-example>
+
+<play-example title="With a label" layout="stack">
+  <play-note>
+    In a Field, its label names it, as for any Input.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="template-search">Find a template</label>
+    <div class="hsearch">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input class="hinput" id="template-search" type="search" placeholder="Name or content" />
+      <button class="hsearch-clear" type="button" tabindex="-1" aria-label="Clear" hidden>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Filtering a list" layout="stack">
+  <play-note>
+    Typing narrows the list as you go; clearing, by the button or
+    <kbd class="hkbd">Escape</kbd>, brings every row back. Each tells the app
+    the field's new value, as typing does, so the app's filter follows. The
+    rows are ghost Cards.
+  </play-note>
+  <div class="hsearch">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input
+      class="hinput"
+      type="search"
+      placeholder="Search quick replies"
+      aria-label="Search quick replies"
+      value=""
+      data-example-filter="quick-replies"
+    />
+    <button class="hsearch-clear" type="button" tabindex="-1" aria-label="Clear" hidden>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </div>
+  <nav id="quick-replies" aria-label="Quick replies">
+    <a class="hcard" data-variant="ghost" href="#order-shipped">Order shipped</a>
+    <a class="hcard" data-variant="ghost" href="#refund-processed">Refund processed</a>
+    <a class="hcard" data-variant="ghost" href="#opening-hours">Opening hours</a>
+    <a class="hcard" data-variant="ghost" href="#order-delayed">Order delayed</a>
+  </nav>
+</play-example>
