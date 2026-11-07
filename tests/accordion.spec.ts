@@ -5,7 +5,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // a <details> that opens and closes with no script; items that share a name
 // open one at a time; the content grows as it opens and shrinks as it closes,
 // with the chevron folding; and a closed item is only its summary.
-const items = async (page: Page, id: string) => (await example(page, id)).locator(".haccordion-item");
+// In the demo: each example's code panel below it is an Accordion item too.
+const items = async (page: Page, id: string) => (await example(page, id)).locator(".play-demo .haccordion-item");
 const isOpen = (item: Locator) => item.evaluate((node) => (node as HTMLDetailsElement).open);
 const height = (element: Locator) => element.evaluate((node) => node.getBoundingClientRect().height);
 // An open item's height once its content has grown: its summary and all of

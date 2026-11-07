@@ -456,67 +456,24 @@ body {
   border-radius: var(--harmo-border-radius);
 }
 
+/* Each example's code is an Accordion item, under the demo. The code fills
+   it edge to edge, so its content doesn't reach past it for focus rings, and
+   it has no space under it. */
 .play-code {
   border-block-start: 1px solid var(--harmo-color-border);
 
-  & > summary {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
+  &::details-content {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
 
-    padding: 0.5rem 1rem;
+  & > .haccordion-summary {
+    padding-inline: 1rem;
 
-    font-size: var(--harmo-font-size-xs);
-    font-weight: var(--harmo-font-weight-medium);
-    line-height: 1.25rem;
-    list-style: none;
-
-    color: var(--harmo-color-text-secondary);
-    border-radius: 0 0 calc(var(--play-radius) - 1px) calc(var(--play-radius) - 1px);
-
-    cursor: pointer;
-    user-select: none;
-
-    transition: color var(--harmo-duration-fast) ease;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        color: var(--harmo-color-text);
-      }
-    }
-
+    /* Inside the box's edge, which would cut it off. */
     &:focus-visible {
-      outline: var(--harmo-focus-outline);
       outline-offset: -2px;
     }
-  }
-
-  &[open] > summary {
-    border-radius: 0;
-  }
-}
-
-.play-code-chevron {
-  margin-inline-start: -0.25rem;
-
-  transition: rotate var(--harmo-duration-fast) var(--harmo-ease-out-cubic);
-
-  .play-code[open] & {
-    rotate: 90deg;
-
-    transition-duration: var(--harmo-duration-normal);
-  }
-
-  &:dir(rtl) {
-    scale: -1 1;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
   }
 }
 
@@ -524,6 +481,10 @@ body {
   position: relative;
 
   border-block-start: 1px solid var(--harmo-color-border);
+
+  &::after {
+    display: none;
+  }
 
   /* Physical, like the code, which is always left to right. */
   & > .play-copy {
