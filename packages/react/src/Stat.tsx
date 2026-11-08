@@ -22,7 +22,7 @@ export interface StatProps extends Omit<ComponentPropsWithRef<"div">, "children"
   hint?: ReactNode;
   trend?: { direction: "up" | "down"; label: ReactNode };
   trendHint?: ReactNode;
-  action?: ReactNode;
+  actions?: ReactNode;
 }
 
 export interface StatGroupProps extends ComponentPropsWithRef<"div"> {
@@ -73,7 +73,7 @@ export const Stat = ({
   hint,
   trend,
   trendHint,
-  action,
+  actions,
   className,
   ...props
 }: StatProps) => {
@@ -114,7 +114,7 @@ export const Stat = ({
       </div>
       <p className="hstat-value">{value}</p>
       {renders(caption) && <p className="hstat-caption">{caption}</p>}
-      {renders(action) && <div className="hstat-action">{action}</div>}
+      {renders(actions) && <div className="hstat-actions">{actions}</div>}
     </div>
   );
 };

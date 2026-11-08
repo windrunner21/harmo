@@ -91,6 +91,10 @@ $actionable: ':where(a[href], button:enabled)';
     "icon description chevron";
   align-content: start;
   align-items: start;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 // A 40px tile with a 24px icon in the accent, as an Empty State's. On a

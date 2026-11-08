@@ -19,7 +19,7 @@ export const examples = {
       value="37"
       caption="Compared to yesterday"
       trend={{ direction: "down", label: "−8%" }}
-      action={<Link href="/tickets">View tickets</Link>}
+      actions={<Link href="/tickets">View tickets</Link>}
     />
   ),
 
@@ -58,7 +58,7 @@ export const examples = {
       // As Intl.NumberFormat("ar") writes +12%, with marks that keep the sign
       // before the number.
       trend={{ direction: "up", label: "\u200e+12\u200e%\u200e" }}
-      action={<Link href="/tickets">عرض التذاكر</Link>}
+      actions={<Link href="/tickets">عرض التذاكر</Link>}
     />
   ),
 };

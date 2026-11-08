@@ -19,8 +19,6 @@ export type PaginationProps = Omit<ComponentPropsWithRef<"nav">, "children"> &
     nextLabel: ReactNode;
   };
 
-// The first and last pages, and the one you're on with one either side; a
-// gap stands for two or more pages, so there are always seven.
 const paginationItems = (page: number, pageCount: number): (number | "gap")[] => {
   const pages = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, index) => from + index);
   if (pageCount <= 7) return pages(1, pageCount);
@@ -41,8 +39,6 @@ export const Pagination = ({
   className,
   ...props
 }: PaginationProps) => {
-  // A link is followed, unless onPageChange takes a plain click instead; a
-  // click with a modifier key, such as to open a new tab, is the browser's.
   const go = (to: number) =>
     onPageChange &&
     ((event: MouseEvent<HTMLElement>) => {

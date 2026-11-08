@@ -305,6 +305,7 @@ export const NavigationMenuItem = ({
         aria-controls={id}
         onClick={(event) => {
           onClick?.(event);
+          if (event.defaultPrevented) return;
           if (!inactive(event.currentTarget.parentElement as HTMLElement)) menu.press(id);
         }}
       >

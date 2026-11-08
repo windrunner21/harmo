@@ -1,13 +1,6 @@
 import { Card, Field, Search } from "@harmo-ui/react";
 import { useState } from "react";
 
-const quickReplies = [
-  ["order-shipped", "Order shipped"],
-  ["refund-processed", "Refund processed"],
-  ["opening-hours", "Opening hours"],
-  ["order-delayed", "Order delayed"],
-];
-
 export const examples = {
   Default: () => (
     <Search
@@ -28,6 +21,12 @@ export const examples = {
   ),
 
   "Filtering a list": () => {
+    const quickReplies = [
+      ["order-shipped", "Order shipped"],
+      ["refund-processed", "Refund processed"],
+      ["opening-hours", "Opening hours"],
+      ["order-delayed", "Order delayed"],
+    ];
     const [query, setQuery] = useState("");
     const matches = (name: string) =>
       name.toLowerCase().includes(query.trim().toLowerCase());

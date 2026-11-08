@@ -31,6 +31,7 @@ export const MenuButton = ({
     aria-expanded={open ?? expanded ?? false}
     onClick={(event) => {
       onClick?.(event);
+      if (event.defaultPrevented) return;
       if (open !== undefined) onOpenChange?.(!open);
     }}
   >

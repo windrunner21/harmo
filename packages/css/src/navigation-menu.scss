@@ -120,7 +120,6 @@
   padding: 8px;
 
   opacity: 0;
-  translate: var(--hnavigation-menu-shift, 0) 0;
   background-color: $color-background;
   border: 1px solid $color-border;
   border-radius: $border-radius;
@@ -128,6 +127,7 @@
 
   pointer-events: none;
 
+  translate: var(--hnavigation-menu-shift, 0) 0;
   transform-origin: top center;
 
   transition:
@@ -160,10 +160,10 @@
 
   visibility: hidden;
   opacity: 0;
-  translate: var(--hnavigation-menu-shift, 0) 0;
 
   pointer-events: none;
 
+  translate: var(--hnavigation-menu-shift, 0) 0;
   transform-origin: top center;
 
   transition:
@@ -179,17 +179,22 @@
   }
 }
 
+// Opening takes 200ms; closing, the 150ms above.
 .hnavigation-menu[data-open] {
   & > .hnavigation-menu-frame {
     opacity: 1;
     scale: 1;
 
     pointer-events: auto;
+
+    transition-duration: $duration-normal;
   }
 
   & .hnavigation-menu-content {
     opacity: 1;
     scale: 1;
+
+    transition-duration: $duration-normal, $duration-normal, 0s;
   }
 }
 
@@ -237,7 +242,7 @@
     }
 
     & .hnavigation-menu-rows {
-      transition: translate $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
+      transition: translate $duration-normal $ease-in-out-cubic;
     }
 
     & .hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {

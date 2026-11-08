@@ -67,7 +67,7 @@ export const Dialog = ({
       <div {...bodyProps} className={withClass("hdialog-body", bodyProps?.className)}>
         {children}
       </div>
-      {footer && <footer className="hdialog-footer">{footer}</footer>}
+      {renders(footer) && <footer className="hdialog-footer">{footer}</footer>}
     </>
   );
 

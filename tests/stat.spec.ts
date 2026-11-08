@@ -62,7 +62,7 @@ onEachPlayground("stat", () => {
     const stat = (await example(page, "stat-with-a-hint-and-an-action")).locator(".hstat");
     const link = stat.getByRole("link", { name: "View tickets" });
     await expect(link).toHaveAttribute("href", "/tickets");
-    const [caption, action] = await boxes(stat.locator(".hstat-caption"), stat.locator(".hstat-action"));
+    const [caption, action] = await boxes(stat.locator(".hstat-caption"), stat.locator(".hstat-actions"));
     expect(action.y - (caption.y + caption.height)).toBeCloseTo(16, 0);
   });
 

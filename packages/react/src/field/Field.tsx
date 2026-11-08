@@ -9,6 +9,7 @@ import {
   type ComponentPropsWithRef,
   type ReactNode,
 } from "react";
+import { renders } from "../children.ts";
 import { withClass } from "../withClass.ts";
 import { ErrorMessage } from "./ErrorMessage.tsx";
 
@@ -108,7 +109,7 @@ export const Field = (fieldProps: FieldProps) => {
     "aria-describedby":
       [
         optional && optionalId,
-        description && descriptionId,
+        renders(description) && descriptionId,
         validated && errorId,
       ]
         .filter(Boolean)
@@ -140,7 +141,7 @@ export const Field = (fieldProps: FieldProps) => {
     </label>
   );
 
-  const descriptionElement = description && (
+  const descriptionElement = renders(description) && (
     <p className="hdescription" id={descriptionId}>
       {description}
     </p>
@@ -149,7 +150,7 @@ export const Field = (fieldProps: FieldProps) => {
   const content = horizontal ? (
     <>
       {children}
-      {description ? (
+      {renders(description) ? (
         <div className="hfield-content">
           {labelElement}
           {descriptionElement}

@@ -8,7 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 describe("Sidebar", () => {
   test("hidden hides a link's or a group's whole item", () => {
     const markup = renderToStaticMarkup(
-      <Sidebar label="Main">
+      <Sidebar aria-label="Main">
         <SidebarGroup>
           <SidebarItem href="/home" hidden>
             Home
@@ -30,7 +30,7 @@ describe("Sidebar", () => {
     const names = (exclusive: boolean) =>
       [
         ...renderToStaticMarkup(
-          <Sidebar label="Main" exclusive={exclusive}>
+          <Sidebar aria-label="Main" exclusive={exclusive}>
             <SidebarGroup>
               <SidebarSub label="Campaigns" />
               <SidebarSub label="More" />

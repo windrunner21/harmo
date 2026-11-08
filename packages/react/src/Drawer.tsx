@@ -71,7 +71,7 @@ export const Drawer = ({
       <div {...bodyProps} className={withClass("hdrawer-body", bodyProps?.className)}>
         {children}
       </div>
-      {footer && <footer className="hdrawer-footer">{footer}</footer>}
+      {renders(footer) && <footer className="hdrawer-footer">{footer}</footer>}
     </>
   );
 

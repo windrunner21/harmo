@@ -23,7 +23,7 @@ const SubContext = createContext(false);
 
 export interface SidebarProps
   extends Omit<ComponentPropsWithRef<"div">, "children"> {
-  label: string;
+  "aria-label": string;
   exclusive?: boolean;
   collapsed?: boolean;
   defaultCollapsed?: boolean;
@@ -36,7 +36,7 @@ export interface SidebarProps
 }
 
 export const Sidebar = ({
-  label,
+  "aria-label": ariaLabel,
   exclusive,
   collapsed,
   defaultCollapsed = false,
@@ -202,7 +202,7 @@ export const Sidebar = ({
         </Tooltip>
       )}
       {renders(header) && <div className="hsidebar-header">{header}</div>}
-      <nav className="hsidebar-nav" aria-label={label}>
+      <nav className="hsidebar-nav" aria-label={ariaLabel}>
         <GroupsContext value={exclusive ? `${generatedId}-groups` : undefined}>
           {children}
         </GroupsContext>

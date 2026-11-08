@@ -44,8 +44,6 @@ const clearIcon = (
   </svg>
 );
 
-// Empties the field as typing would, so onChange, and any input listener of
-// the app's, hear it; a read-only field stays as it is.
 const empty = (input: HTMLInputElement) => {
   if (input.readOnly) return;
   Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, "");
@@ -77,7 +75,6 @@ export const Search = ({
         onKeyDown={(event) => {
           onKeyDown?.(event);
           const input = event.currentTarget;
-          // An IME's Escape cancels what it's composing.
           if (event.nativeEvent.isComposing || event.keyCode === 229) return;
           if (event.defaultPrevented || event.key !== "Escape" || !input.value || input.readOnly) return;
           event.preventDefault();

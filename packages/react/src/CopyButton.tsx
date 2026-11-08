@@ -36,7 +36,7 @@ export interface CopyButtonProps extends ControlOptions {
 
 export interface ShareButtonProps extends ControlOptions {
   url: string;
-  title?: string;
+  shareTitle?: string;
   text?: string;
   onShare?: () => void;
   onCopy?: () => void;
@@ -160,7 +160,6 @@ const Control = ({
           {button}
         </Tooltip>
       )}
-      {/* Different each time, if only by an invisible space, so copying again is read again. */}
       <span className="hcopy-status" role="status" hidden={hidden}>
         {done ? `${copiedLabel}${times % 2 ? "" : "\u00a0"}` : null}
       </span>
@@ -182,12 +181,12 @@ export const CopyButton = ({ value, onCopy, ...props }: CopyButtonProps) => (
 
 // The device's share sheet where the browser has one; elsewhere, it copies
 // the link, and says so.
-export const ShareButton = ({ url, title, text, onShare, onCopy, ...props }: ShareButtonProps) => (
+export const ShareButton = ({ url, shareTitle, text, onShare, onCopy, ...props }: ShareButtonProps) => (
   <Control
     {...props}
     icon={shareIcon}
     action={async () => {
-      const data = { url, title, text };
+      const data = { url, title: shareTitle, text };
       if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {
         try {
           await navigator.share(data);
@@ -220,7 +219,6 @@ export const CopyField = ({
   <Field label={label} htmlFor={props.id} optional={optional} description={description} hidden={hidden}>
     <div className="hcopy-field">
       <Input {...props} type="text" readOnly disabled={disabled} value={value} />
-      {/* The field's label and description are the input's, not the button's. */}
       <FieldContext value={{}}>
         <CopyButton
           size="small"

@@ -181,6 +181,13 @@ onEachPlayground("navigation-menu", () => {
     await expect(rows).toHaveCSS("transition-duration", "0s");
   });
 
+  test("it opens in 200ms and closes in 150ms", async ({ page }) => {
+    const { trigger, frame } = await parts(await example(page, "navigation-menu-default"));
+    await expect(frame).toHaveCSS("transition-duration", "0.15s, 0.15s");
+    await trigger("Solutions").hover();
+    await expect(frame).toHaveCSS("transition-duration", "0.2s");
+  });
+
   test('with data-align="start", the panel opens at the menu\'s start', async ({ page }) => {
     const container = await example(page, "navigation-menu-default");
     const { nav, trigger, frame } = await parts(container);

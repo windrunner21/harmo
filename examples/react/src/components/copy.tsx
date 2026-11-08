@@ -65,7 +65,7 @@ export const examples = {
             <FacebookIcon className="hicon" />
           </Button>
         </Tooltip>
-        <ShareButton url={url} title={text} label="Share" copiedLabel="Link copied" />
+        <ShareButton url={url} shareTitle={text} label="Share" copiedLabel="Link copied" />
       </div>
     );
   },

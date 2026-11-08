@@ -31,7 +31,7 @@ export const examples = {
     return (
       <div style={{ blockSize: "36rem" }}>
         <Sidebar
-          label="Main"
+          aria-label="Main"
           collapseLabel="Collapse"
           expandLabel="Expand"
           header={
@@ -145,7 +145,7 @@ export const examples = {
     return (
       <div style={{ blockSize: "36rem" }}>
         <Sidebar
-          label="Main"
+          aria-label="Main"
           exclusive
           header={
             <SidebarGroup>
@@ -258,7 +258,7 @@ export const examples = {
     return (
       <div style={{ blockSize: "36rem" }}>
         <Sidebar
-          label="Main"
+          aria-label="Main"
           defaultCollapsed
           header={
             <SidebarGroup>
@@ -383,7 +383,7 @@ export const examples = {
         }
       >
         <Sidebar
-          label="Main"
+          aria-label="Main"
           exclusive
           footer={
             <SidebarGroup>

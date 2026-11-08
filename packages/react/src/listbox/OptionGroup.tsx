@@ -24,8 +24,6 @@ export const OptionGroup = ({
 }: OptionGroupProps) => {
   const id = useId();
   const listbox = useListbox();
-  // A group inside another takes its settings too: unfiltered, or hidden,
-  // with it.
   const outer = useContext(GroupContext);
   const filtered = outer.filter && filter;
   const hiddenHere = outer.hidden || Boolean(hidden);

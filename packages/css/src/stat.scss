@@ -179,7 +179,7 @@
 }
 
 // What to do about it, such as a link to the tickets.
-.hstat-action {
+.hstat-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -247,7 +247,7 @@
       grid-row: 3;
     }
 
-    & > .hstat-action {
+    & > .hstat-actions {
       grid-row: 4;
     }
   }

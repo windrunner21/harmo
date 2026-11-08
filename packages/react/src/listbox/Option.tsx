@@ -91,7 +91,7 @@ export const Option = ({
       ) : (
         label
       )}
-      {badge && (
+      {renders(badge) && (
         <>
           {" "}
           <span className="hoption-badge">{badge}</span>
