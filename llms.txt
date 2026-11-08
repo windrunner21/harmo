@@ -48,7 +48,9 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Kbd](docs/components/kbd.md): a key or shortcut, such as Enter or ⌘K, in text or on a button
 - [Link](docs/components/link.md): navigation, inside text or on its own
 - [Listbox](docs/components/listbox.md): the option list inside a popup, with groups, search, and multiple selection
+- [Menu Button](docs/components/menu-button.md): three bars that turn into a cross, for opening a site's menu on a phone
 - [Meter](docs/components/meter.md): how much of something on a fixed scale, such as password strength
+- [Navigation Menu](docs/components/navigation-menu.md): a site's main navigation: links, and triggers that open a panel that resizes as you move between them, or stacked on a phone
 - [Pagination](docs/components/pagination.md): moves through a list shown a page at a time: Previous and Next, and the page numbers if you show them
 - [Password Input](docs/components/password.md): a password field with a show/hide toggle and an optional strength meter
 - [Dialog](docs/components/dialog.md): a modal window for a task or a decision, opened by a button, code, or a link

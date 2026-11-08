@@ -1,0 +1,5 @@
+<svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <line class="hmenu-button-top" x1="3" y1="5" x2="17" y2="5" />
+  <line class="hmenu-button-middle" x1="3" y1="10" x2="17" y2="10" />
+  <line class="hmenu-button-bottom" x1="3" y1="15" x2="17" y2="15" />
+</svg>

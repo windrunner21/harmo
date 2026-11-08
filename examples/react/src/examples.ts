@@ -24,7 +24,9 @@ import { examples as input } from "./components/input.tsx";
 import { examples as kbd } from "./components/kbd.tsx";
 import { examples as link } from "./components/link.tsx";
 import { examples as listbox } from "./components/listbox.tsx";
+import { examples as menuButton } from "./components/menu-button.tsx";
 import { examples as meter } from "./components/meter.tsx";
+import { examples as navigationMenu } from "./components/navigation-menu.tsx";
 import { examples as pagination } from "./components/pagination.tsx";
 import { examples as password } from "./components/password.tsx";
 import { examples as popup } from "./components/popup.tsx";
@@ -69,7 +71,9 @@ export const components: Record<string, Record<string, ComponentType>> = {
   kbd,
   link,
   listbox,
+  "menu-button": menuButton,
   meter,
+  "navigation-menu": navigationMenu,
   pagination,
   password,
   popup,

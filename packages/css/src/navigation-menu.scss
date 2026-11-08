@@ -1,0 +1,474 @@
+@use "shortcuts" as *;
+
+// A site's main navigation: links, and triggers that each open a panel of
+// rows. One frame shows the open panel, resizing as you move between triggers
+// while the rows slide sideways. Each panel follows its trigger in the page,
+// so Tab goes from a trigger into its links; they only look like one panel.
+// The frame and every panel take the same size from the two custom properties
+// a script sets, so they move as one.
+.hnavigation-menu {
+  // Which way the start of the line is, for what slides toward it.
+  --hnavigation-menu-toward-start: -1;
+
+  position: relative;
+
+  inline-size: fit-content;
+
+  font-family: $font-family;
+
+  &:dir(rtl) {
+    --hnavigation-menu-toward-start: 1;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hnavigation-menu-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > li {
+    display: flex;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+.hnavigation-menu-link,
+.hnavigation-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 12px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+
+  color: $color-text-secondary;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-full;
+
+  cursor: pointer;
+
+  transition:
+    background-color $duration-normal ease,
+    color $duration-normal ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-text;
+      background-color: $color-background-hover;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  // The page you're on: its weight tells it apart without its color.
+  &[aria-current="page"] {
+    font-weight: $font-weight-medium;
+
+    color: $color-primary;
+  }
+}
+
+.hnavigation-menu-trigger[aria-expanded="true"] {
+  color: $color-text;
+  background-color: $color-background-hover;
+}
+
+// What you see of the open panel: its background, border, and shadow. It's
+// before the list in the page, so the panels paint over it. Its ::before
+// bridges the 8px gap under the triggers, and no more, so a pointer on its way
+// to the panel doesn't leave the menu, and the triggers stay pressable.
+.hnavigation-menu-frame {
+  position: absolute;
+  z-index: 10;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-end: 0;
+
+  box-sizing: content-box;
+  inline-size: var(--hnavigation-menu-width, 0);
+  block-size: var(--hnavigation-menu-height, 0);
+  padding: 8px;
+
+  opacity: 0;
+  translate: var(--hnavigation-menu-shift, 0) 0;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow-sm;
+
+  pointer-events: none;
+
+  transform-origin: top center;
+
+  transition:
+    opacity $duration-fast ease,
+    scale $duration-fast $ease-out-cubic;
+
+  &::before {
+    content: "";
+
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 100%;
+
+    block-size: 8px;
+  }
+}
+
+// A panel: a box exactly as big as the inside of the frame, in the same
+// place, which clips the rows sliding through it. Closed, it's inert at once,
+// so it's out of the Tab order while it fades.
+.hnavigation-menu-content {
+  position: absolute;
+  z-index: 11;
+  inset-block-start: calc(100% + 17px);
+  inset-inline-end: 9px;
+
+  inline-size: var(--hnavigation-menu-width, 0);
+  block-size: var(--hnavigation-menu-height, 0);
+  overflow: clip;
+
+  visibility: hidden;
+  opacity: 0;
+  translate: var(--hnavigation-menu-shift, 0) 0;
+
+  pointer-events: none;
+
+  transform-origin: top center;
+
+  transition:
+    opacity $duration-fast ease,
+    scale $duration-fast $ease-out-cubic,
+    visibility 0s linear $duration-fast;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hnavigation-menu-frame,
+  .hnavigation-menu-content {
+    scale: 0.98;
+  }
+}
+
+.hnavigation-menu[data-open] {
+  & > .hnavigation-menu-frame {
+    opacity: 1;
+    scale: 1;
+
+    pointer-events: auto;
+  }
+
+  & .hnavigation-menu-content {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+.hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {
+  visibility: visible;
+
+  pointer-events: auto;
+
+  transition-delay: 0s;
+}
+
+// The rows, as wide as they need to be, but for the frame and 8px either side
+// of it to fit the window. A panel that isn't open waits to one side of the
+// frame, on the side its trigger is.
+.hnavigation-menu-rows {
+  inline-size: max-content;
+  max-inline-size: calc(100vw - 34px);
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  .hnavigation-menu-content[data-position="before"] > & {
+    translate: calc((var(--hnavigation-menu-width, 0px) + 16px) * var(--hnavigation-menu-toward-start)) 0;
+  }
+
+  .hnavigation-menu-content[data-position="after"] > & {
+    translate: calc((var(--hnavigation-menu-width, 0px) + 16px) * var(--hnavigation-menu-toward-start) * -1) 0;
+  }
+}
+
+// Moving from one trigger to another: the frame resizes while the rows slide.
+// Opening from closed, they're already in place, and the panel only fades in.
+@media (prefers-reduced-motion: no-preference) {
+  .hnavigation-menu[data-moving] {
+    & > .hnavigation-menu-frame,
+    & .hnavigation-menu-content {
+      transition:
+        inline-size $duration-normal ease,
+        block-size $duration-normal ease,
+        translate $duration-normal ease,
+        opacity $duration-fast ease,
+        scale $duration-fast $ease-out-cubic,
+        visibility 0s linear $duration-normal;
+    }
+
+    & .hnavigation-menu-rows {
+      transition: translate $duration-normal cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    & .hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {
+      transition-delay: 0s;
+    }
+  }
+}
+
+// A row: an icon in a tile, which fills as it's hovered, a title, and what
+// it's for. The focus ring is inside it, since the panel clips what's beyond.
+.hnavigation-menu-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px 16px;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  text-decoration: none;
+
+  color: $color-text;
+  border-radius: $border-radius-sm;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: -2px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      & > .hnavigation-menu-icon {
+        color: $color-on-primary;
+        background-color: $color-primary-fill;
+        border-color: $color-primary-fill;
+      }
+
+      & .hnavigation-menu-description {
+        color: $color-text;
+      }
+    }
+  }
+
+  &:focus-visible {
+    & > .hnavigation-menu-icon {
+      color: $color-on-primary;
+      background-color: $color-primary-fill;
+      border-color: $color-primary-fill;
+    }
+
+    & .hnavigation-menu-description {
+      color: $color-text;
+    }
+  }
+
+  // The page you're on: a line just inside its edge tells it apart without
+  // its color.
+  &[aria-current="page"] {
+    background-color: $color-primary-tint;
+
+    & .hnavigation-menu-title {
+      color: $color-primary;
+    }
+
+    &:not(:focus-visible) {
+      outline: 1px solid $color-primary;
+      outline-offset: -1px;
+    }
+  }
+
+  // On a phone, where a row may wrap: more room between its lines, and less
+  // around them, so a row on one line stays as tall.
+  @media (max-width: 30rem) {
+    padding-block: 10px;
+
+    line-height: 1.25;
+  }
+}
+
+.hnavigation-menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  padding: 8px;
+
+  color: $color-text-secondary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-sm;
+
+  transition:
+    background-color $duration-normal ease,
+    border-color $duration-normal ease,
+    color $duration-normal ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > :is(svg, img) {
+    display: block;
+
+    inline-size: 16px;
+    block-size: 16px;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+.hnavigation-menu-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 30rem) {
+    gap: 5px;
+  }
+}
+
+.hnavigation-menu-description {
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-normal;
+
+  color: $color-text-secondary;
+
+  transition: color $duration-normal ease;
+}
+
+// A panel that wants the end of the menu by default; at its start, for a menu
+// near the start of the window, where the panel would run off the edge.
+.hnavigation-menu[data-align="start"] {
+  & > .hnavigation-menu-frame {
+    inset-inline: 0 auto;
+  }
+
+  & .hnavigation-menu-content {
+    inset-inline: 9px auto;
+  }
+}
+
+// On a phone, or in a sheet: the triggers stacked, each panel opening in
+// place beneath its trigger. No frame, no hover.
+.hnavigation-menu[data-orientation="vertical"] {
+  inline-size: auto;
+
+  & > .hnavigation-menu-frame {
+    display: none;
+  }
+
+  & > .hnavigation-menu-list {
+    flex-direction: column;
+    align-items: stretch;
+
+    & > li {
+      display: block;
+
+      &[hidden] {
+        display: none;
+      }
+    }
+  }
+
+  & .hnavigation-menu-link,
+  & .hnavigation-menu-trigger {
+    justify-content: space-between;
+
+    inline-size: 100%;
+    padding: 12px;
+
+    font-size: $font-size-base;
+
+    border-radius: $border-radius;
+  }
+
+  & .hnavigation-menu-content {
+    position: static;
+
+    display: grid;
+    grid-template-rows: 0fr;
+
+    inline-size: auto;
+    block-size: auto;
+    overflow: visible;
+
+    opacity: 1;
+    scale: none;
+    translate: none;
+
+    transition: visibility 0s linear $duration-fast;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  & .hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {
+    grid-template-rows: 1fr;
+
+    transition: none;
+  }
+
+  & .hnavigation-menu-rows {
+    inline-size: auto;
+    max-inline-size: none;
+    min-block-size: 0;
+    overflow: hidden;
+
+    translate: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    & .hnavigation-menu-content {
+      transition:
+        grid-template-rows $duration-fast $ease-out-cubic,
+        visibility 0s linear $duration-fast;
+    }
+
+    & .hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {
+      transition: grid-template-rows $duration-normal $ease-out-cubic;
+    }
+  }
+}

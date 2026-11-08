@@ -1,0 +1,347 @@
+<play-example title="Default">
+  <play-note>
+    Links, and triggers that each open a panel, on hover, a click, or
+    <kbd class="hkbd">Enter</kbd>. Moving between triggers resizes the panel
+    while its rows slide. <kbd class="hkbd">Tab</kbd> goes from a trigger into
+    its links, and <kbd class="hkbd">Esc</kbd> closes it. A click on a panel
+    the pointer opened keeps it open.
+  </play-note>
+  <div style="min-block-size: 18rem">
+    <nav class="hnavigation-menu" aria-label="Main">
+      <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+      <ul class="hnavigation-menu-list">
+        <li><a class="hnavigation-menu-link" href="/product">Product</a></li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="nav-solutions">
+            Solutions
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="nav-solutions" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/commerce">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="analytics" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Commerce</span>
+                    <span class="hnavigation-menu-description">Drive sales and convert chats</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/support">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="messages" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Customer support</span>
+                    <span class="hnavigation-menu-description">Resolve queries fast</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/marketing">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="campaigns" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Marketing</span>
+                    <span class="hnavigation-menu-description">Ignite leads and engagement</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="nav-resources">
+            Resources
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="nav-resources" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/developers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="developers" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Developers</span>
+                    <span class="hnavigation-menu-description">API keys and webhooks</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/customers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="user" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Customers</span>
+                    <span class="hnavigation-menu-description">Trusted by top teams</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/contact">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="tickets" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Contact us</span>
+                    <span class="hnavigation-menu-description">Get help quickly</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</play-example>
+
+<play-example title="Current page">
+  <play-note>
+    <code>aria-current="page"</code> marks the page you're on, in the accent
+    and a heavier weight.
+  </play-note>
+  <div style="min-block-size: 18rem">
+    <nav class="hnavigation-menu" aria-label="Main">
+      <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+      <ul class="hnavigation-menu-list">
+        <li><a class="hnavigation-menu-link" href="/product">Product</a></li>
+        <li><a class="hnavigation-menu-link" href="/pricing" aria-current="page">Pricing</a></li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="nav-more">
+            Resources
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="nav-more" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/developers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="developers" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Developers</span>
+                    <span class="hnavigation-menu-description">API keys and webhooks</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/customers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="user" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Customers</span>
+                    <span class="hnavigation-menu-description">Trusted by top teams</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/contact">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="tickets" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Contact us</span>
+                    <span class="hnavigation-menu-description">Get help quickly</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</play-example>
+
+<play-example title="On a phone">
+  <play-note>
+    <code>data-orientation="vertical"</code> stacks the triggers, and each
+    panel opens in place beneath its trigger, with no hover. Here a Menu Button
+    opens it in a Popup, which leaves the button showing, so its cross can
+    close it.
+  </play-note>
+  <button class="hbutton hmenu-button" data-variant="secondary" data-size="small" type="button" aria-label="Menu" aria-expanded="false" popovertarget="site-menu" style="anchor-name: --site-menu">
+    <play-icon name="menu-bars" class="hicon hmenu-button-bars"></play-icon>
+  </button>
+  <div class="hpopup" id="site-menu" popover style="inline-size: 18rem; position-anchor: --site-menu">
+    <nav class="hnavigation-menu" aria-label="Main" data-orientation="vertical">
+      <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+      <ul class="hnavigation-menu-list">
+        <li><a class="hnavigation-menu-link" href="/product">Product</a></li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="phone-solutions">
+            Solutions
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="phone-solutions" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/commerce">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="analytics" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Commerce</span>
+                    <span class="hnavigation-menu-description">Drive sales and convert chats</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/support">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="messages" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Customer support</span>
+                    <span class="hnavigation-menu-description">Resolve queries fast</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/marketing">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="campaigns" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Marketing</span>
+                    <span class="hnavigation-menu-description">Ignite leads and engagement</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="phone-resources">
+            Resources
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="phone-resources" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/developers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="developers" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Developers</span>
+                    <span class="hnavigation-menu-description">API keys and webhooks</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/customers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="user" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Customers</span>
+                    <span class="hnavigation-menu-description">Trusted by top teams</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/contact">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="tickets" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">Contact us</span>
+                    <span class="hnavigation-menu-description">Get help quickly</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    In Arabic, the panel opens under the menu's end, on the left, and the rows
+    slide the other way.
+  </play-note>
+  <div style="min-block-size: 18rem">
+    <nav class="hnavigation-menu" aria-label="الرئيسية">
+      <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+      <ul class="hnavigation-menu-list">
+        <li><a class="hnavigation-menu-link" href="/product">المنتج</a></li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="ar-solutions">
+            الحلول
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="ar-solutions" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/commerce">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="analytics" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">التجارة</span>
+                    <span class="hnavigation-menu-description">زد مبيعاتك عبر المحادثات</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/solutions/support">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="messages" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">دعم العملاء</span>
+                    <span class="hnavigation-menu-description">أجب عن الأسئلة بسرعة</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li>
+          <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="ar-resources">
+            الموارد
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hnavigation-menu-content" id="ar-resources" inert>
+            <ul class="hnavigation-menu-rows">
+              <li>
+                <a class="hnavigation-menu-row" href="/developers">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="developers" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">المطورون</span>
+                    <span class="hnavigation-menu-description">مفاتيح الواجهة البرمجية</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="hnavigation-menu-row" href="/contact">
+                  <span class="hnavigation-menu-icon" aria-hidden="true">
+                    <play-icon name="tickets" class="hicon"></play-icon>
+                  </span>
+                  <span class="hnavigation-menu-text">
+                    <span class="hnavigation-menu-title">اتصل بنا</span>
+                    <span class="hnavigation-menu-description">احصل على المساعدة بسرعة</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</play-example>

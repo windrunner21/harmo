@@ -1,0 +1,39 @@
+@use "shortcuts" as *;
+
+// A Button that opens a site's menu on a phone: three bars that turn into a
+// cross while it's expanded.
+.hmenu-button-bars {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+
+  & > line {
+    transform-box: fill-box;
+    transform-origin: center;
+
+    transition:
+      transform $duration-normal $ease-in-out-cubic,
+      opacity $duration-normal $ease-in-out-cubic;
+  }
+
+  .hmenu-button[aria-expanded="true"] > & {
+    & > .hmenu-button-top {
+      transform: translateY(5px) rotate(45deg);
+    }
+
+    & > .hmenu-button-middle {
+      opacity: 0;
+    }
+
+    & > .hmenu-button-bottom {
+      transform: translateY(-5px) rotate(-45deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    & > line {
+      transition: none;
+    }
+  }
+}

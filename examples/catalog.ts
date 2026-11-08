@@ -243,6 +243,18 @@ const groups: CatalogGroup[] = [
           "Places to go and things to do, found by typing: under a search field, or in a dialog.",
       },
       {
+        slug: "menu-button",
+        title: "Menu Button",
+        purpose:
+          "Three bars that turn into a cross, for opening a site's menu on a phone.",
+      },
+      {
+        slug: "navigation-menu",
+        title: "Navigation Menu",
+        purpose:
+          "A site's main navigation: links, and triggers that open a panel that resizes as you move between them.",
+      },
+      {
         slug: "pagination",
         title: "Pagination",
         purpose:

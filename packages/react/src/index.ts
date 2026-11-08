@@ -38,7 +38,18 @@ export { Input, type InputProps } from "./Input.tsx";
 export { Kbd, type KbdProps } from "./Kbd.tsx";
 export { Link, type LinkProps } from "./Link.tsx";
 export { Listbox, type ListboxProps } from "./listbox/Listbox.tsx";
+export { MenuButton, type MenuButtonProps } from "./MenuButton.tsx";
 export { Meter, type MeterProps } from "./Meter.tsx";
+export {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuRow,
+  type NavigationMenuItemProps,
+  type NavigationMenuLinkProps,
+  type NavigationMenuProps,
+  type NavigationMenuRowProps,
+} from "./NavigationMenu.tsx";
 export { Pagination, type PaginationProps } from "./pagination/Pagination.tsx";
 export { Option, type OptionProps } from "./listbox/Option.tsx";
 export { OptionGroup, type OptionGroupProps } from "./listbox/OptionGroup.tsx";

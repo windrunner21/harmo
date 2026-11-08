@@ -172,6 +172,32 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Menu Button: `<button class="hbutton hmenu-button">`, or `<MenuButton>`, three
+  bars that turn into a cross while it's expanded, for opening a site's menu on
+  a phone.
+
+  ```html preview
+  <button class="hbutton hmenu-button" data-variant="secondary" data-size="small" type="button" aria-label="Menu" aria-expanded="false"><svg class="hicon hmenu-button-bars" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><line class="hmenu-button-top" x1="3" y1="5" x2="17" y2="5" /><line class="hmenu-button-middle" x1="3" y1="10" x2="17" y2="10" /><line class="hmenu-button-bottom" x1="3" y1="15" x2="17" y2="15" /></svg></button>
+  ```
+
+- Navigation Menu: `<nav class="hnavigation-menu">`, or `<NavigationMenu>`, a
+  site's main navigation: links, and triggers that each open a panel of rows, on
+  hover, a click, or Enter. One frame shows the open panel, resizing as you move
+  between triggers while the rows slide. Each panel follows its trigger in the
+  page, so Tab goes from a trigger into its links. `data-orientation="vertical"`
+  stacks the triggers, with each panel opening in place, for a phone.
+
+  ```html preview
+  <nav class="hnavigation-menu" aria-label="Main">
+    <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+    <ul class="hnavigation-menu-list">
+      <li><a class="hnavigation-menu-link" href="#product">Product</a></li>
+      <li><button class="hnavigation-menu-trigger" type="button" aria-expanded="false">Solutions<svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false"><g class="hexpand-chevron-head"><line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" /><line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" /></g></svg></button></li>
+      <li><button class="hnavigation-menu-trigger" type="button" aria-expanded="false">Resources<svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false"><g class="hexpand-chevron-head"><line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" /><line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" /></g></svg></button></li>
+    </ul>
+  </nav>
+  ```
+
 - Pagination: `<nav class="hpagination">`, or `<Pagination>`, moves through
   a list shown a page at a time: Previous and Next, as Buttons, and the page
   numbers between them if you show them, the first and last pages and the one
