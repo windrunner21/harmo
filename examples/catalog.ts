@@ -56,7 +56,8 @@ const groups: CatalogGroup[] = [
       {
         slug: "card",
         title: "Card",
-        purpose: "A frame around a group of content: tinted, raised, or ghost.",
+        purpose:
+          "A frame around a group of content: tinted, raised, or ghost; with a title, an icon, a description, and a chevron.",
       },
       {
         slug: "section",

@@ -100,6 +100,7 @@ Some components are built from others, so their files need company:
 | `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |
 | `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
 | `banner.css` | `button.css` for its action |
+| `card.css` | `chevron-to-arrow.css` for a chevron |
 | `empty-state.css` | `button.css` for actions |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |

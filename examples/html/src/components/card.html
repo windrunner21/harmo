@@ -49,3 +49,102 @@
     <p>Last synced 5 minutes ago</p>
   </div>
 </play-example>
+
+<play-example title="Links with icons" layout="wide">
+  <play-note>
+    A card with a <code>.hcard-title</code> lays out its parts: an icon at the
+    start, then the title and a description beside it. In a card that's a
+    link, the title is in the accent, since the whole card is the link. Here
+    the titles are headings, so a page's headings find each one.
+  </play-note>
+  <nav aria-label="Settings" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); gap: 16px; inline-size: 100%">
+    <a class="hcard" data-variant="ghost" href="/settings/personal">
+      <span class="hcard-icon" aria-hidden="true">
+        <play-icon name="user" class="hicon"></play-icon>
+      </span>
+      <h3 class="hcard-title">Personal</h3>
+      <p class="hcard-description">Your name, email address, language, and password.</p>
+    </a>
+    <a class="hcard" data-variant="ghost" href="/settings/notifications">
+      <span class="hcard-icon" aria-hidden="true">
+        <play-icon name="messages" class="hicon"></play-icon>
+      </span>
+      <h3 class="hcard-title">Notifications</h3>
+      <p class="hcard-description">How and when we tell you about new messages and tickets.</p>
+    </a>
+    <a class="hcard" data-variant="ghost" href="/settings/security">
+      <span class="hcard-icon" aria-hidden="true">
+        <play-icon name="lock" class="hicon"></play-icon>
+      </span>
+      <h3 class="hcard-title">Security</h3>
+      <p class="hcard-description">Two-step verification, and the devices signed in to your account.</p>
+    </a>
+    <a class="hcard" data-variant="ghost" href="/settings/developers">
+      <span class="hcard-icon" aria-hidden="true">
+        <play-icon name="developers" class="hicon"></play-icon>
+      </span>
+      <h3 class="hcard-title">Developers</h3>
+      <p class="hcard-description">API keys and webhooks, to connect your own tools.</p>
+    </a>
+  </nav>
+</play-example>
+
+<play-example title="Links with a chevron">
+  <play-note>
+    <code>.hcard-chevron</code>, a ChevronToArrow at the end, turns into an
+    arrow while the card is hovered or focused. These titles aren't headings,
+    and <code>--harmo-card-padding</code> makes the cards tighter.
+  </play-note>
+  <ul style="margin: 0; padding: 0; list-style: none; inline-size: 100%; max-inline-size: 24rem">
+    <li>
+      <a class="hcard" data-variant="ghost" href="/activate" style="--harmo-card-padding: 12px">
+        <p class="hcard-title">Activate your account</p>
+        <p class="hcard-description">Got an invitation? Set a password to start.</p>
+        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+      </a>
+    </li>
+    <li>
+      <a class="hcard" data-variant="ghost" href="/sign-up" style="--harmo-card-padding: 12px">
+        <p class="hcard-title">New here?</p>
+        <p class="hcard-description">Create an account for your team in a few minutes.</p>
+        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+      </a>
+    </li>
+    <li>
+      <a class="hcard" data-variant="ghost" href="/contact" style="--harmo-card-padding: 12px">
+        <p class="hcard-title">Talk to us</p>
+        <p class="hcard-description">Questions about plans or setup? We're glad to help.</p>
+        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+      </a>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Not a link" layout="stack">
+  <play-note>
+    The same parts in a card that isn't a link: the title is in the text
+    color.
+  </play-note>
+  <div class="hcard">
+    <span class="hcard-icon" aria-hidden="true">
+      <play-icon name="lock" class="hicon"></play-icon>
+    </span>
+    <h3 class="hcard-title">Two-step verification is on</h3>
+    <p class="hcard-description">We ask for a code from your phone each time you sign in.</p>
+  </div>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    In Arabic, the icon is on the right, and the chevron, on the left, points
+    left.
+  </play-note>
+  <a class="hcard" data-variant="ghost" href="/settings/personal" style="inline-size: 100%; max-inline-size: 24rem">
+    <span class="hcard-icon" aria-hidden="true">
+      <play-icon name="user" class="hicon"></play-icon>
+    </span>
+    <h3 class="hcard-title">الملف الشخصي</h3>
+    <p class="hcard-description">اسمك وبريدك الإلكتروني ولغتك وكلمة المرور.</p>
+    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+  </a>
+</play-example>

@@ -7,10 +7,11 @@ export const flatChildren = (children: ReactNode): ReactNode[] =>
       : [child],
   );
 
-// Whether a node renders anything: not nothing, false, or an empty string.
-// Zero does, as React renders it, so it goes in its part, not loose.
+// Whether a node renders anything, as React draws it: not nothing, true or
+// false, an empty string, or an array or fragment of only those. Zero does,
+// as React renders it, so it goes in its part, not loose.
 export const renders = (node: ReactNode) =>
-  node !== undefined && node !== null && node !== false && node !== "";
+  flatChildren(node).some((child) => child !== "");
 
 export const shownChildren = (children: ReactNode): ReactNode[] =>
   flatChildren(children).filter(

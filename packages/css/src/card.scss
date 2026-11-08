@@ -78,3 +78,96 @@ $actionable: ':where(a[href], button:enabled)';
 
   cursor: pointer;
 }
+
+// A card with a title lays out its parts: an icon at the start, the title
+// and a description beside it, and a chevron at the end. Any but the title
+// can be left out: margins, not gaps, space them, so a missing one leaves no
+// room. At zero specificity, as above, so an app's own layout class wins.
+:where(.hcard:has(> .hcard-title)) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "icon title chevron"
+    "icon description chevron";
+  align-content: start;
+  align-items: start;
+}
+
+// A 40px tile with a 24px icon in the accent, as an Empty State's. On a
+// tinted card, the tile takes the page's background, so it stays a tile.
+// Its transparent border is drawn in forced colors, where backgrounds go.
+.hcard-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-area: icon;
+
+  box-sizing: border-box;
+  inline-size: 40px;
+  block-size: 40px;
+  margin-inline-end: 16px;
+
+  color: $color-primary;
+  background-color: $color-background-secondary;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > :is(svg, img) {
+    inline-size: 24px;
+    block-size: 24px;
+
+    object-fit: contain;
+  }
+
+  .hcard:not([data-variant]) > & {
+    background-color: $color-background;
+  }
+}
+
+// In a card that's a link or a button, the title is in the accent, as a
+// link's text is, since the whole card is the link.
+.hcard-title {
+  grid-area: title;
+
+  margin: 0;
+
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+
+  :is(a.hcard, button.hcard) > & {
+    color: $color-primary;
+  }
+}
+
+.hcard-description {
+  grid-area: description;
+
+  margin: 0;
+  margin-block-start: 4px;
+
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+}
+
+// A ChevronToArrow at the end, which turns into an arrow while the card is
+// hovered or focused.
+.hcard-chevron {
+  grid-area: chevron;
+  align-self: center;
+
+  margin-inline-start: 16px;
+
+  color: $color-text-secondary;
+}
+
