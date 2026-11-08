@@ -11,7 +11,7 @@ its own: in a `.hstat-group`, each Stat is a tile on a tray.
 | --- | --- |
 | CSS | `stat.css`; `tooltip.css` for a hint; `link.css` for a link as its action |
 | Element | `<div class="hstat">` |
-| Parts | `.hstat-header`, holding `.hstat-title` (`.hstat-label`, a heading of the level that fits the page or a `<p>`, then optionally a hint) and optionally `.hstat-trend`; then `<p class="hstat-value">`, and optionally `<p class="hstat-caption">` and `.hstat-action` |
+| Parts | `.hstat-header`, holding `.hstat-title` (`.hstat-label`, a heading of the level that fits the page or a `<p>`, then optionally a hint) and optionally `.hstat-trend`; then `<p class="hstat-value">`, and optionally `<p class="hstat-caption">` and `.hstat-actions` |
 | Required | A hint is a [Tooltip](tooltip.md) trigger around `<button class="hstat-hint" type="button">`, named by its `data-variant="hint"` tooltip with `aria-labelledby`. A trend with a hint is a `<button class="hstat-trend" type="button">` in a Tooltip trigger, described by it with `aria-describedby`. `aria-hidden="true"` and `focusable="false"` on the icons |
 | Unique | Each tooltip's `id` |
 | Script | Tooltip's, for Escape; and to pin a tooltip open on a press, for a touch screen; see [What a script does](#what-a-script-does) |
@@ -44,7 +44,7 @@ its own: in a `.hstat-group`, each Stat is a tile on a tray.
   </div>
   <p class="hstat-value">37</p>
   <p class="hstat-caption">Compared to yesterday</p>
-  <div class="hstat-action">
+  <div class="hstat-actions">
     <a class="hlink" href="/tickets">View tickets</a>
   </div>
 </div>
@@ -70,7 +70,10 @@ button for its tooltip.
 ```html
 <span class="htooltip-trigger">
   <button class="hstat-trend" type="button" data-direction="up" aria-describedby="tickets-trend">
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">…</svg>
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M4.28326 17C3.95708 17 3.6309 16.8815 3.37339 16.6275C2.87554 16.1366 2.87554 15.324 3.37339 14.833L8.86695 9.41554C9.14163 9.14467 9.50215 9.00923 9.897 9.04309C10.2747 9.07695 10.618 9.28011 10.8412 9.60177L12.7124 12.3782L18.8069 6.36822C19.3047 5.87726 20.1288 5.87726 20.6266 6.36822C21.1245 6.85918 21.1245 7.6718 20.6266 8.16275L13.4163 15.2732C13.1416 15.5441 12.7811 15.6795 12.3863 15.6456C12.0086 15.6118 11.6652 15.4086 11.4421 15.087L9.57082 12.3105L5.19313 16.6275C4.93562 16.8815 4.60944 17 4.28326 17Z" fill="currentColor" />
+      <path d="M19.7143 12C19.0114 12 18.4286 11.4171 18.4286 10.7143V8.57143H16.2857C15.5829 8.57143 15 7.98857 15 7.28571C15 6.58286 15.5829 6 16.2857 6H19.7143C20.4171 6 21 6.58286 21 7.28571V10.7143C21 11.4171 20.4171 12 19.7143 12Z" fill="currentColor" />
+    </svg>
     +12%
   </button>
   <span class="htooltip" role="tooltip" id="tickets-trend" data-side="top" data-variant="hint">Nov 1–7, 2026, compared with Oct 25–31, 2026.</span>
@@ -162,7 +165,7 @@ are the `<div>`'s attributes. `<StatGroup>` renders the tray.
 | `hint` | What the number means: an info button whose tooltip it is |
 | `trend` | `{ direction: "up" \| "down", label }`, such as `{ direction: "up", label: "+12%" }` |
 | `trendHint` | What the trend compares, such as the two periods: the trend becomes a button whose tooltip it is |
-| `action` | Below, such as a `<Link>` |
+| `actions` | Below, such as a `<Link>` |
 
 `<StatGroup trendHint>` gives every Stat in it that `trendHint`, unless it has
 its own, since a page's numbers usually compare the same periods.
@@ -174,7 +177,7 @@ its own, since a page's numbers usually compare the same periods.
   value="37"
   caption="Compared to yesterday"
   trend={{ direction: "down", label: "−8%" }}
-  action={<Link href="/tickets">View tickets</Link>}
+  actions={<Link href="/tickets">View tickets</Link>}
 />
 
 <StatGroup trendHint="Nov 1–7, 2026, compared with Oct 25–31, 2026.">

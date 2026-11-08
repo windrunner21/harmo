@@ -65,8 +65,8 @@ paragraph sits as close to the summary as plain text does.
 - Keyboard focus on a summary: the focus ring, with small corners.
 - Opening, the content grows to its height in 200ms; closing, it shrinks in
   150ms, both with `--harmo-ease-out-cubic`, as a grid row animates from
-  `0fr` to `1fr` on `::details-content`. Safari grows it as it opens but
-  closes it at once. Reduced motion: it opens and closes at once.
+  `0fr` to `1fr` on `::details-content`. Safari grows it as it opens, and
+  may close it at once. Reduced motion: it opens and closes at once.
 - The content shows as soon as the item opens, so Tab reaches what's inside
   while it grows; closing, it stays shown until it has shrunk.
 - The box that clips the growing content reaches 4px past the item on each
@@ -126,9 +126,9 @@ own. Other props are the `<div>`'s, or the `<details>`'s, attributes.
 
 ## Tokens
 
-`--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
-`--harmo-font-family`, `--harmo-font-size-base`, `--harmo-font-size-sm`,
-`--harmo-font-weight-medium`, `--harmo-font-line-height`,
-`--harmo-border-radius-sm`, `--harmo-focus-outline`,
-`--harmo-focus-outline-offset`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`, and Expand Chevron's.
+`--harmo-border-radius-sm`, `--harmo-color-border`, `--harmo-color-text`,
+`--harmo-color-text-secondary`, `--harmo-duration-fast`,
+`--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-focus-outline`,
+`--harmo-focus-outline-offset`, `--harmo-font-family`,
+`--harmo-font-line-height`, `--harmo-font-size-base`, `--harmo-font-size-sm`,
+`--harmo-font-size-xs`, `--harmo-font-weight-medium`; Expand Chevron's.

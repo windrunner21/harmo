@@ -144,7 +144,8 @@ version, so the CLI copies the code of the packages with its version.
    the links at the end. Packing copies the
    changelog into each package, for npm and for the website's changelog page.
 2. Run `mise run check:react`, `mise run test:react`, `mise run test:cli`, and
-   `mise run test:browser:all`.
+   `mise run test:browser`, in Chromium. CI runs all three browsers on the
+   push in step 4.
 3. Check what would be published: `bunx publint packages/css`,
    `bunx publint packages/react`, `bunx publint packages/cli`, and
    `bunx @arethetypeswrong/cli --pack packages/react`. `publint`'s suggestion

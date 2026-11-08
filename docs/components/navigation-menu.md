@@ -75,8 +75,8 @@ place, so they look like one.
   `--harmo-color-border` border, the 8px corners, and `--harmo-box-shadow-sm`.
   It stays 8px inside the window, its rows wrapping to fit and the panel moving
   over if it has to. It's sized to its rows, and follows them if they change.
-- Opening: it fades in and grows from `scale(0.98)` in 150ms, and closes the same
-  way. Moving from one trigger to another, the frame resizes while the rows slide
+- Opening: it fades in and grows from `scale(0.98)` in 200ms, and closes in
+  150ms. Moving from one trigger to another, the frame resizes while the rows slide
   sideways, both in 200ms, with no fade. Reduced motion: it only fades.
 - A row: 12px and 16px of padding, a bordered 34px tile with a 16px icon, 12px
   before a 14px medium title with a 12px description in
@@ -169,4 +169,4 @@ the `<a>`'s, or the trigger's. Links go through `HarmoProvider`'s `linkComponent
 `--harmo-color-border`, `--harmo-border-radius`, `--harmo-border-radius-sm`,
 `--harmo-border-radius-full`, `--harmo-box-shadow-sm`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`; Expand Chevron's.
+`--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-ease-in-out-cubic`; Expand Chevron's.

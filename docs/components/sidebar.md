@@ -52,7 +52,12 @@ in a [Drawer](drawer.md) opened by a menu button.
             <summary class="hsidebar-item">
               <svg class="hicon" …>…</svg>
               <span class="hsidebar-label">Campaigns</span>
-              <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">…</svg>
+              <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+                <g class="hexpand-chevron-head">
+                  <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
+                  <line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" />
+                </g>
+              </svg>
             </summary>
             <ul class="hsidebar-sub-list">
               <li class="hsidebar-sub-heading" aria-hidden="true">Campaigns</li>
@@ -169,7 +174,7 @@ the nav around its children: `<SidebarGroup>`s holding `<SidebarItem>`s and
 
 | Prop | Effect |
 | --- | --- |
-| `label` on `Sidebar` | Required: the nav's name, such as "Main" |
+| `aria-label` on `Sidebar` | Required: the nav's name, such as "Main" |
 | `exclusive` | One group of links open at a time: its groups share a generated `name` |
 | `collapsed`, `defaultCollapsed`, `onCollapsedChange` | Collapsed, held by you or from the start, and told when the toggle changes it |
 | `collapseLabel`, `expandLabel` | The toggle's names, in your app's language, such as "Collapse" and "Expand"; without both, there's no toggle |
@@ -182,7 +187,7 @@ the nav around its children: `<SidebarGroup>`s holding `<SidebarItem>`s and
 
 ```tsx
 <Sidebar
-  label="Main"
+  aria-label="Main"
   collapseLabel="Collapse"
   expandLabel="Expand"
   collapsed={collapsed}
@@ -209,12 +214,13 @@ the nav around its children: `<SidebarGroup>`s holding `<SidebarItem>`s and
 
 ## Tokens
 
+`--harmo-border-radius`, `--harmo-border-radius-full`,
+`--harmo-border-radius-sm`, `--harmo-box-shadow-sm`,
 `--harmo-color-background`, `--harmo-color-background-hover`,
-`--harmo-color-border`, `--harmo-color-text-secondary`,
-`--harmo-color-text-tertiary`, `--harmo-color-primary`,
-`--harmo-color-primary-tint`, `--harmo-icon-color`, `--harmo-border-radius`,
-`--harmo-border-radius-sm`, `--harmo-border-radius-full`,
-`--harmo-box-shadow-sm`, `--harmo-focus-outline`, `--harmo-font-family`,
-`--harmo-font-size-sm`, `--harmo-font-size-2xs`, `--harmo-font-size-3xs`,
-`--harmo-duration-fast`, `--harmo-duration-normal`,
-`--harmo-ease-out-cubic`, and those of Tooltip and Expand Chevron.
+`--harmo-color-border`, `--harmo-color-primary`, `--harmo-color-primary-tint`,
+`--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-out-cubic`,
+`--harmo-focus-outline`, `--harmo-font-family`, `--harmo-font-size-2xs`,
+`--harmo-font-size-3xs`, `--harmo-font-size-sm`, `--harmo-font-weight-bold`,
+`--harmo-font-weight-medium`, `--harmo-font-weight-normal`,
+`--harmo-icon-color`; and those of Tooltip and Expand Chevron.

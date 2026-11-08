@@ -109,11 +109,11 @@ Some components are built from others, so their files need company:
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |
-| `menu-button.css` | `button.css` |
+| `menu-button.css` | `button.css`; `popup.css` to open a Popup |
 | `navigation-menu.css` | `expand-chevron.css` |
 | `pagination.css` | `button.css`, `chevron.css` |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
-| `search.css` | `input.css`; `field.css` for a label |
+| `search.css` | `input.css`; `field.css` for a label; `kbd.css` for a shortcut |
 | `stat.css` | `tooltip.css` for a hint; `link.css` for a link as its action |
 | `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
@@ -166,13 +166,13 @@ Some components are built from others, so their files need company:
 
   | Attribute | Meaning | Used by |
   | --- | --- | --- |
-  | `data-variant` | Appearance | Button, Tag, Status, Tooltip |
+  | `data-variant` | Appearance | Button, Tag, Status, Tooltip, Banner, Card, Empty State, Kbd |
   | `data-status` | `success`, `warning`, `info`, or `error` (Password Input's word and hint: no `info`) | Status, Banner, Meter, Password Input |
-  | `data-size` | `small` or `large` | Spinner, Button (`small` only) |
-  | `data-orientation` | `horizontal` | Field |
-  | `data-direction` | `back` | ChevronToArrow |
+  | `data-size` | `small` or `large` | Spinner; `small` on Button, Accordion, Empty State |
+  | `data-orientation` | `horizontal` on Field, `vertical` on Navigation Menu | Field, Navigation Menu |
+  | `data-direction` | `back` on the chevrons, `up` or `down` on a trend | ChevronToArrow, Chevron, Stat |
   | `data-side` | Preferred or actual side | Tooltip, Popup |
-  | `data-position` | Where the region is: `top-start`, `top-center`, `top-end`, `bottom-start`, `bottom-end` | Toast |
+  | `data-position` | Where the region is: `top-start`, `top-center`, `top-end`, `bottom-start`, `bottom-end`; or, on a panel waiting beside the open one, `before` or `after` (script) | Toast, Navigation Menu |
   | `data-delay` | Wait 300ms before showing | Spinner |
   | `data-placeholder` | No value chosen | Select |
   | `data-filled` | A filled segment | Meter |
@@ -181,6 +181,15 @@ Some components are built from others, so their files need company:
   | `data-ready`, `data-on-current` | Measured, pill over current (script) | Tabs |
   | `data-dismissed` | Hidden by Escape (script) | Tooltip |
   | `data-underlined`, `data-visited` | Opt-in underline / visited color | Link |
+  | `data-align` | `start`: lined up at the start, or a panel opening there | Empty State, Navigation Menu |
+  | `data-destructive` | For an action that destroys something | Button |
+  | `data-hold`, `data-holding`, `data-held` | Held to confirm, and how far along (script) | Button |
+  | `data-pinned`, `data-refit` | Keeping or finding its place (script) | Popup |
+  | `data-open` | Shown, or open (script) | Tooltip's trigger, Navigation Menu |
+  | `data-moving` | Moving between panels (script) | Navigation Menu |
+  | `data-copied` | Just copied (script) | Copy Button |
+  | `data-collapsed` | Down to its icons | Sidebar |
+  | `data-multiple` | Choosing several | Combobox |
 - **Text sizes are in rem**, so text follows the browser's default font-size
   setting as well as zoom. The scale runs `--harmo-font-size-base` (16px),
   `-sm` (14px), `-xs` (13px), `-2xs` (12px), and `-3xs` (11px); line heights
@@ -190,14 +199,16 @@ Some components are built from others, so their files need company:
   `--harmo-control-height` (34px), so they line up in a row. Inputs and select
   triggers also share their box, border, focus ring, and states through the
   `%control` placeholder in `_control.scss`.
-- **Icons scale with text.** Inline icons are sized in `em`; ChevronToArrow,
+- **Icons scale with text.** Inline icons are sized in `em`, and a Button
+  draws its icons at 20px, in `rem`; ChevronToArrow,
   a fixed 24px, is the exception. The space between text and an icon's box is
   `--harmo-icon-gap` (6px); icons with wide blank margins, such as the static
   chevron, offset them so every visible gap matches.
 - **Motion.** Durations come from `--harmo-duration-*` and curves from
   `--harmo-ease-*`. Most entrances take 200ms and exits 150ms; the others,
   such as Tooltip's 150ms in and 100ms out or a Field error's 300ms in, are on
-  their pages. Exits are always quicker than entrances. Reduced motion keeps
+  their pages. Exits are always quicker than entrances. A color or background fading on hover uses the
+  plain CSS `ease`, which has no token. Reduced motion keeps
   the state change and drops the movement.
 - **Hiding.** `hidden` hides any component or part of one, at once, since
   `display: none` can't animate. A Field's error and the password details are
@@ -208,9 +219,10 @@ Some components are built from others, so their files need company:
 - **Hover** styles apply only on devices that hover with a fine pointer.
 - **Focus rings** are `--harmo-focus-outline` (2px solid `--harmo-color-focus`),
   named after Stripe's `focusOutline`, at `--harmo-focus-outline-offset`
-  (2px). Two exceptions keep their own offset: tabs (always 2px, so the ring
-  stays above the divider) and the password toggle (0, since it sits inside
-  the input). Text
+  (2px). Some keep their own offset: tabs (always 2px, so the ring stays above
+  the divider), and controls inside another control or a clipped panel, such
+  as the password toggle, Search's clear button, a Sidebar item, or a
+  Navigation Menu row, whose ring stays inside it. Text
   fields and select triggers instead turn their border the focus color and add
   a 3px tinted ring.
 
@@ -226,7 +238,16 @@ the React components, set:
 | `--htabs-*`, `data-ready`, the strip's scroll position | Tabs | Sliding hover pill and underline; the current tab in view |
 | `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
 | `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
-| `aria-expanded` | Popup triggers, select triggers | Open ring, chevron direction |
+| `aria-expanded` | Popup triggers, select triggers, Menu Button | Open ring, chevron direction, the bars' cross |
+| `aria-expanded`, `aria-activedescendant`, `data-active`, option `hidden`, `.hoption-match`, the status, tags, hidden inputs | Combobox | Filter, highlight, pick, and choose several |
+| `aria-expanded`, `aria-activedescendant`, `aria-keyshortcuts`, `data-active`, option `hidden`, `.hoption-match` | Command Menu | Filter, highlight, the shortcut, and opening |
+| `aria-expanded`, `inert`, `data-open`, `data-moving`, `data-position`, `--hnavigation-menu-*` | Navigation Menu | Open and close its panels, and size its frame |
+| `data-collapsed`, `aria-expanded`, a group's `open` | Sidebar | Collapse, and the groups beside its icons |
+| The clear button's `hidden`, the field's value | Search | Show the clear button; empty the field on it, or on Escape |
+| Tags' `hidden`, `.htag-list-rest`, the count, `data-open` | Tag List | Count what fits, and pin its tooltip open |
+| `data-open` | Stat | Pin a hint's tooltip open on a press |
+| `data-copied`, `data-open`, the tooltip's or label's text, the status | Copy Button, Share Button | Copy or share, and say so for two seconds |
+| Ignoring activation | Pagination | On a disabled Previous or Next |
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | `data-side="top"` | Popup | Slide away from a trigger it opened above |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
@@ -249,7 +270,10 @@ The popover attribute; CSS anchor positioning, including `anchor-scope` and
 `@position-try` (in all major browsers since January 2026);
 `field-sizing: content` (since June 2026); `@starting-style` and
 `allow-discrete` transitions, for Popup and Tooltip; `interpolate-size`, for
-Field's error, with a fallback where it's missing; `:has()`, `:where()`,
+Field's error, with a fallback where it's missing; `::details-content`, for
+Accordion and Sidebar; `subgrid`, for Stat's group; the `inert` attribute and
+`overflow: clip`, for Navigation Menu; the Clipboard and Web Share APIs, in
+Copy Button's and Share Button's scripts; `:has()`, `:where()`,
 `:dir()`, `color-mix()`, `light-dark()`, for dark mode, and logical properties.
 Firefox cannot yet keep a closing popup in the top layer during its fade, so
 the fade may briefly pass under other content there.

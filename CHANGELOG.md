@@ -8,6 +8,29 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Upgrading
+
+- **A list's message for no matches is a status.** So a screen reader reads it
+  as it appears, `.hlistbox-empty` gets `role="status"` and is in the page from
+  the start, empty until nothing matches. `<Listbox>`, `<Select>`,
+  `<FilterChip>`, and `<Combobox>` do this themselves. In HTML, render it empty
+  after the list, and fill it when nothing matches, rather than add it then.
+
+  What you'll notice: if you keep adding it when nothing matches, it looks the
+  same, but a screen reader may not read it.
+
+  In 0.3.0, added when nothing matches:
+
+  ```html
+  <p class="hlistbox-empty">No agents found</p>
+  ```
+
+  In 0.4.0, in the page from the start, and filled when nothing matches:
+
+  ```html
+  <p class="hlistbox-empty" role="status"></p>
+  ```
+
 ### Added
 
 - Accordion: `<details class="haccordion-item">` with its
@@ -202,10 +225,9 @@ minor version may change an API, and says how to upgrade when it does.
   a list shown a page at a time: Previous and Next, as Buttons, and the page
   numbers between them if you show them, the first and last pages and the one
   you're on with one either side, so the row keeps its width, up to 999
-  pages. Each is a link
-  where the page is in the URL, or a button where your app holds it. On the
-  first or last page, Previous or Next stays in place, disabled. On a phone,
-  only Previous and Next show.
+  pages. Each is a link where the page is in the URL, or a button where your
+  app holds it. On the first or last page, Previous or Next stays in place,
+  disabled. On a phone, only Previous and Next show.
 
   ```html preview
   <nav class="hpagination" aria-label="Pages">
@@ -421,25 +443,6 @@ minor version may change an API, and says how to upgrade when it does.
   match each other and the loading spinner. In 0.3.0 it kept its SVG's own
   size, so a 24px icon beside a label looked bigger than an 18px one.
   ChevronToArrow and the Expand Chevron keep their own sizes.
-
-- A list's message for no matches is a status, so a screen reader reads it
-  as it appears: `.hlistbox-empty` gets `role="status"` and is in the page
-  from the start, empty until nothing matches. `<Listbox>`, `<Select>`,
-  `<FilterChip>`, and `<Combobox>` do this themselves. In HTML, render it
-  empty after the list, and fill it when nothing matches, rather than add it
-  then.
-
-  In 0.3.0, added when nothing matches:
-
-  ```html
-  <p class="hlistbox-empty">No agents found</p>
-  ```
-
-  In 0.4.0, in the page from the start, and filled when nothing matches:
-
-  ```html
-  <p class="hlistbox-empty" role="status"></p>
-  ```
 
 ### Fixed
 

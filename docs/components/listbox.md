@@ -220,6 +220,7 @@ A group inside another takes its `hidden` and `filter={false}` too.
 `--harmo-color-border`, `--harmo-color-border-control`,
 `--harmo-color-primary`, `--harmo-color-primary-tint`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
-`--harmo-duration-fast`, `--harmo-font-family`,
+`--harmo-duration-fast`, `--harmo-focus-outline`,
+`--harmo-focus-outline-offset`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-3xs`, `--harmo-font-size-sm`,
-`--harmo-font-weight-bold`.
+`--harmo-font-size-xs`, `--harmo-font-weight-bold`.

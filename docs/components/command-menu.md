@@ -243,6 +243,13 @@ click don't open it in a new tab.
 
 ## Tokens
 
+`--harmo-border-radius`, `--harmo-color-background-secondary`,
+`--harmo-color-border`, `--harmo-color-danger`, `--harmo-color-focus`,
 `--harmo-color-text`, `--harmo-color-text-secondary`,
-`--harmo-color-primary-tint`, `--harmo-color-border`, and those of Search,
-Popup, Dialog, Listbox, and Kbd.
+`--harmo-color-text-tertiary`, `--harmo-control-height`,
+`--harmo-duration-fast`, `--harmo-font-family`, `--harmo-font-line-height`,
+`--harmo-font-size-base`, `--harmo-font-size-sm`, `--harmo-font-size-xs`,
+`--harmo-font-weight-normal`, `--harmo-icon-color`,
+`--harmo-input-box-shadow`, `--harmo-input-color-background`,
+`--harmo-input-color-border`; and those of Search, Popup, Dialog, Listbox, and
+Kbd.

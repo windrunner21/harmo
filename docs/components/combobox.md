@@ -64,7 +64,13 @@ wide as the field.
       <li>
         <span class="htag">
           Ana Lopez
-          <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove Ana Lopez">…</button>
+          <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove Ana Lopez">
+            <svg class="hicon" width="24" height="24" viewBox="0 0 25 25" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+              <path d="M18.1183 18.5318L6.80463 7.21814" />
+              <path d="M18.1183 7.21814L6.80463 18.5318" />
+            </svg>
+          </button>
         </span>
       </li>
       <li class="htag-list-more" hidden>
@@ -79,7 +85,12 @@ wide as the field.
     <input class="hinput" id="notify" type="text" role="combobox" autocomplete="off"
       aria-autocomplete="list" aria-expanded="false" aria-controls="notify-listbox"
       aria-labelledby="notify-label" placeholder="Search agents" value="" />
-    <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">…</svg>
+    <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+      <g class="hexpand-chevron-head">
+        <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
+        <line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" />
+      </g>
+    </svg>
   </div>
   <div class="hpopup" id="notify-popup" popover="manual" style="position-anchor: --notify">
     <ul class="hlistbox" id="notify-listbox" role="listbox" aria-labelledby="notify-label"
@@ -250,5 +261,11 @@ as after a new search with `filter={false}`.
 
 ## Tokens
 
-`--harmo-color-text-secondary`, `--harmo-color-text-tertiary`, and those of
-Input, Popup, Listbox, and, choosing several, Tag List.
+`--harmo-border-radius`, `--harmo-color-background-secondary`,
+`--harmo-color-danger`, `--harmo-color-focus`, `--harmo-color-text`,
+`--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
+`--harmo-control-height`, `--harmo-duration-fast`, `--harmo-font-family`,
+`--harmo-font-size-sm`, `--harmo-font-weight-normal`,
+`--harmo-input-box-shadow`, `--harmo-input-color-background`,
+`--harmo-input-color-border`; and those of Input, Popup, Listbox, and,
+choosing several, Tag List.

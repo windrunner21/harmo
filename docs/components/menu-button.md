@@ -9,11 +9,11 @@ such as a [Popup](popup.md) holding a vertical
 
 | Item | Requirement |
 | --- | --- |
-| CSS | `menu-button.css`, `button.css` |
+| CSS | `menu-button.css`, `button.css`; `popup.css` to open a Popup |
 | Element | `<button class="hbutton hmenu-button" type="button">` |
 | Parts | `<svg class="hicon hmenu-button-bars">` holding `<line>`s `.hmenu-button-top`, `.hmenu-button-middle`, and `.hmenu-button-bottom` |
 | Required | `aria-label`, in the page's language, such as "Menu"; `aria-expanded`; `aria-hidden="true"` and `focusable="false"` on the svg |
-| Unique | None |
+| Unique | The `id` and anchor name of a Popup it opens |
 | Script | Keep `aria-expanded` current; see [What a script does](#what-a-script-does) |
 
 ## Markup

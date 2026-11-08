@@ -9,7 +9,7 @@ list of options, a [Listbox](listbox.md) has its own.
 
 | Item | Requirement |
 | --- | --- |
-| CSS | `search.css` and `input.css`; `field.css` for a label |
+| CSS | `search.css` and `input.css`; `field.css` for a label; `kbd.css` for a shortcut |
 | Element | `<div class="hsearch">` holding the magnifier (`.hicon`), `<input class="hinput" type="search">`, and an optional clear button |
 | Parts | `.hsearch-clear`, a `<button type="button">` after the input |
 | Required | A name for the input: `aria-label`, or a `<label for>` in a [Field](field.md); `aria-label` on the clear button, in the app's language; `aria-hidden="true"` on the magnifier |
