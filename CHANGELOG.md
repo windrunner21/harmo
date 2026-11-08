@@ -257,6 +257,37 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Stat: `<div class="hstat">`, or `<Stat>`, a number to watch, such as the
+  tickets that came in today: its label, which is a heading, how it has
+  changed, such as "+12%", the number, and a caption, with an info button
+  whose tooltip explains it, and an action, such as a link. The trend is
+  neutral, since whether up is good depends on the number; with a hint, such
+  as the periods it compares, it's a button for its tooltip. A press pins a
+  tooltip open, for a touch screen. In a `.hstat-group`, or `<StatGroup>`,
+  each Stat is a tile on a tray, as many to a row as fit, with numbers and
+  captions lined up across a row.
+
+  ```html preview
+  <div class="hstat-group" style="inline-size: 32rem">
+    <div class="hstat">
+      <div class="hstat-header">
+        <div class="hstat-title"><h3 class="hstat-label">New tickets</h3></div>
+        <span class="hstat-trend" data-direction="up"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M4.28326 17C3.95708 17 3.6309 16.8815 3.37339 16.6275C2.87554 16.1366 2.87554 15.324 3.37339 14.833L8.86695 9.41554C9.14163 9.14467 9.50215 9.00923 9.897 9.04309C10.2747 9.07695 10.618 9.28011 10.8412 9.60177L12.7124 12.3782L18.8069 6.36822C19.3047 5.87726 20.1288 5.87726 20.6266 6.36822C21.1245 6.85918 21.1245 7.6718 20.6266 8.16275L13.4163 15.2732C13.1416 15.5441 12.7811 15.6795 12.3863 15.6456C12.0086 15.6118 11.6652 15.4086 11.4421 15.087L9.57082 12.3105L5.19313 16.6275C4.93562 16.8815 4.60944 17 4.28326 17Z" fill="currentColor" /><path d="M19.7143 12C19.0114 12 18.4286 11.4171 18.4286 10.7143V8.57143H16.2857C15.5829 8.57143 15 7.98857 15 7.28571C15 6.58286 15.5829 6 16.2857 6H19.7143C20.4171 6 21 6.58286 21 7.28571V10.7143C21 11.4171 20.4171 12 19.7143 12Z" fill="currentColor" /></svg>+12%</span>
+      </div>
+      <p class="hstat-value">128</p>
+      <p class="hstat-caption">Compared to yesterday</p>
+    </div>
+    <div class="hstat">
+      <div class="hstat-header">
+        <div class="hstat-title"><h3 class="hstat-label">First response time</h3></div>
+        <span class="hstat-trend" data-direction="down"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M19.7167 17C19.3906 17 19.0644 16.8815 18.8069 16.6275L12.7124 10.6175L10.8412 13.394C10.6352 13.7157 10.2747 13.9188 9.897 13.9527C9.50215 13.9865 9.12446 13.8511 8.86695 13.5802L3.37339 8.16275C2.87554 7.6718 2.87554 6.85918 3.37339 6.36822C3.87124 5.87726 4.69528 5.87726 5.19313 6.36822L9.57082 10.6853L11.4421 7.90881C11.6481 7.60408 11.9914 7.40092 12.3863 7.35013C12.7811 7.31628 13.1588 7.45171 13.4163 7.72259L20.6266 14.833C21.1245 15.324 21.1245 16.1366 20.6266 16.6275C20.3691 16.8815 20.0429 17 19.7167 17Z" fill="currentColor" /><path d="M19.7143 17H16.2857C15.5829 17 15 16.4171 15 15.7143C15 15.0114 15.5829 14.4286 16.2857 14.4286H18.4286V12.2857C18.4286 11.5829 19.0114 11 19.7143 11C20.4171 11 21 11.5829 21 12.2857V15.7143C21 16.4171 20.4171 17 19.7143 17Z" fill="currentColor" /></svg>−18%</span>
+      </div>
+      <p class="hstat-value">4m 12s</p>
+      <p class="hstat-caption">Median, in working hours</p>
+    </div>
+  </div>
+  ```
+
 - Tag: `.htag-remove`, or `<TagRemove>`, a button after the text that
   removes the tag, such as a filter: a 12px cross with a 24px target, named
   in your app's language.
@@ -353,6 +384,9 @@ minor version may change an API, and says how to upgrade when it does.
 - `<OptionGroup hidden>` hides the group and its options: it showed them,
   and the arrow keys reached them. The example script, `listbox.js`, skips
   the options of a hidden group too.
+- `<Tooltip label={0}>` or `description={0}` names or describes its control
+  and shows 0 in the tooltip: a 0 was taken for no text, leaving the control
+  unnamed and a stray 0 beside it.
 
 ## [0.3.0] - 2026-11-07
 

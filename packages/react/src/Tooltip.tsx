@@ -11,6 +11,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { renders } from "./children.ts";
 import { withClass } from "./withClass.ts";
 
 interface TooltipControl {
@@ -99,14 +100,16 @@ export const Tooltip = ({
 }: TooltipProps) => {
   const id = useId();
   const { trigger, tooltip } = useTooltip();
-  const text = label ?? description;
+  const names = label !== undefined && label !== null;
+  const text = names ? label : description;
+  const shown = renders(text);
 
   const join = (ids?: string) => (ids ? `${ids} ${id}` : id);
-  const control = !text
+  const control = !shown
     ? children
     : cloneElement(
         children,
-        label
+        names
           ? { "aria-labelledby": join(children.props["aria-labelledby"]) }
           : { "aria-describedby": join(children.props["aria-describedby"]) },
       );
@@ -129,7 +132,7 @@ export const Tooltip = ({
       }}
     >
       {control}
-      {text && (
+      {shown && (
         <span
           {...tooltip}
           className="htooltip"

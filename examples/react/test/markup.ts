@@ -184,4 +184,5 @@ const decode = (text: string) =>
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&nbsp;/g, " ")
+    .replace(/&lrm;/g, "‎")
     .replace(/&amp;/g, "&");

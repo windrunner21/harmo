@@ -1,0 +1,254 @@
+@use "shortcuts" as *;
+
+// A number to watch, such as tickets today: its label, with a hint to explain
+// it and how it has changed, the number, a caption, and an action. It has no
+// frame of its own: in a .hstat-group, each is a tile on a tray.
+.hstat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  min-inline-size: 0;
+
+  font-family: $font-family;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The title, then the trend at the end of the row. As tall as a trend, with
+// one or without, so numbers side by side line up. The label wraps first;
+// the trend moves onto a line of its own, still at the end, only when even
+// the label's longest word, its hint, and the trend can't share one.
+.hstat-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+
+  align-self: stretch;
+  min-block-size: calc(#{$font-size-2xs} * 1.5 + 8px);
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > :is(.hstat-trend, .htooltip-trigger:has(> .hstat-trend)) {
+    margin-inline-start: auto;
+  }
+}
+
+// The label and its hint. At least as wide as the label's longest word and
+// the hint, which decides when the trend moves on, but never wider than the
+// row, so a word too long for it breaks.
+.hstat-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 0;
+
+  max-inline-size: 100%;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A tooltip's trigger as tall as its button, without a line around it.
+:is(.hstat-header, .hstat-title) > .htooltip-trigger {
+  display: flex;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hstat-label {
+  min-inline-size: 0;
+  margin: 0;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+
+  color: $color-text-secondary;
+}
+
+// An info icon whose tooltip explains the number. The icon is 14px; the
+// button is 24px, the least WCAG asks of a target, reaching 5px past it
+// without taking room.
+.hstat-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: 24px;
+  block-size: 24px;
+  margin: -5px;
+  padding: 0;
+
+  color: $color-text;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-sm;
+
+  cursor: default;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > svg {
+    inline-size: 14px;
+    block-size: 14px;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+}
+
+// How the number has changed, such as +12%: an arrow up or down and the
+// app's text. It's neutral, since whether up is good depends on the number.
+// With a hint, such as the periods compared, it's a button for its tooltip.
+// Text too long for its row wraps.
+.hstat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  box-sizing: border-box;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 3px 8px;
+
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  line-height: 1.5;
+  text-align: start;
+
+  color: $color-text;
+  background: none;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+
+  cursor: default;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > svg {
+    flex-shrink: 0;
+
+    inline-size: 14px;
+    block-size: 14px;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+}
+
+.hstat-value {
+  margin: 0;
+  margin-block-start: 4px;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-normal;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+}
+
+.hstat-caption {
+  margin: 0;
+  margin-block-start: 4px;
+
+  font-size: $font-size-2xs;
+  line-height: 1.3;
+
+  color: $color-text-secondary;
+}
+
+// What to do about it, such as a link to the tickets.
+.hstat-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-block-start: 16px;
+
+  font-size: $font-size-sm;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A tray of tiles, as many to a row as fit at 180px or wider. Each tile and
+// the tray have a transparent border, which forced colors draw, where their
+// backgrounds are gone.
+.hstat-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 16px;
+
+  box-sizing: border-box;
+  padding: 16px;
+
+  background-color: $color-background-secondary;
+  border: 1px solid transparent;
+  border-radius: calc(#{$border-radius} * 3);
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Each tile's parts share rows with its neighbors', so headers, numbers,
+  // captions, and actions line up across a row, whatever wraps and
+  // whichever parts a tile leaves out.
+  & > .hstat {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    justify-items: start;
+
+    box-sizing: border-box;
+    padding: 16px;
+
+    background-color: $color-background;
+    border: 1px solid transparent;
+    border-radius: $border-radius;
+
+    &[hidden] {
+      display: none;
+    }
+
+    & > .hstat-header {
+      grid-row: 1;
+      align-self: start;
+      justify-self: stretch;
+    }
+
+    & > .hstat-value {
+      grid-row: 2;
+    }
+
+    & > .hstat-caption {
+      grid-row: 3;
+    }
+
+    & > .hstat-action {
+      grid-row: 4;
+    }
+  }
+}

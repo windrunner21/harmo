@@ -76,6 +76,12 @@ const groups: CatalogGroup[] = [
           "What state something is in, such as a ticket or a campaign run.",
       },
       {
+        slug: "stat",
+        title: "Stat",
+        purpose:
+          "A number to watch: its label, how it has changed, the number, and a caption, alone or as tiles on a tray.",
+      },
+      {
         slug: "tag",
         title: "Tag",
         purpose:

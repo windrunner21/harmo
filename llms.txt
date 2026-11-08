@@ -61,6 +61,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Settings List](docs/components/settings.md): settings with a title, a description, and a control beside or under them
 - [Sidebar](docs/components/sidebar.md): an app's navigation down the side: groups of links with icons, collapsing to the icons alone, each named in a tooltip
 - [Spinner](docs/components/spinner.md): a loading indicator, sized to match what is loading
+- [Stat](docs/components/stat.md): a number to watch, such as tickets today: its label, how it has changed, the number, and a caption, alone or as tiles on a tray
 - [Status](docs/components/status.md): what state something is in, such as a ticket or a campaign run
 - [Switch](docs/components/switch.md): an on/off switch for settings that apply immediately
 - [Tabs](docs/components/tabs.md): switches between sibling pages or panels, with a sliding hover pill and underline

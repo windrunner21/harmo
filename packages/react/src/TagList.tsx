@@ -14,6 +14,7 @@ import {
   type ComponentPropsWithRef,
 } from "react";
 import { useTooltip } from "./Tooltip.tsx";
+import { usePinned } from "./usePinned.ts";
 import { withClass } from "./withClass.ts";
 
 export interface TagListProps extends ComponentPropsWithRef<"ul"> {
@@ -95,23 +96,7 @@ export const TagList = ({
   // A press pins the tooltip open, for a touch screen, which neither hovers
   // nor shows keyboard focus, until a press again, a press elsewhere,
   // Escape, or focus leaving. In a Combobox, a press goes to its field.
-  const [pinned, setPinned] = useState(false);
-  const more = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    if (!pinned) return;
-    const away = (event: PointerEvent) => {
-      if (!more.current?.contains(event.target as Node)) setPinned(false);
-    };
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setPinned(false);
-    };
-    addEventListener("pointerdown", away);
-    addEventListener("keydown", escape);
-    return () => {
-      removeEventListener("pointerdown", away);
-      removeEventListener("keydown", escape);
-    };
-  }, [pinned]);
+  const [pinned, setPinned, more] = usePinned<HTMLSpanElement>();
 
   return (
     <ul

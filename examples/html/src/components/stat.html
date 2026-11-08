@@ -1,0 +1,132 @@
+<play-example title="Default">
+  <play-note>
+    A number to watch: its label, how it has changed, the number, and what
+    it's compared with. The trend is neutral, since whether up is good
+    depends on the number. A Stat has no frame of its own.
+  </play-note>
+  <div class="hstat" style="inline-size: 16rem">
+    <div class="hstat-header">
+      <div class="hstat-title">
+        <h3 class="hstat-label">New tickets</h3>
+      </div>
+      <span class="hstat-trend" data-direction="up">
+        <play-icon name="trend-up"></play-icon>
+        +12%
+      </span>
+    </div>
+    <p class="hstat-value">128</p>
+    <p class="hstat-caption">Compared to yesterday</p>
+  </div>
+</play-example>
+
+<play-example title="With a hint and an action">
+  <play-note>
+    The info button's tooltip explains the number, and names the button; a
+    press pins it open on a touch screen. The action, such as a link, goes
+    below.
+  </play-note>
+  <div class="hstat" style="inline-size: 16rem">
+    <div class="hstat-header">
+      <div class="hstat-title">
+        <h3 class="hstat-label">Open tickets</h3>
+        <span class="htooltip-trigger">
+          <button class="hstat-hint" type="button" aria-labelledby="open-tickets-hint">
+            <play-icon name="info"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="open-tickets-hint" data-side="top" data-variant="hint">Tickets that aren't closed yet, across every channel.</span>
+        </span>
+      </div>
+      <span class="hstat-trend" data-direction="down">
+        <play-icon name="trend-down"></play-icon>
+        −8%
+      </span>
+    </div>
+    <p class="hstat-value">37</p>
+    <p class="hstat-caption">Compared to yesterday</p>
+    <div class="hstat-action">
+      <a class="hlink" href="/tickets">View tickets</a>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a group" layout="wide">
+  <play-note>
+    <code>.hstat-group</code> puts each Stat on a tile, on a tray, as many to
+    a row as fit. Each trend here is a button whose tooltip says which periods
+    it compares.
+  </play-note>
+  <div class="hstat-group" style="inline-size: 100%">
+    <div class="hstat">
+      <div class="hstat-header">
+        <div class="hstat-title">
+          <h3 class="hstat-label">Tickets</h3>
+        </div>
+        <span class="htooltip-trigger">
+          <button class="hstat-trend" type="button" data-direction="up" aria-describedby="tickets-trend">
+            <play-icon name="trend-up"></play-icon>
+            +12%
+          </button>
+          <span class="htooltip" role="tooltip" id="tickets-trend" data-side="top" data-variant="hint">Nov 1–7, 2026, compared with Oct 25–31, 2026.</span>
+        </span>
+      </div>
+      <p class="hstat-value">1,284</p>
+      <p class="hstat-caption">Total for this period</p>
+    </div>
+    <div class="hstat">
+      <div class="hstat-header">
+        <div class="hstat-title">
+          <h3 class="hstat-label">First response time</h3>
+        </div>
+        <span class="htooltip-trigger">
+          <button class="hstat-trend" type="button" data-direction="down" aria-describedby="response-trend">
+            <play-icon name="trend-down"></play-icon>
+            −18%
+          </button>
+          <span class="htooltip" role="tooltip" id="response-trend" data-side="top" data-variant="hint">Nov 1–7, 2026, compared with Oct 25–31, 2026.</span>
+        </span>
+      </div>
+      <p class="hstat-value">4m 12s</p>
+      <p class="hstat-caption">Median, in working hours</p>
+    </div>
+    <div class="hstat">
+      <div class="hstat-header">
+        <div class="hstat-title">
+          <h3 class="hstat-label">Open tickets</h3>
+          <span class="htooltip-trigger">
+            <button class="hstat-hint" type="button" aria-labelledby="group-open-hint">
+              <play-icon name="info"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" id="group-open-hint" data-side="top" data-variant="hint">Tickets that aren't closed yet, across every channel.</span>
+          </span>
+        </div>
+      </div>
+      <p class="hstat-value">37</p>
+      <p class="hstat-caption">Open right now</p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    In Arabic, the trend sits at the left end of the row, and the action
+    below starts on the right. The trend's text is as
+    <code>Intl.NumberFormat("ar")</code> writes it, with marks that keep the
+    sign before the number.
+  </play-note>
+  <div class="hstat" style="inline-size: 16rem">
+    <div class="hstat-header">
+      <div class="hstat-title">
+        <h3 class="hstat-label">التذاكر الجديدة</h3>
+      </div>
+      <span class="hstat-trend" data-direction="up">
+        <play-icon name="trend-up"></play-icon>
+        &lrm;+12&lrm;%&lrm;
+      </span>
+    </div>
+    <p class="hstat-value">128</p>
+    <p class="hstat-caption">مقارنة بالأمس</p>
+    <div class="hstat-action">
+      <a class="hlink" href="/tickets">عرض التذاكر</a>
+    </div>
+  </div>
+</play-example>

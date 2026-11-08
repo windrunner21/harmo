@@ -68,6 +68,12 @@ export {
   type SidebarSubProps,
 } from "./Sidebar.tsx";
 export { Spinner, type SpinnerProps } from "./Spinner.tsx";
+export {
+  Stat,
+  StatGroup,
+  type StatGroupProps,
+  type StatProps,
+} from "./Stat.tsx";
 export { Status, type StatusProps } from "./Status.tsx";
 export { Switch, type SwitchProps } from "./Switch.tsx";
 export {

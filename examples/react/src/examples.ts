@@ -35,6 +35,7 @@ import { examples as select } from "./components/select.tsx";
 import { examples as settings } from "./components/settings.tsx";
 import { examples as sidebar } from "./components/sidebar.tsx";
 import { examples as spinner } from "./components/spinner.tsx";
+import { examples as stat } from "./components/stat.tsx";
 import { examples as status } from "./components/status.tsx";
 import { examples as switchExamples } from "./components/switch.tsx";
 import { examples as tabs } from "./components/tabs.tsx";
@@ -78,6 +79,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   settings,
   sidebar,
   spinner,
+  stat,
   status,
   switch: switchExamples,
   tabs,
