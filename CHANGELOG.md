@@ -8,6 +8,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-08
+
+Thirteen new components, among them Sidebar, Command Menu, Combobox, Navigation
+Menu, and Pagination, and a card's icon, title, description, and chevron.
+
 ### Upgrading
 
 - **A list's message for no matches is a status.** So a screen reader reads it
@@ -808,7 +813,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/windrunner21/harmo/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/windrunner21/harmo/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/windrunner21/harmo/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/windrunner21/harmo/releases/tag/v0.1.1
