@@ -154,7 +154,7 @@ section lists its props.
 
 | Group | Components |
 | --- | --- |
-| Actions | [Button](docs/components/button.md), [Link](docs/components/link.md) |
+| Actions | [Button](docs/components/button.md), [Copy Button](docs/components/copy.md), [Link](docs/components/link.md) |
 | Forms | [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password Input](docs/components/password.md), [Search](docs/components/search.md), [Select](docs/components/select.md), [Combobox](docs/components/combobox.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented Control](docs/components/segmented.md), [Settings List](docs/components/settings.md) |
 | Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Command Menu](docs/components/command-menu.md), [Pagination](docs/components/pagination.md), [Sidebar](docs/components/sidebar.md), [Tabs](docs/components/tabs.md) |

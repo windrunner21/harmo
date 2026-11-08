@@ -134,6 +134,8 @@
 
   // Typography (sizes in rem: 20, 16, 14, 13, 12, 11px at the default setting).
   --harmo-font-family: system-ui, sans-serif;
+  // For text that's read character by character, such as an ID or a key.
+  --harmo-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --harmo-font-size-lg: 1.25rem;
   --harmo-font-size-base: 1rem;
   --harmo-font-size-sm: 0.875rem;

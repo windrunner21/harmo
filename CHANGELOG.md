@@ -113,6 +113,22 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Copy Button: `<button class="hbutton hcopy">`, or `<CopyButton>`, copies
+  text, such as a link or an ID, and says so in place: for two seconds, its
+  icon turns into a check, its tooltip or its text says it's copied, and a
+  status tells screen readers. `.hcopy-field`, or `<CopyField>`, puts one
+  inside a read-only Input in a monospace font, for a value such as a key.
+  `<ShareButton>` opens the device's share sheet where the browser has one,
+  and elsewhere copies the link. A new token, `--harmo-font-family-mono`, is
+  for text that's read character by character.
+
+  ```html preview
+  <button class="hbutton hcopy" data-variant="secondary" type="button">
+    <span class="hicon hcopy-icons" aria-hidden="true"><svg class="hcopy-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"> <path d="M10.5 8.5H17.5C18.6 8.5 19.5 9.4 19.5 10.5V17.5C19.5 18.6 18.6 19.5 17.5 19.5H10.5C9.4 19.5 8.5 18.6 8.5 17.5V10.5C8.5 9.4 9.4 8.5 10.5 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> <path d="M6.5 15.5H6C5.17 15.5 4.5 14.83 4.5 14V6C4.5 5.17 5.17 4.5 6 4.5H14C14.83 4.5 15.5 5.17 15.5 6V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> </svg><svg class="hcopy-done" viewBox="4.85 4.88 16 16" fill="none" aria-hidden="true" focusable="false"> <path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor" /> </svg></span>
+    <span class="hbutton-label">Copy</span>
+  </button>
+  ```
+
 - Empty State: `<div class="hempty-state">`, or `<EmptyState>`, what shows
   where there's nothing yet, such as a list before its first item, a search
   with no results, or a page you're not allowed to see: an icon, a title

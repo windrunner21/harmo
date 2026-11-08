@@ -1,0 +1,119 @@
+<play-example title="Copy a link">
+  <play-note>
+    An icon-only Button, named by its tooltip. For two seconds after it
+    copies, its icon turns into a check and its tooltip says so, shown even
+    without a pointer over it, while a status tells screen readers.
+  </play-note>
+  <span class="htooltip-trigger">
+    <button class="hbutton hcopy" data-variant="tertiary" type="button" aria-labelledby="copy-link-tip" data-example-copy="https://example.com/blog/first-response-time" data-example-copied="Copied">
+      <span class="hicon hcopy-icons" aria-hidden="true">
+        <play-icon name="copy" class="hcopy-icon"></play-icon>
+        <play-icon name="copied" class="hcopy-done"></play-icon>
+      </span>
+    </button>
+    <span class="htooltip" role="tooltip" id="copy-link-tip">Copy link</span>
+  </span>
+  <span class="hcopy-status" role="status"></span>
+</play-example>
+
+<play-example title="With its text">
+  <play-note>
+    With its text, "Copy" turns into "Copied", and the button's width follows
+    over 200ms, as a Button's does when its text changes.
+  </play-note>
+  <div style="display: flex; align-items: center; gap: 12px">
+    <code>npm install @harmo-ui/css</code>
+    <button class="hbutton hcopy" data-variant="secondary" type="button" data-example-copy="npm install @harmo-ui/css" data-example-copied="Copied">
+      <span class="hicon hcopy-icons" aria-hidden="true">
+        <play-icon name="copy" class="hcopy-icon"></play-icon>
+        <play-icon name="copied" class="hcopy-done"></play-icon>
+      </span>
+      <span class="hbutton-label">Copy</span>
+    </button>
+    <span class="hcopy-status" role="status"></span>
+  </div>
+</play-example>
+
+<play-example title="In a field" layout="stack">
+  <play-note>
+    A value to copy, such as an ID or a key: a read-only Input in a monospace
+    font, with a small Copy Button inside its end, which copies what's in it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="account-id">Account ID</label>
+    <p class="hdescription" id="account-id-description">Support asks for it when you write to them.</p>
+    <div class="hcopy-field">
+      <input class="hinput" id="account-id" type="text" readonly value="acc_7Hq2vX9pLm4" aria-describedby="account-id-description" />
+      <span class="htooltip-trigger">
+        <button class="hbutton hcopy" data-variant="tertiary" data-size="small" type="button" aria-labelledby="account-id-copy" data-example-copied="Copied">
+          <span class="hicon hcopy-icons" aria-hidden="true">
+            <play-icon name="copy" class="hcopy-icon"></play-icon>
+            <play-icon name="copied" class="hcopy-done"></play-icon>
+          </span>
+        </button>
+        <span class="htooltip" role="tooltip" id="account-id-copy">Copy account ID</span>
+      </span>
+      <span class="hcopy-status" role="status"></span>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Share">
+  <play-note>
+    Links to share on a site, with your app's logos, open in a new tab, and
+    work without a script. The Share Button opens the device's share sheet
+    where the browser has one; elsewhere, it copies the link and says so.
+  </play-note>
+  <div style="display: flex; gap: 4px">
+    <span class="htooltip-trigger">
+      <a class="hbutton" data-variant="tertiary" href="https://x.com/intent/post?url=https%3A%2F%2Fexample.com%2Fblog%2Ffirst-response-time&amp;text=First%20response%20time%2C%20explained" target="_blank" rel="noopener noreferrer" aria-labelledby="share-x">
+        <play-icon name="x" class="hicon"></play-icon>
+      </a>
+      <span class="htooltip" role="tooltip" id="share-x">Share on X</span>
+    </span>
+    <span class="htooltip-trigger">
+      <a class="hbutton" data-variant="tertiary" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fexample.com%2Fblog%2Ffirst-response-time" target="_blank" rel="noopener noreferrer" aria-labelledby="share-linkedin">
+        <play-icon name="linkedin" class="hicon"></play-icon>
+      </a>
+      <span class="htooltip" role="tooltip" id="share-linkedin">Share on LinkedIn</span>
+    </span>
+    <span class="htooltip-trigger">
+      <a class="hbutton" data-variant="tertiary" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fexample.com%2Fblog%2Ffirst-response-time" target="_blank" rel="noopener noreferrer" aria-labelledby="share-facebook">
+        <play-icon name="facebook" class="hicon"></play-icon>
+      </a>
+      <span class="htooltip" role="tooltip" id="share-facebook">Share on Facebook</span>
+    </span>
+    <span class="htooltip-trigger">
+      <button class="hbutton hcopy" data-variant="tertiary" type="button" aria-labelledby="share-tip" data-example-share="https://example.com/blog/first-response-time" data-example-share-title="First response time, explained" data-example-copied="Link copied">
+        <span class="hicon hcopy-icons" aria-hidden="true">
+          <play-icon name="share" class="hcopy-icon"></play-icon>
+          <play-icon name="copied" class="hcopy-done"></play-icon>
+        </span>
+      </button>
+      <span class="htooltip" role="tooltip" id="share-tip">Share</span>
+    </span>
+    <span class="hcopy-status" role="status"></span>
+  </div>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar" layout="stack">
+  <play-note>
+    In Arabic, the Copy Button is at the field's left end.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="account-id-ar">معرّف الحساب</label>
+    <div class="hcopy-field">
+      <input class="hinput" id="account-id-ar" type="text" readonly value="acc_7Hq2vX9pLm4" />
+      <span class="htooltip-trigger">
+        <button class="hbutton hcopy" data-variant="tertiary" data-size="small" type="button" aria-labelledby="account-id-ar-copy" data-example-copied="تم النسخ">
+          <span class="hicon hcopy-icons" aria-hidden="true">
+            <play-icon name="copy" class="hcopy-icon"></play-icon>
+            <play-icon name="copied" class="hcopy-done"></play-icon>
+          </span>
+        </button>
+        <span class="htooltip" role="tooltip" id="account-id-ar-copy">نسخ معرّف الحساب</span>
+      </span>
+      <span class="hcopy-status" role="status"></span>
+    </div>
+  </div>
+</play-example>

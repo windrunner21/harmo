@@ -1,0 +1,105 @@
+@use "shortcuts" as *;
+
+// Copy Button: a Button that copies text, such as a link or an ID, and says
+// so in place. For two seconds after, its icon turns into a check, and its
+// tooltip, or its text, says it's copied, while a status tells screen
+// readers. A Share Button is the same, with a share icon.
+
+// The icon and the check, one over the other: the one leaving fades and
+// shrinks in 150ms, the one arriving in 200ms.
+.hcopy-icons {
+  display: inline-grid;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > svg {
+    grid-area: 1 / 1;
+
+    inline-size: 100%;
+    block-size: 100%;
+
+    transition:
+      opacity $duration-normal $ease-out-cubic,
+      scale $duration-normal $ease-out-cubic;
+  }
+
+  & > .hcopy-done {
+    opacity: 0;
+
+    transition-duration: $duration-fast;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    & > .hcopy-done {
+      scale: 0.8;
+    }
+  }
+}
+
+.hcopy[data-copied] > .hcopy-icons {
+  & > .hcopy-icon {
+    opacity: 0;
+
+    transition-duration: $duration-fast;
+  }
+
+  & > .hcopy-done {
+    opacity: 1;
+    scale: 1;
+
+    transition-duration: $duration-normal;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    & > .hcopy-icon {
+      scale: 0.8;
+    }
+  }
+}
+
+// Says it's copied to screen readers; hidden from sight.
+.hcopy-status {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  border: 0;
+  clip-path: inset(50%);
+}
+
+// A value to copy, such as an ID or a key: a read-only Input in a monospace
+// font, with a small Copy Button inside its end.
+.hcopy-field {
+  display: grid;
+  align-items: center;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > :is(.hinput, .htooltip-trigger) {
+    grid-area: 1 / 1;
+  }
+
+  & > .hinput {
+    // A small button, its 2px from the end, and 5px before it.
+    padding-inline-end: calc(1.8125rem + 7px);
+
+    font-family: $font-family-mono;
+    text-overflow: ellipsis;
+  }
+
+  & > .htooltip-trigger {
+    justify-self: end;
+
+    margin-inline-end: 2px;
+  }
+}

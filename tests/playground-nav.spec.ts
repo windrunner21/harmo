@@ -9,7 +9,7 @@ onEachPlayground("button", () => {
     await page.setViewportSize({ width: 1100, height: 800 });
     const nav = page.getByRole("navigation", { name: "Components" });
     await expect(nav).toHaveClass(/hsidebar-nav/);
-    await expect(nav.getByRole("link", { name: "Button" })).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("link", { name: "Button", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(nav.getByRole("list", { name: "Forms" })).toBeVisible();
     await expect(page.locator(".play-menu-button")).toBeHidden();
     // Beside the page, under the header, as tall as the window below it.

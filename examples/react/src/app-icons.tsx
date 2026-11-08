@@ -7,8 +7,10 @@ import campaigns from "../../html/src/icons/campaigns.svg" with { type: "text" }
 import chevron from "../../html/src/icons/chevron.svg" with { type: "text" };
 import close from "../../html/src/icons/close.svg" with { type: "text" };
 import developers from "../../html/src/icons/developers.svg" with { type: "text" };
+import facebook from "../../html/src/icons/facebook.svg" with { type: "text" };
 import error from "../../html/src/icons/error.svg" with { type: "text" };
 import home from "../../html/src/icons/home.svg" with { type: "text" };
+import linkedin from "../../html/src/icons/linkedin.svg" with { type: "text" };
 import info from "../../html/src/icons/info.svg" with { type: "text" };
 import lock from "../../html/src/icons/lock.svg" with { type: "text" };
 import menu from "../../html/src/icons/menu.svg" with { type: "text" };
@@ -21,6 +23,7 @@ import tickets from "../../html/src/icons/tickets.svg" with { type: "text" };
 import trash from "../../html/src/icons/trash.svg" with { type: "text" };
 import user from "../../html/src/icons/user.svg" with { type: "text" };
 import warning from "../../html/src/icons/warning.svg" with { type: "text" };
+import x from "../../html/src/icons/x.svg" with { type: "text" };
 
 const icon = (source: string) => {
   const [, attributes = "", body = ""] =
@@ -71,3 +74,6 @@ export const TicketsIcon = icon(tickets);
 export const TrashIcon = icon(trash);
 export const UserIcon = icon(user);
 export const WarningIcon = icon(warning);
+export const FacebookIcon = icon(facebook);
+export const LinkedInIcon = icon(linkedin);
+export const XIcon = icon(x);

@@ -35,6 +35,8 @@
   document.addEventListener("click", (event) => {
     const link = event.target.closest?.(".play-demo a[href]");
     if (!link) return;
+    // A link that opens a new tab doesn't leave the playground.
+    if (link.target === "_blank") return;
     // A link to a dialog that an example's script opens is that script's.
     const named = new URL(link.href).searchParams.get("dialog");
     if (named && document.getElementById(named)?.hasAttribute("data-example-url-dialog")) return;

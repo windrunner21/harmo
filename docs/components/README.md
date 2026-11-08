@@ -17,6 +17,7 @@ the same markup and does what the script would.
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
 | Combobox | [combobox.md](combobox.md) |
 | Command Menu | [command-menu.md](command-menu.md) |
+| Copy Button | [copy.md](copy.md) |
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
 | Empty State | [empty-state.md](empty-state.md) |
@@ -101,6 +102,7 @@ Some components are built from others, so their files need company:
 | `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
 | `banner.css` | `button.css` for its action |
 | `card.css` | `chevron-to-arrow.css` for a chevron |
+| `copy.css` | `button.css`; `tooltip.css` for an icon-only one; `input.css` and `field.css` for a field |
 | `empty-state.css` | `button.css` for actions |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |

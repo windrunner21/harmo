@@ -12,6 +12,7 @@ import { examples as checkbox } from "./components/checkbox.tsx";
 import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
 import { examples as combobox } from "./components/combobox.tsx";
 import { examples as commandMenu } from "./components/command-menu.tsx";
+import { examples as copy } from "./components/copy.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
 import { examples as emptyState } from "./components/empty-state.tsx";
@@ -56,6 +57,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "chevron-to-arrow": chevronToArrow,
   combobox,
   "command-menu": commandMenu,
+  copy,
   dialog,
   drawer,
   "empty-state": emptyState,

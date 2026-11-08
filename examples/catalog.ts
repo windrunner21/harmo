@@ -22,6 +22,12 @@ const groups: CatalogGroup[] = [
           "An action, as a button or as a link styled like one, or held to confirm one that's hard to undo.",
       },
       {
+        slug: "copy",
+        title: "Copy Button",
+        purpose:
+          "Copies text, such as a link or an ID, and says so in place; or shares a link through the device's share sheet.",
+      },
+      {
         slug: "link",
         title: "Link",
         purpose: "Navigation, inside text or on its own.",

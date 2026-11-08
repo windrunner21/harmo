@@ -19,6 +19,14 @@ export {
   type CommandMenuProps,
   type CommandMenuShortcut,
 } from "./CommandMenu.tsx";
+export {
+  CopyButton,
+  CopyField,
+  ShareButton,
+  type CopyButtonProps,
+  type CopyFieldProps,
+  type ShareButtonProps,
+} from "./CopyButton.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";

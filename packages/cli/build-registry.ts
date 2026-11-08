@@ -25,6 +25,7 @@ const components: Record<string, string[]> = {
   "chevron-to-arrow": ["ChevronToArrow.tsx"],
   combobox: ["Combobox.tsx"],
   "command-menu": ["CommandMenu.tsx"],
+  copy: ["CopyButton.tsx"],
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],
   "empty-state": ["EmptyState.tsx"],
