@@ -133,6 +133,31 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Pagination: `<nav class="hpagination">`, or `<Pagination>`, moves through
+  a list shown a page at a time: Previous and Next, as Buttons, and the page
+  numbers between them if you show them, the first and last pages and the one
+  you're on with one either side, so the row keeps its width, up to 999
+  pages. Each is a link
+  where the page is in the URL, or a button where your app holds it. On the
+  first or last page, Previous or Next stays in place, disabled. On a phone,
+  only Previous and Next show.
+
+  ```html preview
+  <nav class="hpagination" aria-label="Pages">
+    <a class="hbutton" data-variant="secondary" href="?page=4" rel="prev"><svg class="hicon hchevron" data-direction="back" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M8.79048 5C8.58956 5 8.38863 5.07186 8.23001 5.22585C7.92333 5.52355 7.92333 6.01631 8.23001 6.31402L14.0886 12.0013L8.23001 17.6885C7.92333 17.9863 7.92333 18.479 8.23001 18.7767C8.53668 19.0744 9.04428 19.0744 9.35096 18.7767L15.77 12.5454C16.0767 12.2477 16.0767 11.7549 15.77 11.4572L9.35096 5.22585C9.19233 5.07186 8.99141 5 8.79048 5Z" fill="currentColor" /></svg><span class="hbutton-label">Previous</span></a>
+    <ul class="hpagination-pages">
+      <li><a class="hpagination-page" href="?page=1" aria-label="Page 1">1</a></li>
+      <li class="hpagination-ellipsis" aria-hidden="true">…</li>
+      <li><a class="hpagination-page" href="?page=4" aria-label="Page 4">4</a></li>
+      <li><a class="hpagination-page" href="?page=5" aria-label="Page 5" aria-current="page">5</a></li>
+      <li><a class="hpagination-page" href="?page=6" aria-label="Page 6">6</a></li>
+      <li class="hpagination-ellipsis" aria-hidden="true">…</li>
+      <li><a class="hpagination-page" href="?page=12" aria-label="Page 12">12</a></li>
+    </ul>
+    <a class="hbutton" data-variant="secondary" href="?page=6" rel="next"><span class="hbutton-label">Next</span><svg class="hicon hchevron" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M8.79048 5C8.58956 5 8.38863 5.07186 8.23001 5.22585C7.92333 5.52355 7.92333 6.01631 8.23001 6.31402L14.0886 12.0013L8.23001 17.6885C7.92333 17.9863 7.92333 18.479 8.23001 18.7767C8.53668 19.0744 9.04428 19.0744 9.35096 18.7767L15.77 12.5454C16.0767 12.2477 16.0767 11.7549 15.77 11.4572L9.35096 5.22585C9.19233 5.07186 8.99141 5 8.79048 5Z" fill="currentColor" /></svg></a>
+  </nav>
+  ```
+
 - Search: `<div class="hsearch">` around an Input with `type="search"`, or
   `<Search>`, a field for searching, such as above a list: filled in gray,
   with a magnifier at its start and an optional clear button at its end once

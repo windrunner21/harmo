@@ -230,6 +230,12 @@ const groups: CatalogGroup[] = [
           "Places to go and things to do, found by typing: under a search field, or in a dialog.",
       },
       {
+        slug: "pagination",
+        title: "Pagination",
+        purpose:
+          "Moves through a list shown a page at a time: Previous and Next, and the page numbers if you show them.",
+      },
+      {
         slug: "sidebar",
         title: "Sidebar",
         purpose:

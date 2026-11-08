@@ -1,0 +1,135 @@
+@use "shortcuts" as *;
+
+// Moves through a list shown a page at a time: Previous and Next, as
+// Buttons, and the page numbers between them if the app shows them. Each is a
+// link where the page is in the URL, or a button where the app holds it.
+.hpagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hpagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  // In a container too narrow for them, the numbers wrap rather than spill
+  // out of it.
+  flex-wrap: wrap;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > li {
+    display: flex;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  // A phone has room for Previous and Next only.
+  @media (max-width: 30rem) {
+    display: none;
+  }
+}
+
+// A page: a square as tall as a control. Numbers up to 999 fit it, so the
+// row doesn't shift as you move through it; a longer one widens its square.
+.hpagination-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  min-inline-size: $control-height;
+  block-size: $control-height;
+  padding: 0 4px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $button-font-weight;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-decoration: none;
+
+  color: $color-text-secondary;
+  background-color: transparent;
+  border: 0;
+  border-radius: $border-radius;
+
+  cursor: pointer;
+
+  transition:
+    background-color $button-duration ease,
+    color $button-duration ease,
+    transform $button-duration $ease-out-quad;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-text;
+      background-color: $color-background-hover;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:active:not(:focus-visible) {
+      transform: scale(0.98);
+    }
+  }
+
+  // The page you're on: a line just inside its edge tells it apart without
+  // its color, and stays in forced colors, where the tint is gone. An
+  // outline rather than a border, so it's no wider than the others; focused,
+  // the focus ring takes its place.
+  &[aria-current="page"] {
+    color: $color-primary;
+    background-color: $color-primary-tint;
+
+    &:not(:focus-visible) {
+      outline: 1px solid $color-primary;
+      outline-offset: -1px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: background-color, color;
+  }
+}
+
+// Pages left out, as wide as a page, so the row keeps its width.
+.hpagination-ellipsis {
+  justify-content: center;
+  align-items: center;
+
+  min-inline-size: $control-height;
+  block-size: $control-height;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+
+  color: $color-text-secondary;
+}

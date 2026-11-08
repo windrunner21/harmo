@@ -40,6 +40,7 @@ const components: Record<string, string[]> = {
     "listbox/OptionGroup.tsx",
   ],
   meter: ["Meter.tsx"],
+  pagination: ["pagination/Pagination.tsx", "pagination/PaginationPage.tsx"],
   password: ["PasswordInput.tsx"],
   popup: ["Popup.tsx"],
   provider: ["HarmoProvider.tsx"],

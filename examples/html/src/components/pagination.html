@@ -1,0 +1,153 @@
+<play-example title="Previous and Next">
+  <play-note>
+    Links, where the page is in the URL, so each can open in a new tab. On
+    the first page Previous is disabled, and on the last, Next. Here a click
+    only moves the page, as your router would.
+  </play-note>
+  <nav class="hpagination" aria-label="Pages" data-example-page="2" data-example-pages="12">
+    <a class="hbutton" data-variant="secondary" href="?page=1" rel="prev">
+      <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+      <span class="hbutton-label">Previous</span>
+    </a>
+    <a class="hbutton" data-variant="secondary" href="?page=3" rel="next">
+      <span class="hbutton-label">Next</span>
+      <play-icon name="chevron" class="hicon hchevron"></play-icon>
+    </a>
+  </nav>
+</play-example>
+
+<play-example title="Numbered">
+  <play-note>
+    The first and last pages, and the one you're on with one either side; an
+    ellipsis stands for the pages between, so there are always seven and the
+    row keeps its width, up to 999 pages. Each number is named, such as "Page
+    5", not only "5". On a phone, only Previous and Next show.
+  </play-note>
+  <nav class="hpagination" aria-label="Pages" data-example-page="5" data-example-pages="12">
+    <a class="hbutton" data-variant="secondary" href="?page=4" rel="prev">
+      <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+      <span class="hbutton-label">Previous</span>
+    </a>
+    <ul class="hpagination-pages">
+      <li><a class="hpagination-page" href="?page=1" aria-label="Page 1">1</a></li>
+      <li class="hpagination-ellipsis" aria-hidden="true">…</li>
+      <li><a class="hpagination-page" href="?page=4" aria-label="Page 4">4</a></li>
+      <li><a class="hpagination-page" href="?page=5" aria-label="Page 5" aria-current="page">5</a></li>
+      <li><a class="hpagination-page" href="?page=6" aria-label="Page 6">6</a></li>
+      <li class="hpagination-ellipsis" aria-hidden="true">…</li>
+      <li><a class="hpagination-page" href="?page=12" aria-label="Page 12">12</a></li>
+    </ul>
+    <a class="hbutton" data-variant="secondary" href="?page=6" rel="next">
+      <span class="hbutton-label">Next</span>
+      <play-icon name="chevron" class="hicon hchevron"></play-icon>
+    </a>
+  </nav>
+</play-example>
+
+<play-example title="On the first page">
+  <play-note>
+    Previous stays in its place, disabled with <code>aria-disabled</code>, and
+    links to the page you're on, so focus stays on it. A script ignores a click
+    on it, as for a Button; without one, it reloads the page you're on. Seven
+    pages or fewer all show.
+  </play-note>
+  <nav class="hpagination" aria-label="Pages" data-example-page="1" data-example-pages="5">
+    <a class="hbutton" data-variant="secondary" href="?page=1" aria-disabled="true">
+      <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+      <span class="hbutton-label">Previous</span>
+    </a>
+    <ul class="hpagination-pages">
+      <li><a class="hpagination-page" href="?page=1" aria-label="Page 1" aria-current="page">1</a></li>
+      <li><a class="hpagination-page" href="?page=2" aria-label="Page 2">2</a></li>
+      <li><a class="hpagination-page" href="?page=3" aria-label="Page 3">3</a></li>
+      <li><a class="hpagination-page" href="?page=4" aria-label="Page 4">4</a></li>
+      <li><a class="hpagination-page" href="?page=5" aria-label="Page 5">5</a></li>
+    </ul>
+    <a class="hbutton" data-variant="secondary" href="?page=2" rel="next">
+      <span class="hbutton-label">Next</span>
+      <play-icon name="chevron" class="hicon hchevron"></play-icon>
+    </a>
+  </nav>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar">
+  <play-note>
+    In Arabic, the first page is on the right, and Previous and Next point in
+    the reading direction.
+  </play-note>
+  <nav class="hpagination" aria-label="الصفحات" data-example-page="5" data-example-pages="12" data-example-page-label="الصفحة {page}">
+    <a class="hbutton" data-variant="secondary" href="?page=4" rel="prev">
+      <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+      <span class="hbutton-label">السابق</span>
+    </a>
+    <ul class="hpagination-pages">
+      <li><a class="hpagination-page" href="?page=1" aria-label="الصفحة 1">1</a></li>
+      <li class="hpagination-ellipsis" aria-hidden="true">…</li>
+      <li><a class="hpagination-page" href="?page=4" aria-label="الصفحة 4">4</a></li>
+      <li><a class="hpagination-page" href="?page=5" aria-label="الصفحة 5" aria-current="page">5</a></li>
+      <li><a class="hpagination-page" href="?page=6" aria-label="الصفحة 6">6</a></li>
+      <li class="hpagination-ellipsis" aria-hidden="true">…</li>
+      <li><a class="hpagination-page" href="?page=12" aria-label="الصفحة 12">12</a></li>
+    </ul>
+    <a class="hbutton" data-variant="secondary" href="?page=6" rel="next">
+      <span class="hbutton-label">التالي</span>
+      <play-icon name="chevron" class="hicon hchevron"></play-icon>
+    </a>
+  </nav>
+</play-example>
+
+<play-example title="In a table footer" layout="wide">
+  <play-note>
+    Where your app holds the page rather than the URL, Previous and Next are
+    buttons. The rows shown, "Rows per page", and "Page 2 of 12" are your
+    app's, beside them; the page is in a <code>role="status"</code>, so a
+    screen reader hears it change.
+  </play-note>
+  <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; inline-size: 100%">
+    <p style="margin: 0; font-size: var(--harmo-font-size-sm); color: var(--harmo-color-text-secondary)" data-example-range="{from}–{to} of {total} results">11–20 of 115 results</p>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span class="hlabel" id="rows-label">Rows per page</span>
+        <button
+          class="hselect"
+          type="button"
+          role="combobox"
+          aria-labelledby="rows-label"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls="rows-listbox"
+          popovertarget="rows-popup"
+          style="inline-size: auto; anchor-name: --rows"
+        >
+          <span class="hselect-value">10</span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div class="hpopup" id="rows-popup" popover style="position-anchor: --rows">
+          <ul class="hlistbox" id="rows-listbox" role="listbox" aria-labelledby="rows-label">
+            <li class="hoption" id="rows-10" role="option" aria-selected="true">
+              <span class="hoption-label">10</span>
+              <play-icon name="check" class="hoption-check"></play-icon>
+            </li>
+            <li class="hoption" id="rows-20" role="option" aria-selected="false">
+              <span class="hoption-label">20</span>
+            </li>
+            <li class="hoption" id="rows-50" role="option" aria-selected="false">
+              <span class="hoption-label">50</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p role="status" style="margin: 0; font-size: var(--harmo-font-size-sm)">Page 2 of 12</p>
+      <nav class="hpagination" aria-label="Pages" data-example-page="2" data-example-pages="12" data-example-total="115" data-example-rows="rows-listbox" data-example-page-of="Page {page} of {count}">
+        <button class="hbutton" data-variant="secondary" type="button">
+          <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          <span class="hbutton-label">Previous</span>
+        </button>
+        <button class="hbutton" data-variant="secondary" type="button">
+          <span class="hbutton-label">Next</span>
+          <play-icon name="chevron" class="hicon hchevron"></play-icon>
+        </button>
+      </nav>
+    </div>
+  </div>
+</play-example>

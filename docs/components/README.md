@@ -29,6 +29,7 @@ the same markup and does what the script would.
 | Link | [link.md](link.md) |
 | Listbox | [listbox.md](listbox.md) |
 | Meter | [meter.md](meter.md) |
+| Pagination | [pagination.md](pagination.md) |
 | Password Input | [password.md](password.md) |
 | Popup | [popup.md](popup.md) |
 | Radio | [radio.md](radio.md) |
@@ -102,6 +103,7 @@ Some components are built from others, so their files need company:
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |
+| `pagination.css` | `button.css`, `chevron.css` |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
 | `search.css` | `input.css`; `field.css` for a label |
 | `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
