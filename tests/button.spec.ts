@@ -184,7 +184,8 @@ onEachPlayground("button", () => {
     await expect
       .poll(() => button.evaluate((node) => new DOMMatrix(getComputedStyle(node).transform).a))
       .toBeCloseTo(0.97, 3);
-    expect(await styleOf(button, "background-color")).toBe(resting);
+    // Once the hover's fade has settled.
+    await expect.poll(() => styleOf(button, "background-color")).toBe(resting);
     await page.mouse.up();
   });
 

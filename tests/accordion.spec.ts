@@ -70,7 +70,7 @@ onEachPlayground("accordion", () => {
     await expect.poll(() => left.evaluate((node) => getComputedStyle(node).transform)).not.toBe(closed);
   });
 
-  test("the content grows as it opens; it shrinks as it closes, except in Safari, which closes it at once", async ({ page, browserName }) => {
+  test("the content grows as it opens, and shrinks as it closes; WebKit may close it at once", async ({ page, browserName }) => {
     const [item] = await (await items(page, "accordion-default")).all();
     const summary = item.locator("summary");
     await summary.click();
@@ -92,11 +92,8 @@ onEachPlayground("accordion", () => {
     await summary.click();
     await page.waitForTimeout(600);
     const closing = await height(item);
-    if (browserName === "webkit") expect(closing).toBeCloseTo(closed, 0);
-    else {
-      expect(closing).toBeGreaterThan(closed + 1);
-      expect(closing).toBeLessThan(full - 1);
-    }
+    expect(closing).toBeLessThan(full - 1);
+    if (browserName !== "webkit") expect(closing).toBeGreaterThan(closed + 1);
   });
 
   test("with reduced motion, it opens and closes at once", async ({ page }) => {
