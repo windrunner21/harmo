@@ -1,9 +1,13 @@
-import { Children, Fragment, isValidElement, type ReactNode } from "react";
+import { Children, cloneElement, Fragment, isValidElement, type ReactNode } from "react";
 
+// Each child keeps its fragment's key in its own, so that those of two keyed
+// fragments stay apart.
 export const flatChildren = (children: ReactNode): ReactNode[] =>
   Children.toArray(children).flatMap((child) =>
     isValidElement<{ children?: ReactNode }>(child) && child.type === Fragment
-      ? flatChildren(child.props.children)
+      ? flatChildren(child.props.children).map((inner) =>
+          isValidElement(inner) ? cloneElement(inner, { key: `${child.key}${inner.key}` }) : inner,
+        )
       : [child],
   );
 

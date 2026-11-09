@@ -99,8 +99,9 @@ no padding, so the panel lays out its own content:
 - Hover (hover devices) and open: `--harmo-color-background-hover`, fading in
   over 150ms (`--harmo-duration-fast`).
 - Values: a 1px `--harmo-color-border` divider and 4px before them; each is
-  11px on `--harmo-color-background-hover` with a 4px radius, 2px 4px padding,
-  and ends with an ellipsis past 12rem. The chip itself never wraps.
+  11px on `--harmo-color-background-hover`, or `--harmo-color-border` while the
+  chip is hovered or open, with a 4px radius, 2px 4px padding, and ends with an
+  ellipsis past 12rem. The chip itself never wraps.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
 

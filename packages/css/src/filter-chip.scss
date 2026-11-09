@@ -97,4 +97,17 @@
 
   background-color: $color-background-hover;
   border-radius: $border-radius-sm;
+
+  transition: background-color $duration-fast ease;
+
+  // A chip that's hovered or open has this background itself.
+  .hfilter-chip[aria-expanded="true"] & {
+    background-color: $color-border;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .hfilter-chip:hover:enabled & {
+      background-color: $color-border;
+    }
+  }
 }

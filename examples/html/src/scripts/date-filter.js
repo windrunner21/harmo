@@ -203,6 +203,7 @@
     chip.addEventListener("example-filter-reset", () => {
       value = { gte: null, lte: null };
       showValue();
+      popup.hidePopover();
     });
 
     apply.addEventListener("click", applied);

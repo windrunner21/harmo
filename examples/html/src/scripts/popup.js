@@ -1,7 +1,8 @@
 // Example only: keep each trigger's aria-expanded in sync with its popup,
 // make each opening find its position afresh, record which side of the
-// trigger the popup is on, so it slides away from the trigger, and keep a
-// closing popup where it is. The React Popup does all of this itself. A
+// trigger the popup is on, so it slides away from the trigger, keep a closing
+// popup where it is, and hand focus back when one over another closes. The
+// React Popup does all of this itself. A
 // popup with no popovertarget button, such as a Combobox's, is placed by the
 // element it's anchored to, whose own script keeps its aria-expanded.
 {
@@ -60,6 +61,18 @@
       if (opening) {
         unpin();
         popup.toggleAttribute("data-refit");
+      }
+
+      // A browser hands focus back only for the first popup open, not one
+      // opened over another.
+      if (!opening && popup.contains(document.activeElement)) {
+        popup.addEventListener(
+          "toggle",
+          () => {
+            if (document.activeElement === document.body || popup.contains(document.activeElement)) trigger.focus();
+          },
+          { once: true },
+        );
       }
 
       const side = opening ? landing() : current();

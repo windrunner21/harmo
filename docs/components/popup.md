@@ -84,6 +84,7 @@ panel lays out its own content.
 | --- | --- |
 | `aria-expanded` on the trigger | On every open and close; it also styles open select triggers |
 | `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; its value doesn't matter, the change does |
+| Focus, back on the trigger | When a popup opened over another closes with focus inside it; browsers do this only for the first popup open |
 | `data-side="top"` on the popup | Before opening, when it will land above its trigger, and before closing, when it's above; CSS can't tell which side it landed on |
 | `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box | Before closing, so it fades where it is; removed as it next opens |
 

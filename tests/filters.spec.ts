@@ -4,10 +4,6 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 // What docs/components/filters.md says: the first filters in a named row and
 // the rest behind a chip; a count of those in force behind it; Reset, while
 // anything is in force, emptying them all; and right to left, from the right.
-// CI records a trace of every test, which on a page this long takes WebKit
-// about two seconds a step.
-test.slow(({ browserName }) => browserName === "webkit", "A long page in WebKit");
-
 const parts = (container: Locator) => {
   const row = container.getByRole("group", { name: "Filter tasks" });
   const moreChip = row.locator(":scope > .hfilter-chip", { hasText: "More filters" });
@@ -49,7 +45,7 @@ const openMore = async ({ moreChip, more }: ReturnType<typeof parts>) => {
 onEachPlayground("filters", () => {
   test("the first filters in a named row, the rest behind a chip, and nothing to count or reset", async ({ page }) => {
     const { row, moreChip, more, count, reset } = parts(await example(page, "filters-default"));
-    await expect(row.locator(":scope > .hfilter-chip")).toHaveText(["Status", "Assignee", "Due date", "More filters"], {
+    await expect(row.locator(":scope > .hfilter-chip")).toHaveText(["Status", "Assignee", "More filters"], {
       useInnerText: true,
     });
     await expect(moreChip).toHaveAttribute("aria-haspopup", "dialog");
@@ -60,11 +56,55 @@ onEachPlayground("filters", () => {
   });
 
   test("the chip opens a named dialog of the rest, with focus on the first", async ({ page }) => {
-    const all = parts(await example(page, "filters-default"));
+    const container = await example(page, "filters-default");
+    const all = parts(container);
     await openMore(all);
     await expect(all.moreChip).toHaveAttribute("aria-expanded", "true");
-    await expect(all.more.locator(".hfilter-chip")).toHaveText(["Priority", "Project"]);
+    await expect(all.more.locator(".hfilter-chip")).toHaveText(["Due date", "Priority", "Project"]);
     await expect(all.more.locator(".hfilter-chip").first()).toBeFocused();
+
+    await container.getByRole("heading", { name: "Default" }).click();
+    await expect(all.more).toBeHidden();
+  });
+
+  test("opening the panel skips a first filter that can't take focus", async ({ page }) => {
+    const container = await example(page, "filters-default");
+    const all = parts(container);
+    await container.locator(".hfilters-more .hfilter-chip").first().evaluate((node: HTMLButtonElement) => (node.disabled = true));
+    await openMore(all);
+    await expect(all.more.locator(".hfilter-chip", { hasText: "Priority" })).toBeFocused();
+  });
+
+  test("three popups deep, Escape closes one at a time and hands focus back", async ({ page }) => {
+    const c = await example(page, "filters-default");
+    const all = parts(c);
+    await openMore(all);
+    const due = all.more.locator(".hfilter-chip", { hasText: "Due date" });
+    const panel = c.getByRole("dialog", { name: "Due date" });
+    await due.click();
+    await expect(panel).toBeVisible();
+    await settled(panel);
+    const condition = panel.getByRole("combobox", { name: "Condition" });
+    await expect(condition).toBeFocused();
+    await condition.click();
+    const list = panel.getByRole("listbox", { name: "Condition" });
+    await expect(list).toBeVisible();
+    await settled(panel.locator(".hpopup:popover-open").last());
+
+    await page.keyboard.press("Escape");
+    await expect(list).toBeHidden();
+    await expect(panel).toBeVisible();
+    await expect(all.more).toBeVisible();
+    await expect(condition).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+    await expect(all.more).toBeVisible();
+    await expect(due).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(all.more).toBeHidden();
+    await expect(all.moreChip).toBeFocused();
   });
 
   test("a filter chosen in the row shows Reset and isn't counted", async ({ page }) => {
@@ -121,23 +161,37 @@ onEachPlayground("filters", () => {
   test("a Date Filter counts as a filter, and Reset empties it", async ({ page }) => {
     const container = await example(page, "filters-default");
     const all = parts(container);
-    await all.chip("Due date").click();
+    const due = all.more.locator(".hfilter-chip", { hasText: "Due date" });
     const panel = container.getByRole("dialog", { name: "Due date" });
-    await expect(panel).toBeVisible();
-    await settled(panel);
+    const reopen = async () => {
+      await due.click();
+      await expect(panel).toBeVisible();
+      await settled(panel);
+    };
+    await openMore(all);
+    await reopen();
     await panel.getByRole("textbox", { name: "How many" }).fill("7");
     await panel.getByRole("button", { name: "Apply" }).click();
     await expect(all.values).toHaveCount(1);
+    await expect(all.count).toHaveText("1");
     await expect(all.reset).toBeVisible();
+    await expect(all.more).toBeVisible();
 
-    await all.reset.click();
+    await reopen();
+    await expect(panel.getByRole("button", { name: "Clear" })).toBeVisible();
+
+    await all.reset.focus();
+    await page.keyboard.press("Enter");
+    await expect(panel).toBeHidden();
+    await expect(all.more).toBeHidden();
     await expect(all.values).toHaveCount(0);
     await expect(all.reset).toBeHidden();
+    await expect(all.chip("Status")).toBeFocused();
 
-    await all.chip("Due date").click();
-    await expect(panel).toBeVisible();
-    await settled(panel);
+    await openMore(all);
+    await reopen();
     await expect(panel.getByRole("button", { name: "Clear" })).toBeHidden();
+    await expect(panel.getByRole("button", { name: "Apply" })).toHaveAttribute("aria-disabled", "true");
   });
 
   test("filters already in force are counted at once, and Reset empties those too", async ({ page }) => {
@@ -169,6 +223,7 @@ onEachPlayground("filters", () => {
     expect((await all.reset.boundingBox())!.height).toBeGreaterThanOrEqual(24);
 
     await openMore(all);
+    await expect(all.count).toHaveCSS("background-color", await color(page, "--harmo-color-border"));
     await expect(all.more).toHaveCSS("padding-top", "12px");
     await expect(all.more).toHaveCSS("row-gap", "8px");
     expect((await all.more.boundingBox())!.width).toBeGreaterThanOrEqual(220);
@@ -179,6 +234,18 @@ onEachPlayground("filters", () => {
     const row = container.getByRole("group", { name: "تصفية المهام" });
     const [first, second] = await boxes(row.locator(":scope > .hfilter-chip").first(), row.locator(":scope > .hfilter-chip").last());
     expect(first!.x).toBeGreaterThan(second!.x);
+  });
+
+  test("a long Reset wraps inside the row on a narrow screen", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 720 });
+    const { row } = parts(await example(page, "filters-with-filters-in-force"));
+    const reset = row.locator(".hfilters-reset");
+    await reset.evaluate((node) => {
+      node.textContent = "Reset every one of the filters on this list back to how they were to begin with";
+    });
+    const [rowBox, resetBox] = await boxes(row, reset);
+    expect(resetBox!.x + resetBox!.width).toBeLessThanOrEqual(rowBox!.x + rowBox!.width + 0.5);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   });
 
   test("on a narrow screen the row wraps, and the panel stays inside the window", async ({ page }) => {

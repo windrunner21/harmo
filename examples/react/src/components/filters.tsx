@@ -5,7 +5,7 @@ export const examples = {
   Default: () => (
     <Filters
       aria-label="Filter tasks"
-      visibleCount={3}
+      visibleCount={2}
       moreLabel="More filters"
       resetLabel="Reset filters"
     >

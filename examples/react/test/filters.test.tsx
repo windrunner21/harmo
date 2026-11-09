@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { FilterChip, Filters } from "@harmo-ui/react";
+import { Fragment } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { flatChildren } from "../../../packages/react/src/children.ts";
 
 // What docs/components/filters.md says about what it renders.
 const labels = { "aria-label": "Filter", resetLabel: "Reset" };
@@ -14,6 +16,8 @@ describe("Filters", () => {
     const markup = renderToStaticMarkup(<Filters {...labels}>{["A", "B"].map(chip)}</Filters>);
     expect(markup).toContain('aria-label="Filter"');
     expect(markup).toContain('role="group"');
+    expect(markup).toContain(">A<");
+    expect(markup).toContain(">B<");
     expect(markup).not.toContain("hfilters-more");
   });
 
@@ -54,12 +58,23 @@ describe("Filters", () => {
     expect(panel).not.toContain(">Mine<");
   });
 
-  test("on the server nothing is counted yet, and Reset and the count are hidden", () => {
+  test("two keyed fragments keep their children's keys apart", () => {
+    const keys = flatChildren(
+      <>
+        <Fragment key="a">{chip("A")}</Fragment>
+        <Fragment key="b">{chip("A")}</Fragment>
+      </>,
+    ).map((node) => (node as { key: string }).key);
+    expect(new Set(keys).size).toBe(2);
+  });
+
+  test("on the server nothing is counted yet, even with a value showing", () => {
     const markup = renderToStaticMarkup(
       <Filters {...labels} visibleCount={0} moreLabel="More">
-        {chip("A")}
+        <FilterChip label="A" values={["Chosen"]} />
       </Filters>,
     );
+    expect(markup).toContain("hfilter-chip-values");
     expect(markup).toMatch(/<span class="hfilters-count" hidden="">0<\/span>/);
     expect(markup).toMatch(/hidden=""[^>]*>Reset<|class="hfilters-reset" hidden=""/);
   });

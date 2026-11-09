@@ -71,6 +71,7 @@
         }
         footer.remove();
         show([]);
+        popup.hidePopover();
       });
     } else if (input) {
       const apply = () => {
@@ -91,6 +92,7 @@
       chip.addEventListener("example-filter-reset", () => {
         input.value = "";
         show([]);
+        popup.hidePopover();
       });
     }
   }

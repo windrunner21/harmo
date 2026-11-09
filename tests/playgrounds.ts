@@ -45,6 +45,11 @@ export const test = base.extend({
 export const open = async (page: Page, playground: Playground, slug: string) => {
   await page.goto(url(playground, slug));
   await ready(page);
+  // The highlighted code under each example is most of a long page and isn't
+  // what's tested, and CI's trace of every step costs WebKit seconds with it.
+  await page.evaluate(() => {
+    for (const code of document.querySelectorAll(".play-code-body code")) code.replaceChildren();
+  });
 };
 
 // Waits until every React example on the page is ready: hydrated, with the

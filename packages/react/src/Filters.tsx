@@ -27,6 +27,7 @@ export type FiltersProps = ComponentPropsWithRef<"div"> &
   };
 
 const IN_FORCE = ".hfilter-chip-values:not(:empty)";
+const CAN_TAKE_FOCUS = ".hfilter-chip:not(:disabled, [hidden])";
 
 export const Filters = ({
   visibleCount,
@@ -64,7 +65,7 @@ export const Filters = ({
   }, []);
 
   useLayoutEffect(() => {
-    if (resets > 0) row.current?.querySelector<HTMLElement>(".hfilter-chip")?.focus();
+    if (resets > 0) row.current?.querySelector<HTMLElement>(CAN_TAKE_FOCUS)?.focus();
   }, [resets]);
 
   useEffect(() => {
@@ -72,7 +73,7 @@ export const Filters = ({
     if (!node) return;
     const toggled = (event: Event) => {
       if ((event as ToggleEvent).newState !== "open") return;
-      node.querySelector<HTMLElement>(".hfilter-chip")?.focus();
+      node.querySelector<HTMLElement>(CAN_TAKE_FOCUS)?.focus();
     };
     node.addEventListener("toggle", toggled);
     return () => node.removeEventListener("toggle", toggled);
@@ -105,6 +106,7 @@ export const Filters = ({
         className="hfilters-reset"
         hidden={inForce.all === 0 && !showReset}
         onClick={() => {
+          more.current?.hidePopover();
           setResets((count) => count + 1);
           onReset?.();
         }}

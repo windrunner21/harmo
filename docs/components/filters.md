@@ -103,12 +103,13 @@ Without filters behind a chip, leave out that chip and its panel.
 
 - Filters in a row 8px apart, which wraps when they don't fit.
 - The chip that opens the rest is a Filter Chip. Its count is 11px in
-  `--harmo-color-text-secondary` on `--harmo-color-background-hover`, fully
-  rounded and at least 18px wide, with digits of one width.
+  `--harmo-color-text-secondary` on `--harmo-color-background-hover`, or
+  `--harmo-color-border` while the chip is hovered or open, fully rounded and at
+  least 18px wide, with digits of one width.
 - The panel is a Popup at least 220px wide, or as wide as the chip, with 12px of
   padding and its filters in a column 8px apart.
 - Reset is 14px and medium weight in `--harmo-color-primary`, with no background,
-  and 25px tall. It darkens on hover and press.
+  and 25px tall. It darkens on hover and press, and long text wraps.
 - Right-to-left, the first filter is on the right.
 
 ## Accessibility
@@ -116,11 +117,11 @@ Without filters behind a chip, leave out that chip and its panel.
 - The row is a named group.
 - The chip that opens the rest has `aria-haspopup="dialog"` and `aria-expanded`,
   and the count is part of its text.
-- The panel is a named dialog. Opening moves focus to its first filter. A filter's
-  list or panel opens over it: Escape closes that first, then the panel, and a
-  press inside it leaves the panel open.
+- The panel is a named dialog. Opening moves focus to its first filter that can
+  take it. A filter's list or panel opens over it: Escape closes that first, then
+  the panel, and a press inside it leaves the panel open.
 - Reset goes once nothing is in force, so pressing it moves focus to the first
-  filter.
+  filter that can take it.
 - Text comes from your app, in its language.
 
 ## What a script does
@@ -133,8 +134,8 @@ of your own that draws the same parts all count, with nothing to tell the row.
 | --- | --- |
 | The text and `hidden` of `.hfilters-count` | A filter behind the chip gains or loses its value |
 | `hidden` on Reset | Any filter gains or loses its value |
-| Move focus to the panel's first filter | The panel opens |
-| Empty every filter, and move focus to the first | Reset is pressed |
+| Move focus to the panel's first filter that can take it | The panel opens |
+| Put every filter back as it started, close anything left open, and move focus to the first that can take it | Reset is pressed |
 
 The playground's example script, `examples/html/src/scripts/filters.js`, does
 all of this.
@@ -155,7 +156,9 @@ Other props go to the row.
 | `showReset` | Shows Reset with no filter in force, for filters outside the row, such as a search field |
 
 The row holds no filter state. Filters given a `defaultValue` go back to it on
-Reset. Those given a `value` show what your app sets in `onReset`:
+Reset. Those given a `value` show what your app sets in `onReset`. A filter that
+moves between the row and the panel, because `visibleCount` or the children
+changed, starts again, so give it a `value` if that can happen:
 
 ```tsx
 <Filters
@@ -184,8 +187,9 @@ there from the start.
 
 ## Tokens
 
-`--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-weight-medium`,
-`--harmo-color-text-secondary`, `--harmo-color-background-hover`,
+`--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-3xs`,
+`--harmo-font-weight-medium`, `--harmo-color-text-secondary`,
+`--harmo-color-background-hover`, `--harmo-color-border`,
 `--harmo-color-primary`, `--harmo-color-primary-hover`,
 `--harmo-color-primary-active`, `--harmo-border-radius-full`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,

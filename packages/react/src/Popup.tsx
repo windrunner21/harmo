@@ -86,7 +86,26 @@ export const placePopup = (popup: HTMLElement, opening: boolean) => {
     popup.toggleAttribute("data-refit");
   }
   placeSide(popup, opening);
-  if (!opening) pin(popup);
+  if (!opening) {
+    pin(popup);
+    handBackFocus(popup);
+  }
+};
+
+// A browser hands focus back only for the first popup open, not one opened
+// over another.
+const handBackFocus = (popup: HTMLElement) => {
+  const owner = popup.ownerDocument;
+  if (!popup.contains(owner.activeElement)) return;
+  popup.addEventListener(
+    "toggle",
+    () => {
+      if (owner.activeElement === owner.body || popup.contains(owner.activeElement)) {
+        popupTrigger(popup)?.focus();
+      }
+    },
+    { once: true },
+  );
 };
 
 const placeSide = (popup: HTMLElement, opening: boolean) => {

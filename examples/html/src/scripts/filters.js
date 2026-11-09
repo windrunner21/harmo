@@ -1,9 +1,11 @@
 // Example only: what the React Filters does. A filter is in force when its chip
 // shows a value: the count on the chip that opens the rest says how many of
 // those are, and Reset shows while any is. Reset empties every chip, by asking
-// each chip's own example script to, and moves focus to the first.
+// each chip's own example script to, and moves focus to the first that can
+// take it.
 {
   const inForce = ".hfilter-chip-values:not(:empty)";
+  const canTakeFocus = ".hfilter-chip:not(:disabled, [hidden])";
 
   for (const row of document.querySelectorAll(".hfilters")) {
     const more = row.querySelector(":scope > .hfilters-more");
@@ -24,14 +26,15 @@
     new MutationObserver(read).observe(row, { childList: true, subtree: true });
 
     more?.addEventListener("toggle", (event) => {
-      if (event.newState === "open") more.querySelector(".hfilter-chip")?.focus();
+      if (event.newState === "open") more.querySelector(canTakeFocus)?.focus();
     });
 
     reset.addEventListener("click", () => {
       for (const chip of row.querySelectorAll(".hfilter-chip")) {
         chip.dispatchEvent(new CustomEvent("example-filter-reset"));
       }
-      row.querySelector(".hfilter-chip").focus();
+      more?.hidePopover();
+      row.querySelector(canTakeFocus)?.focus();
     });
   }
 }
