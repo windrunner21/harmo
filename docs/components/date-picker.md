@@ -220,18 +220,50 @@ does all of this, and `calendar.js` the Calendar.
 Enter settles a date that's changed rather than send the form; pressed again,
 it sends it.
 
-Harmo doesn't include a date parser or depend on one. For natural language,
-install `chrono-node`, or any parser with a `parseDate` method, in your app and
-pass it in:
+Harmo doesn't include a date parser or depend on one, so to read dates in words,
+add [chrono-node](https://github.com/wanasit/chrono) to your app:
 
-```tsx
-import * as chrono from "chrono-node";
-
-<DatePicker natural={chrono} time label="Send on" locale="en-US" calendarLabel="Choose a date" previousLabel="Previous month" nextLabel="Next month" />
+```sh
+npm install chrono-node
 ```
 
-Pass one language's parser, such as `chrono.de`, for German, and to keep the
-other languages out of your bundle.
+Then import it and pass it as `natural`. It's a set of functions, so in Next.js this
+goes in a Client Component:
+
+```tsx
+"use client";
+
+import { DatePicker } from "@harmo-ui/react";
+import * as chrono from "chrono-node";
+
+export function SendOn() {
+  return (
+    <DatePicker
+      natural={chrono}
+      label="Send on"
+      locale="en-US"
+      calendarLabel="Choose a date"
+      previousLabel="Previous month"
+      nextLabel="Next month"
+    />
+  );
+}
+```
+
+What's typed is read when you leave the field or press Enter, and rewritten as a
+date. On November 9, 2026:
+
+| Typed | Shown | Value |
+| --- | --- | --- |
+| tomorrow | November 10, 2026 | `2026-11-10` |
+| in 2 days | November 11, 2026 | `2026-11-11` |
+| next Friday | November 20, 2026 | `2026-11-20` |
+| tomorrow at 2pm, with `time` | November 10, 2026 at 2:00 PM | `2026-11-10T14:00` |
+| someday soon | Stays as typed, marked invalid | `null` |
+
+Pass one language's parser, such as `chrono.de`, for German, and to keep the other
+languages out of your bundle. Any object with a `parseDate` method can take its
+place.
 
 Without `natural` or `parse`, the value is a date with no time. For a separate
 time field, put a [Time Picker](time-picker.md) beside it.

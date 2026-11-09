@@ -73,6 +73,9 @@ function codeOf(slug: string) {
   const body = source.slice(source.indexOf("export const examples = {"));
   const entries = [...body.matchAll(/^  (?:"([^"]+)"|(\w+)): \(\) => (.*)$/gm)];
   const code = new Map<string, string>();
+  // What an example needs from outside Harmo and React, so its code says where
+  // that comes from.
+  const imports = [...source.matchAll(/^import \* as (\w+) from "[^"]+";$/gm)];
   entries.forEach((entry, index) => {
     const title = entry[1] ?? entry[2] ?? "";
     const opening = entry[3] ?? "";
@@ -82,6 +85,8 @@ function codeOf(slug: string) {
     if (opening === "(") code.set(title, dedent(text.replace(/\n  \),\s*$/, "")));
     else if (opening === "{") code.set(title, dedent(text.replace(/\n  \},\s*$/, "")));
     else code.set(title, opening.replace(/,$/, ""));
+    const needed = imports.filter(([, name]) => new RegExp(`\\b${name}\\b`).test(text));
+    if (needed.length) code.set(title, `${needed.map(([line]) => line).join("\n")}\n\n${code.get(title)}`);
   });
   for (const title of Object.keys(components[slug] ?? {})) {
     if (!code.get(title)) throw new Error(`src/components/${slug}.tsx: can't find the code of "${title}"`);

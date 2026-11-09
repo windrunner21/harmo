@@ -83,6 +83,7 @@
     const calendar = popup.querySelector(".hcalendar");
     const { exampleLocale: locale, exampleToday: today } = calendar.dataset;
     const error = picker.closest(".hfield")?.querySelector(".herror");
+    const shownValue = picker.closest(".hfield")?.parentElement.querySelector("[data-example-date-value]");
     const message = picker.dataset.exampleDateError;
     const typing = typedDateOf(locale);
 
@@ -145,6 +146,7 @@
     const settle = (next) => {
       current = next;
       if (hidden) hidden.value = next ?? "";
+      if (shownValue) shownValue.textContent = next ?? "none";
       picker.dispatchEvent(new CustomEvent("example-date-picker-change", { detail: next }));
     };
 

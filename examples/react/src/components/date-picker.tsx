@@ -51,19 +51,29 @@ export const examples = {
     );
   },
 
-  "Typed in words": () => (
-    <DatePicker
-      label="Send on"
-      name="send"
-      locale="en-US"
-      placeholder="Tomorrow, or in 2 days"
-      calendarLabel="Choose a date"
-      previousLabel="Previous month"
-      nextLabel="Next month"
-      today="2026-11-09"
-      natural={chrono}
-    />
-  ),
+  "Typed in words": () => {
+    const [value, setValue] = useState<string | null>(null);
+
+    return (
+      <div style={{ display: "grid", gap: 8 }}>
+        <DatePicker
+          label="Send on"
+          name="send"
+          locale="en-US"
+          placeholder="Tomorrow, or in 2 days"
+          calendarLabel="Choose a date"
+          previousLabel="Previous month"
+          nextLabel="Next month"
+          today="2026-11-09"
+          natural={chrono}
+          onValueChange={setValue}
+        />
+        <p style={{ margin: 0 }}>
+          Value: <code>{value ?? "none"}</code>
+        </p>
+      </div>
+    );
+  },
 
   "With a time": () => (
     <DatePicker

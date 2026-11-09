@@ -77,6 +77,17 @@ onEachPlayground("date-picker", () => {
     await expect(all.day("2026-11-18")).toBeFocused();
   });
 
+  test("typed in words, the value under the field follows what's read", async ({ page }) => {
+    const container = await example(page, "date-picker-typed-in-words");
+    const { field } = parts(container);
+    const value = container.locator(".play-demo p code");
+    await expect(value).toHaveText("none");
+    await field.fill("tomorrow");
+    await field.press("Enter");
+    await expect(value).toHaveText("2026-11-10");
+    await expect(field).toHaveValue("November 10, 2026");
+  });
+
   test("Escape closes it and focus returns to the button; leaving it with Tab closes it", async ({ page }) => {
     const all = parts(await example(page, "date-picker-default"));
     await open(all);
