@@ -82,6 +82,7 @@ export {
   type SegmentedProps,
 } from "./Segmented.tsx";
 export { Select, type SelectProps } from "./Select.tsx";
+export { SelectionBar, type SelectionBarProps } from "./SelectionBar.tsx";
 export {
   Setting,
   Settings,
@@ -136,4 +137,5 @@ export {
   type ToastPosition,
   type ToastStatus,
 } from "./Toast.tsx";
+export { Toolbar, type ToolbarProps } from "./Toolbar.tsx";
 export { Tooltip, type TooltipProps } from "./Tooltip.tsx";

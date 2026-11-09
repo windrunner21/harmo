@@ -1,0 +1,75 @@
+@use "shortcuts" as *;
+
+// What's selected in a list and what can be done with it: a count, a way to
+// deselect, then the actions.
+.hselection-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hselection-bar-count {
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: 28px;
+  padding-inline-end: 16px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+  border-inline-end: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hselection-bar-deselect {
+  max-inline-size: 100%;
+  margin: 0;
+  // 25px tall, as a target should be at least 24px.
+  padding: 2px 8px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+  text-align: start;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+  background-color: transparent;
+  border: 0;
+
+  cursor: pointer;
+
+  transition: color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-text;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+}

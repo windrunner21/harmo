@@ -58,6 +58,16 @@ const groups: CatalogGroup[] = [
         title: "Filters",
         purpose: "A row of filter chips above a list, with the rest behind More filters, and a way to reset them all.",
       },
+      {
+        slug: "selection-bar",
+        title: "Selection Bar",
+        purpose: "What's selected in a list and what can be done with it: a count, a way to deselect, then the actions.",
+      },
+      {
+        slug: "toolbar",
+        title: "Toolbar",
+        purpose: "Above a list: filters at the start and controls at the end.",
+      },
     ],
   },
   {

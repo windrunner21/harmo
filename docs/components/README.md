@@ -45,6 +45,7 @@ the same markup and does what the script would.
 | Section | [section.md](section.md) |
 | Segmented Control | [segmented.md](segmented.md) |
 | Select | [select.md](select.md) |
+| Selection Bar | [selection-bar.md](selection-bar.md) |
 | Settings List | [settings.md](settings.md) |
 | Sidebar | [sidebar.md](sidebar.md) |
 | Spinner | [spinner.md](spinner.md) |
@@ -57,6 +58,7 @@ the same markup and does what the script would.
 | TextArea | [textarea.md](textarea.md) |
 | Time Picker | [time-picker.md](time-picker.md) |
 | Toast | [toast.md](toast.md) |
+| Toolbar | [toolbar.md](toolbar.md) |
 | Tooltip | [tooltip.md](tooltip.md) |
 
 ## Page structure
@@ -124,6 +126,7 @@ Some components are built from others, so their files need company:
 | `navigation-menu.css` | `expand-chevron.css` |
 | `pagination.css` | `button.css`, `chevron.css` |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
+| `selection-bar.css` | `button.css` for its actions; `tooltip.css` for a reason one is blocked |
 | `search.css` | `input.css`; `field.css` for a label; `kbd.css` for a shortcut |
 | `stat.css` | `tooltip.css` for a hint; `link.css` for a link as its action |
 | `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
@@ -261,6 +264,7 @@ the React components, set:
 | Ignoring activation | Pagination | On a disabled Previous or Next |
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
+| The count's text | Selection Bar | Follows the selection, which is your app's |
 | Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
 | `data-side="top"` | Popup | Slide away from a trigger it opened above |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |

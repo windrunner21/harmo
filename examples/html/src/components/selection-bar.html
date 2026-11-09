@@ -1,0 +1,86 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    A count, a way to deselect, then the actions, as small Buttons.
+  </play-note>
+  <div class="hselection-bar">
+    <span class="hselection-bar-count" role="status">3 selected</span>
+    <button class="hselection-bar-deselect" type="button">Deselect</button>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+      <span class="hbutton-label">Assign</span>
+    </button>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button" data-destructive="">
+      <span class="hbutton-label">Delete</span>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="In a toolbar" layout="wide">
+  <play-note>
+    Choose a task and the bar takes the place of the controls, while the filters
+    stay. <strong>Deselect</strong> goes with the bar, so your app moves focus, here to the first
+    task.
+  </play-note>
+  <div data-example-selection style="display:grid;gap:16px;inline-size:100%">
+    <div class="htoolbar">
+      <div class="hfilters" role="group" aria-label="Filter tasks">
+        <button class="hfilter-chip" type="button">
+          <play-icon name="add-circle" class="hicon"></play-icon>
+          <span class="hfilter-chip-label">Status</span>
+        </button>
+        <button class="hfilters-reset" type="button" hidden>Reset filters</button>
+      </div>
+      <div class="htoolbar-controls">
+        <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+          <span class="hbutton-label">Export</span>
+        </button>
+      </div>
+    </div>
+    <div style="display:grid;gap:8px">
+      <div class="hfield" data-orientation="horizontal">
+        <input class="hcheckbox" id="bar-toolbar-1" type="checkbox" />
+        <label class="hlabel" for="bar-toolbar-1">Write the brief</label>
+      </div>
+      <div class="hfield" data-orientation="horizontal">
+        <input class="hcheckbox" id="bar-toolbar-2" type="checkbox" />
+        <label class="hlabel" for="bar-toolbar-2">Review the designs</label>
+      </div>
+      <div class="hfield" data-orientation="horizontal">
+        <input class="hcheckbox" id="bar-toolbar-3" type="checkbox" />
+        <label class="hlabel" for="bar-toolbar-3">Ship the release</label>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="An action that's blocked" layout="wide">
+  <play-note>
+    A Tooltip on a Button with <code>aria-disabled</code>, so the reason can be reached from
+    the keyboard.
+  </play-note>
+  <div class="hselection-bar">
+    <span class="hselection-bar-count" role="status">2 selected</span>
+    <button class="hselection-bar-deselect" type="button">Deselect</button>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+      <span class="hbutton-label">Assign</span>
+    </button>
+    <span class="htooltip-trigger">
+      <button class="hbutton" data-variant="secondary" data-size="small" type="button" aria-disabled="true" aria-describedby="bar-blocked-1" data-destructive="">
+        <span class="hbutton-label">Delete</span>
+      </button>
+      <span class="htooltip" id="bar-blocked-1" role="tooltip">Only a project&#x27;s owner can delete its tasks.</span>
+    </span>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
+  <play-note>
+    The count starts on the right.
+  </play-note>
+  <div class="hselection-bar">
+    <span class="hselection-bar-count" role="status">٣ محددة</span>
+    <button class="hselection-bar-deselect" type="button">إلغاء التحديد</button>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+      <span class="hbutton-label">تعيين</span>
+    </button>
+  </div>
+</play-example>

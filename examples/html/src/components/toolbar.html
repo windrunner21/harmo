@@ -1,0 +1,64 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    Filters at the start and controls at the end. Filters that don't fit wrap on
+    their own side, and on a narrow screen the controls go below them.
+  </play-note>
+  <div class="htoolbar">
+    <div class="hfilters" role="group" aria-label="Filter tasks">
+      <button class="hfilter-chip" type="button">
+        <play-icon name="add-circle" class="hicon"></play-icon>
+        <span class="hfilter-chip-label">Status</span>
+      </button>
+      <button class="hfilter-chip" type="button">
+        <play-icon name="add-circle" class="hicon"></play-icon>
+        <span class="hfilter-chip-label">Assignee</span>
+      </button>
+      <button class="hfilters-reset" type="button" hidden>Reset filters</button>
+    </div>
+    <div class="htoolbar-controls">
+      <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+        <span class="hbutton-label">Columns</span>
+      </button>
+      <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+        <span class="hbutton-label">Board view</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Controls only" layout="wide">
+  <play-note>
+    Without filters, the controls stay at the end.
+  </play-note>
+  <div class="htoolbar">
+    <div class="htoolbar-controls">
+      <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+        <span class="hbutton-label">Export</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
+  <play-note>
+    The filters start on the right, and the controls end on the left.
+  </play-note>
+  <div class="htoolbar">
+    <div class="hfilters" role="group" aria-label="تصفية المهام">
+      <button class="hfilter-chip" type="button">
+        <play-icon name="add-circle" class="hicon"></play-icon>
+        <span class="hfilter-chip-label">الحالة</span>
+      </button>
+      <button class="hfilter-chip" type="button">
+        <play-icon name="add-circle" class="hicon"></play-icon>
+        <span class="hfilter-chip-label">الأولوية</span>
+      </button>
+      <button class="hfilters-reset" type="button" hidden>إعادة التعيين</button>
+    </div>
+    <div class="htoolbar-controls">
+      <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+        <span class="hbutton-label">تصدير</span>
+      </button>
+    </div>
+  </div>
+</play-example>

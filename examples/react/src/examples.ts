@@ -40,6 +40,7 @@ import { examples as search } from "./components/search.tsx";
 import { examples as section } from "./components/section.tsx";
 import { examples as segmented } from "./components/segmented.tsx";
 import { examples as select } from "./components/select.tsx";
+import { examples as selectionBar } from "./components/selection-bar.tsx";
 import { examples as settings } from "./components/settings.tsx";
 import { examples as sidebar } from "./components/sidebar.tsx";
 import { examples as spinner } from "./components/spinner.tsx";
@@ -52,6 +53,7 @@ import { examples as tagList } from "./components/tag-list.tsx";
 import { examples as textarea } from "./components/textarea.tsx";
 import { examples as timePicker } from "./components/time-picker.tsx";
 import { examples as toast } from "./components/toast.tsx";
+import { examples as toolbar } from "./components/toolbar.tsx";
 import { examples as tooltip } from "./components/tooltip.tsx";
 
 export const components: Record<string, Record<string, ComponentType>> = {
@@ -93,6 +95,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   section,
   segmented,
   select,
+  "selection-bar": selectionBar,
   settings,
   sidebar,
   spinner,
@@ -105,5 +108,6 @@ export const components: Record<string, Record<string, ComponentType>> = {
   textarea,
   "time-picker": timePicker,
   toast,
+  toolbar,
   tooltip,
 };

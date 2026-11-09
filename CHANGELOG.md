@@ -10,6 +10,21 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Toolbar: `.htoolbar`, or `<Toolbar controls={…}>`, a row above a list with
+  filters at the start and controls at the end.
+- Selection Bar: `.hselection-bar`, or `<SelectionBar>`, what's selected in a list
+  and what can be done with it: a count, a way to deselect, then the actions.
+
+  ```html preview
+  <div class="hselection-bar">
+    <span class="hselection-bar-count" role="status">3 selected</span>
+    <button class="hselection-bar-deselect" type="button">Deselect</button>
+    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+      <span class="hbutton-label">Assign</span>
+    </button>
+  </div>
+  ```
+
 - Filters: `<Filters>`, a row of Filter Chips above a list: the first few in the
   row, the rest behind a chip with a count of those in force, and a way to reset
   them all. What's chosen stays in your app or your URL.

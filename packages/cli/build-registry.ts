@@ -57,6 +57,7 @@ const components: Record<string, string[]> = {
   section: ["Section.tsx"],
   segmented: ["Segmented.tsx"],
   select: ["Select.tsx"],
+  "selection-bar": ["SelectionBar.tsx"],
   settings: ["Settings.tsx"],
   sidebar: ["Sidebar.tsx"],
   spinner: ["Spinner.tsx"],
@@ -69,6 +70,7 @@ const components: Record<string, string[]> = {
   textarea: ["TextArea.tsx"],
   "time-picker": ["time-picker/TimePicker.tsx", "time-picker/clock.ts"],
   toast: ["Toast.tsx"],
+  toolbar: ["Toolbar.tsx"],
   tooltip: ["Tooltip.tsx"],
 };
 
