@@ -32,18 +32,19 @@ onEachPlayground("table", () => {
     await expect(cell).toHaveCSS("color", await color(page, "--harmo-color-text-secondary"));
     await expect(cell).toHaveCSS("border-top-width", "1px");
     await expect(cell).toHaveCSS("border-top-color", await color(page, "--harmo-color-border"));
-    await expect(name).toHaveCSS("font-weight", "500");
-    await expect(name).toHaveCSS("color", await color(page, "--harmo-color-text"));
+    await expect(name).toHaveCSS("font-weight", "400");
+    await expect(name).toHaveCSS("color", await color(page, "--harmo-color-text-secondary"));
+    await expect(name).toHaveCSS("text-align", "start");
   });
 
   test("a column marked to stand out is heavier and darker than the rest", async ({ page }) => {
     const table = (await example(page, "table-a-column-that-stands-out")).getByRole("table");
+    const task = table.getByRole("rowheader", { name: "Write the brief" });
     const owner = table.getByRole("cell", { name: "Ana" });
-    const status = table.getByRole("cell", { name: "Active" });
-    await expect(owner).toHaveCSS("font-weight", "500");
-    await expect(owner).toHaveCSS("color", await color(page, "--harmo-color-text"));
-    await expect(status).toHaveCSS("font-weight", "400");
-    await expect(status).toHaveCSS("color", await color(page, "--harmo-color-text-secondary"));
+    await expect(task).toHaveCSS("font-weight", "500");
+    await expect(task).toHaveCSS("color", await color(page, "--harmo-color-text"));
+    await expect(owner).toHaveCSS("font-weight", "400");
+    await expect(owner).toHaveCSS("color", await color(page, "--harmo-color-text-secondary"));
   });
 
   test("a row that links is a link all the way across", async ({ page }) => {

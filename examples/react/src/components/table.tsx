@@ -37,8 +37,8 @@ export const examples = {
     <DataTable
       aria-label="Tasks"
       columns={[
-        { id: "task", header: "Task", cell: (row) => row.task },
-        { id: "owner", header: "Owner", emphasis: true, cell: (row) => row.owner },
+        { id: "task", header: "Task", emphasis: true, cell: (row) => row.task },
+        { id: "owner", header: "Owner", cell: (row) => row.owner },
         { id: "status", header: "Status", cell: (row) => row.status },
       ]}
       rows={[

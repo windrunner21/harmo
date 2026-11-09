@@ -190,17 +190,18 @@ export const DataTable = <Row extends object>(tableProps: DataTableProps<Row>) =
                       />
                     </td>
                   )}
-                  {shown.map((column) =>
-                    column === primary ? (
-                      <th key={column.id} scope="row">
+                  {shown.map((column) => {
+                    const emphasis = column.emphasis ? "" : undefined;
+                    return column === primary ? (
+                      <th key={column.id} scope="row" data-emphasis={emphasis}>
                         {named(row, content(column, row))}
                       </th>
                     ) : (
-                      <td key={column.id} data-emphasis={column.emphasis ? "" : undefined}>
+                      <td key={column.id} data-emphasis={emphasis}>
                         {content(column, row)}
                       </td>
-                    ),
-                  )}
+                    );
+                  })}
                 </tr>
               );
             })}

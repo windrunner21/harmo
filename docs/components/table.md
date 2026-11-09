@@ -139,7 +139,7 @@ fill="currentColor"
 | --- | --- |
 | `.htable-scroll` | Scrolls a table too wide for its place, in its own space. While it overflows, add `tabindex="0"`, `role="region"`, and an `aria-label` |
 | `.htable-row-link` | The row is a link or a button all the way across, with a hover background |
-| `data-emphasis` on a `<td>` | The cell stands out, as the cell that names its row does |
+| `data-emphasis` on a cell | The cell stands out, for a column that matters most, such as a name |
 | `.htable-truncate` | A span in a cell: ends with an ellipsis past 360px |
 | `.htable-footer` | The range, rows per page, the page, and Previous and Next. Stays at the bottom of the window while the table runs past it |
 | `data-footer="static"` on `.htable-container` | The footer stays under the table instead |
@@ -151,8 +151,8 @@ fill="currentColor"
 - Headers are 12px and medium weight in `--harmo-color-text`, with 16px either side
   and 12px under them. In a `.htable-scroll` with a height, they stay in view.
 - Cells are 14px in `--harmo-color-text-secondary`, with 12px by 16px of padding and
-  a 1px `--harmo-color-border` line above. The cell that names its row, and any
-  with `data-emphasis`, is medium weight in `--harmo-color-text`.
+  a 1px `--harmo-color-border` line above. A cell with `data-emphasis` is medium
+  weight in `--harmo-color-text`.
 - A row that goes somewhere has `--harmo-color-background-hover` when hovered, and
   the focus ring around the whole row. Anything else in it that can be used, such
   as a checkbox or a link, sits above that and works on its own.
@@ -217,8 +217,8 @@ outer element.
 | `id` | Required: its id |
 | `header` | Required: its header |
 | `cell` | Required: what a row shows in it, as ``(row) => row.name`` |
-| `primary` | This column names the row. By default, the first one shown does |
-| `emphasis` | Its cells stand out, as the cell that names the row does, for a column that matters as much |
+| `primary` | This column names the row, for screen readers. By default, the first one shown does. It changes how the cells are read, not how they look |
+| `emphasis` | Its cells stand out, in medium weight and the main text color, for a column that matters most, such as a name |
 | `truncate` | Ends with an ellipsis past 360px, with the whole text in a `title` if it's a string |
 
 When the selection empties and focus has nowhere to be, it goes to the checkbox in

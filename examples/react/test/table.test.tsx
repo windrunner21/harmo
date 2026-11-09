@@ -61,6 +61,14 @@ describe("DataTable", () => {
     const markup = renderToStaticMarkup(<DataTable aria-label="T" columns={marked} rows={rows} />);
     expect(markup).toContain('<td data-emphasis="">First</td>');
     expect(markup).toContain('<th scope="col">Note</th>');
+    expect(markup).toContain('<th scope="row">Alpha</th>');
+  });
+
+  test("the column that names the row can be emphasized too", () => {
+    const marked = columns.map((column) => ({ ...column, emphasis: column.id === "name" }));
+    expect(renderToStaticMarkup(<DataTable aria-label="T" columns={marked} rows={rows} />)).toContain(
+      '<th scope="row" data-emphasis="">Alpha</th><td>First</td>',
+    );
   });
 
   test("rowHref makes a link in the named cell, and onRowClick a button", () => {
