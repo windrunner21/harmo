@@ -13,6 +13,14 @@ const parts = async (container: Locator) => {
   return { nav, trigger, panel, frame: nav.locator(".hnavigation-menu-frame") };
 };
 
+// Opens a Popup, and waits until it has arrived. Playwright retries a click on
+// something still moving, and scrolls the page on each retry, which can take
+// the Popup out from under the press, and close it.
+const openPopup = async (button: Locator, popup: Locator) => {
+  await button.click();
+  await settled(popup);
+};
+
 // How many of an element's transitions are resizing it, or sliding it.
 const transitioning = (element: Locator, pattern: string) =>
   element.evaluate(
@@ -210,7 +218,7 @@ onEachPlayground("navigation-menu", () => {
     const container = await example(page, "navigation-menu-on-a-phone");
     const button = container.getByRole("button", { name: "Menu" });
     await expect(button).toHaveAttribute("aria-expanded", "false");
-    await button.click();
+    await openPopup(button, container.locator(".hpopup"));
     await expect(button).toHaveAttribute("aria-expanded", "true");
 
     const { nav, trigger, panel } = await parts(container.locator(".hpopup"));
@@ -367,7 +375,7 @@ onEachPlayground("navigation-menu", () => {
     const container = await example(page, "navigation-menu-on-a-phone");
     const button = container.getByRole("button", { name: "Menu" });
     const popup = container.locator(".hpopup");
-    await button.click();
+    await openPopup(button, popup);
     const { trigger } = await parts(popup);
     await trigger("Solutions").click();
     await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "true");
@@ -444,12 +452,10 @@ onEachPlayground("navigation-menu", () => {
   test("the HTML script reads the orientation each time", async ({ page }, info) => {
     test.skip(!info.titlePath.includes("html"), "HTML only");
     const container = await example(page, "navigation-menu-on-a-phone");
-    await container.getByRole("button", { name: "Menu" }).click();
+    await openPopup(container.getByRole("button", { name: "Menu" }), container.locator(".hpopup"));
     const { nav, trigger } = await parts(container.locator(".hpopup"));
     await nav.evaluate((element) => element.removeAttribute("data-orientation"));
-    // The Popup moves as the menu changes shape, so a press aimed at the button
-    // could land outside the Popup and close it.
-    await trigger("Solutions").dispatchEvent("click");
+    await trigger("Solutions").click();
     await expect.poll(() => nav.evaluate((element) => element.style.getPropertyValue("--hnavigation-menu-width"))).not.toBe("");
   });
 
