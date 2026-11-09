@@ -9,10 +9,10 @@ to [Field](field.md). For a single line, use [Input](input.md).
 | --- | --- |
 | CSS | `textarea.css`; `field.css` for its label and messages |
 | Element | `<textarea class="htextarea">` |
-| Parts | `.htextarea-counter`, optional, right after the textarea |
+| Parts | `.htextarea-counter`, optional, right after the textarea. To mark parts of the text, `.htextarea-highlight` around it, and `.htextarea-highlight-backdrop` after it, `aria-hidden`, holding a `<span>` with the text and a final line break |
 | Required | A name from a `<label for>`; `aria-describedby` pointing at the counter when there is one |
 | Unique | The textarea's and the counter's ids |
-| Script | Only for the counter's text; see [What a script does](#what-a-script-does) |
+| Script | Only for the counter's text and marking parts of the text; see [What a script does](#what-a-script-does) |
 
 ## Markup
 
@@ -32,6 +32,7 @@ to [Field](field.md). For a single line, use [Input](input.md).
 | `aria-invalid="true"`, `readonly`, `disabled`, `placeholder` | As for [Input](input.md) |
 | `.htextarea-counter` | A character count under the box |
 | `--htextarea-max-height` | How tall dragging can make it; default `min(400px, 50dvh)` |
+| `.htextarea-highlight` | Marks parts of the text, drawn over the field, as for an [Input](input.md) |
 
 ## Appearance and states
 
@@ -52,15 +53,19 @@ to [Field](field.md). For a single line, use [Input](input.md).
 ## Accessibility
 
 Name it with a `<label for>` in a [Field](field.md). Connect the counter with
-`aria-describedby`, so screen readers read it on focus.
+`aria-describedby`, so screen readers read it on focus. Marks are only seen: if
+they mean something, say so in its label or description.
 
 ## What a script does
 
 | Change | When |
 | --- | --- |
 | The counter's text | As the text changes |
+| The text and `<mark>`s in the backdrop | As the text changes, if it marks parts of it |
+| The backdrop's size, type, padding, direction, and wrapping, copied from the field, with room for its scrollbar | As the text changes or the field resizes |
+| The backdrop's `scrollTop` and `scrollLeft` | As the field scrolls |
 
-`examples/html/src/scripts/textarea.js` is an example script.
+`examples/html/src/scripts/textarea.js` and `highlight.js` are example scripts.
 
 ## React
 
@@ -68,7 +73,12 @@ Name it with a `<label for>` in a [Field](field.md). Connect the counter with
 connected through `aria-describedby` and kept current as you type and after
 a form reset. In a [Field](field.md#react), it takes the field's id and
 descriptions. Its props are the textarea's attributes, with `value` or
-`defaultValue`.
+`defaultValue`, and `highlight`: a regular expression, what it matches in the
+text being marked as you type.
+
+With `highlight`, the `<textarea>` is inside `.htextarea-highlight`, and adding
+or removing the prop while it's showing replaces the `<textarea>`, as for an
+[Input](input.md#react).
 
 ```tsx
 <Field label="Message">
@@ -78,7 +88,7 @@ descriptions. Its props are the textarea's attributes, with `value` or
 
 ## Tokens
 
-`--harmo-border-radius`, `--harmo-color-background-secondary`,
+`--harmo-color-primary`, `--harmo-border-radius`, `--harmo-color-background-secondary`,
 `--harmo-color-danger`, `--harmo-color-focus`, `--harmo-color-text`,
 `--harmo-color-text-tertiary`, `--harmo-duration-fast`, `--harmo-font-family`,
 `--harmo-font-size-2xs`, `--harmo-font-size-sm`, `--harmo-font-weight-normal`,

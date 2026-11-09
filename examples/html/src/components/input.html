@@ -89,3 +89,17 @@
     </button>
   </div>
 </play-example>
+
+<play-example title="With highlights" layout="stack">
+  <play-note>
+    Marks what matches a pattern as you type, such as the variables in a template.
+    It's still a plain field: the caret, selection, and what's sent are its own.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="subject">Subject</label>
+    <div class="hinput-highlight">
+      <input class="hinput" id="subject" name="subject" value="Hello {{1}}, your order {{2}} has shipped" />
+      <div class="hinput-highlight-backdrop" aria-hidden="true" data-example-pattern="\{\{\d+\}\}"><span>Hello <mark>{{1}}</mark>, your order <mark>{{2}}</mark> has shipped</span></div>
+    </div>
+  </div>
+</play-example>

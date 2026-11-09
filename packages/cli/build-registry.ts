@@ -78,6 +78,7 @@ const components: Record<string, string[]> = {
 // Shared by components, and copied only to those that use them.
 const helpers = [
   "children.ts",
+  "highlight.tsx",
   "icons.ts",
   "modal.tsx",
   "useCurrentValue.ts",

@@ -5,6 +5,13 @@
 // stay with each control; a growing multi-line box has no fixed height.
 // The mixins are each part on its own, for a box whose field is inside it,
 // such as a Combobox choosing several.
+@mixin type {
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  line-height: 1.25rem;
+}
+
 @mixin box {
   // One variable for the focused/open border, so the invalid state below
   // can recolor the border and the ring together.
@@ -13,10 +20,7 @@
   box-sizing: border-box;
   margin: 0;
 
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-normal;
-  line-height: 1.25rem;
+  @include type;
 
   color: $color-text;
   background-color: $input-color-background;
@@ -53,6 +57,66 @@
   opacity: 1;
 
   cursor: not-allowed;
+}
+
+// A field whose text is see-through, with what's drawn over it showing instead.
+// The caret, selection, and placeholder are still the field's, and a selection
+// has a set color so that the text drawn over it can be read.
+@mixin highlight-field {
+  color: transparent;
+  caret-color: $color-text;
+
+  &::selection {
+    color: transparent;
+    background-color: color-mix(in srgb, #{$color-focus} 25%, transparent);
+  }
+}
+
+// The text drawn over that field. A script keeps it lined up with the field;
+// these are its values until then. Marks are see-through for the field's caret
+// and selection, underneath, to show. In forced colors, the system paints the
+// field's own text anyway, so only the marks are drawn.
+@mixin highlight-backdrop {
+  position: absolute;
+  inset: 0;
+
+  box-sizing: border-box;
+
+  @include type;
+
+  color: $color-text;
+  border: 1px solid transparent;
+
+  pointer-events: none;
+
+  & mark {
+    color: $color-primary;
+    background-color: color-mix(in srgb, #{$color-primary} 14%, transparent);
+    border-radius: 2px;
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+
+  @media (forced-colors: active) {
+    forced-color-adjust: none;
+
+    color: transparent;
+  }
+}
+
+@mixin highlight-disabled {
+  @media (forced-colors: none) {
+    color: $color-text-tertiary;
+
+    & mark {
+      color: inherit;
+    }
+  }
 }
 
 %control {

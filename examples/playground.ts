@@ -78,8 +78,9 @@ export interface Playground {
   render: (example: Example) => Rendered | undefined;
 }
 
-// Text inside <textarea> and <pre> is shown exactly as written, so the
-// indenting done around it mustn't reach it: it's set aside under a
+// Text inside <textarea>, <pre>, and what's drawn over a textarea is shown
+// exactly as written, so the indenting done around it mustn't reach it: it's
+// set aside under a
 // placeholder and put back once the page is assembled.
 const verbatim: string[] = [];
 
@@ -237,7 +238,8 @@ function renderExample(
     leaveOut(title);
     return undefined;
   }
-  const { demo, hydrate } = rendered;
+  const { hydrate } = rendered;
+  const demo = keepVerbatim(rendered.demo);
 
   const container: Attributes = new Map([["class", "play-demo"]]);
   if (layout) container.set("data-layout", layout);
@@ -409,10 +411,11 @@ function highlight(code: string) {
 // Text ------------------------------------------------------------------------
 
 function keepVerbatim(html: string) {
-  return html.replace(
-    /(<(textarea|pre)\b[^>]*>)([\s\S]*?)(<\/\2>)/g,
-    (_, open: string, _tag: string, text: string, close: string) => `${open}\u0000${verbatim.push(text) - 1}\u0000${close}`,
-  );
+  const keep = (whole: string, open: string, text: string, close: string) =>
+    /^\u0000\d+\u0000$/.test(text) ? whole : `${open}\u0000${verbatim.push(text) - 1}\u0000${close}`;
+  return html
+    .replace(/(<(?:textarea|pre)\b[^>]*>)([\s\S]*?)(<\/(?:textarea|pre)>)/g, keep)
+    .replace(/(<div\b[^>]*\bhtextarea-highlight-backdrop\b[^>]*>)([\s\S]*?)(<\/div>)/g, keep);
 }
 
 function restoreVerbatim(html: string, encode = (text: string) => text) {

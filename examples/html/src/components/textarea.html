@@ -75,3 +75,21 @@
     <textarea class="htextarea" id="signature" name="signature" disabled>The Acme team</textarea>
   </div>
 </play-example>
+
+<play-example title="With highlights" layout="stack">
+  <play-note>
+    Marks what matches a pattern as you type, and follows the text as it scrolls.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="template">Message</label>
+    <div class="htextarea-highlight">
+      <textarea class="htextarea" id="template" name="template">Hello {{1}},
+
+Your order {{2}} has shipped.</textarea>
+      <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="\{\{\d+\}\}"><span>Hello <mark>{{1}}</mark>,
+
+Your order <mark>{{2}}</mark> has shipped.
+</span></div>
+    </div>
+  </div>
+</play-example>

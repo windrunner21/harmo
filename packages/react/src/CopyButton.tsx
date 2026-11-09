@@ -42,7 +42,7 @@ export interface ShareButtonProps extends ControlOptions {
   onCopy?: () => void;
 }
 
-export type CopyFieldProps = Omit<InputProps, "value" | "defaultValue" | "readOnly" | "type"> &
+export type CopyFieldProps = Omit<InputProps, "value" | "defaultValue" | "readOnly" | "type" | "highlight"> &
   Pick<StackedFieldProps, "label" | "optional" | "description"> & {
     value: string;
     copyLabel: string;

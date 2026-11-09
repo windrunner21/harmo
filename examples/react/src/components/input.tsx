@@ -89,4 +89,14 @@ export const examples = {
       <Button variant="secondary">Search</Button>
     </div>
   ),
+
+  "With highlights": () => (
+    <Field label="Subject">
+      <Input
+        name="subject"
+        defaultValue="Hello {{1}}, your order {{2}} has shipped"
+        highlight={/\{\{\d+\}\}/g}
+      />
+    </Field>
+  ),
 };

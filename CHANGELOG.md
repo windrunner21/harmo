@@ -8,6 +8,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Input and TextArea: `highlight`, a regular expression whose matches are marked
+  as you type, such as the variables in a template.
+
 ## [0.5.1] - 2026-11-10
 
 A fix for a Toolbar's controls, and a Date Picker's setup in words, in its docs.

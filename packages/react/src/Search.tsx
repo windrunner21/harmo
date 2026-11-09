@@ -90,7 +90,7 @@ export const Search = ({
           hidden={current.value === "" || props.readOnly}
           disabled={props.disabled}
           onClick={() => {
-            const input = current.ref.current;
+            const input = current.element.current;
             if (!input) return;
             empty(input);
             input.focus();

@@ -1,11 +1,5 @@
-import {
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type Ref,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ChangeEvent, type Ref } from "react";
+import { useMergedRef } from "./useMergedRef.ts";
 
 interface ValueProps<Element> {
   ref?: Ref<Element>;
@@ -23,8 +17,14 @@ export const useCurrentValue = <
   onChange,
 }: ValueProps<Element>) => {
   const element = useRef<Element>(null);
-  useImperativeHandle(ref, () => element.current as Element, []);
+  const merged = useMergedRef<Element>(element, ref);
   const [typed, setTyped] = useState(String(defaultValue ?? ""));
+
+  useLayoutEffect(() => {
+    if (value === undefined && element.current && element.current.value !== typed) {
+      setTyped(element.current.value);
+    }
+  });
 
   useEffect(() => {
     const form = element.current?.form;
@@ -41,7 +41,8 @@ export const useCurrentValue = <
 
   return {
     value: value === undefined ? typed : String(value),
-    ref: element,
+    ref: merged,
+    element,
     onChange: (event: ChangeEvent<Element>) => {
       setTyped(event.target.value);
       onChange?.(event);

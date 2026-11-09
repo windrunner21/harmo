@@ -45,6 +45,41 @@
   }
 }
 
+.htextarea-highlight {
+  position: relative;
+
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  & > .htextarea {
+    @include control.highlight-field;
+
+    &:disabled + .htextarea-highlight-backdrop {
+      @include control.highlight-disabled;
+    }
+
+    &[hidden] + .htextarea-highlight-backdrop {
+      display: none;
+    }
+  }
+}
+
+.htextarea-highlight-backdrop {
+  @include control.highlight-backdrop;
+
+  overflow: hidden;
+
+  padding-block: 8px;
+  padding-inline: 12px;
+
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
 .htextarea-counter {
   margin: 0;
 

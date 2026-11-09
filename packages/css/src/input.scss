@@ -19,3 +19,52 @@
     background-color: $color-background-secondary;
   }
 }
+
+.hinput-highlight {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hinput {
+    @include control.highlight-field;
+
+    &:disabled + .hinput-highlight-backdrop {
+      @include control.highlight-disabled;
+    }
+
+    &[hidden] + .hinput-highlight-backdrop {
+      display: none;
+    }
+  }
+}
+
+.hinput-highlight-backdrop {
+  @include control.highlight-backdrop;
+
+  display: flex;
+  align-items: center;
+
+  padding-inline: 12px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The field clips its text at its padding, and so scrolls this part only.
+  & > span {
+    flex: 1;
+
+    min-inline-size: 0;
+    overflow: hidden;
+
+    white-space: pre;
+  }
+}

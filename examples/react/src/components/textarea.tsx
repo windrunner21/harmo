@@ -58,4 +58,14 @@ export const examples = {
       </Field>
     </>
   ),
+
+  "With highlights": () => (
+    <Field label="Message">
+      <TextArea
+        name="template"
+        defaultValue={"Hello {{1}},\n\nYour order {{2}} has shipped."}
+        highlight={/\{\{\d+\}\}/g}
+      />
+    </Field>
+  ),
 };
