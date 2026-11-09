@@ -447,7 +447,9 @@ onEachPlayground("navigation-menu", () => {
     await container.getByRole("button", { name: "Menu" }).click();
     const { nav, trigger } = await parts(container.locator(".hpopup"));
     await nav.evaluate((element) => element.removeAttribute("data-orientation"));
-    await trigger("Solutions").click();
+    // The Popup moves as the menu changes shape, so a press aimed at the button
+    // could land outside the Popup and close it.
+    await trigger("Solutions").dispatchEvent("click");
     await expect.poll(() => nav.evaluate((element) => element.style.getPropertyValue("--hnavigation-menu-width"))).not.toBe("");
   });
 

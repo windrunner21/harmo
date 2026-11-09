@@ -88,7 +88,7 @@ export const examples = {
           flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: "8px 24px",
+          gap: 8,
           inlineSize: "100%",
         }}
       >
@@ -101,7 +101,7 @@ export const examples = {
         >
           {`${from}–${to} of ${total} results`}
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 24px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 12px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span className="hlabel" id="rows-label">
               Rows per page
