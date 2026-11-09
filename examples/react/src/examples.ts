@@ -14,6 +14,7 @@ import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
 import { examples as combobox } from "./components/combobox.tsx";
 import { examples as commandMenu } from "./components/command-menu.tsx";
 import { examples as copy } from "./components/copy.tsx";
+import { examples as datePicker } from "./components/date-picker.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
 import { examples as emptyState } from "./components/empty-state.tsx";
@@ -46,6 +47,7 @@ import { examples as tabs } from "./components/tabs.tsx";
 import { examples as tag } from "./components/tag.tsx";
 import { examples as tagList } from "./components/tag-list.tsx";
 import { examples as textarea } from "./components/textarea.tsx";
+import { examples as timePicker } from "./components/time-picker.tsx";
 import { examples as toast } from "./components/toast.tsx";
 import { examples as tooltip } from "./components/tooltip.tsx";
 
@@ -62,6 +64,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   combobox,
   "command-menu": commandMenu,
   copy,
+  "date-picker": datePicker,
   dialog,
   drawer,
   "empty-state": emptyState,
@@ -94,6 +97,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   tag,
   "tag-list": tagList,
   textarea,
+  "time-picker": timePicker,
   toast,
   tooltip,
 };

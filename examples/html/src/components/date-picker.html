@@ -1,0 +1,799 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Type the digits and the separators are added for you, in the locale's order;
+    the date settles when you leave the field or press <kbd class="hkbd">Enter</kbd>.
+    The button opens the Calendar on the chosen date. Today is fixed here, so the
+    example looks the same whenever you read it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="due-date">Due date</label>
+    <div class="hdate-picker" style="anchor-name: --due-date">
+      <input class="hinput" id="due-date" type="text" inputmode="numeric" autocomplete="off" placeholder="mm/dd/yyyy" value="11/18/2026" />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="due-date-calendar">
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="due" value="2026-11-18" />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="due-date-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --due-date">
+      <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="due-date-month" aria-live="polite">November 2026</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="due-date-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Sunday">Sun</th>
+              <th scope="col" abbr="Monday">Mon</th>
+              <th scope="col" abbr="Tuesday">Tue</th>
+              <th scope="col" abbr="Wednesday">Wed</th>
+              <th scope="col" abbr="Thursday">Thu</th>
+              <th scope="col" abbr="Friday">Fri</th>
+              <th scope="col" abbr="Saturday">Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+              <td aria-selected="true"><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With a minimum and maximum" layout="stack">
+  <play-note>
+    Days outside them can't be picked, and a date typed outside them is invalid.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="start-date">Start date</label>
+    <div class="hdate-picker" style="anchor-name: --start-date">
+      <input class="hinput" id="start-date" type="text" inputmode="numeric" autocomplete="off" placeholder="mm/dd/yyyy" value="" />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="start-date-calendar">
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="start" value="" />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="start-date-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --start-date">
+      <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09" data-example-min="2026-11-05" data-example-max="2026-12-15">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month" aria-disabled="true">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="start-date-month" aria-live="polite">November 2026</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="start-date-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Sunday">Sun</th>
+              <th scope="col" abbr="Monday">Mon</th>
+              <th scope="col" abbr="Tuesday">Tue</th>
+              <th scope="col" abbr="Wednesday">Wed</th>
+              <th scope="col" abbr="Thursday">Thu</th>
+              <th scope="col" abbr="Friday">Fri</th>
+              <th scope="col" abbr="Saturday">Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026" disabled>1</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026" disabled>2</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026" disabled>3</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026" disabled>4</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With an error" layout="stack">
+  <play-note>
+    A date that doesn't exist stays in the field, marked invalid, so nothing you
+    typed is lost. Your app says why, here when <code>onInvalidChange</code> tells it. Try 02/31/2026.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="renewal-date">Renewal date</label>
+    <div class="hdate-picker" data-example-date-error="Enter a date as mm/dd/yyyy." style="anchor-name: --renewal-date">
+      <input class="hinput" id="renewal-date" type="text" inputmode="numeric" autocomplete="off" placeholder="mm/dd/yyyy" value="" aria-describedby="renewal-date-error" />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="renewal-date-calendar">
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="renewal" value="" />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="renewal-date-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --renewal-date">
+      <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="renewal-date-month" aria-live="polite">November 2026</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="renewal-date-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Sunday">Sun</th>
+              <th scope="col" abbr="Monday">Mon</th>
+              <th scope="col" abbr="Tuesday">Tue</th>
+              <th scope="col" abbr="Wednesday">Wed</th>
+              <th scope="col" abbr="Thursday">Thu</th>
+              <th scope="col" abbr="Friday">Fri</th>
+              <th scope="col" abbr="Saturday">Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="herror" id="renewal-date-error"></p>
+  </div>
+</play-example>
+
+<play-example title="Typed in words" layout="stack">
+  <play-note>
+    With <code>natural</code>, your app brings a parser, such as chrono-node, so "in
+    2 days" or "next Friday" works. Harmo has none of its own, so the HTML
+    playground's script only knows "today", "tomorrow", and "next week".
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="send-date">Send on</label>
+    <div class="hdate-picker" data-example-words style="anchor-name: --send-date">
+      <input class="hinput" id="send-date" type="text" autocomplete="off" placeholder="Tomorrow, or in 2 days" value="" />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="send-date-calendar">
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="send" value="" />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="send-date-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --send-date">
+      <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="send-date-month" aria-live="polite">November 2026</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="send-date-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Sunday">Sun</th>
+              <th scope="col" abbr="Monday">Mon</th>
+              <th scope="col" abbr="Tuesday">Tue</th>
+              <th scope="col" abbr="Wednesday">Wed</th>
+              <th scope="col" abbr="Thursday">Thu</th>
+              <th scope="col" abbr="Friday">Fri</th>
+              <th scope="col" abbr="Saturday">Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With a time" layout="stack">
+  <play-note>
+    With <code>time</code>, the value has a time too, as
+    <code>2026-11-18T14:00</code>, and picking a day keeps it. Try "tomorrow at
+    2pm".
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="send-at">Send at</label>
+    <div class="hdate-picker" data-example-words data-example-time style="anchor-name: --send-at">
+      <input class="hinput" id="send-at" type="text" autocomplete="off" placeholder="Tomorrow at 2:00 PM" value="November 18, 2026 at 2:00 PM" />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="send-at-calendar">
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="send-at" value="2026-11-18T14:00" />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="send-at-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --send-at">
+      <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="send-at-month" aria-live="polite">November 2026</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="send-at-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Sunday">Sun</th>
+              <th scope="col" abbr="Monday">Mon</th>
+              <th scope="col" abbr="Tuesday">Tue</th>
+              <th scope="col" abbr="Wednesday">Wed</th>
+              <th scope="col" abbr="Thursday">Thu</th>
+              <th scope="col" abbr="Friday">Fri</th>
+              <th scope="col" abbr="Saturday">Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+              <td aria-selected="true"><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    The hidden input sends the date. <kbd class="hkbd">Enter</kbd> settles a date that's changed; pressed again, it sends the form. Reset goes back to the date the page loaded with.
+  </play-note>
+  <form style="display: grid; gap: 12px" data-example-send>
+    <div class="hfield">
+      <label class="hlabel" for="form-due">Due date</label>
+      <div class="hdate-picker" style="anchor-name: --form-due">
+        <input class="hinput" id="form-due" type="text" inputmode="numeric" autocomplete="off" placeholder="mm/dd/yyyy" value="11/18/2026" />
+        <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="form-due-calendar">
+          <play-icon name="calendar" class="hicon"></play-icon>
+        </button>
+        <input type="hidden" name="due-form" value="2026-11-18" />
+      </div>
+      <div class="hpopup hdate-picker-popup" id="form-due-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --form-due">
+        <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+          <div class="hcalendar-header">
+            <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+              <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+            </button>
+            <p class="hcalendar-title" id="form-due-month" aria-live="polite">November 2026</p>
+            <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+              <play-icon name="chevron" class="hicon hchevron"></play-icon>
+            </button>
+          </div>
+          <table class="hcalendar-grid" role="grid" aria-labelledby="form-due-month">
+            <thead>
+              <tr>
+                <th scope="col" abbr="Sunday">Sun</th>
+                <th scope="col" abbr="Monday">Mon</th>
+                <th scope="col" abbr="Tuesday">Tue</th>
+                <th scope="col" abbr="Wednesday">Wed</th>
+                <th scope="col" abbr="Thursday">Thu</th>
+                <th scope="col" abbr="Friday">Fri</th>
+                <th scope="col" abbr="Saturday">Sat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+              </tr>
+              <tr>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+              </tr>
+              <tr>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+                <td aria-selected="true"><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+              </tr>
+              <tr>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+              </tr>
+              <tr>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+                <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px">
+      <button class="hbutton" type="submit"><span class="hbutton-label">Save</span></button>
+      <button class="hbutton" data-variant="secondary" type="reset"><span class="hbutton-label">Reset</span></button>
+    </div>
+    <p role="status" hidden></p>
+  </form>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    The field and its button can't be used, and the value isn't sent with a form.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="locked-date">Due date</label>
+    <div class="hdate-picker" style="anchor-name: --locked-date">
+      <input class="hinput" id="locked-date" type="text" inputmode="numeric" autocomplete="off" value="11/18/2026" disabled />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="locked-date-calendar" disabled>
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="locked" value="2026-11-18" disabled />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="locked-date-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --locked-date">
+      <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="locked-date-month" aria-live="polite">November 2026</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="locked-date-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="Sunday">Sun</th>
+              <th scope="col" abbr="Monday">Mon</th>
+              <th scope="col" abbr="Tuesday">Tue</th>
+              <th scope="col" abbr="Wednesday">Wed</th>
+              <th scope="col" abbr="Thursday">Thu</th>
+              <th scope="col" abbr="Friday">Fri</th>
+              <th scope="col" abbr="Saturday">Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+              <td aria-selected="true"><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="stack" dir="rtl" lang="ar">
+  <play-note>
+    The button is at the field's left end, and the date is in the locale's order and digits.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="due-date-ar">تاريخ الاستحقاق</label>
+    <div class="hdate-picker" style="anchor-name: --due-date-ar">
+      <input class="hinput" id="due-date-ar" type="text" inputmode="numeric" autocomplete="off" value="١٨‏/١١‏/٢٠٢٦" />
+      <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="اختر تاريخًا" aria-haspopup="dialog" aria-expanded="false" popovertarget="due-date-ar-calendar">
+        <play-icon name="calendar" class="hicon"></play-icon>
+      </button>
+      <input type="hidden" name="due-ar" value="2026-11-18" />
+    </div>
+    <div class="hpopup hdate-picker-popup" id="due-date-ar-calendar" popover role="dialog" aria-label="اختر تاريخًا" style="position-anchor: --due-date-ar">
+      <div class="hcalendar" data-example-locale="ar-EG" data-example-today="2026-11-09">
+        <div class="hcalendar-header">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="الشهر السابق">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+          </button>
+          <p class="hcalendar-title" id="due-date-ar-month" aria-live="polite">نوفمبر ٢٠٢٦</p>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="الشهر التالي">
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </div>
+        <table class="hcalendar-grid" role="grid" aria-labelledby="due-date-ar-month">
+          <thead>
+            <tr>
+              <th scope="col" abbr="السبت">السبت</th>
+              <th scope="col" abbr="الأحد">الأحد</th>
+              <th scope="col" abbr="الاثنين">الاثنين</th>
+              <th scope="col" abbr="الثلاثاء">الثلاثاء</th>
+              <th scope="col" abbr="الأربعاء">الأربعاء</th>
+              <th scope="col" abbr="الخميس">الخميس</th>
+              <th scope="col" abbr="الجمعة">الجمعة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="الأحد، ١ نوفمبر ٢٠٢٦">١</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="الاثنين، ٢ نوفمبر ٢٠٢٦">٢</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="الثلاثاء، ٣ نوفمبر ٢٠٢٦">٣</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="الأربعاء، ٤ نوفمبر ٢٠٢٦">٤</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="الخميس، ٥ نوفمبر ٢٠٢٦">٥</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="الجمعة، ٦ نوفمبر ٢٠٢٦">٦</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="السبت، ٧ نوفمبر ٢٠٢٦">٧</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="الأحد، ٨ نوفمبر ٢٠٢٦">٨</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-09" aria-label="الاثنين، ٩ نوفمبر ٢٠٢٦" aria-current="date">٩</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="الثلاثاء، ١٠ نوفمبر ٢٠٢٦">١٠</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="الأربعاء، ١١ نوفمبر ٢٠٢٦">١١</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="الخميس، ١٢ نوفمبر ٢٠٢٦">١٢</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="الجمعة، ١٣ نوفمبر ٢٠٢٦">١٣</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="السبت، ١٤ نوفمبر ٢٠٢٦">١٤</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="الأحد، ١٥ نوفمبر ٢٠٢٦">١٥</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="الاثنين، ١٦ نوفمبر ٢٠٢٦">١٦</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="الثلاثاء، ١٧ نوفمبر ٢٠٢٦">١٧</button></td>
+              <td aria-selected="true"><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-18" aria-label="الأربعاء، ١٨ نوفمبر ٢٠٢٦">١٨</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="الخميس، ١٩ نوفمبر ٢٠٢٦">١٩</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="الجمعة، ٢٠ نوفمبر ٢٠٢٦">٢٠</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="السبت، ٢١ نوفمبر ٢٠٢٦">٢١</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="الأحد، ٢٢ نوفمبر ٢٠٢٦">٢٢</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="الاثنين، ٢٣ نوفمبر ٢٠٢٦">٢٣</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="الثلاثاء، ٢٤ نوفمبر ٢٠٢٦">٢٤</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="الأربعاء، ٢٥ نوفمبر ٢٠٢٦">٢٥</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="الخميس، ٢٦ نوفمبر ٢٠٢٦">٢٦</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="الجمعة، ٢٧ نوفمبر ٢٠٢٦">٢٧</button></td>
+            </tr>
+            <tr>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="السبت، ٢٨ نوفمبر ٢٠٢٦">٢٨</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="الأحد، ٢٩ نوفمبر ٢٠٢٦">٢٩</button></td>
+              <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="الاثنين، ٣٠ نوفمبر ٢٠٢٦">٣٠</button></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>

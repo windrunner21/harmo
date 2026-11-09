@@ -1,0 +1,136 @@
+@use "shortcuts" as *;
+@use "control";
+
+// A time of day: a trigger that looks like a Select, as wide as what it shows,
+// and a Popup with a column each for the hour, the minute, and, on a 12-hour
+// clock, AM or PM.
+.htime-picker {
+  @extend %control;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  inline-size: fit-content;
+  min-block-size: $control-height;
+  padding: 0 12px;
+  padding-inline-end: 20px;
+
+  font-variant-numeric: tabular-nums;
+  text-align: start;
+
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hexpand-chevron {
+    color: $color-text-secondary;
+  }
+
+  &:disabled > .hexpand-chevron {
+    color: inherit;
+  }
+}
+
+.htime-picker-value {
+  white-space: nowrap;
+
+  &[data-placeholder] {
+    color: $color-text-tertiary;
+  }
+}
+
+.hpopup.htime-picker-popup {
+  flex-direction: row;
+
+  min-inline-size: 0;
+}
+
+.htime-picker-column {
+  position: relative;
+
+  flex: none;
+
+  max-block-size: 200px;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & + & {
+    border-inline-start: 1px solid $color-border;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: -2px;
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+.htime-picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  inline-size: 40px;
+  block-size: 32px;
+
+  font-size: $font-size-sm;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+
+  color: $color-text;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    background-color $button-duration ease,
+    color $button-duration ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: $color-background-hover;
+    }
+  }
+
+  // The hour, minute, or period chosen, filled. In forced colors, where a fill
+  // is gone, in the system's highlight.
+  &[aria-selected="true"] {
+    color: $color-on-primary;
+    background-color: $color-primary-fill;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $color-primary-fill-hover;
+      }
+    }
+
+    @media (forced-colors: active) {
+      &,
+      &:hover {
+        forced-color-adjust: none;
+
+        color: HighlightText;
+        background-color: Highlight;
+      }
+    }
+  }
+}

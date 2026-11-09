@@ -1,0 +1,424 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    A trigger that shows the time on the locale's clock, here 12-hour, and a column
+    each for the hour, the minute, and AM or PM. Choosing keeps it open, since a
+    time takes more than one choice. The arrow keys move through a column and
+    between columns, and <kbd class="hkbd">Enter</kbd> closes it.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="start-time-label">Start time</span>
+    <button class="htime-picker" id="start-time" type="button" aria-labelledby="start-time-label start-time-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="start-time-popup" style="anchor-name: --start-time" data-example-locale="en-US" data-example-name="start">
+      <span class="htime-picker-value" id="start-time-value">02:30 PM</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup htime-picker-popup" id="start-time-popup" popover role="dialog" aria-labelledby="start-time-label" style="position-anchor: --start-time">
+      <ul class="htime-picker-column" role="listbox" aria-label="Hour" tabindex="0" aria-activedescendant="start-time-hour-2" data-example-column="hour">
+        <li class="htime-picker-option" id="start-time-hour-12" role="option" aria-selected="false" data-example-value="12">12</li>
+        <li class="htime-picker-option" id="start-time-hour-1" role="option" aria-selected="false" data-example-value="1">01</li>
+        <li class="htime-picker-option" id="start-time-hour-2" role="option" aria-selected="true" data-example-value="2">02</li>
+        <li class="htime-picker-option" id="start-time-hour-3" role="option" aria-selected="false" data-example-value="3">03</li>
+        <li class="htime-picker-option" id="start-time-hour-4" role="option" aria-selected="false" data-example-value="4">04</li>
+        <li class="htime-picker-option" id="start-time-hour-5" role="option" aria-selected="false" data-example-value="5">05</li>
+        <li class="htime-picker-option" id="start-time-hour-6" role="option" aria-selected="false" data-example-value="6">06</li>
+        <li class="htime-picker-option" id="start-time-hour-7" role="option" aria-selected="false" data-example-value="7">07</li>
+        <li class="htime-picker-option" id="start-time-hour-8" role="option" aria-selected="false" data-example-value="8">08</li>
+        <li class="htime-picker-option" id="start-time-hour-9" role="option" aria-selected="false" data-example-value="9">09</li>
+        <li class="htime-picker-option" id="start-time-hour-10" role="option" aria-selected="false" data-example-value="10">10</li>
+        <li class="htime-picker-option" id="start-time-hour-11" role="option" aria-selected="false" data-example-value="11">11</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="Minute" tabindex="0" aria-activedescendant="start-time-minute-30" data-example-column="minute">
+        <li class="htime-picker-option" id="start-time-minute-0" role="option" aria-selected="false" data-example-value="0">00</li>
+        <li class="htime-picker-option" id="start-time-minute-15" role="option" aria-selected="false" data-example-value="15">15</li>
+        <li class="htime-picker-option" id="start-time-minute-30" role="option" aria-selected="true" data-example-value="30">30</li>
+        <li class="htime-picker-option" id="start-time-minute-45" role="option" aria-selected="false" data-example-value="45">45</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="AM or PM" tabindex="0" aria-activedescendant="start-time-dayPeriod-1" data-example-column="dayPeriod">
+        <li class="htime-picker-option" id="start-time-dayPeriod-0" role="option" aria-selected="false" data-example-value="0">AM</li>
+        <li class="htime-picker-option" id="start-time-dayPeriod-1" role="option" aria-selected="true" data-example-value="1">PM</li>
+      </ul>
+    </div>
+    <input type="hidden" name="start" value="14:30" />
+  </div>
+</play-example>
+
+<play-example title="On a 24-hour clock" layout="stack">
+  <play-note>
+    The locale decides: en-GB has no AM or PM column.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="opens-at-label">Opens at</span>
+    <button class="htime-picker" id="opens-at" type="button" aria-labelledby="opens-at-label opens-at-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="opens-at-popup" style="anchor-name: --opens-at" data-example-locale="en-GB" data-example-name="opens">
+      <span class="htime-picker-value" id="opens-at-value">09:00</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup htime-picker-popup" id="opens-at-popup" popover role="dialog" aria-labelledby="opens-at-label" style="position-anchor: --opens-at">
+      <ul class="htime-picker-column" role="listbox" aria-label="Hour" tabindex="0" aria-activedescendant="opens-at-hour-9" data-example-column="hour">
+        <li class="htime-picker-option" id="opens-at-hour-0" role="option" aria-selected="false" data-example-value="0">00</li>
+        <li class="htime-picker-option" id="opens-at-hour-1" role="option" aria-selected="false" data-example-value="1">01</li>
+        <li class="htime-picker-option" id="opens-at-hour-2" role="option" aria-selected="false" data-example-value="2">02</li>
+        <li class="htime-picker-option" id="opens-at-hour-3" role="option" aria-selected="false" data-example-value="3">03</li>
+        <li class="htime-picker-option" id="opens-at-hour-4" role="option" aria-selected="false" data-example-value="4">04</li>
+        <li class="htime-picker-option" id="opens-at-hour-5" role="option" aria-selected="false" data-example-value="5">05</li>
+        <li class="htime-picker-option" id="opens-at-hour-6" role="option" aria-selected="false" data-example-value="6">06</li>
+        <li class="htime-picker-option" id="opens-at-hour-7" role="option" aria-selected="false" data-example-value="7">07</li>
+        <li class="htime-picker-option" id="opens-at-hour-8" role="option" aria-selected="false" data-example-value="8">08</li>
+        <li class="htime-picker-option" id="opens-at-hour-9" role="option" aria-selected="true" data-example-value="9">09</li>
+        <li class="htime-picker-option" id="opens-at-hour-10" role="option" aria-selected="false" data-example-value="10">10</li>
+        <li class="htime-picker-option" id="opens-at-hour-11" role="option" aria-selected="false" data-example-value="11">11</li>
+        <li class="htime-picker-option" id="opens-at-hour-12" role="option" aria-selected="false" data-example-value="12">12</li>
+        <li class="htime-picker-option" id="opens-at-hour-13" role="option" aria-selected="false" data-example-value="13">13</li>
+        <li class="htime-picker-option" id="opens-at-hour-14" role="option" aria-selected="false" data-example-value="14">14</li>
+        <li class="htime-picker-option" id="opens-at-hour-15" role="option" aria-selected="false" data-example-value="15">15</li>
+        <li class="htime-picker-option" id="opens-at-hour-16" role="option" aria-selected="false" data-example-value="16">16</li>
+        <li class="htime-picker-option" id="opens-at-hour-17" role="option" aria-selected="false" data-example-value="17">17</li>
+        <li class="htime-picker-option" id="opens-at-hour-18" role="option" aria-selected="false" data-example-value="18">18</li>
+        <li class="htime-picker-option" id="opens-at-hour-19" role="option" aria-selected="false" data-example-value="19">19</li>
+        <li class="htime-picker-option" id="opens-at-hour-20" role="option" aria-selected="false" data-example-value="20">20</li>
+        <li class="htime-picker-option" id="opens-at-hour-21" role="option" aria-selected="false" data-example-value="21">21</li>
+        <li class="htime-picker-option" id="opens-at-hour-22" role="option" aria-selected="false" data-example-value="22">22</li>
+        <li class="htime-picker-option" id="opens-at-hour-23" role="option" aria-selected="false" data-example-value="23">23</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="Minute" tabindex="0" aria-activedescendant="opens-at-minute-0" data-example-column="minute">
+        <li class="htime-picker-option" id="opens-at-minute-0" role="option" aria-selected="true" data-example-value="0">00</li>
+        <li class="htime-picker-option" id="opens-at-minute-15" role="option" aria-selected="false" data-example-value="15">15</li>
+        <li class="htime-picker-option" id="opens-at-minute-30" role="option" aria-selected="false" data-example-value="30">30</li>
+        <li class="htime-picker-option" id="opens-at-minute-45" role="option" aria-selected="false" data-example-value="45">45</li>
+      </ul>
+    </div>
+    <input type="hidden" name="opens" value="09:00" />
+  </div>
+</play-example>
+
+<play-example title="Every 5 minutes" layout="stack">
+  <play-note>
+    <code>minuteStep</code> sets the minutes offered, every 15 by default. A time
+    between them is still shown, and added to its column.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="closes-at-label">Closes at</span>
+    <button class="htime-picker" id="closes-at" type="button" aria-labelledby="closes-at-label closes-at-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="closes-at-popup" style="anchor-name: --closes-at" data-example-locale="en-GB" data-example-name="closes">
+      <span class="htime-picker-value" id="closes-at-value">17:07</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup htime-picker-popup" id="closes-at-popup" popover role="dialog" aria-labelledby="closes-at-label" style="position-anchor: --closes-at">
+      <ul class="htime-picker-column" role="listbox" aria-label="Hour" tabindex="0" aria-activedescendant="closes-at-hour-17" data-example-column="hour">
+        <li class="htime-picker-option" id="closes-at-hour-0" role="option" aria-selected="false" data-example-value="0">00</li>
+        <li class="htime-picker-option" id="closes-at-hour-1" role="option" aria-selected="false" data-example-value="1">01</li>
+        <li class="htime-picker-option" id="closes-at-hour-2" role="option" aria-selected="false" data-example-value="2">02</li>
+        <li class="htime-picker-option" id="closes-at-hour-3" role="option" aria-selected="false" data-example-value="3">03</li>
+        <li class="htime-picker-option" id="closes-at-hour-4" role="option" aria-selected="false" data-example-value="4">04</li>
+        <li class="htime-picker-option" id="closes-at-hour-5" role="option" aria-selected="false" data-example-value="5">05</li>
+        <li class="htime-picker-option" id="closes-at-hour-6" role="option" aria-selected="false" data-example-value="6">06</li>
+        <li class="htime-picker-option" id="closes-at-hour-7" role="option" aria-selected="false" data-example-value="7">07</li>
+        <li class="htime-picker-option" id="closes-at-hour-8" role="option" aria-selected="false" data-example-value="8">08</li>
+        <li class="htime-picker-option" id="closes-at-hour-9" role="option" aria-selected="false" data-example-value="9">09</li>
+        <li class="htime-picker-option" id="closes-at-hour-10" role="option" aria-selected="false" data-example-value="10">10</li>
+        <li class="htime-picker-option" id="closes-at-hour-11" role="option" aria-selected="false" data-example-value="11">11</li>
+        <li class="htime-picker-option" id="closes-at-hour-12" role="option" aria-selected="false" data-example-value="12">12</li>
+        <li class="htime-picker-option" id="closes-at-hour-13" role="option" aria-selected="false" data-example-value="13">13</li>
+        <li class="htime-picker-option" id="closes-at-hour-14" role="option" aria-selected="false" data-example-value="14">14</li>
+        <li class="htime-picker-option" id="closes-at-hour-15" role="option" aria-selected="false" data-example-value="15">15</li>
+        <li class="htime-picker-option" id="closes-at-hour-16" role="option" aria-selected="false" data-example-value="16">16</li>
+        <li class="htime-picker-option" id="closes-at-hour-17" role="option" aria-selected="true" data-example-value="17">17</li>
+        <li class="htime-picker-option" id="closes-at-hour-18" role="option" aria-selected="false" data-example-value="18">18</li>
+        <li class="htime-picker-option" id="closes-at-hour-19" role="option" aria-selected="false" data-example-value="19">19</li>
+        <li class="htime-picker-option" id="closes-at-hour-20" role="option" aria-selected="false" data-example-value="20">20</li>
+        <li class="htime-picker-option" id="closes-at-hour-21" role="option" aria-selected="false" data-example-value="21">21</li>
+        <li class="htime-picker-option" id="closes-at-hour-22" role="option" aria-selected="false" data-example-value="22">22</li>
+        <li class="htime-picker-option" id="closes-at-hour-23" role="option" aria-selected="false" data-example-value="23">23</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="Minute" tabindex="0" aria-activedescendant="closes-at-minute-7" data-example-column="minute">
+        <li class="htime-picker-option" id="closes-at-minute-0" role="option" aria-selected="false" data-example-value="0">00</li>
+        <li class="htime-picker-option" id="closes-at-minute-5" role="option" aria-selected="false" data-example-value="5">05</li>
+        <li class="htime-picker-option" id="closes-at-minute-7" role="option" aria-selected="true" data-example-value="7">07</li>
+        <li class="htime-picker-option" id="closes-at-minute-10" role="option" aria-selected="false" data-example-value="10">10</li>
+        <li class="htime-picker-option" id="closes-at-minute-15" role="option" aria-selected="false" data-example-value="15">15</li>
+        <li class="htime-picker-option" id="closes-at-minute-20" role="option" aria-selected="false" data-example-value="20">20</li>
+        <li class="htime-picker-option" id="closes-at-minute-25" role="option" aria-selected="false" data-example-value="25">25</li>
+        <li class="htime-picker-option" id="closes-at-minute-30" role="option" aria-selected="false" data-example-value="30">30</li>
+        <li class="htime-picker-option" id="closes-at-minute-35" role="option" aria-selected="false" data-example-value="35">35</li>
+        <li class="htime-picker-option" id="closes-at-minute-40" role="option" aria-selected="false" data-example-value="40">40</li>
+        <li class="htime-picker-option" id="closes-at-minute-45" role="option" aria-selected="false" data-example-value="45">45</li>
+        <li class="htime-picker-option" id="closes-at-minute-50" role="option" aria-selected="false" data-example-value="50">50</li>
+        <li class="htime-picker-option" id="closes-at-minute-55" role="option" aria-selected="false" data-example-value="55">55</li>
+      </ul>
+    </div>
+    <input type="hidden" name="closes" value="17:07" />
+  </div>
+</play-example>
+
+<play-example title="With nothing chosen" layout="stack">
+  <play-note>
+    The first choice makes a whole time: what you haven't picked yet starts at its
+    first option.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="reminder-time-label">Reminder</span>
+    <button class="htime-picker" id="reminder-time" type="button" aria-labelledby="reminder-time-label reminder-time-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="reminder-time-popup" style="anchor-name: --reminder-time" data-example-locale="en-US" data-example-name="reminder">
+      <span class="htime-picker-value" id="reminder-time-value" data-placeholder>Choose a time</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup htime-picker-popup" id="reminder-time-popup" popover role="dialog" aria-labelledby="reminder-time-label" style="position-anchor: --reminder-time">
+      <ul class="htime-picker-column" role="listbox" aria-label="Hour" tabindex="0" data-example-column="hour">
+        <li class="htime-picker-option" id="reminder-time-hour-12" role="option" aria-selected="false" data-example-value="12">12</li>
+        <li class="htime-picker-option" id="reminder-time-hour-1" role="option" aria-selected="false" data-example-value="1">01</li>
+        <li class="htime-picker-option" id="reminder-time-hour-2" role="option" aria-selected="false" data-example-value="2">02</li>
+        <li class="htime-picker-option" id="reminder-time-hour-3" role="option" aria-selected="false" data-example-value="3">03</li>
+        <li class="htime-picker-option" id="reminder-time-hour-4" role="option" aria-selected="false" data-example-value="4">04</li>
+        <li class="htime-picker-option" id="reminder-time-hour-5" role="option" aria-selected="false" data-example-value="5">05</li>
+        <li class="htime-picker-option" id="reminder-time-hour-6" role="option" aria-selected="false" data-example-value="6">06</li>
+        <li class="htime-picker-option" id="reminder-time-hour-7" role="option" aria-selected="false" data-example-value="7">07</li>
+        <li class="htime-picker-option" id="reminder-time-hour-8" role="option" aria-selected="false" data-example-value="8">08</li>
+        <li class="htime-picker-option" id="reminder-time-hour-9" role="option" aria-selected="false" data-example-value="9">09</li>
+        <li class="htime-picker-option" id="reminder-time-hour-10" role="option" aria-selected="false" data-example-value="10">10</li>
+        <li class="htime-picker-option" id="reminder-time-hour-11" role="option" aria-selected="false" data-example-value="11">11</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="Minute" tabindex="0" data-example-column="minute">
+        <li class="htime-picker-option" id="reminder-time-minute-0" role="option" aria-selected="false" data-example-value="0">00</li>
+        <li class="htime-picker-option" id="reminder-time-minute-15" role="option" aria-selected="false" data-example-value="15">15</li>
+        <li class="htime-picker-option" id="reminder-time-minute-30" role="option" aria-selected="false" data-example-value="30">30</li>
+        <li class="htime-picker-option" id="reminder-time-minute-45" role="option" aria-selected="false" data-example-value="45">45</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="AM or PM" tabindex="0" data-example-column="dayPeriod">
+        <li class="htime-picker-option" id="reminder-time-dayPeriod-0" role="option" aria-selected="false" data-example-value="0">AM</li>
+        <li class="htime-picker-option" id="reminder-time-dayPeriod-1" role="option" aria-selected="false" data-example-value="1">PM</li>
+      </ul>
+    </div>
+    <input type="hidden" name="reminder" value="" />
+  </div>
+</play-example>
+
+<play-example title="Beside a date">
+  <play-note>
+    For a date and a time, put a Date Picker and a Time Picker side by side.
+  </play-note>
+  <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px">
+    <div class="hfield">
+      <label class="hlabel" for="send-on">Send on</label>
+      <div class="hdate-picker" style="anchor-name: --send-on">
+        <input class="hinput" id="send-on" type="text" inputmode="numeric" autocomplete="off" placeholder="mm/dd/yyyy" value="11/18/2026" />
+        <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Choose a date" aria-haspopup="dialog" aria-expanded="false" popovertarget="send-on-calendar">
+          <play-icon name="calendar" class="hicon"></play-icon>
+        </button>
+        <input type="hidden" name="send-date" value="2026-11-18" />
+      </div>
+      <div class="hpopup hdate-picker-popup" id="send-on-calendar" popover role="dialog" aria-label="Choose a date" style="position-anchor: --send-on">
+        <div class="hcalendar" data-example-locale="en-US" data-example-today="2026-11-09">
+      <div class="hcalendar-header">
+        <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Previous month">
+          <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+        </button>
+        <p class="hcalendar-title" id="send-on-month" aria-live="polite">November 2026</p>
+        <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-label="Next month">
+          <play-icon name="chevron" class="hicon hchevron"></play-icon>
+        </button>
+      </div>
+      <table class="hcalendar-grid" role="grid" aria-labelledby="send-on-month">
+        <thead>
+          <tr>
+            <th scope="col" abbr="Sunday">Sun</th>
+            <th scope="col" abbr="Monday">Mon</th>
+            <th scope="col" abbr="Tuesday">Tue</th>
+            <th scope="col" abbr="Wednesday">Wed</th>
+            <th scope="col" abbr="Thursday">Thu</th>
+            <th scope="col" abbr="Friday">Fri</th>
+            <th scope="col" abbr="Saturday">Sat</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-01" aria-label="Sunday, November 1, 2026">1</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-02" aria-label="Monday, November 2, 2026">2</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-03" aria-label="Tuesday, November 3, 2026">3</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-04" aria-label="Wednesday, November 4, 2026">4</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-05" aria-label="Thursday, November 5, 2026">5</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-06" aria-label="Friday, November 6, 2026">6</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-07" aria-label="Saturday, November 7, 2026">7</button></td>
+          </tr>
+          <tr>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-08" aria-label="Sunday, November 8, 2026">8</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-09" aria-label="Monday, November 9, 2026" aria-current="date">9</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-10" aria-label="Tuesday, November 10, 2026">10</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-11" aria-label="Wednesday, November 11, 2026">11</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-12" aria-label="Thursday, November 12, 2026">12</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-13" aria-label="Friday, November 13, 2026">13</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-14" aria-label="Saturday, November 14, 2026">14</button></td>
+          </tr>
+          <tr>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-15" aria-label="Sunday, November 15, 2026">15</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-16" aria-label="Monday, November 16, 2026">16</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-17" aria-label="Tuesday, November 17, 2026">17</button></td>
+            <td aria-selected="true"><button class="hcalendar-day" type="button" tabindex="0" data-date="2026-11-18" aria-label="Wednesday, November 18, 2026">18</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-19" aria-label="Thursday, November 19, 2026">19</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-20" aria-label="Friday, November 20, 2026">20</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-21" aria-label="Saturday, November 21, 2026">21</button></td>
+          </tr>
+          <tr>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-22" aria-label="Sunday, November 22, 2026">22</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-23" aria-label="Monday, November 23, 2026">23</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-24" aria-label="Tuesday, November 24, 2026">24</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-25" aria-label="Wednesday, November 25, 2026">25</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-26" aria-label="Thursday, November 26, 2026">26</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-27" aria-label="Friday, November 27, 2026">27</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-28" aria-label="Saturday, November 28, 2026">28</button></td>
+          </tr>
+          <tr>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-29" aria-label="Sunday, November 29, 2026">29</button></td>
+            <td><button class="hcalendar-day" type="button" tabindex="-1" data-date="2026-11-30" aria-label="Monday, November 30, 2026">30</button></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+      </div>
+    </div>
+    <div class="hfield">
+      <span class="hlabel" id="send-at-label">At</span>
+      <button class="htime-picker" id="send-at" type="button" aria-labelledby="send-at-label send-at-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="send-at-popup" style="anchor-name: --send-at" data-example-locale="en-US" data-example-name="send-time">
+        <span class="htime-picker-value" id="send-at-value">02:00 PM</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup htime-picker-popup" id="send-at-popup" popover role="dialog" aria-labelledby="send-at-label" style="position-anchor: --send-at">
+        <ul class="htime-picker-column" role="listbox" aria-label="Hour" tabindex="0" aria-activedescendant="send-at-hour-2" data-example-column="hour">
+          <li class="htime-picker-option" id="send-at-hour-12" role="option" aria-selected="false" data-example-value="12">12</li>
+          <li class="htime-picker-option" id="send-at-hour-1" role="option" aria-selected="false" data-example-value="1">01</li>
+          <li class="htime-picker-option" id="send-at-hour-2" role="option" aria-selected="true" data-example-value="2">02</li>
+          <li class="htime-picker-option" id="send-at-hour-3" role="option" aria-selected="false" data-example-value="3">03</li>
+          <li class="htime-picker-option" id="send-at-hour-4" role="option" aria-selected="false" data-example-value="4">04</li>
+          <li class="htime-picker-option" id="send-at-hour-5" role="option" aria-selected="false" data-example-value="5">05</li>
+          <li class="htime-picker-option" id="send-at-hour-6" role="option" aria-selected="false" data-example-value="6">06</li>
+          <li class="htime-picker-option" id="send-at-hour-7" role="option" aria-selected="false" data-example-value="7">07</li>
+          <li class="htime-picker-option" id="send-at-hour-8" role="option" aria-selected="false" data-example-value="8">08</li>
+          <li class="htime-picker-option" id="send-at-hour-9" role="option" aria-selected="false" data-example-value="9">09</li>
+          <li class="htime-picker-option" id="send-at-hour-10" role="option" aria-selected="false" data-example-value="10">10</li>
+          <li class="htime-picker-option" id="send-at-hour-11" role="option" aria-selected="false" data-example-value="11">11</li>
+        </ul>
+        <ul class="htime-picker-column" role="listbox" aria-label="Minute" tabindex="0" aria-activedescendant="send-at-minute-0" data-example-column="minute">
+          <li class="htime-picker-option" id="send-at-minute-0" role="option" aria-selected="true" data-example-value="0">00</li>
+          <li class="htime-picker-option" id="send-at-minute-15" role="option" aria-selected="false" data-example-value="15">15</li>
+          <li class="htime-picker-option" id="send-at-minute-30" role="option" aria-selected="false" data-example-value="30">30</li>
+          <li class="htime-picker-option" id="send-at-minute-45" role="option" aria-selected="false" data-example-value="45">45</li>
+        </ul>
+        <ul class="htime-picker-column" role="listbox" aria-label="AM or PM" tabindex="0" aria-activedescendant="send-at-dayPeriod-1" data-example-column="dayPeriod">
+          <li class="htime-picker-option" id="send-at-dayPeriod-0" role="option" aria-selected="false" data-example-value="0">AM</li>
+          <li class="htime-picker-option" id="send-at-dayPeriod-1" role="option" aria-selected="true" data-example-value="1">PM</li>
+        </ul>
+      </div>
+      <input type="hidden" name="send-time" value="14:00" />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    The hidden input sends the time, and Reset goes back to the time the page loaded with.
+  </play-note>
+  <form style="display: grid; gap: 12px" data-example-send>
+    <div class="hfield">
+      <span class="hlabel" id="form-start-label">Start time</span>
+      <button class="htime-picker" id="form-start" type="button" aria-labelledby="form-start-label form-start-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="form-start-popup" style="anchor-name: --form-start" data-example-locale="en-US" data-example-name="start-form">
+        <span class="htime-picker-value" id="form-start-value">02:30 PM</span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup htime-picker-popup" id="form-start-popup" popover role="dialog" aria-labelledby="form-start-label" style="position-anchor: --form-start">
+        <ul class="htime-picker-column" role="listbox" aria-label="Hour" tabindex="0" aria-activedescendant="form-start-hour-2" data-example-column="hour">
+          <li class="htime-picker-option" id="form-start-hour-12" role="option" aria-selected="false" data-example-value="12">12</li>
+          <li class="htime-picker-option" id="form-start-hour-1" role="option" aria-selected="false" data-example-value="1">01</li>
+          <li class="htime-picker-option" id="form-start-hour-2" role="option" aria-selected="true" data-example-value="2">02</li>
+          <li class="htime-picker-option" id="form-start-hour-3" role="option" aria-selected="false" data-example-value="3">03</li>
+          <li class="htime-picker-option" id="form-start-hour-4" role="option" aria-selected="false" data-example-value="4">04</li>
+          <li class="htime-picker-option" id="form-start-hour-5" role="option" aria-selected="false" data-example-value="5">05</li>
+          <li class="htime-picker-option" id="form-start-hour-6" role="option" aria-selected="false" data-example-value="6">06</li>
+          <li class="htime-picker-option" id="form-start-hour-7" role="option" aria-selected="false" data-example-value="7">07</li>
+          <li class="htime-picker-option" id="form-start-hour-8" role="option" aria-selected="false" data-example-value="8">08</li>
+          <li class="htime-picker-option" id="form-start-hour-9" role="option" aria-selected="false" data-example-value="9">09</li>
+          <li class="htime-picker-option" id="form-start-hour-10" role="option" aria-selected="false" data-example-value="10">10</li>
+          <li class="htime-picker-option" id="form-start-hour-11" role="option" aria-selected="false" data-example-value="11">11</li>
+        </ul>
+        <ul class="htime-picker-column" role="listbox" aria-label="Minute" tabindex="0" aria-activedescendant="form-start-minute-30" data-example-column="minute">
+          <li class="htime-picker-option" id="form-start-minute-0" role="option" aria-selected="false" data-example-value="0">00</li>
+          <li class="htime-picker-option" id="form-start-minute-15" role="option" aria-selected="false" data-example-value="15">15</li>
+          <li class="htime-picker-option" id="form-start-minute-30" role="option" aria-selected="true" data-example-value="30">30</li>
+          <li class="htime-picker-option" id="form-start-minute-45" role="option" aria-selected="false" data-example-value="45">45</li>
+        </ul>
+        <ul class="htime-picker-column" role="listbox" aria-label="AM or PM" tabindex="0" aria-activedescendant="form-start-dayPeriod-1" data-example-column="dayPeriod">
+          <li class="htime-picker-option" id="form-start-dayPeriod-0" role="option" aria-selected="false" data-example-value="0">AM</li>
+          <li class="htime-picker-option" id="form-start-dayPeriod-1" role="option" aria-selected="true" data-example-value="1">PM</li>
+        </ul>
+      </div>
+      <input type="hidden" name="start-form" value="14:30" />
+    </div>
+    <div style="display: flex; gap: 8px">
+      <button class="hbutton" type="submit"><span class="hbutton-label">Save</span></button>
+      <button class="hbutton" data-variant="secondary" type="reset"><span class="hbutton-label">Reset</span></button>
+    </div>
+    <p role="status" hidden></p>
+  </form>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    It can't be opened, and the value isn't sent with a form.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="locked-time-label">Start time</span>
+    <button class="htime-picker" id="locked-time" type="button" aria-labelledby="locked-time-label locked-time-value" aria-haspopup="dialog" aria-expanded="false" disabled data-example-locale="en-US" data-example-name="locked">
+      <span class="htime-picker-value" id="locked-time-value">02:30 PM</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <input type="hidden" name="locked" value="14:30" disabled />
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="stack" dir="rtl" lang="ar">
+  <play-note>
+    In Arabic, with the locale's digits and order, and the arrow keys following what you see.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="start-time-ar-label">وقت البدء</span>
+    <button class="htime-picker" id="start-time-ar" type="button" aria-labelledby="start-time-ar-label start-time-ar-value" aria-haspopup="dialog" aria-expanded="false" popovertarget="start-time-ar-popup" style="anchor-name: --start-time-ar" data-example-locale="ar-EG" data-example-name="start-ar">
+      <span class="htime-picker-value" id="start-time-ar-value">٠٢:٣٠ م</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup htime-picker-popup" id="start-time-ar-popup" popover role="dialog" aria-labelledby="start-time-ar-label" style="position-anchor: --start-time-ar">
+      <ul class="htime-picker-column" role="listbox" aria-label="الساعة" tabindex="0" aria-activedescendant="start-time-ar-hour-2" data-example-column="hour">
+        <li class="htime-picker-option" id="start-time-ar-hour-12" role="option" aria-selected="false" data-example-value="12">١٢</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-1" role="option" aria-selected="false" data-example-value="1">٠١</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-2" role="option" aria-selected="true" data-example-value="2">٠٢</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-3" role="option" aria-selected="false" data-example-value="3">٠٣</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-4" role="option" aria-selected="false" data-example-value="4">٠٤</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-5" role="option" aria-selected="false" data-example-value="5">٠٥</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-6" role="option" aria-selected="false" data-example-value="6">٠٦</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-7" role="option" aria-selected="false" data-example-value="7">٠٧</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-8" role="option" aria-selected="false" data-example-value="8">٠٨</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-9" role="option" aria-selected="false" data-example-value="9">٠٩</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-10" role="option" aria-selected="false" data-example-value="10">١٠</li>
+        <li class="htime-picker-option" id="start-time-ar-hour-11" role="option" aria-selected="false" data-example-value="11">١١</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="الدقيقة" tabindex="0" aria-activedescendant="start-time-ar-minute-30" data-example-column="minute">
+        <li class="htime-picker-option" id="start-time-ar-minute-0" role="option" aria-selected="false" data-example-value="0">٠٠</li>
+        <li class="htime-picker-option" id="start-time-ar-minute-15" role="option" aria-selected="false" data-example-value="15">١٥</li>
+        <li class="htime-picker-option" id="start-time-ar-minute-30" role="option" aria-selected="true" data-example-value="30">٣٠</li>
+        <li class="htime-picker-option" id="start-time-ar-minute-45" role="option" aria-selected="false" data-example-value="45">٤٥</li>
+      </ul>
+      <ul class="htime-picker-column" role="listbox" aria-label="صباحًا أو مساءً" tabindex="0" aria-activedescendant="start-time-ar-dayPeriod-1" data-example-column="dayPeriod">
+        <li class="htime-picker-option" id="start-time-ar-dayPeriod-0" role="option" aria-selected="false" data-example-value="0">ص</li>
+        <li class="htime-picker-option" id="start-time-ar-dayPeriod-1" role="option" aria-selected="true" data-example-value="1">م</li>
+      </ul>
+    </div>
+    <input type="hidden" name="start-ar" value="14:30" />
+  </div>
+</play-example>

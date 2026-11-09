@@ -28,6 +28,7 @@ export {
   type CopyFieldProps,
   type ShareButtonProps,
 } from "./CopyButton.tsx";
+export { DatePicker, type DatePickerProps, type NaturalDateParser } from "./date-picker/DatePicker.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";
@@ -115,6 +116,7 @@ export {
 export { Tag, TagRemove, type TagProps, type TagRemoveProps } from "./Tag.tsx";
 export { TagList, type TagListProps } from "./TagList.tsx";
 export { TextArea, type TextAreaProps } from "./TextArea.tsx";
+export { TimePicker, type TimePickerProps } from "./time-picker/TimePicker.tsx";
 export {
   toast,
   Toaster,

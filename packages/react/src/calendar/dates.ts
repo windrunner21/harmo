@@ -17,6 +17,12 @@ export const isDate = (value?: string | null): value is string => {
   return !Number.isNaN(date.getTime()) && isoOf(date) === value;
 };
 
+// A date with a time on the clock, as "2026-11-09T14:30".
+export const isDateTime = (value?: string | null): value is string =>
+  !!value &&
+  /^.{10}T([01]\d|2[0-3]):[0-5]\d$/.test(value) &&
+  isDate(value.slice(0, 10));
+
 export const isMonth = (value?: string | null): value is string =>
   !!value && isDate(`${value}-01`);
 

@@ -27,6 +27,33 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Date Picker: `.hdate-picker`, or `<DatePicker>`, a date typed in the locale's
+  order, or chosen from a Calendar that a button in the field opens. Digits get
+  their separators as you type, a date that doesn't exist stays in the field,
+  marked invalid, and `name` sends the date as `2026-11-09`. `natural` takes a
+  date parser your app brings, such as `chrono-node`, so "in 2 days" works, and
+  `time` keeps the time too, as `2026-11-09T14:00`. Harmo gains no dependency:
+  your app installs the parser and passes it in.
+
+  ```html preview="date-picker/Default"
+  <div class="hdate-picker">
+    <input class="hinput" type="text" inputmode="numeric" autocomplete="off" />
+    <!-- the button, and a hidden input with the date -->
+  </div>
+  <!-- a Popup holding a Calendar -->
+  ```
+
+- Time Picker: `.htime-picker`, or `<TimePicker>`, a time of day chosen from a
+  column each for the hour, the minute, and, on a 12-hour clock, AM or PM. The locale decides the clock, its digits, and the order of
+  the columns, and `name` sends the time as `14:30`.
+
+  ```html preview="time-picker/Default"
+  <button class="htime-picker" type="button" aria-haspopup="dialog">
+    <span class="htime-picker-value">02:30 PM</span>
+  </button>
+  <!-- a Popup holding a listbox for each column -->
+  ```
+
 ## [0.4.0] - 2026-11-08
 
 Thirteen new components, among them Sidebar, Command Menu, Combobox, Navigation

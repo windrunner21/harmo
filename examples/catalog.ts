@@ -155,6 +155,11 @@ const groups: CatalogGroup[] = [
         purpose: "A text field that filters a list as you type, to pick from it or be helped by it.",
       },
       {
+        slug: "date-picker",
+        title: "Date Picker",
+        purpose: "A date typed in the locale's order, or chosen from a Calendar it opens.",
+      },
+      {
         slug: "field",
         title: "Field",
         purpose:
@@ -207,6 +212,11 @@ const groups: CatalogGroup[] = [
         slug: "textarea",
         title: "TextArea",
         purpose: "Multi-line text that grows as you type.",
+      },
+      {
+        slug: "time-picker",
+        title: "Time Picker",
+        purpose: "A time of day, chosen from columns of hours and minutes, on the locale's clock.",
       },
     ],
   },

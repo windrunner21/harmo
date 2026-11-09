@@ -1,0 +1,33 @@
+@use "shortcuts" as *;
+
+// A date typed into an Input, or chosen from a Calendar that a small button
+// inside the Input's end opens in a Popup.
+.hdate-picker {
+  display: grid;
+  align-items: center;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > :is(.hinput, .hbutton) {
+    grid-area: 1 / 1;
+  }
+
+  & > .hinput {
+    // A small button, 2px from the end, and 5px before it.
+    padding-inline-end: calc(1.8125rem + 7px);
+  }
+
+  & > .hbutton {
+    justify-self: end;
+
+    margin-inline-end: 2px;
+  }
+}
+
+// As wide as its Calendar, however wide the field.
+.hpopup.hdate-picker-popup {
+  min-inline-size: 0;
+  padding: 16px;
+}

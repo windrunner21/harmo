@@ -27,6 +27,7 @@ const components: Record<string, string[]> = {
   combobox: ["Combobox.tsx"],
   "command-menu": ["CommandMenu.tsx"],
   copy: ["CopyButton.tsx"],
+  "date-picker": ["date-picker/DatePicker.tsx", "date-picker/typedDate.ts"],
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],
   "empty-state": ["EmptyState.tsx"],
@@ -63,6 +64,7 @@ const components: Record<string, string[]> = {
   tag: ["Tag.tsx"],
   "tag-list": ["TagList.tsx"],
   textarea: ["TextArea.tsx"],
+  "time-picker": ["time-picker/TimePicker.tsx", "time-picker/clock.ts"],
   toast: ["Toast.tsx"],
   tooltip: ["Tooltip.tsx"],
 };

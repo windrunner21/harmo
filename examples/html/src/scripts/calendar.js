@@ -136,13 +136,18 @@
       dayNode(cursor)?.focus();
     });
 
-    // A date your app sets: the month follows it.
-    const set = calendar.parentElement.querySelector("[data-example-calendar-set]");
-    set?.addEventListener("click", () => {
-      value = set.dataset.exampleCalendarSet;
-      month = monthOf(value);
+    // A date your app sets: the month follows it. A Date Picker's example
+    // script does this as it opens, so it opens on the date chosen.
+    const allowedMonth = (shown) =>
+      shown < monthOf(min) ? monthOf(min) : shown > monthOf(max) ? monthOf(max) : shown;
+    const show = (date) => {
+      value = date;
+      month = allowedMonth(monthOf(date ?? today));
       cursor = null;
       render();
-    });
+    };
+    calendar.addEventListener("example-calendar-show", (event) => show(event.detail));
+    const set = calendar.parentElement.querySelector("[data-example-calendar-set]");
+    set?.addEventListener("click", () => show(set.dataset.exampleCalendarSet));
   }
 }

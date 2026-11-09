@@ -19,6 +19,7 @@ the same markup and does what the script would.
 | Combobox | [combobox.md](combobox.md) |
 | Command Menu | [command-menu.md](command-menu.md) |
 | Copy Button | [copy.md](copy.md) |
+| Date Picker | [date-picker.md](date-picker.md) |
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
 | Empty State | [empty-state.md](empty-state.md) |
@@ -51,6 +52,7 @@ the same markup and does what the script would.
 | Tag | [tag.md](tag.md) |
 | Tag List | [tag-list.md](tag-list.md) |
 | TextArea | [textarea.md](textarea.md) |
+| Time Picker | [time-picker.md](time-picker.md) |
 | Toast | [toast.md](toast.md) |
 | Tooltip | [tooltip.md](tooltip.md) |
 
@@ -107,10 +109,12 @@ Some components are built from others, so their files need company:
 | `calendar.css` | `button.css`, `chevron.css` |
 | `card.css` | `chevron-to-arrow.css` for a chevron |
 | `copy.css` | `button.css`; `tooltip.css` for an icon-only one; `input.css` and `field.css` for a field |
+| `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
 | `empty-state.css` | `button.css` for actions |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |
+| `time-picker.css` | `popup.css`, `expand-chevron.css`; `field.css` for a label |
 | `menu-button.css` | `button.css`; `popup.css` to open a Popup |
 | `navigation-menu.css` | `expand-chevron.css` |
 | `pagination.css` | `button.css`, `chevron.css` |
