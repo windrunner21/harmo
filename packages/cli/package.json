@@ -1,6 +1,6 @@
 {
        "name": "harmo-ui",
-       "version": "0.4.0",
+       "version": "0.5.0",
        "description": "Copy Harmo's components and styles into your project, and make them yours.",
        "license": "MIT",
        "author": "Imran Hajiyev",

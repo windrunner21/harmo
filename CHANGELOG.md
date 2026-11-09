@@ -8,6 +8,12 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-09
+
+Nine new components for lists and dates: Table, with selecting, row links,
+columns, and pages; Toolbar, Selection Bar, Filters, Filter Bar, and Date Filter;
+and Calendar, Date Picker, and Time Picker.
+
 ### Added
 
 - Table: `.htable` on a normal `<table>`, or `<DataTable>` with `useRowSelection`
@@ -141,6 +147,11 @@ minor version may change an API, and says how to upgrade when it does.
 - Popup: one inside another no longer marks the outer one as closed, or resets
   what's in it, when it opens or closes.
 - Popup: one fading out no longer takes presses from what's under it.
+- Popup: Escape from one opened over another hands focus back to what opened it,
+  as a browser does only for the first one open.
+- Popup: in Firefox, one whose direction isn't the page's, such as a right-to-left
+  widget on a left-to-right page, lines up with what opened it.
+- Filter Chip: a value keeps its background while the chip is hovered or open.
 
 ## [0.4.0] - 2026-11-08
 
@@ -947,7 +958,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/windrunner21/harmo/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/windrunner21/harmo/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/windrunner21/harmo/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/windrunner21/harmo/compare/v0.1.1...v0.2.0
