@@ -8,6 +8,10 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-10
+
+A fix for a Toolbar's controls, and a Date Picker's setup in words, in its docs.
+
 ### Fixed
 
 - Toolbar: controls stay beside short filters, rather than going below them in a
@@ -963,7 +967,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/windrunner21/harmo/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/windrunner21/harmo/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/windrunner21/harmo/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/windrunner21/harmo/compare/v0.2.0...v0.3.0
