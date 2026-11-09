@@ -13,6 +13,12 @@ export const checkAccessibility = (page: Page, only?: string[]) =>
   page.evaluate(async (only) => {
     const { axe } = window as unknown as { axe: typeof import("axe-core") };
 
+    // Without fades: a browser may start one a frame or more after the click,
+    // and text caught part-way through would fail on contrast.
+    const noFades = document.createElement("style");
+    noFades.textContent = "*, ::before, ::after { transition: none !important; }";
+    document.head.append(noFades);
+
     // axe's WCAG 2.2 A and AA rules, or only the rules named, less any named
     // as exceptions. Without preloading: axe would fetch the stylesheets
     // again, which a page opened from disk isn't allowed to.
@@ -82,5 +88,6 @@ export const checkAccessibility = (page: Page, only?: string[]) =>
       dialog.close();
       for (const animation of dialog.getAnimations()) animation.finish();
     }
+    noFades.remove();
     return { loaded, popups };
   }, only);
