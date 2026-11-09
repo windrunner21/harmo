@@ -23,6 +23,7 @@ import { examples as expandChevron } from "./components/expand-chevron.tsx";
 import { examples as field } from "./components/field.tsx";
 import { examples as filterBar } from "./components/filter-bar.tsx";
 import { examples as filterChip } from "./components/filter-chip.tsx";
+import { examples as filters } from "./components/filters.tsx";
 import { examples as icons } from "./components/icons.tsx";
 import { examples as input } from "./components/input.tsx";
 import { examples as kbd } from "./components/kbd.tsx";
@@ -75,6 +76,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   field,
   "filter-bar": filterBar,
   "filter-chip": filterChip,
+  filters,
   icons,
   input,
   kbd,

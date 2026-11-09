@@ -1,0 +1,77 @@
+@use "shortcuts" as *;
+
+// A row of Filter Chips above a list: the first few in the row, the rest behind
+// a chip that opens them in a Popup, and a way to reset them all.
+.hfilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hpopup.hfilters-more {
+  align-items: flex-start;
+  gap: 8px;
+
+  min-inline-size: max(220px, anchor-size(inline));
+  padding: 12px;
+}
+
+// How many of the filters behind the chip are in force.
+.hfilters-count {
+  box-sizing: border-box;
+  min-inline-size: 18px;
+  padding: 1px 5px;
+
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  text-align: center;
+
+  color: $color-text-secondary;
+  background-color: $color-background-hover;
+  border-radius: $border-radius-full;
+}
+
+.hfilters-reset {
+  margin: 0;
+  // 25px tall, as a target should be at least 24px.
+  padding: 2px 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  white-space: nowrap;
+
+  color: $color-primary;
+  background-color: transparent;
+  border: 0;
+
+  cursor: pointer;
+
+  transition: color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-primary-hover;
+    }
+  }
+
+  &:active {
+    color: $color-primary-active;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+}

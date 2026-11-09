@@ -63,6 +63,15 @@
           footer.remove();
         }
       });
+
+      // Filters' Reset.
+      chip.addEventListener("example-filter-reset", () => {
+        for (const option of listbox.querySelectorAll('.hoption[aria-selected="true"]')) {
+          option.setAttribute("aria-selected", "false");
+        }
+        footer.remove();
+        show([]);
+      });
     } else if (input) {
       const apply = () => {
         const text = input.value.trim();
@@ -76,6 +85,12 @@
         if (event.key !== "Enter") return;
         event.preventDefault();
         apply();
+      });
+
+      // Filters' Reset.
+      chip.addEventListener("example-filter-reset", () => {
+        input.value = "";
+        show([]);
       });
     }
   }

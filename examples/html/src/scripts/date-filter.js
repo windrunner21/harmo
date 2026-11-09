@@ -199,6 +199,12 @@
       else settle({ gte: null, lte: endOfDay(date) });
     };
 
+    // Filters' Reset.
+    chip.addEventListener("example-filter-reset", () => {
+      value = { gte: null, lte: null };
+      showValue();
+    });
+
     apply.addEventListener("click", applied);
     // The panel stays open, for choosing again. Clear is about to go, so
     // focus moves first.

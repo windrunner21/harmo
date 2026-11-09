@@ -28,6 +28,7 @@ the same markup and does what the script would.
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
 | Filter Bar | [filter-bar.md](filter-bar.md) |
 | Filter Chip | [filter-chip.md](filter-chip.md) |
+| Filters | [filters.md](filters.md) |
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
@@ -115,6 +116,7 @@ Some components are built from others, so their files need company:
 | `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
 | `empty-state.css` | `button.css` for actions |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
+| `filters.css` | `filter-chip.css`, `popup.css`, and those of the filters in it |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |
 | `time-picker.css` | `popup.css`, `expand-chevron.css`; `field.css` for a label |
@@ -258,6 +260,7 @@ the React components, set:
 | `data-copied`, `data-open`, the tooltip's or label's text, the status | Copy Button, Share Button | Copy or share, and say so for two seconds |
 | Ignoring activation | Pagination | On a disabled Previous or Next |
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
+| The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
 | Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
 | `data-side="top"` | Popup | Slide away from a trigger it opened above |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |

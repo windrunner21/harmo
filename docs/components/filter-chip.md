@@ -58,7 +58,7 @@ value in a form, use a [Select](select.md).
 - While a multi-select chip has values, end its list with a Clear filters
   button in a `.hlistbox-footer`, so the values don't have to be removed one by
   one. Render the footer only then.
-- Resetting every chip at once belongs to the planned Filters row.
+- Resetting every chip at once is what a [Filters](filters.md) row is for.
 
 A chip can open a panel instead of a list, such as a text filter. The popup has
 no padding, so the panel lays out its own content:

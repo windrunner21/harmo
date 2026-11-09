@@ -36,6 +36,7 @@ const components: Record<string, string[]> = {
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
   "filter-bar": ["FilterBar.tsx"],
   "filter-chip": ["FilterChip.tsx"],
+  filters: ["Filters.tsx"],
   input: ["Input.tsx"],
   kbd: ["Kbd.tsx"],
   link: ["Link.tsx"],

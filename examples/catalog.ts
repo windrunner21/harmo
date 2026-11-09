@@ -53,6 +53,11 @@ const groups: CatalogGroup[] = [
         purpose:
           "Narrows a list or table: a dashed chip that opens a Popup and shows what's chosen.",
       },
+      {
+        slug: "filters",
+        title: "Filters",
+        purpose: "A row of filter chips above a list, with the rest behind More filters, and a way to reset them all.",
+      },
     ],
   },
   {

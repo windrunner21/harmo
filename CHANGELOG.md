@@ -10,6 +10,26 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Filters: `<Filters>`, a row of Filter Chips above a list: the first few in the
+  row, the rest behind a chip with a count of those in force, and a way to reset
+  them all. What's chosen stays in your app or your URL.
+
+  ```html preview="filters/With filters in force"
+  <div class="hfilters" role="group" aria-label="Filter tasks">
+    <button class="hfilter-chip" type="button">
+      <span class="hfilter-chip-label">Status</span>
+      <span class="hfilter-chip-values">
+        <span class="hfilter-chip-value">Active</span>
+      </span>
+    </button>
+    <button class="hfilter-chip" type="button">
+      <span class="hfilter-chip-label">More filters</span>
+      <span class="hfilters-count">1</span>
+    </button>
+    <button class="hfilters-reset" type="button">Reset filters</button>
+  </div>
+  ```
+
 - Date Filter: `<DateFilter>`, a chip that filters a list by date: within the
   last few minutes or months, on a day, between two days, after a day, or before
   one. Its value is `{ gte, lte }` in Unix seconds, so a link can restore it, and

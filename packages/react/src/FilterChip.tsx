@@ -161,7 +161,7 @@ const FilterChipList = ({
   );
 };
 
-const plus = (
+export const plus = (
   <svg
     className="hicon"
     width="18"
