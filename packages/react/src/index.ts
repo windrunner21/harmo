@@ -109,6 +109,15 @@ export {
 export { Status, type StatusProps } from "./Status.tsx";
 export { Switch, type SwitchProps } from "./Switch.tsx";
 export {
+  DataTable,
+  DataTableFooter,
+  type DataTableColumn,
+  type DataTableFooterProps,
+  type DataTableProps,
+} from "./table/DataTable.tsx";
+export { useColumnVisibility, type ColumnVisibilityOptions } from "./table/useColumnVisibility.ts";
+export { useRowSelection, type RowSelection } from "./table/useRowSelection.ts";
+export {
   Tab,
   TabList,
   TabPanel,

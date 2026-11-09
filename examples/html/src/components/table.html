@@ -1,0 +1,418 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    The columns fit their content and the last takes what's left. The first column
+    names each row.
+  </play-note>
+  <div class="htable-container">
+    <div class="htable-scroll">
+      <table class="htable" aria-label="Tasks">
+        <thead>
+          <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Status</th>
+            <th scope="col">Due</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Write the brief</th>
+            <td>Active</td>
+            <td>Nov 18</td>
+          </tr>
+          <tr>
+            <th scope="row">Review the designs</th>
+            <td>Blocked</td>
+            <td>Nov 20</td>
+          </tr>
+          <tr>
+            <th scope="row">Ship the release</th>
+            <td>Done</td>
+            <td>Nov 9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="A column that stands out" layout="wide">
+  <play-note>
+    Medium weight and the main text color, as the cell that names each row has,
+    for any other column that matters as much.
+  </play-note>
+  <div class="htable-container">
+    <div class="htable-scroll">
+      <table class="htable" aria-label="Tasks">
+        <thead>
+          <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Owner</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Write the brief</th>
+            <td data-emphasis>Ana</td>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <th scope="row">Review the designs</th>
+            <td data-emphasis>Ben</td>
+            <td>Blocked</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Rows that link" layout="wide">
+  <play-note>
+    The link is in the first cell and covers the whole row, so it works from the
+    keyboard and can open in a new tab.
+  </play-note>
+  <div class="htable-container">
+    <div class="htable-scroll">
+      <table class="htable" aria-label="Tasks">
+        <thead>
+          <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">
+              <a class="htable-row-link" href="?task=brief">Write the brief</a>
+            </th>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <a class="htable-row-link" href="?task=designs">Review the designs</a>
+            </th>
+            <td>Blocked</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Rows with an action" layout="wide">
+  <play-note>
+    A button instead of a link, for a row that opens something on this page.
+  </play-note>
+  <div data-example-table-open style="display:grid;gap:12px;inline-size:100%">
+    <div class="htable-container">
+      <div class="htable-scroll">
+        <table class="htable" aria-label="Tasks">
+          <thead>
+            <tr>
+              <th scope="col">Task</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">
+                <button class="htable-row-link" type="button">Write the brief</button>
+              </th>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <th scope="row">
+                <button class="htable-row-link" type="button">Review the designs</button>
+              </th>
+              <td>Blocked</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p role="status">Nothing opened yet</p>
+  </div>
+</play-example>
+
+<play-example title="Selecting rows" layout="wide">
+  <play-note>
+    Tick a row and a Selection Bar takes the place of the controls. The checkboxes
+    sit above the row's link. After <strong>Deselect</strong>, focus goes to the checkbox in the header.
+  </play-note>
+  <div data-example-table-selection style="display:grid;gap:16px;inline-size:100%">
+    <div class="htoolbar">
+      <div class="hfilters" role="group" aria-label="Filter tasks">
+        <button class="hfilter-chip" type="button">
+          <play-icon name="add-circle" class="hicon"></play-icon>
+          <span class="hfilter-chip-label">Status</span>
+        </button>
+        <button class="hfilters-reset" type="button" hidden>Reset filters</button>
+      </div>
+      <div class="htoolbar-controls">
+        <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+          <span class="hbutton-label">Export</span>
+        </button>
+      </div>
+    </div>
+    <div class="htable-container">
+      <div class="htable-scroll">
+        <table class="htable" aria-label="Tasks">
+          <thead>
+            <tr>
+              <th class="htable-select" scope="col">
+                <input class="hcheckbox" type="checkbox" aria-label="Select all tasks" />
+              </th>
+              <th scope="col">Task</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="htable-select">
+                <input class="hcheckbox" type="checkbox" aria-label="Select Write the brief" />
+              </td>
+              <th scope="row">
+                <a class="htable-row-link" href="?task=brief">Write the brief</a>
+              </th>
+              <td>Active</td>
+            </tr>
+            <tr>
+              <td class="htable-select">
+                <input class="hcheckbox" type="checkbox" aria-label="Select Review the designs" />
+              </td>
+              <th scope="row">
+                <a class="htable-row-link" href="?task=designs">Review the designs</a>
+              </th>
+              <td>Blocked</td>
+            </tr>
+            <tr>
+              <td class="htable-select">
+                <input class="hcheckbox" type="checkbox" aria-label="Select Ship the release" />
+              </td>
+              <th scope="row">
+                <a class="htable-row-link" href="?task=release">Ship the release</a>
+              </th>
+              <td>Done</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Choosing columns" layout="wide">
+  <play-note>
+    A Button, a Popup, and a Listbox. Task is pinned, so it isn't in the list, and
+    your choice is remembered.
+  </play-note>
+  <div data-example-table-columns style="display:grid;gap:16px;inline-size:100%">
+    <div class="htoolbar">
+      <div class="htoolbar-controls">
+        <button class="hbutton" data-variant="secondary" data-size="small" type="button" popovertarget="t-cols-1" aria-expanded="false" style="anchor-name:--t-cols-1">
+          <span class="hbutton-label">Edit columns</span>
+        </button>
+        <div class="hpopup" id="t-cols-1" popover style="position-anchor:--t-cols-1">
+          <ul class="hlistbox" role="listbox" aria-label="Columns" aria-multiselectable="true" tabindex="-1">
+            <li class="hoption" id="t-cols-2" role="option" aria-selected="true">
+              <span class="hoption-checkbox" aria-hidden="true"></span>
+              <span class="hoption-label">Status</span>
+            </li>
+            <li class="hoption" id="t-cols-3" role="option" aria-selected="true">
+              <span class="hoption-checkbox" aria-hidden="true"></span>
+              <span class="hoption-label">Due</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="htable-container">
+      <div class="htable-scroll">
+        <table class="htable" aria-label="Tasks">
+          <thead>
+            <tr>
+              <th scope="col">Task</th>
+              <th scope="col">Status</th>
+              <th scope="col">Due</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Write the brief</th>
+              <td>Active</td>
+              <td>Nov 18</td>
+            </tr>
+            <tr>
+              <th scope="row">Review the designs</th>
+              <td>Blocked</td>
+              <td>Nov 20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In pages" layout="wide">
+  <play-note>
+    The footer stays at the bottom of the window while the table runs past it.
+  </play-note>
+  <div class="htable-container">
+    <div class="htable-scroll">
+      <table class="htable" aria-label="Tasks">
+        <thead>
+          <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Task 11</th>
+            <td>Done</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 12</th>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 13</th>
+            <td>Blocked</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 14</th>
+            <td>Done</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 15</th>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 16</th>
+            <td>Blocked</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 17</th>
+            <td>Done</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 18</th>
+            <td>Active</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 19</th>
+            <td>Blocked</td>
+          </tr>
+          <tr>
+            <th scope="row">Task 20</th>
+            <td>Done</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="htable-footer">
+      <p class="htable-footer-summary" data-example-range="{from}–{to} of {total} results">11–20 of 115 results</p>
+      <div class="htable-footer-controls">
+        <div class="htable-footer-rows">
+          <span class="htable-footer-label" id="t-pages-1">Rows per page</span>
+          <button class="hselect" type="button" role="combobox" aria-labelledby="t-pages-1" aria-haspopup="listbox" aria-expanded="false" aria-controls="t-pages-2" popovertarget="t-pages-3" style="anchor-name:--t-pages-3">
+            <span class="hselect-value">10</span>
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hpopup" id="t-pages-3" popover style="position-anchor:--t-pages-3">
+            <ul class="hlistbox" id="t-pages-2" role="listbox" aria-labelledby="t-pages-1">
+              <li class="hoption" id="t-pages-4" role="option" aria-selected="true">
+                <span class="hoption-label">10</span>
+                <play-icon name="check" class="hoption-check"></play-icon>
+              </li>
+              <li class="hoption" id="t-pages-5" role="option" aria-selected="false">
+                <span class="hoption-label">20</span>
+              </li>
+              <li class="hoption" id="t-pages-6" role="option" aria-selected="false">
+                <span class="hoption-label">50</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="htable-footer-status" role="status">Page 2 of 12</p>
+        <nav class="hpagination" aria-label="Pages" data-example-page="2" data-example-pages="12" data-example-total="115" data-example-rows="t-pages-2" data-example-page-of="Page {page} of {count}">
+          <button class="hbutton" data-variant="secondary" type="button">
+            <play-icon name="chevron" class="hicon hchevron" data-direction="back"></play-icon>
+            <span class="hbutton-label">Previous</span>
+          </button>
+          <button class="hbutton" data-variant="secondary" type="button">
+            <span class="hbutton-label">Next</span>
+            <play-icon name="chevron" class="hicon hchevron"></play-icon>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With nothing to show" layout="wide">
+  <play-note>
+    Instead of the table, what you give it, such as an Empty State.
+  </play-note>
+  <div class="htable-container">
+    <div class="hempty-state" data-variant="dashed" data-size="small">
+      <h2 class="hempty-state-title">No tasks yet</h2>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Long text" layout="wide">
+  <play-note>
+    A column marked to truncate ends with an ellipsis, with the whole text in its title.
+  </play-note>
+  <div class="htable-container">
+    <div class="htable-scroll">
+      <table class="htable" aria-label="Tasks">
+        <thead>
+          <tr>
+            <th scope="col">Task</th>
+            <th scope="col">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Write the brief</th>
+            <td>
+              <span class="htable-truncate" title="Cover the audience, the goals for the quarter, what&#x27;s out of scope, and who signs it off before the review.">Cover the audience, the goals for the quarter, what&#x27;s out of scope, and who signs it off before the review.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
+  <play-note>
+    The first column is on the right.
+  </play-note>
+  <div class="htable-container">
+    <div class="htable-scroll">
+      <table class="htable" aria-label="المهام">
+        <thead>
+          <tr>
+            <th scope="col">المهمة</th>
+            <th scope="col">الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">كتابة الملخص</th>
+            <td>نشطة</td>
+          </tr>
+          <tr>
+            <th scope="row">إطلاق الإصدار</th>
+            <td>مكتملة</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</play-example>

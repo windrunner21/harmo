@@ -52,6 +52,7 @@ the same markup and does what the script would.
 | Stat | [stat.md](stat.md) |
 | Status | [status.md](status.md) |
 | Switch | [switch.md](switch.md) |
+| Table | [table.md](table.md) |
 | Tabs | [tabs.md](tabs.md) |
 | Tag | [tag.md](tag.md) |
 | Tag List | [tag-list.md](tag-list.md) |
@@ -127,6 +128,7 @@ Some components are built from others, so their files need company:
 | `pagination.css` | `button.css`, `chevron.css` |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
 | `selection-bar.css` | `button.css` for its actions; `tooltip.css` for a reason one is blocked |
+| `table.css` | `checkbox.css` to select rows; `select.css`, `listbox.css`, `popup.css`, `expand-chevron.css`, `pagination.css`, `button.css`, `chevron.css` for a footer |
 | `search.css` | `input.css`; `field.css` for a label; `kbd.css` for a shortcut |
 | `stat.css` | `tooltip.css` for a hint; `link.css` for a link as its action |
 | `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
@@ -265,6 +267,7 @@ the React components, set:
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
 | The count's text | Selection Bar | Follows the selection, which is your app's |
+| `checked` and `indeterminate`, hidden columns, the rows and the page | Table | Follow the selection, the columns chosen, and the page, which are your app's |
 | Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
 | `data-side="top"` | Popup | Slide away from a trigger it opened above |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |

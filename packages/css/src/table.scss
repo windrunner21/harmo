@@ -1,0 +1,204 @@
+@use "shortcuts" as *;
+
+// Rows and columns of data. The columns fit their content and the last takes
+// what's left; a table too wide for its place scrolls in .htable-scroll.
+.htable-container {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.htable-scroll {
+  overflow-x: auto;
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: -2px;
+  }
+}
+
+.htable {
+  inline-size: 100%;
+  border-spacing: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+
+  & > thead > tr > th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 2;
+
+    inline-size: 0;
+    padding-inline: 16px;
+    padding-block-end: 12px;
+
+    font-size: $font-size-2xs;
+    font-weight: $font-weight-medium;
+    text-align: start;
+    white-space: nowrap;
+
+    color: $color-text;
+    background-color: $color-background;
+
+    &:nth-last-child(1 of :not([hidden])) {
+      inline-size: auto;
+    }
+  }
+
+  & > tbody > tr > :is(td, th) {
+    padding: 12px 16px;
+
+    font-weight: $font-weight-normal;
+    text-align: start;
+    white-space: nowrap;
+
+    color: $color-text-secondary;
+    border-block-start: 1px solid $color-border;
+  }
+
+  // The cell that names its row, and any column that should stand out.
+  & > tbody > tr > :is(th, [data-emphasis]) {
+    font-weight: $font-weight-medium;
+
+    color: $color-text;
+  }
+
+  // A row that goes somewhere: its link or button covers the whole row.
+  & > tbody > tr:has(.htable-row-link) {
+    position: relative;
+
+    transition: background-color $duration-fast ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: $color-background-hover;
+      }
+    }
+  }
+}
+
+// Anything else in the row that can be used sits above that. Without any
+// weight, so an app's own positioning of it wins.
+:where(.htable > tbody > tr:has(.htable-row-link) :is(a, button, input, select, textarea, label, [tabindex]):not(.htable-row-link)) {
+  position: relative;
+  z-index: 1;
+}
+
+.htable-row-link {
+  margin: 0;
+  padding: 0;
+
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+
+  color: inherit;
+  background: none;
+  border: 0;
+
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: $focus-outline;
+      outline-offset: -2px;
+    }
+  }
+}
+
+.htable-truncate {
+  display: block;
+
+  max-inline-size: min(360px, 42vw);
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Under the table, and at the bottom of the window while the table runs past it.
+.htable-footer {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 3;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 48px;
+
+  padding-block: 12px;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+
+  background-color: $color-background;
+  border-block-start: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .htable-container[data-footer="static"] > & {
+    position: static;
+  }
+}
+
+.htable-footer-summary {
+  margin: 0;
+
+  color: $color-text-secondary;
+}
+
+.htable-footer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 48px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.htable-footer-rows {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hselect {
+    inline-size: auto;
+  }
+}
+
+.htable-footer-label,
+.htable-footer-status {
+  margin: 0;
+
+  font-weight: $font-weight-medium;
+
+  color: $color-text;
+}

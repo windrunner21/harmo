@@ -71,8 +71,8 @@ on one that deletes and `loading` while one runs.
   along with its first count, some screen readers miss that one: the checkbox
   that was just ticked says as much.
 - Deselect goes when the bar does, so focus has to go somewhere else. Your app
-  knows where: move it in `onDeselect`, such as to the checkbox that selects every
-  row, as the example does with its first task.
+  knows where: move it in `onDeselect`, as the example does with its first task. A
+  [DataTable](table.md) sends it to the checkbox in its header by itself.
 - Explain a blocked action with `aria-disabled="true"`, not `disabled`: a
   `disabled` button can't take keyboard focus, so keyboard users would never reach
   the reason.

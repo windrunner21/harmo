@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/date-filter.md says: a chip that opens a panel of a
 // condition and the fields it needs; Apply off until they're complete; a value
@@ -290,11 +290,28 @@ onEachPlayground("date-filter", () => {
     await expect(apply).toHaveAttribute("aria-disabled", "true");
     await date.pressSequentially("12012026");
     await expect(date).toBeFocused();
-    // Forced, so nothing waits for the list above Apply to finish fading.
-    await settled(panel.locator(".hpopup").first());
     await apply.click({ force: true });
     await expect(panel).toBeHidden();
     await expect(query).toHaveText(`?due[gte]=${baku(12, 1)}`);
+  });
+
+  test("a list fading out doesn't take presses from what's under it", async ({ page }) => {
+    const { panel, condition } = await open(page, "date-filter-default");
+    await condition.click();
+    const list = panel.locator(".hpopup").first();
+    await expect(list).toBeVisible();
+    await settled(list);
+    const [box] = await boxes(list);
+    await slowDown(list);
+    await panel.getByRole("option", { name: "is between", exact: true }).click();
+    await expect(condition).toContainText("is between");
+    await expect(list).toHaveCSS("opacity", /^(?!0$)/);
+
+    const hit = await page.evaluate(
+      ([x, y]) => document.elementFromPoint(x!, y!)?.closest(".hlistbox") === null,
+      [box!.x + box!.width / 2, box!.y + box!.height / 2],
+    );
+    expect(hit).toBe(true);
   });
 
   test("Enter in the amount applies", async ({ page }) => {

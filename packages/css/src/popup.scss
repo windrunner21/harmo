@@ -50,6 +50,8 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
   &[popover]:not(:popover-open) {
     visibility: hidden;
     opacity: 0;
+    // Fading out, it no longer takes presses from what's under it.
+    pointer-events: none;
 
     transform: translateY(
       calc(var(--hpopup-slide-direction) * var(--hpopup-slide))

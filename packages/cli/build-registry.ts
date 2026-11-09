@@ -64,6 +64,7 @@ const components: Record<string, string[]> = {
   stat: ["Stat.tsx"],
   status: ["Status.tsx"],
   switch: ["Switch.tsx"],
+  table: ["table/DataTable.tsx", "table/useColumnVisibility.ts", "table/useRowSelection.ts"],
   tabs: ["tabs/Tabs.tsx", "tabs/TabNav.tsx", "tabs/useTabsMotion.ts"],
   tag: ["Tag.tsx"],
   "tag-list": ["TagList.tsx"],

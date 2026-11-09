@@ -64,6 +64,11 @@ const groups: CatalogGroup[] = [
         purpose: "What's selected in a list and what can be done with it: a count, a way to deselect, then the actions.",
       },
       {
+        slug: "table",
+        title: "Table",
+        purpose: "Rows and columns of data, with selecting, links, choosing columns, and pages.",
+      },
+      {
         slug: "toolbar",
         title: "Toolbar",
         purpose: "Above a list: filters at the start and controls at the end.",

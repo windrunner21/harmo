@@ -10,6 +10,17 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Table: `.htable` on a normal `<table>`, or `<DataTable>` with `useRowSelection`
+  and `useColumnVisibility`: selecting rows, rows that are links all the way
+  across, choosing columns, and a footer of pages that stays in view.
+
+  ```html preview="table/Default"
+  <table class="htable" aria-label="Tasks">
+    <thead><tr><th scope="col">Task</th><th scope="col">Status</th></tr></thead>
+    <tbody><tr><th scope="row">Write the brief</th><td>Active</td></tr></tbody>
+  </table>
+  ```
+
 - Toolbar: `.htoolbar`, or `<Toolbar controls={…}>`, a row above a list with
   filters at the start and controls at the end.
 - Selection Bar: `.hselection-bar`, or `<SelectionBar>`, what's selected in a list
@@ -129,6 +140,7 @@ minor version may change an API, and says how to upgrade when it does.
 
 - Popup: one inside another no longer marks the outer one as closed, or resets
   what's in it, when it opens or closes.
+- Popup: one fading out no longer takes presses from what's under it.
 
 ## [0.4.0] - 2026-11-08
 

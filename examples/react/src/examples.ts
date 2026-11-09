@@ -47,6 +47,7 @@ import { examples as spinner } from "./components/spinner.tsx";
 import { examples as stat } from "./components/stat.tsx";
 import { examples as status } from "./components/status.tsx";
 import { examples as switchExamples } from "./components/switch.tsx";
+import { examples as table } from "./components/table.tsx";
 import { examples as tabs } from "./components/tabs.tsx";
 import { examples as tag } from "./components/tag.tsx";
 import { examples as tagList } from "./components/tag-list.tsx";
@@ -102,6 +103,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   stat,
   status,
   switch: switchExamples,
+  table,
   tabs,
   tag,
   "tag-list": tagList,

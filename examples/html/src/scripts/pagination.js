@@ -47,6 +47,7 @@
       if (range) {
         const from = (page - 1) * perPage() + 1;
         const to = Math.min(page * perPage(), total);
+        nav.dispatchEvent(new CustomEvent("example-page-change", { detail: { from, to } }));
         range.textContent = range.dataset.exampleRange.replace("{from}", from).replace("{to}", to).replace("{total}", total);
       }
       if (!list) return;
