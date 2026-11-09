@@ -7,6 +7,10 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 // on the condition the value describes; and Clear.
 test.use({ timezoneId: "Asia/Baku" });
 
+// CI records a trace of every test, which on a page this long takes WebKit
+// about two seconds a step.
+test.slow(({ browserName }) => browserName === "webkit", "A long page in WebKit");
+
 // Seconds for a moment in Baku, which is UTC+4 all year.
 const baku = (month: number, day: number, hours = 0, minutes = 0, seconds = 0, year = 2026) =>
   Date.UTC(year, month - 1, day, hours - 4, minutes, seconds) / 1000;
@@ -360,6 +364,8 @@ onEachPlayground("date-filter", () => {
   });
 
   test("right to left, the amount is on the right of its unit", async ({ page }) => {
+    // The last example on the page, so the list needs a taller window for room.
+    await page.setViewportSize({ width: 1280, height: 1000 });
     const container = await example(page, "date-filter-right-to-left");
     await container.locator(".hfilter-chip").click();
     const panel = container.getByRole("dialog");

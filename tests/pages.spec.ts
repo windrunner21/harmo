@@ -12,8 +12,7 @@ for (const playground of playgrounds) {
         await open(page, playground, slug);
         // axe opens each popup twice, which on a page of many takes Firefox and
         // WebKit over the usual 30 seconds.
-        const triggers = page.locator(".play-demo [popovertarget]:not(.hpopup [popovertarget])");
-        test.slow((await triggers.count()) >= 5, "A page of many popups");
+        test.slow((await page.locator(".play-demo .hpopup").count()) >= 5, "A page of many popups");
         await page.addScriptTag({ path: axe });
         const { loaded, popups } = await checkAccessibility(page);
 
