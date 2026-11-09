@@ -1,0 +1,158 @@
+@use "shortcuts" as *;
+
+// A month of days to pick from: Previous and Next around its name, then the
+// days as a grid. Always six rows, so it stays the same height from month to
+// month, and Previous and Next stay under the pointer.
+.hcalendar {
+  // Seven days fit a 320px screen inside a popup's padding and margins.
+  --hcalendar-day-size: min(2.5rem, (100vw - 3rem) / 7);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  inline-size: fit-content;
+
+  font-family: $font-family;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hcalendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hcalendar-title {
+  margin: 0;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+
+  color: $color-text;
+}
+
+.hcalendar-grid {
+  border-collapse: collapse;
+
+  & th {
+    padding: 0 0 8px;
+
+    font-size: $font-size-xs;
+    font-weight: $font-weight-normal;
+    line-height: 1.5;
+    text-align: center;
+
+    color: $color-text-secondary;
+  }
+
+  // Sized themselves, so a row of empty cells keeps its height.
+  & td {
+    inline-size: var(--hcalendar-day-size);
+    block-size: var(--hcalendar-day-size);
+    padding: 0;
+  }
+
+  // The chosen date, filled. In forced colors, where a fill is gone, in the
+  // system's highlight.
+  & [aria-selected="true"] > .hcalendar-day {
+    color: $color-on-primary;
+    background-color: $color-primary-fill;
+
+    @media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+      &:hover:not(:disabled) {
+        color: $color-on-primary;
+        background-color: $color-primary-fill-hover;
+      }
+    }
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+}
+
+.hcalendar-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  inline-size: var(--hcalendar-day-size);
+  block-size: var(--hcalendar-day-size);
+  padding: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+
+  color: $color-text;
+  background-color: transparent;
+  border: 0;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+
+  transition:
+    background-color $button-duration ease,
+    color $button-duration ease,
+    transform $button-duration $ease-out-quad;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Today, tinted; in forced colors, where a tint is gone, a line just inside
+  // its edge.
+  &[aria-current="date"] {
+    background-color: $color-background-secondary;
+
+    @media (forced-colors: active) {
+      outline: 1px solid CanvasText;
+      outline-offset: -1px;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      background-color: $color-background-hover;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:active:not(:focus-visible, :disabled) {
+      transform: scale(0.98);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    opacity: $opacity-disabled;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: background-color, color;
+  }
+}

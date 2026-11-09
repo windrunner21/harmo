@@ -19,6 +19,7 @@ const components: Record<string, string[]> = {
   banner: ["Banner.tsx"],
   breadcrumb: ["Breadcrumb.tsx"],
   button: ["Button.tsx"],
+  calendar: ["calendar/Calendar.tsx", "calendar/dates.ts"],
   card: ["Card.tsx"],
   checkbox: ["Checkbox.tsx", "CheckboxGroup.tsx"],
   chevron: ["Chevron.tsx"],

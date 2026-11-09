@@ -7,6 +7,7 @@ import { examples as avatar } from "./components/avatar.tsx";
 import { examples as banner } from "./components/banner.tsx";
 import { examples as breadcrumb } from "./components/breadcrumb.tsx";
 import { examples as button } from "./components/button.tsx";
+import { examples as calendar } from "./components/calendar.tsx";
 import { examples as card } from "./components/card.tsx";
 import { examples as checkbox } from "./components/checkbox.tsx";
 import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
@@ -54,6 +55,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   banner,
   breadcrumb,
   button,
+  calendar,
   card,
   checkbox,
   "chevron-to-arrow": chevronToArrow,

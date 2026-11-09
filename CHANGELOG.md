@@ -8,6 +8,25 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Calendar: `.hcalendar`, or `<Calendar>`, a month of days to pick a date from.
+  The month's name sits between Previous and Next, and the days are a grid of
+  real buttons, always six rows, so it stays the same height from month to
+  month. Names come from `Intl`, in the language of `locale`, which also says
+  where the week starts. The keyboard moves by a day, a week, a month, or a
+  year, and `min` and `max` limit what can be chosen. Dates are strings, as
+  `"2026-11-09"`, so a timezone can't move them.
+
+  ```html preview="calendar/Default"
+  <div class="hcalendar">
+    <div class="hcalendar-header"><!-- Previous, the title, Next --></div>
+    <table class="hcalendar-grid" role="grid" aria-labelledby="month-title">
+      <!-- the weekdays, then six rows of days -->
+    </table>
+  </div>
+  ```
+
 ## [0.4.0] - 2026-11-08
 
 Thirteen new components, among them Sidebar, Command Menu, Combobox, Navigation

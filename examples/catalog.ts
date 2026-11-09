@@ -140,6 +140,11 @@ const groups: CatalogGroup[] = [
     title: "Forms",
     entries: [
       {
+        slug: "calendar",
+        title: "Calendar",
+        purpose: "A month of days to pick a date from, by pointer or keyboard, in the locale's language.",
+      },
+      {
         slug: "checkbox",
         title: "Checkbox",
         purpose: "A native checkbox with Harmo's appearance.",

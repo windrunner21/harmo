@@ -12,6 +12,7 @@ the same markup and does what the script would.
 | Banner | [banner.md](banner.md) |
 | Breadcrumb | [breadcrumb.md](breadcrumb.md) |
 | Button | [button.md](button.md) |
+| Calendar | [calendar.md](calendar.md) |
 | Card | [card.md](card.md) |
 | Checkbox | [checkbox.md](checkbox.md) |
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
@@ -103,6 +104,7 @@ Some components are built from others, so their files need company:
 | `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |
 | `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
 | `banner.css` | `button.css` for its action |
+| `calendar.css` | `button.css`, `chevron.css` |
 | `card.css` | `chevron-to-arrow.css` for a chevron |
 | `copy.css` | `button.css`; `tooltip.css` for an icon-only one; `input.css` and `field.css` for a field |
 | `empty-state.css` | `button.css` for actions |

@@ -8,6 +8,7 @@ export { Avatar, type AvatarProps } from "./Avatar.tsx";
 export { Banner, type BannerProps } from "./Banner.tsx";
 export { Breadcrumb, type BreadcrumbProps } from "./Breadcrumb.tsx";
 export { Button, type ButtonProps } from "./Button.tsx";
+export { Calendar, type CalendarProps } from "./calendar/Calendar.tsx";
 export { Card, type CardProps } from "./Card.tsx";
 export { Checkbox, type CheckboxProps } from "./Checkbox.tsx";
 export { CheckboxGroup, type CheckboxGroupProps } from "./CheckboxGroup.tsx";

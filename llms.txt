@@ -20,7 +20,7 @@ To copy components into a project instead of installing them, run `npx harmo-ui 
 Rules for using the React components (`@harmo-ui/react`):
 
 - Import the CSS once (`@harmo-ui/css`), then the components. Each component page's React section lists its props; every other prop is the named element's native attribute, and `ref` reaches that element.
-- Harmo builds in no text. Pass every word a component shows or announces: Breadcrumb's `aria-label`, Copy Button's `label` and `copiedLabel`, Pagination's `aria-label`, `previousLabel` and `nextLabel` (and `pageLabel` with `numbered`), Spinner's label as children, Password Input's `showPasswordLabel` and `hidePasswordLabel` (and `strengthLabel` with `strength`), Filter Chip's `clearLabel` and `formatCount` with `multiple`, and `emptyMessage` with `searchLabel`. TypeScript requires each where it's needed.
+- Harmo builds in no text. Pass every word a component shows or announces: Breadcrumb's `aria-label`, Calendar's `locale`, `previousLabel` and `nextLabel`, Copy Button's `label` and `copiedLabel`, Pagination's `aria-label`, `previousLabel` and `nextLabel` (and `pageLabel` with `numbered`), Spinner's label as children, Password Input's `showPasswordLabel` and `hidePasswordLabel` (and `strengthLabel` with `strength`), Filter Chip's `clearLabel` and `formatCount` with `multiple`, and `emptyMessage` with `searchLabel`. TypeScript requires each where it's needed.
 - Wrap a form control in `<Field label=…>` for its label, description, Optional marker, and error; Field connects their ids. Pass `error` to every field you validate, even while it's `undefined`, so the error can animate in. Checkbox, Radio, and Switch use `<Field orientation="horizontal">`.
 - Choices are children: `<Select>`, `<Listbox>`, and `<FilterChip>` take `<Option value=…>` and `<OptionGroup label=…>`. Selection is `value` or `defaultValue` with `onValueChange`: a string, or an array with `multiple`.
 - Set the app's router link and image components once with `<HarmoProvider linkComponent={…} imageComponent={…}>`; Link, Button with `href`, TabLink, and Avatar use them. In the Next.js App Router, do it in a `"use client"` component that wraps the root layout's `children`: passing them directly from a Server Component fails the build.
@@ -33,6 +33,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Banner](docs/components/banner.md): an inline notice: an icon, a message, and an optional action
 - [Breadcrumb](docs/components/breadcrumb.md): a navigation trail ending at the current page
 - [Button](docs/components/button.md): an action, as a button or as a link styled like one, or held to confirm one that's hard to undo
+- [Calendar](docs/components/calendar.md): a month of days to pick a date from, by pointer or keyboard, in the locale's language
 - [Card](docs/components/card.md): a frame around a group of content: tinted, raised, or ghost for rows that lead somewhere; with a title, it lays out an icon, the title, a description, and a chevron, as in a list of settings pages
 - [Checkbox](docs/components/checkbox.md): a native checkbox with Harmo's appearance
 - [ChevronToArrow](docs/components/chevron-to-arrow.md): a chevron that turns into an arrow while its link or button is hovered or focused
