@@ -9,9 +9,11 @@ for (const playground of playgrounds) {
   test.describe(playground, () => {
     for (const slug of pages(playground)) {
       test(slug, async ({ page }) => {
-        // Seven popups of a month of buttons each, and axe opens each one twice.
-        test.slow(slug === "date-picker", "Its popups take Firefox and WebKit over 30 seconds");
         await open(page, playground, slug);
+        // axe opens each popup twice, which on a page of many takes Firefox and
+        // WebKit over the usual 30 seconds.
+        const triggers = page.locator(".play-demo [popovertarget]:not(.hpopup [popovertarget])");
+        test.slow((await triggers.count()) >= 5, "A page of many popups");
         await page.addScriptTag({ path: axe });
         const { loaded, popups } = await checkAccessibility(page);
 

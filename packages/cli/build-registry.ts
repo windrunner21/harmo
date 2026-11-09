@@ -27,6 +27,7 @@ const components: Record<string, string[]> = {
   combobox: ["Combobox.tsx"],
   "command-menu": ["CommandMenu.tsx"],
   copy: ["CopyButton.tsx"],
+  "date-filter": ["date-filter/DateFilter.tsx", "date-filter/range.ts"],
   "date-picker": ["date-picker/DatePicker.tsx", "date-picker/typedDate.ts"],
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],

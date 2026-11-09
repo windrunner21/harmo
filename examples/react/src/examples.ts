@@ -14,6 +14,7 @@ import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
 import { examples as combobox } from "./components/combobox.tsx";
 import { examples as commandMenu } from "./components/command-menu.tsx";
 import { examples as copy } from "./components/copy.tsx";
+import { examples as dateFilter } from "./components/date-filter.tsx";
 import { examples as datePicker } from "./components/date-picker.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
@@ -65,6 +66,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   combobox,
   "command-menu": commandMenu,
   copy,
+  "date-filter": dateFilter,
   "date-picker": datePicker,
   dialog,
   drawer,

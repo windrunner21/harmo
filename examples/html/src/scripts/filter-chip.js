@@ -18,7 +18,7 @@
     return footer;
   };
 
-  for (const chip of document.querySelectorAll(".hfilter-chip[popovertarget]")) {
+  for (const chip of document.querySelectorAll('.hfilter-chip[popovertarget]:not([aria-haspopup="dialog"])')) {
     const popup = document.getElementById(chip.getAttribute("popovertarget"));
     const listbox = popup.querySelector(".hlistbox");
     const input = popup.querySelector("input");

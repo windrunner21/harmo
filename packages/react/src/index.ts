@@ -28,6 +28,14 @@ export {
   type CopyFieldProps,
   type ShareButtonProps,
 } from "./CopyButton.tsx";
+export {
+  DateFilter,
+  type DateFilterCondition,
+  type DateFilterLabels,
+  type DateFilterProps,
+  type DateFilterUnit,
+  type DateFilterValue,
+} from "./date-filter/DateFilter.tsx";
 export { DatePicker, type DatePickerProps, type NaturalDateParser } from "./date-picker/DatePicker.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";

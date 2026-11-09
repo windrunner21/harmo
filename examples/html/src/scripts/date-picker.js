@@ -81,8 +81,8 @@
     const hidden = picker.querySelector('input[type="hidden"]');
     const popup = document.getElementById(button.getAttribute("popovertarget"));
     const calendar = popup.querySelector(".hcalendar");
-    const { exampleLocale: locale, exampleToday: today, exampleMin: min, exampleMax: max } = calendar.dataset;
-    const error = picker.closest(".hfield").querySelector(".herror");
+    const { exampleLocale: locale, exampleToday: today } = calendar.dataset;
+    const error = picker.closest(".hfield")?.querySelector(".herror");
     const message = picker.dataset.exampleDateError;
     const typing = typedDateOf(locale);
 
@@ -116,7 +116,7 @@
     const parse = (text) => (words ? readWords(text) : typing.parse(text));
     const isValue = (value) => (time ? isDateTime(value) : isDate(value));
 
-    let current = hidden.value || null;
+    let current = hidden?.value || null;
 
     const showCalendar = () =>
       calendar.dispatchEvent(new CustomEvent("example-calendar-show", { detail: current?.slice(0, 10) ?? null }));
@@ -144,7 +144,8 @@
 
     const settle = (next) => {
       current = next;
-      hidden.value = next ?? "";
+      if (hidden) hidden.value = next ?? "";
+      picker.dispatchEvent(new CustomEvent("example-date-picker-change", { detail: next }));
     };
 
     const commit = () => {
@@ -156,6 +157,7 @@
       }
       if (typed === written(current)) return;
       const parsed = parse(typed);
+      const { exampleMin: min, exampleMax: max } = calendar.dataset;
       if (isValue(parsed) && (!min || parsed.slice(0, 10) >= min) && (!max || parsed.slice(0, 10) <= max)) {
         input.value = written(parsed);
         setInvalid(false);
@@ -207,6 +209,13 @@
       const next = event.relatedTarget;
       const pressed = next === button && pressingButton;
       if (next && !pressed && !popup.contains(next)) popup.hidePopover();
+    });
+
+    // A date another script sets, as a Date Filter's does as it opens.
+    picker.addEventListener("example-date-picker-set", (event) => {
+      settle(event.detail);
+      input.value = written(event.detail);
+      setInvalid(false);
     });
 
     // A form's reset, which can't restore the hidden input: setting its value

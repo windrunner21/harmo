@@ -10,6 +10,20 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Date Filter: `<DateFilter>`, a chip that filters a list by date: within the
+  last few minutes or months, on a day, between two days, after a day, or before
+  one. Its value is `{ gte, lte }` in Unix seconds, so a link can restore it, and
+  the panel reopens on the condition the value describes.
+
+  ```html preview="date-filter/Default"
+  <button class="hfilter-chip" type="button" aria-haspopup="dialog">
+    <span class="hfilter-chip-label">Due date</span>
+    <span class="hfilter-chip-values">
+      <span class="hfilter-chip-value">Nov 1 – 9, 2026</span>
+    </span>
+  </button>
+  ```
+
 - Filter Bar: `.hfilter-bar`, or `<FilterBar>` with `<FilterBarItem>`s, quick
   filters above a list, as a row of cards that each show how many items they'd
   leave. Links where the filter is in the URL, so it can be shared, or buttons
@@ -75,6 +89,11 @@ minor version may change an API, and says how to upgrade when it does.
   </button>
   <!-- a Popup holding a listbox for each column -->
   ```
+
+### Fixed
+
+- Popup: one inside another no longer marks the outer one as closed, or resets
+  what's in it, when it opens or closes.
 
 ## [0.4.0] - 2026-11-08
 

@@ -48,6 +48,8 @@ export const Popup = ({
         popover=""
         style={{ ...style, positionAnchor: anchor } as CSSProperties}
         onBeforeToggle={(event) => {
+          // React passes on those of the popups inside this one.
+          if (event.target !== event.currentTarget) return;
           onBeforeToggle?.(event);
           if (event.defaultPrevented) return;
           setOpen(event.newState === "open");

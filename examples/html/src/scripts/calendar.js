@@ -18,12 +18,8 @@
   };
 
   for (const calendar of document.querySelectorAll(".hcalendar[data-example-locale]")) {
-    const {
-      exampleLocale: locale,
-      exampleToday: today,
-      exampleMin: min = "0100-01-01",
-      exampleMax: max = "9999-12-31",
-    } = calendar.dataset;
+    const { exampleLocale: locale, exampleToday: today } = calendar.dataset;
+    let { exampleMin: min = "0100-01-01", exampleMax: max = "9999-12-31" } = calendar.dataset;
     const [previous, next] = calendar.querySelectorAll(".hcalendar-header > .hbutton");
     const title = calendar.querySelector(".hcalendar-title");
     const grid = calendar.querySelector(".hcalendar-grid");
@@ -141,6 +137,7 @@
     const allowedMonth = (shown) =>
       shown < monthOf(min) ? monthOf(min) : shown > monthOf(max) ? monthOf(max) : shown;
     const show = (date) => {
+      ({ exampleMin: min = "0100-01-01", exampleMax: max = "9999-12-31" } = calendar.dataset);
       value = date;
       month = allowedMonth(monthOf(date ?? today));
       cursor = null;

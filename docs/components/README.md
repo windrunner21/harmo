@@ -19,6 +19,7 @@ the same markup and does what the script would.
 | Combobox | [combobox.md](combobox.md) |
 | Command Menu | [command-menu.md](command-menu.md) |
 | Copy Button | [copy.md](copy.md) |
+| Date Filter | [date-filter.md](date-filter.md) |
 | Date Picker | [date-picker.md](date-picker.md) |
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
@@ -110,6 +111,7 @@ Some components are built from others, so their files need company:
 | `calendar.css` | `button.css`, `chevron.css` |
 | `card.css` | `chevron-to-arrow.css` for a chevron |
 | `copy.css` | `button.css`; `tooltip.css` for an icon-only one; `input.css` and `field.css` for a field |
+| `date-filter.css` | `filter-chip.css`, `popup.css`, `select.css`, `listbox.css`, `expand-chevron.css`, `input.css`, `date-picker.css`, `calendar.css`, `button.css`, `chevron.css` |
 | `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
 | `empty-state.css` | `button.css` for actions |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
@@ -256,6 +258,7 @@ the React components, set:
 | `data-copied`, `data-open`, the tooltip's or label's text, the status | Copy Button, Share Button | Copy or share, and say so for two seconds |
 | Ignoring activation | Pagination | On a disabled Previous or Next |
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
+| Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
 | `data-side="top"` | Popup | Slide away from a trigger it opened above |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
 | `aria-selected` | Listbox option | Selection |

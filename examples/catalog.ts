@@ -38,6 +38,11 @@ const groups: CatalogGroup[] = [
     title: "Data",
     entries: [
       {
+        slug: "date-filter",
+        title: "Date Filter",
+        purpose: "A chip that filters a list by date: in the last days, on a day, between two, after or before.",
+      },
+      {
         slug: "filter-bar",
         title: "Filter Bar",
         purpose: "Quick filters above a list, as a row of cards that each show how many items they'd leave.",

@@ -108,5 +108,5 @@ export const typedDateOf = (locale: string) => {
     return text.length;
   };
 
-  return { mask, format, parse, digitsIn, caretAfter };
+  return { mask, format, parse, digitsIn, caretAfter, toLatin };
 };

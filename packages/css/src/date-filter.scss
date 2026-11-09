@@ -1,0 +1,66 @@
+@use "shortcuts" as *;
+
+// The panel a Date Filter's chip opens: a condition, the fields it needs, and
+// its buttons. Its parts are other components; this only lays them out.
+.hpopup.hdate-filter {
+  gap: 8px;
+
+  min-inline-size: max(200px, anchor-size(inline));
+  padding: 8px;
+}
+
+.hdate-filter-fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hselect {
+    flex: 1 1 0;
+
+    min-inline-size: 8.5rem;
+  }
+
+  // Their width, side by side, and the whole row once they wrap.
+  & > .hdate-picker {
+    flex: 1 1 auto;
+
+    inline-size: 9.75rem;
+  }
+}
+
+.hdate-filter-fields > .hdate-filter-amount {
+  flex: none;
+
+  inline-size: 4rem;
+}
+
+.hdate-filter-and {
+  font-size: $font-size-sm;
+  line-height: 1.5;
+
+  color: $color-text-secondary;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hdate-filter-actions {
+  display: flex;
+  gap: 8px;
+
+  margin-block-start: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hbutton {
+    flex: 1;
+  }
+}
