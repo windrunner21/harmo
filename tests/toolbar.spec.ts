@@ -33,6 +33,14 @@ onEachPlayground("toolbar", () => {
     expect(end!.x).toBeGreaterThanOrEqual(start!.x + start!.width + 39);
   });
 
+  test("short filters leave the controls beside them, in a row with room for both", async ({ page }) => {
+    const container = await example(page, "toolbar-default");
+    const toolbar = container.locator(".htoolbar");
+    await toolbar.evaluate((node: HTMLElement) => (node.style.inlineSize = "450px"));
+    const [start, end] = await boxes(toolbar.locator(".hfilters"), toolbar.locator(".htoolbar-controls"));
+    expect(start!.y + start!.height / 2).toBeCloseTo(end!.y + end!.height / 2, 0);
+  });
+
   test("on a narrow screen the controls go below the filters, with nothing overflowing", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
     const container = await example(page, "toolbar-default");

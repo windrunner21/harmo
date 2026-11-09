@@ -8,6 +8,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Fixed
+
+- Toolbar: controls stay beside short filters, rather than going below them in a
+  row with room for both.
+
 ## [0.5.0] - 2026-11-09
 
 Nine new components for lists and dates: Table, with selecting, row links,

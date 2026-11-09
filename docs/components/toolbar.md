@@ -60,9 +60,8 @@ None of its own: it takes its look from what's in it. Small secondary
 
 - Filters and controls in one row, vertically centered, at least 40px apart.
 - The controls are 8px apart, and stay at the end.
-- Filters that don't fit wrap on their own side. The start is at least 20rem wide
-  unless the row is narrower, so on a narrow screen the controls go below the
-  filters, 8px down.
+- Filters that don't fit wrap on their own side. The controls go below them, 8px
+  down, only when they and the widest filter can't share a row.
 - Right-to-left, the filters start on the right and the controls end on the left.
 
 ## Accessibility

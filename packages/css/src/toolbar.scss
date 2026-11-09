@@ -13,7 +13,7 @@
   }
 
   & > :not(.htoolbar-controls, .hpopup) {
-    flex: 1 1 20rem;
+    flex: 1 1 min-content;
 
     min-inline-size: 0;
   }
