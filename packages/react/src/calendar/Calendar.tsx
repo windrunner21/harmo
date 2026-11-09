@@ -199,7 +199,7 @@ export const Calendar = ({
         >
           <Chevron direction="back" />
         </Button>
-        <p className="hcalendar-title" id={titleId} aria-live="polite">
+        <p className="hcalendar-title" id={titleId} aria-live="polite" suppressHydrationWarning>
           {month && formats.title.format(dateOf(`${month}-01`))}
         </p>
         <Button
@@ -222,7 +222,12 @@ export const Calendar = ({
         <thead>
           <tr>
             {weekdays.map((weekday) => (
-              <th key={weekday.getTime()} scope="col" abbr={formats.weekdayName.format(weekday)}>
+              <th
+                key={weekday.getTime()}
+                scope="col"
+                abbr={formats.weekdayName.format(weekday)}
+                suppressHydrationWarning
+              >
                 {formats.weekday.format(weekday)}
               </th>
             ))}
@@ -243,6 +248,7 @@ export const Calendar = ({
                       aria-current={date === today ? "date" : undefined}
                       disabled={!inRange(date)}
                       onClick={() => choose(date)}
+                      suppressHydrationWarning
                     >
                       {formats.number.format(dateOf(date).getUTCDate())}
                     </button>

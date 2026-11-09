@@ -63,6 +63,8 @@ onEachPlayground("calendar", () => {
     for (let months = 0; months < 11; months++) await previous(calendar).click();
     await expect(title(calendar)).toHaveText("February 2026");
 
+    // In the same place on screen first: a retried click may have scrolled the page.
+    await example(page, "calendar-default");
     const after = await boxes(calendar, previous(calendar), next(calendar));
     for (const [index, box] of before.entries()) {
       expect(after[index]!.x).toBeCloseTo(box.x, 0);

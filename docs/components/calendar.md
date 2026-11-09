@@ -219,7 +219,13 @@ attributes.
 
 Only the browser knows today's date. Rendered on the server, with no `value`,
 `defaultMonth`, or `today`, it's blank at its full size until the page is
-interactive, so nothing shifts or mismatches.
+interactive, so nothing shifts.
+
+Servers and browsers word dates slightly differently, such as "Sunday, 1
+February" and "Sunday 1 February", so the names rendered on the server can
+differ a little from the browser's. They stay until the month changes, with no
+hydration warning. Where the two could disagree about where the week starts,
+set `weekStartsOn`.
 
 ## Tokens
 
