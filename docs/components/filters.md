@@ -106,8 +106,9 @@ Without filters behind a chip, leave out that chip and its panel.
   `--harmo-color-text-secondary` on `--harmo-color-background-hover`, or
   `--harmo-color-border` while the chip is hovered or open, fully rounded and at
   least 18px wide, with digits of one width.
-- The panel is a Popup at least 220px wide, or as wide as the chip, with 12px of
-  padding and its filters in a column 8px apart.
+- The panel is a Popup as wide as its widest filter, and never narrower than the
+  chip, with 12px of padding and its filters in a column 8px apart. It grows as a
+  filter gains values.
 - Reset is 14px and medium weight in `--harmo-color-primary`, with no background,
   and 25px tall. It darkens on hover and press, and long text wraps.
 - Right-to-left, the first filter is on the right.

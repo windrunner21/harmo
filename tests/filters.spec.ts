@@ -120,10 +120,13 @@ onEachPlayground("filters", () => {
     const container = await example(page, "filters-default");
     const all = parts(container);
     await openMore(all);
+    const [before] = await boxes(all.more);
     await choose(all.more.locator(".hfilter-chip", { hasText: "Project" }), all.more, "Website");
     await expect(all.more).toBeVisible();
     await expect(all.moreChip).toHaveAttribute("aria-expanded", "true");
     await expect(all.count).toHaveText("1");
+    const [after] = await boxes(all.more);
+    expect(after!.width).toBeGreaterThan(before!.width);
     await expect(all.reset).toBeVisible();
 
     await choose(all.more.locator(".hfilter-chip", { hasText: "Priority" }), all.more, "High");
@@ -226,7 +229,8 @@ onEachPlayground("filters", () => {
     await expect(all.count).toHaveCSS("background-color", await color(page, "--harmo-color-border"));
     await expect(all.more).toHaveCSS("padding-top", "12px");
     await expect(all.more).toHaveCSS("row-gap", "8px");
-    expect((await all.more.boundingBox())!.width).toBeGreaterThanOrEqual(220);
+    const [panel, chip, filter] = await boxes(all.more, all.moreChip, all.more.locator(".hfilter-chip"));
+    expect(panel!.width).toBeCloseTo(Math.max(chip!.width, filter!.width + 26), 0);
   });
 
   test("right to left, the first filter is on the right", async ({ page }) => {

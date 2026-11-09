@@ -362,7 +362,7 @@ onEachPlayground("date-filter", () => {
     await expect(panel).toBeHidden();
   });
 
-  test("right to left, the amount is on the right of its unit", async ({ page, browserName }) => {
+  test("right to left, the amount is on the right of its unit, and the panel is by its chip", async ({ page }) => {
     const container = await example(page, "date-filter-right-to-left");
     await container.locator(".hfilter-chip").click();
     const panel = container.getByRole("dialog");
@@ -375,9 +375,10 @@ onEachPlayground("date-filter", () => {
     expect(amount.x).toBeGreaterThan(unit.x);
     await expect(panel.getByRole("button", { name: "تطبيق" })).toBeVisible();
 
-    // Firefox puts a list opened from this panel outside the window, where
-    // only part of the page is right to left.
-    if (browserName === "firefox") return;
+    const [chip, box] = await boxes(container.locator(".hfilter-chip"), panel);
+    expect(box.x).toBeLessThan(chip.x + chip.width);
+    expect(box.x + box.width).toBeGreaterThan(chip.x);
+
     await choose(panel.getByRole("combobox", { name: "الشرط" }), panel, "بين");
     await expect(panel.getByRole("textbox", { name: "تاريخ البداية" })).toBeVisible();
     await expect(panel.getByRole("textbox", { name: "تاريخ النهاية" })).toBeVisible();

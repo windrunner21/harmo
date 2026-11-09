@@ -11,6 +11,9 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
 
   inset: auto;
   position-area: block-end span-inline-end;
+  // What the area implies, said outright: Firefox lines up a popup whose
+  // direction isn't the page's against the wrong edge otherwise.
+  justify-self: start;
   position-try-fallbacks: $fallbacks;
 
   display: flex;

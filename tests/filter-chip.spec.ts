@@ -1,9 +1,20 @@
 import { expect, type Page } from "@playwright/test";
-import { clickAt, example, onEachPlayground, openPopup, test } from "./playgrounds.ts";
+import { clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/filter-chip.md says a script does, on the Filter Chip
 // page.
 onEachPlayground("filter-chip", () => {
+  test("a value keeps its background on a chip that's open", async ({ page }) => {
+    const { chip } = await openChip(page, "filter-chip-one-value");
+    const value = chip.locator(".hfilter-chip-value");
+    await settled(chip);
+    await settled(value);
+    const backgrounds = await chip.evaluate((node) =>
+      [node, node.querySelector(".hfilter-chip-value")!].map((part) => getComputedStyle(part).backgroundColor),
+    );
+    expect(backgrounds[0]).not.toBe(backgrounds[1]);
+  });
+
   test("a multi-select chip shows two values, then a count, and stays open", async ({ page }) => {
     const { container, chip } = await openChip(page, "filter-chip-nothing-chosen");
     const values = chip.locator(".hfilter-chip-value");
