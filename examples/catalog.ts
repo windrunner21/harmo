@@ -38,6 +38,11 @@ const groups: CatalogGroup[] = [
     title: "Data",
     entries: [
       {
+        slug: "filter-bar",
+        title: "Filter Bar",
+        purpose: "Quick filters above a list, as a row of cards that each show how many items they'd leave.",
+      },
+      {
         slug: "filter-chip",
         title: "Filter Chip",
         purpose:

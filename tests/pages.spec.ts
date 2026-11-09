@@ -9,6 +9,8 @@ for (const playground of playgrounds) {
   test.describe(playground, () => {
     for (const slug of pages(playground)) {
       test(slug, async ({ page }) => {
+        // Seven popups of a month of buttons each, and axe opens each one twice.
+        test.slow(slug === "date-picker", "Its popups take Firefox and WebKit over 30 seconds");
         await open(page, playground, slug);
         await page.addScriptTag({ path: axe });
         const { loaded, popups } = await checkAccessibility(page);

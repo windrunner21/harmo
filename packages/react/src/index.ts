@@ -34,6 +34,7 @@ export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
 export { Field, type FieldProps } from "./field/Field.tsx";
+export { FilterBar, FilterBarItem, type FilterBarItemProps, type FilterBarProps } from "./FilterBar.tsx";
 export { FilterChip, type FilterChipProps } from "./FilterChip.tsx";
 export { HarmoProvider, type HarmoProviderProps } from "./HarmoProvider.tsx";
 export { Input, type InputProps } from "./Input.tsx";

@@ -43,6 +43,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Empty State](docs/components/empty-state.md): what shows where there's nothing yet: a list before its first item, a search with no results, or a page you can't see
 - [Expand Chevron](docs/components/expand-chevron.md): a chevron that folds from down to up while its control is expanded
 - [Field](docs/components/field.md): arranges and connects a label, description, control, and error message
+- [Filter Bar](docs/components/filter-bar.md): quick filters above a list, as a row of cards that each show how many items they'd leave
 - [Filter Chip](docs/components/filter-chip.md): narrows a list or table: a dashed chip that opens a Popup and shows what's chosen
 - [Icons](docs/components/icons.md): SVG icons placed next to text in buttons, links, and breadcrumbs
 - [Input](docs/components/input.md): single-line native inputs: text, email, search, tel, url, and similar

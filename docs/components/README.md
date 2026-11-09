@@ -25,6 +25,7 @@ the same markup and does what the script would.
 | Empty State | [empty-state.md](empty-state.md) |
 | Expand Chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
+| Filter Bar | [filter-bar.md](filter-bar.md) |
 | Filter Chip | [filter-chip.md](filter-chip.md) |
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
 | Input | [input.md](input.md) |

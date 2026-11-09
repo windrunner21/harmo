@@ -1,0 +1,66 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    Links, where the filter is in the URL, so a link can be shared. As many to a
+    row as fit, all the same width. The one in force has
+    <code>aria-current="true"</code>. Here a click only moves it, as your router would.
+  </play-note>
+  <nav class="hfilter-bar" aria-label="Task status">
+    <a class="hfilter-bar-item" href="?" aria-current="true">
+      <span class="hfilter-bar-label">All</span>
+      <span class="hfilter-bar-count">128</span>
+    </a>
+    <a class="hfilter-bar-item" href="?status=active">
+      <span class="hfilter-bar-label">Active</span>
+      <span class="hfilter-bar-count">37</span>
+    </a>
+    <a class="hfilter-bar-item" href="?status=blocked">
+      <span class="hfilter-bar-label">Blocked</span>
+      <span class="hfilter-bar-count">6</span>
+    </a>
+    <a class="hfilter-bar-item" href="?status=done">
+      <span class="hfilter-bar-label">Done</span>
+      <span class="hfilter-bar-count">85</span>
+    </a>
+  </nav>
+</play-example>
+
+<play-example title="Held by your app" layout="wide">
+  <play-note>
+    Buttons with <code>aria-pressed</code>, where your app holds the filter rather
+    than the URL.
+  </play-note>
+  <div class="hfilter-bar" role="group" aria-label="Whose tasks">
+    <button class="hfilter-bar-item" type="button" aria-pressed="true">
+      <span class="hfilter-bar-label">Mine</span>
+      <span class="hfilter-bar-count">12</span>
+    </button>
+    <button class="hfilter-bar-item" type="button" aria-pressed="false">
+      <span class="hfilter-bar-label">My team's</span>
+      <span class="hfilter-bar-count">41</span>
+    </button>
+    <button class="hfilter-bar-item" type="button" aria-pressed="false">
+      <span class="hfilter-bar-label">Unassigned</span>
+      <span class="hfilter-bar-count">0</span>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
+  <play-note>
+    The first filter is on the right, and the text starts there.
+  </play-note>
+  <nav class="hfilter-bar" aria-label="حالة المهام">
+    <a class="hfilter-bar-item" href="?" aria-current="true">
+      <span class="hfilter-bar-label">الكل</span>
+      <span class="hfilter-bar-count">١٢٨</span>
+    </a>
+    <a class="hfilter-bar-item" href="?status=active">
+      <span class="hfilter-bar-label">نشطة</span>
+      <span class="hfilter-bar-count">٣٧</span>
+    </a>
+    <a class="hfilter-bar-item" href="?status=done">
+      <span class="hfilter-bar-label">مكتملة</span>
+      <span class="hfilter-bar-count">٨٥</span>
+    </a>
+  </nav>
+</play-example>

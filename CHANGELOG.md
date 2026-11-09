@@ -10,6 +10,28 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Added
 
+- Filter Bar: `.hfilter-bar`, or `<FilterBar>` with `<FilterBarItem>`s, quick
+  filters above a list, as a row of cards that each show how many items they'd
+  leave. Links where the filter is in the URL, so it can be shared, or buttons
+  where your app holds it.
+
+  ```html preview
+  <nav class="hfilter-bar" aria-label="Task status" style="inline-size: 28rem">
+    <a class="hfilter-bar-item" href="#all" aria-current="true">
+      <span class="hfilter-bar-label">All</span>
+      <span class="hfilter-bar-count">128</span>
+    </a>
+    <a class="hfilter-bar-item" href="#active">
+      <span class="hfilter-bar-label">Active</span>
+      <span class="hfilter-bar-count">37</span>
+    </a>
+    <a class="hfilter-bar-item" href="#done">
+      <span class="hfilter-bar-label">Done</span>
+      <span class="hfilter-bar-count">85</span>
+    </a>
+  </nav>
+  ```
+
 - Calendar: `.hcalendar`, or `<Calendar>`, a month of days to pick a date from.
   The month's name sits between Previous and Next, and the days are a grid of
   real buttons, always six rows, so it stays the same height from month to

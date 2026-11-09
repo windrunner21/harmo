@@ -33,6 +33,7 @@ const components: Record<string, string[]> = {
   "empty-state": ["EmptyState.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
+  "filter-bar": ["FilterBar.tsx"],
   "filter-chip": ["FilterChip.tsx"],
   input: ["Input.tsx"],
   kbd: ["Kbd.tsx"],
