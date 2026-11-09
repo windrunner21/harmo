@@ -96,8 +96,9 @@ Note each change people using Harmo would notice under Unreleased in
 that asks something of them goes under Upgrading: what it is, what they'll
 notice if they do nothing, and the code before and after. After a code block's
 language, `title="globals.css"` names its file, and `preview` shows its HTML
-live on the website's changelog, as the second 0.2.0 entry does; GitHub shows
-both as plain code.
+live on the website's changelog, as the second 0.2.0 entry does. That HTML has
+no script, so a component that needs one names its example on the website
+instead, as `preview="combobox/Default"`. GitHub shows them all as plain code.
 
 For assisted development, agree on the scope of each patch. Run
 installations, builds, and other toolchain commands only with explicit
@@ -155,6 +156,12 @@ version, so the CLI copies the code of the packages with its version.
 5. From each of `packages/css`, `packages/react`, and `packages/cli`, run
    `npm publish`, which builds the package first.
 6. Tag the commit `v<version>`, and push the tag.
+7. Create the GitHub Release, once every package is on npm, with the version's
+   section of the changelog as its notes:
+
+   ```sh
+   awk '/^## \[<version>\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md | gh release create v<version> --title <version> --notes-file -
+   ```
 
 ## Playground
 

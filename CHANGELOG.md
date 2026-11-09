@@ -105,7 +105,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   that scrolls. With free text too, typed text, such as an address, is a
   choice of its own.
 
-  ```html preview
+  ```html preview="combobox/Default"
   <div>
     <div class="hcombobox" style="anchor-name: --changelog-assignee">
       <input class="hinput" type="text" role="combobox" autocomplete="off" aria-autocomplete="list" aria-expanded="false" aria-label="Assign to" placeholder="Search agents" value="" />
@@ -126,7 +126,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   field, its list opens and closes at once, as it's opened many times a day;
   the dialog fades in as a Dialog does.
 
-  ```html preview
+  ```html preview="command-menu/Default"
   <div style="display: grid; gap: 12px; inline-size: 20rem">
     <div class="hsearch">
       <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor" /><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor" /></svg>
@@ -150,7 +150,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   and elsewhere copies the link. A new token, `--harmo-font-family-mono`, is
   for text that's read character by character.
 
-  ```html preview
+  ```html preview="copy/With its text"
   <button class="hbutton hcopy" data-variant="secondary" type="button">
     <span class="hicon hcopy-icons" aria-hidden="true"><svg class="hcopy-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"> <path d="M10.5 8.5H17.5C18.6 8.5 19.5 9.4 19.5 10.5V17.5C19.5 18.6 18.6 19.5 17.5 19.5H10.5C9.4 19.5 8.5 18.6 8.5 17.5V10.5C8.5 9.4 9.4 8.5 10.5 8.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> <path d="M6.5 15.5H6C5.17 15.5 4.5 14.83 4.5 14V6C4.5 5.17 5.17 4.5 6 4.5H14C14.83 4.5 15.5 5.17 15.5 6V6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /> </svg><svg class="hcopy-done" viewBox="4.85 4.88 16 16" fill="none" aria-hidden="true" focusable="false"> <path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor" /> </svg></span>
     <span class="hbutton-label">Copy</span>
@@ -204,7 +204,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   bars that turn into a cross while it's expanded, for opening a site's menu on
   a phone.
 
-  ```html preview
+  ```html preview="menu-button/Default"
   <button class="hbutton hmenu-button" data-variant="secondary" data-size="small" type="button" aria-label="Menu" aria-expanded="false"><svg class="hicon hmenu-button-bars" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><line class="hmenu-button-top" x1="3" y1="5" x2="17" y2="5" /><line class="hmenu-button-middle" x1="3" y1="10" x2="17" y2="10" /><line class="hmenu-button-bottom" x1="3" y1="15" x2="17" y2="15" /></svg></button>
   ```
 
@@ -215,7 +215,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   page, so Tab goes from a trigger into its links. `data-orientation="vertical"`
   stacks the triggers, with each panel opening in place, for a phone.
 
-  ```html preview
+  ```html preview="navigation-menu/Default"
   <nav class="hnavigation-menu" aria-label="Main">
     <div class="hnavigation-menu-frame" aria-hidden="true"></div>
     <ul class="hnavigation-menu-list">
@@ -234,7 +234,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   app holds it. On the first or last page, Previous or Next stays in place,
   disabled. On a phone, only Previous and Next show.
 
-  ```html preview
+  ```html preview="pagination/Numbered"
   <nav class="hpagination" aria-label="Pages">
     <a class="hbutton" data-variant="secondary" href="?page=4" rel="prev"><svg class="hicon hchevron" data-direction="back" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M8.79048 5C8.58956 5 8.38863 5.07186 8.23001 5.22585C7.92333 5.52355 7.92333 6.01631 8.23001 6.31402L14.0886 12.0013L8.23001 17.6885C7.92333 17.9863 7.92333 18.479 8.23001 18.7767C8.53668 19.0744 9.04428 19.0744 9.35096 18.7767L15.77 12.5454C16.0767 12.2477 16.0767 11.7549 15.77 11.4572L9.35096 5.22585C9.19233 5.07186 8.99141 5 8.79048 5Z" fill="currentColor" /></svg><span class="hbutton-label">Previous</span></a>
     <ul class="hpagination-pages">
@@ -384,7 +384,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   removes the tag, such as a filter: a 12px cross with a 24px target, named
   in your app's language.
 
-  ```html preview
+  ```html preview="tag/With a remove button"
   <div>
     <span class="htag">
       Billing
@@ -402,7 +402,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
 
   ```html preview
   <div>
-    <ul class="htag-list" style="inline-size: 16rem">
+    <ul class="htag-list">
       <li>
         <span class="htag" style="--htag-color: var(--harmo-amber)">
           <span class="htag-dot" aria-hidden="true"></span>Billing
@@ -430,7 +430,7 @@ Menu, and Pagination, and a card's icon, title, description, and chevron.
   tooltip a press pins open, as on a touch screen, which neither hovers nor
   shows keyboard focus. A Tag List's "+N" uses it.
 
-  ```html preview
+  ```html
   <div>
     <span class="htooltip-trigger" data-open>
       <button class="hbutton" data-variant="secondary" type="button" aria-describedby="changelog-pinned-tip">
