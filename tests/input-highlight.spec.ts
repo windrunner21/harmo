@@ -126,6 +126,8 @@ onEachPlayground("input", () => {
   test("a long value scrolls with the field", async ({ page }) => {
     const { field, text } = await parts(page);
     await field.fill(`{{1}} ${"a long run of words ".repeat(20)}`);
+    // Safari doesn't scroll to a caret that's already at the end.
+    await field.press("Home");
     await field.press("End");
     await expect.poll(() => field.evaluate((n) => n.scrollLeft)).toBeGreaterThan(0);
     await expect.poll(() => scrolled(text)).toEqual(await scrolled(field));

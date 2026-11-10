@@ -67,9 +67,10 @@ export const useBackdrop = (field: RefObject<HTMLElement | null>, shown: boolean
     for (const name of copied) to.style[name] = style[name];
     to.style.whiteSpace = from.getAttribute("wrap")?.toLowerCase() === "off" ? "pre" : style.whiteSpace;
     to.style.inset = `${from.offsetTop}px auto auto ${from.offsetLeft}px`;
-    const start = from.clientLeft - parseFloat(style.borderLeftWidth);
-    const end = from.offsetWidth - from.clientWidth - from.clientLeft - parseFloat(style.borderRightWidth);
-    const below = from.offsetHeight - from.clientHeight - from.clientTop - parseFloat(style.borderBottomWidth);
+    const scrolls = from.localName === "textarea";
+    const start = scrolls ? from.clientLeft - parseFloat(style.borderLeftWidth) : 0;
+    const end = scrolls ? from.offsetWidth - from.clientWidth - from.clientLeft - parseFloat(style.borderRightWidth) : 0;
+    const below = scrolls ? from.offsetHeight - from.clientHeight - from.clientTop - parseFloat(style.borderBottomWidth) : 0;
     to.style.paddingLeft = `${parseFloat(style.paddingLeft) + scrollbar(start)}px`;
     to.style.paddingRight = `${parseFloat(style.paddingRight) + scrollbar(end)}px`;
     to.style.paddingBottom = `${parseFloat(style.paddingBottom) + scrollbar(below)}px`;

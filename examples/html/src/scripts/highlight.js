@@ -30,9 +30,11 @@
       for (const name of copied) backdrop.style[name] = style[name];
       backdrop.style.whiteSpace = field.getAttribute("wrap")?.toLowerCase() === "off" ? "pre" : style.whiteSpace;
       backdrop.style.inset = `${field.offsetTop}px auto auto ${field.offsetLeft}px`;
-      const start = field.clientLeft - parseFloat(style.borderLeftWidth);
-      const end = field.offsetWidth - field.clientWidth - field.clientLeft - parseFloat(style.borderRightWidth);
-      const below = field.offsetHeight - field.clientHeight - field.clientTop - parseFloat(style.borderBottomWidth);
+      // Only a textarea has scrollbars, and Firefox counts an input's padding in
+      // clientLeft.
+      const start = textarea ? field.clientLeft - parseFloat(style.borderLeftWidth) : 0;
+      const end = textarea ? field.offsetWidth - field.clientWidth - field.clientLeft - parseFloat(style.borderRightWidth) : 0;
+      const below = textarea ? field.offsetHeight - field.clientHeight - field.clientTop - parseFloat(style.borderBottomWidth) : 0;
       backdrop.style.paddingLeft = `${parseFloat(style.paddingLeft) + scrollbar(start)}px`;
       backdrop.style.paddingRight = `${parseFloat(style.paddingRight) + scrollbar(end)}px`;
       backdrop.style.paddingBottom = `${parseFloat(style.paddingBottom) + scrollbar(below)}px`;
