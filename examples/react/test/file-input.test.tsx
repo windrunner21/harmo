@@ -81,6 +81,19 @@ describe("FileInput", () => {
     expect(markup).not.toMatch(/<button[^>]*hidden=""/);
   });
 
+  test("a spread can't turn on choosing several files", () => {
+    const native = { multiple: true } as object;
+    expect(renderToStaticMarkup(<FileInput {...labels} {...native} />)).not.toContain("multiple");
+  });
+
+  test("only an avatar with two texts stacks them", () => {
+    expect(renderToStaticMarkup(<FileInput {...labels} variant="avatar" />)).not.toContain("data-stacked");
+    expect(renderToStaticMarkup(<FileInput {...labels} variant="avatar" changeLabel="C" />)).toContain("data-stacked");
+    expect(
+      renderToStaticMarkup(<FileInput {...labels} variant="area" dropLabel="D" heading={<span>H</span>} />),
+    ).not.toContain("data-stacked");
+  });
+
   test("the icon shows an arrow, then a check once there's a file, unless replaced", () => {
     expect(renderToStaticMarkup(<FileInput {...labels} />)).toContain("hfile-input-arrow");
     expect(renderToStaticMarkup(<FileInput {...labels} defaultFileName="a" />)).toContain("hfile-input-check");

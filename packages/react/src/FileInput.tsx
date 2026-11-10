@@ -28,6 +28,7 @@ interface FileInputOptions
     ComponentPropsWithRef<"input">,
     "type" | "multiple" | "value" | "defaultValue" | "children"
   > {
+  multiple?: never;
   chooseLabel: ReactNode;
   removeLabel: string;
   icon?: ReactNode;
@@ -127,6 +128,18 @@ const elementOf = (event: DragEvent) => {
 const dropAreaOf = (event: DragEvent) =>
   elementOf(event)?.closest(".hfile-input[data-variant]:has(.hfile-input-control:enabled)");
 
+const ownAnswers = new WeakSet<Event>();
+const stuckAfter = 2000;
+
+const leftToOthers = (event: DragEvent) => {
+  const element = elementOf(event);
+  return (
+    (event.defaultPrevented && !ownAnswers.has(event)) ||
+    (element as HTMLElement | null)?.isContentEditable ||
+    Boolean(element?.closest("input:not(.hfile-input-control), textarea"))
+  );
+};
+
 const useFileDrop = (
   root: RefObject<HTMLElement | null>,
   input: RefObject<HTMLInputElement | null>,
@@ -137,34 +150,41 @@ const useFileDrop = (
   useEffect(() => {
     if (!enabled) return;
     let depth = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const carriesFiles = (event: DragEvent) => event.dataTransfer?.types.includes("Files");
     const inside = (event: DragEvent) => dropAreaOf(event) === root.current;
-    const anotherInput = (event: DragEvent) =>
-      elementOf(event)?.closest('input[type="file"]:not(.hfile-input-control)');
-    const allow = (event: DragEvent) => {
+    const end = () => {
+      depth = 0;
+      clearTimeout(timer);
+      setDragging(undefined);
+    };
+    const answer = (event: DragEvent) => {
+      setDragging(inside(event) ? "over" : "page");
+      clearTimeout(timer);
+      timer = setTimeout(end, stuckAfter);
+      if (leftToOthers(event)) return;
+      ownAnswers.add(event);
       event.preventDefault();
       event.dataTransfer!.dropEffect = dropAreaOf(event) ? "copy" : "none";
-      setDragging(inside(event) ? "over" : "page");
     };
 
     const enter = (event: DragEvent) => {
       if (!carriesFiles(event)) return;
       depth += 1;
-      if (!anotherInput(event)) allow(event);
+      answer(event);
     };
     const leave = (event: DragEvent) => {
       if (!carriesFiles(event)) return;
       depth = Math.max(0, depth - 1);
-      if (depth === 0) setDragging(undefined);
+      if (depth === 0) end();
     };
     const over = (event: DragEvent) => {
-      if (!carriesFiles(event) || anotherInput(event)) return;
-      allow(event);
+      if (carriesFiles(event)) answer(event);
     };
     const drop = (event: DragEvent) => {
-      depth = 0;
-      setDragging(undefined);
-      if (!carriesFiles(event) || anotherInput(event)) return;
+      end();
+      if (!carriesFiles(event) || leftToOthers(event)) return;
+      ownAnswers.add(event);
       event.preventDefault();
       const transfer = event.dataTransfer!;
       const file = transfer.files[0];
@@ -181,6 +201,7 @@ const useFileDrop = (
     document.addEventListener("dragover", over);
     document.addEventListener("drop", drop);
     return () => {
+      clearTimeout(timer);
       document.removeEventListener("dragenter", enter);
       document.removeEventListener("dragleave", leave);
       document.removeEventListener("dragover", over);
@@ -214,6 +235,9 @@ export const FileInput = ({
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const image = useRef<HTMLImageElement>(null);
+  const created = useRef(new Set<string>());
+  const reconciled = useRef(false);
+  const defaults = useRef([defaultFileName, defaultPreview]);
   const inputRef = useMergedRef(input, ref);
   const widthRef = useWidthChange();
   const errorId = useId();
@@ -235,22 +259,31 @@ export const FileInput = ({
     if (refused && input.current) input.current.value = "";
     const kept = refused ? null : file;
     setFileName(kept?.name ?? null);
-    setPreview(kept && variant === "avatar" ? URL.createObjectURL(kept) : null);
+    const url = kept && variant === "avatar" ? URL.createObjectURL(kept) : null;
+    if (url) created.current.add(url);
+    setPreview(url);
     onFileChange?.(kept);
   };
 
+  const restore = () => {
+    setFileName(defaultFileName ?? null);
+    setPreview(defaultPreview ?? null);
+  };
+
   useEffect(() => {
+    if (reconciled.current) return;
+    reconciled.current = true;
     const chosen = input.current?.files?.[0];
     if (chosen) take(chosen);
   }, []);
 
   useEffect(() => {
-    const restore = () => {
-      setFileName(defaultFileName ?? null);
-      setPreview(defaultPreview ?? null);
-    };
+    if (defaults.current[0] === defaultFileName && defaults.current[1] === defaultPreview) return;
+    defaults.current = [defaultFileName, defaultPreview];
     if (!input.current?.files?.length) restore();
+  }, [defaultFileName, defaultPreview]);
 
+  useEffect(() => {
     const form = input.current?.form;
     if (!form) return;
     const reset = (event: Event) =>
@@ -261,13 +294,13 @@ export const FileInput = ({
       });
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, [defaultFileName, defaultPreview]);
+  }, [defaultFileName, defaultPreview, props.form]);
 
   useEffect(
     () => () => {
-      if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
+      if (picture && created.current.delete(picture)) URL.revokeObjectURL(picture);
     },
-    [preview],
+    [picture],
   );
 
   const leaving = picture !== null && preview === null;
@@ -290,6 +323,7 @@ export const FileInput = ({
       ref={inputRef}
       className="hfile-input-control"
       type="file"
+      multiple={false}
       aria-invalid={message ? true : field["aria-invalid"]}
       onChange={(event) => {
         onChange?.(event);
@@ -323,7 +357,7 @@ export const FileInput = ({
                 />
               )}
             </span>
-            <span className="hfile-input-heading">
+            <span className="hfile-input-heading" data-stacked={renders(changeLabel) ? "" : undefined}>
               {renders(changeLabel) ? (
                 <>
                   <span data-inactive={attached ? "" : undefined}>{chooseLabel}</span>

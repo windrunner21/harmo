@@ -5,6 +5,7 @@ import { boxes, example, onEachPlayground, ready, settled, test } from "./playgr
 // What docs/components/file-input.md says: a button that opens the picker, then
 // shows the file with a way to remove it; a real input the keyboard reaches;
 // refusing a file and saying why; a file already attached; and a form's reset.
+const png = { name: "me.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64") };
 const csv = (name = "tasks.csv", size = 10) => ({ name, mimeType: "text/csv", buffer: Buffer.alloc(size, "a") });
 
 // Sends a drag event carrying files, as the browser would. Returns whether the
@@ -18,6 +19,25 @@ const drag = (target: Locator, type: string, names = ["tasks.csv"]) =>
     },
     [type, names] as const,
   );
+
+// What a page last told the browser about a drag over this element. A made-up
+// event's dropEffect can't be set, so this keeps the value the page gave, which
+// is the one a browser would obey.
+const lastEffect = (target: Locator) =>
+  target.evaluate((node) => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(new File(["a"], "tasks.csv", { type: "text/csv" }));
+    let last = "";
+    Object.defineProperty(dataTransfer, "dropEffect", { set: (value) => (last = value), get: () => last });
+    node.dispatchEvent(new DragEvent("dragover", { bubbles: true, cancelable: true, dataTransfer }));
+    return last;
+  });
+
+// Adds an element to the page to drag over.
+const added = async (page: Page, markup: string) => {
+  await page.evaluate((markup) => document.body.insertAdjacentHTML("beforeend", markup), markup);
+  return page.locator("body > :last-child");
+};
 
 onEachPlayground("file-input", () => {
   const parts = async (page: Page, id: string) => {
@@ -147,9 +167,18 @@ onEachPlayground("file-input", () => {
     expect(await root.evaluate((n) => n.scrollWidth - n.clientWidth)).toBe(0);
   });
 
-  test("the button's own text wraps instead, and loses the file's title with the file", async ({ page }) => {
-    const { input, text, remove } = await parts(page, "file-input-default");
+  test("the button's own text wraps instead of ending in an ellipsis", async ({ page }) => {
+    const { root, button, text } = await parts(page, "file-input-default");
+    await root.evaluate((n: HTMLElement) => (n.style.inlineSize = "140px"));
+    await text.evaluate((n) => (n.textContent = "Choose a file from anywhere on this computer"));
+    const [drawn] = await boxes(button);
+    expect(drawn!.height).toBeGreaterThan(34);
+    expect(await text.evaluate((n) => n.scrollWidth - n.clientWidth)).toBe(0);
     await expect(text).not.toHaveCSS("text-overflow", "ellipsis");
+  });
+
+  test("a file's name is in the title while the file is there", async ({ page }) => {
+    const { input, text, remove } = await parts(page, "file-input-default");
     await input.setInputFiles(csv());
     await expect(text).toHaveAttribute("title", "tasks.csv");
     await remove.click();
@@ -200,22 +229,75 @@ onEachPlayground("file-input", () => {
   });
 
   test("with several on a page, each one allows a drop, and only they do", async ({ page }) => {
-    const effect = (target: Locator) =>
-      target.evaluate((node) => {
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(new File(["a"], "tasks.csv", { type: "text/csv" }));
-        // A made-up event's dropEffect can't be set, so this keeps the last one
-        // the page gave, which is the one a browser would obey.
-        let last = "";
-        Object.defineProperty(dataTransfer, "dropEffect", { set: (value) => (last = value), get: () => last });
-        node.dispatchEvent(new DragEvent("dragover", { bubbles: true, cancelable: true, dataTransfer }));
-        return last;
-      });
     for (const id of ["compact-drop-area", "large-drop-area", "avatar", "avatar-with-a-picture"]) {
-      expect(await effect(page.locator(`[id="file-input-${id}"] .hfile-input`).first()), id).toBe("copy");
+      expect(await lastEffect(page.locator(`[id="file-input-${id}"] .hfile-input`).first()), id).toBe("copy");
     }
-    expect(await effect(page.locator("body"))).toBe("none");
-    expect(await effect(page.locator('[id="file-input-disabled"] .hfile-input[data-variant="strip"]'))).toBe("none");
+    expect(await lastEffect(page.locator("body"))).toBe("none");
+    expect(await lastEffect(page.locator('[id="file-input-disabled"] .hfile-input[data-variant="strip"]'))).toBe("none");
+  });
+
+  test("a drop target of someone else's keeps its own answer", async ({ page }) => {
+    const other = await added(page, '<div style="block-size: 40px"></div>');
+    await other.evaluate((node) =>
+      node.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        (event as DragEvent).dataTransfer!.dropEffect = "copy";
+      }),
+    );
+    expect(await lastEffect(other)).toBe("copy");
+  });
+
+  test("text fields and editable content keep a drop of their own", async ({ page }) => {
+    for (const markup of ["<textarea></textarea>", '<div contenteditable="true">Text</div>', '<input type="file" />']) {
+      const field = await added(page, markup);
+      expect(await drag(field, "dragover"), markup).toBe(true);
+      expect(await drag(field, "drop"), markup).toBe(true);
+    }
+  });
+
+  test("moving onto a plain file input takes the fill off the area", async ({ page }) => {
+    const { root } = await parts(page, "file-input-compact-drop-area");
+    const plain = await added(page, '<input type="file" />');
+    await drag(root, "dragenter");
+    await expect(root).toHaveAttribute("data-dragging", "over");
+    await drag(plain, "dragenter");
+    await expect(root).toHaveAttribute("data-dragging", "page");
+  });
+
+  test("a drag that ends without a word still clears the highlight", async ({ page }) => {
+    const { root } = await parts(page, "file-input-compact-drop-area");
+    await drag(root, "dragenter");
+    await expect(root).toHaveAttribute("data-dragging", "over");
+    await expect(root).not.toHaveAttribute("data-dragging", { timeout: 4000 });
+  });
+
+  test("the button's width moves to the name's", async ({ page }) => {
+    const { input } = await parts(page, "file-input-default");
+    await page.evaluate(() => {
+      const seen: string[] = [];
+      (window as unknown as { widths: string[] }).widths = seen;
+      const animate = Element.prototype.animate;
+      Element.prototype.animate = function (keyframes, options) {
+        if (JSON.stringify(keyframes).includes("width")) seen.push(this.localName);
+        return animate.call(this, keyframes, options);
+      };
+    });
+    await input.setInputFiles(csv("a-name-much-longer-than-the-button-was.csv"));
+    await expect.poll(() => page.evaluate(() => (window as unknown as { widths: string[] }).widths)).toContain("label");
+  });
+
+  test("in an HTML page, a field enabled or disabled later follows its state", async ({ page }) => {
+    test.skip((await page.locator("[data-play-root]").count()) > 0, "React removes its listeners with the prop");
+    const root = page.locator('[id="file-input-disabled"] .hfile-input[data-variant="strip"]');
+    const input = root.locator(".hfile-input-control");
+    await input.evaluate((n: HTMLInputElement) => (n.disabled = false));
+    await drag(root, "drop");
+    expect(await fileCount(input)).toBe(1);
+    await drag(root, "dragenter");
+    await expect(root).toHaveAttribute("data-dragging", "over");
+    await input.evaluate((n: HTMLInputElement) => (n.disabled = true));
+    await drag(root, "dragover");
+    await expect(root).not.toHaveAttribute("data-dragging");
   });
 
   test("a real drag and drop reaches every area on the page", async ({ page, browserName }) => {
@@ -238,6 +320,9 @@ onEachPlayground("file-input", () => {
       await expect
         .poll(() => root.locator(".hfile-input-control").evaluate((n: HTMLInputElement) => n.files!.length), id)
         .toBe(1);
+      if (id === "avatar-with-a-picture") await expect(root.locator(".hfile-input-preview")).toHaveAttribute("src", /^blob:/);
+      else await expect(root.locator("label.hbutton .hbutton-label")).toHaveText("tasks.csv");
+      await expect(root).not.toHaveAttribute("data-dragging");
     }
   });
 
@@ -368,7 +453,7 @@ onEachPlayground("file-input", () => {
     const { root, input } = await parts(page, "file-input-avatar");
     const chooser = page.waitForEvent("filechooser");
     await root.locator(".hfile-input-heading").click();
-    await (await chooser).setFiles({ name: "me.png", mimeType: "image/png", buffer: Buffer.from("a") });
+    await (await chooser).setFiles(png);
     expect(await fileCount(input)).toBe(1);
   });
 
@@ -378,8 +463,9 @@ onEachPlayground("file-input", () => {
     const picture = root.locator(".hfile-input-preview");
     await expect(picture).toHaveCount(0);
     await expect(remove).toBeHidden();
-    await input.setInputFiles({ name: "me.png", mimeType: "image/png", buffer: Buffer.from("a") });
+    await input.setInputFiles(png);
     await expect(picture).toHaveAttribute("src", /^blob:/);
+    await expect.poll(() => picture.evaluate((n: HTMLImageElement) => n.naturalWidth)).toBe(1);
     await expect(heading).toHaveText("Change picture");
     await expect(remove).toBeVisible();
     await remove.click();
@@ -390,12 +476,46 @@ onEachPlayground("file-input", () => {
     expect(await fileCount(input)).toBe(0);
   });
 
+  test("a picture's address is released once it's replaced", async ({ page }) => {
+    const { root, input } = await parts(page, "file-input-avatar");
+    await page.evaluate(() => {
+      const seen: string[] = [];
+      (window as unknown as { revoked: string[] }).revoked = seen;
+      const revoke = URL.revokeObjectURL;
+      URL.revokeObjectURL = (url) => {
+        seen.push(url);
+        revoke.call(URL, url);
+      };
+    });
+    const picture = root.locator(".hfile-input-preview");
+    await input.setInputFiles(png);
+    await expect(picture).toHaveAttribute("src", /^blob:/);
+    const first = await picture.getAttribute("src");
+    await input.setInputFiles({ ...png, name: "other.png" });
+    await expect(picture).not.toHaveAttribute("src", first!);
+    await expect.poll(() => page.evaluate(() => (window as unknown as { revoked: string[] }).revoked)).toContain(first);
+  });
+
+  test("an avatar keeps room for its remove button in its own width", async ({ page }) => {
+    const { root, remove } = await parts(page, "file-input-avatar-with-a-picture");
+    const [around, removing] = await boxes(root, remove);
+    expect(removing!.x + removing!.width).toBeLessThanOrEqual(around!.x + around!.width + 0.5);
+  });
+
+  test("spans in a heading are only text, unless they're an avatar's two states", async ({ page }) => {
+    const { root } = await parts(page, "file-input-large-drop-area");
+    const heading = root.locator(".hfile-input-heading");
+    await heading.evaluate((n) => (n.innerHTML = "<span>One</span> <span>Two</span>"));
+    const [one, two] = await boxes(heading.locator("span").first(), heading.locator("span").last());
+    expect(two!.x).toBeGreaterThan(one!.x + one!.width);
+  });
+
   test("changing its text can't move the circle, however wide the text is", async ({ page }) => {
     const { root, input, remove } = await parts(page, "file-input-avatar");
     await root.locator(".hfile-input-heading").evaluate((n: HTMLElement) => (n.style.fontSize = "20px"));
     const circle = root.locator(".havatar");
     const [empty] = await boxes(circle);
-    await input.setInputFiles({ name: "me.png", mimeType: "image/png", buffer: Buffer.from("a") });
+    await input.setInputFiles(png);
     await expect(remove).toBeVisible();
     const [picked] = await boxes(circle);
     expect(picked!.x).toBe(empty!.x);
@@ -408,7 +528,7 @@ onEachPlayground("file-input", () => {
   test("an avatar is named by the text that's showing", async ({ page }) => {
     const { input } = await parts(page, "file-input-avatar");
     await expect(input).toHaveAccessibleName("Upload picture PNG or JPG");
-    await input.setInputFiles({ name: "me.png", mimeType: "image/png", buffer: Buffer.from("a") });
+    await input.setInputFiles(png);
     await expect(input).toHaveAccessibleName("Change picture PNG or JPG");
   });
 

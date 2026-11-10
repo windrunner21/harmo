@@ -2,8 +2,10 @@
 // picture, removes it, and refuses a file of the wrong type or size, saying why.
 // A refused file is cleared from the input, so a form doesn't send it. With a
 // data-variant, it also takes a file dropped on it, lights up while one is
-// dragged, and stops a drop that just misses from opening the file in the tab.
+// dragged, and stops a drop that just misses from opening the file in the tab,
+// leaving alone other drop targets and text fields.
 {
+  const answered = new WeakSet();
   const paths = {
     arrow: "M12 16V10M12 10L9 12M12 10L15 12",
     check: "M9 13L11 15L15 11",
@@ -21,6 +23,7 @@
     const avatar = root.dataset.variant === "avatar";
     const input = root.querySelector(".hfile-input-control");
     const text = root.querySelector(avatar ? ".hfile-input-heading" : ".hbutton-label");
+    const button = root.querySelector("label.hbutton");
     const circle = root.querySelector(".havatar");
     const remove = root.querySelector("button.hbutton");
     const next = root.nextElementSibling;
@@ -72,14 +75,16 @@
     };
 
     const showNameFrom = (label, name) => {
-      const replacement = label.cloneNode();
-      replacement.textContent = name ?? exampleChoose;
-      if (name === null) replacement.removeAttribute("title");
-      else replacement.title = name;
-      label.replaceWith(replacement);
-      current.text = replacement;
-      root.querySelector(".hfile-input-arrow, .hfile-input-check")?.replaceWith(mark(name === null ? "arrow" : "check"));
-      remove.hidden = name === null;
+      changeButtonWidth(button, () => {
+        const replacement = label.cloneNode();
+        replacement.textContent = name ?? exampleChoose;
+        if (name === null) replacement.removeAttribute("title");
+        else replacement.title = name;
+        label.replaceWith(replacement);
+        current.text = replacement;
+        root.querySelector(".hfile-input-arrow, .hfile-input-check")?.replaceWith(mark(name === null ? "arrow" : "check"));
+        remove.hidden = name === null;
+      });
     };
 
     // Closes as a Field's error does: its text goes once the exit has finished.
@@ -134,20 +139,43 @@
       }),
     );
 
-    if (!root.dataset.variant || input.disabled) continue;
+    if (!root.dataset.variant) continue;
 
     let depth = 0;
+    let timer;
     const carriesFiles = (event) => event.dataTransfer?.types.includes("Files");
     // The target can be a text node, and every area answers for the whole page,
     // so it asks which area the file is over, not only whether it's this one.
     const elementOf = (event) => (event.target instanceof Element ? event.target : event.target.parentElement);
     const areaOf = (event) => elementOf(event)?.closest(".hfile-input[data-variant]:has(.hfile-input-control:enabled)");
     const inside = (event) => areaOf(event) === root;
-    const anotherInput = (event) => elementOf(event)?.closest('input[type="file"]:not(.hfile-input-control)');
-    const allow = (event) => {
+    const leftToOthers = (event) => {
+      const element = elementOf(event);
+      return (
+        (event.defaultPrevented && !answered.has(event)) ||
+        element?.isContentEditable ||
+        Boolean(element?.closest("input:not(.hfile-input-control), textarea"))
+      );
+    };
+    const end = () => {
+      depth = 0;
+      clearTimeout(timer);
+      light(null);
+    };
+    // Anything that would stop a drag early gets no event, such as the element
+    // under it being removed, so it ends when the drag's repeating events stop.
+    const answer = (event) => {
+      light(inside(event) ? "over" : "page");
+      clearTimeout(timer);
+      timer = setTimeout(end, 2000);
+      if (leftToOthers(event)) return;
+      answered.add(event);
       event.preventDefault();
       event.dataTransfer.dropEffect = areaOf(event) ? "copy" : "none";
-      light(inside(event) ? "over" : "page");
+    };
+    const ignored = (event) => {
+      if (input.disabled) end();
+      return input.disabled || !carriesFiles(event);
     };
     const light = (state) => {
       if (state) root.dataset.dragging = state;
@@ -155,23 +183,22 @@
     };
 
     document.addEventListener("dragenter", (event) => {
-      if (!carriesFiles(event)) return;
+      if (ignored(event)) return;
       depth += 1;
-      if (!anotherInput(event)) allow(event);
+      answer(event);
     });
     document.addEventListener("dragleave", (event) => {
-      if (!carriesFiles(event)) return;
+      if (ignored(event)) return;
       depth = Math.max(0, depth - 1);
-      if (depth === 0) light(null);
+      if (depth === 0) end();
     });
     document.addEventListener("dragover", (event) => {
-      if (!carriesFiles(event) || anotherInput(event)) return;
-      allow(event);
+      if (!ignored(event)) answer(event);
     });
     document.addEventListener("drop", (event) => {
-      depth = 0;
-      light(null);
-      if (!carriesFiles(event) || anotherInput(event)) return;
+      end();
+      if (ignored(event) || leftToOthers(event)) return;
+      answered.add(event);
       event.preventDefault();
       const file = event.dataTransfer.files[0];
       if (!inside(event) || !file) return;

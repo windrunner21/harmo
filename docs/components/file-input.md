@@ -24,7 +24,7 @@ itself.
   <div class="hfile-input">
     <label class="hbutton" data-variant="secondary">
       <input class="hfile-input-control" id="attachment" name="attachment" type="file" />
-      <svg class="hicon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 16V10M12 10L9 12M12 10L15 12M23 15C23 12.7909 21.2091 11 19 11C18.9764 11 18.9532 11.0002 18.9297 11.0006C18.4447 7.60802 15.5267 5 12 5C9.20335 5 6.79019 6.64004 5.66895 9.01082C3.06206 9.18144 1 11.3498 1 13.9999C1 16.7613 3.23858 19.0001 6 19.0001L19 19C21.2091 19 23 17.2091 23 15Z" /></svg>
+      <svg class="hicon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M23 15C23 12.7909 21.2091 11 19 11C18.9764 11 18.9532 11.0002 18.9297 11.0006C18.4447 7.60802 15.5267 5 12 5C9.20335 5 6.79019 6.64004 5.66895 9.01082C3.06206 9.18144 1 11.3498 1 13.9999C1 16.7613 3.23858 19.0001 6 19.0001L19 19C21.2091 19 23 17.2091 23 15Z" /><path class="hfile-input-arrow" d="M12 16V10M12 10L9 12M12 10L15 12" /></svg>
       <span class="hbutton-label">Choose file</span>
     </label>
     <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove attachment" hidden>
@@ -62,9 +62,9 @@ heading, and a hint:
 ```
 
 An avatar's circle and text are one `<label>`, so all of it opens the picker. The
-picture goes last in the circle. Its two texts sit one over the other, with
-`data-inactive` on the one not showing, so that changing between them can't move
-the circle:
+picture goes last in the circle. With `data-stacked`, its two texts sit one over
+the other, with `data-inactive` on the one not showing, so that changing between
+them can't move the circle:
 
 ```html
 <div class="hfile-input" data-variant="avatar">
@@ -74,7 +74,7 @@ the circle:
       <!-- an icon -->
       <img class="hfile-input-preview" src="me.webp" alt="" />
     </span>
-    <span class="hfile-input-heading"><span data-inactive="">Upload picture</span><span>Change picture</span></span>
+    <span class="hfile-input-heading" data-stacked=""><span data-inactive="">Upload picture</span><span>Change picture</span></span>
     <span class="hfile-input-hint">PNG or JPG</span>
   </label>
   <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove picture">
@@ -99,7 +99,7 @@ the circle:
 - The button is a secondary [Button](button.md), 34px tall, with a 20px icon: it
   hovers, presses, and shows focus as one does, following the input inside it.
 - The icon gains a check once there's a file, and the text becomes its name.
-- The remove button is a tertiary icon-only Button, 8px after it.
+- The remove button is a tertiary icon-only Button, 6px after it.
 - A long name ends in an ellipsis, with the remove button still beside it. Its
   `title` shows the whole name on hover, and screen readers read all of it.
 - A strip is as wide as what's in it, up to the width it's given. A large area
@@ -114,8 +114,8 @@ the circle:
   changes width over 200ms, and the remove button settles in.
 - An avatar's circle is 6rem and dashed, and solid once it has a picture. The
   picture fades and settles in over 200ms, and fades out in 150ms when removed,
-  and the remove button sits beside the circle. Pressing the circle scales it to
-  0.98.
+  and the remove button sits beside the circle, in room the avatar keeps for it
+  even with no picture. Pressing the circle scales it to 0.98.
 - With reduced motion, only colors and fades change: nothing moves or scales.
 - Disabled: the button is dimmed, with a not-allowed cursor.
 
@@ -142,9 +142,9 @@ the circle:
 | The button's text, its `title` with the file's name, its icon, and `hidden` on the remove button | A file is chosen or removed, or the form is reset |
 | Emptying the input (`value = ""`), and moving focus to it | The remove button is pressed |
 | Emptying the input, `aria-invalid`, and the `.herror`'s text | A file is refused |
-| `data-dragging` on `.hfile-input` | A file is dragged over the page or the area |
+| `data-dragging` on `.hfile-input` | A file is dragged over the page or the area, and off once the drag ends or its events stop for two seconds |
 | Setting the input's `files` to the first file, and sending `change` | A file is dropped on the area |
-| Stopping a drop elsewhere on the page, which would open the file in the tab | A file is dropped outside the area, except on another file input |
+| Stopping a drop elsewhere on the page, which would open the file in the tab | A file is dropped outside the area, except on a text field, on editable content, or on a drop target that has already accepted it |
 | Adding `.hfile-input-preview`, or setting `data-leaving` on it and taking it away once it has faded, and moving `data-inactive` between its two texts, for an avatar | A picture is chosen or removed |
 
 `examples/html/src/scripts/file-input.js` is an example script.
@@ -174,6 +174,8 @@ It picks one file; there's no `multiple`, and of several dropped it takes the
 first. Refusing a file also clears what was there before, and `onFileChange` gets
 `null`. A drop area adds listeners to the document while it's on the page, so that
 it lights up, and so that a drop that just misses doesn't open the file in the tab.
+Drop targets of your own that accept the drag, text fields, and editable content
+are left alone.
 
 ```tsx
 <Field label="Task list" description="A CSV file, up to 1 MB.">

@@ -156,14 +156,18 @@
     position: relative;
 
     inline-size: fit-content;
-    max-inline-size: 100%;
+    // The remove button's room, so that it counts toward the width and can't
+    // hang outside it.
+    padding-inline-end: calc(#{$control-height} + #{$space-2xs});
 
     // Beside the circle, as it's beside the button in the other variants. The
-    // circle's edge is 3rem from the middle.
+    // circle's edge is 3rem from the middle of what's left of the padding.
     & > button.hbutton {
       position: absolute;
       inset-block-start: calc(3rem - #{$control-height} / 2);
-      inset-inline-start: calc(50% + 3rem + #{$space-2xs});
+      inset-inline-start: calc(
+        (100% - #{$control-height} - #{$space-2xs}) / 2 + 3rem + #{$space-2xs}
+      );
     }
   }
 }
@@ -233,28 +237,28 @@
 
   // An avatar's two texts, one over the other, taking the width of the longer,
   // so that changing from one to the other can't move the circle.
-  &:has(> span) {
+  &[data-stacked] {
     display: grid;
 
     &[hidden] {
       display: none;
     }
-  }
 
-  & > span {
-    grid-area: 1 / 1;
+    & > span {
+      grid-area: 1 / 1;
 
-    transition:
-      opacity $duration-normal ease-out,
-      visibility $duration-normal;
-  }
+      transition:
+        opacity $duration-normal ease-out,
+        visibility $duration-normal;
+    }
 
-  & > [data-inactive] {
-    visibility: hidden;
+    & > [data-inactive] {
+      visibility: hidden;
 
-    opacity: 0;
+      opacity: 0;
 
-    transition-duration: $duration-fast;
+      transition-duration: $duration-fast;
+    }
   }
 }
 
