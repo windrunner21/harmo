@@ -103,6 +103,13 @@ onEachPlayground("phone-input", () => {
     await expect(field).toHaveValue("(415) 552-671");
   });
 
+  test("replacing a number with the same digits keeps every digit", async ({ page }) => {
+    const { field } = await parts(page, "default");
+    await field.fill("4155552671");
+    await edit(field, "4155552671", 10, {});
+    await expect(field).toHaveValue("(415) 555-2671");
+  });
+
   test("cutting only a space changes nothing", async ({ page }) => {
     const { field } = await parts(page, "default");
     await field.fill("4155552671");

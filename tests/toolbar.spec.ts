@@ -12,7 +12,8 @@ onEachPlayground("toolbar", () => {
     const [bar, start, end] = await boxes(toolbar, toolbar.locator(".hfilters"), controls);
     expect(start!.x).toBeCloseTo(bar!.x, 0);
     expect(end!.x + end!.width).toBeCloseTo(bar!.x + bar!.width, 0);
-    expect(start!.y + start!.height / 2).toBeCloseTo(end!.y + end!.height / 2, 0);
+    // Within a pixel: a browser can snap each to a different one.
+    expect(Math.abs(start!.y + start!.height / 2 - (end!.y + end!.height / 2))).toBeLessThanOrEqual(1);
     await expect(container.getByRole("toolbar")).toHaveCount(0);
 
     const [first, second] = await boxes(controls.locator(".hbutton").first(), controls.locator(".hbutton").last());

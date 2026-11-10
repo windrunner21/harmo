@@ -105,7 +105,9 @@
     const apply = (entered, position, kind) => {
       let raw = asciiDigits(entered);
       let at = position;
-      if (digitsOf(raw) === digitsOf(text) && raw.length < text.length) {
+      const removedFormatting =
+        raw.length === text.length - 1 && raw === text.slice(0, at) + text.slice(at + 1) && /\D/.test(text[at] ?? "");
+      if (removedFormatting) {
         if (kind === "deleteContentBackward" || !kind) {
           const before = raw.slice(0, at).replace(/\d(\D*)$/, "$1");
           raw = before + raw.slice(at);

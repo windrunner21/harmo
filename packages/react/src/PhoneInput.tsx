@@ -206,7 +206,9 @@ export const PhoneInput = ({
 
     // Deleting only a space or a bracket would come straight back when the
     // number is formatted, so it takes the digit beside it too.
-    if (digitsOf(raw) === digitsOf(text) && raw.length < text.length) {
+    const removedFormatting =
+      raw.length === text.length - 1 && raw === text.slice(0, at) + text.slice(at + 1) && /\D/.test(text[at] ?? "");
+    if (removedFormatting) {
       if (kind === "deleteContentBackward" || !kind) {
         const before = raw.slice(0, at).replace(/\d(\D*)$/, "$1");
         raw = before + raw.slice(at);
