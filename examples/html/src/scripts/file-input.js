@@ -35,8 +35,10 @@
       exampleWrongType,
       exampleTooLarge,
       exampleImage,
+      exampleMaxFiles,
+      exampleTooMany,
     } = root.dataset;
-    const attached = remove.hidden ? null : text.textContent;
+    const attached = !remove || remove.hidden ? null : text.textContent;
     const attachedPicture = circle?.querySelector("img")?.getAttribute("src") ?? null;
     let objectUrl = null;
 
@@ -90,9 +92,10 @@
     // Closes as a Field's error does: its text goes once the exit has finished.
     const say = (message) => {
       if (!error) return;
-      if (message) {
+      const lines = [message].flat().filter(Boolean);
+      if (lines.length) {
         input.setAttribute("aria-invalid", "true");
-        error.textContent = message;
+        error.replaceChildren(...lines.flatMap((line, index) => (index ? [document.createElement("br"), line] : [line])));
         error.hidden = false;
         return;
       }
@@ -107,13 +110,32 @@
     };
 
     const problem = (file) => {
-      if (exampleImage !== undefined && !file.type.startsWith("image/")) return exampleWrongType;
+      if (exampleImage !== undefined && !file.type.startsWith("image/")) return exampleWrongType.replace("{name}", file.name);
       if (exampleEnding && !file.name.toLowerCase().endsWith(exampleEnding)) return exampleWrongType;
-      if (exampleMaxBytes && file.size > Number(exampleMaxBytes)) return exampleTooLarge;
+      if (exampleMaxBytes && file.size > Number(exampleMaxBytes)) return exampleTooLarge.replace("{name}", file.name);
       return "";
     };
 
+    // Several files go to whatever is holding them; the input keeps none.
+    const takeMany = () => {
+      const held = root.closest("[data-example-files]")?.querySelectorAll(".hfile-list > :not([data-leaving])").length ?? 0;
+      const messages = new Set();
+      const accepted = [];
+      for (const file of input.files) {
+        const message = exampleMaxFiles && held + accepted.length >= Number(exampleMaxFiles) ? exampleTooMany : problem(file);
+        if (message) messages.add(message);
+        else accepted.push(file);
+      }
+      say([...messages]);
+      input.value = "";
+      if (accepted.length) root.dispatchEvent(new CustomEvent("example-files-add", { bubbles: true, detail: accepted }));
+    };
+
     input.addEventListener("change", () => {
+      if (input.multiple) {
+        takeMany();
+        return;
+      }
       const file = input.files[0] ?? null;
       const message = file ? problem(file) : "";
       say(message);
@@ -121,7 +143,7 @@
       show(message ? null : file);
     });
 
-    remove.addEventListener("click", () => {
+    remove?.addEventListener("click", () => {
       input.value = "";
       say("");
       show(null);
@@ -135,7 +157,7 @@
         if (objectUrl) URL.revokeObjectURL(objectUrl);
         objectUrl = null;
         if (avatar) showPicture(attachedPicture);
-        else showNameFrom(current.text, attached);
+        else if (!input.multiple) showNameFrom(current.text, attached);
       }),
     );
 
@@ -200,11 +222,14 @@
       if (ignored(event) || leftToOthers(event)) return;
       answered.add(event);
       event.preventDefault();
-      const file = event.dataTransfer.files[0];
-      if (!inside(event) || !file) return;
-      if (event.dataTransfer.items[0]?.webkitGetAsEntry?.()?.isDirectory) return;
+      if (!inside(event)) return;
+      const dropped = [...event.dataTransfer.items]
+        .filter((item) => item.kind === "file" && !item.webkitGetAsEntry?.()?.isDirectory)
+        .flatMap((item) => item.getAsFile() ?? []);
+      const files = input.multiple ? dropped : dropped.slice(0, 1);
+      if (!files.length) return;
       const chosen = new DataTransfer();
-      chosen.items.add(file);
+      for (const file of files) chosen.items.add(file);
       input.files = chosen.files;
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });

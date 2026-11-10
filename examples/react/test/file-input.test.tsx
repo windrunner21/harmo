@@ -81,9 +81,11 @@ describe("FileInput", () => {
     expect(markup).not.toMatch(/<button[^>]*hidden=""/);
   });
 
-  test("a spread can't turn on choosing several files", () => {
-    const native = { multiple: true } as object;
-    expect(renderToStaticMarkup(<FileInput {...labels} {...native} />)).not.toContain("multiple");
+  test("one file unless asked for several, which has no remove button of its own", () => {
+    expect(renderToStaticMarkup(<FileInput {...labels} />)).not.toContain("multiple");
+    const markup = renderToStaticMarkup(<FileInput multiple chooseLabel="Add" onFilesAdd={() => {}} />);
+    expect(markup).toMatch(/<input[^>]*multiple=""/);
+    expect(markup).not.toContain("<button");
   });
 
   test("only an avatar with two texts stacks them", () => {

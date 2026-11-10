@@ -13,12 +13,24 @@ minor version may change an API, and says how to upgrade when it does.
 - Input and TextArea: `highlight`, a regular expression whose matches are marked
   as you type, such as the variables in a template.
 
+- File List: `.hfile-list`, or `<FileList>`, the files your app is holding or
+  sending, as rows or a thumbnail grid, with progress and a way to try again.
+
+  ```html preview="file-list/Default"
+  <ul class="hfile-list" aria-label="Attachments" tabindex="-1">
+    <li class="hfile-list-item">
+      <div class="hfile-list-text"><span class="hfile-list-name">project-brief.pdf</span></div>
+    </li>
+  </ul>
+  ```
+
 - Tokens: `--harmo-space-2xs` to `--harmo-space-2xl`, a spacing scale whose steps
   grow by the golden ratio.
 - File Input: `.hfile-input`, or `<FileInput>`, which picks one file for your app
   to upload, shows its name, and removes it, with `validate` to refuse a file and
   `defaultFileName` for one already attached. `variant` makes it take a dropped
-  file, as a compact strip, a large area, or an avatar circle.
+  file, as a compact strip, a large area, or an avatar circle, and `multiple` takes
+  several for your app to hold.
 
   ```html preview="file-input/Default"
   <div class="hfile-input">

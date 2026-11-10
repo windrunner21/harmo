@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Fragment,
   useEffect,
   useId,
   useRef,
@@ -28,12 +29,26 @@ interface FileInputOptions
     ComponentPropsWithRef<"input">,
     "type" | "multiple" | "value" | "defaultValue" | "children"
   > {
-  multiple?: never;
   chooseLabel: ReactNode;
-  removeLabel: string;
   icon?: ReactNode;
-  validate?: (file: File) => ReactNode;
+  validate?: (file: File, accepted: number) => ReactNode;
+}
+
+interface OneFile {
+  multiple?: false;
+  removeLabel: string;
   onFileChange?: (file: File | null) => void;
+  onFilesAdd?: undefined;
+}
+
+interface ManyFiles {
+  multiple: true;
+  onFilesAdd: (files: File[]) => void;
+  removeLabel?: undefined;
+  onFileChange?: undefined;
+  defaultFileName?: undefined;
+  defaultPreview?: undefined;
+  changeLabel?: undefined;
 }
 
 interface NoExtras {
@@ -68,7 +83,8 @@ type FileInputLook =
       defaultFileName?: undefined;
     };
 
-export type FileInputProps = FileInputOptions & FileInputLook;
+export type FileInputProps = FileInputOptions &
+  ((OneFile & FileInputLook) | (ManyFiles & Exclude<FileInputLook, { variant: "avatar" }>));
 
 const removeIcon = (
   <svg
@@ -186,12 +202,14 @@ const useFileDrop = (
       if (!carriesFiles(event) || leftToOthers(event)) return;
       ownAnswers.add(event);
       event.preventDefault();
-      const transfer = event.dataTransfer!;
-      const file = transfer.files[0];
-      if (!inside(event) || !input.current || !file) return;
-      if (transfer.items[0]?.webkitGetAsEntry?.()?.isDirectory) return;
+      if (!inside(event) || !input.current) return;
+      const dropped = Array.from(event.dataTransfer!.items)
+        .filter((item) => item.kind === "file" && !item.webkitGetAsEntry?.()?.isDirectory)
+        .flatMap((item) => item.getAsFile() ?? []);
+      const files = input.current.multiple ? dropped : dropped.slice(0, 1);
+      if (!files.length) return;
       const chosen = new DataTransfer();
-      chosen.items.add(file);
+      for (const file of files) chosen.items.add(file);
       input.current.files = chosen.files;
       input.current.dispatchEvent(new Event("change", { bubbles: true }));
     };
@@ -216,6 +234,8 @@ const useFileDrop = (
 export const FileInput = ({
   chooseLabel,
   removeLabel,
+  multiple,
+  onFilesAdd,
   icon,
   variant,
   dropLabel,
@@ -253,7 +273,7 @@ export const FileInput = ({
   const attached = fileName !== null || preview !== null;
 
   const take = (file: File | null) => {
-    const problem = file && validate?.(file);
+    const problem = file && validate?.(file, 0);
     const refused = renders(problem);
     setMessage(refused ? problem : null);
     if (refused && input.current) input.current.value = "";
@@ -265,6 +285,33 @@ export const FileInput = ({
     onFileChange?.(kept);
   };
 
+  const takeMany = (files: File[]) => {
+    const messages = new Set<ReactNode>();
+    const accepted: File[] = [];
+    for (const file of files) {
+      const problem = validate?.(file, accepted.length);
+      if (renders(problem)) messages.add(problem);
+      else accepted.push(file);
+    }
+    setMessage(
+      messages.size
+        ? [...messages].map((text, index) => (
+            <Fragment key={index}>
+              {index > 0 && <br />}
+              {text}
+            </Fragment>
+          ))
+        : null,
+    );
+    if (input.current) input.current.value = "";
+    if (accepted.length) onFilesAdd?.(accepted);
+  };
+
+  const takeChosen = (files: FileList | null) => {
+    if (multiple) takeMany(Array.from(files ?? []));
+    else take(files?.[0] ?? null);
+  };
+
   const restore = () => {
     setFileName(defaultFileName ?? null);
     setPreview(defaultPreview ?? null);
@@ -273,8 +320,7 @@ export const FileInput = ({
   useEffect(() => {
     if (reconciled.current) return;
     reconciled.current = true;
-    const chosen = input.current?.files?.[0];
-    if (chosen) take(chosen);
+    if (input.current?.files?.length) takeChosen(input.current.files);
   }, []);
 
   useEffect(() => {
@@ -323,11 +369,11 @@ export const FileInput = ({
       ref={inputRef}
       className="hfile-input-control"
       type="file"
-      multiple={false}
+      multiple={multiple === true}
       aria-invalid={message ? true : field["aria-invalid"]}
       onChange={(event) => {
         onChange?.(event);
-        take(event.target.files?.[0] ?? null);
+        takeChosen(event.target.files);
       }}
     />
   );
@@ -386,21 +432,23 @@ export const FileInput = ({
             </label>
           </>
         )}
-        <button
-          className="hbutton"
-          data-variant="tertiary"
-          type="button"
-          aria-label={removeLabel}
-          hidden={!attached}
-          disabled={props.disabled}
-          onClick={() => {
-            if (input.current) input.current.value = "";
-            take(null);
-            input.current?.focus();
-          }}
-        >
-          {removeIcon}
-        </button>
+        {!multiple && (
+          <button
+            className="hbutton"
+            data-variant="tertiary"
+            type="button"
+            aria-label={removeLabel}
+            hidden={!attached}
+            disabled={props.disabled}
+            onClick={() => {
+              if (input.current) input.current.value = "";
+              take(null);
+              input.current?.focus();
+            }}
+          >
+            {removeIcon}
+          </button>
+        )}
       </div>
       {validate && !hidden && (
         <ErrorMessage id={errorId}>{message}</ErrorMessage>

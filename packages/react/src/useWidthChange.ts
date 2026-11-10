@@ -21,7 +21,7 @@ const restore = (node: HTMLElement, change: Change) => {
   changes.delete(node);
 };
 
-const seconds = (value: string) => {
+export const seconds = (value: string) => {
   const number = parseFloat(value);
   if (!Number.isFinite(number)) return undefined;
   return value.trim().endsWith("ms") ? number : number * 1000;

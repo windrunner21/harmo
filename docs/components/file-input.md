@@ -11,7 +11,7 @@ itself.
 | --- | --- |
 | CSS | `file-input.css`, `button.css`; `avatar.css` for an avatar; `field.css` for a label and a message |
 | Element | `<div class="hfile-input">` |
-| Parts | `<label class="hbutton" data-variant="secondary">` holding `<input class="hfile-input-control" type="file">`, an icon, and `.hbutton-label`; then a `<button class="hbutton">` that removes the file |
+| Parts | `<label class="hbutton" data-variant="secondary">` holding `<input class="hfile-input-control" type="file">`, an icon, and `.hbutton-label`; then a `<button class="hbutton">` that removes the file, except with `multiple` |
 | Required | A name for the input, from a `<label for>` or `aria-label`; the button's text and the remove button's `aria-label`, in the page's language |
 | Unique | The input's `id` |
 | Script | To show the file's name and remove it, and to take a dropped file. See [What a script does](#what-a-script-does) |
@@ -87,10 +87,11 @@ them can't move the circle:
 
 | Attribute | On | Effect |
 | --- | --- | --- |
+| `multiple` | The input | Takes several files, for your app to hold. There's no remove button; show them in a [File List](file-list.md) |
 | `data-variant` | `.hfile-input` | `strip`, `area`, or `avatar`: a place to drop a file |
 | `data-dragging` | `.hfile-input` | Set by a script: `page` while a file is dragged over the page, `over` while it's over the area |
 | `accept` | The input | Narrows what the picker offers. People can still choose any file, so check it too |
-| `name` | The input | Sends the file with a form |
+| `name` | The input | Sends the file with a form, except with `multiple`, where your app holds the files |
 | `disabled` | The input, and the remove button | Dims the button, and no file can be chosen or removed |
 | `hidden` | The remove button | While there's no file to remove |
 
@@ -143,7 +144,8 @@ them can't move the circle:
 | Emptying the input (`value = ""`), and moving focus to it | The remove button is pressed |
 | Emptying the input, `aria-invalid`, and the `.herror`'s text | A file is refused |
 | `data-dragging` on `.hfile-input` | A file is dragged over the page or the area, and off once the drag ends or its events stop for two seconds |
-| Setting the input's `files` to the first file, and sending `change` | A file is dropped on the area |
+| Setting the input's `files` to the first file, or with `multiple` to all of them, leaving out folders, and sending `change` | Files are dropped on the area |
+| Checking each file, handing those accepted to your app, showing why any were refused, and emptying the input | Files are chosen or dropped, with `multiple`. The steps above for one file's name, icon, and remove button don't apply |
 | Stopping a drop elsewhere on the page, which would open the file in the tab | A file is dropped outside the area, except on a text field, on editable content, or on a drop target that has already accepted it |
 | Adding `.hfile-input-preview`, or setting `data-leaving` on it and taking it away once it has faded, and moving `data-inactive` between its two texts, for an avatar | A picture is chosen or removed |
 
@@ -160,7 +162,9 @@ field's id and descriptions. Its props go on the input, except `className` and
 | `chooseLabel` | Required. The button's text before there's a file |
 | `removeLabel` | Required. The remove button's name |
 | `onFileChange` | Called with the `File`, or `null` when there's none: removed, or refused |
-| `validate` | Called with the chosen `File`. Return a message to refuse it, or `null`. The message shows below, and the input is emptied so that a form doesn't send the file |
+| `validate` | Called with the chosen `File`. Return a message to refuse it, or `null`. The message shows below, and the input is emptied so that a form doesn't send the file. With `multiple`, its second argument is how many it has accepted so far from this pick, to limit their number |
+| `multiple` | Takes several files. Each goes through `validate`, and those that pass go to `onFilesAdd`. The input is emptied after each pick, so the same file can be picked again, and a form doesn't send them: your app holds them. Not on an avatar, and without `removeLabel`, `onFileChange`, or `defaultFileName` |
+| `onFilesAdd` | Required with `multiple`. Called with the files accepted, unless there are none |
 | `defaultFileName` | The name of a file your app already has. It shows until another is chosen or it's removed, and comes back when the form is reset. If it changes while no file has been chosen, the new name shows. Not on an avatar |
 | `variant` | `strip`, `area`, or `avatar`: takes a dropped file too |
 | `dropLabel` | Required on a strip or an area. What tells people they can drop a file |
@@ -170,9 +174,9 @@ field's id and descriptions. Its props go on the input, except `className` and
 | `changeLabel` | An avatar's text once it has a picture |
 | `defaultPreview` | The URL of a picture your app already has, for an avatar. It behaves as `defaultFileName` does |
 
-It picks one file; there's no `multiple`, and of several dropped it takes the
-first. Refusing a file also clears what was there before, and `onFileChange` gets
-`null`. A drop area adds listeners to the document while it's on the page, so that
+Without `multiple` it picks one file, and of several dropped it takes the first.
+Refusing a file also clears what was there before, and `onFileChange` gets `null`.
+A folder that's dropped is left out. A drop area adds listeners to the document while it's on the page, so that
 it lights up, and so that a drop that just misses doesn't open the file in the tab.
 Drop targets of your own that accept the drag, text fields, and editable content
 are left alone.

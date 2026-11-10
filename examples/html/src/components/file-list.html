@@ -1,0 +1,374 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    The files your app is holding. Removing one fades and closes its row, and
+    focus moves to the next.
+  </play-note>
+  <ul data-example-files aria-label="Attachments" class="hfile-list" role="list" tabindex="-1">
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-0-0" title="project-brief.pdf">project-brief.pdf</span>
+        <span class="hfile-list-detail">412 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove project-brief.pdf"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-0-1" title="timeline.xlsx">timeline.xlsx</span>
+        <span class="hfile-list-detail">86 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove timeline.xlsx"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-0-2" title="kickoff-notes.docx">kickoff-notes.docx</span>
+        <span class="hfile-list-detail">38 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove kickoff-notes.docx"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Upload progress" layout="stack">
+  <play-note>
+    Your app says how far each file has got. A bar runs along the bottom of the
+    row, so that it can't change its height, a check draws itself at the end,
+    and a failed file says why and can be tried again.
+  </play-note>
+  <ul data-example-files data-example-retry-detail="38 kB" aria-label="Uploads" class="hfile-list" role="list" tabindex="-1">
+    <li class="hfile-list-item" data-status="done">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-1-0" title="project-brief.pdf">project-brief.pdf</span>
+        <span class="hfile-list-detail">412 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <play-icon name="file-done" class="hicon hfile-list-done"></play-icon>
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove project-brief.pdf"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+      <div class="hfile-list-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-labelledby="file-list-1-0" style="--hfile-list-progress:1"></div>
+    </li>
+    <li class="hfile-list-item" data-status="uploading">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-1-1" title="timeline.xlsx">timeline.xlsx</span>
+        <span class="hfile-list-detail">86 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove timeline.xlsx"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+      <div class="hfile-list-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" aria-labelledby="file-list-1-1" style="--hfile-list-progress:0.4"></div>
+    </li>
+    <li class="hfile-list-item" data-status="error">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-1-2" title="kickoff-notes.docx">kickoff-notes.docx</span>
+        <p class="hfile-list-error" role="alert">That didn&#x27;t upload. Check your connection.</p>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton" data-variant="tertiary" type="button">
+          <span class="hbutton-label">Try again</span>
+        </button>
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove kickoff-notes.docx"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Long file names" layout="stack">
+  <play-note>
+    A long name ends in an ellipsis, with the whole of it on hover.
+  </play-note>
+  <ul aria-label="Attachments" class="hfile-list" role="list" tabindex="-1">
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-2-0" title="quarterly-planning-notes-for-the-whole-team-with-every-appendix-and-every-draft.pdf">quarterly-planning-notes-for-the-whole-team-with-every-appendix-and-every-draft.pdf</span>
+        <span class="hfile-list-detail">1.2 MB</span>
+      </div>
+      <div class="hfile-list-actions"></div>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="A grid of thumbnails" layout="wide">
+  <play-note>
+    Square previews with the name and a way to remove each below. When one goes,
+    the others slide into its place.
+  </play-note>
+  <ul data-example-files aria-label="Images" class="hfile-list" data-layout="grid" role="list" tabindex="-1">
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb">
+        <img src="images/dusk.svg" alt="" />
+      </span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-3-0" title="dusk.svg">dusk.svg</span>
+        <span class="hfile-list-detail">1 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove dusk.svg"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb">
+        <img src="images/forest.svg" alt="" />
+      </span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-3-1" title="forest.svg">forest.svg</span>
+        <span class="hfile-list-detail">1 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove forest.svg"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+    <li class="hfile-list-item">
+      <span class="hfile-list-thumb">
+        <img src="images/dune.svg" alt="" />
+      </span>
+      <div class="hfile-list-text">
+        <span class="hfile-list-name" id="file-list-3-2" title="dune.svg">dune.svg</span>
+        <span class="hfile-list-detail">1 kB</span>
+      </div>
+      <div class="hfile-list-actions">
+        <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove dune.svg"><play-icon name="close" class="hicon"></play-icon></button>
+      </div>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Compact drop area" layout="stack">
+  <play-note>
+    A File Input that takes several files, with the list below it. Files can be
+    limited with <code>validate</code>, which is told how many it has accepted
+    so far.
+  </play-note>
+  <div data-example-files style="display:grid;gap:16px">
+    <div class="hfile-input" data-variant="strip" data-example-choose="Add files" data-example-max-files="3" data-example-too-many="Add up to 3 files.">
+      <span class="hfile-input-drop">or drop up to 3 files here</span>
+      <label class="hbutton" data-variant="secondary">
+        <input aria-label="Attachments" aria-describedby="file-list-4-0" class="hfile-input-control" type="file" multiple="" name="attachments" />
+        <play-icon name="upload" class="hicon"></play-icon>
+        <span class="hbutton-label">Add files</span>
+      </label>
+    </div>
+    <p id="file-list-4-0" class="herror"></p>
+    <ul aria-label="Attachments" class="hfile-list" role="list" tabindex="-1"></ul>
+  </div>
+</play-example>
+
+<play-example title="Uploading as files arrive" layout="wide">
+  <play-note>
+    Drop or choose files and they start at once. This one pretends to upload, so
+    nothing leaves the page.
+  </play-note>
+  <div data-example-files data-example-simulate style="display:grid;gap:26px;inline-size:100%">
+    <div class="hfile-input" data-variant="area" data-example-choose="Choose files" data-example-max-bytes="10000000" data-example-too-large="{name} is over 10 MB.">
+      <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
+      <span class="hfile-input-heading">Upload your files</span>
+      <span class="hfile-input-drop">Drag them here, or choose them below.</span>
+      <span class="hfile-input-hint">Any type, up to 10 MB each.</span>
+      <label class="hbutton" data-variant="secondary">
+        <input aria-label="Files to upload" aria-describedby="file-list-5-0" class="hfile-input-control" type="file" multiple="" name="uploads" />
+        <span class="hbutton-label">Choose files</span>
+      </label>
+    </div>
+    <p id="file-list-5-0" class="herror"></p>
+    <section aria-labelledby="file-list-5-1-title" class="hsection">
+      <header class="hsection-header">
+        <div class="hsection-text">
+          <h3 class="hsection-title" id="file-list-5-1-title">Uploads</h3>
+        </div>
+        <div class="hsection-actions">
+          <button type="button" class="hbutton" data-variant="secondary" data-size="small" data-example-files-clear>
+            <span class="hbutton-label">Clear all</span>
+          </button>
+        </div>
+      </header>
+      <div class="hsection-body">
+        <ul aria-label="Uploads" class="hfile-list" role="list" tabindex="-1">
+          <li class="hfile-list-item" data-status="done">
+            <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+            <div class="hfile-list-text">
+              <span class="hfile-list-name" id="file-list-5-2" title="project-brief.pdf">project-brief.pdf</span>
+              <span class="hfile-list-detail">412 kB</span>
+            </div>
+            <div class="hfile-list-actions">
+              <play-icon name="file-done" class="hicon hfile-list-done"></play-icon>
+              <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove project-brief.pdf"><play-icon name="close" class="hicon"></play-icon></button>
+            </div>
+            <div class="hfile-list-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-labelledby="file-list-5-2" style="--hfile-list-progress:1"></div>
+          </li>
+          <li class="hfile-list-item" data-status="done">
+            <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+            <div class="hfile-list-text">
+              <span class="hfile-list-name" id="file-list-5-3" title="timeline.xlsx">timeline.xlsx</span>
+              <span class="hfile-list-detail">86 kB</span>
+            </div>
+            <div class="hfile-list-actions">
+              <play-icon name="file-done" class="hicon hfile-list-done"></play-icon>
+              <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove timeline.xlsx"><play-icon name="close" class="hicon"></play-icon></button>
+            </div>
+            <div class="hfile-list-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-labelledby="file-list-5-3" style="--hfile-list-progress:1"></div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</play-example>
+
+<play-example title="Gallery" layout="wide">
+  <play-note>
+    Images added to a grid, with a heading from a Section.
+  </play-note>
+  <div data-example-files data-example-preview style="display:grid;gap:26px;inline-size:100%">
+    <div class="hfile-input" data-variant="area" data-example-choose="Choose images" data-example-image data-example-wrong-type="{name} isn't an image.">
+      <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
+      <span class="hfile-input-heading">Add images to the gallery</span>
+      <span class="hfile-input-drop">Drag them here, or choose them below.</span>
+      <span class="hfile-input-hint">PNG or JPG.</span>
+      <label class="hbutton" data-variant="secondary">
+        <input aria-label="Images to add" accept="image/*" aria-describedby="file-list-6-0" class="hfile-input-control" type="file" multiple="" name="gallery" />
+        <span class="hbutton-label">Choose images</span>
+      </label>
+    </div>
+    <p id="file-list-6-0" class="herror"></p>
+    <section aria-labelledby="file-list-6-1-title" class="hsection">
+      <header class="hsection-header">
+        <div class="hsection-text">
+          <h3 class="hsection-title" id="file-list-6-1-title" data-example-count="Gallery ({n})">Gallery (3)</h3>
+        </div>
+        <div class="hsection-actions">
+          <button type="button" class="hbutton" data-variant="secondary" data-size="small" data-example-files-clear>
+            <span class="hbutton-label">Clear all</span>
+          </button>
+        </div>
+      </header>
+      <div class="hsection-body">
+        <ul aria-label="Gallery" class="hfile-list" data-layout="grid" role="list" tabindex="-1">
+          <li class="hfile-list-item">
+            <span class="hfile-list-thumb">
+              <img src="images/dusk.svg" alt="" />
+            </span>
+            <div class="hfile-list-text">
+              <span class="hfile-list-name" id="file-list-6-2" title="dusk.svg">dusk.svg</span>
+              <span class="hfile-list-detail">1 kB</span>
+            </div>
+            <div class="hfile-list-actions">
+              <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove dusk.svg"><play-icon name="close" class="hicon"></play-icon></button>
+            </div>
+          </li>
+          <li class="hfile-list-item">
+            <span class="hfile-list-thumb">
+              <img src="images/forest.svg" alt="" />
+            </span>
+            <div class="hfile-list-text">
+              <span class="hfile-list-name" id="file-list-6-3" title="forest.svg">forest.svg</span>
+              <span class="hfile-list-detail">1 kB</span>
+            </div>
+            <div class="hfile-list-actions">
+              <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove forest.svg"><play-icon name="close" class="hicon"></play-icon></button>
+            </div>
+          </li>
+          <li class="hfile-list-item">
+            <span class="hfile-list-thumb">
+              <img src="images/dune.svg" alt="" />
+            </span>
+            <div class="hfile-list-text">
+              <span class="hfile-list-name" id="file-list-6-4" title="dune.svg">dune.svg</span>
+              <span class="hfile-list-detail">1 kB</span>
+            </div>
+            <div class="hfile-list-actions">
+              <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove dune.svg"><play-icon name="close" class="hicon"></play-icon></button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</play-example>
+
+<play-example title="Table" layout="wide">
+  <play-note>
+    Files in a Data Table instead of a File List, when they need columns of
+    their own.
+  </play-note>
+  <div data-example-files style="display:grid;gap:26px;inline-size:100%">
+    <div class="hfile-input" data-variant="area" data-example-choose="Choose files">
+      <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
+      <span class="hfile-input-heading">Add files</span>
+      <span class="hfile-input-drop">Drag them here, or choose them below.</span>
+      <label class="hbutton" data-variant="secondary">
+        <input aria-label="Files to add" class="hfile-input-control" type="file" multiple="" name="table-files" />
+        <span class="hbutton-label">Choose files</span>
+      </label>
+    </div>
+    <section aria-labelledby="file-list-7-0-title" class="hsection">
+      <header class="hsection-header">
+        <div class="hsection-text">
+          <h3 class="hsection-title" id="file-list-7-0-title" data-example-count="Files ({n})">Files (2)</h3>
+        </div>
+        <div class="hsection-actions">
+          <button type="button" class="hbutton" data-variant="secondary" data-size="small" data-example-files-clear>
+            <span class="hbutton-label">Remove all</span>
+          </button>
+        </div>
+      </header>
+      <div class="hsection-body">
+        <div class="htable-container">
+          <div class="htable-scroll">
+            <table class="htable" aria-label="Files">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Size</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" data-emphasis="">
+                    <span data-example-name class="htable-truncate" title="project-brief.pdf">project-brief.pdf</span>
+                  </th>
+                  <td>
+                    <span class="htag" data-example-type>PDF</span>
+                  </td>
+                  <td data-example-size>412 kB</td>
+                  <td>
+                    <div style="display:flex;gap:6px">
+                      <a href="#project-brief" download="project-brief.pdf" data-example-download aria-label="Download project-brief.pdf" class="hbutton" data-variant="tertiary"><play-icon name="download" class="hicon"></play-icon></a>
+                      <button type="button" data-example-remove aria-label="Remove project-brief.pdf" class="hbutton" data-variant="tertiary"><play-icon name="close" class="hicon"></play-icon></button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row" data-emphasis="">
+                    <span data-example-name class="htable-truncate" title="timeline.xlsx">timeline.xlsx</span>
+                  </th>
+                  <td>
+                    <span class="htag" data-example-type>Sheet</span>
+                  </td>
+                  <td data-example-size>86 kB</td>
+                  <td>
+                    <div style="display:flex;gap:6px">
+                      <a href="#timeline" download="timeline.xlsx" data-example-download aria-label="Download timeline.xlsx" class="hbutton" data-variant="tertiary"><play-icon name="download" class="hicon"></play-icon></a>
+                      <button type="button" data-example-remove aria-label="Remove timeline.xlsx" class="hbutton" data-variant="tertiary"><play-icon name="close" class="hicon"></play-icon></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</play-example>

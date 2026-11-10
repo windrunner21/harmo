@@ -79,9 +79,18 @@ onEachPlayground("file-input", () => {
     await page.keyboard.press("Shift");
     await input.focus();
     await expect(button).toHaveCSS("outline-style", "solid");
-    const chooser = page.waitForEvent("filechooser");
+    await input.evaluate((node: HTMLInputElement) =>
+      node.addEventListener(
+        "click",
+        (event) => {
+          event.preventDefault();
+          node.dataset.activated = "";
+        },
+        { once: true },
+      ),
+    );
     await page.keyboard.press("Space");
-    await chooser;
+    await expect(input).toHaveAttribute("data-activated");
   });
 
   test("it's named by the field's label and what the button says", async ({ page }) => {

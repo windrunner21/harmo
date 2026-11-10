@@ -201,6 +201,11 @@ const groups: CatalogGroup[] = [
         purpose: "Picks one file for your app to upload, shows its name, and removes it.",
       },
       {
+        slug: "file-list",
+        title: "File List",
+        purpose: "The files your app is holding or sending: rows or a thumbnail grid, with progress.",
+      },
+      {
         slug: "input",
         title: "Input",
         purpose:

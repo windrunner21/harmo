@@ -1,0 +1,304 @@
+@use "shortcuts" as *;
+
+// The files your app is holding or sending: rows, or a grid of thumbnails.
+.hfile-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+
+  // A definite width, or a column flex container that wraps would measure a
+  // grid's height at one column wide.
+  inline-size: 100%;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+
+  font-family: $font-family;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // It takes focus only when the last file is removed from it.
+  &:focus {
+    outline: none;
+  }
+
+  &[data-layout="grid"] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+    // Rows as tall as their tiles, however tall the list is made.
+    align-content: start;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+// A row. In a narrow one, the actions wrap to a line of their own.
+.hfile-list-item {
+  position: relative;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-xs;
+
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: $space-xs;
+  overflow: hidden;
+
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+
+  transition:
+    opacity $duration-normal ease-out,
+    transform $duration-normal $ease-out-cubic;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Only a file that's just arrived settles in, not those there as the page
+  // loads. A script takes one away; see the docs.
+  &[data-new] {
+    @starting-style {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      @starting-style {
+        transform: none;
+      }
+    }
+  }
+}
+
+.hfile-list-thumb {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: $space-lg;
+  block-size: $space-lg;
+  overflow: hidden;
+
+  color: $color-text-secondary;
+  background-color: $color-background-secondary;
+  border-radius: $border-radius-sm;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Out of the flow, so that a picture's own size can't stretch the thumbnail.
+  & > img {
+    position: absolute;
+    inset: 0;
+
+    inline-size: 100%;
+    block-size: 100%;
+
+    object-fit: cover;
+  }
+
+  & > svg {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+}
+
+.hfile-list-text {
+  display: flex;
+  flex: 1 1 8rem;
+  flex-direction: column;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hfile-list-name {
+  overflow: hidden;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.25rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: $color-text;
+}
+
+.hfile-list-detail {
+  font-size: $font-size-xs;
+  line-height: 1.25rem;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+}
+
+.hfile-list-error {
+  margin: 0;
+
+  font-size: $font-size-xs;
+  line-height: 1.25rem;
+  overflow-wrap: anywhere;
+
+  color: $color-danger;
+}
+
+.hfile-list-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: $space-2xs;
+
+  max-inline-size: 100%;
+  margin-inline-start: auto;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The check draws itself once a file has finished.
+.hfile-list-done {
+  flex-shrink: 0;
+
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-inline-end: $space-2xs;
+
+  color: $color-success;
+
+  & > path {
+    stroke-dasharray: 1;
+
+    transition: stroke-dashoffset $duration-slow $ease-out-cubic;
+
+    @starting-style {
+      stroke-dashoffset: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}
+
+// Along the bottom edge, so that it can't change the row's height as it comes
+// and goes. Fades once the file has finished.
+.hfile-list-progress {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+
+  block-size: 3px;
+  overflow: hidden;
+
+  background-color: color-mix(in srgb, $color-border-control 50%, transparent);
+
+  transition: opacity $duration-normal ease-out;
+
+  &::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background-color: $color-primary;
+
+    transform: scaleX(var(--hfile-list-progress, 0));
+    transform-origin: left;
+
+    transition: transform $duration-normal ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+
+      background-color: Highlight;
+    }
+  }
+
+  &:dir(rtl)::before {
+    transform-origin: right;
+  }
+
+  [data-status="done"] > & {
+    opacity: 0;
+  }
+
+  @media (forced-colors: active) {
+    border-block-start: 1px solid CanvasText;
+  }
+}
+
+// A tile: its thumbnail on top, its name and actions below. :where() keeps these
+// as easy to override as each part's own rule.
+:where(.hfile-list[data-layout="grid"]) > .hfile-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  gap: 0;
+
+  padding: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-new] {
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      @starting-style {
+        transform: none;
+      }
+    }
+  }
+
+  // A failure's button would squeeze the name, so it has a line of its own.
+  &[data-status="error"] > .hfile-list-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}
+
+:where(.hfile-list[data-layout="grid"] > .hfile-list-item) > .hfile-list-thumb {
+  grid-column: 1 / -1;
+
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 1;
+
+  border-radius: 0;
+}
+
+:where(.hfile-list[data-layout="grid"] > .hfile-list-item) > .hfile-list-text {
+  padding: $space-2xs $space-xs;
+}
+
+// Room on every side for a button's focus ring, which the tile would clip.
+:where(.hfile-list[data-layout="grid"] > .hfile-list-item) > .hfile-list-actions {
+  padding: $space-2xs;
+}

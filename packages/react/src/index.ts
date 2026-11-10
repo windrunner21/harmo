@@ -44,6 +44,7 @@ export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
 export { Field, type FieldProps } from "./field/Field.tsx";
 export { FilterBar, FilterBarItem, type FilterBarItemProps, type FilterBarProps } from "./FilterBar.tsx";
 export { FileInput, type FileInputProps } from "./FileInput.tsx";
+export { FileList, type FileListItem, type FileListProps } from "./FileList.tsx";
 export { FilterChip, type FilterChipProps } from "./FilterChip.tsx";
 export { Filters, type FiltersProps } from "./Filters.tsx";
 export { HarmoProvider, type HarmoProviderProps } from "./HarmoProvider.tsx";
