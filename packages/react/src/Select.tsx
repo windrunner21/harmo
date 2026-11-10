@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type ReactNode,
 } from "react";
 import { ExpandChevron } from "./ExpandChevron.tsx";
 import { Field, useField, type StackedFieldProps } from "./field/Field.tsx";
@@ -29,6 +30,7 @@ type SelectControlProps = Omit<
   ListboxSearch & {
     name?: string;
     placeholder?: string;
+    renderValue?: (values: string[]) => ReactNode;
   };
 
 type SelectField =
@@ -69,6 +71,7 @@ const SelectControl = ({
   onValueChange,
   name,
   placeholder,
+  renderValue,
   searchLabel,
   emptyMessage,
   disabled,
@@ -133,7 +136,7 @@ const SelectControl = ({
         data-placeholder={chosen.length ? undefined : ""}
       >
         {chosen.length
-          ? chosen.map((option) => option.label).join(", ")
+          ? (renderValue?.(values) ?? chosen.map((option) => option.label).join(", "))
           : placeholder}
       </span>
       <ExpandChevron />

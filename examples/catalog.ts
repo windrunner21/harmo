@@ -218,6 +218,11 @@ const groups: CatalogGroup[] = [
           "A password field with a show/hide toggle and an optional strength meter.",
       },
       {
+        slug: "phone-input",
+        title: "Phone Input",
+        purpose: "A phone number, with a searchable country code, formatted as it's typed.",
+      },
+      {
         slug: "radio",
         title: "Radio",
         purpose: "A native radio with Harmo's appearance.",

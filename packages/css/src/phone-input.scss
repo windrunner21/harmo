@@ -1,0 +1,79 @@
+@use "shortcuts" as *;
+
+// A phone number: a searchable Select for the country code, then an Input.
+.hphone-input {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2xs;
+
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hphone-input-country {
+    flex: none;
+    gap: $space-2xs;
+
+    inline-size: auto;
+    padding-inline: $space-xs $space-sm;
+  }
+
+  & > .hinput {
+    flex: 1;
+  }
+
+  // A phone number reads left to right in every language, and sits at the end
+  // of a right-to-left form.
+  &:dir(rtl) > .hinput {
+    text-align: end;
+  }
+}
+
+// The flag and the code, side by side.
+:where(.hphone-input > .hphone-input-country) > .hselect-value {
+  display: flex;
+  align-items: center;
+  gap: $space-2xs;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Which country it is, for a screen reader: several share a calling code.
+.hphone-input-name {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  border: 0;
+  clip-path: inset(50%);
+}
+
+.hphone-input-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  font-size: $font-size-base;
+  line-height: 1;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // In the list, the same distance from the name as in the button.
+  .hoption-label > & {
+    margin-inline-end: $space-2xs;
+  }
+}

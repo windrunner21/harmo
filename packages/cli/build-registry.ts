@@ -52,6 +52,7 @@ const components: Record<string, string[]> = {
   "navigation-menu": ["NavigationMenu.tsx"],
   pagination: ["pagination/Pagination.tsx", "pagination/PaginationPage.tsx"],
   password: ["PasswordInput.tsx"],
+  "phone-input": ["PhoneInput.tsx"],
   popup: ["Popup.tsx"],
   provider: ["HarmoProvider.tsx"],
   radio: ["Radio.tsx", "RadioGroup.tsx"],

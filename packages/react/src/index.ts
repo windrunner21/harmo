@@ -72,6 +72,12 @@ export {
   type PasswordInputProps,
   type PasswordStrength,
 } from "./PasswordInput.tsx";
+export {
+  PhoneInput,
+  type PhoneInputProps,
+  type PhoneNumberDetails,
+  type PhoneParser,
+} from "./PhoneInput.tsx";
 export { Popup, type PopupProps } from "./Popup.tsx";
 export { Radio, type RadioProps } from "./Radio.tsx";
 export { RadioGroup, type RadioGroupProps } from "./RadioGroup.tsx";

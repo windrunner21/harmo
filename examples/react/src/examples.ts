@@ -36,6 +36,7 @@ import { examples as meter } from "./components/meter.tsx";
 import { examples as navigationMenu } from "./components/navigation-menu.tsx";
 import { examples as pagination } from "./components/pagination.tsx";
 import { examples as password } from "./components/password.tsx";
+import { examples as phoneInput } from "./components/phone-input.tsx";
 import { examples as popup } from "./components/popup.tsx";
 import { examples as radio } from "./components/radio.tsx";
 import { examples as search } from "./components/search.tsx";
@@ -94,6 +95,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "navigation-menu": navigationMenu,
   pagination,
   password,
+  "phone-input": phoneInput,
   popup,
   radio,
   search,

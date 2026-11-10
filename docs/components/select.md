@@ -136,6 +136,7 @@ attributes.
 | `onValueChange` | Called with the new value or array |
 | `name` | Adds the hidden inputs a form submits; a form reset restores `defaultValue` |
 | `placeholder` | Shown, grayed, while nothing is chosen |
+| `renderValue` | What the button shows for the chosen values, in place of their labels |
 | `searchLabel` | Adds a search row, with this as its placeholder and name |
 | `emptyMessage` | Required with `searchLabel`: shown when the search matches nothing, such as "No agents found" |
 

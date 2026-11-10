@@ -1,0 +1,382 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Choose a country and type a number: it's formatted as you go, and the caret
+    stays where it was. Add <code>libphonenumber-js</code> to your app, and pass
+    it as <code>phone={libphonenumber}</code>. This page stands in for it, with
+    six countries.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="phone-0-0">Phone</label>
+    <div class="hphone-input" data-example-country="US">
+      <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-0-1" popoverTarget="phone-0-2" style="anchor-name:--phone-0-2">
+        <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span><span dir="ltr">+1</span><span class="hphone-input-name">United States</span></span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="phone-0-2" popover="" style="position-anchor:--phone-0-2">
+        <div class="hlistbox-search">
+          <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+          <input data-example-empty="No countries found" class="hlistbox-search-input" type="text" role="combobox" placeholder="Search countries" aria-label="Search countries" aria-expanded="true" aria-controls="phone-0-1" aria-autocomplete="list" />
+        </div>
+        <ul aria-label="Country code" class="hlistbox" id="phone-0-1" role="listbox">
+          <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-0-3" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span>Azerbaijan</span>
+            <span class="hoption-badge"><span dir="ltr">+994</span></span>
+          </li>
+          <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-0-4" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇩🇪</span>Germany</span>
+            <span class="hoption-badge"><span dir="ltr">+49</span></span>
+          </li>
+          <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-0-5" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇫🇷</span>France</span>
+            <span class="hoption-badge"><span dir="ltr">+33</span></span>
+          </li>
+          <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-0-6" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇬🇧</span>United Kingdom</span>
+            <span class="hoption-badge"><span dir="ltr">+44</span></span>
+          </li>
+          <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-0-7" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇹🇷</span>Türkiye</span>
+            <span class="hoption-badge"><span dir="ltr">+90</span></span>
+          </li>
+          <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-0-8" role="option" aria-selected="true">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span>United States</span>
+            <span class="hoption-badge"><span dir="ltr">+1</span></span>
+            <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+          </li>
+        </ul>
+        <p class="hlistbox-empty" role="status"></p>
+      </div>
+      <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" id="phone-0-0" class="hinput" value="" />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With a number already" layout="stack">
+  <play-note>
+    A number in E.164 sets the country, and shows the way it's written there.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="phone-1-0">Phone</label>
+    <div class="hphone-input" data-example-country="AZ">
+      <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-1-1" popoverTarget="phone-1-2" style="anchor-name:--phone-1-2">
+        <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span><span dir="ltr">+994</span><span class="hphone-input-name">Azerbaijan</span></span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="phone-1-2" popover="" style="position-anchor:--phone-1-2">
+        <div class="hlistbox-search">
+          <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+          <input data-example-empty="No countries found" class="hlistbox-search-input" type="text" role="combobox" placeholder="Search countries" aria-label="Search countries" aria-expanded="true" aria-controls="phone-1-1" aria-autocomplete="list" />
+        </div>
+        <ul aria-label="Country code" class="hlistbox" id="phone-1-1" role="listbox">
+          <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-1-3" role="option" aria-selected="true">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span>Azerbaijan</span>
+            <span class="hoption-badge"><span dir="ltr">+994</span></span>
+            <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+          </li>
+          <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-1-4" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇩🇪</span>Germany</span>
+            <span class="hoption-badge"><span dir="ltr">+49</span></span>
+          </li>
+          <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-1-5" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇫🇷</span>France</span>
+            <span class="hoption-badge"><span dir="ltr">+33</span></span>
+          </li>
+          <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-1-6" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇬🇧</span>United Kingdom</span>
+            <span class="hoption-badge"><span dir="ltr">+44</span></span>
+          </li>
+          <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-1-7" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇹🇷</span>Türkiye</span>
+            <span class="hoption-badge"><span dir="ltr">+90</span></span>
+          </li>
+          <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-1-8" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span>United States</span>
+            <span class="hoption-badge"><span dir="ltr">+1</span></span>
+          </li>
+        </ul>
+        <p class="hlistbox-empty" role="status"></p>
+      </div>
+      <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" id="phone-1-0" class="hinput" value="050 123 45 67" />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Checking the number" layout="stack">
+  <play-note>
+    Your app hears the number in E.164, and whether it's valid. It's empty until
+    it is.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="phone-2-0">Phone</label>
+    <div class="hphone-input" data-example-country="US">
+      <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-2-1" popoverTarget="phone-2-2" style="anchor-name:--phone-2-2">
+        <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span><span dir="ltr">+1</span><span class="hphone-input-name">United States</span></span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="phone-2-2" popover="" style="position-anchor:--phone-2-2">
+        <div class="hlistbox-search">
+          <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+          <input data-example-empty="No countries found" class="hlistbox-search-input" type="text" role="combobox" placeholder="Search countries" aria-label="Search countries" aria-expanded="true" aria-controls="phone-2-1" aria-autocomplete="list" />
+        </div>
+        <ul aria-label="Country code" class="hlistbox" id="phone-2-1" role="listbox">
+          <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-2-3" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span>Azerbaijan</span>
+            <span class="hoption-badge"><span dir="ltr">+994</span></span>
+          </li>
+          <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-2-4" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇩🇪</span>Germany</span>
+            <span class="hoption-badge"><span dir="ltr">+49</span></span>
+          </li>
+          <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-2-5" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇫🇷</span>France</span>
+            <span class="hoption-badge"><span dir="ltr">+33</span></span>
+          </li>
+          <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-2-6" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇬🇧</span>United Kingdom</span>
+            <span class="hoption-badge"><span dir="ltr">+44</span></span>
+          </li>
+          <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-2-7" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇹🇷</span>Türkiye</span>
+            <span class="hoption-badge"><span dir="ltr">+90</span></span>
+          </li>
+          <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-2-8" role="option" aria-selected="true">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span>United States</span>
+            <span class="hoption-badge"><span dir="ltr">+1</span></span>
+            <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+          </li>
+        </ul>
+        <p class="hlistbox-empty" role="status"></p>
+      </div>
+      <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" id="phone-2-0" class="hinput" value="" />
+    </div>
+  </div>
+  <span data-example-phone-status="Not a complete number yet" class="hstatus">Not a complete number yet</span>
+</play-example>
+
+<play-example title="An example as the placeholder" layout="stack">
+  <play-note>
+    Pass the parser's example numbers, and the country's shows until a number is
+    typed.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="phone-3-0">Phone</label>
+    <div class="hphone-input" data-example-country="US">
+      <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-3-1" popoverTarget="phone-3-2" style="anchor-name:--phone-3-2">
+        <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span><span dir="ltr">+1</span><span class="hphone-input-name">United States</span></span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="phone-3-2" popover="" style="position-anchor:--phone-3-2">
+        <div class="hlistbox-search">
+          <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+          <input data-example-empty="No countries found" class="hlistbox-search-input" type="text" role="combobox" placeholder="Search countries" aria-label="Search countries" aria-expanded="true" aria-controls="phone-3-1" aria-autocomplete="list" />
+        </div>
+        <ul aria-label="Country code" class="hlistbox" id="phone-3-1" role="listbox">
+          <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-3-3" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span>Azerbaijan</span>
+            <span class="hoption-badge"><span dir="ltr">+994</span></span>
+          </li>
+          <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-3-4" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇩🇪</span>Germany</span>
+            <span class="hoption-badge"><span dir="ltr">+49</span></span>
+          </li>
+          <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-3-5" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇫🇷</span>France</span>
+            <span class="hoption-badge"><span dir="ltr">+33</span></span>
+          </li>
+          <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-3-6" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇬🇧</span>United Kingdom</span>
+            <span class="hoption-badge"><span dir="ltr">+44</span></span>
+          </li>
+          <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-3-7" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇹🇷</span>Türkiye</span>
+            <span class="hoption-badge"><span dir="ltr">+90</span></span>
+          </li>
+          <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-3-8" role="option" aria-selected="true">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span>United States</span>
+            <span class="hoption-badge"><span dir="ltr">+1</span></span>
+            <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+          </li>
+        </ul>
+        <p class="hlistbox-empty" role="status"></p>
+      </div>
+      <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" placeholder="(201) 555-0123" id="phone-3-0" class="hinput" value="" />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Your own flags" layout="stack">
+  <play-note>
+    Windows shows emoji flags as two letters. <code>renderFlag</code> replaces
+    them with your own images.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="phone-4-0">Phone</label>
+    <div class="hphone-input" data-example-country="US">
+      <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-4-1" popoverTarget="phone-4-2" style="anchor-name:--phone-4-2">
+        <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">US</span></span><span dir="ltr">+1</span><span class="hphone-input-name">United States</span></span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <div class="hpopup" id="phone-4-2" popover="" style="position-anchor:--phone-4-2">
+        <div class="hlistbox-search">
+          <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+          <input data-example-empty="No countries found" class="hlistbox-search-input" type="text" role="combobox" placeholder="Search countries" aria-label="Search countries" aria-expanded="true" aria-controls="phone-4-1" aria-autocomplete="list" />
+        </div>
+        <ul aria-label="Country code" class="hlistbox" id="phone-4-1" role="listbox">
+          <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-4-3" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">AZ</span></span>Azerbaijan</span>
+            <span class="hoption-badge"><span dir="ltr">+994</span></span>
+          </li>
+          <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-4-4" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">DE</span></span>Germany</span>
+            <span class="hoption-badge"><span dir="ltr">+49</span></span>
+          </li>
+          <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-4-5" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">FR</span></span>France</span>
+            <span class="hoption-badge"><span dir="ltr">+33</span></span>
+          </li>
+          <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-4-6" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">GB</span></span>United Kingdom</span>
+            <span class="hoption-badge"><span dir="ltr">+44</span></span>
+          </li>
+          <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-4-7" role="option" aria-selected="false">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">TR</span></span>Türkiye</span>
+            <span class="hoption-badge"><span dir="ltr">+90</span></span>
+          </li>
+          <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-4-8" role="option" aria-selected="true">
+            <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true"><span style="font-size:11px;font-weight:500;letter-spacing:1px">US</span></span>United States</span>
+            <span class="hoption-badge"><span dir="ltr">+1</span></span>
+            <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+          </li>
+        </ul>
+        <p class="hlistbox-empty" role="status"></p>
+      </div>
+      <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" id="phone-4-0" class="hinput" value="" />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="stack">
+  <play-note>
+    A phone number reads left to right in every language, and sits at the end of
+    the field.
+  </play-note>
+  <div dir="rtl" lang="ar" style="inline-size:100%">
+    <div class="hfield">
+      <label class="hlabel" for="phone-5-0">الهاتف</label>
+      <div class="hphone-input" data-example-country="AZ">
+        <button aria-label="رمز البلد" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-5-1" popoverTarget="phone-5-2" style="anchor-name:--phone-5-2">
+          <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span><span dir="ltr">+994</span><span class="hphone-input-name">أذربيجان</span></span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div class="hpopup" id="phone-5-2" popover="" style="position-anchor:--phone-5-2">
+          <div class="hlistbox-search">
+            <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+            <input data-example-empty="لا توجد بلدان" class="hlistbox-search-input" type="text" role="combobox" placeholder="ابحث عن بلد" aria-label="ابحث عن بلد" aria-expanded="true" aria-controls="phone-5-1" aria-autocomplete="list" />
+          </div>
+          <ul aria-label="رمز البلد" class="hlistbox" id="phone-5-1" role="listbox">
+            <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-5-3" role="option" aria-selected="true">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span>أذربيجان</span>
+              <span class="hoption-badge"><span dir="ltr">+994</span></span>
+              <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+            </li>
+            <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-5-4" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇩🇪</span>ألمانيا</span>
+              <span class="hoption-badge"><span dir="ltr">+49</span></span>
+            </li>
+            <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-5-5" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇫🇷</span>فرنسا</span>
+              <span class="hoption-badge"><span dir="ltr">+33</span></span>
+            </li>
+            <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-5-6" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇬🇧</span>المملكة المتحدة</span>
+              <span class="hoption-badge"><span dir="ltr">+44</span></span>
+            </li>
+            <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-5-7" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇹🇷</span>تركيا</span>
+              <span class="hoption-badge"><span dir="ltr">+90</span></span>
+            </li>
+            <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-5-8" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span>الولايات المتحدة</span>
+              <span class="hoption-badge"><span dir="ltr">+1</span></span>
+            </li>
+          </ul>
+          <p class="hlistbox-empty" role="status"></p>
+        </div>
+        <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" id="phone-5-0" class="hinput" value="" />
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    Neither the country nor the number can be changed.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="phone-6-0">Phone</label>
+    <div class="hphone-input" data-example-country="US">
+      <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" disabled="">
+        <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span><span dir="ltr">+1</span><span class="hphone-input-name">United States</span></span>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </button>
+      <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" disabled="" id="phone-6-0" class="hinput" value="(415) 555-2671" />
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    A form sends the number in E.164. Resetting it brings back the number it
+    started with.
+  </play-note>
+  <form style="display:flex;flex-direction:column;gap:16px">
+    <div class="hfield">
+      <label class="hlabel" for="phone-7-0">Phone</label>
+      <div class="hphone-input" data-example-country="US">
+        <button aria-label="Country code" class="hselect hphone-input-country" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="phone-7-1" popoverTarget="phone-7-2" style="anchor-name:--phone-7-2">
+          <span class="hselect-value"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span><span dir="ltr">+1</span><span class="hphone-input-name">United States</span></span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div class="hpopup" id="phone-7-2" popover="" style="position-anchor:--phone-7-2">
+          <div class="hlistbox-search">
+            <svg class="hicon" width="1.125em" height="1.125em" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M11.5 21.75C5.85 21.75 1.25 17.15 1.25 11.5C1.25 5.85 5.85 1.25 11.5 1.25C17.15 1.25 21.75 5.85 21.75 11.5C21.75 17.15 17.15 21.75 11.5 21.75ZM11.5 2.75C6.67 2.75 2.75 6.68 2.75 11.5C2.75 16.32 6.67 20.25 11.5 20.25C16.33 20.25 20.25 16.32 20.25 11.5C20.25 6.68 16.33 2.75 11.5 2.75Z" fill="currentColor"></path><path d="M21.9995 22.7499C21.8095 22.7499 21.6195 22.6799 21.4695 22.5299L19.4695 20.5299C19.1795 20.2399 19.1795 19.7599 19.4695 19.4699C19.7595 19.1799 20.2395 19.1799 20.5295 19.4699L22.5295 21.4699C22.8195 21.7599 22.8195 22.2399 22.5295 22.5299C22.3795 22.6799 22.1895 22.7499 21.9995 22.7499Z" fill="currentColor"></path></svg>
+            <input data-example-empty="No countries found" class="hlistbox-search-input" type="text" role="combobox" placeholder="Search countries" aria-label="Search countries" aria-expanded="true" aria-controls="phone-7-1" aria-autocomplete="list" />
+          </div>
+          <ul aria-label="Country code" class="hlistbox" id="phone-7-1" role="listbox">
+            <li data-example-value="AZ" data-example-keywords="994,+994,AZ" class="hoption" id="phone-7-3" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇦🇿</span>Azerbaijan</span>
+              <span class="hoption-badge"><span dir="ltr">+994</span></span>
+            </li>
+            <li data-example-value="DE" data-example-keywords="49,+49,DE" class="hoption" id="phone-7-4" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇩🇪</span>Germany</span>
+              <span class="hoption-badge"><span dir="ltr">+49</span></span>
+            </li>
+            <li data-example-value="FR" data-example-keywords="33,+33,FR" class="hoption" id="phone-7-5" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇫🇷</span>France</span>
+              <span class="hoption-badge"><span dir="ltr">+33</span></span>
+            </li>
+            <li data-example-value="GB" data-example-keywords="44,+44,GB" class="hoption" id="phone-7-6" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇬🇧</span>United Kingdom</span>
+              <span class="hoption-badge"><span dir="ltr">+44</span></span>
+            </li>
+            <li data-example-value="TR" data-example-keywords="90,+90,TR" class="hoption" id="phone-7-7" role="option" aria-selected="false">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇹🇷</span>Türkiye</span>
+              <span class="hoption-badge"><span dir="ltr">+90</span></span>
+            </li>
+            <li data-example-value="US" data-example-keywords="1,+1,US" class="hoption" id="phone-7-8" role="option" aria-selected="true">
+              <span class="hoption-label"><span class="hphone-input-flag" aria-hidden="true">🇺🇸</span>United States</span>
+              <span class="hoption-badge"><span dir="ltr">+1</span></span>
+              <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor"></path></svg>
+            </li>
+          </ul>
+          <p class="hlistbox-empty" role="status"></p>
+        </div>
+        <input autoComplete="tel-national" inputMode="tel" type="tel" dir="ltr" id="phone-7-0" class="hinput" value="(415) 555-2671" />
+        <input type="hidden" name="phone" value="+14155552671" />
+      </div>
+    </div>
+    <button type="reset" style="align-self:flex-start" class="hbutton" data-variant="secondary">
+      <span class="hbutton-label">Reset</span>
+    </button>
+  </form>
+</play-example>

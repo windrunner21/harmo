@@ -41,6 +41,7 @@ the same markup and does what the script would.
 | Navigation Menu | [navigation-menu.md](navigation-menu.md) |
 | Pagination | [pagination.md](pagination.md) |
 | Password Input | [password.md](password.md) |
+| Phone Input | [phone-input.md](phone-input.md) |
 | Popup | [popup.md](popup.md) |
 | Radio | [radio.md](radio.md) |
 | Search | [search.md](search.md) |
@@ -130,6 +131,7 @@ Some components are built from others, so their files need company:
 | `menu-button.css` | `button.css`; `popup.css` to open a Popup |
 | `navigation-menu.css` | `expand-chevron.css` |
 | `pagination.css` | `button.css`, `chevron.css` |
+| `phone-input.css` | `select.css`, `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label |
 | `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
 | `selection-bar.css` | `button.css` for its actions; `tooltip.css` for a reason one is blocked |
 | `table.css` | `checkbox.css` to select rows; `select.css`, `listbox.css`, `popup.css`, `expand-chevron.css`, `pagination.css`, `button.css`, `chevron.css` for a footer |
@@ -272,6 +274,7 @@ the React components, set:
 | The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
 | The button's text and icon, the remove button's `hidden`, the message and `aria-invalid` | File Input | Show the file, remove it, and say why one was refused |
 | `data-status`, the progress, the rows themselves | File List | Follow your app's uploads |
+| The field's text, the country, and the hidden value | Phone Input | Format the number and follow the country |
 | The count's text | Selection Bar | Follows the selection, which is your app's |
 | `checked` and `indeterminate`, hidden columns, the rows and the page | Table | Follow the selection, the columns chosen, and the page, which are your app's |
 | Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |

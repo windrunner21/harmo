@@ -3,7 +3,8 @@
 // and keep the hidden inputs a form submits in step, as the React Select
 // does. listbox.js closes a single select.
 {
-  for (const trigger of document.querySelectorAll(".hselect[popovertarget]")) {
+  // A Phone Input shows the flag and code in its button; phone-input.js does that.
+  for (const trigger of document.querySelectorAll(".hselect[popovertarget]:not(.hphone-input-country)")) {
     const popup = document.getElementById(trigger.getAttribute("popovertarget"));
     const listbox = popup.querySelector(".hlistbox");
     const value = trigger.querySelector(".hselect-value");

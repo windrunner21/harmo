@@ -24,6 +24,17 @@ minor version may change an API, and says how to upgrade when it does.
   </ul>
   ```
 
+- Phone Input: `.hphone-input`, or `<PhoneInput>`, a phone number with a
+  searchable country code, formatted as it's typed, using a parser your app brings
+  such as `libphonenumber-js`. Harmo gains no dependency.
+
+  ```html preview="phone-input/Default"
+  <div class="hphone-input">
+    <input class="hinput" type="tel" aria-label="Phone" />
+  </div>
+  ```
+
+- Select: `renderValue`, for what the button shows in place of the chosen labels.
 - Tokens: `--harmo-space-2xs` to `--harmo-space-2xl`, a spacing scale whose steps
   grow by the golden ratio.
 - File Input: `.hfile-input`, or `<FileInput>`, which picks one file for your app
