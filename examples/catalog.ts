@@ -196,6 +196,11 @@ const groups: CatalogGroup[] = [
           "Arranges and connects a label, description, control, and error message.",
       },
       {
+        slug: "file-input",
+        title: "File Input",
+        purpose: "Picks one file for your app to upload, shows its name, and removes it.",
+      },
+      {
         slug: "input",
         title: "Input",
         purpose:

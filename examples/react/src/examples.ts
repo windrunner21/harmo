@@ -22,6 +22,7 @@ import { examples as emptyState } from "./components/empty-state.tsx";
 import { examples as expandChevron } from "./components/expand-chevron.tsx";
 import { examples as field } from "./components/field.tsx";
 import { examples as filterBar } from "./components/filter-bar.tsx";
+import { examples as fileInput } from "./components/file-input.tsx";
 import { examples as filterChip } from "./components/filter-chip.tsx";
 import { examples as filters } from "./components/filters.tsx";
 import { examples as icons } from "./components/icons.tsx";
@@ -78,6 +79,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "expand-chevron": expandChevron,
   field,
   "filter-bar": filterBar,
+  "file-input": fileInput,
   "filter-chip": filterChip,
   filters,
   icons,

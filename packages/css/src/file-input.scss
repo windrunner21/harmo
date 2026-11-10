@@ -1,0 +1,439 @@
+@use "shortcuts" as *;
+
+// Picks a file: a Button that's a <label> around the real input. The button's
+// states come from the input inside it (see button.scss).
+.hfile-input {
+  display: flex;
+  align-items: center;
+  gap: $space-2xs;
+
+  min-inline-size: 0;
+
+  font-family: $font-family;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Shrinks to leave room for the remove button beside it. A file's name ends
+  // in an ellipsis, while the button's own text can still wrap.
+  & > label.hbutton {
+    position: relative;
+
+    flex-shrink: 1;
+
+    min-inline-size: 0;
+
+    & > .hbutton-label {
+      transition: opacity $duration-normal ease-out;
+
+      @starting-style {
+        opacity: 0;
+      }
+    }
+
+    &:has(+ .hbutton:not([hidden])) > .hbutton-label {
+      min-inline-size: 0;
+      overflow: hidden;
+
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  // The remove button settles in as a file arrives.
+  & > button.hbutton {
+    transition:
+      background-color $button-duration ease,
+      color $button-duration ease,
+      border-color $button-duration ease,
+      transform $duration-normal $ease-out-cubic,
+      opacity $duration-normal ease-out;
+
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transform: none;
+
+      @starting-style {
+        transform: none;
+      }
+    }
+  }
+
+  // Where a file can be dropped: dashed, turning the accent as soon as a file
+  // is dragged over the page, and filling when it's over the area.
+  &[data-variant="strip"],
+  &[data-variant="area"] {
+    flex-wrap: wrap;
+
+    box-sizing: border-box;
+
+    border: 1px dashed $color-border-control;
+    border-radius: $border-radius;
+
+    transition:
+      border-color $duration-fast ease,
+      background-color $duration-fast ease;
+
+    // Room for the remove button on the line, or it would wrap to the next.
+    & > label.hbutton:has(+ .hbutton:not([hidden])) {
+      max-inline-size: calc(100% - #{$control-height} - #{$space-2xs});
+    }
+
+    &[data-dragging] {
+      border-color: $color-primary;
+    }
+
+    &[data-dragging="over"] {
+      background-color: $color-primary-tint;
+
+      @media (forced-colors: active) {
+        border-style: solid;
+        border-color: Highlight;
+      }
+    }
+
+    // Nothing can be dragged on a touch screen, so it's only the button.
+    @media (hover: none) and (pointer: coarse) {
+      padding: 0;
+
+      border-color: transparent;
+
+      & > .hfile-input-drop {
+        display: none;
+      }
+    }
+  }
+
+  // As wide as what's in it, up to the width it's given.
+  &[data-variant="strip"] {
+    gap: $space-2xs $space-xs;
+
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    padding: $space-xs $space-sm;
+
+    // As close to the button as in every other variant.
+    & > button.hbutton {
+      margin-inline-start: calc(#{$space-2xs} - #{$space-xs});
+    }
+
+    & > .hfile-input-drop {
+      order: 1;
+    }
+  }
+
+  // Laid out as an Empty State: each text fills its line, and the button and
+  // the remove button share the last. The heading and what follows it are one
+  // thing, a small step apart; the button is another, a big step away.
+  &[data-variant="area"] {
+    justify-content: center;
+    gap: 0 $space-2xs;
+
+    padding: $space-lg $space-md;
+
+    text-align: center;
+
+    & > :is(.hfile-input-heading, .hfile-input-drop, .hfile-input-hint) {
+      flex: 0 0 100%;
+    }
+
+    & > .hfile-input-heading {
+      font-size: $font-size-base;
+      line-height: $space-md;
+    }
+
+    & > .hbutton {
+      margin-block-start: $space-md;
+    }
+  }
+
+  &[data-variant="avatar"] {
+    position: relative;
+
+    inline-size: fit-content;
+    max-inline-size: 100%;
+
+    // Beside the circle, as it's beside the button in the other variants. The
+    // circle's edge is 3rem from the middle.
+    & > button.hbutton {
+      position: absolute;
+      inset-block-start: calc(3rem - #{$control-height} / 2);
+      inset-inline-start: calc(50% + 3rem + #{$space-2xs});
+    }
+  }
+}
+
+// Out of sight, not hidden: the keyboard and screen readers still reach it.
+.hfile-input-control {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  border: 0;
+  clip-path: inset(50%);
+}
+
+.hfile-input-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  inline-size: 40px;
+  block-size: 40px;
+  margin-block-end: $space-sm;
+
+  color: $color-primary;
+  background-color: $color-background-secondary;
+  // Transparent, until forced colors draw it, where the background is gone.
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+
+  transition:
+    transform $duration-normal $ease-out-cubic,
+    background-color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > svg {
+    inline-size: 20px;
+    block-size: 20px;
+  }
+
+  [data-dragging="over"] > & {
+    background-color: $color-background;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.hfile-input-heading {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+
+  // An avatar's two texts, one over the other, taking the width of the longer,
+  // so that changing from one to the other can't move the circle.
+  &:has(> span) {
+    display: grid;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  & > span {
+    grid-area: 1 / 1;
+
+    transition:
+      opacity $duration-normal ease-out,
+      visibility $duration-normal;
+  }
+
+  & > [data-inactive] {
+    visibility: hidden;
+
+    opacity: 0;
+
+    transition-duration: $duration-fast;
+  }
+}
+
+.hfile-input-drop {
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+
+  .hfile-input-heading + & {
+    margin-block-start: $space-2xs;
+  }
+}
+
+.hfile-input-hint {
+  margin-block-start: $space-xs;
+
+  font-size: $font-size-xs;
+  line-height: $font-line-height;
+  overflow-wrap: anywhere;
+
+  color: $color-text-secondary;
+}
+
+// The arrow rises as a file comes over the area; the check draws itself when
+// one has been taken.
+.hfile-input-arrow {
+  transition: transform $duration-normal $ease-out-cubic;
+
+  [data-dragging="over"] & {
+    @media (prefers-reduced-motion: no-preference) {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.hfile-input-check {
+  stroke-dasharray: 1;
+
+  transition: stroke-dashoffset $duration-slow $ease-out-cubic;
+
+  @starting-style {
+    stroke-dashoffset: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// An avatar: the circle and the text beneath it are one big target.
+.hfile-input-target {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-inline-size: 0;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:has(> .hfile-input-control:disabled) {
+    opacity: $opacity-disabled;
+
+    cursor: not-allowed;
+  }
+
+  & > .havatar {
+    --harmo-avatar-size: 6rem;
+
+    position: relative;
+
+    margin-block-end: $space-sm;
+
+    border: 1px dashed $color-border-control;
+
+    transition:
+      border-color $duration-fast ease,
+      background-color $duration-fast ease,
+      transform $duration-normal $ease-out-cubic;
+
+    & > .hicon {
+      inline-size: 1.75rem;
+      block-size: 1.75rem;
+
+      transition: transform $duration-normal $ease-out-cubic;
+    }
+
+    &:has(> .hfile-input-preview:not([data-leaving])) {
+      border-style: solid;
+
+      & > .hicon {
+        visibility: hidden;
+      }
+    }
+
+    [data-dragging] & {
+      border-color: $color-primary;
+    }
+
+    [data-dragging="over"] & {
+      background-color: $color-primary-tint;
+
+      @media (prefers-reduced-motion: no-preference) {
+        transform: scale(1.04);
+
+        & > .hicon {
+          transform: translateY(-2px);
+        }
+      }
+
+      @media (forced-colors: active) {
+        border-style: solid;
+        border-color: Highlight;
+      }
+    }
+  }
+
+  &:where(:has(> .hfile-input-control:enabled)) {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover > .havatar {
+        border-color: $color-primary;
+      }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      &:active > .havatar {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  &:has(> .hfile-input-control:focus-visible) > .havatar {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  & > .hfile-input-hint {
+    margin-block-start: $space-2xs;
+  }
+}
+
+// The picture chosen, settling in over the circle. data-leaving fades it, and a
+// script takes it away once it has.
+.hfile-input-preview {
+  position: absolute;
+  inset: 0;
+
+  inline-size: 100%;
+  block-size: 100%;
+
+  object-fit: cover;
+
+  transition:
+    opacity $duration-normal ease-out,
+    transform $duration-normal $ease-out-cubic;
+
+  @starting-style {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+
+  &[data-leaving] {
+    opacity: 0;
+
+    transition-duration: $duration-fast;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @starting-style {
+      transform: none;
+    }
+  }
+}

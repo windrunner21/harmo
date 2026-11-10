@@ -1,0 +1,239 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    A secondary Button that opens the file picker. Once a file is chosen, it shows
+    the file's name, with a way to remove it. Your app does the uploading.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="attachment">Attachment</label>
+    <div class="hfile-input" data-example-choose="Choose file">
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="attachment" name="attachment" type="file" />
+        <play-icon name="upload" class="hicon"></play-icon>
+        <span class="hbutton-label">Choose file</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove attachment" hidden>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Limited to a type and size" layout="stack">
+  <play-note>
+    <code>accept</code> only narrows what the picker offers, so check the file
+    too. One that's refused says why and isn't kept.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="task-list">Task list</label>
+    <p class="hdescription" id="task-list-description">A CSV file, up to 1 MB.</p>
+    <div class="hfile-input" data-example-choose="Choose file" data-example-ending=".csv" data-example-max-bytes="1048576" data-example-wrong-type="Use a CSV file." data-example-too-large="Use a file of 1 MB or less.">
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="task-list" name="task-list" type="file" accept=".csv" aria-describedby="task-list-description task-list-error" />
+        <play-icon name="upload" class="hicon"></play-icon>
+        <span class="hbutton-label">Choose file</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove task list" hidden>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+    <p class="herror" id="task-list-error"></p>
+  </div>
+</play-example>
+
+<play-example title="Compact drop area" layout="stack">
+  <play-note>
+    A file can be dropped anywhere in the dashed area, or chosen with the button.
+    The area lights up as soon as a file is dragged over the page, and fills when
+    it's over the area.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="attachment-strip">Attachment</label>
+    <div class="hfile-input" data-variant="strip" data-example-choose="Choose file">
+      <span class="hfile-input-drop">or drop it here</span>
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="attachment-strip" name="attachment-strip" type="file" />
+        <play-icon name="upload" class="hicon"></play-icon>
+        <span class="hbutton-label">Choose file</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove attachment" hidden>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Large drop area" layout="stack">
+  <play-note>
+    With a heading and a hint. <code>accept</code> doesn't apply to a drop, so
+    check the file too.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="task-list-area">Task list</label>
+    <div class="hfile-input" data-variant="area" data-example-choose="Choose file" data-example-ending=".csv" data-example-max-bytes="1048576" data-example-wrong-type="Use a CSV file." data-example-too-large="Use a file of 1 MB or less.">
+      <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
+      <span class="hfile-input-heading">Upload a task list</span>
+      <span class="hfile-input-drop">Drag it here, or choose it below.</span>
+      <span class="hfile-input-hint">A CSV file, up to 1 MB.</span>
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="task-list-area" name="task-list-area" type="file" accept=".csv" aria-describedby="task-list-area-error" />
+        <span class="hbutton-label">Choose file</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove task list" hidden>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+    <p class="herror" id="task-list-area-error"></p>
+  </div>
+</play-example>
+
+<play-example title="Avatar" layout="stack">
+  <play-note>
+    The circle and its text open the picker, and take a dropped image. The picture
+    settles in once it's chosen.
+  </play-note>
+  <div class="hfile-input" data-variant="avatar" data-example-choose="Upload picture" data-example-image data-example-wrong-type="Use an image.">
+    <label class="hfile-input-target">
+      <input class="hfile-input-control" name="avatar" type="file" accept="image/*" aria-describedby="avatar-error" />
+      <span class="havatar">
+        <play-icon name="user" class="hicon"></play-icon>
+      </span>
+      <span class="hfile-input-heading"><span>Upload picture</span><span data-inactive="">Change picture</span></span>
+      <span class="hfile-input-hint">PNG or JPG</span>
+    </label>
+    <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove picture" hidden>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </div>
+  <p class="herror" id="avatar-error"></p>
+</play-example>
+
+<play-example title="Avatar with a picture" layout="stack">
+  <play-note>
+    A picture your app already has. Choosing another replaces it, and the button
+    beside it removes it.
+  </play-note>
+  <div class="hfile-input" data-variant="avatar" data-example-choose="Upload picture">
+    <label class="hfile-input-target">
+      <input class="hfile-input-control" name="avatar-set" type="file" accept="image/*" />
+      <span class="havatar">
+        <play-icon name="user" class="hicon"></play-icon>
+      <img class="hfile-input-preview" src="images/imran.webp" alt="" />
+      </span>
+      <span class="hfile-input-heading"><span data-inactive="">Upload picture</span><span>Change picture</span></span>
+      <span class="hfile-input-hint">PNG or JPG</span>
+    </label>
+    <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove picture">
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="With a file already attached" layout="stack">
+  <play-note>
+    The name of a file your app already has. Choosing another replaces it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="brief">Project brief</label>
+    <div class="hfile-input" data-example-choose="Choose file">
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="brief" name="brief" type="file" />
+        <play-icon name="uploaded" class="hicon"></play-icon>
+        <span class="hbutton-label" title="project-brief.pdf">project-brief.pdf</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove project brief">
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Long file name" layout="stack">
+  <play-note>
+    A long name ends in an ellipsis. The whole name shows on hover, and screen
+    readers read all of it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="notes">Notes</label>
+    <div class="hfile-input" data-example-choose="Choose file">
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="notes" name="notes" type="file" />
+        <play-icon name="uploaded" class="hicon"></play-icon>
+        <span class="hbutton-label" title="quarterly-planning-notes-for-the-whole-team-with-every-appendix-and-every-draft.pdf">quarterly-planning-notes-for-the-whole-team-with-every-appendix-and-every-draft.pdf</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove notes">
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    No file can be chosen or dropped, and one that's attached can't be removed.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="cover">Cover image</label>
+    <div class="hfile-input" data-example-choose="Choose file">
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="cover" name="cover" type="file" disabled />
+        <play-icon name="upload" class="hicon"></play-icon>
+        <span class="hbutton-label">Choose file</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove cover image" hidden disabled>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="contract">Contract</label>
+    <div class="hfile-input" data-example-choose="Choose file">
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="contract" name="contract" type="file" disabled />
+        <play-icon name="uploaded" class="hicon"></play-icon>
+        <span class="hbutton-label" title="contract.pdf">contract.pdf</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove contract" disabled>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="terms">Terms</label>
+    <div class="hfile-input" data-variant="strip" data-example-choose="Choose file">
+      <span class="hfile-input-drop">or drop it here</span>
+      <label class="hbutton" data-variant="secondary">
+        <input class="hfile-input-control" id="terms" name="terms" type="file" disabled />
+        <play-icon name="upload" class="hicon"></play-icon>
+        <span class="hbutton-label">Choose file</span>
+      </label>
+      <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove terms" hidden disabled>
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    It's a real file input, so a form sends the file, and resetting the form
+    brings back the file that was attached.
+  </play-note>
+  <form style="display: flex; flex-direction: column; gap: 16px">
+    <div class="hfield">
+      <label class="hlabel" for="timeline">Timeline</label>
+      <div class="hfile-input" data-example-choose="Choose file">
+        <label class="hbutton" data-variant="secondary">
+          <input class="hfile-input-control" id="timeline" name="timeline" type="file" />
+          <play-icon name="uploaded" class="hicon"></play-icon>
+          <span class="hbutton-label" title="timeline.pdf">timeline.pdf</span>
+        </label>
+        <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove timeline">
+          <play-icon name="close" class="hicon"></play-icon>
+        </button>
+      </div>
+    </div>
+    <button class="hbutton" data-variant="secondary" type="reset" style="align-self: flex-start">
+      <span class="hbutton-label">Reset</span>
+    </button>
+  </form>
+</play-example>

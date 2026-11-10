@@ -34,6 +34,7 @@ const components: Record<string, string[]> = {
   "empty-state": ["EmptyState.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
+  "file-input": ["FileInput.tsx"],
   "filter-bar": ["FilterBar.tsx"],
   "filter-chip": ["FilterChip.tsx"],
   filters: ["Filters.tsx"],
@@ -94,6 +95,7 @@ const alsoStyledBy: Record<string, string[]> = {
   breadcrumb: ["chevron"],
   combobox: ["input"],
   "command-menu": ["dialog"],
+  "file-input": ["avatar", "button"],
   "tag-list": ["tag"],
 };
 

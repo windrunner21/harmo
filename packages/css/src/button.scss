@@ -2,7 +2,7 @@
 
 // Enabled and actionable. aria-disabled keeps a button focusable, so a tooltip
 // can explain why or focus survives loading, while it looks and acts disabled.
-$actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([aria-disabled="true"]))';
+$actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([aria-disabled="true"]), label:has(> input:enabled))';
 
 .hbutton {
   display: inline-flex;
@@ -215,7 +215,9 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     }
   }
 
-  &:focus-visible {
+  // A <label> around an input, as in a File Input, takes these from the input.
+  &:focus-visible,
+  &:where(label:has(> input:focus-visible)) {
     outline: $focus-outline;
     outline-offset: $focus-outline-offset;
 
@@ -223,7 +225,8 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   }
 
   &:disabled,
-  &[aria-disabled="true"] {
+  &[aria-disabled="true"],
+  &:where(label:has(> input:disabled)) {
     opacity: $opacity-disabled;
 
     cursor: not-allowed;

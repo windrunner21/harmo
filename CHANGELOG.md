@@ -13,6 +13,22 @@ minor version may change an API, and says how to upgrade when it does.
 - Input and TextArea: `highlight`, a regular expression whose matches are marked
   as you type, such as the variables in a template.
 
+- Tokens: `--harmo-space-2xs` to `--harmo-space-2xl`, a spacing scale whose steps
+  grow by the golden ratio.
+- File Input: `.hfile-input`, or `<FileInput>`, which picks one file for your app
+  to upload, shows its name, and removes it, with `validate` to refuse a file and
+  `defaultFileName` for one already attached. `variant` makes it take a dropped
+  file, as a compact strip, a large area, or an avatar circle.
+
+  ```html preview="file-input/Default"
+  <div class="hfile-input">
+    <label class="hbutton" data-variant="secondary">
+      <input class="hfile-input-control" type="file" aria-label="Attachment" />
+      <span class="hbutton-label">Choose file</span>
+    </label>
+  </div>
+  ```
+
 ## [0.5.1] - 2026-11-10
 
 A fix for a Toolbar's controls, and a Date Picker's setup in words, in its docs.

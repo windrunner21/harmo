@@ -26,6 +26,7 @@ the same markup and does what the script would.
 | Empty State | [empty-state.md](empty-state.md) |
 | Expand Chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
+| File Input | [file-input.md](file-input.md) |
 | Filter Bar | [filter-bar.md](filter-bar.md) |
 | Filter Chip | [filter-chip.md](filter-chip.md) |
 | Filters | [filters.md](filters.md) |
@@ -118,6 +119,7 @@ Some components are built from others, so their files need company:
 | `date-filter.css` | `filter-chip.css`, `popup.css`, `select.css`, `listbox.css`, `expand-chevron.css`, `input.css`, `date-picker.css`, `calendar.css`, `button.css`, `chevron.css` |
 | `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
 | `empty-state.css` | `button.css` for actions |
+| `file-input.css` | `button.css`; `avatar.css` for an avatar; `field.css` for a label and a message |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `filters.css` | `filter-chip.css`, `popup.css`, and those of the filters in it |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
@@ -266,6 +268,7 @@ the React components, set:
 | Ignoring activation | Pagination | On a disabled Previous or Next |
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
+| The button's text and icon, the remove button's `hidden`, the message and `aria-invalid` | File Input | Show the file, remove it, and say why one was refused |
 | The count's text | Selection Bar | Follows the selection, which is your app's |
 | `checked` and `indeterminate`, hidden columns, the rows and the page | Table | Follow the selection, the columns chosen, and the page, which are your app's |
 | Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
