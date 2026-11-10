@@ -505,6 +505,24 @@ onEachPlayground("file-input", () => {
     await expect.poll(() => page.evaluate(() => (window as unknown as { revoked: string[] }).revoked)).toContain(first);
   });
 
+  test("stretched by what's around it, an avatar keeps its remove button beside it", async ({ page }) => {
+    const { root, remove } = await parts(page, "file-input-avatar-with-a-picture");
+    await root.evaluate((n: HTMLElement) => (n.style.inlineSize = "100%"));
+    await settled(remove);
+    const [target, beside] = await boxes(root.locator(".hfile-input-target"), remove);
+    expect(beside!.x - (target!.x + target!.width)).toBeCloseTo(6, 0);
+  });
+
+  test("an avatar is the same width with a picture and without", async ({ page }) => {
+    const { root, input, remove } = await parts(page, "file-input-avatar");
+    const [empty] = await boxes(root);
+    await input.setInputFiles(png);
+    await expect(remove).toBeVisible();
+    await settled(remove);
+    const [picked] = await boxes(root);
+    expect(picked!.width).toBeCloseTo(empty!.width, 0);
+  });
+
   test("an avatar keeps room for its remove button in its own width", async ({ page }) => {
     const { root, remove } = await parts(page, "file-input-avatar-with-a-picture");
     const [around, removing] = await boxes(root, remove);
@@ -583,8 +601,8 @@ onEachPlayground("file-input", () => {
     await expect(circle).toHaveCSS("border-top-style", "solid");
     await expect(remove).toBeVisible();
     await settled(remove);
-    const [around, beside] = await boxes(circle, remove);
-    expect(beside!.x - (around!.x + around!.width)).toBeCloseTo(6, 0);
+    const [around, target, beside] = await boxes(circle, root.locator(".hfile-input-target"), remove);
+    expect(beside!.x - (target!.x + target!.width)).toBeCloseTo(6, 0);
     expect(beside!.y + beside!.height / 2).toBeCloseTo(around!.y + around!.height / 2, 0);
     await expect(remove).toHaveAttribute("data-variant", "tertiary");
     await remove.click();

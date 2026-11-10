@@ -8,6 +8,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Fixed
+
+- File Input: an avatar's remove button stays beside the circle when something
+  around it stretches the avatar's box.
+
 ## [0.5.2] - 2026-11-10
 
 Three new components for forms and files: File Input, File List, and Phone Input.
