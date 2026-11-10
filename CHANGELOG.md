@@ -8,10 +8,27 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-10
+
+Three new components for forms and files: File Input, File List, and Phone Input.
+Also marking text in an Input or TextArea, and a spacing scale.
+
 ### Added
 
-- Input and TextArea: `highlight`, a regular expression whose matches are marked
-  as you type, such as the variables in a template.
+- File Input: `.hfile-input`, or `<FileInput>`, which picks one file for your app
+  to upload, shows its name, and removes it, with `validate` to refuse a file and
+  `defaultFileName` for one already attached. `variant` makes it take a dropped
+  file, as a compact strip, a large area, or an avatar circle, and `multiple` takes
+  several for your app to hold.
+
+  ```html preview="file-input/Default"
+  <div class="hfile-input">
+    <label class="hbutton" data-variant="secondary">
+      <input class="hfile-input-control" type="file" aria-label="Attachment" />
+      <span class="hbutton-label">Choose file</span>
+    </label>
+  </div>
+  ```
 
 - File List: `.hfile-list`, or `<FileList>`, the files your app is holding or
   sending, as rows or a thumbnail grid, with progress and a way to try again.
@@ -34,23 +51,13 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Input and TextArea: `highlight`, a regular expression whose matches are marked
+  as you type, such as the variables in a template.
+
 - Select: `renderValue`, for what the button shows in place of the chosen labels.
+
 - Tokens: `--harmo-space-2xs` to `--harmo-space-2xl`, a spacing scale whose steps
   grow by the golden ratio.
-- File Input: `.hfile-input`, or `<FileInput>`, which picks one file for your app
-  to upload, shows its name, and removes it, with `validate` to refuse a file and
-  `defaultFileName` for one already attached. `variant` makes it take a dropped
-  file, as a compact strip, a large area, or an avatar circle, and `multiple` takes
-  several for your app to hold.
-
-  ```html preview="file-input/Default"
-  <div class="hfile-input">
-    <label class="hbutton" data-variant="secondary">
-      <input class="hfile-input-control" type="file" aria-label="Attachment" />
-      <span class="hbutton-label">Choose file</span>
-    </label>
-  </div>
-  ```
 
 ## [0.5.1] - 2026-11-10
 
@@ -1011,7 +1018,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/windrunner21/harmo/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/windrunner21/harmo/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/windrunner21/harmo/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/windrunner21/harmo/compare/v0.3.0...v0.4.0

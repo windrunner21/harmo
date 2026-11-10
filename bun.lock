@@ -23,7 +23,7 @@
     },
     "packages/cli": {
       "name": "harmo-ui",
-      "version": "0.5.1",
+      "version": "0.5.2",
       "bin": {
         "harmo-ui": "dist/harmo.js",
       },
@@ -39,11 +39,11 @@
     },
     "packages/css": {
       "name": "@harmo-ui/css",
-      "version": "0.5.1",
+      "version": "0.5.2",
     },
     "packages/react": {
       "name": "@harmo-ui/react",
-      "version": "0.5.1",
+      "version": "0.5.2",
       "devDependencies": {
         "@types/react": "^19",
         "@types/react-dom": "^19",
