@@ -42,6 +42,47 @@
   </div>
 </play-example>
 
+<play-example title="With a shortcut" layout="stack">
+  <play-note>
+    A Kbd after the input shows the shortcut that reaches the field, here
+    <kbd class="hkbd">Ctrl K</kbd>, or <kbd class="hkbd">⌘K</kbd> on Apple
+    devices. <code>aria-keyshortcuts</code> on the input names it, the Kbd is
+    hidden from screen readers, and the app handles the key itself. Once
+    there's text, the clear button takes the Kbd's place; on a device that
+    can't hover, there's no Kbd.
+  </play-note>
+  <div class="hsearch">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input
+      class="hinput"
+      type="search"
+      placeholder="Search templates"
+      aria-label="Search templates"
+      aria-keyshortcuts="Control+K"
+      data-example-search-shortcut
+    />
+    <kbd class="hkbd" aria-hidden="true" data-example-apple="⌘K">Ctrl K</kbd>
+    <button class="hsearch-clear" type="button" tabindex="-1" aria-label="Clear" hidden>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </div>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    <code>disabled</code> on the input and its clear button: the placeholder
+    turns a lighter gray and the magnifier dims, as a disabled Input's text and
+    marks do.
+  </play-note>
+  <div class="hsearch">
+    <play-icon name="search" class="hicon"></play-icon>
+    <input class="hinput" type="search" placeholder="Search archived conversations" aria-label="Search archived conversations" disabled />
+    <button class="hsearch-clear" type="button" tabindex="-1" aria-label="Clear" disabled hidden>
+      <play-icon name="close" class="hicon"></play-icon>
+    </button>
+  </div>
+</play-example>
+
 <play-example title="Filtering a list" layout="stack">
   <play-note>
     Typing narrows the list as you go; clearing, by the button or

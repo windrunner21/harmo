@@ -37,7 +37,7 @@ interface HorizontalFieldProps extends FieldParts {
 
 export type FieldProps = StackedFieldProps | HorizontalFieldProps;
 
-interface FieldControl {
+export interface FieldControl {
   id?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -65,6 +65,7 @@ export const useField = (
 
   return {
     id: control.id ?? field.id,
+    "aria-label": control["aria-label"],
     "aria-labelledby": named
       ? control["aria-labelledby"]
       : (field["aria-labelledby"] ?? (labelled ? undefined : field.title)),

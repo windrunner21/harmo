@@ -5,7 +5,7 @@
   @extend %control;
 
   min-block-size: $control-height;
-  padding: 0 12px;
+  padding: 0 control.$padding-inline;
 
   inline-size: 100%;
   min-inline-size: 0;
@@ -17,6 +17,29 @@
 
   &[readonly] {
     background-color: $color-background-secondary;
+  }
+
+  // A search field without the browsers' own clear button and decorations,
+  // so every browser shows the same field. One rule each: a browser drops a
+  // whole rule over one selector it doesn't know.
+  &[type="search"] {
+    appearance: none;
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    &::-webkit-search-decoration {
+      display: none;
+    }
+
+    &::-webkit-search-results-button {
+      display: none;
+    }
+
+    &::-webkit-search-results-decoration {
+      display: none;
+    }
   }
 }
 
@@ -52,7 +75,7 @@
   display: flex;
   align-items: center;
 
-  padding-inline: 12px;
+  padding-inline: control.$padding-inline;
 
   &[hidden] {
     display: none;

@@ -1,9 +1,13 @@
 @use "shortcuts" as *;
 
 .hfield {
+  // The gap between its parts, which a description under its label and an
+  // empty error take back, so they move with it.
+  --hfield-gap: #{$space-2xs};
+
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--hfield-gap);
 
   min-inline-size: 0;
 
@@ -16,7 +20,7 @@
 
   & > .hlabel + .hdescription,
   & > .hfield-label-row + .hdescription {
-    margin-block-start: -8px;
+    margin-block-start: calc(-1 * var(--hfield-gap));
   }
 
   &[data-orientation="horizontal"] {
@@ -35,11 +39,11 @@
       margin-block: calc((1.25rem - $switch-height) / 2);
     }
 
+    // The label and description, close together, as in a stacked Field.
     & > .hfield-content {
       display: flex;
       flex-direction: column;
       flex: 1;
-      gap: 4px;
 
       min-inline-size: 0;
 
@@ -74,7 +78,7 @@ $horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: $space-2xs;
 
   &[hidden] {
     display: none;
@@ -108,8 +112,14 @@ $horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .
 .herror {
   interpolate-size: allow-keywords;
 
+  min-block-size: 0;
   margin: 0;
-  overflow: hidden;
+  // Clipped for the collapse, with room past its edges for the focus ring of a
+  // link inside it: the ring's 2px, at its 2px offset. A plain length, as
+  // Chromium drops calc() here; a browser without overflow-clip-margin clips at
+  // the edges.
+  overflow: clip;
+  overflow-clip-margin: 4px;
   overflow-wrap: anywhere;
 
   font-family: $font-family;
@@ -122,19 +132,21 @@ $horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .
   // Opening grows the error to its text's height while it fades and slides
   // in; closing reverses it, quicker.
   transition:
-    block-size $duration-slow $ease-out-cubic,
-    line-height $duration-slow $ease-out-cubic,
-    margin-block-start $duration-slow $ease-out-cubic,
-    opacity $duration-slow $ease-out-cubic,
-    transform $duration-slow $ease-out-cubic,
-    visibility $duration-slow;
+    block-size $duration-normal $ease-out-cubic,
+    line-height $duration-normal $ease-out-cubic,
+    margin-block-start $duration-normal $ease-out-cubic,
+    opacity $duration-normal $ease-out-cubic,
+    transform $duration-normal $ease-out-cubic,
+    visibility $duration-normal;
 
   // Empty: no error. Hidden: closing, with the text kept until it has gone.
+  // Either way it takes back the Field's gap; outside a Field, such as under
+  // a File Input, the gap a Field has.
   &:empty,
   &[hidden] {
     display: block;
     block-size: 0;
-    margin-block-start: -8px;
+    margin-block-start: calc(-1 * var(--hfield-gap, #{$space-2xs}));
 
     opacity: 0;
     transform: translateY(-0.25rem);
@@ -187,7 +199,9 @@ $horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .
   font-family: $font-family;
   font-size: $font-size-2xs;
   font-weight: $font-weight-normal;
-  line-height: 1.25rem;
+  // Its border's 2px less than a label's line, so a label row with the marker
+  // is as tall as a label alone.
+  line-height: calc(1.25rem - 2px);
 
   background-color: color-mix(
     in srgb,

@@ -1,23 +1,40 @@
 "use client";
 
-import { useId, type ComponentPropsWithRef, type ReactNode } from "react";
+import { useId, type ComponentPropsWithRef } from "react";
 import { renders } from "./children.ts";
-import { useField } from "./field/Field.tsx";
+import { Field, useField } from "./field/Field.tsx";
 import {
   RadioGroupContext,
   useRadioGroupInput,
   type RadioGroupOptions,
 } from "./RadioGroup.tsx";
+import type { ControlField } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
-export interface SegmentedProps
-  extends Omit<ComponentPropsWithRef<"div">, "defaultValue">,
-    RadioGroupOptions {
-  label?: ReactNode;
-}
+type SegmentedControlProps = Omit<ComponentPropsWithRef<"div">, "defaultValue"> &
+  RadioGroupOptions;
 
-export const Segmented = ({
-  label,
+export type SegmentedProps = SegmentedControlProps & ControlField;
+
+export const Segmented = (segmentedProps: SegmentedProps) => {
+  const { label, optional, description, error, hidden, ...props } = segmentedProps;
+  if (!renders(label)) return <SegmentedControl {...props} hidden={hidden} />;
+
+  return (
+    <Field
+      label={label}
+      control="button"
+      optional={optional}
+      description={description}
+      hidden={hidden}
+      {...("error" in segmentedProps && { error })}
+    >
+      <SegmentedControl {...props} />
+    </Field>
+  );
+};
+
+const SegmentedControl = ({
   name,
   value,
   defaultValue,
@@ -25,15 +42,12 @@ export const Segmented = ({
   required,
   disabled,
   className,
-  hidden,
   ...props
-}: SegmentedProps) => {
+}: SegmentedControlProps) => {
   const id = useId();
-  const labelId = `${id}-label`;
   const field = useField(props);
-  const labelled = renders(label);
 
-  const control = (
+  return (
     <RadioGroupContext
       value={{
         name: name ?? id,
@@ -47,23 +61,12 @@ export const Segmented = ({
       <div
         {...props}
         className={withClass("hsegmented", className)}
-        hidden={labelled ? undefined : hidden}
         role="radiogroup"
-        aria-labelledby={labelled ? labelId : field["aria-labelledby"]}
+        aria-labelledby={field["aria-labelledby"]}
         aria-describedby={field["aria-describedby"]}
+        aria-invalid={field["aria-invalid"]}
       />
     </RadioGroupContext>
-  );
-
-  if (!labelled) return control;
-
-  return (
-    <div className="hfield" hidden={hidden}>
-      <span className="hlabel" id={labelId}>
-        {label}
-      </span>
-      {control}
-    </div>
   );
 };
 

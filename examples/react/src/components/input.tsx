@@ -80,7 +80,7 @@ export const examples = {
   ),
 
   "Next to a button": () => (
-    <div style={{ display: "flex", gap: 8 }}>
+    <div style={{ display: "flex", gap: "var(--harmo-space-xs)" }}>
       <Input
         type="search"
         aria-label="Search conversations"

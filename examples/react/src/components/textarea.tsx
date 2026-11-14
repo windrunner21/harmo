@@ -12,6 +12,16 @@ export const examples = {
     </Field>
   ),
 
+  "Counting down": () => (
+    <Field label="Text message">
+      <TextArea
+        name="sms"
+        maxLength={160}
+        formatCount={(length, maxLength) => `${maxLength - length} characters left`}
+      />
+    </Field>
+  ),
+
   "Long text": () => (
     <Field label="Saved reply">
       <TextArea

@@ -11,7 +11,7 @@ labels, use a [Radio](radio.md) group or a [Select](select.md).
 | CSS | `segmented.css`; `field.css` for the label |
 | Element | `<div class="hsegmented" role="radiogroup">` |
 | Parts | `.hsegmented-option`: a `<label>` wrapping an `<input type="radio">` and its text |
-| Required | `aria-labelledby` or `aria-label` on the group; the same `name` on every radio in it |
+| Required | `aria-labelledby` or `aria-label` on the group; the same `name` on every radio in it; with a description or error, `aria-describedby` on the group pointing to them |
 | Unique | Every id, and each group's `name` |
 | Script | None |
 
@@ -31,6 +31,23 @@ labels, use a [Radio](radio.md) group or a [Select](select.md).
 </div>
 ```
 
+The label is a `<span>` with an id, since a `<label>` can't name a group. A
+description, the Optional marker, and an error are a [Field](field.md)'s, as
+for any control: connect them with `aria-describedby` on the group, and set
+`aria-invalid="true"` on it while there's an error:
+
+```html
+<div class="hfield">
+  <span class="hlabel" id="reply-tone-label">Reply tone</span>
+  <p class="hdescription" id="reply-tone-description">Used for suggested replies.</p>
+  <div class="hsegmented" role="radiogroup" aria-labelledby="reply-tone-label"
+    aria-describedby="reply-tone-description reply-tone-error" aria-invalid="true">
+    …
+  </div>
+  <p class="herror" id="reply-tone-error" aria-live="polite">Choose a tone.</p>
+</div>
+```
+
 ## Options
 
 | Hook | Effect |
@@ -40,13 +57,19 @@ labels, use a [Radio](radio.md) group or a [Select](select.md).
 
 ## Appearance and states
 
-- Options 8px apart, `--harmo-control-height` tall, 14px
-  `--harmo-color-text-secondary` text, 8px radius, and a
+- Options 6px (`--harmo-space-2xs`) apart, `--harmo-control-height` tall, 14px
+  `--harmo-color-text-secondary` text 10px (`--harmo-space-xs`) in from
+  their sides, as an Input's is, 8px radius, and a
   `--harmo-input-color-border` border like [inputs](input.md).
-- Labels never wrap. Options share the row equally; one with a longer label
-  takes the room it needs, and options move to a new row only when they can't
-  all fit on one.
-- Hover (hover devices): `--harmo-color-primary` border.
+- Options share the row equally; one with a longer label takes the room it
+  needs, and options move to a new row only when they can't all fit on one.
+  A label stays on one line, unless it's wider than the whole group: that
+  option then takes a row of its own and its label wraps, with 6px
+  (`--harmo-space-2xs`) above and below it.
+- Hover (hover devices): `--harmo-color-primary` border. It weighs no more
+  than the checked state, so an app's own rule for the checked option, such
+  as `.hsegmented-option:has(:checked)`, loaded after Harmo, applies on hover
+  too.
 - Checked: border and text in `--harmo-color-primary`.
 - Keyboard focus: the standard ring around the option.
 - Disabled: `--harmo-opacity-disabled` (50%).
@@ -59,6 +82,7 @@ labels, use a [Radio](radio.md) group or a [Select](select.md).
 Each option wraps a native radio, so the group works in forms, Tab reaches the
 chosen option, and the arrow keys move the choice. The radios are invisible but
 stay focusable, and `role="radiogroup"` with `aria-labelledby` names the group.
+Its description and error are read with its name, from `aria-describedby`.
 
 ## What a script does
 
@@ -67,14 +91,17 @@ None.
 ## React
 
 `<Segmented>` renders the group, with a `<SegmentedOption>` for each option;
-with `label`, it also renders the Field and label above it. Without `label`,
-name it with `aria-label`, or place it in a
-[Setting](settings.md#react), which names it. Other props are the
-group `<div>`'s attributes.
+with `label`, it also renders its Field, with the label above it, and the
+group takes the Field's description and error. An `aria-labelledby` of your
+own wins over the label. Without `label`, name it with `aria-label`, or place
+it in a [Setting](settings.md#react), which names it. Inside a `<Field>` of
+your own, give that Field `control="button"`, so its label can name the
+group. Other props are the group `<div>`'s attributes.
 
 | Prop | Effect |
 | --- | --- |
 | `label` | The label above it |
+| `optional`, `description`, `error` | As for a [Field](field.md#react), with `label`. Pass `error` to a group you validate, even while it's `undefined`; a message sets `aria-invalid` on the group |
 | `name` | The name its options submit under; generated when left out |
 | `value` or `defaultValue` | The chosen option's value |
 | `onValueChange` | Called with the newly chosen value |
@@ -99,4 +126,4 @@ other props to the radio inside.
 `--harmo-color-text-secondary`, `--harmo-control-height`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`, `--harmo-font-family`,
 `--harmo-font-size-sm`, `--harmo-input-color-border`,
-`--harmo-opacity-disabled`.
+`--harmo-opacity-disabled`, `--harmo-space-2xs`, `--harmo-space-xs`.

@@ -53,7 +53,7 @@
       aria-describedby="billing-email-error"
       aria-invalid="true"
     />
-    <p class="herror" id="billing-email-error">Enter a valid email address.</p>
+    <p class="herror" id="billing-email-error" aria-live="polite">Enter a valid email address.</p>
   </div>
 </play-example>
 
@@ -82,7 +82,7 @@
     In a flex row, the input takes the room the button leaves. The row here is
     a plain flex container of your own.
   </play-note>
-  <div style="display: flex; gap: 8px">
+  <div style="display: flex; gap: var(--harmo-space-xs)">
     <input class="hinput" type="search" aria-label="Search conversations" placeholder="Search conversations" />
     <button class="hbutton" data-variant="secondary" type="button">
       <span class="hbutton-label">Search</span>

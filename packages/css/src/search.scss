@@ -1,18 +1,22 @@
 @use "shortcuts" as *;
+@use "control";
 
 // A search field: an Input filled with the secondary background, a magnifier
 // at its start, and an optional clear button at its end once there's text.
 // It sets Input's own tokens inside it, so the Input keeps its hover, focus,
-// invalid, and disabled states.
+// invalid, and disabled states. Input hides the browsers' own clear button.
 
 // The icons are sized in rem, so the room kept for them is too: with a larger
 // default font size, the text still starts after the magnifier and stops
-// before the clear button.
-$magnifier-inset: 12px;
+// before the clear button. The magnifier and the cross are as far in from the
+// border as a field's text, and the small step from the text.
+$magnifier-inset: control.$padding-inline;
 $magnifier-size: 1.125rem;
-$clear-inset: 8px;
-$clear-size: calc(1rem + 8px);
-$text-gap: 8px;
+$cross-size: 1rem;
+$cross-room: 4px;
+$clear-size: calc(#{$cross-size} + 2 * #{$cross-room});
+$clear-inset: calc(#{control.$padding-inline} - #{$cross-room});
+$text-gap: $space-2xs;
 
 .hsearch {
   --harmo-input-color-background: #{$color-background-secondary};
@@ -54,47 +58,27 @@ $text-gap: 8px;
     &::placeholder {
       color: $color-text-secondary;
     }
-
-    // The browsers' own clear button and decorations, so every browser shows
-    // the same field; .hsearch-clear is the clear button, when there is one.
-    // One rule each: a browser drops a whole rule over one selector it
-    // doesn't know.
-    &::-webkit-search-cancel-button {
-      display: none;
-    }
-
-    &::-webkit-search-decoration {
-      display: none;
-    }
-
-    &::-webkit-search-results-button {
-      display: none;
-    }
-
-    &::-webkit-search-results-decoration {
-      display: none;
-    }
-  }
-
-  // Room for the clear button while it shows.
-  &:has(> .hsearch-clear:not([hidden])) > .hinput {
-    padding-inline-end: calc(#{$clear-inset} + #{$clear-size} + #{$text-gap});
   }
 
   // The shortcut that reaches the field, such as ⌘K, at its end, as a hint;
-  // without a keyboard to press it, there's none. The room kept for it is in
-  // rem, as its text is.
+  // without a keyboard to press it, there's none, and once there's text, the
+  // clear button takes its place. The room kept for it is in rem, as its text
+  // is.
   & > .hkbd {
     z-index: 1;
     justify-self: end;
 
-    margin-inline-end: 10px;
+    margin-inline-end: control.$padding-inline;
 
     pointer-events: none;
   }
 
+  &:where(:has(> .hsearch-clear:not([hidden]))) > .hkbd {
+    display: none;
+  }
+
   &:has(> .hkbd:not([hidden])) > .hinput {
-    padding-inline-end: calc(10px + 3.875rem);
+    padding-inline-end: calc(#{control.$padding-inline} + 3.875rem);
   }
 
   @media (hover: none) {
@@ -103,9 +87,26 @@ $text-gap: 8px;
     }
 
     &:has(> .hkbd:not([hidden])) > .hinput {
-      padding-inline-end: 12px;
+      padding-inline-end: control.$padding-inline;
     }
   }
+
+  // Room for the clear button while it shows, after the Kbd's, so it wins
+  // where both are there.
+  &:has(> .hsearch-clear:not([hidden])) > .hinput {
+    padding-inline-end: calc(#{$clear-inset} + #{$clear-size} + #{$text-gap});
+  }
+}
+
+// Disabled: the placeholder turns tertiary, as a disabled Input's text does,
+// and the magnifier dims, as a mark in a field does. The placeholder's rule
+// weighs what the one above does, and wins by coming after it.
+:where(.hsearch) > .hinput:disabled::placeholder {
+  color: $color-text-tertiary;
+}
+
+:where(.hsearch:has(> .hinput:disabled)) > .hicon {
+  opacity: $opacity-disabled;
 }
 
 .hsearch-clear {
@@ -133,8 +134,8 @@ $text-gap: 8px;
   & > svg {
     flex-shrink: 0;
 
-    inline-size: 1rem;
-    block-size: 1rem;
+    inline-size: $cross-size;
+    block-size: $cross-size;
   }
 
   &[hidden] {

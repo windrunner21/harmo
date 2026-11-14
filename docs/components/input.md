@@ -42,20 +42,27 @@ To mark parts of the text, such as the variables in a template:
 
 ## Appearance and states
 
-- `--harmo-control-height` (34px) tall, 12px inline padding, 14px text on a
-  fixed 20px line, so the height doesn't depend on the font.
+- `--harmo-control-height` (34px) tall, 10px (`--harmo-space-xs`) inline
+  padding, 14px text on a fixed 20px line, so the height doesn't depend on
+  the font. Every text field and select trigger starts its text at the same
+  inset, so they line up in a form.
 - Fills its container (`inline-size: 100%`) and can shrink to any width. Next to
   a button in a flex row, the input takes the room the button leaves.
 - Border: 1px `--harmo-input-color-border` (`#e3e8ee`) with
   `--harmo-input-box-shadow`, a faint layered shadow.
 - Hover (hover devices): the border turns `--harmo-color-focus` over 150ms
   (`--harmo-duration-fast`), except on disabled, read-only, and invalid
-  controls.
+  controls. Only the pointer on the control itself does this: browsers count a
+  control as hovered while its `<label>` is, so a Field's `.hlabel` under the
+  pointer leaves it as it is.
 - Focus: the border turns `--harmo-color-focus`. With `:focus-visible`, which
   browsers match whenever a text field is focused, a 3px ring of the same color
   at 20% appears, starting at the border.
 - Selects and textareas share this box and these states, so they always match;
   segmented options share the border.
+- `type="search"`: the browsers' own clear button and decorations are hidden,
+  so every browser shows the same field. For a magnifier and a clear button
+  of Harmo's, use [Search](search.md).
 - Marked text is `--harmo-color-primary` on a see-through 14% of it, with 2px
   corners. The field's own text is see-through, with the text drawn over it
   taking its place; the caret, selection, and placeholder are still the field's,
@@ -70,11 +77,15 @@ To mark parts of the text, such as the variables in a template:
   description and error with `aria-describedby`.
 - Set `aria-invalid="true"` only after the application has validated the
   value, and give fields an `autocomplete` value where one fits.
-- The default border is 1.23:1 on white, a deliberately light look below
-  WCAG 1.4.11's 3:1 for a field's edge; the faint shadow doesn't make up the
-  difference. For 3.42:1, set `--harmo-input-color-border:
-  var(--harmo-color-border-control)` on `:root`. Selects and textareas follow,
-  since they share the token.
+- The default border is 1.23:1 on white, a deliberately light look, and the
+  faint shadow doesn't add to it. W3C's Understanding of WCAG 1.4.11 says a
+  control needs no visible boundary unless the boundary is its only cue, so
+  the light edge meets 1.4.11 only beside a visible label, as in a
+  [Field](field.md), or another visible cue, such as [Search](search.md)'s
+  magnifier. For a field with neither, named only by `aria-label` or a
+  placeholder, set `--harmo-input-color-border:
+  var(--harmo-color-border-control)`, 3.42:1, on `:root` or on what's around
+  it. Selects and textareas follow, since they share the token.
 - Marks are only seen: a screen reader reads the field's value. If they mean
   something, such as a variable that must be filled in, say so in its label or
   description.
@@ -125,4 +136,5 @@ and on in place, keep the prop and pass a pattern that matches nothing, such as
 `--harmo-color-text-tertiary`, `--harmo-control-height`,
 `--harmo-duration-fast`, `--harmo-font-family`, `--harmo-font-size-sm`,
 `--harmo-font-weight-normal`, `--harmo-input-box-shadow`,
-`--harmo-input-color-background`, `--harmo-input-color-border`.
+`--harmo-input-color-background`, `--harmo-input-color-border`,
+`--harmo-space-xs`.

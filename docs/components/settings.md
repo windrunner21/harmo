@@ -53,14 +53,17 @@ Use whichever heading level fits the page, or a `<p>`, for the title.
 ## Appearance and states
 
 - Rows are separated by a 1px `--harmo-color-border` divider and padded 16px
-  above and below; the first row has no top padding and the last no bottom
-  padding or divider.
-- The text takes the row's free width, with 16px between it and a control on
-  the right, which is vertically centered and keeps its size.
-- Title: 15px bold, 1.3 line height, `--harmo-color-text`. Description: 14px,
-  4px below, `--harmo-color-text-tertiary`.
-- A control under the text sits 12px below the description, as wide as the
-  text. So does one that wraps its field: a [Search](search.md), a
+  (`--harmo-space-sm`) above and below; the first row has no top padding and
+  the last no bottom padding or divider.
+- The text takes the row's free width, with 16px (`--harmo-space-sm`) between
+  it and a control on the right, which is vertically centered and keeps its
+  size.
+- Title: 15px (`--harmo-font-size-md`) bold, 1.3 line height,
+  `--harmo-color-text`. Description: 14px, 6px (`--harmo-space-2xs`) below,
+  `--harmo-color-text-tertiary`.
+- A control under the text sits 16px below the description, the text's 6px
+  gap and a 10px (`--harmo-space-xs`) margin, as wide as the text. So does one
+  that wraps its field: a [Search](search.md), a
   highlighted [Input](input.md) or [TextArea](textarea.md), a
   [Combobox](combobox.md), a [Phone Input](phone-input.md), or a
   [Date Picker](date-picker.md).
@@ -119,4 +122,6 @@ the description, and so does a control given its own `aria-label` or
 
 `--harmo-color-border`, `--harmo-color-text`,
 `--harmo-color-text-tertiary`, `--harmo-font-family`,
-`--harmo-font-line-height`, `--harmo-font-size-sm`, `--harmo-font-weight-bold`.
+`--harmo-font-line-height`, `--harmo-font-size-md`, `--harmo-font-size-sm`,
+`--harmo-font-weight-bold`, `--harmo-space-2xs`, `--harmo-space-xs`,
+`--harmo-space-sm`.

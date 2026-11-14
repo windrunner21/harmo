@@ -1,9 +1,9 @@
 @use "shortcuts" as *;
 
 .hswitch:where(input[type="checkbox"]) {
-  --hswitch-width: 44px;
-  --hswitch-thumb: 20px;
-  --hswitch-inset: 2px;
+  --hswitch-width: #{$switch-width};
+  --hswitch-thumb: #{$switch-thumb-size};
+  --hswitch-inset: 0.125rem;
   --hswitch-travel: calc(
     var(--hswitch-width) - var(--hswitch-thumb) - 2 * var(--hswitch-inset)
   );
@@ -48,7 +48,8 @@
     border-radius: 50%;
     box-shadow: $switch-thumb-box-shadow;
 
-    transition: transform $duration-normal $ease-in-out-cubic;
+    // Ease-out, so the thumb moves at once on a press.
+    transition: transform $duration-normal $ease-out-cubic;
   }
 
   &:checked {

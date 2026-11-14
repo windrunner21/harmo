@@ -44,6 +44,24 @@
     update();
   }
 
+  // The "With a shortcut" example's own shortcut, as an app's would be: Ctrl K,
+  // or ⌘K on Apple devices, reaches the field, and the Kbd and
+  // aria-keyshortcuts say which.
+  const apple = /mac|iphone|ipad|ipod/i.test(navigator.userAgentData?.platform || navigator.platform || navigator.userAgent);
+  for (const input of document.querySelectorAll("[data-example-search-shortcut]")) {
+    const kbd = input.parentElement.querySelector(":scope > .hkbd");
+    if (apple) {
+      kbd.textContent = kbd.dataset.exampleApple;
+      input.setAttribute("aria-keyshortcuts", "Meta+K");
+    }
+    document.addEventListener("keydown", (event) => {
+      if ((event.key !== "k" && event.key !== "K") || event.altKey || event.shiftKey) return;
+      if (apple ? !event.metaKey || event.ctrlKey : !event.ctrlKey || event.metaKey) return;
+      event.preventDefault();
+      input.focus();
+    });
+  }
+
   // The "Filtering a list" example's own filter, as an app's would be: the
   // rows whose text holds what's typed.
   for (const input of document.querySelectorAll("[data-example-filter]")) {

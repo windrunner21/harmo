@@ -93,7 +93,7 @@ row.
   toggle, so focus, invalid, and disabled states are the same.
 - The toggle: a bare 20px eye in `--harmo-icon-color` (3.42:1 on white),
   `--harmo-icon-hover-color` on hover, and `--harmo-color-text-tertiary` when
-  disabled. Its edge is 12px from the border, like the text's start. The eye
+  disabled. Its edge is 10px from the border, like the text's start. The eye
   shows while the password is hidden, the crossed eye while it shows. Its focus
   ring has no offset, since it sits inside the input. The eye, its button, and
   the room kept for it grow with the browser's font size.
@@ -103,8 +103,9 @@ row.
 - The strength word sits at the end of the label row, 12px, colored by
   `data-status` in the text colors above. The meter's bars use the brighter
   status colors.
-- The hint: 12px below the bars, colored like the word.
-- The details open 12px below the input, growing and fading in over 200ms
+- The hint: 10px (`--harmo-space-xs`) below the bars, colored like the word.
+  The focus ring of a link in it shows whole, as in a Field's error.
+- The details open 10px below the input, growing and fading in over 200ms
   (`--harmo-ease-out-cubic`) and closing in 150ms. Reduced motion: they appear
   in place and fade in; closing, they fade out in place, then their space
   closes.
@@ -172,6 +173,7 @@ props are the `<input>`'s attributes, such as `autoComplete`.
 `--harmo-border-radius-sm`, `--harmo-color-danger`, `--harmo-color-success`,
 `--harmo-color-text-tertiary`, `--harmo-color-warning`,
 `--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-out-cubic`,
-`--harmo-focus-outline`, `--harmo-font-family`, `--harmo-font-size-2xs`,
-`--harmo-font-weight-normal`, `--harmo-icon-color`,
-`--harmo-icon-hover-color`, plus [Input](input.md)'s and [Meter](meter.md)'s.
+`--harmo-focus-outline`, `--harmo-focus-outline-offset`, `--harmo-font-family`,
+`--harmo-font-size-2xs`, `--harmo-font-weight-normal`, `--harmo-icon-color`,
+`--harmo-icon-hover-color`, `--harmo-space-xs`, plus [Input](input.md)'s and
+[Meter](meter.md)'s.

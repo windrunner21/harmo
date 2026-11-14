@@ -34,6 +34,7 @@ export const ErrorMessage = ({
 
   return (
     <p
+      aria-live="polite"
       {...props}
       ref={ref}
       className={withClass("herror", className)}

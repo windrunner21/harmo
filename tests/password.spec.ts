@@ -134,6 +134,21 @@ onEachPlayground("password", () => {
     await expect(input).toHaveAttribute("type", "password");
   });
 
+  test("the eye is as far in as the text starts, and the details open 10px under the input, with the hint 10px under the bars", async ({ page }) => {
+    const container = await example(page, "password-new-password");
+    const input = container.getByLabel("New password");
+    await input.fill("short");
+    const details = container.locator(".hpassword-details");
+    await settled(details);
+    const eye = container.locator(".hpassword-toggle > .hpassword-icon-show");
+    const [field, icon, open, meter, hint] = await boxes(input, eye, details, container.locator(".hmeter"), container.locator(".hpassword-hint"));
+    const start = await input.evaluate((node) => parseFloat(getComputedStyle(node).paddingLeft));
+    expect(start).toBe(10);
+    expect(field.x + field.width - (icon.x + icon.width)).toBeCloseTo(start, 0);
+    expect(open.y - (field.y + field.height)).toBeCloseTo(10, 0);
+    expect(hint.y - (meter.y + meter.height)).toBeCloseTo(10, 0);
+  });
+
   test("at a larger font size, the eye still fits its button, and the text stops before it", async ({ page }) => {
     await page.evaluate(() => (document.documentElement.style.fontSize = "24px"));
     const container = await example(page, "password-current-password");

@@ -37,10 +37,10 @@ field colors them.
 | --- | --- |
 | `.hsearch-clear` | The clear button; leave it out where the field doesn't need one |
 | `hidden` on `.hsearch-clear` | Hides it, while the field is empty |
-| `disabled` on the input and the clear button | Disabled, as for an Input; disable both together |
+| `disabled` on the input and the clear button | Disabled, as for an Input, with a tertiary placeholder and a dimmed magnifier; disable both together |
 | `readonly` on the input | Read-only, as for an Input: no clear button, and Escape leaves it as it is |
 | `aria-invalid="true"` on the input | Invalid, as for an Input |
-| A [Kbd](kbd.md) after the input | The shortcut that reaches the field, such as `/`, as a hint: `aria-keyshortcuts` on the input, and `aria-hidden="true"` on the `.hkbd`. The app handles the key itself, as a [Command Menu](command-menu.md) does |
+| A [Kbd](kbd.md) after the input | The shortcut that reaches the field, such as `/`, as a hint: `aria-keyshortcuts` on the input, and `aria-hidden="true"` on the `.hkbd`. The app handles the key itself, as a [Command Menu](command-menu.md) does. Once the clear button shows, the Kbd is hidden, since the hint only helps on an empty field |
 
 ## Appearance and states
 
@@ -49,19 +49,27 @@ field colors them.
   hovered or focused, when it shows Input's border and focus ring. It sets
   Input's own tokens inside `.hsearch` for this, so its other states stay
   Input's.
-- The magnifier, 18px in `--harmo-icon-color`, sits 12px in from its start,
-  and the text starts after it. The placeholder is
-  `--harmo-color-text-secondary`, since tertiary text is 4.4:1 on the fill.
-- The clear button, 24px with a 16px cross in `--harmo-icon-color`, sits 8px
-  in from its end, darkening to `--harmo-icon-hover-color` on hover. While it
-  shows, the text stops before it.
+- The magnifier, 18px in `--harmo-icon-color`, sits 10px in from its start,
+  as far as an Input's text, and the text starts 6px (`--harmo-space-2xs`)
+  after it. The
+  placeholder is `--harmo-color-text-secondary`, since tertiary text is 4.4:1
+  on the fill.
+- The clear button, 24px with a 16px cross in `--harmo-icon-color`, sits 6px
+  in from its end, so the cross is 10px in, darkening to
+  `--harmo-icon-hover-color` on hover. While it shows, the text stops 6px
+  before it.
 - A shortcut's Kbd sits 10px in from its end, and the text stops 72px from
   it. A device that can't hover, such as a phone, has no keyboard to press
-  it, so there it isn't shown.
+  it, so there it isn't shown. While the clear button shows, the Kbd doesn't,
+  and the text keeps the clear button's room.
+- Disabled: Input's disabled field, with the placeholder in
+  `--harmo-color-text-tertiary` and the magnifier at
+  `--harmo-opacity-disabled`.
 - The magnifier, the clear button, the Kbd, and the room kept for each grow
   with the browser's font size, so the text still stops short of them.
 - The browsers' own clear buttons and decorations for `type="search"` are
-  hidden, so every browser shows the same field.
+  hidden, as on every [Input](input.md) of that type, so every browser shows
+  the same field.
 - On a right-to-left page, the magnifier is at the right and the clear button
   at the left.
 
@@ -101,6 +109,7 @@ setting `value` sends no event.
 | Prop | Effect |
 | --- | --- |
 | `clearLabel` | The clear button's `aria-label`, such as "Clear", in your app's language; without it, there's no clear button |
+| `shortcutHint` | The shortcut's hint, such as `"/"`, in a Kbd after the input, hidden from screen readers. It only shows the hint: name the keys with `aria-keyshortcuts`, and handle them yourself. A [Command Menu](command-menu.md#react)'s `shortcut` handles its keys for you |
 
 Clearing, by the button or Escape, calls `onChange` with an empty value, as
 typing does, so a list filtered by the value follows it, as in the "Filtering
@@ -118,9 +127,21 @@ const [query, setQuery] = useState("");
 />
 ```
 
+With a shortcut that your app handles, as in the "With a shortcut" example:
+
+```tsx
+<Search
+  aria-label="Search templates"
+  aria-keyshortcuts="Control+K"
+  shortcutHint="Ctrl K"
+  clearLabel="Clear"
+/>
+```
+
 ## Tokens
 
 `--harmo-border-radius-sm`, `--harmo-color-background-secondary`,
 `--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
 `--harmo-duration-fast`, `--harmo-focus-outline`, `--harmo-icon-color`,
-`--harmo-icon-hover-color`, and Input's.
+`--harmo-icon-hover-color`, `--harmo-opacity-disabled`, `--harmo-space-2xs`,
+`--harmo-space-xs`, and Input's.

@@ -40,8 +40,10 @@ A native checkbox with Harmo's appearance. Pair it with a label in a horizontal
 - On hover, an unchecked box's border turns `--harmo-color-primary-hover`.
 - Checked and mixed: `--harmo-color-primary-tint` fill and
   `--harmo-color-primary` border, with a check mark or dash in the same color.
-- The fill and border fade in 150ms; the marks appear at once. Nothing moves,
-  so reduced motion keeps the fade.
+- Toggled with the pointer, the fill and border fade in 150ms; the marks
+  appear at once. Toggled from the keyboard, with its focus ring showing, it
+  changes at once, as what's done from the keyboard does. Nothing moves, so
+  reduced motion keeps the fade.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
 - In a horizontal Field the checkbox is centered on the label's first line,

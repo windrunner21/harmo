@@ -18,9 +18,9 @@ $wrapped: ".hsearch, .hinput-highlight, .htextarea-highlight, .hcombobox, .hphon
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: $space-sm;
 
-  padding-block: 16px;
+  padding-block: $space-sm;
 
   border-block-end: 1px solid $color-border;
 
@@ -61,7 +61,7 @@ $wrapped: ".hsearch, .hinput-highlight, .htextarea-highlight, .hcombobox, .hphon
 
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $space-2xs;
 
   min-inline-size: 0;
 
@@ -69,17 +69,17 @@ $wrapped: ".hsearch, .hinput-highlight, .htextarea-highlight, .hcombobox, .hphon
     display: none;
   }
 
-  // A control that fills its container sits under the description and spans
-  // the text; compact ones stay on the right.
+  // A control that fills its container sits under the description, 16px
+  // below it with the gap, and spans the text; compact ones stay on the right.
   & > :is(.hselect, .hinput, .htextarea, .hsegmented, #{$wrapped}) {
-    margin-block-start: 8px;
+    margin-block-start: $space-xs;
   }
 }
 
 .hsetting-title {
   margin: 0;
 
-  font-size: 0.9375rem;
+  font-size: $font-size-md;
   font-weight: $font-weight-bold;
   line-height: 1.3;
   overflow-wrap: anywhere;

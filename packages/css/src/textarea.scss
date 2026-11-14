@@ -1,6 +1,11 @@
 @use "shortcuts" as *;
 @use "control";
 
+// The space above and below the text: what an Input's height leaves around
+// one 20px line and the border, split in two, so a one-line TextArea is as
+// tall as an Input.
+$padding-block: calc((#{$control-height} - 1.25rem - 2px) / 2);
+
 .htextarea {
   @extend %control;
 
@@ -11,9 +16,9 @@
   field-sizing: content;
   inline-size: 100%;
   min-inline-size: 0;
-  min-block-size: calc(1.25rem + 18px);
+  min-block-size: $control-height;
   max-block-size: var(--htextarea-max-height);
-  padding: 8px 12px;
+  padding: $padding-block control.$padding-inline;
 
   border-end-end-radius: 2px;
 
@@ -69,8 +74,8 @@
 
   overflow: hidden;
 
-  padding-block: 8px;
-  padding-inline: 12px;
+  padding-block: $padding-block;
+  padding-inline: control.$padding-inline;
 
   white-space: pre-wrap;
   overflow-wrap: break-word;

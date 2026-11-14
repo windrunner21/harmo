@@ -51,8 +51,10 @@ A group is a [Field](field.md) with `role="radiogroup"`, labelled by its
 - Checked: `--harmo-color-primary-tint` fill, `--harmo-color-primary` border,
   and a dot in the same color, 6px at the default size. The dot is a centered
   gradient, so it stays centered at any display scaling.
-- Like Checkbox, the fill and border fade in 150ms and the dot appears at once.
-  Nothing moves, so reduced motion keeps the fade.
+- Like Checkbox, the fill and border fade in 150ms when chosen with the
+  pointer, and the dot appears at once. From the keyboard, the radio the
+  arrow keys reach fills at once, with its focus ring, and the one they leave
+  fades out. Nothing moves, so reduced motion keeps the fade.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
 - In a horizontal Field the radio is centered on the label's first line, at

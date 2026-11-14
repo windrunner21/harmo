@@ -1,12 +1,15 @@
 "use client";
 
-import type { ComponentPropsWithRef } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
+import { renders } from "./children.ts";
 import { close as closePaths, search as searchPaths } from "./icons.ts";
 import { Input } from "./Input.tsx";
+import { Kbd } from "./Kbd.tsx";
 import { useCurrentValue } from "./useCurrentValue.ts";
 
 export interface SearchProps extends Omit<ComponentPropsWithRef<"input">, "type"> {
   clearLabel?: string;
+  shortcutHint?: ReactNode;
 }
 
 export const searchIcon = (
@@ -52,6 +55,7 @@ const empty = (input: HTMLInputElement) => {
 
 export const Search = ({
   clearLabel,
+  shortcutHint,
   ref,
   value,
   defaultValue,
@@ -81,6 +85,7 @@ export const Search = ({
           empty(input);
         }}
       />
+      {renders(shortcutHint) && <Kbd aria-hidden="true">{shortcutHint}</Kbd>}
       {clearLabel !== undefined && (
         <button
           className="hsearch-clear"

@@ -45,8 +45,8 @@
 
 <play-example title="Narrow container" frame="16rem">
   <play-note>
-    Labels never wrap. When the options can't all fit on one row, drawn dashed
-    here, they move to a new one.
+    Labels stay on one line. When the options can't all fit on one row, drawn
+    dashed here, they move to a new one.
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="header-type-narrow-label">Message header</span>
@@ -62,6 +62,55 @@
       </label>
       <label class="hsegmented-option">
         <input type="radio" name="header-type-narrow" value="location" />Location
+      </label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Long label" frame="16rem">
+  <play-note>
+    A label wider than the whole group takes a row of its own and wraps, so
+    nothing spills past the edge; the labels that fit stay on one line.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="send-label">Send</span>
+    <div class="hsegmented" role="radiogroup" aria-labelledby="send-label">
+      <label class="hsegmented-option">
+        <input type="radio" name="send" value="now" checked />Now
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="send" value="later" />Later
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="send" value="business-hours" />At the start of the customer's next business day
+      </label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With a description" layout="stack">
+  <play-note>
+    A description under the label, as in any Field, connected to the group with
+    <code>aria-describedby</code>. An error is connected the same way, and
+    marks the group with <code>aria-invalid="true"</code>.
+  </play-note>
+  <div class="hfield">
+    <span class="hlabel" id="reply-tone-label">Reply tone</span>
+    <p class="hdescription" id="reply-tone-description">Used for suggested replies.</p>
+    <div
+      class="hsegmented"
+      role="radiogroup"
+      aria-labelledby="reply-tone-label"
+      aria-describedby="reply-tone-description"
+    >
+      <label class="hsegmented-option">
+        <input type="radio" name="reply-tone" value="friendly" checked />Friendly
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="reply-tone" value="neutral" />Neutral
+      </label>
+      <label class="hsegmented-option">
+        <input type="radio" name="reply-tone" value="formal" />Formal
       </label>
     </div>
   </div>

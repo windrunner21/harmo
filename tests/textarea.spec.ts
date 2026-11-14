@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
-import { example, onEachPlayground, test } from "./playgrounds.ts";
+import { example, onEachPlayground, settled, test } from "./playgrounds.ts";
 
 // What docs/components/textarea.md says, on the TextArea page: what a script
-// does, and how tall it grows.
+// does, the counter's text, and how tall it grows.
 onEachPlayground("textarea", () => {
   test("the counter counts toward maxlength as the text changes, and describes the field", async ({ page }) => {
     const container = await example(page, "textarea-with-a-counter");
@@ -18,6 +18,43 @@ onEachPlayground("textarea", () => {
     await expect(textarea).toHaveAccessibleDescription("12/500");
     await textarea.fill("");
     await expect(counter).toHaveText("0/500");
+  });
+
+  test("the counter's text is the app's: here, what's left, in its own words", async ({ page }) => {
+    const container = await example(page, "textarea-counting-down");
+    const textarea = container.getByLabel("Text message");
+    const counter = container.locator(".htextarea-counter");
+    await expect(counter).toHaveText("160 characters left");
+    await textarea.fill("Hello");
+    await expect(counter).toHaveText("155 characters left");
+    await expect(textarea).toHaveAccessibleDescription("155 characters left");
+  });
+
+  test("only the pointer on the field lights its border, not the pointer on its label", async ({ page }) => {
+    const container = await example(page, "textarea-long-text");
+    const textarea = container.getByLabel("Saved reply");
+    const border = () => textarea.evaluate((node) => getComputedStyle(node).borderTopColor);
+    const rest = await border();
+    await container.locator(".hlabel").hover();
+    await settled(textarea);
+    expect(await border()).toBe(rest);
+    await textarea.hover();
+    await settled(textarea);
+    expect(await border()).not.toBe(rest);
+  });
+
+  test("it starts one line tall, as tall as an Input, with its text as far in as an Input's", async ({ page }) => {
+    const textarea = (await example(page, "textarea-with-a-counter")).getByLabel("Message");
+    expect((await textarea.boundingBox())!.height).toBeCloseTo(34, 0);
+    const padding = await textarea.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return [style.paddingTop, style.paddingRight, style.paddingBottom, style.paddingLeft];
+    });
+    expect(padding).toEqual(["6px", "10px", "6px", "10px"]);
+
+    // A theme's control height reaches it, as it reaches an Input.
+    await page.evaluate(() => document.documentElement.style.setProperty("--harmo-control-height", "2.5rem"));
+    expect((await textarea.boundingBox())!.height).toBeCloseTo(40, 0);
   });
 
   test("in a form, a reset puts back the first text, and the counter follows", async ({ page }) => {

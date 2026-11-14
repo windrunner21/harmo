@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type ComponentPropsWithRef, type UIEvent } from "react";
+import { useId, type ComponentPropsWithRef, type ReactNode, type UIEvent } from "react";
 import { useField } from "./field/Field.tsx";
 import { highlightedParts, useBackdrop } from "./highlight.tsx";
 import { useCurrentValue } from "./useCurrentValue.ts";
@@ -8,10 +8,14 @@ import { withClass } from "./withClass.ts";
 
 export interface TextAreaProps extends ComponentPropsWithRef<"textarea"> {
   highlight?: RegExp;
+  formatCount?: (length: number, maxLength: number) => ReactNode;
 }
+
+const count = (length: number, maxLength: number) => `${length}/${maxLength}`;
 
 export const TextArea = ({
   highlight,
+  formatCount = count,
   ref,
   value,
   defaultValue,
@@ -22,9 +26,9 @@ export const TextArea = ({
 }: TextAreaProps) => {
   const counterId = useId();
   const current = useCurrentValue({ ref, value, defaultValue, onChange });
-  const counted = props.maxLength !== undefined;
+  const { maxLength } = props;
   const field = useField(props, {
-    describedBy: counted ? counterId : undefined,
+    describedBy: maxLength !== undefined ? counterId : undefined,
   });
   const { backdrop, follow } = useBackdrop(current.element, Boolean(highlight));
 
@@ -56,9 +60,9 @@ export const TextArea = ({
       ) : (
         box
       )}
-      {counted && (
+      {maxLength !== undefined && (
         <p className="htextarea-counter" id={counterId} hidden={props.hidden}>
-          {current.value.length}/{props.maxLength}
+          {formatCount(current.value.length, maxLength)}
         </p>
       )}
     </>

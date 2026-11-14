@@ -25,12 +25,15 @@ to [Field](field.md). For a single line, use [Input](input.md).
 </div>
 ```
 
+The counter's text is the app's, in its words and digits: `0/500`, as the
+React TextArea writes it by default, or "500 characters left".
+
 ## Options
 
 | Hook | Effect |
 | --- | --- |
 | `aria-invalid="true"`, `readonly`, `disabled`, `placeholder` | As for [Input](input.md) |
-| `.htextarea-counter` | A character count under the box |
+| `.htextarea-counter` | A character count under the box, in the app's words |
 | `--htextarea-max-height` | How tall dragging can make it; default `min(400px, 50dvh)` |
 | `.htextarea-highlight` | Marks parts of the text, drawn over the field, as for an [Input](input.md) |
 
@@ -38,9 +41,10 @@ to [Field](field.md). For a single line, use [Input](input.md).
 
 - The same box and states as [Input](input.md): border, 8px radius, 14px text
   on a 20px line, the focus border, and a ring on keyboard focus.
-- 8px 12px padding. It starts one line tall (38px) and grows with its text up
-  to 150px, or to `--htextarea-max-height` if that's smaller, then
-  scrolls (`field-sizing: content`).
+- 6px padding above and below, and Input's 10px (`--harmo-space-xs`) at the
+  sides, so its text lines up with an Input's. It starts one line tall, as
+  tall as an Input (`--harmo-control-height`, 34px), and grows with its text up to 150px, or to `--htextarea-max-height`
+  if that's smaller, then scrolls (`field-sizing: content`).
 - The bottom end corner is squared off (2px), so the native resize handle sits
   inside the border instead of spilling past a rounded corner.
 - Dragging the handle can make it taller, up to `--htextarea-max-height`:
@@ -56,11 +60,16 @@ Name it with a `<label for>` in a [Field](field.md). Connect the counter with
 `aria-describedby`, so screen readers read it on focus. Marks are only seen: if
 they mean something, say so in its label or description.
 
+The default border is Input's light edge, which meets WCAG 1.4.11 only beside
+a visible label or another visible cue. For a textarea with neither, set
+`--harmo-input-color-border: var(--harmo-color-border-control)`, as
+[Input](input.md#accessibility) explains.
+
 ## What a script does
 
 | Change | When |
 | --- | --- |
-| The counter's text | As the text changes, and when its form resets, unless a listener cancels the reset |
+| The counter's text, in the app's words, such as `12/500` | As the text changes, and when its form resets, unless a listener cancels the reset |
 | The text and `<mark>`s in the backdrop | As the text changes, if it marks parts of it |
 | The backdrop's size, type, padding, direction, and wrapping, copied from the field, with room for its scrollbar | As the text changes or the field resizes |
 | The backdrop's `scrollTop` and `scrollLeft` | As the field scrolls |
@@ -73,8 +82,12 @@ they mean something, say so in its label or description.
 connected through `aria-describedby` and kept current as you type and after
 a form reset. In a [Field](field.md#react), it takes the field's id and
 descriptions. Its props are the textarea's attributes, with `value` or
-`defaultValue`, and `highlight`: a regular expression, what it matches in the
-text being marked as you type.
+`defaultValue`, and:
+
+| Prop | Effect |
+| --- | --- |
+| `highlight` | A regular expression: what it matches in the text is marked as you type |
+| `formatCount` | Writes the counter's text from the text's length and `maxLength`, in your words and digits, such as `` (length, maxLength) => `${maxLength - length} characters left` ``; without it, the counter reads `12/500` |
 
 With `highlight`, the `<textarea>` is inside `.htextarea-highlight`, and adding
 or removing the prop while it's showing replaces the `<textarea>`, as for an
@@ -90,7 +103,7 @@ or removing the prop while it's showing replaces the `<textarea>`, as for an
 
 `--harmo-color-primary`, `--harmo-border-radius`, `--harmo-color-background-secondary`,
 `--harmo-color-danger`, `--harmo-color-focus`, `--harmo-color-text`,
-`--harmo-color-text-tertiary`, `--harmo-duration-fast`, `--harmo-font-family`,
+`--harmo-color-text-tertiary`, `--harmo-control-height`, `--harmo-duration-fast`, `--harmo-font-family`,
 `--harmo-font-size-2xs`, `--harmo-font-size-sm`, `--harmo-font-weight-normal`,
 `--harmo-input-box-shadow`, `--harmo-input-color-background`,
-`--harmo-input-color-border`.
+`--harmo-input-color-border`, `--harmo-space-xs`.

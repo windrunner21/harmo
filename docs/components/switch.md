@@ -34,18 +34,22 @@ With a description, put the label and description in `.hfield-content`, as
 | --- | --- |
 | `checked` | On |
 | `disabled` | Dimmed; the Field label turns gray |
-| `--hswitch-width`, `--hswitch-thumb`, `--hswitch-inset` on the input | Track width (44px), thumb size (20px), and the thumb's inset (2px) |
+| `--hswitch-width`, `--hswitch-thumb`, `--hswitch-inset` on the input | One switch's track width (44px, from `--harmo-switch-width`), thumb size (20px, from `--harmo-switch-thumb-size`), and the thumb's inset (2px) |
+| `--harmo-switch-width`, `--harmo-switch-thumb-size` | Every switch's track width (44px) and thumb size (20px) |
 | `--harmo-switch-height` | Track height (24px); a horizontal Field centers the switch by it |
 
 ## Appearance and states
 
 - 44×24 track with a 20px white thumb and a soft shadow
   (`--harmo-switch-thumb-color-background`, `--harmo-switch-thumb-box-shadow`).
+  Its sizes are in rem, so it grows with the browser's font size, as a
+  checkbox does.
 - Off: `--harmo-switch-color-background`, the control border gray, so the
   track stands out from white at 3.42:1. On: `--harmo-color-primary-fill`, with
   the thumb 20px toward the end of the line (to the left in right-to-left text).
-- The thumb slides in 200ms (`--harmo-ease-in-out-cubic`) while the color fades
-  in 200ms. Under reduced motion the thumb jumps; the color change stays.
+- The thumb slides in 200ms (`--harmo-ease-out-cubic`), so it moves at once
+  on a press and settles gently, while the color fades in 200ms. Under
+  reduced motion the thumb jumps; the color change stays.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
 - In a horizontal Field the switch is centered on the label's first line.
@@ -77,8 +81,9 @@ attributes, such as `checked`, `defaultChecked`, and `onChange`.
 ## Tokens
 
 `--harmo-border-radius-full`, `--harmo-color-primary-fill`,
-`--harmo-duration-normal`, `--harmo-ease-in-out-cubic`,
+`--harmo-duration-normal`, `--harmo-ease-out-cubic`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-opacity-disabled`, `--harmo-switch-color-background`,
 `--harmo-switch-height`, `--harmo-switch-thumb-box-shadow`,
-`--harmo-switch-thumb-color-background`.
+`--harmo-switch-thumb-color-background`, `--harmo-switch-thumb-size`,
+`--harmo-switch-width`.

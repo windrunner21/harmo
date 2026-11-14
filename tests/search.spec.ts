@@ -1,9 +1,11 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, open, playgrounds, ready, settled, test } from "./playgrounds.ts";
 
 // What docs/components/search.md says, on the Search page: a gray field with a
 // magnifier, Input's border and ring once hovered or focused, a clear button
-// that shows with text and empties the field, and Escape doing the same.
+// that shows with text and empties the field, and Escape doing the same; a
+// shortcut's Kbd that gives way to the clear button; and a disabled field's
+// quieter placeholder and magnifier.
 const styleOf = (element: Locator, property: string, pseudo?: string) =>
   element.evaluate(
     (node, [property, pseudo]) => getComputedStyle(node, pseudo).getPropertyValue(property!),
@@ -28,6 +30,13 @@ const countInputs = (input: Locator) =>
   });
 const inputs = (input: Locator) => input.evaluate((node) => (node as HTMLInputElement & { inputs: number }).inputs);
 
+// An Apple device, as the examples read it, from the next page load on.
+const onApple = (page: Page) =>
+  page.addInitScript(() => {
+    Object.defineProperty(navigator, "platform", { get: () => "MacIntel" });
+    Object.defineProperty(navigator, "userAgentData", { get: () => ({ platform: "macOS" }) });
+  });
+
 onEachPlayground("search", () => {
   test("a gray field with a magnifier at its start, and Input's border and ring once focused", async ({ page }) => {
     const container = await example(page, "search-default");
@@ -39,7 +48,7 @@ onEachPlayground("search", () => {
 
     const magnifier = container.locator(".hsearch > .hicon");
     const [field, icon] = await boxes(input, magnifier);
-    expect(icon.x - field.x).toBeCloseTo(12, 0);
+    expect(icon.x - field.x).toBeCloseTo(10, 0);
     // Drawn over the field, not under it: what's on top at its middle, once
     // it can be hit, is the magnifier.
     const onTop = await magnifier.evaluate((node, [x, y]) => {
@@ -49,7 +58,7 @@ onEachPlayground("search", () => {
       return !!hit?.closest(".hsearch > .hicon");
     }, [icon.x + icon.width / 2, icon.y + icon.height / 2]);
     expect(onTop).toBe(true);
-    expect(await styleOf(input, "padding-left")).toBe("38px");
+    expect(await styleOf(input, "padding-left")).toBe("34px");
 
     await input.focus();
     expect(await styleOf(input, "border-top-color")).toBe(await color(page, "--harmo-color-focus"));
@@ -65,7 +74,10 @@ onEachPlayground("search", () => {
     await expect(clear).toBeVisible();
     await expect(clear).toHaveAttribute("tabindex", "-1");
     await expect(clear).toHaveAccessibleName("Clear");
-    expect(await styleOf(input, "padding-right")).toBe("40px");
+    expect(await styleOf(input, "padding-right")).toBe("36px");
+    // The cross is as far in from the end as the magnifier is from the start.
+    const [field, cross] = await boxes(input, clear.locator("svg"));
+    expect(field.x + field.width - (cross.x + cross.width)).toBeCloseTo(10, 0);
 
     await countInputs(input);
     await clear.click();
@@ -221,9 +233,73 @@ onEachPlayground("search", () => {
     await expect(input).toHaveValue("");
   });
 
+  test("a shortcut's Kbd shows on an empty field, hidden from screen readers, and gives way to the clear button once there's text", async ({ page }) => {
+    const container = await example(page, "search-with-a-shortcut");
+    const input = container.getByRole("searchbox", { name: "Search templates" });
+    const kbd = container.locator(".hsearch > .hkbd");
+    await expect(input).toHaveAttribute("aria-keyshortcuts", "Control+K");
+    await expect(kbd).toHaveAttribute("aria-hidden", "true");
+    await expect(kbd).toHaveText("Ctrl K");
+    await expect(kbd).toBeVisible();
+    expect(await styleOf(input, "padding-right")).toBe("72px");
+
+    await input.fill("ship");
+    await expect(container.locator(".hsearch-clear")).toBeVisible();
+    await expect(kbd).toBeHidden();
+    expect(await styleOf(input, "padding-right")).toBe("36px");
+    await page.keyboard.press("Escape");
+    await expect(kbd).toBeVisible();
+  });
+
+  test("the example's shortcut reaches the field", async ({ page }) => {
+    const container = await example(page, "search-with-a-shortcut");
+    const input = container.getByRole("searchbox", { name: "Search templates" });
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await expect(input).not.toBeFocused();
+    await page.keyboard.press("Control+k");
+    await expect(input).toBeFocused();
+  });
+
+  test("on an Apple device, the example's shortcut is ⌘K, and it reaches the field", async ({ page }) => {
+    await onApple(page);
+    await page.reload();
+    await ready(page);
+    const container = await example(page, "search-with-a-shortcut");
+    const input = container.getByRole("searchbox", { name: "Search templates" });
+    await expect(input).toHaveAttribute("aria-keyshortcuts", "Meta+K");
+    await expect(container.locator(".hsearch > .hkbd")).toHaveText("⌘K");
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await expect(input).not.toBeFocused();
+    await page.keyboard.press("Meta+k");
+    await expect(input).toBeFocused();
+  });
+
+  test("disabled, the placeholder is tertiary and the magnifier dims", async ({ page }) => {
+    const container = await example(page, "search-disabled");
+    const input = container.getByRole("searchbox", { name: "Search archived conversations" });
+    await expect(input).toBeDisabled();
+    await expect(container.locator(".hsearch-clear")).toBeDisabled();
+    expect(await styleOf(input, "color", "::placeholder")).toBe(await color(page, "--harmo-color-text-tertiary"));
+    const opacity = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--harmo-opacity-disabled").trim());
+    expect(await styleOf(container.locator(".hsearch > .hicon"), "opacity")).toBe(opacity);
+    // An enabled field's magnifier doesn't dim.
+    expect(await styleOf((await example(page, "search-default")).locator(".hsearch > .hicon"), "opacity")).toBe("1");
+  });
+
   test("in a Field, its label names it", async ({ page }) => {
     const container = await example(page, "search-with-a-label");
     await expect(container.getByRole("searchbox", { name: "Find a template" })).toBeVisible();
+  });
+
+  test("in a Field, only the pointer on the field shows its border, not the pointer on its label", async ({ page }) => {
+    const container = await example(page, "search-with-a-label");
+    const input = container.getByRole("searchbox", { name: "Find a template" });
+    await container.locator(".hlabel").hover();
+    await settled(input);
+    expect(await styleOf(input, "border-top-color")).toBe("rgba(0, 0, 0, 0)");
+    await input.hover();
+    await settled(input);
+    expect(await styleOf(input, "border-top-color")).toBe(await color(page, "--harmo-color-focus"));
   });
 
   test("on a right-to-left page, the magnifier is at the right and the clear button at the left", async ({ page }) => {
@@ -232,7 +308,25 @@ onEachPlayground("search", () => {
     const input = container.getByRole("searchbox");
     await input.fill("ship");
     const [field, icon, clear] = await boxes(input, container.locator(".hsearch > .hicon"), container.locator(".hsearch-clear"));
-    expect(field.x + field.width - (icon.x + icon.width)).toBeCloseTo(12, 0);
-    expect(clear.x - field.x).toBeCloseTo(8, 0);
+    expect(field.x + field.width - (icon.x + icon.width)).toBeCloseTo(10, 0);
+    expect(clear.x - field.x).toBeCloseTo(6, 0);
   });
 });
+
+// Every HTML page runs Search's script. On the Command Menu page, whose fields
+// and trigger have shortcuts of their own, it leaves them as they are, on an
+// Apple device too.
+for (const playground of playgrounds) {
+  test.describe(playground, () => {
+    test("on an Apple device, the Command Menu page keeps its own shortcuts", async ({ page }) => {
+      await onApple(page);
+      await open(page, playground, "command-menu");
+      const field = await example(page, "command-menu-default");
+      await expect(field.getByRole("combobox")).toHaveAttribute("aria-keyshortcuts", "/");
+      await expect(field.locator(".hsearch > .hkbd")).toHaveText("/");
+      const trigger = (await example(page, "command-menu-in-a-dialog")).locator(".hcommand-menu-trigger");
+      await expect(trigger).toHaveAttribute("aria-keyshortcuts", "Meta+K");
+      await expect(trigger.locator(".hkbd")).toHaveText("⌘K");
+    });
+  });
+}
