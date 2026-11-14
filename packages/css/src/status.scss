@@ -5,7 +5,7 @@
 
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: $space-2xs;
 
   font-family: $font-family;
   font-size: inherit;
@@ -46,11 +46,13 @@
     --hstatus-color: #{$status-color-error};
   }
 
+  // A pill as tall as a Tag beside it: its text size, line height, and
+  // padding above and below.
   &[data-variant="bordered"] {
-    padding: 4px 10px;
+    padding: 2px $space-xs;
 
     font-size: $font-size-xs;
-    line-height: 1;
+    line-height: $font-line-height;
 
     border: 1px solid $color-border;
     border-radius: $border-radius-full;

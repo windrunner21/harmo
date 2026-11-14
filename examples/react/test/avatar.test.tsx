@@ -3,12 +3,22 @@ import { Avatar, HarmoProvider } from "@harmo-ui/react";
 import type { ComponentProps } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-// What docs/components/avatar.md says about the React Avatar: a placeholder
-// is an image named by alt, or hidden from screen readers with alt=""; with
-// src, it's an image, through HarmoProvider's imageComponent.
+// What docs/components/avatar.md says about the React Avatar: alt is
+// required; a placeholder is an image named by alt, or hidden from screen
+// readers with alt=""; with src, it's an image, through HarmoProvider's
+// imageComponent.
 const FrameworkImage = (props: ComponentProps<"img">) => <img {...props} data-framework-image="" />;
 
 describe("Avatar", () => {
+  test("alt is required, so an avatar can't be left without a name or a choice to hide it", () => {
+    // Checked by mise run check:react: with alt optional, these would be
+    // allowed, and each directive below unused, which is an error.
+    // @ts-expect-error
+    void (<Avatar>JS</Avatar>);
+    // @ts-expect-error
+    void (<Avatar src="images/jane.svg" />);
+  });
+
   test("a placeholder is an image named by alt", () => {
     expect(renderToStaticMarkup(<Avatar alt="Jane Smith">JS</Avatar>)).toBe(
       '<span role="img" aria-label="Jane Smith" class="havatar">JS</span>',

@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Button, Card, Tag } from "@harmo-ui/react";
+import { Button, Card, Section, Status, Tag } from "@harmo-ui/react";
 import { DevelopersIcon, LockIcon, MessagesIcon, UserIcon } from "../app-icons.tsx";
 
 export const examples = {
@@ -14,80 +14,135 @@ export const examples = {
   ),
 
   Raised: () => (
-    <Card variant="raised">
-      <p>Refund not received for order 1042</p>
-      <Tag>Billing</Tag>
-    </Card>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(16rem, 100%), 1fr))",
+        gap: "var(--harmo-space-sm)",
+        alignItems: "start",
+      }}
+    >
+      <Card style={{ display: "grid", gap: "var(--harmo-space-xs)" }}>
+        <Status status="info" style={{ justifySelf: "start" }}>
+          Open
+        </Status>
+        <Card variant="raised">
+          <p>Refund not received for order 1042</p>
+          <Tag>Billing</Tag>
+        </Card>
+        <Card variant="raised">
+          <p>Can't connect a custom domain</p>
+          <Tag>Setup</Tag>
+        </Card>
+      </Card>
+      <Card style={{ display: "grid", gap: "var(--harmo-space-xs)" }}>
+        <Status status="warning" style={{ justifySelf: "start" }}>
+          Waiting on customer
+        </Status>
+        <Card variant="raised">
+          <p>Invoice shows the old address</p>
+          <Tag>Billing</Tag>
+        </Card>
+      </Card>
+    </div>
   ),
 
   Ghost: () => (
-    <nav aria-label="Settings">
-      <Card variant="ghost" href="#team">
-        Team members
-      </Card>
-      <Card variant="ghost" href="#billing">
-        Billing
-      </Card>
-      <Card variant="ghost" href="#developers">
-        Developers
-      </Card>
-    </nav>
+    <Section label="Workspace" labelAs="h3">
+      <nav aria-label="Workspace settings" style={{ marginBlock: "calc(-1px - var(--harmo-card-padding))" }}>
+        <Card variant="ghost" href="#team">
+          Team members
+        </Card>
+        <Card variant="ghost" href="#billing">
+          Billing
+        </Card>
+        <Card variant="ghost" href="#developers">
+          Developers
+        </Card>
+      </nav>
+    </Section>
   ),
 
   Padding: () => (
-    <Card style={{ "--harmo-card-padding": "8px" } as CSSProperties}>
-      <p>Last synced 5 minutes ago</p>
-    </Card>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(16rem, 100%), 1fr))",
+        gap: "var(--harmo-space-sm)",
+        alignItems: "start",
+      }}
+    >
+      <Card>
+        <p>Last synced 5 minutes ago</p>
+      </Card>
+      <Card style={{ "--harmo-card-padding": "var(--harmo-space-xs)" } as CSSProperties}>
+        <p>Last synced 5 minutes ago</p>
+      </Card>
+    </div>
   ),
 
   "Links with icons": () => (
-    <nav
-      aria-label="Settings"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(min(18rem, 100%), 1fr))",
-        gap: 16,
-        inlineSize: "100%",
-      }}
-    >
-      <Card
-        variant="ghost"
-        href="/settings/personal"
-        icon={<UserIcon className="hicon" />}
-        label="Personal"
-        description="Your name, email address, language, and password."
-      />
-      <Card
-        variant="ghost"
-        href="/settings/notifications"
-        icon={<MessagesIcon className="hicon" />}
-        label="Notifications"
-        description="How and when we tell you about new messages and tickets."
-      />
-      <Card
-        variant="ghost"
-        href="/settings/security"
-        icon={<LockIcon className="hicon" />}
-        label="Security"
-        description="Two-step verification, and the devices signed in to your account."
-      />
-      <Card
-        variant="ghost"
-        href="/settings/developers"
-        icon={<DevelopersIcon className="hicon" />}
-        label="Developers"
-        description="API keys and webhooks, to connect your own tools."
-      />
-    </nav>
+    <Section label="Settings" labelAs="h3">
+      <nav
+        aria-label="Settings"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(18rem, 100%), 1fr))",
+          gap: "var(--harmo-space-sm)",
+          marginBlock: "calc(-1px - var(--harmo-card-padding))",
+        }}
+      >
+        <Card
+          variant="ghost"
+          href="/settings/personal"
+          icon={<UserIcon className="hicon" />}
+          label="Personal"
+          labelAs="h4"
+          description="Your name, email address, language, and password."
+        />
+        <Card
+          variant="ghost"
+          href="/settings/notifications"
+          icon={<MessagesIcon className="hicon" />}
+          label="Notifications"
+          labelAs="h4"
+          description="How and when we tell you about new messages and tickets."
+        />
+        <Card
+          variant="ghost"
+          href="/settings/security"
+          icon={<LockIcon className="hicon" />}
+          label="Security"
+          labelAs="h4"
+          description="Two-step verification, and the devices signed in to your account."
+        />
+        <Card
+          variant="ghost"
+          href="/settings/developers"
+          icon={<DevelopersIcon className="hicon" />}
+          label="Developers"
+          labelAs="h4"
+          description="API keys and webhooks, to connect your own tools."
+        />
+      </nav>
+    </Section>
   ),
 
   "Links with a chevron": () => (
-    <ul style={{ margin: 0, padding: 0, listStyle: "none", inlineSize: "100%", maxInlineSize: "24rem" }}>
+    <ul
+      style={
+        {
+          "--harmo-card-padding": "var(--harmo-space-xs)",
+          marginBlock: "calc(-1px - var(--harmo-card-padding))",
+          padding: 0,
+          listStyle: "none",
+        } as CSSProperties
+      }
+    >
       <li>
         <Card
           variant="ghost"
           href="/activate"
-          style={{ "--harmo-card-padding": "12px" } as CSSProperties}
           label="Activate your account"
           labelAs="p"
           description="Got an invitation? Set a password to start."
@@ -98,7 +153,6 @@ export const examples = {
         <Card
           variant="ghost"
           href="/sign-up"
-          style={{ "--harmo-card-padding": "12px" } as CSSProperties}
           label="New here?"
           labelAs="p"
           description="Create an account for your team in a few minutes."
@@ -109,7 +163,6 @@ export const examples = {
         <Card
           variant="ghost"
           href="/contact"
-          style={{ "--harmo-card-padding": "12px" } as CSSProperties}
           label="Talk to us"
           labelAs="p"
           description="Questions about plans or setup? We're glad to help."
@@ -131,7 +184,7 @@ export const examples = {
     <Card
       variant="ghost"
       href="/settings/personal"
-      style={{ inlineSize: "100%", maxInlineSize: "24rem" }}
+      style={{ marginBlock: "calc(-1px - var(--harmo-card-padding))" }}
       icon={<UserIcon className="hicon" />}
       label="الملف الشخصي"
       description="اسمك وبريدك الإلكتروني ولغتك وكلمة المرور."

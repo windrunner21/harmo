@@ -106,12 +106,23 @@ onEachPlayground("accordion", () => {
     expect(await height(item)).toBeCloseTo(await height(summary), 0);
   });
 
-  test("small: 14px text with 8px above and below, and 13px content with 8px under it", async ({ page }) => {
+  test("the summary's 16px above and below, and before the chevron, is --harmo-space-sm, so a theme that changes the scale changes it", async ({ page }) => {
+    const [item] = await (await items(page, "accordion-default")).all();
+    const summary = item.locator("summary");
+    await expect(summary).toHaveCSS("padding-top", "16px");
+    await expect(summary).toHaveCSS("column-gap", "16px");
+    await page.evaluate(() => document.documentElement.style.setProperty("--harmo-space-sm", "20px"));
+    await expect(summary).toHaveCSS("padding-bottom", "20px");
+    await expect(summary).toHaveCSS("column-gap", "20px");
+  });
+
+  test("small: 14px text with 8px above and below and the chevron 10px after it, and 13px content with 8px under it", async ({ page }) => {
     const [item] = await (await items(page, "accordion-small")).all();
     const summary = item.locator("summary");
     await expect(summary).toHaveCSS("font-size", "14px");
     await expect(summary).toHaveCSS("padding-top", "8px");
     await expect(summary).toHaveCSS("padding-bottom", "8px");
+    await expect(summary).toHaveCSS("column-gap", "10px");
     await summary.click();
     const content = item.locator(".haccordion-content");
     await expect(content).toHaveCSS("font-size", "13px");

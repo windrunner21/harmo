@@ -4,7 +4,8 @@ import type { ComponentPropsWithRef, Ref } from "react";
 import { useImageComponent } from "./HarmoProvider.tsx";
 import { withClass } from "./withClass.ts";
 
-export type AvatarProps = Omit<ComponentPropsWithRef<"img">, "ref"> & {
+export type AvatarProps = Omit<ComponentPropsWithRef<"img">, "ref" | "alt"> & {
+  alt: string;
   ref?: Ref<HTMLElement>;
 };
 

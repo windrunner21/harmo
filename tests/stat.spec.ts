@@ -4,7 +4,7 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/stat.md says, on the Stat page: a label that's a
 // heading, the number, its caption, and a neutral trend; a hint that names
 // its button; tooltips a press pins open; an action below; and tiles on a
-// tray, as many to a row as fit.
+// tray, as many to a row as fit, all spaced on the golden-ratio scale.
 onEachPlayground("stat", () => {
   test("a label that's a heading, the number, its caption, and a trend in the text color with its arrow hidden", async ({ page }) => {
     const stat = (await example(page, "stat-default")).locator(".hstat");
@@ -68,12 +68,24 @@ onEachPlayground("stat", () => {
     await expect(trigger).not.toHaveAttribute("data-open");
   });
 
-  test("the action goes 16px below the caption", async ({ page }) => {
+  test("the value 6px under the label's row, the caption 6px under it, and the action 16px below, with actions 10px apart", async ({ page }) => {
     const stat = (await example(page, "stat-with-a-hint-and-an-action")).locator(".hstat");
     const link = stat.getByRole("link", { name: "View tickets" });
     await expect(link).toHaveAttribute("href", "/tickets");
-    const [caption, action] = await boxes(stat.locator(".hstat-caption"), stat.locator(".hstat-actions"));
+    const [header, value, caption, action] = await boxes(
+      stat.locator(".hstat-header"),
+      stat.locator(".hstat-value"),
+      stat.locator(".hstat-caption"),
+      stat.locator(".hstat-actions"),
+    );
+    expect(value.y - (header.y + header.height)).toBeCloseTo(6, 0);
+    expect(caption.y - (value.y + value.height)).toBeCloseTo(6, 0);
     expect(action.y - (caption.y + caption.height)).toBeCloseTo(16, 0);
+    await expect(stat.locator(".hstat-actions")).toHaveCSS("column-gap", "10px");
+    await expect(stat.locator(".hstat-title")).toHaveCSS("column-gap", "6px");
+    await expect(stat.locator(".hstat-trend")).toHaveCSS("column-gap", "6px");
+    // The trend 6px from the title, as parts of one thing.
+    await expect(stat.locator(".hstat-header")).toHaveCSS("column-gap", "6px");
   });
 
   test("in a group, each Stat is a tile on a tray, as many to a row as fit, and each trend's tooltip says what it compares", async ({ page }) => {

@@ -100,28 +100,30 @@ Several Stats go in a `.hstat-group`, a tray of tiles:
 ## Appearance and states
 
 - The label: 14px in `--harmo-color-text-secondary`. The hint: a 14px info
-  icon in `--harmo-color-text`, 4px after the label, in a 24px button, the
+  icon in `--harmo-color-text`, 6px (`--harmo-space-2xs`) after the label, in
+  a 24px button, the
   least WCAG asks of a target, that reaches past it without taking room. Its
   focus ring is on that button, with no offset.
-- The trend: at the end of the row, 12px text and a 14px arrow in
-  `--harmo-color-text`, in a 1px `--harmo-color-border` frame with the 8px
-  corners, 8px from the title. Neutral, since whether up is good depends on
+- The trend: at the end of the row, 12px text and a 14px arrow 6px before
+  it, in `--harmo-color-text`, in a 1px `--harmo-color-border` frame with the
+  8px corners and 3px 8px padding, 6px (`--harmo-space-2xs`) from the title. Neutral, since whether up is good depends on
   the number: more open tickets is worse.
-- The label wraps first. The trend moves onto a line of its own, still at
-  the end, only when even the label's longest word, the hint, and the trend
-  can't share one; text too long for its row wraps. A word too long for its
+- The label wraps first. The trend moves onto a line of its own, 6px under
+  the label, still at the end, only when even the label's longest word, the
+  hint, and the trend can't share one; text too long for its row wraps. A word too long for its
   line, such as an ID, breaks, in the label, the trend, the value, and the
   caption alike.
 - The label's row is as tall as a trend, with one or without, so numbers
   side by side line up.
-- The value: 20px in `--harmo-color-text`, 4px under the label's row. The
-  caption: 12px in `--harmo-color-text-secondary`, 4px under it. The action:
-  14px, 16px under them.
+- The value: 20px in `--harmo-color-text`, 6px (`--harmo-space-2xs`) under
+  the label's row. The caption: 12px in `--harmo-color-text-secondary`, 6px
+  under it. The actions: 14px, 16px (`--harmo-space-sm`) under them, 10px
+  (`--harmo-space-xs`) apart.
 - The hint's and the trend's tooltips are Tooltip's `hint` variant, above
   them.
 - In a group: a `--harmo-color-background-secondary` tray with 24px corners
-  and 16px padding, holding `--harmo-color-background` tiles with the 8px
-  corners and 16px padding, 16px apart, as many to a row as fit at 180px or
+  and 16px (`--harmo-space-sm`) padding, holding `--harmo-color-background`
+  tiles with the 8px corners and 16px padding, 16px apart, as many to a row as fit at 180px or
   wider; one to a row on a phone. Each tile's parts share rows with its
   neighbors', so headers, numbers, captions, and actions line up across a
   row, whatever wraps and whichever parts a tile leaves out. The tray and
@@ -195,5 +197,6 @@ its own, since a page's numbers usually compare the same periods.
 `--harmo-color-border`, `--harmo-color-text`, `--harmo-color-text-secondary`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-2xs`,
-`--harmo-font-size-lg`, `--harmo-font-size-sm`, `--harmo-font-weight-normal`;
-Tooltip's, for the hints.
+`--harmo-font-size-lg`, `--harmo-font-size-sm`, `--harmo-font-weight-normal`,
+`--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-space-sm`; Tooltip's, for
+the hints.

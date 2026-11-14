@@ -36,12 +36,27 @@ $actionable: ':where(a[href], button:enabled)';
     outline-offset: $focus-outline-offset;
   }
 
+  // A link or button card is a step darker while pressed, so a tap on a
+  // touch screen shows before the next page loads.
+  &#{$actionable} {
+    transition: background-color $duration-fast ease;
+
+    &:active {
+      background-color: $color-background-active;
+    }
+  }
+
   // The page's background, bordered and lifted off the page, like an item on
-  // a board.
+  // a board. Pressed, the step past the page's background, as a secondary
+  // Button's.
   &[data-variant="raised"] {
     background-color: $color-background;
     border-color: $color-border;
     box-shadow: $box-shadow-sm;
+
+    &#{$actionable}:active {
+      background-color: $color-background-hover;
+    }
   }
 
   // No frame until a link or button card is hovered, like a row in a list of
@@ -49,13 +64,15 @@ $actionable: ':where(a[href], button:enabled)';
   &[data-variant="ghost"] {
     background-color: transparent;
 
-    transition: background-color $duration-fast ease;
-
     &#{$actionable} {
       @media (hover: hover) and (pointer: fine) {
         &:hover {
           background-color: $color-background-hover;
         }
+      }
+
+      &:active {
+        background-color: $color-background-active;
       }
     }
   }
@@ -113,7 +130,7 @@ $actionable: ':where(a[href], button:enabled)';
   box-sizing: border-box;
   inline-size: 40px;
   block-size: 40px;
-  margin-inline-end: 16px;
+  margin-inline-end: $space-sm;
 
   color: $color-primary;
   background-color: $color-background-secondary;
@@ -159,7 +176,7 @@ $actionable: ':where(a[href], button:enabled)';
   grid-area: description;
 
   margin: 0;
-  margin-block-start: 4px;
+  margin-block-start: $space-2xs;
 
   font-size: $font-size-sm;
   line-height: $font-line-height;
@@ -174,7 +191,7 @@ $actionable: ':where(a[href], button:enabled)';
   grid-area: chevron;
   align-self: center;
 
-  margin-inline-start: 16px;
+  margin-inline-start: $space-sm;
 
   color: $color-text-secondary;
 }

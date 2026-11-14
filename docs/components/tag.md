@@ -49,11 +49,12 @@ email address in a list. For the state something is in, use
 
 ## Appearance and states
 
-- Always a rectangle: 4px radius, 1px `--harmo-color-border` border, 2px 6px
-  padding, 13px `--harmo-color-text-secondary` text that wraps rather than
-  overflowing.
-- A tag with its own color shows `.htag-dot` (6px) in `--htag-color`; without
-  one, it has no dot. In forced-colors mode the dot uses the text color.
+- Always a rectangle: 4px radius, 1px `--harmo-color-border` border, 2px
+  padding above and below and 6px (`--harmo-space-2xs`) at the sides, 13px
+  `--harmo-color-text-secondary` text that wraps rather than overflowing.
+- A tag with its own color shows `.htag-dot` (6px) in `--htag-color`, 6px
+  before the text; without one, it has no dot. In forced-colors mode the dot
+  uses the text color.
 - Unlike a Status, a tag's color carries no meaning, and it is never a pill.
 - A remove button is 16px, 2px after the text, with a 12px cross in
   `--harmo-icon-color`, darkening to `--harmo-icon-hover-color` on hover;
@@ -88,7 +89,9 @@ as a Combobox does with the arrow keys.
 
 `<TagRemove>` renders the remove button, with its cross; put it in the tag,
 after the text. Its props are the button's attributes, and `aria-label` is
-required. Removing the tag, and moving focus on, is yours.
+required. Removing the tag, and moving focus on, is yours. In the tooltip of
+a [Tag List](tag-list.md)'s "+N", which shows copies of the hidden tags, it
+renders nothing.
 
 ```tsx
 <Tag color="var(--harmo-amber)">Billing</Tag>
@@ -105,4 +108,4 @@ required. Removing the tag, and moving focus on, is yours.
 `--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
 `--harmo-duration-fast`, `--harmo-focus-outline`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-xs`, `--harmo-icon-color`,
-`--harmo-icon-hover-color`.
+`--harmo-icon-hover-color`, `--harmo-space-2xs`.

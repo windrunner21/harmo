@@ -44,19 +44,22 @@ frame around content, use a [Card](card.md).
 | Hook | Effect |
 | --- | --- |
 | `.hsection-description` | A line or two under the title |
-| `.hsection-actions` | Buttons or other controls at the header's end, 8px apart, each in its own variant |
+| `.hsection-actions` | Buttons or other controls at the header's end, 10px (`--harmo-space-xs`) apart, each in its own variant |
 | The title's element | `<h2>` by default; `<h3>` and lower for a section inside another |
 
 ## Appearance and states
 
 - The title is 20px bold in `--harmo-color-text`; the description is 14px in
-  `--harmo-color-text-secondary`, 4px under it.
-- The actions sit at the header's end, centered on its text. Where there isn't
-  room beside the text, at least 16rem for it, they wrap under it.
-- A 1px `--harmo-color-border` line runs under the header, 12px below its
-  text, and the content starts 24px below the line.
-- The content is stacked, 20px apart, and keeps its own look: Section styles
-  nothing inside it.
+  `--harmo-color-text-secondary`, 6px (`--harmo-space-2xs`) under it, as a
+  Dialog's.
+- The actions sit at the header's end, centered on its text, at least 16px
+  (`--harmo-space-sm`) after it. Where there isn't room beside the text, at
+  least 16rem for it, they wrap under it, 10px (`--harmo-space-xs`) below.
+- A 1px `--harmo-color-border` line runs under the header, 10px
+  (`--harmo-space-xs`) below its text, and the content starts 26px
+  (`--harmo-space-md`) below the line.
+- The content is stacked, 16px (`--harmo-space-sm`) apart, and keeps its own
+  look: Section styles nothing inside it.
 - Sections one after another are the page's to space, as it spaces any of its
   blocks.
 
@@ -112,4 +115,5 @@ by its title, which makes it a region. For a small group inside another part,
 
 `--harmo-color-border`, `--harmo-color-text`, `--harmo-color-text-secondary`,
 `--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-lg`,
-`--harmo-font-size-sm`, `--harmo-font-weight-bold`.
+`--harmo-font-size-sm`, `--harmo-font-weight-bold`, `--harmo-space-2xs`,
+`--harmo-space-xs`, `--harmo-space-sm`, `--harmo-space-md`.

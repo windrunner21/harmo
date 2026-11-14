@@ -10,7 +10,7 @@ none.
 | CSS | `avatar.css` |
 | Element | `<img class="havatar">`, or `<span class="havatar" role="img">` for a placeholder |
 | Parts | None; a placeholder holds a direct `<svg>` or initials |
-| Required | `alt` on an image; `aria-label` on a placeholder |
+| Required | `alt` on an image, `alt=""` when the name is beside it; on a placeholder, `aria-label`, or `aria-hidden="true"` when the name is beside it |
 | Unique | None |
 | Script | None |
 
@@ -60,12 +60,15 @@ placeholder.
 | Prop | Effect |
 | --- | --- |
 | `src` | Renders the image, through `HarmoProvider`'s `imageComponent` (an `<img>` by default) |
-| `alt` | Names it: the image's `alt`, or the placeholder's `role="img"` and `aria-label`. `alt=""` hides either from screen readers, for an avatar next to its name |
+| `alt` | Required. Names it: the image's `alt`, or the placeholder's `role="img"` and `aria-label`. `alt=""` hides either from screen readers, for an avatar next to its name |
 | `children` | The placeholder's initials or icon |
 
 ```tsx
 <Avatar src="images/jane.svg" alt="Jane Smith" />
 <Avatar alt="Jane Smith">JS</Avatar>
+<span>
+  <Avatar alt="">JS</Avatar> Jane Smith
+</span>
 <Avatar alt="Jane Smith" style={{ "--harmo-avatar-size": "4rem" } as CSSProperties}>
   JS
 </Avatar>

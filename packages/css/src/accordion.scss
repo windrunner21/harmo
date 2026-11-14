@@ -37,9 +37,9 @@
 .haccordion-summary {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: $space-sm;
 
-  padding-block: 16px;
+  padding-block: $space-sm;
 
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
@@ -99,7 +99,7 @@
 
     display: block;
 
-    block-size: 16px;
+    block-size: $space-sm;
   }
 
   & > :first-child {
@@ -113,10 +113,11 @@
 
 // Small, on an item or on .haccordion for all of its items, such as the
 // panels of a settings page or a code sample under an example: 14px text
-// with 8px above and below it, and 13px content with 8px under it.
+// with 8px above and below it, and 13px content with 8px under it. The 8px
+// set the row's height, as a list's options do, so they stay off the scale.
 :where(.haccordion[data-size="small"] > .haccordion-item, .haccordion-item[data-size="small"]) {
   & > .haccordion-summary {
-    gap: 12px;
+    gap: $space-xs;
 
     padding-block: 8px;
 

@@ -3,7 +3,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/section.md says, on the Section page: a region named by
 // its title, a line under its header, actions at its end that wrap under the
-// text in a narrow space, and its content stacked, styled by nothing of its own.
+// text in a narrow space, and its content stacked, styled by nothing of its
+// own, all spaced on the golden-ratio scale.
 const styleOf = (element: Locator, property: string) =>
   element.evaluate((node, property) => getComputedStyle(node).getPropertyValue(property), property);
 
@@ -29,16 +30,16 @@ onEachPlayground("section", () => {
     const description = section.locator(".hsection-description");
     expect(await styleOf(description, "color")).toBe(await color(page, "--harmo-color-text-secondary"));
     const [titleBox, descriptionBox] = await boxes(title, description);
-    expect(descriptionBox.y - (titleBox.y + titleBox.height)).toBeCloseTo(4, 0);
+    expect(descriptionBox.y - (titleBox.y + titleBox.height)).toBeCloseTo(6, 0);
 
     const header = section.locator(".hsection-header");
     expect(await styleOf(header, "border-bottom-width")).toBe("1px");
     expect(await styleOf(header, "border-bottom-color")).toBe(await color(page, "--harmo-color-border"));
     const [text, line] = await boxes(section.locator(".hsection-text"), header);
-    expect(line.y + line.height - (text.y + text.height)).toBeCloseTo(12 + 1, 0);
+    expect(line.y + line.height - (text.y + text.height)).toBeCloseTo(10 + 1, 0);
   });
 
-  test("its content starts 24px below the line, stacked 20px apart", async ({ page }) => {
+  test("its content starts 26px below the line, stacked 16px apart, and its actions are 10px apart", async ({ page }) => {
     const container = await example(page, "section-with-actions");
     const section = container.locator(".hsection");
     const [header, first, second] = await boxes(
@@ -46,8 +47,10 @@ onEachPlayground("section", () => {
       section.locator(".hfield").nth(0),
       section.locator(".hfield").nth(1),
     );
-    expect(first.y - (header.y + header.height)).toBeCloseTo(24, 0);
-    expect(second.y - (first.y + first.height)).toBeCloseTo(20, 0);
+    expect(first.y - (header.y + header.height)).toBeCloseTo(26, 0);
+    expect(second.y - (first.y + first.height)).toBeCloseTo(16, 0);
+    const [one, two] = await boxes(section.locator(".hsection-actions > *").nth(0), section.locator(".hsection-actions > *").nth(1));
+    expect(two.x - (one.x + one.width)).toBeCloseTo(10, 0);
   });
 
   test("its actions sit at the header's end, after the text and centered on it; in a narrow space they wrap under it", async ({ page }) => {

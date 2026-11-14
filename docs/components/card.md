@@ -62,6 +62,23 @@ With parts:
 </a>
 ```
 
+A ghost card keeps its padding, so the frame a hover shows has room. In a
+list, that padding adds to the space above the first row and below the last.
+Pulling the list up and down by the cards' padding and their 1px border puts
+the first and last rows' text where other content would start and end, while
+their frames line up with the sides of what's around them:
+
+```html
+<nav aria-label="Settings" style="margin-block: calc(-1px - var(--harmo-card-padding))">
+  <a class="hcard" data-variant="ghost" href="/settings/team">Team members</a>
+  <a class="hcard" data-variant="ghost" href="/settings/billing">Billing</a>
+</nav>
+```
+
+The first row's frame then reaches 17px above the list's place, by default,
+so leave at least that much room above it, as a Section's gap under its
+header does.
+
 ## Options
 
 | Hook | Effect |
@@ -69,7 +86,7 @@ With parts:
 | Default | Tinted: `--harmo-color-background-secondary`, with no border |
 | `data-variant="raised"` | `--harmo-color-background`, a 1px `--harmo-color-border` border, and `--harmo-box-shadow-sm` |
 | `data-variant="ghost"` | No background; on a link or button card, `--harmo-color-background-hover` on hover |
-| `--harmo-card-padding` | The padding, 16px by default; set it on a card for a tighter one |
+| `--harmo-card-padding` | The padding: `--harmo-space-sm`, 16px, by default; set it on a card for a tighter one. Built on `:root`, so a section that changes `--harmo-space-sm` redeclares it there too |
 | `.hcard-title` inside | Lays out the parts in a grid: the icon, the title and description, and the chevron |
 
 ## Appearance and states
@@ -84,18 +101,24 @@ With parts:
   focus ring.
 - A ghost link or button card fades to the hover background in 150ms on
   devices that hover. The others don't change on hover.
+- Pressed, any link or button card is a step darker, fading in 150ms, so a
+  tap on a touch screen shows before the next page loads:
+  `--harmo-color-background-active` on a tinted or ghost card, and
+  `--harmo-color-background-hover` on a raised one, as a pressed secondary
+  Button is.
 - On the tint, and on a hovered ghost card, use secondary text or darker:
   tertiary text is 4.4:1 there, below WCAG AA.
 - With parts: the icon is a 40px tile with the 8px corners and a 24px icon in
-  `--harmo-color-primary`, at the start and at the top, 16px before the
-  title. The tile is `--harmo-color-background-secondary`, or on a tinted
+  `--harmo-color-primary`, at the start and at the top, 16px
+  (`--harmo-space-sm`) before the title. The tile is `--harmo-color-background-secondary`, or on a tinted
   card, `--harmo-color-background`, so it stays a tile; its transparent
   border is drawn in forced colors.
 - The title: 16px medium, in `--harmo-color-primary` in a card that's a link
   or a button, as a link's text is, and in `--harmo-color-text` otherwise.
-  The description: 14px in `--harmo-color-text-secondary`, 4px under it.
+  The description: 14px in `--harmo-color-text-secondary`, 6px
+  (`--harmo-space-2xs`) under it.
 - The chevron: in `--harmo-color-text-secondary` at the end, centered, 16px
-  after the text. It turns into an arrow while the card is hovered or
+  (`--harmo-space-sm`) after the text. It turns into an arrow while the card is hovered or
   focused, as a ChevronToArrow does in any link or button.
 - A part left out leaves no room. A long word or address in the title or
   description breaks rather than running into the chevron. Right-to-left,
@@ -159,11 +182,11 @@ For a card that's a button, put `className="hcard"` on a `<button>`; for an
 ## Tokens
 
 `--harmo-border-radius`, `--harmo-box-shadow-sm`, `--harmo-card-padding`,
-`--harmo-color-background`, `--harmo-color-background-hover`,
-`--harmo-color-background-secondary`, `--harmo-color-border`,
-`--harmo-color-primary`, `--harmo-color-text`,
+`--harmo-color-background`, `--harmo-color-background-active`,
+`--harmo-color-background-hover`, `--harmo-color-background-secondary`,
+`--harmo-color-border`, `--harmo-color-primary`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-duration-fast`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-base`,
-`--harmo-font-size-sm`, `--harmo-font-weight-medium`; ChevronToArrow's, for
-the chevron.
+`--harmo-font-size-sm`, `--harmo-font-weight-medium`, `--harmo-space-2xs`,
+`--harmo-space-sm`; ChevronToArrow's, for the chevron.

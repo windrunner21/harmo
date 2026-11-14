@@ -1,9 +1,20 @@
 import { expect } from "@playwright/test";
 import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 
-// What docs/components/tag.md says of the remove button, on the Tag page: a
-// 16px button with a 12px cross, 2px after the text, with a 24px target.
+// What docs/components/tag.md says, on the Tag page: 2px 6px padding and
+// 6px from the dot to the text, from the space scale; and of the remove
+// button, a 16px button with a 12px cross, 2px after the text, with a 24px
+// target.
 onEachPlayground("tag", () => {
+  test("its side padding and the dot's gap are --harmo-space-2xs, 6px; above and below, 2px", async ({ page }) => {
+    const tag = (await example(page, "tag-with-a-color")).locator(".htag").first();
+    await expect(tag).toHaveCSS("padding", "2px 6px");
+    await expect(tag).toHaveCSS("column-gap", "6px");
+    await page.evaluate(() => document.documentElement.style.setProperty("--harmo-space-2xs", "8px"));
+    await expect(tag).toHaveCSS("padding", "2px 8px");
+    await expect(tag).toHaveCSS("column-gap", "8px");
+  });
+
   test("the remove button is 16px with a 12px cross, 2px after the text, and its target is 24px", async ({ page }) => {
     const container = await example(page, "tag-with-a-remove-button");
     const button = container.getByRole("button", { name: "Remove Billing" });

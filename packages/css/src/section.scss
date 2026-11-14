@@ -6,7 +6,7 @@
 .hsection {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: $space-md;
 
   font-family: $font-family;
 
@@ -22,9 +22,9 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 16px;
+  gap: $space-xs $space-sm;
 
-  padding-block-end: 12px;
+  padding-block-end: $space-xs;
   border-block-end: 1px solid $color-border;
 
   &[hidden] {
@@ -37,7 +37,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $space-2xs;
 
   min-inline-size: 0;
 
@@ -71,7 +71,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: $space-xs;
 
   &[hidden] {
     display: none;
@@ -81,7 +81,7 @@
 .hsection-body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: $space-sm;
 
   min-inline-size: 0;
 

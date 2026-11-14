@@ -37,11 +37,14 @@ There is no custom color: the app maps its own states, such as a campaign run's
 
 ## Appearance and states
 
-- An 8px dot, then 6px, then text in `--harmo-color-text-secondary`.
+- An 8px dot, then 6px (`--harmo-space-2xs`), then text in
+  `--harmo-color-text-secondary`.
 - Default: no border, and the font size and line height of the surrounding
   text, so it fits a 15px settings section or a 14px table alike.
-- Bordered: 13px text, 4px 10px padding, a 1px `--harmo-color-border` border,
-  fully rounded.
+- Bordered: 13px text at `--harmo-font-line-height`, 2px padding above and
+  below and 10px (`--harmo-space-xs`) at the sides, a 1px
+  `--harmo-color-border` border, fully rounded: as tall as a
+  [Tag](tag.md) beside it, so their edges line up in a row.
 - Text too long for its line wraps, and a word too long for it, such as an
   ID, breaks rather than spilling out.
 - The dot colors are brighter than `--harmo-color-success`,
@@ -79,6 +82,7 @@ the `<span>`'s attributes.
 
 `--harmo-border-radius-full`, `--harmo-color-border`,
 `--harmo-color-border-control`, `--harmo-color-text-secondary`,
-`--harmo-font-family`, `--harmo-font-size-xs`, `--harmo-status-color-error`,
+`--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-xs`,
+`--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-status-color-error`,
 `--harmo-status-color-info`, `--harmo-status-color-success`,
 `--harmo-status-color-warning`.

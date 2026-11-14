@@ -6,7 +6,7 @@
 .htag-list {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: $space-2xs;
 
   box-sizing: border-box;
   inline-size: 100%;
@@ -18,6 +18,16 @@
 
   &[hidden] {
     display: none;
+  }
+
+  // Until the tags are counted, every one shows, so the row is cut at its
+  // end rather than running into what's beside it, as in a table's next
+  // column; 4px past its edges, the reach of a focus ring, is still drawn.
+  // Once "+N" shows, nothing is past the end, and nothing is cut, so its
+  // own ring is whole, also in a browser without overflow-clip-margin.
+  &:where(:has(> .htag-list-more[hidden])) {
+    overflow: clip;
+    overflow-clip-margin: 4px;
   }
 
   & > li {
@@ -42,7 +52,7 @@
 
   box-sizing: border-box;
   margin: 0;
-  padding: 2px 6px;
+  padding: 2px $space-2xs;
 
   font-family: $font-family;
   font-size: $font-size-xs;
@@ -66,12 +76,13 @@
   }
 }
 
-// The rest, in the tooltip: a column of tags, shown as they are but without
-// their remove buttons, since a tooltip holds nothing to press.
+// The rest, in the tooltip: a column of copies of the tags, shown as they
+// are. A script copies them without their remove buttons, since a tooltip
+// holds nothing to press; one it copies anyway is hidden here.
 .htag-list-rest {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $space-2xs;
   align-items: flex-start;
 
   &[hidden] {
@@ -79,7 +90,7 @@
   }
 
   & > .htag:has(> .htag-remove) {
-    padding-inline-end: 6px;
+    padding-inline-end: $space-2xs;
   }
 
   & .htag-remove {

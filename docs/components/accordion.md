@@ -52,15 +52,17 @@ paragraph sits as close to the summary as plain text does.
 | `name` on each item of a group | One open at a time: opening one closes the one that was open. Without it, each opens on its own |
 | `open` on an item | Open, such as from the start |
 | `.haccordion` around the items | A line between the items that are shown; without it, an item stands alone |
-| `data-size="small"` on `.haccordion`, or on an item | Small: 14px summary text with 8px above and below it, and 13px content with 8px under it, for a panel beside other things, such as help next to a message box |
+| `data-size="small"` on `.haccordion`, or on an item | Small: 14px summary text with 8px above and below it and the chevron 10px (`--harmo-space-xs`) after it, and 13px content with 8px under it, for a panel beside other things, such as help next to a message box |
 
 ## Appearance and states
 
 - The summary: the label, 16px medium in `--harmo-color-text`, with 16px
-  above and below it, and the chevron at its end in
+  (`--harmo-space-sm`) above and below it, and the chevron at its end, at
+  least 16px after it, in
   `--harmo-color-text-secondary`, folding up while the item is open. A long
   label wraps; the whole row is clickable.
-- The content: 14px `--harmo-color-text-secondary`, with 16px under it.
+- The content: 14px `--harmo-color-text-secondary`, with 16px
+  (`--harmo-space-sm`) under it.
 - A 1px `--harmo-color-border` line between items in `.haccordion`.
 - Keyboard focus on a summary: the focus ring, with small corners.
 - Opening, the content grows to its height in 200ms; closing, it shrinks in
@@ -131,4 +133,5 @@ own. Other props are the `<div>`'s, or the `<details>`'s, attributes.
 `--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-base`, `--harmo-font-size-sm`,
-`--harmo-font-size-xs`, `--harmo-font-weight-medium`; Expand Chevron's.
+`--harmo-font-size-xs`, `--harmo-font-weight-medium`, `--harmo-space-xs`,
+`--harmo-space-sm`; Expand Chevron's.

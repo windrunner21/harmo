@@ -12,14 +12,20 @@ import {
   useState,
   type ComponentPropsWithRef,
 } from "react";
+import { createPortal } from "react-dom";
 import { shownChildren } from "./children.ts";
+import { TagCopyContext } from "./Tag.tsx";
 import { useTooltip } from "./Tooltip.tsx";
+import type { FormatCount } from "./types.ts";
 import { usePinned } from "./usePinned.ts";
 import { withClass } from "./withClass.ts";
 
 export interface TagListProps extends ComponentPropsWithRef<"ul"> {
   moreLabel: (count: number) => string;
+  formatCount?: FormatCount;
 }
+
+const plus: FormatCount = (count) => `+${count}`;
 
 // A Combobox around the list, whose field reaches every tag: while focus is
 // in it, every tag shows, in a row that scrolls, and "+N" stays out of the
@@ -30,6 +36,7 @@ export const TagListContext = createContext<{ editing: boolean } | undefined>(
 
 export const TagList = ({
   moreLabel,
+  formatCount = plus,
   ref,
   className,
   children,
@@ -46,9 +53,27 @@ export const TagList = ({
   const shown = counting ? Math.min(fitting, items.length) : items.length;
   const rest = items.length - shown;
 
+  // "+N" for each count it could show, as the app writes it, drawn into an
+  // element off the page for counting to measure: a smaller count can be
+  // wider, as "one other" is beside "4 others". Made before the first count,
+  // and before the browser paints.
+  const [counts, setCounts] = useState<HTMLSpanElement | null>(null);
+  useLayoutEffect(() => setCounts(document.createElement("span")), []);
+
+  // While "+N" has focus, it stays, however wide the list grows, so focus
+  // isn't lost; the tags are counted again once it leaves.
+  const [holding, setHolding] = useState(false);
+
   const fit = useRef(() => {});
   fit.current = () => {
-    if (counting && list.current) setFitting(countFitting(list.current));
+    const ul = list.current;
+    if (!counting || !ul) return;
+    const focused =
+      holding &&
+      !!ul
+        .querySelector(":scope > .htag-list-more")
+        ?.contains(document.activeElement);
+    setFitting(countFitting(ul, focused, counts));
   };
 
   // Counted again as the list, its container, or a tag changes size, such
@@ -72,8 +97,9 @@ export const TagList = ({
     };
   }, [counting]);
 
-  // While every tag shows, in a Combobox, its end stays in view as tags are
-  // added, beside the text being typed.
+  // Counted after every render, as a hidden tag whose text changes reports
+  // no change of size. While every tag shows, in a Combobox, its end stays
+  // in view as tags are added, beside the text being typed.
   const before = useRef({ counting, length: items.length });
   useLayoutEffect(() => {
     fit.current();
@@ -128,9 +154,13 @@ export const TagList = ({
           data-open={pinned && rest ? "" : undefined}
           onPointerEnter={trigger.onPointerEnter}
           onPointerLeave={trigger.onPointerLeave}
-          onBlur={() => {
+          onFocus={() => setHolding(true)}
+          onBlur={(event) => {
             trigger.onBlur();
             setPinned(false);
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setHolding(false);
+            }
           }}
         >
           <button
@@ -141,7 +171,7 @@ export const TagList = ({
             aria-label={rest ? moreLabel(rest) : undefined}
             aria-describedby={tipId}
           >
-            {rest ? `+${rest}` : null}
+            {rest ? formatCount(rest) : null}
           </button>
           <span
             {...tooltip}
@@ -150,22 +180,39 @@ export const TagList = ({
             role="tooltip"
             id={tipId}
           >
+            {/* Copies, only to look at: a TagRemove in one renders nothing,
+                as a tooltip holds nothing to press. */}
             <span className="htag-list-rest">
-              {items
-                .slice(shown)
-                .flatMap((item, index) => (index ? [" ", item] : [item]))}
+              <TagCopyContext value={true}>
+                {items
+                  .slice(shown)
+                  .flatMap((item, index) => (index ? [" ", item] : [item]))}
+              </TagCopyContext>
             </span>
           </span>
         </span>
       </li>
+      {counts &&
+        createPortal(
+          items.map((_, index) => (
+            <span key={index}>{formatCount(index + 1)}</span>
+          )),
+          counts,
+        )}
     </ul>
   );
 };
 
-// How many tags fit the list's width, with room for "+N" when some don't:
-// each is shown to be measured, then put back as it was, so nothing paints
-// in between. "+N" is measured with the most digits it could show.
-const countFitting = (list: HTMLElement) => {
+// How many tags fit the list's width, with room for "+N" when some don't, or
+// while it's kept: each is shown to be measured, then put back as it was, so
+// nothing paints in between. From the most tags that leave any room, one
+// fewer at a time, "+N" is measured with its text for the rest, copied from
+// `counts`, until it fits beside them.
+const countFitting = (
+  list: HTMLElement,
+  keepMore: boolean,
+  counts: HTMLElement | null,
+) => {
   const items = Array.from(list.children).filter(
     (item) => !item.classList.contains("htag-list-more"),
   ) as HTMLElement[];
@@ -175,7 +222,7 @@ const countFitting = (list: HTMLElement) => {
   for (const item of items) item.hidden = false;
   if (more) more.hidden = true;
 
-  const available = list.clientWidth;
+  const available = list.clientWidth + 0.5;
   const gap = parseFloat(getComputedStyle(list).columnGap) || 0;
   const widths = items.map((item) => item.getBoundingClientRect().width);
   const total =
@@ -183,26 +230,39 @@ const countFitting = (list: HTMLElement) => {
     gap * Math.max(items.length - 1, 0);
 
   let count = items.length;
-  if (total > available + 0.5 && more) {
+  if (more && (keepMore || total > available)) {
     const probe = more.cloneNode(true) as HTMLElement;
     probe.querySelector(".htooltip")?.remove();
     const button = probe.querySelector(".htag-list-count");
-    if (button) button.textContent = `+${items.length}`;
     probe.hidden = false;
     list.append(probe);
-    let used = probe.getBoundingClientRect().width;
-    probe.remove();
+    // Where "+N" starts after each number of tags.
+    const starts = [0];
+    for (const width of widths) {
+      starts.push((starts.at(-1) ?? 0) + width + gap);
+    }
     count = 0;
     while (
-      count < items.length &&
-      used + gap + (widths[count] ?? 0) <= available + 0.5
+      count < items.length - 1 &&
+      (starts[count + 1] ?? Infinity) <= available
     ) {
-      used += gap + (widths[count] ?? 0);
       count++;
     }
+    while (count > 0) {
+      const text = counts?.children[items.length - count - 1];
+      if (button && text) {
+        button.replaceChildren(
+          ...Array.from(text.childNodes, (node) => node.cloneNode(true)),
+        );
+      }
+      const width = probe.getBoundingClientRect().width;
+      if ((starts[count] ?? 0) + width <= available) break;
+      count--;
+    }
+    probe.remove();
   }
 
   items.forEach((item, index) => (item.hidden = before[index] ?? false));
   if (more) more.hidden = moreBefore;
-  return count;
+  return Math.max(count, 0);
 };

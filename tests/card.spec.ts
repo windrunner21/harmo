@@ -4,7 +4,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/card.md says about a card's parts: an icon at the
 // start, the title and a description beside it, a chevron at the end, each
 // but the title left out without leaving room; the title in the accent in a
-// card that's a link; and right to left, mirrored.
+// card that's a link; a link card a step darker while pressed; and right to
+// left, mirrored.
 const color = (page: import("@playwright/test").Page, name: string) =>
   page.evaluate((name) => {
     const probe = document.createElement("span");
@@ -16,12 +17,12 @@ const color = (page: import("@playwright/test").Page, name: string) =>
   }, name);
 
 onEachPlayground("card", () => {
-  test("a link with an icon: the icon at the start, 16px from the title, with the description 4px under it, the whole card named by both", async ({ page }) => {
+  test("a link with an icon: the icon at the start, 16px from the title, with the description 6px under it, the whole card named by both", async ({ page }) => {
     const nav = (await example(page, "card-links-with-icons")).getByRole("navigation", { name: "Settings" });
     const card = nav.getByRole("link", { name: /^Personal/ });
     await expect(card).toHaveAttribute("href", "/settings/personal");
     await expect(card).toHaveAccessibleName("Personal Your name, email address, language, and password.");
-    await expect(card.getByRole("heading", { level: 3, name: "Personal" })).toBeVisible();
+    await expect(card.getByRole("heading", { level: 4, name: "Personal" })).toBeVisible();
     await expect(card.locator(".hcard-icon")).toHaveAttribute("aria-hidden", "true");
 
     const [icon, title, description] = await boxes(card.locator(".hcard-icon"), card.locator(".hcard-title"), card.locator(".hcard-description"));
@@ -29,7 +30,7 @@ onEachPlayground("card", () => {
     expect(icon.y).toBeCloseTo(title.y, 0);
     expect(title.x - (icon.x + icon.width)).toBeCloseTo(16, 0);
     expect(description.x).toBeCloseTo(title.x, 0);
-    expect(description.y - (title.y + title.height)).toBeCloseTo(4, 0);
+    expect(description.y - (title.y + title.height)).toBeCloseTo(6, 0);
 
     await expect(card.locator(".hcard-title")).toHaveCSS("color", await color(page, "--harmo-color-primary"));
     await expect(card.locator(".hcard-icon")).toHaveCSS("color", await color(page, "--harmo-color-primary"));
@@ -39,9 +40,9 @@ onEachPlayground("card", () => {
     const list = await example(page, "card-links-with-a-chevron");
     const card = list.getByRole("link", { name: /^Talk to us/ });
     const [box, title, chevron] = await boxes(card, card.locator(".hcard-title"), card.locator(".hcard-chevron"));
-    // 12px of padding and the 1px border.
-    expect(title.x - box.x).toBeCloseTo(13, 0);
-    expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(13, 0);
+    // 10px of padding, --harmo-space-xs, and the 1px border.
+    expect(title.x - box.x).toBeCloseTo(11, 0);
+    expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(11, 0);
     expect(chevron.y + chevron.height / 2).toBeCloseTo(box.y + box.height / 2, 0);
 
     const shaft = card.locator(".hchevron-to-arrow-shaft");
@@ -49,6 +50,33 @@ onEachPlayground("card", () => {
     await expect(shaft).toHaveCSS("opacity", "0");
     await card.hover();
     await expect(shaft).toHaveCSS("opacity", "1");
+  });
+
+  test("pressed, a link card is a step darker, whatever its variant, as a tap on a touch screen shows", async ({ page }) => {
+    const card = (await example(page, "card-ghost")).getByRole("link", { name: "Team members" });
+    const background = (token: string) =>
+      page.evaluate((token) => {
+        const probe = document.createElement("span");
+        document.body.append(probe);
+        probe.style.backgroundColor = `var(${token})`;
+        const value = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return value;
+      }, token);
+    const variants: [string | null, string][] = [
+      ["ghost", "--harmo-color-background-active"],
+      [null, "--harmo-color-background-active"],
+      ["raised", "--harmo-color-background-hover"],
+    ];
+    for (const [variant, pressed] of variants) {
+      await card.evaluate((node, variant) => (variant ? node.setAttribute("data-variant", variant) : node.removeAttribute("data-variant")), variant);
+      await card.hover();
+      await page.mouse.down();
+      await expect(card, `${variant ?? "tinted"}, pressed`).toHaveCSS("background-color", await background(pressed));
+      // Let go away from it, so it isn't followed.
+      await page.mouse.move(0, 0);
+      await page.mouse.up();
+    }
   });
 
   test("in a card that isn't a link, the title is in the text color, and the icon's tile in the page's", async ({ page }) => {
@@ -63,6 +91,13 @@ onEachPlayground("card", () => {
       return value;
     });
     await expect(card.locator(".hcard-icon")).toHaveCSS("background-color", background);
+  });
+
+  test("its padding is --harmo-space-sm by default, so a theme that changes the space scale on :root changes it too", async ({ page }) => {
+    const card = (await example(page, "card-links-with-icons")).locator(".hcard").first();
+    await expect(card).toHaveCSS("padding-top", "16px");
+    await page.evaluate(() => document.documentElement.style.setProperty("--harmo-space-sm", "20px"));
+    await expect(card).toHaveCSS("padding-top", "20px");
   });
 
   test("a long word or address breaks, rather than running into the chevron or out of the card", async ({ page }) => {
@@ -89,5 +124,20 @@ onEachPlayground("card", () => {
     const [icon, title, chevron] = await boxes(card.locator(".hcard-icon"), card.locator(".hcard-title"), card.locator(".hcard-chevron"));
     expect(icon.x).toBeGreaterThan(title.x + title.width);
     expect(chevron.x + chevron.width).toBeLessThan(title.x);
+  });
+
+  test("a ghost list's frames line up with the section's sides, its first row a step under the header's line", async ({ page }) => {
+    const ghost = await example(page, "card-ghost");
+    const [header, first] = await boxes(ghost.locator(".hsection-header"), ghost.getByRole("link", { name: "Team members" }));
+    expect(first!.x).toBeCloseTo(header!.x, 0);
+    expect(first!.x + first!.width).toBeCloseTo(header!.x + header!.width, 0);
+    // The section's 26px gap, less the 16px padding and 1px border pulled up.
+    expect(first!.y - (header!.y + header!.height)).toBeCloseTo(9, 0);
+
+    const settings = await example(page, "card-links-with-icons");
+    const cards = settings.locator(".hcard");
+    const [line, start, end] = await boxes(settings.locator(".hsection-header"), cards.first(), cards.nth(1));
+    expect(start!.x).toBeCloseTo(line!.x, 0);
+    expect(end!.x + end!.width).toBeCloseTo(line!.x + line!.width, 0);
   });
 });

@@ -1,10 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import { Tag, TagList } from "@harmo-ui/react";
 import { renderToStaticMarkup } from "react-dom/server";
+import * as source from "../../../packages/react/src/Tag.tsx";
 
 // What docs/components/tag-list.md says about the React TagList: a list,
 // kept one in Safari, with each tag in an <li>, though tags come in a
-// fragment, and none for a hidden tag or an empty string.
+// fragment, and none for a hidden tag or an empty string; and the copies in
+// the tooltip of "+N" are only to look at, with no remove button.
 const tags = (markup: string) =>
   [...markup.matchAll(/<li(?! class="htag-list-more")[^>]*>(.*?)<\/li>/g)].map((item) => item[1]);
 
@@ -37,5 +39,18 @@ describe("TagList", () => {
       '<span class="htag">Refund</span>',
       '<span class="htag">Partner</span>',
     ]);
+  });
+
+  test("in a copy, as in the tooltip of +N, a TagRemove renders nothing; elsewhere, its button", () => {
+    const tag = (
+      <source.Tag>
+        Billing
+        <source.TagRemove aria-label="Remove Billing" />
+      </source.Tag>
+    );
+    expect(renderToStaticMarkup(<source.TagCopyContext value={true}>{tag}</source.TagCopyContext>)).toBe(
+      '<span class="htag">Billing</span>',
+    );
+    expect(renderToStaticMarkup(tag)).toContain('<button aria-label="Remove Billing" class="htag-remove" type="button">');
   });
 });

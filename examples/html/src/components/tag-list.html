@@ -48,3 +48,58 @@
     </li>
   </ul>
 </play-example>
+
+<play-example title="Count in words" frame="24rem">
+  <play-note>
+    The text of <code>+N</code> is yours, in words if you like, such as one
+    other, then 2 others. A smaller count can be wider, so each one is
+    measured as you write it, and the row always fits.
+  </play-note>
+  <ul
+    class="htag-list"
+    role="list"
+    data-example-more-text="{count} others"
+    data-example-more-text-one="one other"
+    data-example-more-label="{count} others"
+    data-example-more-label-one="one other"
+  >
+    <li><span class="htag">Ana Lopez</span></li>
+    <li><span class="htag">Sam Rivera</span></li>
+    <li><span class="htag">lee@partner.org</span></li>
+    <li><span class="htag">kim@partner.org</span></li>
+    <li class="htag-list-more" hidden>
+      <span class="htooltip-trigger">
+        <button class="htag-list-count" type="button" aria-describedby="recipients-others"></button>
+        <span class="htooltip" data-variant="hint" role="tooltip" id="recipients-others">
+          <span class="htag-list-rest"></span>
+        </span>
+      </span>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Right to left" dir="rtl" lang="ar" frame="10rem">
+  <play-note>
+    In Arabic, the tags start on the right, and <code>+N</code> ends the row
+    on the left. Its text is yours, as its name is: here it's written in
+    Arabic digits, such as <code>+٢</code>.
+  </play-note>
+  <ul class="htag-list" role="list" data-example-more-label="{count} أخرى" data-example-more-text="+{count}">
+    <li>
+      <span class="htag" style="--htag-color: var(--harmo-amber)">
+        <span class="htag-dot" aria-hidden="true"></span>الفواتير
+      </span>
+    </li>
+    <li><span class="htag">استرداد</span></li>
+    <li><span class="htag">شريك</span></li>
+    <li><span class="htag">عاجل</span></li>
+    <li class="htag-list-more" hidden>
+      <span class="htooltip-trigger">
+        <button class="htag-list-count" type="button" aria-describedby="ticket-tags-more-ar"></button>
+        <span class="htooltip" data-variant="hint" role="tooltip" id="ticket-tags-more-ar">
+          <span class="htag-list-rest"></span>
+        </span>
+      </span>
+    </li>
+  </ul>
+</play-example>

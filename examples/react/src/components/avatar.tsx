@@ -32,6 +32,8 @@ export const examples = {
     <>
       <Avatar src="images/imran.webp" alt="" />
       <span>Imran Hajiyev</span>
+      <Avatar alt="">SR</Avatar>
+      <span>Sam Rivera</span>
     </>
   ),
 };
