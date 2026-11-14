@@ -1,8 +1,9 @@
 # Tooltip
 
 A short description shown on hover and keyboard focus: dark by default, for
-labels and reasons, or a white hint card that explains something. For content
-someone opens and interacts with, use a [Popup](popup.md).
+labels and reasons, or a hint card in the page's background color that
+explains something. For content someone opens and interacts with, use a
+[Popup](popup.md).
 
 ## Contract
 
@@ -33,7 +34,7 @@ someone opens and interacts with, use a [Popup](popup.md).
 | (default) | Below the trigger |
 | `data-side="top"`, `"left"`, or `"right"` | Preferred side; it flips when there isn't room. Sides are physical, as in Radix and Floating UI: `left` stays left in right-to-left text |
 | `data-variant="hint"` | Explains something, such as a KPI: a card in the page's background color with 13px `--harmo-color-text-secondary` text, a border, and a soft shadow, up to 280px wide, start-aligned |
-| `data-open` on `.htooltip-trigger` | Shows it at once, until removed: for a tooltip a press pins open, as on a touch screen, which neither hovers nor shows keyboard focus, such as a [Tag List](tag-list.md)'s "+N". Escape still hides it |
+| `data-open` on `.htooltip-trigger` | Shows it at once, until removed: for a tooltip a press pins open, as on a touch screen, which neither hovers nor shows keyboard focus, such as a [Tag List](tag-list.md)'s "+N". Escape still hides it, until `data-open` is added again, as the next press does |
 
 ## Appearance and states
 
@@ -69,7 +70,7 @@ someone opens and interacts with, use a [Popup](popup.md).
 
 | Change | When |
 | --- | --- |
-| `data-dismissed` on `.htooltip` | Escape hides an open tooltip until the pointer or focus leaves |
+| `data-dismissed` on `.htooltip` | Escape hides an open tooltip until the pointer or focus leaves, or `data-open` is added to its trigger again, as a press that pins it open does |
 | `--htooltip-delay: 0ms` on the trigger or any ancestor | Right after another tooltip closed, so neighbors show at once |
 
 `examples/html/src/scripts/tooltip.js` is an example script.

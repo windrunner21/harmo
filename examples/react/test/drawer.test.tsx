@@ -30,6 +30,17 @@ describe("Drawer", () => {
     expect(markup).not.toContain("hdrawer-aside");
   });
 
+  test("an aside that renders nothing, such as an empty fragment, adds none; one of 0 goes in its part", () => {
+    const empty = renderToStaticMarkup(
+      <Drawer id="reply" label="New quick reply" closeLabel="Close" aside={<></>} />,
+    );
+    expect(empty).not.toContain("hdrawer-aside");
+    const zero = renderToStaticMarkup(
+      <Drawer id="reply" label="New quick reply" closeLabel="Close" aside={0} />,
+    );
+    expect(zero).toMatch(/<div class="hdrawer-aside">0<\/div><\/dialog>/);
+  });
+
   test("its title names it, and its close button is named by closeLabel", () => {
     const markup = renderToStaticMarkup(
       <Drawer id="reply" label="Nueva respuesta" description="Rápida." closeLabel="Cerrar" />,

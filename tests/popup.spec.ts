@@ -1,5 +1,5 @@
 import { expect, type Locator } from "@playwright/test";
-import { boxes, clickAt, example, onEachPlayground, openPopup, rendered, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, openPopup, release, rendered, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/popup.md says, on the Popup page: the browser opens
 // and closes it, a script keeps aria-expanded and data-side and makes each
@@ -126,7 +126,108 @@ onEachPlayground("popup", () => {
     expect(after.top - before.top).toBeCloseTo(before.above ? 12 : -12, 0);
     await expect(popup).toHaveAttribute("data-side", before.above ? "top" : "bottom");
   });
+
+  test("closed as it slides in, it fades from where it is, without a jump", async ({ page }) => {
+    const container = await example(page, "popup-placement");
+    const popup = container.locator(".hpopup");
+    await slowOpening(popup);
+    await container.getByRole("button", { name: "Last 30 days" }).click();
+    await expect(openPopup(container)).toHaveCount(1);
+    await rendered(page);
+    expect(Math.abs((await motionOf(popup)).slide), "still sliding").toBeGreaterThan(6);
+
+    const [before, after] = await popup.evaluate((node) => {
+      const before = node.getBoundingClientRect().top;
+      (node as HTMLElement).hidePopover();
+      return [before, node.getBoundingClientRect().top];
+    });
+    expect(after).toBeCloseTo(before, 0);
+    await release(popup);
+  });
+
+  test("it slides 12px away from its trigger and fades in, in 200ms, and fades out in 150ms", async ({ page }) => {
+    const container = await example(page, "popup-placement");
+    const popup = container.locator(".hpopup");
+    await slowOpening(popup);
+    await container.getByRole("button", { name: "Last 30 days" }).click();
+    await expect(openPopup(container)).toHaveCount(1);
+    await expect(popup).not.toHaveAttribute("data-side", "top");
+    // Below its trigger, it starts 12px up, toward it.
+    const opening = await motionOf(popup);
+    expect(opening.slide).toBeCloseTo(-12, 0);
+    expect(opening.opacity).toBeLessThan(0.5);
+    await release(popup);
+    await popup.evaluate((node) => (node as HTMLElement).style.removeProperty("transition-duration"));
+    await settled(popup);
+    expect((await motionOf(popup)).slide).toBe(0);
+    expect(await durationOf(popup, "opacity")).toBe("0.2s");
+
+    await page.keyboard.press("Escape");
+    await expect(openPopup(container)).toHaveCount(0);
+    expect(await durationOf(popup, "opacity")).toBe("0.15s");
+  });
+
+  test("with reduced motion, it fades without sliding", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const container = await example(page, "popup-placement");
+    const popup = container.locator(".hpopup");
+    await slowDown(popup);
+    await container.getByRole("button", { name: "Last 30 days" }).click();
+    await expect(openPopup(container)).toHaveCount(1);
+    const { slide, opacity } = await motionOf(popup);
+    expect(slide).toBeCloseTo(0, 1);
+    expect(opacity).toBeLessThan(0.5);
+    await release(popup);
+  });
+
+  test("closed and opened again at once, with focus inside, it leaves focus there", async ({ page }) => {
+    const container = await example(page, "popup-panel");
+    const input = container.getByLabel("Name contains");
+    await container.locator(".hfilter-chip").click();
+    await clickAt(page, input);
+    await expect(input).toBeFocused();
+
+    // Focused again as it opens, as a list's search is; then after every
+    // listener has run.
+    await container.locator(".hpopup").evaluate(
+      (node) =>
+        new Promise<void>((resolve) => {
+          const field = node.querySelector("input")!;
+          node.addEventListener("toggle", (event) => {
+            if ((event as ToggleEvent).newState !== "open") return;
+            field.focus();
+            setTimeout(resolve);
+          });
+          (node as HTMLElement).hidePopover();
+          (node as HTMLElement).showPopover();
+        }),
+    );
+    await expect(input).toBeFocused();
+  });
 });
+
+// How far a popup is moved by its slide, and how opaque it is, as things are.
+// Slows a popup's opening below its trigger. Its side is set first: a script that
+// finds the side changed resets the transition, which would undo the slowing.
+const slowOpening = async (popup: Locator) => {
+  await popup.evaluate((node) => ((node as HTMLElement).dataset.side = "bottom"));
+  await slowDown(popup);
+};
+
+const motionOf = (popup: Locator) =>
+  popup.evaluate((node) => {
+    const { transform, opacity } = getComputedStyle(node);
+    return { slide: new DOMMatrixReadOnly(transform === "none" ? undefined : transform).m42, opacity: Number(opacity) };
+  });
+
+// How long a popup's transition of `property` takes, as things are.
+const durationOf = (popup: Locator, property: string) =>
+  popup.evaluate((node, property) => {
+    const style = getComputedStyle(node);
+    const properties = style.transitionProperty.split(", ");
+    const durations = style.transitionDuration.split(", ");
+    return durations[properties.indexOf(property) % durations.length];
+  }, property);
 
 // Opens the Placement example's popup, and waits for it to settle.
 const openPlacement = async (container: Locator) => {

@@ -16,6 +16,7 @@ import {
   type RefObject,
 } from "react";
 import { flushSync } from "react-dom";
+import { renders } from "../children.ts";
 import { search as searchPaths } from "../icons.ts";
 import { popupTrigger } from "../Popup.tsx";
 import { withClass } from "../withClass.ts";
@@ -327,7 +328,9 @@ export const Listbox = ({
       swallowSpace.current = false;
     };
 
+    // Capturing, it also sees the popovers inside, which it leaves alone.
     const beforeToggle = (event: Event) => {
+      if (event.target !== popup) return;
       if ((event as ToggleEvent).newState !== "open") {
         setActive(null);
         clearTimeout(typedTimer.current);
@@ -359,28 +362,25 @@ export const Listbox = ({
       requestAnimationFrame(() => updateTitles(list.current));
     };
 
-    let frame = 0;
-    const resize = () => {
-      frame ||= requestAnimationFrame(() => {
-        frame = 0;
-        if (isShown(popup)) updateTitles(list.current);
-      });
-    };
+    // Measured again as the list changes size, such as with the window or
+    // its container.
+    const resized = new ResizeObserver(() => {
+      if (isShown(popup)) updateTitles(list.current);
+    });
+    if (list.current) resized.observe(list.current);
 
     const owner = trigger.current;
     owner?.addEventListener("keydown", keydown);
     owner?.addEventListener("keyup", keyup);
     popup.addEventListener("beforetoggle", beforeToggle, true);
     popup.addEventListener("toggle", toggle);
-    addEventListener("resize", resize);
     return () => {
       owner?.removeEventListener("keydown", keydown);
       owner?.removeEventListener("keyup", keyup);
       owner?.removeAttribute("aria-activedescendant");
       popup.removeEventListener("beforetoggle", beforeToggle, true);
       popup.removeEventListener("toggle", toggle);
-      removeEventListener("resize", resize);
-      cancelAnimationFrame(frame);
+      resized.disconnect();
     };
   }, [searchable, combobox === undefined]);
 
@@ -390,9 +390,11 @@ export const Listbox = ({
     else trigger.current.removeAttribute("aria-activedescendant");
   }, [activeId, triggerOwned]);
 
-  // The options showing, to notice when they change, such as results that
-  // arrive after the text was typed.
+  // The options showing, and the list's text, to notice when they change,
+  // such as results that arrive after the text was typed. Labels that change
+  // while the list is open are measured again.
   const shownBefore = useRef("");
+  const textBefore = useRef("");
 
   useLayoutEffect(() => {
     setEmpty(!list.current?.querySelector(".hoption:not([hidden])"));
@@ -401,6 +403,11 @@ export const Listbox = ({
     const shown = options.map((option) => option.id).join(" ");
     const changed = shown !== shownBefore.current;
     shownBefore.current = shown;
+    const text = list.current?.textContent ?? "";
+    if (open && (changed || text !== textBefore.current)) {
+      requestAnimationFrame(() => updateTitles(list.current));
+    }
+    textBefore.current = text;
     if (active.current && !options.some((option) => option.id === active.current)) {
       setActive(open ? (options[0]?.id ?? null) : null);
     } else if (!active.current && open && changed && combobox?.autoHighlight) {
@@ -478,6 +485,9 @@ export const Listbox = ({
         }}
         onPointerMove={(event) => {
           pointing.current = true;
+          if (active.current && !(event.target as Element).closest(".hoption")) {
+            setActive(null);
+          }
           onPointerMove?.(event);
         }}
         onPointerLeave={(event) => {
@@ -496,7 +506,7 @@ export const Listbox = ({
           {empty ? emptyMessage : null}
         </p>
       )}
-      {footer && (
+      {renders(footer) && (
         <div className="hlistbox-footer" hidden={props.hidden}>
           {footer}
         </div>

@@ -112,7 +112,7 @@ export const Drawer = ({
           </Button>
         </header>
         {form ? <form {...form}>{content}</form> : content}
-        {aside && (
+        {renders(aside) && (
           <div {...asideProps} className={withClass("hdrawer-aside", asideProps?.className)}>
             {aside}
           </div>

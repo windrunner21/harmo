@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, pointAt, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, pointAt, release, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/tooltip.md says, on the Tooltip page: CSS shows a
 // tooltip on hover after a delay and at once on keyboard focus, and a script
@@ -92,6 +92,81 @@ onEachPlayground("tooltip", () => {
     await expect.poll(() => shown(tooltip)).toBe(true);
   });
 
+  test("data-open on its trigger shows it at once, without hover or focus, and Escape still hides it", async ({ page }) => {
+    const container = await example(page, "tooltip-describing-a-control");
+    const tooltip = tooltipOf(container, "Export");
+    await tooltip.evaluate((node) => node.parentElement!.setAttribute("data-open", ""));
+    expect(await delayOf(tooltip)).toBe("0s");
+    await expect.poll(() => shown(tooltip)).toBe(true);
+    await page.keyboard.press("Escape");
+    await expect.poll(() => shown(tooltip)).toBe(false);
+  });
+
+  test("hidden keeps it hidden on hover, on keyboard focus, and with data-open", async ({ page }) => {
+    const container = await example(page, "tooltip-describing-a-control");
+    const button = container.getByRole("button", { name: "Export" });
+    const tooltip = tooltipOf(container, "Export");
+    const display = () => tooltip.evaluate((node) => getComputedStyle(node).display);
+    await tooltip.evaluate((node) => ((node as HTMLElement).hidden = true));
+
+    await pointAt(page, button);
+    expect(await display(), "hovered").toBe("none");
+    await page.mouse.move(0, 0);
+    await tabTo(page, button);
+    expect(await display(), "focused").toBe("none");
+    await tooltip.evaluate((node) => node.parentElement!.setAttribute("data-open", ""));
+    expect(await display(), "pinned").toBe("none");
+  });
+
+  test("it fades in and grows from 95% in 150ms, and fades out in 100ms", async ({ page }) => {
+    const container = await example(page, "tooltip-describing-a-control");
+    const tooltip = tooltipOf(container, "Archive");
+    await slowDown(tooltip);
+    await tabTo(page, container.getByRole("button", { name: "Archive" }));
+    await expect.poll(() => shown(tooltip)).toBe(true);
+    expect(await scaleOf(tooltip)).toBeCloseTo(0.95, 2);
+    expect(await opacityOf(tooltip)).toBeLessThan(0.5);
+    await release(tooltip);
+    await tooltip.evaluate((node) => (node as HTMLElement).style.removeProperty("transition-duration"));
+    expect(await scaleOf(tooltip)).toBe(1);
+    expect(await durationOf(tooltip, "opacity")).toBe("0.15s");
+
+    await page.keyboard.press("Shift+Tab");
+    expect(await durationOf(tooltip, "opacity")).toBe("0.1s");
+  });
+
+  test("with reduced motion, it fades without growing", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const container = await example(page, "tooltip-describing-a-control");
+    const tooltip = tooltipOf(container, "Archive");
+    await slowDown(tooltip);
+    await tabTo(page, container.getByRole("button", { name: "Archive" }));
+    await expect.poll(() => shown(tooltip)).toBe(true);
+    expect(await tooltip.evaluate((node) => getComputedStyle(node).transform)).toBe("none");
+    expect(await opacityOf(tooltip)).toBeLessThan(0.5);
+    await release(tooltip);
+  });
+
+  test("a hint is a card in the page's background color, up to 280px wide, with start-aligned text", async ({ page }) => {
+    const container = await example(page, "tooltip-hint");
+    const tooltip = tooltipOf(container, "What is CSAT?");
+    await tabTo(page, container.getByRole("button", { name: "What is CSAT?" }));
+    await expect.poll(() => shown(tooltip)).toBe(true);
+    const style = await tooltip.evaluate((node) => {
+      // The page's background color where the tooltip is.
+      const probe = document.createElement("span");
+      probe.style.backgroundColor = "var(--harmo-color-background)";
+      node.parentElement!.append(probe);
+      const page = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      const { backgroundColor, maxInlineSize, textAlign } = getComputedStyle(node);
+      return { page, backgroundColor, maxInlineSize, textAlign };
+    });
+    expect(style.backgroundColor).toBe(style.page);
+    expect(style.maxInlineSize).toBe("280px");
+    expect(style.textAlign).toBe("start");
+  });
+
   test("an unavailable action's tooltip shows on keyboard focus", async ({ page }) => {
     const container = await example(page, "tooltip-explaining-an-unavailable-action");
     await tabTo(page, container.getByRole("button", { name: "Analyze" }));
@@ -139,6 +214,37 @@ onEachPlayground("tooltip", () => {
   });
 });
 
+// A tooltip a press pins open, as on a touch screen: after Escape hides it,
+// the next press, from the keyboard or the pointer still over its control,
+// pins it open again.
+const pinnedBy = [
+  { slug: "stat", where: "a Stat's hint", id: "stat-with-a-hint-and-an-action", control: ".hstat-hint" },
+  { slug: "tag-list", where: "a Tag List's count", id: "tag-list-default", control: ".htag-list-count" },
+];
+for (const { slug, where, id, control } of pinnedBy) {
+  onEachPlayground(slug, () => {
+    test(`on ${where}, after Escape, the next press pins the tooltip open again`, async ({ page }) => {
+      const container = await example(page, id);
+      const button = container.locator(control);
+      const tooltip = container.locator(`.htooltip-trigger:has(> ${control}) > .htooltip`);
+
+      await tabTo(page, button);
+      await expect(tooltip).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(tooltip).toBeHidden();
+      await page.keyboard.press("Enter");
+      await expect(tooltip).toBeVisible();
+
+      await page.keyboard.press("Escape");
+      await expect(tooltip).toBeHidden();
+      await pointAt(page, button);
+      await page.mouse.down();
+      await page.mouse.up();
+      await expect(tooltip).toBeVisible();
+    });
+  });
+}
+
 // The tooltip in the same trigger as the button with this name.
 const tooltipOf = (container: Locator, name: string) =>
   container.locator(".htooltip-trigger").filter({ has: container.page().getByRole("button", { name, exact: true }) }).locator(".htooltip");
@@ -155,6 +261,23 @@ const delayOf = (tooltip: Locator) =>
     const delays = style.transitionDelay.split(", ");
     return delays[properties.indexOf("visibility") % delays.length];
   });
+
+// How long a tooltip's transition of `property` takes, as things are.
+const durationOf = (tooltip: Locator, property: string) =>
+  tooltip.evaluate((element, property) => {
+    const style = getComputedStyle(element);
+    const properties = style.transitionProperty.split(", ");
+    const durations = style.transitionDuration.split(", ");
+    return durations[properties.indexOf(property) % durations.length];
+  }, property);
+
+const scaleOf = (tooltip: Locator) =>
+  tooltip.evaluate((element) => {
+    const { transform } = getComputedStyle(element);
+    return new DOMMatrixReadOnly(transform === "none" ? undefined : transform).a;
+  });
+
+const opacityOf = (tooltip: Locator) => tooltip.evaluate((element) => Number(getComputedStyle(element).opacity));
 
 // Focuses an element from the keyboard, so it matches :focus-visible: focus
 // it, then Tab away and back.

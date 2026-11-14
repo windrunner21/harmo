@@ -39,10 +39,15 @@
       return popupBox.top + popupBox.height / 2 < triggerBox.top + triggerBox.height / 2 ? "top" : "bottom";
     };
 
-    // Pins a closing popup to its box, so it fades where it is.
+    // Pins a closing popup to its box, so it fades where it is: the box
+    // without the slide still under way, if it closes as it opens, since the
+    // closing slide carries on from there.
     const pin = () => {
       const box = popup.getBoundingClientRect();
-      for (const [name, value] of Object.entries({ top: box.top, left: box.left, width: box.width, height: box.height })) {
+      const { transform } = getComputedStyle(popup);
+      const slide = new DOMMatrixReadOnly(transform === "none" ? undefined : transform);
+      const place = { top: box.top - slide.m42, left: box.left - slide.m41, width: box.width, height: box.height };
+      for (const [name, value] of Object.entries(place)) {
         popup.style.setProperty(`--hpopup-pinned-${name}`, `${value}px`);
       }
       popup.setAttribute("data-pinned", "");
@@ -64,11 +69,13 @@
       }
 
       // A browser hands focus back only for the first popup open, not one
-      // opened over another.
+      // opened over another. Not when it opened again at once, which sends
+      // one toggle event, for the opening.
       if (!opening && popup.contains(document.activeElement)) {
         popup.addEventListener(
           "toggle",
-          () => {
+          (event) => {
+            if (event.newState !== "closed") return;
             if (document.activeElement === document.body || popup.contains(document.activeElement)) trigger.focus();
           },
           { once: true },

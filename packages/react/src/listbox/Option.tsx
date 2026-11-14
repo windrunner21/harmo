@@ -51,7 +51,9 @@ export const Option = ({
     !group.filter ||
     matches(listbox.query, searchText(children, description, keywords));
   const label = (
-    <span className="hoption-label">{marked(children, listbox.mark)}</span>
+    <span className="hoption-label" suppressHydrationWarning>
+      {marked(children, listbox.mark)}
+    </span>
   );
 
   return (

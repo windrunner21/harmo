@@ -130,25 +130,29 @@
       transform: scale(0.95);
     }
   }
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .htooltip-trigger:hover > .htooltip {
+  :where(.htooltip-trigger:hover) > .htooltip {
     @include shown(var(--htooltip-delay, #{$tooltip-delay}));
   }
 }
 
-.htooltip-trigger:has(:focus-visible) > .htooltip {
+:where(.htooltip-trigger:has(:focus-visible)) > .htooltip {
   @include shown(0s);
 }
 
 // Pinned open by a press, such as on a touch screen, which neither hovers
 // nor shows keyboard focus; Escape still hides it, below.
-.htooltip-trigger[data-open] > .htooltip {
+:where(.htooltip-trigger[data-open]) > .htooltip {
   @include shown(0s);
 }
 
-.htooltip-trigger > .htooltip[data-dismissed] {
+:where(.htooltip-trigger) > .htooltip[data-dismissed] {
   visibility: hidden;
   opacity: 0;
 

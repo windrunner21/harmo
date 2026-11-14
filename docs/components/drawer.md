@@ -70,7 +70,10 @@ As a [Dialog](dialog.md#opening-and-closing) does: a button with `commandfor`
 and `command="show-modal"`, or `showModal()`; the close button and buttons
 with `command="request-close"`, Escape, a click outside with `closedby="any"`,
 and a `<form method="dialog">` as it's sent; and from a URL, when the app's
-router decides whether it's open.
+router decides whether it's open. A `value` on a `command="request-close"`
+button becomes `returnValue` once the exit has played. A value passed to
+`drawer.requestClose(value)` from a script isn't kept while the exit plays:
+close it with `close(value)` instead.
 
 ## Options
 
@@ -97,7 +100,8 @@ router decides whether it's open.
 - The header has 16px 20px padding and a line under it; the title is 20px
   bold in `--harmo-color-text`, with the description 14px in
   `--harmo-color-text-secondary` under it, and the close button, a tertiary
-  icon [Button](button.md), at its end.
+  icon [Button](button.md), at its end. A long word in the title or
+  description breaks where it must, rather than running under the button.
 - The body has 20px padding and scrolls; the footer stays under it, with 20px
   padding, a line above it, and its actions at its end, 8px apart. The first
   and last child's own block margins in the body and aside are removed.
@@ -118,6 +122,11 @@ As a [Dialog](dialog.md#accessibility): the browser makes it a modal dialog,
 with the page behind inert, focus moved inside and back, and Escape. Its title
 names it and its description describes it; the close button needs
 `aria-label`, in the app's language.
+
+The aside is for content without controls, such as a preview. It comes after
+the footer in the markup, so Tab reaches it last; on a window narrower than
+68rem, where it shows between the body and the footer, a scrolling aside with
+`tabindex="0"` still comes after the footer's buttons.
 
 ## What a script does
 

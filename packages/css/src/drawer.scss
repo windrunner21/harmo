@@ -84,7 +84,10 @@
 
     pointer-events: auto;
 
-    translate: 0;
+    // None rather than 0: any other translate makes the drawer the containing
+    // block of what's fixed inside it, such as a tooltip, which its overflow
+    // would then clip. It slides from the shift all the same.
+    translate: none;
     transition-duration: $duration-normal;
 
     @starting-style {
@@ -156,7 +159,8 @@
   }
 
   // Where the body and aside don't fit side by side, the aside goes below the
-  // body, the drawer scrolls as a whole, and its header and footer stay put.
+  // body, the drawer scrolls as a whole, and its header and footer stay put,
+  // as its parts' own rules say at the end.
   @media (max-width: 68rem) {
     &:has(> .hdrawer-aside) {
       grid-template-columns: var(--hdrawer-column);
@@ -171,32 +175,6 @@
       overflow-y: auto;
 
       overscroll-behavior: contain;
-
-      & > .hdrawer-header,
-      & > .hdrawer-footer,
-      & > form > .hdrawer-footer {
-        position: sticky;
-        z-index: 1;
-
-        background-color: $color-background;
-      }
-
-      & > .hdrawer-header {
-        inset-block-start: 0;
-      }
-
-      & > .hdrawer-footer,
-      & > form > .hdrawer-footer {
-        inset-block-end: 0;
-      }
-
-      // Each as tall as its content, which the drawer scrolls.
-      & > .hdrawer-body,
-      & > form > .hdrawer-body,
-      & > .hdrawer-aside {
-        min-block-size: auto;
-        overflow: visible;
-      }
     }
   }
 }
@@ -254,6 +232,7 @@
 
   font-size: $font-size-sm;
   line-height: $font-line-height;
+  overflow-wrap: anywhere;
 
   color: $color-text-secondary;
 }
@@ -339,5 +318,35 @@
 
   &[hidden] {
     display: none;
+  }
+}
+
+// Where the aside goes below the body, and the drawer scrolls as a whole: the
+// header and footer stick to its edges, and the body and aside are each as
+// tall as their content. After the parts' own rules, which these change.
+@media (max-width: 68rem) {
+  :where(.hdrawer:has(> .hdrawer-aside)) > .hdrawer-header,
+  :where(.hdrawer:has(> .hdrawer-aside)) > .hdrawer-footer,
+  :where(.hdrawer:has(> .hdrawer-aside) > form) > .hdrawer-footer {
+    position: sticky;
+    z-index: 1;
+
+    background-color: $color-background;
+  }
+
+  :where(.hdrawer:has(> .hdrawer-aside)) > .hdrawer-header {
+    inset-block-start: 0;
+  }
+
+  :where(.hdrawer:has(> .hdrawer-aside)) > .hdrawer-footer,
+  :where(.hdrawer:has(> .hdrawer-aside) > form) > .hdrawer-footer {
+    inset-block-end: 0;
+  }
+
+  :where(.hdrawer:has(> .hdrawer-aside)) > .hdrawer-body,
+  :where(.hdrawer:has(> .hdrawer-aside) > form) > .hdrawer-body,
+  :where(.hdrawer:has(> .hdrawer-aside)) > .hdrawer-aside {
+    min-block-size: auto;
+    overflow: visible;
   }
 }

@@ -91,31 +91,45 @@
     // Search: hide the options whose label, description, or keywords don't
     // contain the typed text,
     // and the groups left with none, so the selection stays in the page for
-    // every script. When nothing matches, .hlistbox-empty follows the list.
-    // The first match is highlighted, and labels shown again are measured.
+    // every script. What the app hid stays hidden, as an option in a group it
+    // hid does. When nothing matches, .hlistbox-empty follows the list, with
+    // the app's message. The first match is highlighted, and labels shown
+    // again are measured.
     if (search) {
       const options = [...listbox.querySelectorAll(".hoption")];
       const groups = [...listbox.querySelectorAll(".hoption-group")];
       // The status after the list, in the page from the start so a screen
       // reader reads the message as it appears.
       const empty = listbox.nextElementSibling?.matches(".hlistbox-empty") ? listbox.nextElementSibling : null;
+      // What the search hid, the only things it shows again.
+      const unmatched = new WeakSet();
+      const show = (element, shown) => {
+        if (shown && unmatched.has(element)) {
+          element.hidden = false;
+          unmatched.delete(element);
+        } else if (!shown && !element.hidden) {
+          element.hidden = true;
+          unmatched.add(element);
+        }
+      };
       search.addEventListener("input", () => {
         const query = search.value.trim().toLowerCase();
-        for (const option of options) option.hidden = !searchTextOf(option).includes(query);
-        for (const group of groups) group.hidden = !group.querySelector(".hoption:not([hidden])");
+        for (const option of options) show(option, searchTextOf(option).includes(query));
+        for (const group of groups) show(group, group.querySelector(".hoption:not([hidden])") !== null);
         if (empty && options.length) {
-          empty.textContent = options.every((option) => option.hidden) ? (search.dataset.exampleEmpty ?? "No results") : "";
+          const none = !listbox.querySelector(".hoption:not([hidden], .hoption-group[hidden] .hoption)");
+          empty.textContent = none ? (search.dataset.exampleEmpty ?? "") : "";
         }
         highlight(enabled()[0] ?? null, { scroll: true });
         requestAnimationFrame(() => updateTitles(listbox));
       });
       // Each opening starts from the whole list. Capturing restores it before
       // anything else handles the opening, such as a script that measures the
-      // popup.
+      // popup; it also sees the popovers inside, which it leaves alone.
       popup.addEventListener(
         "beforetoggle",
         (event) => {
-          if (event.newState !== "open" || !search.value || !options.length) return;
+          if (event.target !== popup || event.newState !== "open" || !search.value || !options.length) return;
           search.value = "";
           search.dispatchEvent(new Event("input"));
         },
@@ -308,23 +322,15 @@
     });
   }
 
-  // Lists outside a popup, and open ones, are measured now and again after
-  // the window resizes, at most once a frame.
-  const updateShown = () => {
-    for (const listbox of listboxes) {
-      if (!listbox.closest(".hpopup:not(:popover-open)")) updateTitles(listbox);
+  // Lists outside a popup, and open ones, are measured as they first show
+  // and again as they change size, such as with the window or their
+  // container.
+  const resized = new ResizeObserver((entries) => {
+    for (const { target } of entries) {
+      if (!target.closest(".hpopup:not(:popover-open)")) updateTitles(target);
     }
-  };
-  if (listboxes.length) {
-    updateShown();
-    let frame = 0;
-    addEventListener("resize", () => {
-      frame ||= requestAnimationFrame(() => {
-        frame = 0;
-        updateShown();
-      });
-    });
-  }
+  });
+  for (const listbox of listboxes) resized.observe(listbox);
 
   // A footer's Clear filters clears the selection.
   for (const button of document.querySelectorAll("[data-example-clear]")) {

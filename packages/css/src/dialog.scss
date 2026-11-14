@@ -181,6 +181,7 @@
 
   font-size: $font-size-sm;
   line-height: $font-line-height;
+  overflow-wrap: anywhere;
 
   color: $color-text-secondary;
 }
@@ -198,7 +199,8 @@
 
 // What scrolls when the dialog is taller than the window. Its 4px of padding,
 // taken back by the margin, keeps the focus rings of what's inside from being
-// clipped at its edges.
+// clipped at its edges. A long word, such as a key or a link, breaks where it
+// must, rather than scrolling sideways.
 .hdialog-body {
   flex: 1 1 auto;
 
@@ -206,6 +208,8 @@
   margin: 16px -4px 0;
   padding: 4px;
   overflow-y: auto;
+
+  overflow-wrap: anywhere;
 
   overscroll-behavior: contain;
 

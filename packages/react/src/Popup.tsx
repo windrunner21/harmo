@@ -99,7 +99,8 @@ const handBackFocus = (popup: HTMLElement) => {
   if (!popup.contains(owner.activeElement)) return;
   popup.addEventListener(
     "toggle",
-    () => {
+    (event) => {
+      if ((event as ToggleEvent).newState !== "closed") return;
       if (owner.activeElement === owner.body || popup.contains(owner.activeElement)) {
         popupTrigger(popup)?.focus();
       }
@@ -137,10 +138,20 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
 
 const pinned = ["top", "left", "width", "height"] as const;
 
+// Its box without the slide still under way, if it closes as it opens: the
+// closing slide carries on from there.
 const pin = (popup: HTMLElement) => {
   const box = popup.getBoundingClientRect();
+  const { transform } = getComputedStyle(popup);
+  const slide = new DOMMatrixReadOnly(transform === "none" ? undefined : transform);
+  const place = {
+    top: box.top - slide.m42,
+    left: box.left - slide.m41,
+    width: box.width,
+    height: box.height,
+  };
   for (const name of pinned) {
-    popup.style.setProperty(`--hpopup-pinned-${name}`, `${box[name]}px`);
+    popup.style.setProperty(`--hpopup-pinned-${name}`, `${place[name]}px`);
   }
   popup.setAttribute("data-pinned", "");
 };

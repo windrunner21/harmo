@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { renders } from "./children.ts";
+import { milliseconds } from "./milliseconds.ts";
 import { withClass } from "./withClass.ts";
 
 interface TooltipControl {
@@ -34,14 +35,16 @@ export type TooltipProps = TooltipOptions &
 
 let lastHide = -Infinity;
 
-const milliseconds = (time: string) =>
-  parseFloat(time) * (time.trim().endsWith("ms") ? 1 : 1000);
-
-export const useTooltip = () => {
+export const useTooltip = (open = false) => {
   const tooltip = useRef<HTMLSpanElement>(null);
   const entered = useRef(0);
   const delay = useRef(0);
   const [dismissed, setDismissed] = useState(false);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) setDismissed(false);
+  }
 
   const shown = () =>
     tooltip.current !== null &&
@@ -72,6 +75,7 @@ export const useTooltip = () => {
               getComputedStyle(event.currentTarget).getPropertyValue(
                 "--harmo-tooltip-delay",
               ),
+              300,
             );
       },
       onPointerLeave: () => {
@@ -99,7 +103,9 @@ export const Tooltip = ({
   ...props
 }: TooltipProps) => {
   const id = useId();
-  const { trigger, tooltip } = useTooltip();
+  const { trigger, tooltip } = useTooltip(
+    (props as { "data-open"?: unknown })["data-open"] != null,
+  );
   const names = label !== undefined && label !== null;
   const text = names ? label : description;
   const shown = renders(text);

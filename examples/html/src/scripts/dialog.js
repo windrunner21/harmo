@@ -45,16 +45,32 @@
   };
 
   for (const dialog of document.querySelectorAll(".hdialog, .hdrawer")) {
+    // A command="request-close" button's value, kept for the cancel event its
+    // press fires, in the same task, so holding that event doesn't drop it.
+    // Only for that task, so a later Escape can't reuse it.
+    let requested;
+    dialog.addEventListener("command", (event) => {
+      if (event.command !== "request-close" || !event.source?.hasAttribute("value")) return;
+      requested = event.source.value;
+      setTimeout(() => (requested = undefined));
+    });
     dialog.addEventListener("cancel", (event) => {
+      const value = requested;
+      requested = undefined;
       // The browser lets a page hold Escape only after the person has used
       // it; otherwise, it closes at once.
       if (!event.cancelable || event.defaultPrevented) return;
       event.preventDefault();
-      closeAfterFade(dialog);
+      closeAfterFade(dialog, value);
     });
     dialog.addEventListener("beforetoggle", (event) => {
       if (event.newState === "closed" && exits.has(dialog)) stopExit(dialog);
     });
+    // Wanted open again while its exit plays, as Command Menu's shortcut does
+    // by removing data-closing, the exit stops, and it stays open.
+    new MutationObserver(() => {
+      if (!dialog.hasAttribute("data-closing")) exits.delete(dialog);
+    }).observe(dialog, { attributes: true, attributeFilter: ["data-closing"] });
   }
 
   // On the document, so an app's own handler on the form runs first.

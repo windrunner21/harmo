@@ -59,7 +59,10 @@ holds the page until it's closed. For a small panel beside its trigger, use a
   `command="request-close"`; Escape; a click outside, with `closedby="any"`; a
   `<form method="dialog">` when it's sent; or `dialog.requestClose()`. Each of
   these fades it out first, with the script. `command="close"` and
-  `dialog.close()` close it at once.
+  `dialog.close()` close it at once. A `value` on a `command="request-close"`
+  button becomes `returnValue` once the exit has played. A value passed to
+  `dialog.requestClose(value)` from a script isn't kept while the exit plays:
+  close it with `close(value)` instead.
 - **From a URL:** a link such as `?dialog=invite-dialog`, a reload, and Back,
   when the app's router decides whether it's open. See
   [React](#react) for the recipe, and the "Opened from a link" example.
@@ -84,6 +87,9 @@ holds the page until it's closed. For a small panel beside its trigger, use a
 - The title is 20px bold in `--harmo-color-text`; the description is 14px in
   `--harmo-color-text-secondary`, 8px below it. The close button is a tertiary
   icon [Button](button.md) at the title's end.
+- A long word in the title, description, or body, such as an email address or
+  a key, breaks where it must, rather than running under the close button or
+  scrolling sideways.
 - The footer holds its actions at its end, 8px apart, 20px below the body.
 - The page behind is dimmed by `--harmo-dialog-backdrop-color`, and doesn't
   scroll while it's open. A page that scrolls as a whole, where scrollbars take
@@ -116,7 +122,7 @@ None to open, close, or focus it. The example script:
 
 | Behavior | What it does |
 | --- | --- |
-| Fading out | Holds the dialog's `cancel` event, which Escape, a click outside, and `command="request-close"` send first, and a form sent with `method="dialog"`, its own or its submit button's `formmethod`, unless the app's own handler has stopped it, such as to confirm unsaved changes; sets `data-closing` until the fade has played, then closes it. The browser lets a page hold Escape only after the person has used it, so a dialog that opened by itself closes at once on its first Escape. |
+| Fading out | Holds the dialog's `cancel` event, which Escape, a click outside, and `command="request-close"` send first, and a form sent with `method="dialog"`, its own or its submit button's `formmethod`, unless the app's own handler has stopped it, such as to confirm unsaved changes; sets `data-closing` until the fade has played, then closes it. The browser lets a page hold Escape only after the person has used it, so a dialog that opened by itself closes at once on its first Escape. If `data-closing` is removed meanwhile, as Command Menu's shortcut does, the fade stops and it stays open. |
 | Opening from a link | See below |
 
 For the "Opened from a link" example, it stands in for an app's router: it opens the dialog that `?dialog=` names on load and
@@ -180,7 +186,8 @@ A button opens it, beside it with `trigger` or anywhere else by its `id`:
 Anything else decides, with `open` held by you: your code, such as once an
 export is ready, or the URL. In the Next.js App Router, closing goes back when
 a link on the page opened it, and otherwise takes its parameter off, leaving
-the URL's others as they are:
+the URL's others as they are. A click with a modifier key opens the link in a
+new tab or window instead, pushing nothing here, so it doesn't count:
 
 ```tsx
 "use client";
@@ -201,7 +208,20 @@ export function NewTeam() {
 
   return (
     <>
-      <Link href={`?${withDialog}`} onClick={() => setLinked(true)}>
+      <Link
+        href={`?${withDialog}`}
+        onClick={(event) => {
+          if (
+            !event.defaultPrevented &&
+            event.button === 0 &&
+            !event.metaKey &&
+            !event.ctrlKey &&
+            !event.shiftKey &&
+            !event.altKey
+          )
+            setLinked(true);
+        }}
+      >
         New team
       </Link>
       <Dialog

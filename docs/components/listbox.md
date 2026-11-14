@@ -148,9 +148,10 @@ focus.
 - Keys: Down and Up move the highlight, Home and End go to the first and last
   option, and typing jumps to the next option whose label starts with the
   typed letters (except in a search field), leaving out what's `aria-hidden` in
-  it, such as a flag. Enter chooses; in a multi-select,
-  Space toggles. Disabled options are skipped. With nothing to choose, Enter in
-  the search field does nothing, so it can't submit the form around it.
+  it, such as a flag. Enter or Space chooses, toggling in a multi-select;
+  Space types instead in a search field, or partway through typed letters.
+  Disabled options are skipped. With nothing to choose, Enter in the search
+  field does nothing, so it can't submit the form around it.
 - The search field needs no focus ring: its caret shows focus.
 
 ## What a script does
@@ -158,13 +159,13 @@ focus.
 | Change | When |
 | --- | --- |
 | Highlight the option a key asked for, else the selected one, else the first enabled one | As the list opens (`beforetoggle`), so a key pressed straight after moves on from it |
-| Move `data-active` and the focused element's `aria-activedescendant` | Arrow keys, Home, End, type-to-jump, and pointer movement |
-| Toggle `aria-selected` and move the check mark | Enter, Space in a multi-select, or a click |
+| Move `data-active` and the focused element's `aria-activedescendant` | Arrow keys, Home, End, type-to-jump, and pointer movement; a pointer over no option, such as on a group's label, clears it |
+| Toggle `aria-selected` and move the check mark | Enter or Space (except where Space types, as in a search field), or a click |
 | Close the popup, which returns focus to what opened it; a multi-select stays open | After a single-select choice, even of the selected option |
-| Move focus to the search field | When a list with a search row opens |
-| Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup), so each opening starts from the whole list |
-| Set `hidden` on the options and groups that don't match, by their label, description, or keywords, and put the message in `.hlistbox-empty` when none do, emptying it once some do | As the search text changes |
-| Set a truncated `.hoption-label`'s `title` to its full text, and remove it when it fits | When the list opens or resizes, so hovering shows the whole option |
+| Move focus to the search field, or else to the list | When the list opens, unless a select's trigger or a Combobox's field keeps it |
+| Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup, and only for the list's own popup, not one inside it), so each opening starts from the whole list |
+| Set `hidden` on the options and groups that don't match, by their label, description, or keywords, and put the app's message in `.hlistbox-empty` when none do, emptying it once some do; what the app hid stays hidden | As the search text changes |
+| Set a truncated `.hoption-label`'s `title` to its full text, and remove it when it fits | When the list opens, changes size, or its options change, so hovering shows the whole option |
 
 `examples/html/src/scripts/listbox.js` is an example script that does all of
 this; its search hides the options whose label, description, and keywords

@@ -46,6 +46,63 @@ onEachPlayground("dialog", () => {
     }
   });
 
+  test("a request-close button's value is its returnValue once it has closed, and Escape later doesn't reuse it", async ({ page }) => {
+    const { container, dialog } = await openFrom(page, "dialog-default", "Invite people");
+    const cancel = dialog.getByRole("button", { name: "Cancel" });
+    await cancel.evaluate((node) => node.setAttribute("value", "discard"));
+    await cancel.click();
+    await expect.poll(() => isOpen(dialog)).toBe(false);
+    expect(await dialog.evaluate((node) => (node as HTMLDialogElement).returnValue)).toBe("discard");
+    await settled(dialog);
+
+    await dialog.evaluate((node) => ((node as HTMLDialogElement).returnValue = ""));
+    await container.getByRole("button", { name: "Invite people" }).click();
+    await expect.poll(() => isOpen(dialog)).toBe(true);
+    await settled(dialog);
+    await page.keyboard.press("Escape");
+    await expect.poll(() => isOpen(dialog)).toBe(false);
+    expect(await dialog.evaluate((node) => (node as HTMLDialogElement).returnValue)).toBe("");
+  });
+
+  test("an app that stops the close, such as to confirm unsaved changes, keeps it open", async ({ page }) => {
+    const { dialog } = await openFrom(page, "dialog-default", "Invite people");
+    // Before the dialog's own handlers, as React runs an app's onCancel.
+    await page.evaluate(() => addEventListener("cancel", (event) => event.preventDefault(), { capture: true, once: true }));
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(400);
+    expect(await isOpen(dialog)).toBe(true);
+    await expect(dialog).not.toHaveAttribute("data-closing");
+  });
+
+  test("an app that stops its form being sent keeps it open", async ({ page }) => {
+    const { dialog } = await openFrom(page, "dialog-default", "Invite people");
+    // On the form, so before the dialog's own handler on the document, as an
+    // app's onSubmit is.
+    await dialog.locator("form").evaluate((form) => form.addEventListener("submit", (event) => event.preventDefault(), { once: true }));
+    await dialog.getByRole("button", { name: "Send invite" }).click();
+    await page.waitForTimeout(400);
+    expect(await isOpen(dialog)).toBe(true);
+    await expect(dialog).not.toHaveAttribute("data-closing");
+  });
+
+  test("a long word in its description or body breaks, rather than running under the close button or scrolling sideways", async ({ page }) => {
+    const key = `sk_live_${"51HqT9xKZ4mBvR2cWnPq8sLdYfE3aGhJ".repeat(3)}`;
+    const container = await example(page, "dialog-default");
+    await container.locator(".hdialog-description").evaluate((node, key) => node.append(` ${key}`), key);
+    await container.locator(".hdialog-body").evaluate((node, key) => {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = key;
+      node.append(paragraph);
+    }, key);
+    const { dialog } = await openFrom(page, "dialog-default", "Invite people");
+    const description = dialog.locator(".hdialog-description");
+    const body = dialog.locator(".hdialog-body");
+    const [text, close] = await boxes(description, dialog.locator(".hdialog-close"));
+    expect(text.x + text.width).toBeLessThanOrEqual(close.x);
+    expect(await description.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+    expect(await body.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+  });
+
   test("a click outside closes it, and a click inside doesn't", async ({ page }) => {
     const { dialog } = await openFrom(page, "dialog-default", "Invite people");
     await dialog.locator(".hdialog-description").click();

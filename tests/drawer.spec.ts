@@ -77,6 +77,31 @@ onEachPlayground("drawer", () => {
     await expect(drawer).not.toHaveAttribute("data-closing");
   });
 
+  test("an app that stops its form being sent keeps it open", async ({ page }) => {
+    const { drawer } = await openFrom(page, "drawer-default", "New quick reply");
+    // On the form, so before the drawer's own handler on the document, as an
+    // app's onSubmit is.
+    await drawer.locator("form").evaluate((form) => form.addEventListener("submit", (event) => event.preventDefault(), { once: true }));
+    await drawer.getByRole("button", { name: "Save", exact: true }).click();
+    await page.waitForTimeout(400);
+    expect(await isOpen(drawer)).toBe(true);
+    await expect(drawer).not.toHaveAttribute("data-closing");
+  });
+
+  test("open, it places what's fixed inside it, such as a tooltip, against the window, so its edges don't clip that", async ({ page }) => {
+    const { drawer } = await openFrom(page, "drawer-default", "New quick reply");
+    const box = await drawer.locator(".hdrawer-body").evaluate((body) => {
+      const fixed = document.createElement("div");
+      fixed.style.cssText = "position: fixed; inset: 0 auto auto 0; inline-size: 8px; block-size: 8px";
+      body.append(fixed);
+      const box = fixed.getBoundingClientRect().toJSON();
+      fixed.remove();
+      return box;
+    });
+    expect(box.x).toBeCloseTo(0, 0);
+    expect(box.y).toBeCloseTo(0, 0);
+  });
+
   test("closed some other way while it slides out, then opened again, it stays open", async ({ page }) => {
     const { drawer } = await openFrom(page, "drawer-default", "New quick reply");
     await slowDown(drawer);
@@ -189,6 +214,13 @@ onEachPlayground("drawer", () => {
     const { drawer: template } = await openFrom(page, "drawer-with-an-aside", "Edit template");
     const [aside] = await boxes(template.locator(".hdrawer-aside"));
     expect(aside.width).toBeLessThanOrEqual(480);
+  });
+
+  test("a long word in its description breaks, rather than running under the close button", async ({ page }) => {
+    const key = `sk_live_${"51HqT9xKZ4mBvR2cWnPq8sLdYfE3aGhJ".repeat(3)}`;
+    await page.locator("#template-drawer .hdrawer-description").evaluate((node, key) => node.append(` ${key}`), key);
+    const { drawer } = await openFrom(page, "drawer-with-an-aside", "Edit template");
+    expect(await drawer.locator(".hdrawer-description").evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
   test("its body scrolls, and its footer stays under it, in view", async ({ page }) => {

@@ -84,16 +84,19 @@ panel lays out its own content.
 | --- | --- |
 | `aria-expanded` on the trigger | On every open and close; it also styles open select triggers |
 | `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; its value doesn't matter, the change does |
-| Focus, back on the trigger | When a popup opened over another closes with focus inside it; browsers do this only for the first popup open |
+| Focus, back on the trigger | When a popup opened over another closes with focus inside it, once its `toggle` event says it closed, not when it opened again at once; browsers do this only for the first popup open |
 | `data-side="top"` on the popup | Before opening, when it will land above its trigger, and before closing, when it's above; CSS can't tell which side it landed on |
-| `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box | Before closing, so it fades where it is; removed as it next opens |
+| `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box, less the slide still under way if it closes as it opens | Before closing, so it fades where it is; removed as it next opens |
 
 In `beforetoggle`, when opening, remove `data-pinned` and toggle `data-refit`
 first, then work the side out from the room around the trigger, as the CSS
 does: above when the popup fits there but not below. After the toggle, the
 popup measures at its whole height, not one it was shrunk to where it last
 fit; its position can't tell where it will land. When closing, measure where
-it is, since scrolling may have moved it, then pin it there. If the side
+it is, since scrolling may have moved it, then pin it there, less its
+`transform`: closing during the opening slide, the closing slide carries on
+from where that one was, so counting it in the pinned box would move the
+popup twice. If the side
 changes, apply it without a transition, so the slide starts from the right
 side. `examples/html/src/scripts/popup.js` is an example script. Other
 listeners that change the popup's contents as it opens, such as a Listbox

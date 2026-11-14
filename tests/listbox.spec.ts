@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { expectActive, expectChosen } from "./lists.ts";
-import { boxes, clickAt, example, onEachPlayground, openPopup, pointAt, settled, test } from "./playgrounds.ts";
+import { animations, boxes, clickAt, example, onEachPlayground, openPopup, pointAt, release, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/listbox.md says a script does, on the Listbox page.
 onEachPlayground("listbox", () => {
@@ -140,6 +140,21 @@ onEachPlayground("listbox", () => {
     await expect(listbox).toBeFocused();
   });
 
+  test("a multi-select's checkbox fades its fill and border in 150ms", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-multiple", "Status");
+    const checkbox = listbox.getByRole("option", { name: "Delivered" }).locator(".hoption-checkbox");
+    const style = await checkbox.evaluate((node) => {
+      const { transitionProperty, transitionDuration } = getComputedStyle(node);
+      return { transitionProperty, transitionDuration };
+    });
+    expect(style).toEqual({ transitionProperty: "background-color, border-color", transitionDuration: "0.15s, 0.15s" });
+
+    await slowDown(checkbox);
+    await page.keyboard.press(" ");
+    expect(await animations(checkbox), "fading").toBeGreaterThan(0);
+    await release(checkbox);
+  });
+
   test("a footer's Clear filters clears the selection", async ({ page }) => {
     const { container } = await openList(page, "listbox-multiple-with-a-footer", "Language");
     await clickAt(page, container.getByRole("button", { name: "Clear filters" }));
@@ -162,6 +177,24 @@ onEachPlayground("listbox", () => {
     await expect(label("+49")).toHaveAttribute("title", "+49 30 1234567 · Support");
     await page.setViewportSize({ width: 1280, height: 720 });
     await expect(label("+49")).not.toHaveAttribute("title");
+  });
+
+  test("a label cut short as its list narrows, with the window as it was, gets its whole text as a title", async ({ page }) => {
+    const { container, listbox } = await openList(page, "listbox-long-options", "Sender number");
+    const label = listbox.getByRole("option", { name: /^\+49/ }).locator(".hoption-label");
+    await expect(label).not.toHaveAttribute("title");
+    await openPopup(container).evaluate((popup) => Object.assign((popup as HTMLElement).style, { minInlineSize: "0", inlineSize: "120px" }));
+    await expect(label).toHaveAttribute("title", "+49 30 1234567 · Support");
+  });
+
+  test("the pointer over a group's label, between options, clears the highlight", async ({ page }) => {
+    const { listbox, search } = await openList(page, "listbox-single-grouped-with-search", "Inbox");
+    const whatsApp = listbox.getByRole("option", { name: "WhatsApp" });
+    await pointAt(page, whatsApp);
+    await expectActive(search, whatsApp);
+    await pointAt(page, listbox.getByText("Email", { exact: true }));
+    await expect(listbox.locator("[data-active]")).toHaveCount(0);
+    await expect(search).not.toHaveAttribute("aria-activedescendant");
   });
 
   test("a focused list has no ring of its own", async ({ page }) => {
@@ -255,6 +288,61 @@ onEachPlayground("listbox", () => {
     await expect(search).toHaveValue("");
     await expect(listbox.getByRole("option")).toHaveCount(5);
     // The status for no matches stays in the page, empty.
+    await expect(container.locator(".hlistbox-empty")).toHaveText("");
+  });
+
+  test("a popover opening and closing inside its popup leaves the search and the highlight as they are", async ({ page }) => {
+    const { container, listbox, search } = await openList(page, "listbox-single-with-search", "Assignee");
+    const ana = listbox.getByRole("option", { name: "Ana Souza" });
+    await page.keyboard.type("an");
+    await page.keyboard.press("ArrowDown");
+    await expectActive(search, ana);
+
+    await openPopup(container).evaluate((popup) => {
+      const inner = document.createElement("div");
+      inner.popover = "manual";
+      popup.append(inner);
+      inner.showPopover();
+      inner.hidePopover();
+      inner.remove();
+    });
+    await expect(search).toHaveValue("an");
+    await expect(listbox.getByRole("option")).toHaveText(["Jane Smith", "Ana Souza"]);
+    await expectActive(search, ana);
+  });
+
+  test("a search leaves hidden the options and groups the app hid", async ({ page }, info) => {
+    // In React, an Option's or OptionGroup's hidden is a prop, which a search
+    // never changes.
+    test.skip(!info.titlePath.includes("html"), "HTML only");
+    const assignees = await example(page, "listbox-single-with-search");
+    await assignees.locator("#assignee-ana").evaluate((option) => ((option as HTMLElement).hidden = true));
+    const { listbox } = await openList(page, "listbox-single-with-search", "Assignee");
+    await page.keyboard.type("an");
+    await expect(listbox.getByRole("option")).toHaveText(["Jane Smith"]);
+    await page.keyboard.press("Backspace");
+    await page.keyboard.press("Backspace");
+    await expect(listbox.getByRole("option")).toHaveCount(4);
+    await page.keyboard.press("Escape");
+
+    // Its options too, which count as hidden.
+    const inboxes = await example(page, "listbox-single-grouped-with-search");
+    await inboxes.locator(".hoption-group").filter({ hasText: "Messaging" }).evaluate((group) => ((group as HTMLElement).hidden = true));
+    const { container, listbox: grouped } = await openList(page, "listbox-single-grouped-with-search", "Inbox");
+    await page.keyboard.type("tel");
+    await expect(grouped.getByRole("option")).toHaveCount(0);
+    await expect(grouped.getByRole("group")).toHaveCount(0);
+    await expect(container.locator(".hlistbox-empty")).toHaveText("No inboxes found");
+  });
+
+  test("with no message from the app, a search with no match shows no text of its own", async ({ page }, info) => {
+    // The React Listbox requires emptyMessage with searchLabel.
+    test.skip(!info.titlePath.includes("html"), "HTML only");
+    const container = await example(page, "listbox-single-with-search");
+    await container.locator("[data-example-empty]").evaluate((search) => search.removeAttribute("data-example-empty"));
+    const { listbox } = await openList(page, "listbox-single-with-search", "Assignee");
+    await page.keyboard.type("zzz");
+    await expect(listbox.getByRole("option")).toHaveCount(0);
     await expect(container.locator(".hlistbox-empty")).toHaveText("");
   });
 
