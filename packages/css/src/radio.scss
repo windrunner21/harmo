@@ -37,8 +37,8 @@
     background-color: $color-primary-tint;
     background-image: radial-gradient(
       circle,
-      $color-primary 2.75px,
-      transparent 3.25px
+      $color-primary calc($checkbox-size * 0.1375),
+      transparent calc($checkbox-size * 0.1625)
     );
     border-color: $color-primary;
   }

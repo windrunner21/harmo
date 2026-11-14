@@ -4,10 +4,13 @@ import {
   createContext,
   useContext,
   useId,
+  useRef,
   type ChangeEvent,
   type ComponentPropsWithRef,
+  type RefObject,
 } from "react";
 import { Field, type StackedFieldProps } from "./field/Field.tsx";
+import { useMergedRef } from "./useMergedRef.ts";
 
 export interface CheckboxGroupProps
   extends Omit<StackedFieldProps, "orientation" | "role" | "defaultValue"> {
@@ -24,6 +27,7 @@ interface CheckboxGroupState {
   defaultValue?: string[];
   disabled?: boolean;
   onValueChange?: (value: string[]) => void;
+  element: RefObject<HTMLDivElement | null>;
 }
 
 const CheckboxGroupContext = createContext<CheckboxGroupState | undefined>(
@@ -46,9 +50,9 @@ export const useCheckboxGroupInput = ({
     onChange: (event: ChangeEvent<HTMLInputElement>) => {
       onChange?.(event);
       if (!group?.onValueChange) return;
-      const boxes = event.target
-        .closest('[role="group"]')
-        ?.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
+      const boxes = group.element.current?.querySelectorAll<HTMLInputElement>(
+        'input[type="checkbox"]',
+      );
       group.onValueChange(
         Array.from(boxes ?? [])
           .filter((box) => box.name === group.name && box.checked)
@@ -64,9 +68,12 @@ export const CheckboxGroup = ({
   defaultValue,
   onValueChange,
   disabled,
+  ref,
   ...props
 }: CheckboxGroupProps) => {
   const generatedName = useId();
+  const element = useRef<HTMLDivElement>(null);
+  const merged = useMergedRef<HTMLDivElement>(element, ref);
 
   return (
     <CheckboxGroupContext
@@ -76,9 +83,10 @@ export const CheckboxGroup = ({
         defaultValue,
         disabled,
         onValueChange,
+        element,
       }}
     >
-      <Field {...props} role="group" />
+      <Field {...props} ref={merged} role="group" />
     </CheckboxGroupContext>
   );
 };

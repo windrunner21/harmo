@@ -1,25 +1,45 @@
 // Example only: the show/hide toggle and the strength feedback, as the React
 // PasswordInput does them. Both also run once at load, for a field that
-// starts with a value.
+// starts with a value, and again after its form resets, once the browser has
+// put its first value back.
 {
+  // Runs `then` after the form an input belongs to resets, even one it joined
+  // later, unless the reset was cancelled.
+  const onReset = (input, then) =>
+    document.addEventListener(
+      "reset",
+      (event) => {
+        if (event.target !== input.form) return;
+        setTimeout(() => {
+          if (!event.defaultPrevented) then();
+        });
+      },
+      true,
+    );
+
   // The toggle shows once something is typed, and is disabled with the
   // input. Its label stays "Show password"; aria-pressed says whether the
-  // password shows, and the tooltip names the next click.
+  // password shows, and the tooltip names the next click. A reset hides the
+  // password again.
   for (const toggle of document.querySelectorAll(".hpassword-toggle")) {
     const input = document.getElementById(toggle.getAttribute("aria-controls"));
     const tip = toggle.parentElement.querySelector(".htooltip");
-    toggle.addEventListener("click", () => {
-      const show = toggle.getAttribute("aria-pressed") !== "true";
+    const reveal = (show) => {
       toggle.setAttribute("aria-pressed", show);
       input.type = show ? "text" : "password";
       if (tip) tip.textContent = show ? "Hide password" : "Show password";
-    });
+    };
+    toggle.addEventListener("click", () => reveal(toggle.getAttribute("aria-pressed") !== "true"));
     const sync = () => {
       toggle.hidden = input.value === "";
       toggle.disabled = input.disabled;
     };
     input.addEventListener("input", sync);
     new MutationObserver(sync).observe(input, { attributeFilter: ["disabled"] });
+    onReset(input, () => {
+      reveal(false);
+      sync();
+    });
     sync();
   }
 
@@ -57,6 +77,13 @@
       shown = value;
       const level = levels[value];
       details.hidden = value === 0;
+      // Emptied, the details keep the last meter and hint while they close.
+      if (value === 0) {
+        word.textContent = "";
+        word.removeAttribute("data-status");
+        input.removeAttribute("aria-invalid");
+        return;
+      }
       word.textContent = level.word;
       hint.textContent = level.hint;
       meter.setAttribute("aria-valuenow", value);
@@ -74,6 +101,7 @@
       else input.removeAttribute("aria-invalid");
     };
     input.addEventListener("input", sync);
+    onReset(input, sync);
     sync();
   }
 }

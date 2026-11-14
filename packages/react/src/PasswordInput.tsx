@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  useEffect,
   useId,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -60,6 +62,20 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
   const [revealed, setRevealed] = useState(false);
   const rating =
     strength && current.value !== "" ? strength(current.value) : undefined;
+  const lastRating = useRef(rating);
+  if (rating) lastRating.current = rating;
+  const shown = rating ?? lastRating.current;
+
+  useEffect(() => {
+    const form = current.element.current?.form;
+    if (!form) return;
+    const reset = (event: Event) =>
+      setTimeout(() => {
+        if (!event.defaultPrevented) setRevealed(false);
+      });
+    form.addEventListener("reset", reset);
+    return () => form.removeEventListener("reset", reset);
+  }, []);
 
   const word = strength && (
     <span
@@ -115,18 +131,18 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
         <div className="hpassword-details" hidden={!rating}>
           <div>
             <Meter
-              value={rating?.level ?? 0}
+              value={shown?.level ?? 0}
               max={3}
-              status={rating?.status}
+              status={shown?.status}
               aria-label={strengthLabel}
-              aria-valuetext={rating?.word}
+              aria-valuetext={shown?.word}
             />
             <p
               className="hpassword-hint"
               id={hintId}
-              data-status={rating?.status}
+              data-status={shown?.status}
             >
-              {rating?.hint}
+              {shown?.hint}
             </p>
           </div>
         </div>

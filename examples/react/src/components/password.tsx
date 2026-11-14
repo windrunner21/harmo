@@ -1,5 +1,24 @@
-import { Checkbox, Field, PasswordInput, type PasswordStrength } from "@harmo-ui/react";
+import { Button, Checkbox, Field, PasswordInput, type PasswordStrength } from "@harmo-ui/react";
 import { useState } from "react";
+
+const strength = (password: string): PasswordStrength => {
+  if (password.length < 10) {
+    return {
+      level: 1,
+      word: "Too weak",
+      hint: "Passwords need to be at least 10 characters. Include multiple words and phrases to make it more secure.",
+      status: "error",
+    };
+  }
+  const kinds = [/[A-Z]/, /[a-z]/, /\d/, /[!@#$%^&*(),.?":{}|<>]/];
+  return kinds.every((kind) => kind.test(password))
+    ? { level: 3, word: "Strong", status: "success" }
+    : {
+        level: 2,
+        word: "Medium",
+        hint: "Include multiple words and phrases to make it more secure.",
+      };
+};
 
 export const examples = {
   "Current password": () => (
@@ -11,37 +30,16 @@ export const examples = {
     />
   ),
 
-  "New password": () => {
-    const strength = (password: string): PasswordStrength => {
-      if (password.length < 10) {
-        return {
-          level: 1,
-          word: "Too weak",
-          hint: "Passwords need to be at least 10 characters. Include multiple words and phrases to make it more secure.",
-          status: "error",
-        };
-      }
-      const kinds = [/[A-Z]/, /[a-z]/, /\d/, /[!@#$%^&*(),.?":{}|<>]/];
-      return kinds.every((kind) => kind.test(password))
-        ? { level: 3, word: "Strong", status: "success" }
-        : {
-            level: 2,
-            word: "Medium",
-            hint: "Include multiple words and phrases to make it more secure.",
-          };
-    };
-
-    return (
-      <PasswordInput
-        label="New password"
-        showPasswordLabel="Show password"
-        hidePasswordLabel="Hide password"
-        autoComplete="new-password"
-        strength={strength}
-        strengthLabel="Password strength"
-      />
-    );
-  },
+  "New password": () => (
+    <PasswordInput
+      label="New password"
+      showPasswordLabel="Show password"
+      hidePasswordLabel="Hide password"
+      autoComplete="new-password"
+      strength={strength}
+      strengthLabel="Password strength"
+    />
+  ),
 
   Disabled: () => (
     <PasswordInput
@@ -74,4 +72,20 @@ export const examples = {
       </>
     );
   },
+
+  "In a form": () => (
+    <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <PasswordInput
+        label="New password"
+        showPasswordLabel="Show password"
+        hidePasswordLabel="Hide password"
+        autoComplete="new-password"
+        strength={strength}
+        strengthLabel="Password strength"
+      />
+      <Button variant="secondary" type="reset" style={{ alignSelf: "flex-start" }}>
+        Reset
+      </Button>
+    </form>
+  ),
 };

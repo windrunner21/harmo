@@ -52,6 +52,24 @@ onEachPlayground("field", () => {
     expect(await error.textContent()).toBe("This coupon code is not valid.");
     await expect(error).toBeVisible();
   });
+
+  test("a closing error cut short, as when the field stops showing, still clears its text", async ({ page }) => {
+    const { input, error } = await couponField(page);
+    await enter(input, "WINTER10");
+    await settled(error);
+    await slowDown(error);
+    await enter(input, "SPRING25");
+    await expect(error).toHaveAttribute("hidden");
+    expect(await animations(error), "closing animations").toBeGreaterThan(0);
+
+    // Cancelled rather than finished, as the browser does to a transition on
+    // an element that stops rendering.
+    await error.evaluate((node) => {
+      for (const animation of node.getAnimations()) animation.cancel();
+    });
+    await expect(error).toHaveText("");
+    await expect(input).toHaveAccessibleDescription("");
+  });
 });
 
 const couponField = async (page: Page) => {

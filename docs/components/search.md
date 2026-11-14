@@ -58,6 +58,8 @@ field colors them.
 - A shortcut's Kbd sits 10px in from its end, and the text stops 72px from
   it. A device that can't hover, such as a phone, has no keyboard to press
   it, so there it isn't shown.
+- The magnifier, the clear button, the Kbd, and the room kept for each grow
+  with the browser's font size, so the text still stops short of them.
 - The browsers' own clear buttons and decorations for `type="search"` are
   hidden, so every browser shows the same field.
 - On a right-to-left page, the magnifier is at the right and the clear button
@@ -79,7 +81,8 @@ field colors them.
 
 | Change | When |
 | --- | --- |
-| Remove `hidden` from the clear button; add it back | When the field gets text; when it's empty again, or read-only |
+| Remove `hidden` from the clear button; add it back | When the field gets text; when it's empty again, made read-only, or its form resets |
+| Set `disabled` on the clear button, and remove it | When the input is disabled or enabled |
 | Empty the field, keep focus in it, and send an `input` event, as typing does | On a click of the clear button, unless the field is read-only |
 | The same, and stop the key (`preventDefault()`), so a dialog or popup around it stays open | On Escape, while the field has text, unless it's read-only or an IME is composing |
 

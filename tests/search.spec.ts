@@ -120,6 +120,58 @@ onEachPlayground("search", () => {
     expect(await inputs(input)).toBe(0);
   });
 
+  test("made read-only or disabled after typing, the clear button follows", async ({ page }, info) => {
+    // React's Search follows its readOnly and disabled props, which
+    // examples/react/test/search.test.tsx checks.
+    test.skip(!info.titlePath.includes("html"), "sets the attributes directly, as an app's own script would");
+    const container = await example(page, "search-default");
+    const input = container.getByRole("searchbox");
+    const clear = container.locator(".hsearch-clear");
+    await input.fill("ship");
+    await expect(clear).toBeVisible();
+
+    await input.evaluate((node) => node.setAttribute("readonly", ""));
+    await expect(clear).toBeHidden();
+    await input.evaluate((node) => node.removeAttribute("readonly"));
+    await expect(clear).toBeVisible();
+
+    await input.evaluate((node) => node.setAttribute("disabled", ""));
+    await expect(clear).toBeDisabled();
+    await input.evaluate((node) => node.removeAttribute("disabled"));
+    await expect(clear).toBeEnabled();
+  });
+
+  test("in a form, a reset puts back the first text, and the clear button follows", async ({ page }) => {
+    const container = await example(page, "search-in-a-form");
+    const input = container.getByRole("searchbox", { name: "Search orders" });
+    const clear = container.locator(".hsearch-clear");
+    await expect(input).toHaveValue("refund");
+    await expect(clear).toBeVisible();
+
+    await clear.click();
+    await expect(input).toHaveValue("");
+    await expect(clear).toBeHidden();
+    await container.getByRole("button", { name: "Reset" }).click();
+    await expect(input).toHaveValue("refund");
+    await expect(clear).toBeVisible();
+  });
+
+  test("at a larger font size, the text still starts after the magnifier and stops before the clear button", async ({ page }) => {
+    await page.evaluate(() => (document.documentElement.style.fontSize = "24px"));
+    const container = await example(page, "search-default");
+    const input = container.getByRole("searchbox");
+    await input.fill("ship");
+    const [field, icon, clear] = await boxes(input, container.locator(".hsearch > .hicon"), container.locator(".hsearch-clear"));
+    const start = parseFloat(await styleOf(input, "padding-left"));
+    const end = parseFloat(await styleOf(input, "padding-right"));
+    expect(icon.width).toBeCloseTo(27, 0);
+    expect(icon.x + icon.width - field.x).toBeLessThan(start);
+    expect(field.x + field.width - clear.x).toBeLessThan(end);
+    // The cross fits its button.
+    const cross = await container.locator(".hsearch-clear > svg").boundingBox();
+    expect(cross!.width).toBeLessThanOrEqual(clear.width);
+  });
+
   test("while an IME is composing, Escape is left to it", async ({ page }) => {
     const container = await example(page, "search-default");
     const input = container.getByRole("searchbox");

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, type ComponentPropsWithRef, type ReactNode } from "react";
+import { renders } from "./children.ts";
 import { useField } from "./field/Field.tsx";
 import {
   RadioGroupContext,
@@ -30,6 +31,7 @@ export const Segmented = ({
   const id = useId();
   const labelId = `${id}-label`;
   const field = useField(props);
+  const labelled = renders(label);
 
   const control = (
     <RadioGroupContext
@@ -45,15 +47,15 @@ export const Segmented = ({
       <div
         {...props}
         className={withClass("hsegmented", className)}
-        hidden={label ? undefined : hidden}
+        hidden={labelled ? undefined : hidden}
         role="radiogroup"
-        aria-labelledby={label ? labelId : field["aria-labelledby"]}
+        aria-labelledby={labelled ? labelId : field["aria-labelledby"]}
         aria-describedby={field["aria-describedby"]}
       />
     </RadioGroupContext>
   );
 
-  if (!label) return control;
+  if (!labelled) return control;
 
   return (
     <div className="hfield" hidden={hidden}>
@@ -82,7 +84,14 @@ export const SegmentedOption = ({
       style={style}
       hidden={hidden}
     >
-      <input {...group} {...props} onChange={group.onChange} type="radio" />
+      <input
+        {...group}
+        {...props}
+        disabled={group.disabled || props.disabled}
+        required={group.required || props.required}
+        onChange={group.onChange}
+        type="radio"
+      />
       {children}
     </label>
   );

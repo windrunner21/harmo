@@ -11,7 +11,7 @@ use [Field](field.md) instead.
 | CSS | `settings.css`, plus the controls' own, such as `switch.css` |
 | Element | `<div class="hsettings">` holding one `<div class="hsetting">` per setting |
 | Parts | `.hsetting-text` holding `.hsetting-title` and `.hsetting-description`; the control |
-| Required | On the control: `aria-labelledby` (the title's id) and `aria-describedby` (the description's id) |
+| Required | On the control: `aria-labelledby` (the title's id), except on a button, which keeps its own label, and `aria-describedby` (the description's id) |
 | Unique | Each row's title and description ids |
 | Script | None |
 
@@ -60,10 +60,14 @@ Use whichever heading level fits the page, or a `<p>`, for the title.
 - Title: 15px bold, 1.3 line height, `--harmo-color-text`. Description: 14px,
   4px below, `--harmo-color-text-tertiary`.
 - A control under the text sits 12px below the description, as wide as the
-  text.
-- A disabled control that is a direct child of the row or of `.hsetting-text`
-  turns the title and description `--harmo-color-text-tertiary`. One nested
-  deeper, such as a Segmented Control's radios, doesn't.
+  text. So does one that wraps its field: a [Search](search.md), a
+  highlighted [Input](input.md) or [TextArea](textarea.md), a
+  [Combobox](combobox.md), a [Phone Input](phone-input.md), or a
+  [Date Picker](date-picker.md).
+- A disabled control that is a direct child of the row or of `.hsetting-text`,
+  or the field of one of those wrappers there, turns the title and
+  description `--harmo-color-text-tertiary`. One nested deeper, such as a
+  Segmented Control's radios, doesn't.
 
 ## Accessibility
 

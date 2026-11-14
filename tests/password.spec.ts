@@ -1,9 +1,10 @@
 import { expect, type Locator } from "@playwright/test";
-import { example, onEachPlayground, test } from "./playgrounds.ts";
+import { animations, boxes, example, onEachPlayground, release, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/password.md says a script does, on the Password Input
 // page. The strength rule is the docs' example: under 10 characters is too
-// weak; upper case, lower case, digits, and symbols together are strong.
+// weak; upper case, lower case, digits, and symbols together are strong. A
+// form's reset starts the field over.
 onEachPlayground("password", () => {
   test("the toggle shows once there's a value, and goes when it's emptied", async ({ page }) => {
     const container = await example(page, "password-current-password");
@@ -74,12 +75,76 @@ onEachPlayground("password", () => {
     await expectLevel(container, { word: "Strong", level: 3, status: "success" });
     await expect(hint).toHaveText("");
 
-    // Emptied, everything clears.
+    // Emptied, the word clears and the details close, keeping the last meter
+    // and hint so that they don't change as they go.
     await input.fill("");
     await expect(details).toBeHidden();
-    await expectLevel(container, { word: "", level: 0 });
+    await expect(container.locator(".hpassword-strength")).toHaveText("");
+    await expect(container.locator(".hpassword-strength")).not.toHaveAttribute("data-status");
     await expect(hint).toHaveText("");
     await expect(input).not.toHaveAttribute("aria-invalid");
+  });
+
+  test("under reduced motion, closing details fade out in place, then their space closes", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const container = await example(page, "password-new-password");
+    const input = container.getByLabel("New password");
+    const details = container.locator(".hpassword-details");
+    await input.fill("short");
+    await expect(details).toBeVisible();
+    await settled(details);
+    const open = (await details.boundingBox())!.height;
+    expect(open).toBeGreaterThan(0);
+
+    await slowDown(details);
+    await input.fill("");
+    await expect(details).toHaveAttribute("hidden");
+    expect(await animations(details), "closing animations").toBeGreaterThan(0);
+    expect((await details.boundingBox())!.height).toBeCloseTo(open, 0);
+
+    await release(details);
+    await settled(details);
+    expect((await details.boundingBox())?.height ?? 0).toBeCloseTo(0, 0);
+  });
+
+  test("in a form, a reset empties it, clears the strength, and hides the password again", async ({ page }) => {
+    const container = await example(page, "password-in-a-form");
+    const input = container.getByLabel("New password");
+    const toggle = container.locator(".hpassword-toggle");
+    const details = container.locator(".hpassword-details");
+    await input.fill("short");
+    await toggle.click();
+    await expect(input).toHaveAttribute("type", "text");
+    await expect(details).toBeVisible();
+    await expect(input).toHaveAttribute("aria-invalid", "true");
+
+    await container.getByRole("button", { name: "Reset" }).click();
+    await expect(input).toHaveValue("");
+    await expect(toggle).toBeHidden();
+    await expect(details).toBeHidden();
+    await expect(container.locator(".hpassword-strength")).toHaveText("");
+    await expect(input).not.toHaveAttribute("aria-invalid");
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await expect(input).toHaveAttribute("type", "password");
+    await expect(container.locator(".htooltip")).toHaveText("Show password");
+
+    // So the next password typed doesn't show.
+    await input.fill("another");
+    await expect(toggle).toBeVisible();
+    await expect(input).toHaveAttribute("type", "password");
+  });
+
+  test("at a larger font size, the eye still fits its button, and the text stops before it", async ({ page }) => {
+    await page.evaluate(() => (document.documentElement.style.fontSize = "24px"));
+    const container = await example(page, "password-current-password");
+    const input = container.getByLabel("Password", { exact: true });
+    const toggle = container.locator(".hpassword-toggle");
+    await input.fill("secret");
+    const [field, button, eye] = await boxes(input, toggle, toggle.locator(".hpassword-icon-show"));
+    expect(eye.width).toBeCloseTo(30, 0);
+    expect(eye.width).toBeLessThanOrEqual(button.width);
+    const end = await input.evaluate((node) => parseFloat(getComputedStyle(node).paddingRight));
+    expect(field.x + field.width - button.x).toBeLessThan(end);
   });
 });
 

@@ -16,6 +16,8 @@ export const Radio = ({ className, ...props }: RadioProps) => {
       {...group}
       {...props}
       {...field}
+      disabled={group.disabled || props.disabled}
+      required={group.required || props.required}
       onChange={group.onChange}
       className={withClass("hradio", className)}
       type="radio"

@@ -27,6 +27,10 @@
       flex-shrink: 0;
     }
 
+    & > :is(.hcheckbox, .hradio) {
+      margin-block: calc((1.25rem - $checkbox-size) / 2);
+    }
+
     & > .hswitch {
       margin-block: calc((1.25rem - $switch-height) / 2);
     }

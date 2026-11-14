@@ -1,5 +1,8 @@
 @use "shortcuts" as *;
 
+// Controls that wrap their field, which is one level inside them.
+$wrapped: ".hsearch, .hinput-highlight, .htextarea-highlight, .hcombobox, .hphone-input, .hdate-picker";
+
 .hsettings {
   display: flex;
   flex-direction: column;
@@ -40,7 +43,12 @@
     flex-shrink: 0;
   }
 
-  &:has(> :disabled, > .hsetting-text > :disabled) {
+  &:has(
+      > :disabled,
+      > .hsetting-text > :disabled,
+      > :is(#{$wrapped}) > :disabled,
+      > .hsetting-text > :is(#{$wrapped}) > :disabled
+    ) {
     .hsetting-title,
     .hsetting-description {
       color: $color-text-tertiary;
@@ -63,7 +71,7 @@
 
   // A control that fills its container sits under the description and spans
   // the text; compact ones stay on the right.
-  & > :is(.hselect, .hinput, .htextarea, .hsegmented) {
+  & > :is(.hselect, .hinput, .htextarea, .hsegmented, #{$wrapped}) {
     margin-block-start: 8px;
   }
 }

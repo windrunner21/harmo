@@ -70,3 +70,22 @@
     <a class="hcard" data-variant="ghost" href="#order-delayed">Order delayed</a>
   </nav>
 </play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    Resetting the form puts back the text it started with, and the clear
+    button follows.
+  </play-note>
+  <form style="display: flex; flex-direction: column; gap: 16px">
+    <div class="hsearch">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input class="hinput" type="search" name="q" placeholder="Search orders" aria-label="Search orders" value="refund" />
+      <button class="hsearch-clear" type="button" tabindex="-1" aria-label="Clear">
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </div>
+    <button class="hbutton" data-variant="secondary" type="reset" style="align-self: flex-start">
+      <span class="hbutton-label">Reset</span>
+    </button>
+  </form>
+</play-example>

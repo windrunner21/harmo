@@ -82,7 +82,8 @@ group, nest one horizontal Field per option in a Field with `role="radiogroup"`
 | `.herror` | 12px, `--harmo-color-danger` |
 | `.hfield-content` | Column for a horizontal label and description, 4px apart |
 
-- In a horizontal Field, a switch is centered on the label's first line.
+- In a horizontal Field, a checkbox, radio, or switch is centered on the
+  label's first line, whatever its size.
 - On hover devices, an enabled checkbox's, radio's, or switch's label turns
   `--harmo-color-primary-hover` with a pointer cursor. A disabled one,
   including inside a disabled `<fieldset>`, turns `--harmo-color-text-tertiary`.
@@ -124,9 +125,11 @@ Validation itself stays in the application.
 them: the control gets the generated `id`, and `aria-describedby` and
 `aria-invalid` for the parts there are. Harmo's form controls read these; an
 id or ARIA attribute you pass a control yourself wins, and descriptions are
-combined. A control's own `id` also becomes the label's `for` when the control
-is the Field's direct child; for one nested deeper, pass the same id as
-`htmlFor`. Other props are the wrapper `<div>`'s attributes.
+combined. A Field holds one control: every Harmo control inside it takes its
+id, so two would share one. Give several controls a Field each, inside a Field
+with `role="group"`. A control's own `id` also becomes the label's `for` when
+the control is the Field's direct child; for one nested deeper, pass the same
+id as `htmlFor`. Other props are the wrapper `<div>`'s attributes.
 
 | Prop | Effect |
 | --- | --- |
@@ -138,7 +141,7 @@ is the Field's direct child; for one nested deeper, pass the same id as
 | `labelAccessory` | Placed in the label row after the Optional marker, such as a [Password Input](password.md)'s strength |
 | `orientation` | `horizontal`, for a checkbox, radio, or switch: the control comes first, and only `label` and `description` apply |
 | `control` | `button`, for a control that's a button rather than a form field, such as a `<Button>`: the label is a `<span>` that names it through `aria-labelledby`. `combobox`, for a [Combobox](combobox.md): the label stays a `<label for>` and gets an `id` too, which names the field and its list |
-| `role` | `group` or `radiogroup` makes the Field the group, named by its label, for controls that each have their own; see [RadioGroup](radio.md#react) and [CheckboxGroup](checkbox.md#react) |
+| `role` | `group` or `radiogroup` makes the Field the group, named by its label, for controls that each have their own; see [RadioGroup](radio.md#react) and [CheckboxGroup](checkbox.md#react). The group is then the control: its own `aria-label` or `aria-labelledby` wins over the label, its `aria-invalid` over the error's, and its `aria-describedby` is combined with the Field's |
 
 ```tsx
 <Field
@@ -153,9 +156,9 @@ is the Field's direct child; for one nested deeper, pass the same id as
 
 ## Tokens
 
-`--harmo-border-radius-sm`, `--harmo-color-background-hover`,
-`--harmo-color-border`, `--harmo-color-danger`, `--harmo-color-primary-hover`,
-`--harmo-color-text`, `--harmo-color-text-secondary`,
+`--harmo-border-radius-sm`, `--harmo-checkbox-size`,
+`--harmo-color-background-hover`, `--harmo-color-border`,
+`--harmo-color-danger`, `--harmo-color-primary-hover`, `--harmo-color-text`, `--harmo-color-text-secondary`,
 `--harmo-color-text-tertiary`, `--harmo-duration-fast`,
 `--harmo-duration-normal`, `--harmo-duration-slow`,
 `--harmo-ease-out-cubic`, `--harmo-font-family`, `--harmo-font-line-height`,

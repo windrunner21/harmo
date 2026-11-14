@@ -4,6 +4,16 @@
 // at its start, and an optional clear button at its end once there's text.
 // It sets Input's own tokens inside it, so the Input keeps its hover, focus,
 // invalid, and disabled states.
+
+// The icons are sized in rem, so the room kept for them is too: with a larger
+// default font size, the text still starts after the magnifier and stops
+// before the clear button.
+$magnifier-inset: 12px;
+$magnifier-size: 1.125rem;
+$clear-inset: 8px;
+$clear-size: calc(1rem + 8px);
+$text-gap: 8px;
+
 .hsearch {
   --harmo-input-color-background: #{$color-background-secondary};
   --harmo-input-color-border: transparent;
@@ -26,9 +36,9 @@
     z-index: 1;
     justify-self: start;
 
-    inline-size: 1.125rem;
-    block-size: 1.125rem;
-    margin-inline-start: 12px;
+    inline-size: $magnifier-size;
+    block-size: $magnifier-size;
+    margin-inline-start: $magnifier-inset;
 
     color: $icon-color;
 
@@ -36,7 +46,7 @@
   }
 
   & > .hinput {
-    padding-inline-start: 38px;
+    padding-inline-start: calc(#{$magnifier-inset} + #{$magnifier-size} + #{$text-gap});
 
     appearance: none;
 
@@ -68,11 +78,12 @@
 
   // Room for the clear button while it shows.
   &:has(> .hsearch-clear:not([hidden])) > .hinput {
-    padding-inline-end: 40px;
+    padding-inline-end: calc(#{$clear-inset} + #{$clear-size} + #{$text-gap});
   }
 
   // The shortcut that reaches the field, such as ⌘K, at its end, as a hint;
-  // without a keyboard to press it, there's none.
+  // without a keyboard to press it, there's none. The room kept for it is in
+  // rem, as its text is.
   & > .hkbd {
     z-index: 1;
     justify-self: end;
@@ -83,7 +94,7 @@
   }
 
   &:has(> .hkbd:not([hidden])) > .hinput {
-    padding-inline-end: 72px;
+    padding-inline-end: calc(10px + 3.875rem);
   }
 
   @media (hover: none) {
@@ -104,10 +115,10 @@
   justify-self: end;
 
   box-sizing: border-box;
-  inline-size: 24px;
-  block-size: 24px;
+  inline-size: $clear-size;
+  block-size: $clear-size;
   margin: 0;
-  margin-inline-end: 8px;
+  margin-inline-end: $clear-inset;
   padding: 0;
 
   color: $icon-color;

@@ -1,4 +1,4 @@
-import { Card, Field, Search } from "@harmo-ui/react";
+import { Button, Card, Field, Search } from "@harmo-ui/react";
 import { useState } from "react";
 
 export const examples = {
@@ -49,4 +49,19 @@ export const examples = {
       </>
     );
   },
+
+  "In a form": () => (
+    <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Search
+        name="q"
+        placeholder="Search orders"
+        aria-label="Search orders"
+        clearLabel="Clear"
+        defaultValue="refund"
+      />
+      <Button variant="secondary" type="reset" style={{ alignSelf: "flex-start" }}>
+        Reset
+      </Button>
+    </form>
+  ),
 };

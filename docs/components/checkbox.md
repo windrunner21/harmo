@@ -44,6 +44,8 @@ A native checkbox with Harmo's appearance. Pair it with a label in a horizontal
   so reduced motion keeps the fade.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
+- In a horizontal Field the checkbox is centered on the label's first line,
+  at any size.
 - In forced-colors mode the browser draws its own checkbox.
 
 ## Accessibility

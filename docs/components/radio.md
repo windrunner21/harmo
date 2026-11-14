@@ -41,6 +41,7 @@ A group is a [Field](field.md) with `role="radiogroup"`, labelled by its
 | `checked` | Chosen |
 | `disabled` | Dimmed, not-allowed cursor; its Field label turns gray |
 | `required` | On the radios, when an answer is required |
+| `--harmo-checkbox-size` on the element | Size (default 20px), shared with [Checkbox](checkbox.md); the dot scales with it |
 
 ## Appearance and states
 
@@ -48,12 +49,14 @@ A group is a [Field](field.md) with `role="radiogroup"`, labelled by its
   border. On hover devices, an enabled unchecked radio's border turns
   `--harmo-color-primary-hover`, like Checkbox.
 - Checked: `--harmo-color-primary-tint` fill, `--harmo-color-primary` border,
-  and a 6px dot in the same color. The dot is a centered gradient, so it stays
-  centered at any display scaling.
+  and a dot in the same color, 6px at the default size. The dot is a centered
+  gradient, so it stays centered at any display scaling.
 - Like Checkbox, the fill and border fade in 150ms and the dot appears at once.
   Nothing moves, so reduced motion keeps the fade.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
+- In a horizontal Field the radio is centered on the label's first line, at
+  any size.
 - In forced-colors mode the browser draws its own radio.
 
 ## Accessibility

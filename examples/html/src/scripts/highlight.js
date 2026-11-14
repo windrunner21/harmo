@@ -62,7 +62,14 @@
     field.addEventListener("input", draw);
     field.addEventListener("scroll", follow);
     new ResizeObserver(match).observe(field);
-    field.form?.addEventListener("reset", () => setTimeout(draw));
+    // The form it belongs to when it resets, even one it joined later.
+    document.addEventListener(
+      "reset",
+      (event) => {
+        if (event.target === field.form) setTimeout(draw);
+      },
+      true,
+    );
     draw();
   }
 }

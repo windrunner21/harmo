@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Field, TextArea } from "@harmo-ui/react";
+import { Button, Field, TextArea } from "@harmo-ui/react";
 
 export const examples = {
   "With a counter": () => (
@@ -67,5 +67,20 @@ export const examples = {
         highlight={/\{\{\d+\}\}/g}
       />
     </Field>
+  ),
+
+  "In a form": () => (
+    <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Field label="Reply">
+        <TextArea
+          name="reply"
+          maxLength={500}
+          defaultValue="Hello, your order has shipped."
+        />
+      </Field>
+      <Button variant="secondary" type="reset" style={{ alignSelf: "flex-start" }}>
+        Reset
+      </Button>
+    </form>
   ),
 };

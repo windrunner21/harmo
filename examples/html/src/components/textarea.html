@@ -93,3 +93,27 @@ Your order <mark>{{2}}</mark> has shipped.
     </div>
   </div>
 </play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    Resetting the form puts back the text it started with, and the counter
+    follows.
+  </play-note>
+  <form style="display: flex; flex-direction: column; gap: 16px">
+    <div class="hfield">
+      <label class="hlabel" for="form-reply">Reply</label>
+      <textarea
+        class="htextarea"
+        id="form-reply"
+        name="reply"
+        maxlength="500"
+        aria-describedby="form-reply-counter"
+        data-example-counter
+      >Hello, your order has shipped.</textarea>
+      <p class="htextarea-counter" id="form-reply-counter">30/500</p>
+    </div>
+    <button class="hbutton" data-variant="secondary" type="reset" style="align-self: flex-start">
+      <span class="hbutton-label">Reset</span>
+    </button>
+  </form>
+</play-example>

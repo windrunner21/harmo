@@ -60,7 +60,7 @@ they mean something, say so in its label or description.
 
 | Change | When |
 | --- | --- |
-| The counter's text | As the text changes |
+| The counter's text | As the text changes, and when its form resets, unless a listener cancels the reset |
 | The text and `<mark>`s in the backdrop | As the text changes, if it marks parts of it |
 | The backdrop's size, type, padding, direction, and wrapping, copied from the field, with room for its scrollbar | As the text changes or the field resizes |
 | The backdrop's `scrollTop` and `scrollLeft` | As the field scrolls |

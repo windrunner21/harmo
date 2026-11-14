@@ -6,6 +6,7 @@ import {
   useState,
   type ComponentPropsWithoutRef,
 } from "react";
+import { renders } from "../children.ts";
 import { withClass } from "../withClass.ts";
 
 export type ErrorMessageProps = ComponentPropsWithoutRef<"p">;
@@ -17,17 +18,15 @@ export const ErrorMessage = ({
 }: ErrorMessageProps) => {
   const ref = useRef<HTMLParagraphElement>(null);
   const [message, setMessage] = useState(children);
-  if (children && children !== message) setMessage(children);
-  const closing = !children && Boolean(message);
+  const shown = renders(children);
+  if (shown && children !== message) setMessage(children);
+  const closing = !shown && renders(message);
 
   useEffect(() => {
     if (!closing || !ref.current) return;
     let current = true;
     const exits = ref.current.getAnimations().map((exit) => exit.finished);
-    Promise.all(exits).then(
-      () => current && setMessage(undefined),
-      () => {},
-    );
+    Promise.allSettled(exits).then(() => current && setMessage(undefined));
     return () => {
       current = false;
     };
@@ -40,7 +39,7 @@ export const ErrorMessage = ({
       className={withClass("herror", className)}
       hidden={closing}
     >
-      {children || message}
+      {shown ? children : message}
     </p>
   );
 };

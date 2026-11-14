@@ -105,16 +105,19 @@ export const Field = (fieldProps: FieldProps) => {
   const validated = !horizontal && "error" in fieldProps;
   const group = props.role === "group" || props.role === "radiogroup";
 
+  const marked = renders(optional);
+  const accessory = renders(labelAccessory);
+
   const described: FieldState = {
     "aria-describedby":
       [
-        optional && optionalId,
+        marked && optionalId,
         renders(description) && descriptionId,
         validated && errorId,
       ]
         .filter(Boolean)
         .join(" ") || undefined,
-    "aria-invalid": error ? true : undefined,
+    "aria-invalid": renders(error) ? true : undefined,
   };
 
   // A button can't be labelled by a <label>, so a span with an id names it. A
@@ -129,7 +132,18 @@ export const Field = (fieldProps: FieldProps) => {
         "aria-labelledby": button || combobox ? labelId : undefined,
         ...described,
       };
-  const groupName = group ? { "aria-labelledby": labelId, ...described } : {};
+  const named =
+    props["aria-label"] !== undefined || props["aria-labelledby"] !== undefined;
+  const groupName = group
+    ? {
+        "aria-labelledby": named ? props["aria-labelledby"] : labelId,
+        "aria-describedby":
+          [described["aria-describedby"], props["aria-describedby"]]
+            .filter(Boolean)
+            .join(" ") || undefined,
+        "aria-invalid": props["aria-invalid"] ?? described["aria-invalid"],
+      }
+    : {};
 
   const labelElement = group || button ? (
     <span className="hlabel" id={labelId}>
@@ -161,10 +175,10 @@ export const Field = (fieldProps: FieldProps) => {
     </>
   ) : (
     <>
-      {optional || labelAccessory ? (
+      {marked || accessory ? (
         <div className="hfield-label-row">
           {labelElement}
-          {optional && (
+          {marked && (
             <span className="hfield-optional" id={optionalId}>
               {optional}
             </span>

@@ -35,6 +35,7 @@ export const Checkbox = ({
       {...group}
       {...props}
       {...field}
+      disabled={group.disabled || props.disabled}
       onChange={group.onChange}
       ref={input}
       className={withClass("hcheckbox", className)}

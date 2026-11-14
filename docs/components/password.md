@@ -95,7 +95,8 @@ row.
   `--harmo-icon-hover-color` on hover, and `--harmo-color-text-tertiary` when
   disabled. Its edge is 12px from the border, like the text's start. The eye
   shows while the password is hidden, the crossed eye while it shows. Its focus
-  ring has no offset, since it sits inside the input.
+  ring has no offset, since it sits inside the input. The eye, its button, and
+  the room kept for it grow with the browser's font size.
 - Its [Tooltip](tooltip.md) names the click it will perform, "Show password" or
   "Hide password", on hover and keyboard focus; see
   [Accessibility](#accessibility) for the toggle's own name.
@@ -105,7 +106,8 @@ row.
 - The hint: 12px below the bars, colored like the word.
 - The details open 12px below the input, growing and fading in over 200ms
   (`--harmo-ease-out-cubic`) and closing in 150ms. Reduced motion: they appear
-  in place and fade.
+  in place and fade in; closing, they fade out in place, then their space
+  closes.
 - Edge's built-in reveal button is hidden, so there is only one toggle.
 
 ## Accessibility
@@ -126,10 +128,11 @@ row.
 | Remove `hidden` from `.hpassword-toggle`, and add it back | When the input gets a value, and when it's emptied |
 | Toggle `aria-pressed` and switch the input's `type` between `password` and `text` | On toggle click |
 | Set the tooltip text to "Hide password" or "Show password" for the next click | On toggle click |
-| Remove `hidden` from `.hpassword-details`, and add it back | When the input gets a value, and when it's emptied |
+| Remove `hidden` from `.hpassword-details`, and add it back, leaving the meter and hint as they were, so that they close without changing, and clearing only the strength word | When the input gets a value, and when it's emptied |
 | Set the word, hint text, and meter values, with the same `data-status` on all three; clear them | When the strength level changes; when the input is emptied |
 | Set `aria-invalid="true"` on the input, and remove it | While the password is too weak; otherwise |
 | Set `disabled` on the toggle, and remove it | When the input is disabled or enabled |
+| Hide the password again (`aria-pressed="false"`, `type="password"`, and the tooltip's "Show password"), then all of the above for the value the form puts back | When its form resets, unless a listener cancels the reset |
 
 The strength rule and wording belong to the app. For example: under 10
 characters is "Too weak" (`error`); upper case, lower case, digits, and
