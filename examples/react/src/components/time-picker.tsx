@@ -95,6 +95,7 @@ export const examples = {
           minuteLabel="Minute"
           periodLabel="AM or PM"
           defaultValue="14:30"
+          onValueChange={() => setSent(null)}
         />
         <div style={{ display: "flex", gap: 8 }}>
           <Button type="submit">Save</Button>

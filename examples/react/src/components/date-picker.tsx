@@ -112,6 +112,7 @@ export const examples = {
           nextLabel="Next month"
           today="2026-11-09"
           defaultValue="2026-11-18"
+          onValueChange={() => setSent(null)}
         />
         <div style={{ display: "flex", gap: 8 }}>
           <Button type="submit">Save</Button>

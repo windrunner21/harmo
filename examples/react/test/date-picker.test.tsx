@@ -111,6 +111,19 @@ describe("DatePicker", () => {
     expect(markup).toContain('<input type="hidden" name="due" value="2026-11-18"/>');
   });
 
+  test("className goes on .hdate-picker, not on the input inside it", () => {
+    const markup = renderToStaticMarkup(<DatePicker {...labels} label="Due" className="w-40" />);
+    expect(markup).toContain('<div class="hdate-picker w-40"');
+    expect(markup).toMatch(/<input[^>]*class="hinput"/);
+  });
+
+  test("disabled, there's no popup or Calendar, and the button names none", () => {
+    const markup = renderToStaticMarkup(<DatePicker {...labels} aria-label="Date" defaultValue="2026-11-18" disabled />);
+    expect(markup).not.toContain("hpopup");
+    expect(markup).not.toContain("hcalendar");
+    expect(markup).not.toMatch(/popovertarget/i);
+  });
+
   test("no name, no hidden input", () => {
     expect(renderToStaticMarkup(<DatePicker {...labels} aria-label="Date" />)).not.toContain('type="hidden"');
   });

@@ -2,30 +2,29 @@ import { Button, Field, FileInput } from "@harmo-ui/react";
 
 export const examples = {
   Default: () => (
-    <Field label="Attachment">
-      <FileInput
-        name="attachment"
-        chooseLabel="Choose file"
-        removeLabel="Remove attachment"
-      />
-    </Field>
+    <FileInput
+      label="Attachment"
+      name="attachment"
+      chooseLabel="Choose file"
+      removeLabel="Remove attachment"
+    />
   ),
   "Limited to a type and size": () => (
-    <Field label="Task list" description="A CSV file, up to 1 MB.">
-      <FileInput
-        name="task-list"
-        accept=".csv"
-        chooseLabel="Choose file"
-        removeLabel="Remove task list"
-        validate={(file) => {
-          if (!file.name.toLowerCase().endsWith(".csv")) {
-            return "Use a CSV file.";
-          }
-          if (file.size > 1024 * 1024) return "Use a file of 1 MB or less.";
-          return null;
-        }}
-      />
-    </Field>
+    <FileInput
+      label="Task list"
+      description="A CSV file, up to 1 MB."
+      name="task-list"
+      accept=".csv"
+      chooseLabel="Choose file"
+      removeLabel="Remove task list"
+      validate={(file) => {
+        if (!file.name.toLowerCase().endsWith(".csv")) {
+          return "Use a CSV file.";
+        }
+        if (file.size > 1024 * 1024) return "Use a file of 1 MB or less.";
+        return null;
+      }}
+    />
   ),
   "Compact drop area": () => (
     <Field label="Attachment">

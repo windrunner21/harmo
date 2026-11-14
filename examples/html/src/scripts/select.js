@@ -13,6 +13,8 @@
     const name = trigger.dataset.name;
     const chosen = () => [...listbox.querySelectorAll('.hoption[aria-selected="true"]')];
     const initial = chosen();
+    const valuesOf = (options) => options.map((option) => option.dataset.value ?? "").join("\n");
+    let held = valuesOf(initial);
     // This select's hidden inputs are the ones right after its popup.
     let inputs = [];
     for (let next = popup.nextElementSibling; next?.matches('input[type="hidden"]') && next.name === name; next = next.nextElementSibling) {
@@ -33,6 +35,10 @@
       const labels = options.map((option) => option.querySelector(".hoption-label").textContent.trim());
       value.textContent = labels.length ? labels.join(", ") : placeholder;
       value.toggleAttribute("data-placeholder", labels.length === 0);
+      // What an app hears as onValueChange in React: the choice changed, by a
+      // pick or a reset.
+      if (valuesOf(options) !== held) trigger.dispatchEvent(new CustomEvent("example-select-change", { bubbles: true }));
+      held = valuesOf(options);
 
       if (!name) return;
       const values = options.map((option) => option.dataset.value ?? "");
@@ -67,13 +73,18 @@
     if (name) new MutationObserver(sync).observe(trigger, { attributeFilter: ["disabled"] });
   }
 
-  // The form example shows what it would send instead of leaving the page.
+  // The form example shows what it would send instead of leaving the page,
+  // until a choice changes, a reset's included.
   for (const form of document.querySelectorAll("form[data-example-form]")) {
     const output = form.querySelector("[data-example-submitted]");
+    const waiting = output.value;
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const sent = new URLSearchParams(new FormData(form)).toString();
       output.value = sent ? `Sends ${sent}` : "Sends nothing";
+    });
+    document.addEventListener("example-select-change", (event) => {
+      if (event.target.form === form) output.value = waiting;
     });
   }
 }

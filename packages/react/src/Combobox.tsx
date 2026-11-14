@@ -12,6 +12,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+import { flushSync } from "react-dom";
 import { ExpandChevron } from "./ExpandChevron.tsx";
 import { Field, useField, type StackedFieldProps } from "./field/Field.tsx";
 import {
@@ -25,6 +26,7 @@ import {
 import { placePopup } from "./Popup.tsx";
 import { Tag, TagRemove } from "./Tag.tsx";
 import { TagList, TagListContext } from "./TagList.tsx";
+import type { FormatCount } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
 type ComboboxValue =
@@ -36,6 +38,7 @@ type ComboboxValue =
       onValueChange?: (value: string | null) => void;
       removeLabel?: never;
       moreLabel?: never;
+      formatCount?: never;
     }
   | {
       multiple?: false;
@@ -45,6 +48,7 @@ type ComboboxValue =
       onValueChange?: (value: string) => void;
       removeLabel?: never;
       moreLabel?: never;
+      formatCount?: never;
     }
   | {
       multiple: true;
@@ -54,6 +58,7 @@ type ComboboxValue =
       onValueChange?: (value: string[]) => void;
       removeLabel: (label: string) => string;
       moreLabel: (count: number) => string;
+      formatCount?: FormatCount;
     };
 
 type ComboboxControlProps = Omit<
@@ -108,6 +113,7 @@ const ComboboxControl = ({
   onValueChange,
   removeLabel,
   moreLabel,
+  formatCount,
   inputValue,
   onInputChange,
   filter = true,
@@ -131,12 +137,17 @@ const ComboboxControl = ({
   const anchor = `--${useId()}`;
   const box = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
+  const listKeys = useRef<((event: globalThis.KeyboardEvent) => void) | null>(null);
   useImperativeHandle(ref, () => input.current as HTMLInputElement, []);
   const popup = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
   // Choosing several, focus is in the field, on its text or a remove button:
   // every choice shows, in a row that scrolls, rather than "+N".
   const [editing, setEditing] = useState(false);
+  // What's typed is being followed: the list opens once there's something to
+  // show, such as results arriving from a search. Escape, Enter, a pick, and
+  // leaving the field stop it, until the next keystroke.
+  const following = useRef(false);
 
   // Each option's label, kept once a render with it is committed, so a choice
   // whose option is no longer among the children, such as after a new
@@ -215,17 +226,23 @@ const ComboboxControl = ({
     setValuesState(next);
     (onValueChange as ((value: string[]) => void) | undefined)?.(next);
   };
+  // The option typed text names, if it can be picked.
+  const optionNamed = (typedText: string) => {
+    const wanted = typedText.trim().toLowerCase();
+    if (wanted === "") return undefined;
+    return options.find(
+      (option) =>
+        !option.disabled &&
+        !option.hidden &&
+        option.label.trim().toLowerCase() === wanted,
+    );
+  };
   // Typed text as a choice: an option it names that can be picked, or, with
   // free text, the text itself.
   const resolve = (typedText: string) => {
     const wanted = typedText.trim();
     if (wanted === "") return null;
-    const named = options.find(
-      (option) =>
-        !option.disabled &&
-        !option.hidden &&
-        option.label.trim().toLowerCase() === wanted.toLowerCase(),
-    );
+    const named = optionNamed(wanted);
     return named ? named.value : freeText ? wanted : null;
   };
   const addTyped = (texts: string[]) => {
@@ -259,6 +276,7 @@ const ComboboxControl = ({
       clearText();
       return;
     }
+    following.current = false;
     setTyped(false);
     const label = labelOf(item) ?? "";
     report(label);
@@ -266,12 +284,13 @@ const ComboboxControl = ({
     else choose(item);
   };
 
-  // Leaving the field in pick mode, after typing: text naming an option that
-  // can be picked picks it, an empty field clears the choice, and anything
-  // else gives way to the chosen label, so the field never shows a value
-  // that isn't one. Choosing several, the text becomes a choice if it can,
-  // and empties. Made read-only while typed in, nothing is picked: the field
-  // goes back to the choice, or, choosing several, empties.
+  // Leaving the field in pick mode after typing, or Enter with the list
+  // closed: text naming an option that can be picked picks it, an empty
+  // field clears the choice, and anything else gives way to the chosen
+  // label, so the field never shows a value that isn't one. Choosing
+  // several, the text becomes a choice if it can, and empties. Made
+  // read-only while typed in, nothing is picked: the field goes back to the
+  // choice, or, choosing several, empties.
   const settle = () => {
     if (isReadOnly()) {
       if (multiple) {
@@ -292,41 +311,56 @@ const ComboboxControl = ({
     }
     if (freeText || !typed) return;
     setTyped(false);
-    const current = (input.current?.value ?? text).trim().toLowerCase();
-    if (current === "") {
+    const current = input.current?.value ?? text;
+    if (current.trim() === "") {
       choose(null);
       report("");
       return;
     }
-    const named = options.find(
-      (option) =>
-        !option.disabled &&
-        !option.hidden &&
-        option.label.trim().toLowerCase() === current,
-    );
+    const named = optionNamed(current);
     const next = named ? named.value : chosen;
     if (named) choose(named.value);
     report(labelOf(next) ?? "");
   };
 
-  // A form reset restores the value the page loaded with.
+  // A form reset restores the value the page loaded with, and, unless you
+  // hold the value, tells you when that changes it; once it's happened,
+  // since another listener may cancel it, and not if the field has gone by
+  // then, such as when the reset closes what it's in.
   const defaults = JSON.stringify(defaultValue ?? null);
+  const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
     const form = input.current?.form;
     if (!form) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
+    const reset = (event: Event) => {
+      clearTimeout(resetting.current);
+      resetting.current = setTimeout(() => {
         if (event.defaultPrevented) return;
         const restored = JSON.parse(defaults) as string | string[] | null;
+        following.current = false;
         setTyped(false);
         setDraft("");
-        if (multiple) setValuesState((restored as string[] | null) ?? []);
-        else if (freeText) setFreeState((restored as string | null) ?? "");
-        else setChosenState(restored as string | null);
+        if (multiple) {
+          const next = (restored as string[] | null) ?? [];
+          setValuesState(next);
+          if (value === undefined && next.join("\n") !== valuesState.join("\n")) {
+            (onValueChange as ((value: string[]) => void) | undefined)?.(next);
+          }
+        } else if (freeText) {
+          const next = (restored as string | null) ?? "";
+          setFreeState(next);
+          if (value === undefined && next !== freeState) changeValue?.(next);
+        } else {
+          const next = restored as string | null;
+          setChosenState(next);
+          if (value === undefined && next !== chosenState) changeValue?.(next);
+        }
       });
+    };
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, [defaults, multiple, freeText, props.form]);
+  });
 
   // The list opens only with something to show: an option the query
   // matches, or a message; with filter off, any option. Options you hide
@@ -362,7 +396,8 @@ const ComboboxControl = ({
     report(next);
     if (freeText && !multiple) setFree(next);
     const forQuery = filter ? next : "";
-    if (shows(forQuery) && !(added && next.trim() === "")) open(forQuery);
+    following.current = !(added && next.trim() === "");
+    if (shows(forQuery) && following.current) open(forQuery);
     else close();
   };
 
@@ -373,6 +408,14 @@ const ComboboxControl = ({
   const close = () => {
     if (isOpen()) popup.current?.hidePopover();
   };
+
+  // Options that come or go, such as a search's results, count once they're
+  // rendered: a list left with nothing to show closes, and one that has
+  // something again opens, while what's typed is followed.
+  useLayoutEffect(() => {
+    if (!shows(query)) close();
+    else if (following.current && input.current?.matches(":focus")) open();
+  });
 
   // The choices' remove buttons, out of the Tab order: the arrow keys reach
   // them from the field, toward its start, and move between them.
@@ -421,7 +464,7 @@ const ComboboxControl = ({
     <>
       <div
         ref={box}
-        className="hcombobox"
+        className={withClass("hcombobox", className)}
         data-multiple={multiple ? "" : undefined}
         hidden={hidden}
         style={{ anchorName: anchor } as CSSProperties}
@@ -459,7 +502,10 @@ const ComboboxControl = ({
       >
         {multiple && (
           <TagListContext value={{ editing }}>
-            <TagList moreLabel={moreLabel ?? ((count) => `+${count}`)}>
+            <TagList
+              moreLabel={moreLabel ?? ((count) => `+${count}`)}
+              formatCount={formatCount}
+            >
               {values.map((item, index) => {
                 const label = labelOf(item) ?? item;
                 return (
@@ -487,7 +533,7 @@ const ComboboxControl = ({
           {...props}
           {...field}
           ref={input}
-          className={withClass("hinput", className)}
+          className="hinput"
           type="text"
           role="combobox"
           autoComplete="off"
@@ -495,6 +541,7 @@ const ComboboxControl = ({
           aria-expanded={expanded}
           aria-controls={disabled ? undefined : listId}
           data-free-text={freeText ? "" : undefined}
+          data-name={multiple || !freeText ? name : undefined}
           name={freeText && !multiple ? name : undefined}
           // Choosing several, the choices satisfy required, not the text:
           // required holds only while none is made, and aria-required says
@@ -516,7 +563,9 @@ const ComboboxControl = ({
           }}
           onKeyDown={(event) => {
             onKeyDown?.(event);
+            if (event.nativeEvent.defaultPrevented) return;
             if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+            listKeys.current?.(event.nativeEvent);
             const readOnly = event.currentTarget.readOnly;
             if (multiple && text === "" && values.length && canRemove) {
               // Backspace takes the last choice away, and the arrow toward
@@ -535,6 +584,7 @@ const ComboboxControl = ({
             if (event.key === "Escape") {
               // Open, Escape closes the list; closed, it empties the field.
               // Either way it stops there, so a dialog around it stays open.
+              following.current = false;
               if (isOpen()) {
                 event.preventDefault();
                 close();
@@ -548,18 +598,20 @@ const ComboboxControl = ({
               }
               return;
             }
-            if (event.key !== "Enter" || event.defaultPrevented) return;
+            if (event.key !== "Enter" || event.nativeEvent.defaultPrevented) return;
             // Choosing several, Enter with nothing highlighted makes the
             // text a choice, if it can be one, and doesn't send the form.
             if (multiple) {
               if (text.trim() !== "") {
                 event.preventDefault();
                 if (addTyped([text])) {
+                  following.current = false;
                   clearText();
                   close();
                 }
               } else if (isOpen()) {
                 event.preventDefault();
+                following.current = false;
                 close();
               }
               return;
@@ -567,12 +619,29 @@ const ComboboxControl = ({
             // Enter with nothing highlighted closes the list; in pick mode it
             // doesn't send the form, since nothing was picked.
             if (isOpen()) {
+              following.current = false;
               if (!freeText) event.preventDefault();
               close();
+              return;
+            }
+            // Closed, in pick mode after typing, Enter settles the text before
+            // a form is sent, so it sends what the field shows. Text that
+            // names no option gives way to the chosen label, and the form
+            // isn't sent, as the field showed something else. Either way the
+            // list stays closed until the next keystroke, though settling
+            // brings back every option.
+            following.current = false;
+            if (!freeText && typed) {
+              const current = event.currentTarget.value;
+              if (readOnly || (current.trim() !== "" && !optionNamed(current))) {
+                event.preventDefault();
+              }
+              flushSync(settle);
             }
           }}
           onBlur={(event) => {
             onBlur?.(event);
+            following.current = false;
             close();
             settle();
           }}
@@ -604,6 +673,7 @@ const ComboboxControl = ({
                 autoHighlight: !freeText,
                 onChoose: pick,
                 canOpen: () => shows(query),
+                keys: listKeys,
               }}
             >
               <Listbox

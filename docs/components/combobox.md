@@ -15,7 +15,7 @@ instead.
 | --- | --- |
 | CSS | `combobox.css`, `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label; `tag-list.css`, `tag.css`, and `tooltip.css` to choose several |
 | Element | `<div class="hcombobox">` holding `<input class="hinput" type="text" role="combobox">` and an [Expand Chevron](expand-chevron.md); a `<div class="hpopup" popover="manual">` holding a [Listbox](listbox.md) |
-| Parts | On the input: `aria-autocomplete="list"`, `aria-expanded`, `aria-controls` naming the list, and `autocomplete="off"`; `anchor-name` on `.hcombobox`, and the same name as the popup's `position-anchor`; a hidden input after the popup for the value a form sends, in pick mode |
+| Parts | On the input: `aria-autocomplete="list"`, `aria-expanded`, `aria-controls` naming the list, and `autocomplete="off"`; `anchor-name` on `.hcombobox`, and the same name as the popup's `position-anchor`; a hidden input after the popup for the value a form sends, in pick mode, named by `data-name` on the input |
 | Required | A name for the field: a `<label for>` with an `id`, which `aria-labelledby` on the field and the list both point to, or `aria-label` on each |
 | Unique | Every id, and each anchor name |
 | Script | Required: opening, filtering, the keyboard, and picking; see [What a script does](#what-a-script-does) |
@@ -26,9 +26,10 @@ instead.
 <div class="hfield">
   <label class="hlabel" for="assignee" id="assignee-label">Assign to</label>
   <div class="hcombobox" style="anchor-name: --assignee">
-    <input class="hinput" id="assignee" type="text" role="combobox" autocomplete="off"
-      aria-autocomplete="list" aria-expanded="false" aria-controls="assignee-listbox"
-      aria-labelledby="assignee-label" placeholder="Search agents" value="" />
+    <input class="hinput" id="assignee" data-name="assignee" type="text" role="combobox"
+      autocomplete="off" aria-autocomplete="list" aria-expanded="false"
+      aria-controls="assignee-listbox" aria-labelledby="assignee-label"
+      placeholder="Search agents" value="" />
     <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
       <g class="hexpand-chevron-head">
         <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
@@ -52,7 +53,13 @@ instead.
 The list takes a [Listbox](listbox.md)'s options and groups, and its status
 for no matches. Its popup has no button to open it, so it's
 `popover="manual"`, and anchored to the field itself, so it's at least as
-wide as the field.
+wide as the field. Its hidden inputs are those right after the popup with the
+name in the input's `data-name`, so other hidden inputs of yours can follow
+them.
+
+Your app can put options in the list itself as the text changes, such as
+results from a search on your server: while what's typed is followed, the list
+opens once there's something to show and closes when there's nothing.
 
 ### Choosing several
 
@@ -82,9 +89,10 @@ wide as the field.
         </span>
       </li>
     </ul>
-    <input class="hinput" id="notify" type="text" role="combobox" autocomplete="off"
-      aria-autocomplete="list" aria-expanded="false" aria-controls="notify-listbox"
-      aria-labelledby="notify-label" placeholder="Search agents" value="" />
+    <input class="hinput" id="notify" data-name="notify" type="text" role="combobox"
+      autocomplete="off" aria-autocomplete="list" aria-expanded="false"
+      aria-controls="notify-listbox" aria-labelledby="notify-label"
+      placeholder="Search agents" value="" />
     <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
       <g class="hexpand-chevron-head">
         <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
@@ -120,7 +128,8 @@ sends it.
 | Pick mode (default) | The value is an option: its `data-value` goes in the hidden input, and the field shows its label |
 | `data-free-text` on the input | Free text: what's typed is the value, so the input itself has the `name`, and the list suggests; there's no hidden input |
 | `.hlistbox-empty` after the list | The status for no matches, `role="status"`, in the page from the start and empty; the script puts the app's message in it, such as "No agents found", when nothing matches. Without one, the list closes when nothing matches |
-| `data-multiple` on `.hcombobox` | Choosing several: the choices are `.htag`s in a `.htag-list` before the input, each with a `.htag-remove` button, `tabindex="-1"`, named in the app's language, such as "Remove Ana Lopez"; its "+N" button has `tabindex="-1"` too, so the field is one Tab stop. One hidden input for each choice, all with the `name`, and the input's `form` if it has one; `aria-multiselectable="true"` on the list. The input has no `name`, even with free text |
+| `data-name` on the input | The name of its hidden inputs, in pick mode and choosing several. Without it there are none, and a form doesn't send the value |
+| `data-multiple` on `.hcombobox` | Choosing several: the choices are `.htag`s in a `.htag-list` before the input, each with a `.htag-remove` button, `tabindex="-1"`, named in the app's language, such as "Remove Ana Lopez"; its "+N" button has `tabindex="-1"` too, so the field is one Tab stop. One hidden input for each choice, all with the `data-name`, and the input's `form` if it has one; `aria-multiselectable="true"` on the list. The input has no `name`, even with free text |
 | `aria-disabled="true"` on an option | Shown, but can't be picked, not even by typing its label and leaving the field |
 | `disabled` on the input | Disabled, as for an Input; leave out its `aria-controls` and the popup, and disable the hidden inputs too, so a form doesn't send them. In a disabled `<fieldset>`, the list stays closed too |
 | `readonly` on the input | Read-only: the list stays closed, however it's asked for, so nothing can be picked, and leaving the field picks nothing from what was typed |
@@ -129,9 +138,10 @@ sends it.
 
 ## Appearance and states
 
-- An [Input](input.md), with [Select](select.md)'s Expand Chevron 21px in from
-  its end, drawn over the field and letting clicks through to it. The
-  chevron folds while the list is open.
+- An [Input](input.md), with [Select](select.md)'s Expand Chevron where a
+  Select has it, 16px in from its end, drawn over the field and letting
+  clicks through to it. The text stops 10px before the chevron. The chevron
+  folds while the list is open.
 - The list opens below the field, or above where there's more room, at
   least as wide as the field, and wider for a long option, as a
   [Popup](popup.md) does.
@@ -140,10 +150,13 @@ sends it.
 - Choosing several, the box is Input's, one row high however many choices
   there are, around the tags and the text, which has no box of its own; it
   takes the text's states, such as its focus ring and its error border. The
-  tags sit 4px in from its border, so their 4px corners follow its 8px ones.
-  The placeholder shows only with no choice made.
+  tags sit 4px in from its border, so their 4px corners follow its 8px ones,
+  6px apart, and the text follows 12px after the last; with no choice made, it
+  starts where an Input's does. The placeholder shows only with no choice
+  made.
 - At rest, the tags that fit show, then "+N", whose tooltip shows the rest on
-  hover, as in a [Tag List](tag-list.md); the text gives its room to them.
+  hover, as in a [Tag List](tag-list.md), and whose text is the app's; the
+  text gives its room to them.
 - While focus is in the field, on the text or a remove button, every tag
   shows, in a row that scrolls sideways, without a scrollbar, and stays
   scrolled to its end as choices are added; the text keeps 4rem to itself.
@@ -161,8 +174,8 @@ sends it.
   | --- | --- |
   | Typing | Opens the list and filters it; in pick mode, the first match is highlighted |
   | ↓ / ↑ | Open the list at the chosen option or the first, or at the last; move through it |
-  | Enter | Picks the highlighted option; with none, closes the list, and in pick mode doesn't send the form |
-  | Escape | Closes the list; closed, empties the field, and stops there, so a dialog around it stays open. On an empty field with the list closed, it's left to what's around it, such as a dialog, which closes |
+  | Enter | Picks the highlighted option; with none, closes the list, and in pick mode doesn't send the form. With the list closed after typing in pick mode, it settles the text first, as leaving the field does, so a form sends what the field shows; text that names no option goes back to the pick, and the form isn't sent |
+  | Escape | Closes the list, which stays closed as options arrive until the next keystroke; closed, empties the field, and stops there, so a dialog around it stays open. On an empty field with the list closed, it's left to what's around it, such as a dialog, which closes |
   | Tab | Leaves without picking |
   | Home / End | Move the caret, as in any field |
 
@@ -192,10 +205,11 @@ sends it.
 | --- | --- |
 | Show the popup, set `aria-expanded`, and hide the options whose label, description, and keywords don't hold the text, and the groups left with none; put the message in the status when there are none, and empty it otherwise | On typing; the list stays closed when nothing matches and there's no status, however it's opened: typing, a click, or Down |
 | Highlight the first match (`data-active`, and `aria-activedescendant` on the field) | On typing, in pick mode |
-| Show the option's label in the field; in pick mode, select it and put its `data-value` in the hidden input | On a pick, by Enter or a click |
-| Text naming an option that isn't disabled picks it; an empty field clears the pick; other text goes back to the picked label | On leaving the field after typing, in pick mode |
+| Show the option's label in the field; in pick mode, select it and put its `data-value` in the hidden input | On a pick, by Enter or a click; not when your own click handler on the option calls `preventDefault()`, as in a [Listbox](listbox.md#what-a-script-does) |
+| Text naming an option that isn't disabled picks it; an empty field clears the pick; other text goes back to the picked label, and keeps a form from being sent on Enter | On leaving the field after typing, and on Enter with the list closed, in pick mode |
+| Open the list once options arrive and there's something to show, and close it once there's nothing; after Escape, Enter, or a pick, keep it closed until the next keystroke. Options and groups that arrive `hidden`, those inside an arriving group included, stay hidden whatever is typed | When options are added to the list or taken away, while the field has focus after typing |
 | Keep the pointer from taking focus from the field | On a press in the list |
-| Choosing several: add a tag and a hidden input, check the option (`aria-selected="true"`), and empty the text; on a pick of a chosen option, take them away. The list stays open. Required, set `required` on the input while there's no choice, and take it away while there is | On a pick, by Enter or a click |
+| Choosing several: add a tag and a hidden input, check the option (`aria-selected="true"`), and empty the text; on a pick of a chosen option, take them away. The list stays open. Required, set `required` on the input while there's no choice, and take it away while there is | On a pick, by Enter or a click; not when your own click handler on the option calls `preventDefault()` |
 | Choosing several: make the text a choice, if it names an option that isn't disabled, or with free text, and empty it | On Enter with nothing highlighted, on leaving the field, and, with free text, on a comma |
 | Choosing several: take a choice's tag and hidden input away, uncheck its option, and move focus on as the keys above say | On its remove button, or Backspace in an empty field |
 | Keep the pointer from taking focus from the field, and open the list on a click anywhere in the box | On a press in the box, choosing several |
@@ -210,13 +224,21 @@ sends it.
 
 `<Combobox>` renders the field, the list, and, with a `name` in pick mode, the
 hidden input. Its children are [Listbox](listbox.md#react) `<Option>`s and
-`<OptionGroup>`s. Other props are the input's attributes.
+`<OptionGroup>`s. Other props are the input's attributes, except `className`,
+which goes on `.hcombobox`, and `hidden`, which goes on its Field, or on
+`.hcombobox` without a `label`. `ref` is the input.
+
+Your `onKeyDown` runs before its own keys: `preventDefault()` in it keeps a key
+from opening the list, moving the highlight, picking with Enter, or closing or
+emptying with Escape, as in a [Listbox](listbox.md#react). In HTML, a keydown
+listener of your own that runs first, and calls `preventDefault()`, leaves the key
+to you.
 
 | Prop | Effect |
 | --- | --- |
 | `label`, `optional`, `description`, `error` | As for a [Field](field.md#react); the last three need a `label` |
 | `value` or `defaultValue` | In pick mode, the picked option's value, or `null`: the field shows its label, except while it's typed in, so a value you change shows at once; with free text, the text; choosing several, the choices, in the order they were made |
-| `onValueChange` | Called with the new value: an option's value or `null` in pick mode, the text with free text, the choices choosing several |
+| `onValueChange` | Called with the new value: an option's value or `null` in pick mode, the text with free text, the choices choosing several. A form reset that changes the value calls it too, unless you hold the value |
 | `freeText` | Free text: what's typed is the value, and the options suggest; choosing several, typed text can be a choice of its own |
 | `multiple` | Choosing several, as tags in the field |
 | `required` | Choosing several, the choices satisfy it, not the text: the input is `required` only while no choice is made, with `aria-required` throughout |
@@ -224,8 +246,9 @@ hidden input. Its children are [Listbox](listbox.md#react) `<Option>`s and
 | `disabled` | Disabled: no list, and a form doesn't send the value |
 | `removeLabel` | Choosing several, required: names each tag's remove button from its label, in your app's language, such as ``(label) => `Remove ${label}` `` |
 | `moreLabel` | Choosing several, required: names "+N" from the count, such as ``(count) => `${count} more` `` |
+| `formatCount` | Choosing several: writes the count "+N" shows, as in a [Tag List](tag-list.md#react), such as in your app's digits. `` `+${count}` `` by default |
 | `inputValue`, `onInputChange` | The field's text, held by you, such as to fetch options as it changes |
-| `filter` | `false` leaves the filtering to you: every option you render shows |
+| `filter` | `false` leaves the filtering to you: every option you render shows. While what's typed is followed, the list opens as your results arrive and closes when there are none |
 | `name` | The name a form sends the value under |
 | `emptyMessage` | The status shown, and read, when nothing matches, such as "No agents found"; without it, the list closes |
 
@@ -259,10 +282,24 @@ hidden input. Its children are [Listbox](listbox.md#react) `<Option>`s and
 
 A choice keeps its option's label once seen, so its tag, or the field in pick
 mode, still shows it when its option is no longer among the children, such
-as after a new search with `filter={false}`.
+as after a new search with `filter={false}`:
+
+```tsx
+const [text, setText] = useState("");
+const results = useAgentSearch(text); // your search, on your server
+
+<Combobox label="Find an agent" name="agent" filter={false} onInputChange={setText}>
+  {results.map((agent) => (
+    <Option key={agent.id} value={agent.id}>
+      {agent.name}
+    </Option>
+  ))}
+</Combobox>
+```
 
 ## Tokens
 
+`--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-space-sm`,
 `--harmo-border-radius`, `--harmo-color-background-secondary`,
 `--harmo-color-danger`, `--harmo-color-focus`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,

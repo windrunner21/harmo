@@ -15,8 +15,9 @@
   }
 
   & > .hinput {
-    // A small button, 2px from the end, and 5px before it.
-    padding-inline-end: calc(1.8125rem + 7px);
+    // A small button, a small step before it, and the button's 2px from the
+    // field's outer edge, less the 1px border the padding starts inside.
+    padding-inline-end: calc(#{$control-height-small} + 1px + #{$space-2xs});
   }
 
   & > .hbutton {
@@ -29,5 +30,5 @@
 // As wide as its Calendar, however wide the field.
 .hpopup.hdate-picker-popup {
   min-inline-size: 0;
-  padding: 16px;
+  padding: $space-sm;
 }

@@ -5,17 +5,16 @@ import { useState } from "react";
 
 export const examples = {
   Default: () => (
-    <Field label="Phone">
-      <PhoneInput
-        phone={libphonenumber}
-        locale="en"
-        defaultCountry="US"
-        countries={["AZ", "DE", "FR", "GB", "TR", "US"]}
-        countryLabel="Country code"
-        searchLabel="Search countries"
-        emptyMessage="No countries found"
-      />
-    </Field>
+    <PhoneInput
+      label="Phone"
+      phone={libphonenumber}
+      locale="en"
+      defaultCountry="US"
+      countries={["AZ", "DE", "FR", "GB", "TR", "US"]}
+      countryLabel="Country code"
+      searchLabel="Search countries"
+      emptyMessage="No countries found"
+    />
   ),
   "With a number already": () => (
     <Field label="Phone">
@@ -36,24 +35,26 @@ export const examples = {
     const [valid, setValid] = useState(false);
 
     return (
-      <>
-        <Field label="Phone">
-          <PhoneInput
-            phone={libphonenumber}
-            locale="en"
-            defaultCountry="US"
-            countries={["AZ", "DE", "FR", "GB", "TR", "US"]}
-            countryLabel="Country code"
-            searchLabel="Search countries"
-            emptyMessage="No countries found"
-            onValueChange={(value, details) => {
-              setNumber(value);
-              setValid(details.valid);
-            }}
-          />
-        </Field>
+      <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <PhoneInput
+          label="Phone"
+          phone={libphonenumber}
+          locale="en"
+          defaultCountry="US"
+          countries={["AZ", "DE", "FR", "GB", "TR", "US"]}
+          countryLabel="Country code"
+          searchLabel="Search countries"
+          emptyMessage="No countries found"
+          onValueChange={(value, details) => {
+            setNumber(value);
+            setValid(details.valid);
+          }}
+        />
         <Status status={valid ? "success" : undefined}>{valid ? number : "Not a complete number yet"}</Status>
-      </>
+        <Button variant="secondary" type="reset" style={{ alignSelf: "flex-start" }}>
+          Reset
+        </Button>
+      </form>
     );
   },
   "An example as the placeholder": () => (

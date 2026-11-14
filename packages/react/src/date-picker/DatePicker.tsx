@@ -21,6 +21,7 @@ import { calendar } from "../icons.ts";
 import { Input } from "../Input.tsx";
 import { placePopup } from "../Popup.tsx";
 import { useMergedRef } from "../useMergedRef.ts";
+import { withClass } from "../withClass.ts";
 import {
   longDateOf,
   readNaturalDate,
@@ -111,6 +112,7 @@ const DatePickerControl = ({
   readOnly,
   hidden,
   ref,
+  className,
   onBlur,
   onKeyDown,
   onCompositionEnd,
@@ -157,6 +159,7 @@ const DatePickerControl = ({
 
   const [open, setOpen] = useState(false);
   const [openings, setOpenings] = useState(0);
+  if (disabled && open) setOpen(false);
 
   const reportedInvalid = useRef(false);
   useEffect(() => {
@@ -184,25 +187,30 @@ const DatePickerControl = ({
     };
     node.addEventListener("toggle", toggled);
     return () => node.removeEventListener("toggle", toggled);
-  }, []);
+  }, [disabled]);
 
   useEffect(() => {
     const node = popup.current;
-    if ((disabled || readOnly) && node?.matches(":popover-open")) node.hidePopover();
-  }, [disabled, readOnly]);
+    if (readOnly && node?.matches(":popover-open")) node.hidePopover();
+  }, [readOnly]);
 
+  const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
     const owner = input.current?.form;
     if (!owner) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
+    const reset = (event: Event) => {
+      clearTimeout(resetting.current);
+      resetting.current = setTimeout(() => {
         if (event.defaultPrevented) return;
         const initial = isValue(defaultValue) ? defaultValue : null;
         setChosen(initial);
         setFollowed(valueProp === undefined ? initial : current);
         setText(written(valueProp === undefined ? initial : current));
         setInvalid(false);
+        if (valueProp === undefined && initial !== current) onValueChange?.(initial);
       });
+    };
     owner.addEventListener("reset", reset);
     return () => owner.removeEventListener("reset", reset);
   });
@@ -294,7 +302,7 @@ const DatePickerControl = ({
   return (
     <>
       <div
-        className="hdate-picker"
+        className={withClass("hdate-picker", className)}
         hidden={hidden}
         style={{ anchorName: anchor } as CSSProperties}
       >
@@ -326,7 +334,7 @@ const DatePickerControl = ({
             aria-label={calendarLabel}
             aria-haspopup="dialog"
             aria-expanded={open}
-            popoverTarget={popupId}
+            popoverTarget={disabled ? undefined : popupId}
             disabled={disabled || readOnly}
             onPointerDown={() => {
               pressingButton.current = true;
@@ -342,37 +350,39 @@ const DatePickerControl = ({
           <input type="hidden" name={name} form={form} disabled={disabled} value={current ?? ""} />
         )}
       </div>
-      <div
-        ref={popup}
-        className="hpopup hdate-picker-popup"
-        id={popupId}
-        popover=""
-        role="dialog"
-        aria-label={calendarLabel}
-        style={{ positionAnchor: anchor } as CSSProperties}
-        onBlur={leavePopup}
-        onBeforeToggle={(event) => {
-          const opening = event.newState === "open";
-          setOpen(opening);
-          if (opening) setOpenings((count) => count + 1);
-          placePopup(event.currentTarget, opening);
-        }}
-      >
-        <FieldContext value={{}}>
-          <Calendar
-            key={openings}
-            locale={locale}
-            previousLabel={previousLabel}
-            nextLabel={nextLabel}
-            value={current?.slice(0, 10) ?? null}
-            onValueChange={pick}
-            min={min}
-            max={max}
-            weekStartsOn={weekStartsOn}
-            today={today}
-          />
-        </FieldContext>
-      </div>
+      {!disabled && (
+        <div
+          ref={popup}
+          className="hpopup hdate-picker-popup"
+          id={popupId}
+          popover=""
+          role="dialog"
+          aria-label={calendarLabel}
+          style={{ positionAnchor: anchor } as CSSProperties}
+          onBlur={leavePopup}
+          onBeforeToggle={(event) => {
+            const opening = event.newState === "open";
+            setOpen(opening);
+            if (opening) setOpenings((count) => count + 1);
+            placePopup(event.currentTarget, opening);
+          }}
+        >
+          <FieldContext value={{}}>
+            <Calendar
+              key={openings}
+              locale={locale}
+              previousLabel={previousLabel}
+              nextLabel={nextLabel}
+              value={current?.slice(0, 10) ?? null}
+              onValueChange={pick}
+              min={min}
+              max={max}
+              weekStartsOn={weekStartsOn}
+              today={today}
+            />
+          </FieldContext>
+        </div>
+      )}
     </>
   );
 };

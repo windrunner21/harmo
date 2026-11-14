@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, pointAt, settled, test, watchTransitions } from "./playgrounds.ts";
 
 // What docs/components/time-picker.md says: the time on the locale's clock, its
 // value in a hidden input; columns that stay open as you choose, and their
@@ -156,6 +156,62 @@ onEachPlayground("time-picker", () => {
     await expect(all.popup).toBeHidden();
   });
 
+  test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", async ({ page }) => {
+    const { button } = parts(await example(page, "time-picker-default"));
+    const [box, value, chevron] = await boxes(button, button.locator(".htime-picker-value"), button.locator(".hexpand-chevron"));
+    // Each past the trigger's 1px border.
+    expect(value.x - box.x).toBeCloseTo(11, 0);
+    expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
+  });
+
+  test("the arrow keys move the choice at once, with no fade, while the pointer's hover still fades in", async ({ page }) => {
+    const all = parts(await example(page, "time-picker-default"));
+    await open(all);
+    const before = all.option("Hour", "02");
+    const after = all.option("Hour", "03");
+    const left = await watchTransitions(before, "background-color");
+    const arrived = await watchTransitions(after, "background-color");
+    await page.keyboard.press("ArrowDown");
+    await expect(after).toHaveAttribute("aria-selected", "true");
+    expect(await left()).toBe(0);
+    expect(await arrived()).toBe(0);
+
+    // The one after the choice, so it's in view in its column. The pointer's
+    // first move in the column ends the keys' "at once", but by then the
+    // browser has drawn the option it landed on, so it lands on the choice
+    // first, as a hand passes over the column on its way.
+    const other = all.option("Hour", "04");
+    const hovered = await watchTransitions(other, "background-color");
+    await pointAt(page, after);
+    await pointAt(page, other);
+    expect(await hovered()).toBe(1);
+  });
+
+  test("the arrow keys move the choice at once off an option the pointer rests on, and its hover fades again once the pointer moves", async ({ page }) => {
+    const all = parts(await example(page, "time-picker-default"));
+    await open(all);
+    const before = all.option("Hour", "03");
+    const after = all.option("Hour", "04");
+    await clickAt(page, before);
+    await expect(before).toHaveAttribute("aria-selected", "true");
+    await settled(before);
+    const left = await watchTransitions(before, "background-color");
+    const arrived = await watchTransitions(after, "background-color");
+    await page.keyboard.press("ArrowDown");
+    await expect(after).toHaveAttribute("aria-selected", "true");
+    // Still under the pointer, it shows its hover at once.
+    await expect(before).toHaveCSS("background-color", await color(page, "--harmo-color-background-hover"));
+    expect(await left()).toBe(0);
+    expect(await arrived()).toBe(0);
+
+    // A move onto the new choice first, as in the test above.
+    const other = all.option("Hour", "02");
+    const hovered = await watchTransitions(other, "background-color");
+    await pointAt(page, after);
+    await pointAt(page, other);
+    expect(await hovered()).toBe(1);
+  });
+
   test("in a form: it sends the time, and Reset goes back", async ({ page }) => {
     const container = await example(page, "time-picker-in-a-form");
     const all = parts(container);
@@ -166,9 +222,12 @@ onEachPlayground("time-picker", () => {
     await container.getByRole("button", { name: "Save" }).click();
     await expect(container.getByRole("status")).toHaveText("Sent 17:30");
 
+    // A reset changes the time back, so what was sent no longer shows: React
+    // calls onValueChange for it.
     await container.getByRole("button", { name: "Reset" }).click();
     await expect(all.button).toHaveText(/02:30\sPM/);
     await expect(all.hidden).toHaveValue("14:30");
+    await expect(container.getByRole("status")).toBeHidden();
     await open(all);
     await expect(all.option("Hour", "02")).toHaveAttribute("aria-selected", "true");
     await expect(all.option("Hour", "05")).toHaveAttribute("aria-selected", "false");

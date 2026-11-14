@@ -1,5 +1,5 @@
-import { Button, Combobox, Option, OptionGroup } from "@harmo-ui/react";
-import { useState } from "react";
+import { Button, Combobox, Field, Option, OptionGroup } from "@harmo-ui/react";
+import { useEffect, useState } from "react";
 
 export const examples = {
   Default: () => (
@@ -78,6 +78,42 @@ export const examples = {
     </Combobox>
   ),
 
+  "Searching as you type": () => {
+    // Stands in for a search on your server.
+    const agents = [
+      { value: "sam", name: "Sam Rivera" },
+      { value: "ana", name: "Ana Lopez" },
+      { value: "lee", name: "Lee Chen" },
+      { value: "priya", name: "Priya Shah" },
+    ];
+    const [text, setText] = useState("");
+    const [results, setResults] = useState<typeof agents>([]);
+    useEffect(() => {
+      const wanted = text.trim().toLowerCase();
+      const timer = setTimeout(
+        () => setResults(wanted ? agents.filter((agent) => agent.name.toLowerCase().includes(wanted)) : []),
+        300,
+      );
+      return () => clearTimeout(timer);
+    }, [text]);
+
+    return (
+      <Combobox
+        label="Find an agent"
+        name="find-agent"
+        placeholder="Search agents"
+        filter={false}
+        onInputChange={setText}
+      >
+        {results.map((agent) => (
+          <Option key={agent.value} value={agent.value}>
+            {agent.name}
+          </Option>
+        ))}
+      </Combobox>
+    );
+  },
+
   "Picked by the app": () => {
     const [owner, setOwner] = useState<string | null>(null);
     return (
@@ -117,17 +153,19 @@ export const examples = {
         <Option value="sam">sam@example.com</Option>
         <Option value="ana">ana@example.com</Option>
       </Combobox>
-      <Combobox
-        label="Watchers"
-        multiple
-        name="form-watchers"
-        defaultValue={["ana"]}
-        removeLabel={(label) => `Remove ${label}`}
-        moreLabel={(count) => `${count} more`}
-      >
-        <Option value="sam">Sam Rivera</Option>
-        <Option value="ana">Ana Lopez</Option>
-      </Combobox>
+      <Field label="Watchers" control="combobox">
+        <Combobox
+          multiple
+          name="form-watchers"
+          defaultValue={["ana"]}
+          removeLabel={(label) => `Remove ${label}`}
+          moreLabel={(count) => `${count} more`}
+        >
+          <Option value="sam">Sam Rivera</Option>
+          <Option value="ana">Ana Lopez</Option>
+        </Combobox>
+        <input type="hidden" name="form-record" value="42" />
+      </Field>
       <Button variant="secondary" type="reset" style={{ alignSelf: "flex-start" }}>
         Reset
       </Button>

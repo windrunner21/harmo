@@ -10,10 +10,11 @@ import {
   type ComponentPropsWithRef,
   type ReactNode,
 } from "react";
-import { FieldContext } from "./field/Field.tsx";
+import { Field, FieldContext } from "./field/Field.tsx";
 import { Input } from "./Input.tsx";
 import { Option } from "./listbox/Option.tsx";
 import { Select } from "./Select.tsx";
+import type { ControlField } from "./types.ts";
 import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
@@ -38,8 +39,10 @@ export interface PhoneNumberDetails {
   valid: boolean;
 }
 
-export interface PhoneInputProps
-  extends Omit<ComponentPropsWithRef<"input">, "value" | "defaultValue" | "type" | "children"> {
+type PhoneInputControlProps = Omit<
+  ComponentPropsWithRef<"input">,
+  "value" | "defaultValue" | "type" | "children"
+> & {
   phone: PhoneParser;
   locale: string;
   defaultCountry: string;
@@ -52,7 +55,9 @@ export interface PhoneInputProps
   examples?: object;
   renderFlag?: (country: string) => ReactNode;
   onValueChange?: (value: string, details: PhoneNumberDetails) => void;
-}
+};
+
+export type PhoneInputProps = PhoneInputControlProps & ControlField;
 
 const flagOf = (country: string) =>
   String.fromCodePoint(...Array.from(country.toUpperCase(), (letter) => 0x1f1e6 + letter.charCodeAt(0) - 65));
@@ -74,7 +79,24 @@ const caretAfter = (text: string, digits: number) => {
   return text.length;
 };
 
-export const PhoneInput = ({
+export const PhoneInput = (phoneProps: PhoneInputProps) => {
+  const { label, optional, description, error, hidden, ...props } = phoneProps;
+  if (label === undefined) return <PhoneInputControl {...props} hidden={hidden} />;
+
+  return (
+    <Field
+      label={label}
+      optional={optional}
+      description={description}
+      hidden={hidden}
+      {...("error" in phoneProps && { error })}
+    >
+      <PhoneInputControl {...props} />
+    </Field>
+  );
+};
+
+const PhoneInputControl = ({
   phone,
   locale,
   defaultCountry,
@@ -97,7 +119,7 @@ export const PhoneInput = ({
   readOnly,
   placeholder,
   ...props
-}: PhoneInputProps) => {
+}: PhoneInputControlProps) => {
   const input = useRef<HTMLInputElement>(null);
   const inputRef = useMergedRef(input, ref);
   const caret = useRef<number | null>(null);
@@ -150,18 +172,24 @@ export const PhoneInput = ({
     if (start) report(start.text, start.country);
   }, [defaultValue]);
 
+  const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
     const form = input.current?.form;
     if (!form) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
+    const reset = (event: Event) => {
+      clearTimeout(resetting.current);
+      resetting.current = setTimeout(() => {
         if (event.defaultPrevented) return;
-        setCountry(start?.country ?? firstCountry);
-        setText(start?.text ?? "");
+        const restored = { country: start?.country ?? firstCountry, text: start?.text ?? "" };
+        setCountry(restored.country);
+        setText(restored.text);
+        if (restored.country !== country || restored.text !== text) report(restored.text, restored.country);
       });
+    };
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, [start, firstCountry, props.form]);
+  });
 
   useLayoutEffect(() => {
     if (caret.current === null || !input.current) return;

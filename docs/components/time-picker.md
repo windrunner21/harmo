@@ -75,20 +75,25 @@ The hidden input holds the time as `09:00`, 24-hour, whatever the trigger shows.
 | --- | --- |
 | `aria-selected="true"` on an option | The hour, minute, or period chosen, filled |
 | `data-placeholder` on `.htime-picker-value` | No time chosen: the placeholder's color |
+| `data-instant` on a column | Its options change at once, their hover too, without a fade. A script sets it while the arrow keys move the choice |
 | `disabled` on the trigger and the hidden input | It can't be opened, and the time isn't sent with a form |
 
 ## Appearance and states
 
 - The trigger looks like a [Select](select.md), as wide as what it shows, with
-  digits of one width, so it doesn't shift as the time changes. Set an
+  digits of one width, so it doesn't shift as the time changes, and Select's
+  insets: the text 10px from its start, the chevron 16px from its end. Set an
   `inline-size` to make it wider.
 - The popup opens under the trigger, one column beside the next with a line
   between them. Columns are 200px tall at most and scroll on their own.
 - Options: at least 40 by 32px, growing with the text size and for a longer
   period's name, 14px text, with `--harmo-border-radius-sm` corners.
-  Hovered, on `--harmo-color-background-hover`. Chosen,
-  `--harmo-color-on-primary` on `--harmo-color-primary-fill`, and in
-  forced-colors mode in the system's highlight.
+  Hovered, on `--harmo-color-background-hover`, fading in over
+  `--harmo-button-duration`. Chosen, `--harmo-color-on-primary` on
+  `--harmo-color-primary-fill`, and in forced-colors mode in the system's
+  highlight. The choice moves at once, without a fade, so the arrow keys feel
+  immediate, even off an option the pointer rests on, which shows its hover
+  at once.
 - A column that has keyboard focus shows the focus ring just inside its edge.
 - Right-to-left, the columns run from the right.
 
@@ -117,6 +122,7 @@ The hidden input holds the time as `09:00`, 24-hour, whatever the trigger shows.
 | Move `aria-selected` and `aria-activedescendant`, write the time in `.htime-picker-value`, remove `data-placeholder`, and set the hidden input | When an option is chosen |
 | Scroll each column to its chosen option, and focus the first column | As the popup opens |
 | Keep the chosen option in view | As the keyboard moves through a column |
+| Set `data-instant` on the column, and remove it | As the keyboard moves through a column, and once the pointer moves over it |
 | Close the popup and focus the trigger | On Enter or Space in a column |
 | Close the popup | When focus leaves it for something outside it, unless the trigger is being pressed, which toggles it. A press is forgotten once focus has left, so one dragged off the trigger doesn't keep the popup open later |
 | Restore the time, the options, and the hidden input to how the page loaded | On the form's reset |
@@ -131,7 +137,9 @@ does all of this.
 
 `<TimePicker>` renders the Field, the trigger, the popup, and its columns, and
 does everything above. Times are strings, as `"14:30"`, 24-hour. Other props are
-the `<button>`'s attributes.
+the trigger `<button>`'s attributes, and `ref` is the trigger. `className` goes on
+the trigger, its outer element, and `hidden` on its Field, or on the trigger
+without a `label`.
 
 | Prop | Effect |
 | --- | --- |
@@ -139,7 +147,7 @@ the `<button>`'s attributes.
 | `locale` | Required: its clock, digits, and order of columns |
 | `hourLabel`, `minuteLabel`, `periodLabel` | Required: the columns' names |
 | `value`, `defaultValue` | The time, or `null` for none. A time that doesn't exist is ignored |
-| `onValueChange` | Called with the time as it changes |
+| `onValueChange` | Called with the time as it changes. A form reset that changes the time calls it too, unless you hold the value, with `""` when there's no time to go back to |
 | `name` | Sends the time with a form, in a hidden input |
 | `placeholder` | What it shows with no time chosen |
 | `minuteStep` | The minutes offered, every 15 by default, from 1 to 60. A time between them is still offered, and stays offered as you move off it |
@@ -164,6 +172,7 @@ the `<button>`'s attributes.
 `--harmo-color-background-hover`, `--harmo-color-primary-fill`,
 `--harmo-color-primary-fill-hover`, `--harmo-color-on-primary`,
 `--harmo-border-radius-sm`, `--harmo-focus-outline`, `--harmo-button-duration`,
-`--harmo-space-2xs`, `--harmo-control-height`, `--harmo-color-text-secondary`,
+`--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-space-sm`,
+`--harmo-control-height`, `--harmo-color-text-secondary`,
 `--harmo-color-text-tertiary`; those of an [Input](input.md) and the
 [Popup](popup.md).

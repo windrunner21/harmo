@@ -68,6 +68,7 @@
       value.removeAttribute("data-placeholder");
       if (hidden) hidden.value = time;
       for (const list of lists) showChosen(list, false);
+      button.dispatchEvent(new CustomEvent("example-time-picker-change", { detail: time }));
     };
 
     const pick = (list, option) => {
@@ -121,15 +122,25 @@
           if (option) list.setAttribute("aria-activedescendant", option.id);
           else list.removeAttribute("aria-activedescendant");
         });
+        button.dispatchEvent(new CustomEvent("example-time-picker-change", { detail: initial.time }));
       }),
     );
 
-    // "In a form": says what would be sent, rather than leave the playground.
+    // "In a form": says what would be sent, rather than leave the playground,
+    // until the time changes, a reset's included, as an app would.
     const form = button.form;
     if (form && "exampleSend" in form.dataset) {
+      const status = form.querySelector('[role="status"]');
+      let held = hidden.value;
+      button.addEventListener("example-time-picker-change", (event) => {
+        if (event.detail !== held) {
+          status.hidden = true;
+          status.textContent = "";
+        }
+        held = event.detail;
+      });
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        const status = form.querySelector('[role="status"]');
         status.textContent = `Sent ${new FormData(form).get(hidden.name)}`;
         status.hidden = false;
       });
@@ -141,11 +152,16 @@
         if (option) pick(list, option);
       });
 
+      // While the keys move the choice, nothing in the column fades, not even
+      // the option it leaves under a pointer at rest, until the pointer moves.
+      list.addEventListener("pointermove", () => list.removeAttribute("data-instant"));
+
       list.addEventListener("keydown", (event) => {
         const options = [...list.querySelectorAll('[role="option"]')];
         const index = options.indexOf(chosenOf(list));
         const go = (next) => {
           event.preventDefault();
+          list.setAttribute("data-instant", "");
           pick(list, options[next]);
         };
         const forward = getComputedStyle(list).direction === "rtl" ? -1 : 1;

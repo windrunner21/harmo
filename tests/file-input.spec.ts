@@ -187,6 +187,46 @@ onEachPlayground("file-input", () => {
     await expect(remove).toBeHidden();
   });
 
+  test("what the page loads with doesn't settle in, and what a change puts in does (data-new)", async ({ page }) => {
+    const { root, input, text, remove } = await parts(page, "file-input-with-a-file-already-attached");
+    await expect(text).not.toHaveAttribute("data-new");
+    await expect(remove).not.toHaveAttribute("data-new");
+    await input.setInputFiles(csv());
+    await expect(text).toHaveText("tasks.csv");
+    await expect(text).toHaveAttribute("data-new", "");
+    await expect(remove).toHaveAttribute("data-new", "");
+    await expect(root.locator(".hfile-input-check")).toHaveAttribute("data-new", "");
+    // The check draws itself over --harmo-duration-normal, as things coming in
+    // do, so a theme's timing reaches it.
+    await root.evaluate((node) => (node as HTMLElement).style.setProperty("--harmo-duration-normal", "123ms"));
+    await expect(root.locator(".hfile-input-check")).toHaveCSS("transition-duration", "0.123s");
+
+    const avatar = await parts(page, "file-input-avatar-with-a-picture");
+    const picture = avatar.root.locator(".hfile-input-preview");
+    await expect(picture).not.toHaveAttribute("data-new");
+    await avatar.input.setInputFiles(png);
+    await expect(picture).toHaveAttribute("src", /^blob:/);
+    await expect(picture).toHaveAttribute("data-new", "");
+  });
+
+  test("the name's fade, the remove button's, and the picture's take --harmo-ease-out-cubic, so a theme's curve reaches them", async ({ page }) => {
+    const curve = "cubic-bezier(0.1, 0.9, 0.2, 1)";
+    // Each property's curve, as the browser pairs the two lists.
+    const curves = (element: Locator) =>
+      element.evaluate((node, curve) => {
+        node.closest<HTMLElement>(".hfile-input")!.style.setProperty("--harmo-ease-out-cubic", curve);
+        const style = getComputedStyle(node);
+        const easings = style.transitionTimingFunction.split(/,\s*(?![^(]*\))/);
+        return Object.fromEntries(style.transitionProperty.split(/,\s*/).map((name, index) => [name, easings[index % easings.length]]));
+      }, curve);
+    const { text, remove } = await parts(page, "file-input-with-a-file-already-attached");
+    expect((await curves(text)).opacity).toBe(curve);
+    expect((await curves(remove)).opacity).toBe(curve);
+    const avatar = await parts(page, "file-input-avatar-with-a-picture");
+    const picture = await curves(avatar.root.locator(".hfile-input-preview"));
+    expect([picture.opacity, picture.transform]).toEqual([curve, curve]);
+  });
+
   test("a long name ends in an ellipsis, with the whole of it in its title and the remove button beside it", async ({ page }) => {
     const { root, button, text, remove } = await parts(page, "file-input-long-file-name");
     const whole = await text.textContent();

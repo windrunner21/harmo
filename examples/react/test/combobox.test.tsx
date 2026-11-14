@@ -50,7 +50,26 @@ describe("Combobox", () => {
       { type: "hidden", name: "notify", value: "sam", form: "f" },
       { type: "hidden", name: "notify", value: "ana", form: "f" },
     ]);
-    expect(markup).not.toMatch(/<input[^>]*role="combobox"[^>]*name=/);
+    expect(markup).not.toMatch(/<input(?=[^>]*role="combobox")(?=[^>]*\sname=)/);
+  });
+
+  test("data-name on the input names its hidden inputs, in pick mode and choosing several, not with free text", () => {
+    const named = (markup: string) => /<input[^>]*role="combobox"[^>]*>/.exec(markup)![0].match(/data-name="([^"]*)"/)?.[1];
+    expect(named(renderToStaticMarkup(<Combobox aria-label="Owner" name="owner">{options}</Combobox>))).toBe("owner");
+    expect(
+      named(renderToStaticMarkup(<Combobox aria-label="Notify" multiple freeText name="notify" {...several}>{options}</Combobox>)),
+    ).toBe("notify");
+    expect(named(renderToStaticMarkup(<Combobox aria-label="To" freeText name="to">{options}</Combobox>))).toBeUndefined();
+  });
+
+  test("className goes on .hcombobox, not on the input inside it", () => {
+    const markup = renderToStaticMarkup(
+      <Combobox label="Owner" className="w-40" name="owner">
+        {options}
+      </Combobox>,
+    );
+    expect(markup).toContain('<div class="hcombobox w-40"');
+    expect(markup).toMatch(/<input(?=[^>]*class="hinput")(?=[^>]*role="combobox")/);
   });
 
   test("disabled, it has no popup and no aria-controls, and its hidden inputs are disabled", () => {

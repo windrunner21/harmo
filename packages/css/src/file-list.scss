@@ -57,7 +57,7 @@
   border-radius: $border-radius;
 
   transition:
-    opacity $duration-normal ease-out,
+    opacity $duration-normal $ease-out-cubic,
     transform $duration-normal $ease-out-cubic;
 
   &[hidden] {
@@ -174,7 +174,8 @@
   }
 }
 
-// The check draws itself once a file has finished.
+// The check draws itself once a file has finished (data-new), not when the
+// page loads with the file finished.
 .hfile-list-done {
   flex-shrink: 0;
 
@@ -187,14 +188,16 @@
   & > path {
     stroke-dasharray: 1;
 
-    transition: stroke-dashoffset $duration-slow $ease-out-cubic;
-
-    @starting-style {
-      stroke-dashoffset: 1;
-    }
+    transition: stroke-dashoffset $duration-normal $ease-out-cubic;
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
+    }
+  }
+
+  &[data-new] > path {
+    @starting-style {
+      stroke-dashoffset: 1;
     }
   }
 }
@@ -211,7 +214,7 @@
 
   background-color: color-mix(in srgb, $color-border-control 50%, transparent);
 
-  transition: opacity $duration-normal ease-out;
+  transition: opacity $duration-normal $ease-out-cubic;
 
   &::before {
     content: "";
@@ -224,7 +227,7 @@
     transform: scaleX(var(--hfile-list-progress, 0));
     transform-origin: left;
 
-    transition: transform $duration-normal ease-out;
+    transition: transform $duration-normal $ease-out-cubic;
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;

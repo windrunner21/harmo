@@ -143,9 +143,11 @@
 
     field.addEventListener("compositionend", () => apply(field.value, field.selectionStart ?? field.value.length));
 
+    // A click the app stops, with preventDefault() in its own handler on the
+    // option, chooses nothing, as listbox.js leaves it unselected.
     list.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || field.readOnly || option.dataset.exampleValue === country) return;
+      if (!option || field.readOnly || event.defaultPrevented || option.dataset.exampleValue === country) return;
       markCountry(option.dataset.exampleValue);
       show("");
       requestAnimationFrame(() => field.focus());

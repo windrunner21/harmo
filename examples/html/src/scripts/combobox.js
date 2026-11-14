@@ -4,8 +4,12 @@
 // in the field and, in pick mode, its data-value in the hidden input; with
 // free text, the text is the value. Leaving the field in pick mode, text that
 // names an option picks it, an empty field clears the choice, and anything
-// else goes back to the chosen label. Escape closes the list, or, closed,
-// empties the field.
+// else goes back to the chosen label, and so does Enter with the list closed,
+// which doesn't send the form when the text named nothing. Escape closes the
+// list, or, closed, empties the field. Options the app adds or takes away, such
+// as a search's results, count as they change: while what's typed is
+// followed, the list opens once there's something to show and closes when
+// there's nothing.
 //
 // Choosing several (data-multiple on .hcombobox), each choice is a Tag in a
 // Tag List before the text, with a remove button, and a hidden input after
@@ -27,18 +31,24 @@
     const wrapper = input.closest(".hcombobox");
     const freeText = input.hasAttribute("data-free-text");
     const multiple = wrapper.hasAttribute("data-multiple");
+    // Its hidden inputs are those right after the popup with the name in
+    // data-name, and no others, whatever follows them.
+    const name = input.dataset.name ?? null;
     const hiddenInputs = () => {
       const found = [];
-      for (let next = popup.nextElementSibling; next?.matches('input[type="hidden"]'); next = next.nextElementSibling) found.push(next);
+      for (let next = popup.nextElementSibling; next?.matches('input[type="hidden"]') && next.name === name; next = next.nextElementSibling) found.push(next);
       return found;
     };
-    const hidden = multiple ? null : (hiddenInputs()[0] ?? null);
-    const options = [...listbox.querySelectorAll(".hoption")];
-    const groups = [...listbox.querySelectorAll(".hoption-group")];
+    const hidden = multiple || freeText ? null : (hiddenInputs()[0] ?? null);
+    const options = () => [...listbox.querySelectorAll(".hoption")];
+    const groups = () => [...listbox.querySelectorAll(".hoption-group")];
     // Options and groups the page hides stay hidden, whatever is typed, and
     // so do the options in a group it hides.
-    const kept = new Set([...options, ...groups].filter((element) => element.hidden));
+    const kept = new Set([...options(), ...groups()].filter((element) => element.hidden));
     const isKept = (option) => kept.has(option) || kept.has(option.closest(".hoption-group"));
+    // What typing hid, so one moved within the list isn't taken for one the
+    // page hides.
+    const filtered = new WeakSet();
     const labelOf = (option) => option.querySelector(".hoption-label").textContent.trim();
     // What typing finds an option by: its label, its description, and its
     // keywords (data-example-keywords).
@@ -55,12 +65,18 @@
     // is only ever what's typed.
     let typed = false;
     const query = () => (typed || multiple ? input.value : "");
+    // What's typed is being followed: the list opens once there's something
+    // to show. Escape, Enter, a pick, and leaving the field stop it, until
+    // the next keystroke.
+    let following = false;
 
     // Several: the choices in order, from the hidden inputs the page loaded
-    // with, and the name they're sent under.
-    const name = multiple ? (hiddenInputs()[0]?.name ?? input.dataset.exampleName) : null;
+    // with.
     let values = multiple ? hiddenInputs().map((field) => field.value) : [];
     const initial = { option: chosen(), text: input.value, values };
+    // In pick mode, the chosen label, kept for when its option leaves the
+    // list, such as after a new search.
+    let pickedLabel = initial.option ? labelOf(initial.option) : "";
 
     const isOpen = () => popup.matches(":popover-open");
     const open = () => isOpen() || popup.showPopover();
@@ -70,9 +86,14 @@
     // groups left with any, and the empty message when there are none.
     const filter = (text) => {
       const wanted = text.trim().toLowerCase();
-      for (const option of options) option.hidden = isKept(option) || !searchTextOf(option).includes(wanted);
-      for (const group of groups) group.hidden = kept.has(group) || !group.querySelector(".hoption:not([hidden])");
-      const none = options.every((option) => option.hidden);
+      const hide = (element, hidden) => {
+        element.hidden = hidden;
+        if (hidden && !kept.has(element)) filtered.add(element);
+        else filtered.delete(element);
+      };
+      for (const option of options()) hide(option, isKept(option) || !searchTextOf(option).includes(wanted));
+      for (const group of groups()) hide(group, kept.has(group) || !group.querySelector(".hoption:not([hidden])"));
+      const none = options().every((option) => option.hidden);
       if (empty) empty.textContent = none ? (message ?? "") : "";
       return !none || empty !== null;
     };
@@ -89,12 +110,13 @@
         if (option) option.append(listbox.querySelector(".hoption-check") ?? template.content.firstElementChild.cloneNode(true));
         else listbox.querySelector(".hoption-check")?.remove();
       }
+      pickedLabel = option ? labelOf(option) : "";
       if (hidden) hidden.value = option?.dataset.value ?? "";
     };
 
     // Several: an option's value, an option by value, and a choice's label.
     const valueOf = (option) => option.dataset.value ?? labelOf(option);
-    const optionOf = (value) => options.find((option) => valueOf(option) === value);
+    const optionOf = (value) => options().find((option) => valueOf(option) === value);
     const labelFor = (value) => {
       const option = optionOf(value);
       return option ? labelOf(option) : value;
@@ -144,7 +166,7 @@
           after = field;
         }
       }
-      for (const option of options) option.setAttribute("aria-selected", String(values.includes(valueOf(option))));
+      for (const option of options()) option.setAttribute("aria-selected", String(values.includes(valueOf(option))));
       if (required) input.required = values.length === 0;
     };
     const setValues = (next) => {
@@ -152,12 +174,17 @@
       render();
     };
 
-    // Typed text as a choice: an option it names that can be picked, or,
-    // with free text, the text itself.
+    // The option typed text names, if it can be picked; and typed text as a
+    // choice: that option, or, with free text, the text itself.
+    const optionNamed = (text) => {
+      const wanted = text.trim().toLowerCase();
+      if (!wanted) return undefined;
+      return options().find((option) => option.getAttribute("aria-disabled") !== "true" && !isKept(option) && labelOf(option).toLowerCase() === wanted);
+    };
     const resolve = (text) => {
       const wanted = text.trim();
       if (!wanted) return null;
-      const named = options.find((option) => option.getAttribute("aria-disabled") !== "true" && !isKept(option) && labelOf(option).toLowerCase() === wanted.toLowerCase());
+      const named = optionNamed(wanted);
       return named ? valueOf(named) : freeText ? wanted : null;
     };
     const addTyped = (texts) => {
@@ -212,33 +239,61 @@
         input.value = parts.pop().trimStart();
         added = addTyped(parts);
       }
-      if (!filter(input.value) || (added && !input.value.trim())) {
+      following = !(added && !input.value.trim());
+      if (!filter(input.value) || !following) {
         close();
         return;
       }
       open();
-      highlight(freeText ? null : listbox.querySelector('.hoption:not([aria-disabled="true"], [hidden])'));
+      highlightFirst();
     };
+    const highlightFirst = () => highlight(freeText ? null : listbox.querySelector('.hoption:not([aria-disabled="true"], [hidden])'));
     input.addEventListener("input", (event) => enter(event.isComposing));
     if (multiple && freeText) input.addEventListener("compositionend", () => enter(false));
     input.addEventListener("click", open);
 
     // listbox.js marks a pick selected (not with free text) and closes; this
-    // shows it in the field.
+    // shows it in the field. A click the app stops, with preventDefault() in
+    // its own handler on the option, picks nothing, here as there.
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (multiple || !option || option.getAttribute("aria-disabled") === "true") return;
+      if (multiple || !option || option.getAttribute("aria-disabled") === "true" || event.defaultPrevented) return;
       typed = false;
+      following = false;
       input.value = labelOf(option);
-      if (!freeText && hidden) hidden.value = option.dataset.value ?? "";
+      if (freeText) return;
+      pickedLabel = labelOf(option);
+      if (hidden) hidden.value = option.dataset.value ?? "";
     });
+
+    // Options that come or go: kept hidden if they arrive hidden, on their own
+    // or in a group that arrives with them, and the list opened or closed to
+    // match while the text is followed. A list left with nothing to show
+    // closes, whatever opened it.
+    new MutationObserver((records) => {
+      for (const record of records) {
+        for (const node of record.addedNodes) {
+          if (node.nodeType !== Node.ELEMENT_NODE) continue;
+          for (const element of [node, ...node.querySelectorAll(".hoption, .hoption-group")]) {
+            if (element.hidden && !filtered.has(element) && element.matches(".hoption, .hoption-group")) kept.add(element);
+          }
+        }
+      }
+      const followed = following && document.activeElement === input;
+      if (!isOpen() && !followed) return;
+      if (!filter(query())) close();
+      else if (!isOpen()) {
+        open();
+        highlightFirst();
+      } else if (!listbox.querySelector(".hoption[data-active]:not([hidden])")) highlightFirst();
+    }).observe(listbox, { childList: true, subtree: true });
 
     // Several: on the popup, so listbox.js has toggled the option first. The
     // text empties for the next choice, and the list stays open on all of
     // them, with the picked option still highlighted.
     popup.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!multiple || !option || option.getAttribute("aria-disabled") === "true") return;
+      if (!multiple || !option || option.getAttribute("aria-disabled") === "true" || event.defaultPrevented) return;
       const value = valueOf(option);
       setValues(option.getAttribute("aria-selected") === "true" ? [...values, value] : values.filter((other) => other !== value));
       input.value = "";
@@ -284,6 +339,7 @@
 
       if (event.key === "Escape") {
         // Either way it stops there, so a dialog around it stays open.
+        following = false;
         if (isOpen()) {
           event.preventDefault();
           close();
@@ -302,11 +358,13 @@
         if (input.value.trim()) {
           event.preventDefault();
           if (addTyped([input.value])) {
+            following = false;
             input.value = "";
             close();
           }
         } else if (isOpen()) {
           event.preventDefault();
+          following = false;
           close();
         }
         return;
@@ -314,8 +372,20 @@
       // Enter with nothing highlighted closes the list; in pick mode it
       // doesn't send the form, since nothing was picked.
       if (isOpen()) {
+        following = false;
         if (!freeText) event.preventDefault();
         close();
+        return;
+      }
+      // Closed, in pick mode after typing, Enter settles the text before a
+      // form is sent, so it sends what the field shows. Text that names no
+      // option gives way to the chosen label, and the form isn't sent, as
+      // the field showed something else. Either way the list stays closed
+      // until the next keystroke.
+      following = false;
+      if (!freeText && typed) {
+        if (input.readOnly || (input.value.trim() && !optionNamed(input.value))) event.preventDefault();
+        settle();
       }
     });
 
@@ -338,14 +408,14 @@
       });
     }
 
-    input.addEventListener("blur", () => {
-      close();
+    // Leaving the field, or Enter with the list closed in pick mode. Made
+    // read-only while typed in, what's typed is left out: in pick mode the
+    // field goes back to the choice, and choosing several it empties.
+    const settle = () => {
       typed = false;
-      // Made read-only while typed in, what's typed is left out: in pick mode
-      // the field goes back to the choice, and choosing several it empties.
       if (input.readOnly) {
         if (multiple) input.value = "";
-        else if (!freeText) input.value = chosen() ? labelOf(chosen()) : "";
+        else if (!freeText) input.value = pickedLabel;
         return;
       }
       if (multiple) {
@@ -354,23 +424,26 @@
         return;
       }
       if (freeText) return;
-      const text = input.value.trim().toLowerCase();
-      if (!text) {
+      if (!input.value.trim()) {
         choose(null);
         input.value = "";
         return;
       }
-      const named = options.find((option) => option.getAttribute("aria-disabled") !== "true" && !isKept(option) && labelOf(option).toLowerCase() === text);
+      const named = optionNamed(input.value);
       if (named) choose(named);
-      const current = chosen();
-      input.value = current ? labelOf(current) : "";
+      input.value = pickedLabel;
+    };
+    input.addEventListener("blur", () => {
+      following = false;
+      close();
+      settle();
     });
 
     // The "Picked by the app" example's button, as an app's code would pick:
     // the field shows it, unless it's being typed in.
     for (const button of document.querySelectorAll(`[data-example-pick="${input.id}"]`)) {
       button.addEventListener("click", () => {
-        const option = options.find((candidate) => candidate.dataset.value === button.dataset.examplePickValue);
+        const option = options().find((candidate) => candidate.dataset.value === button.dataset.examplePickValue);
         choose(option ?? null);
         if (!typed) input.value = option ? labelOf(option) : "";
       });
@@ -382,6 +455,7 @@
       setTimeout(() => {
         if (event.defaultPrevented) return;
         typed = false;
+        following = false;
         if (multiple) setValues(initial.values);
         else if (!freeText) choose(initial.option);
         input.value = initial.text;
@@ -394,5 +468,35 @@
       if (multiple) render();
       else if (hidden) hidden.disabled = input.disabled;
     }).observe(input, { attributeFilter: ["disabled"] });
+  }
+
+  // "Searching as you type" stands in for a search on your server: a moment
+  // after each keystroke, the people whose name holds the text, as options,
+  // the chosen one checked.
+  for (const input of document.querySelectorAll(".hcombobox > input[data-example-late-results]")) {
+    const listbox = document.getElementById(input.getAttribute("aria-controls"));
+    const hidden = listbox.closest(".hpopup").nextElementSibling;
+    const people = input.dataset.exampleLateResults.split(";").map((entry) => entry.split(":"));
+    const optionFor = ([value, name]) => {
+      const option = document.createElement("li");
+      Object.assign(option, { className: "hoption", id: `${input.id}-${value}`, role: "option" });
+      option.dataset.value = value;
+      option.setAttribute("aria-selected", String(value === hidden.value));
+      const label = document.createElement("span");
+      label.className = "hoption-label";
+      label.textContent = name;
+      option.append(label);
+      if (value === hidden.value) option.append(template.content.firstElementChild.cloneNode(true));
+      return option;
+    };
+    let timer;
+    input.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const wanted = input.value.trim().toLowerCase();
+        const found = wanted ? people.filter(([, name]) => name.toLowerCase().includes(wanted)) : [];
+        listbox.replaceChildren(...found.map(optionFor));
+      }, 300);
+    });
   }
 }

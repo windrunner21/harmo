@@ -96,6 +96,17 @@ describe("PhoneInput", () => {
     expect(markup).not.toMatch(new RegExp(`<button[^>]*id="${id}"`));
   });
 
+  test("with a label, it renders its own Field, the same as one around it, which takes hidden", () => {
+    const own = renderToStaticMarkup(<PhoneInput {...labels} label="Phone" description="A mobile" error="" hidden />);
+    expect(own).toMatch(/^<div[^>]*class="hfield"/);
+    const id = /<label[^>]*for="([^"]+)"/.exec(own)![1];
+    expect(own).toMatch(new RegExp(`<input[^>]*id="${id}"`));
+    expect(own).toMatch(/<input[^>]*aria-describedby="[^"]+"/);
+    expect(own).toContain('class="herror"');
+    expect(own).toMatch(/^<div[^>]*hidden=""/);
+    expect(own).toContain('<div class="hphone-input">');
+  });
+
   test("disabled reaches the Select, the field, and the hidden input", () => {
     const markup = renderToStaticMarkup(<PhoneInput {...labels} name="phone" disabled />);
     expect(markup).toMatch(/<button[^>]*disabled=""/);

@@ -125,8 +125,10 @@ where the week starts.
 
 - 16px between the header and the grid. The title: 14px at medium weight in
   `--harmo-color-text`. Previous and Next: small tertiary [Buttons](button.md)
-  with a chevron, at the header's two ends.
-- Weekdays: 13px in `--harmo-color-text-secondary`, 8px above the days.
+  with a chevron, at the header's two ends, at least 6px
+  (`--harmo-space-2xs`) from the title.
+- Weekdays: 13px in `--harmo-color-text-secondary`, 6px
+  (`--harmo-space-2xs`) above the days.
 - Days: 40px squares, 14px numbers at medium weight, of one width each, with
   `--harmo-border-radius-sm` corners. Hovered, on
   `--harmo-color-background-hover`; pressed, they shrink slightly, as a Button
@@ -231,8 +233,8 @@ set `weekStartsOn`.
 
 ## Tokens
 
-`--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-xs`,
-`--harmo-font-weight-medium`, `--harmo-font-weight-normal`,
+`--harmo-space-2xs`, `--harmo-space-sm`, `--harmo-font-family`, `--harmo-font-size-sm`,
+`--harmo-font-size-xs`, `--harmo-font-weight-medium`, `--harmo-font-weight-normal`,
 `--harmo-color-text`, `--harmo-color-text-secondary`,
 `--harmo-color-background-secondary`, `--harmo-color-background-hover`,
 `--harmo-color-primary-fill`, `--harmo-color-primary-fill-hover`,

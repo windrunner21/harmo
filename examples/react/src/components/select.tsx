@@ -102,14 +102,20 @@ export const examples = {
   },
 
   "In a form": () => {
-    const [sent, setSent] = useState("Save to see what the form sends.");
+    const waiting = "Save to see what the form sends.";
+    const [sent, setSent] = useState(waiting);
 
     return (
       <form
         style={{ display: "flex", flexDirection: "column", gap: 16 }}
         onSubmit={(event) => setSent(sends(event))}
       >
-        <Select label="Channel" name="channel" defaultValue="whatsapp">
+        <Select
+          label="Channel"
+          name="channel"
+          defaultValue="whatsapp"
+          onValueChange={() => setSent(waiting)}
+        >
           <Option value="whatsapp">WhatsApp</Option>
           <Option value="telegram">Telegram</Option>
           <Option value="viber">Viber</Option>
@@ -120,6 +126,7 @@ export const examples = {
           name="statuses"
           placeholder="No statuses"
           defaultValue={["failed"]}
+          onValueChange={() => setSent(waiting)}
         >
           <Option value="delivered">Delivered</Option>
           <Option value="read">Read</Option>
@@ -137,7 +144,8 @@ export const examples = {
   },
 
   "Outside its form": () => {
-    const [sent, setSent] = useState("Save to see what the form sends.");
+    const waiting = "Save to see what the form sends.";
+    const [sent, setSent] = useState(waiting);
 
     return (
       <>
@@ -146,6 +154,7 @@ export const examples = {
           name="outside-channel"
           form="outside-form"
           defaultValue="whatsapp"
+          onValueChange={() => setSent(waiting)}
         >
           <Option value="whatsapp">WhatsApp</Option>
           <Option value="telegram">Telegram</Option>

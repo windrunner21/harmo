@@ -80,6 +80,8 @@
     const button = picker.querySelector(".hbutton");
     const hidden = picker.querySelector('input[type="hidden"]');
     const popup = document.getElementById(button.getAttribute("popovertarget"));
+    // A disabled one has no popup, and nothing to do.
+    if (!popup) continue;
     const calendar = popup.querySelector(".hcalendar");
     const { exampleLocale: locale, exampleToday: today } = calendar.dataset;
     const error = picker.closest(".hfield")?.querySelector(".herror");
@@ -208,9 +210,10 @@
     popup.addEventListener("click", (event) => {
       const day = event.target.closest("[data-date]");
       if (!day || day.disabled || input.disabled || input.readOnly) return;
-      settle(time ? `${day.dataset.date}T${current?.slice(11) ?? "00:00"}` : day.dataset.date);
-      input.value = written(current);
+      const next = time ? `${day.dataset.date}T${current?.slice(11) ?? "00:00"}` : day.dataset.date;
+      input.value = written(next);
       setInvalid(false);
+      settle(next);
       popup.hidePopover();
       button.focus();
     });
@@ -257,12 +260,21 @@
       }),
     );
 
-    // "In a form": says what would be sent, rather than leave the playground.
+    // "In a form": says what would be sent, rather than leave the playground,
+    // until the date changes, a reset's included, as an app would.
     const form = input.form;
     if (form && "exampleSend" in form.dataset) {
+      const status = form.querySelector('[role="status"]');
+      let held = current;
+      picker.addEventListener("example-date-picker-change", (event) => {
+        if (event.detail !== held) {
+          status.hidden = true;
+          status.textContent = "";
+        }
+        held = event.detail;
+      });
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        const status = form.querySelector('[role="status"]');
         status.textContent = `Sent ${new FormData(form).get(hidden.name)}`;
         status.hidden = false;
       });

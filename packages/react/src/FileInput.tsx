@@ -12,7 +12,7 @@ import {
 } from "react";
 import { renders } from "./children.ts";
 import { ErrorMessage } from "./field/ErrorMessage.tsx";
-import { useField } from "./field/Field.tsx";
+import { Field, useField } from "./field/Field.tsx";
 import {
   close as closePaths,
   uploadArrow,
@@ -20,6 +20,7 @@ import {
   uploadCloud,
   user as userPaths,
 } from "./icons.ts";
+import type { ControlField } from "./types.ts";
 import { useMergedRef } from "./useMergedRef.ts";
 import { useWidthChange } from "./useWidthChange.ts";
 import { withClass } from "./withClass.ts";
@@ -83,8 +84,10 @@ type FileInputLook =
       defaultFileName?: undefined;
     };
 
-export type FileInputProps = FileInputOptions &
+type FileInputControlProps = FileInputOptions &
   ((OneFile & FileInputLook) | (ManyFiles & Exclude<FileInputLook, { variant: "avatar" }>));
+
+export type FileInputProps = FileInputControlProps & ControlField;
 
 const removeIcon = (
   <svg
@@ -113,7 +116,7 @@ const personIcon = (
   </svg>
 );
 
-const cloudIcon = (attached: boolean) => (
+const cloudIcon = (attached: boolean, changed: boolean) => (
   <svg
     className="hicon"
     width="24"
@@ -129,7 +132,13 @@ const cloudIcon = (attached: boolean) => (
   >
     <path d={uploadCloud} />
     {attached ? (
-      <path key="check" className="hfile-input-check" d={uploadCheck} pathLength={1} />
+      <path
+        key="check"
+        className="hfile-input-check"
+        d={uploadCheck}
+        pathLength={1}
+        data-new={changed ? "" : undefined}
+      />
     ) : (
       <path key="arrow" className="hfile-input-arrow" d={uploadArrow} />
     )}
@@ -231,7 +240,21 @@ const useFileDrop = (
   return dragging;
 };
 
-export const FileInput = ({
+export const FileInput = (fileProps: FileInputProps) => {
+  const { label, optional, description, error, hidden, ...props } = fileProps;
+  const control = props as FileInputControlProps;
+  if (label === undefined) return <FileInputControl {...control} hidden={hidden} />;
+
+  return (
+    <Field label={label} optional={optional} description={description} hidden={hidden}>
+      <FileInputControl {...control} {...("error" in fileProps && { error })} />
+    </Field>
+  );
+};
+
+const FileInputControl = (controlProps: FileInputControlProps & { error?: ReactNode }) => {
+  const given = "error" in controlProps;
+  const {
   chooseLabel,
   removeLabel,
   multiple,
@@ -250,8 +273,9 @@ export const FileInput = ({
   ref,
   className,
   hidden,
+  error,
   ...props
-}: FileInputProps) => {
+  } = controlProps;
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const image = useRef<HTMLImageElement>(null);
@@ -266,15 +290,20 @@ export const FileInput = ({
   const [preview, setPreview] = useState(defaultPreview ?? null);
   const [picture, setPicture] = useState(preview);
   const [message, setMessage] = useState<ReactNode>(null);
+  const [changed, setChanged] = useState(false);
+  const reported = useRef<File | null>(null);
   const dragging = useFileDrop(root, input, Boolean(variant) && !props.disabled);
   const describedHint = variant !== "avatar" && renders(hint);
+  const validated = Boolean(validate) || given;
   const field = useField(props, {
     describedBy:
-      [describedHint && hintId, validate && errorId].filter(Boolean).join(" ") ||
+      [describedHint && hintId, validated && errorId].filter(Boolean).join(" ") ||
       undefined,
   });
   if (preview && preview !== picture) setPicture(preview);
   const attached = fileName !== null || preview !== null;
+  const shownError = renders(message) ? message : error;
+  const marked = changed ? "" : undefined;
 
   const take = (file: File | null) => {
     const problem = file && validate?.(file, 0);
@@ -282,10 +311,12 @@ export const FileInput = ({
     setMessage(refused ? problem : null);
     if (refused && input.current) input.current.value = "";
     const kept = refused ? null : file;
+    setChanged(true);
     setFileName(kept?.name ?? null);
     const url = kept && variant === "avatar" ? URL.createObjectURL(kept) : null;
     if (url) created.current.add(url);
     setPreview(url);
+    reported.current = kept;
     onFileChange?.(kept);
   };
 
@@ -330,21 +361,30 @@ export const FileInput = ({
   useEffect(() => {
     if (defaults.current[0] === defaultFileName && defaults.current[1] === defaultPreview) return;
     defaults.current = [defaultFileName, defaultPreview];
-    if (!input.current?.files?.length) restore();
+    if (input.current?.files?.length) return;
+    setChanged(true);
+    restore();
   }, [defaultFileName, defaultPreview]);
 
+  const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
     const form = input.current?.form;
     if (!form) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
+    const reset = (event: Event) => {
+      clearTimeout(resetting.current);
+      resetting.current = setTimeout(() => {
         if (event.defaultPrevented) return;
         restore();
         setMessage(null);
+        if (!reported.current) return;
+        reported.current = null;
+        onFileChange?.(null);
       });
+    };
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, [defaultFileName, defaultPreview, props.form]);
+  });
 
   useEffect(
     () => () => {
@@ -374,7 +414,7 @@ export const FileInput = ({
       className="hfile-input-control"
       type="file"
       multiple={multiple === true}
-      aria-invalid={message ? true : field["aria-invalid"]}
+      aria-invalid={renders(shownError) ? true : field["aria-invalid"]}
       onChange={(event) => {
         onChange?.(event);
         takeChosen(event.target.files);
@@ -403,6 +443,7 @@ export const FileInput = ({
                   className="hfile-input-preview"
                   src={picture}
                   alt=""
+                  data-new={marked}
                   data-leaving={leaving ? "" : undefined}
                 />
               )}
@@ -422,7 +463,7 @@ export const FileInput = ({
         ) : (
           <>
             {variant === "area" && (
-              <span className="hfile-input-icon">{icon ?? cloudIcon(attached)}</span>
+              <span className="hfile-input-icon">{icon ?? cloudIcon(attached, changed)}</span>
             )}
             {renders(heading) && <span className="hfile-input-heading">{heading}</span>}
             {variant && <span className="hfile-input-drop">{dropLabel}</span>}
@@ -433,8 +474,13 @@ export const FileInput = ({
             )}
             <label ref={widthRef} className="hbutton" data-variant="secondary">
               {control}
-              {variant !== "area" && (icon ?? cloudIcon(attached))}
-              <span key={fileName ?? ""} className="hbutton-label" title={fileName ?? undefined}>
+              {variant !== "area" && (icon ?? cloudIcon(attached, changed))}
+              <span
+                key={fileName ?? ""}
+                className="hbutton-label"
+                title={fileName ?? undefined}
+                data-new={marked}
+              >
                 {fileName ?? chooseLabel}
               </span>
             </label>
@@ -448,6 +494,7 @@ export const FileInput = ({
             aria-label={removeLabel}
             hidden={!attached}
             disabled={props.disabled}
+            data-new={marked}
             onClick={() => {
               if (input.current) input.current.value = "";
               take(null);
@@ -458,8 +505,8 @@ export const FileInput = ({
           </button>
         )}
       </div>
-      {validate && !hidden && (
-        <ErrorMessage id={errorId}>{message}</ErrorMessage>
+      {validated && !hidden && (
+        <ErrorMessage id={errorId}>{shownError}</ErrorMessage>
       )}
     </>
   );

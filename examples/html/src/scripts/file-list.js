@@ -9,7 +9,9 @@
     'class="hicon" stroke-width="1.5"',
     '<path d="M6.5 2.75H13.5L19.25 8.5V20C19.25 20.69 18.69 21.25 18 21.25H6.5C5.81 21.25 5.25 20.69 5.25 20V4C5.25 3.31 5.81 2.75 6.5 2.75Z" /><path d="M13.5 2.75V8.5H19.25" />',
   );
-  const doneIcon = svg('class="hicon hfile-list-done" stroke-width="2"', '<path d="M5 12.5L10 17.5L19 7.5" pathLength="1" />');
+  // Marked new, as it's only ever added once a file has finished, so it draws
+  // itself; one there as the page loads doesn't.
+  const doneIcon = svg('class="hicon hfile-list-done" data-new stroke-width="2"', '<path d="M5 12.5L10 17.5L19 7.5" pathLength="1" />');
   const removeIcon =
     '<svg class="hicon" width="24" height="24" viewBox="0 0 25 25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M18.1183 18.5318L6.80463 7.21814" /><path d="M18.1183 7.21814L6.80463 18.5318" /></svg>';
 
@@ -76,9 +78,14 @@
       if (heading) heading.textContent = heading.dataset.exampleCount.replace("{n}", rows().length);
     };
 
-    // The pictures and links a file made are released with it.
+    // The pictures and links a file made are released with it; a picture
+    // still loading, once it has loaded, as one released mid-load fails to.
     const release = (row) => {
-      for (const node of row.querySelectorAll('img[src^="blob:"], a[href^="blob:"]')) URL.revokeObjectURL(node.src ?? node.href);
+      for (const node of row.querySelectorAll('img[src^="blob:"], a[href^="blob:"]')) {
+        const url = node.src ?? node.href;
+        if (node.localName !== "img" || node.complete) URL.revokeObjectURL(url);
+        else for (const type of ["load", "error"]) node.addEventListener(type, () => URL.revokeObjectURL(url), { once: true });
+      }
     };
 
     const remove = (row) => {

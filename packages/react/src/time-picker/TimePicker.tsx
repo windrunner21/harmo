@@ -138,16 +138,23 @@ const TimePickerControl = ({
     for (const column of panels()) showChosen(column, false);
   }, [current]);
 
+  const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
     const form = trigger.current?.form;
     if (!form) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
-        if (!event.defaultPrevented) setChosen(isTime(defaultValue) ? defaultValue : null);
+    const reset = (event: Event) => {
+      clearTimeout(resetting.current);
+      resetting.current = setTimeout(() => {
+        if (event.defaultPrevented) return;
+        const initial = isTime(defaultValue) ? defaultValue : null;
+        setChosen(initial);
+        if (valueProp === undefined && initial !== current) onValueChange?.(initial ?? "");
       });
+    };
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, [defaultValue, props.form]);
+  });
 
   const choose = (nextHour: number, nextMinute: number) => {
     const next = `${String(nextHour).padStart(2, "0")}:${String(nextMinute).padStart(2, "0")}`;
@@ -193,6 +200,7 @@ const TimePickerControl = ({
     const step = (direction: number) => {
       event.preventDefault();
       const next = index < 0 ? (direction > 0 ? 0 : options.length - 1) : (index + direction + options.length) % options.length;
+      event.currentTarget.setAttribute("data-instant", "");
       pick((options[next] as ColumnOption).value);
     };
     const toColumn = (direction: number) => {
@@ -204,6 +212,7 @@ const TimePickerControl = ({
     else if (event.key === "ArrowUp") step(-1);
     else if (event.key === "Home" || event.key === "End") {
       event.preventDefault();
+      event.currentTarget.setAttribute("data-instant", "");
       pick((options[event.key === "Home" ? 0 : options.length - 1] as ColumnOption).value);
     } else if (event.key === "ArrowRight") toColumn(forward);
     else if (event.key === "ArrowLeft") toColumn(-forward);
@@ -285,6 +294,7 @@ const TimePickerControl = ({
                   tabIndex={0}
                   aria-activedescendant={selected === undefined ? undefined : optionId(selected)}
                   onKeyDown={(event) => press(event, column, place)}
+                  onPointerMove={(event) => event.currentTarget.removeAttribute("data-instant")}
                 >
                   {options.map((option) => (
                     <li

@@ -9,12 +9,12 @@
 
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: $space-sm;
 
   inline-size: fit-content;
   min-block-size: $control-height;
-  padding: 0 12px;
-  padding-inline-end: 20px;
+  padding: 0 control.$padding-inline;
+  padding-inline-end: $space-sm;
 
   font-variant-numeric: tabular-nums;
   text-align: start;
@@ -100,17 +100,23 @@
   cursor: pointer;
   user-select: none;
 
-  transition:
-    background-color $button-duration ease,
-    color $button-duration ease;
-
   &[hidden] {
     display: none;
   }
 
+  // Only the pointer's hover fades in. A choice moves at once, as the arrow
+  // keys move it, rather than fade from one option to the next, even off an
+  // option the pointer rests on: the script marks the column data-instant
+  // while the keys move its choice, until the pointer moves.
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       background-color: $color-background-hover;
+    }
+
+    :where(.htime-picker-column:not([data-instant])) > &:hover {
+      transition:
+        background-color $button-duration ease,
+        color $button-duration ease;
     }
   }
 
@@ -119,6 +125,8 @@
   &[aria-selected="true"] {
     color: $color-on-primary;
     background-color: $color-primary-fill;
+
+    transition: none;
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {

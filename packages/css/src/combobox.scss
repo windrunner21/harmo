@@ -1,6 +1,15 @@
 @use "shortcuts" as *;
 @use "control";
 
+// Where Select's chevron sits: its end padding, inside the field's border. The
+// text stops a step before the chevron, which is 1em wide.
+$chevron-inset: $space-sm;
+$chevron-room: calc(#{$chevron-inset} + 1em + #{$space-xs});
+
+// Choosing several, how far the tags sit in from the border, so their 4px
+// corners follow its 8px ones.
+$tag-inset: 4px;
+
 // A Combobox's field: an Input with Select's Expand Chevron at its end, which
 // folds while the list is open. The chevron is drawn over the field and lets
 // clicks through to it, so a click anywhere on the field opens the list.
@@ -20,15 +29,15 @@
   }
 
   & > .hinput {
-    padding-inline-end: 44px;
+    padding-inline-end: $chevron-room;
   }
 
-  // Where Select's chevron sits: its 20px padding and 1px border.
+  // Past the field's 1px border too, as the chevron is laid over the field.
   & > .hexpand-chevron {
     z-index: 1;
     justify-self: end;
 
-    margin-inline-end: 21px;
+    margin-inline-end: calc(#{$chevron-inset} + 1px);
 
     color: $color-text-secondary;
 
@@ -44,20 +53,20 @@
 // Tag List, and a text field without a box of its own after them. The box
 // takes its field's states: focused or open, invalid, disabled, read-only.
 // At rest, the tags that fit show, then "+N"; while focus is in the field,
-// every tag shows, in a row that scrolls sideways rather than grow. Tags sit
-// 4px in from the border, so their 4px corners follow its 8px ones.
+// every tag shows, in a row that scrolls sideways rather than grow. The 3px
+// above and below centers the 28px tags in the field.
 .hcombobox[data-multiple] {
   @include control.box;
 
   position: relative;
 
   display: flex;
-  gap: 4px;
+  gap: $space-2xs;
   align-items: center;
 
   min-block-size: $control-height;
   padding-block: 3px;
-  padding-inline: 4px 44px;
+  padding-inline: $tag-inset $chevron-room;
 
   cursor: text;
 
@@ -65,14 +74,15 @@
     display: none;
   }
 
-  // The text starts 12px in, as in an Input, and keeps 4rem to itself
-  // before it moves to a row of its own.
+  // Its padding and the tags' inset add up to an Input's, so the text starts
+  // where an Input's does. It keeps 4rem to itself before it moves to a row
+  // of its own.
   & > .hinput {
     flex: 1 0 4rem;
 
     min-block-size: 0;
     block-size: 1.5rem;
-    padding: 0 8px;
+    padding: 0 calc(#{control.$padding-inline} - #{$tag-inset});
 
     background: none;
     border: 0;
@@ -85,6 +95,12 @@
     flex: 0 1 auto;
 
     inline-size: auto;
+  }
+
+  // With no choice made, the empty list gives back the gap after it too, so
+  // the text isn't pushed past where an Input's starts.
+  & > .htag-list:where(:not(:has(> li > .htag))) {
+    margin-inline-end: calc(-1 * #{$space-2xs});
   }
 
   &:focus-within > .htag-list {
@@ -110,7 +126,7 @@
   & > .hexpand-chevron {
     position: absolute;
     inset-block: 0;
-    inset-inline-end: 20px;
+    inset-inline-end: $chevron-inset;
 
     margin-block: auto;
     margin-inline-end: 0;
@@ -123,7 +139,8 @@
                 > .hinput:disabled,
                 > .hinput[readonly],
                 > .hinput[aria-invalid="true"]
-              )
+              ),
+            #{control.$label-hovered}
           )
       ) {
       @include control.focused;

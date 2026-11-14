@@ -3,7 +3,9 @@
 // A refused file is cleared from the input, so a form doesn't send it. With a
 // data-variant, it also takes a file dropped on it, lights up while one is
 // dragged, and stops a drop that just misses from opening the file in the tab,
-// leaving alone other drop targets and text fields.
+// leaving alone other drop targets and text fields. What it puts in as a file
+// comes or goes is marked data-new, so it settles in; what the page loaded with
+// doesn't.
 {
   const answered = new WeakSet();
   const paths = {
@@ -15,7 +17,10 @@
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("class", `hfile-input-${name}`);
     path.setAttribute("d", paths[name]);
-    if (name === "check") path.setAttribute("pathLength", "1");
+    if (name === "check") {
+      path.setAttribute("pathLength", "1");
+      path.setAttribute("data-new", "");
+    }
     return path;
   };
 
@@ -49,6 +54,7 @@
         picture.className = "hfile-input-preview";
         picture.alt = "";
         picture.src = src;
+        picture.dataset.new = "";
         old?.remove();
         circle.append(picture);
       } else if (old) {
@@ -65,6 +71,7 @@
         choosing.toggleAttribute("data-inactive", Boolean(src));
         changing.toggleAttribute("data-inactive", !src);
       }
+      remove.dataset.new = "";
       remove.hidden = !src;
     };
 
@@ -84,11 +91,13 @@
       changeButtonWidth(button, () => {
         const replacement = label.cloneNode();
         replacement.textContent = name ?? exampleChoose;
+        replacement.dataset.new = "";
         if (name === null) replacement.removeAttribute("title");
         else replacement.title = name;
         label.replaceWith(replacement);
         current.text = replacement;
         root.querySelector(".hfile-input-arrow, .hfile-input-check")?.replaceWith(mark(name === null ? "arrow" : "check"));
+        remove.dataset.new = "";
         remove.hidden = name === null;
       });
     };
@@ -160,8 +169,11 @@
         say("");
         if (objectUrl) URL.revokeObjectURL(objectUrl);
         objectUrl = null;
-        if (avatar) showPicture(attachedPicture);
-        else if (!input.multiple) showNameFrom(current.text, attached);
+        // Only what the reset changes is put back, so nothing else settles in
+        // again.
+        const picture = circle?.querySelector("img:not([data-leaving])")?.getAttribute("src") ?? null;
+        if (avatar && picture !== attachedPicture) showPicture(attachedPicture);
+        else if (!avatar && !input.multiple && current.text.getAttribute("title") !== attached) showNameFrom(current.text, attached);
       }),
     );
 

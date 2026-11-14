@@ -13,12 +13,13 @@
     display: none;
   }
 
+  // Select's insets, so its text and chevron line up with a Select's above or
+  // below it.
   & > .hphone-input-country {
     flex: none;
     gap: $space-2xs;
 
     inline-size: auto;
-    padding-inline: $space-xs $space-sm;
   }
 
   & > .hinput {

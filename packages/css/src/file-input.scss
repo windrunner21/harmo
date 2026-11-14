@@ -24,11 +24,15 @@
 
     min-inline-size: 0;
 
+    // A name fades in as it changes, data-new marking a change, so the text
+    // there as the page loads doesn't.
     & > .hbutton-label {
-      transition: opacity $duration-normal ease-out;
+      transition: opacity $duration-normal $ease-out-cubic;
 
-      @starting-style {
-        opacity: 0;
+      &[data-new] {
+        @starting-style {
+          opacity: 0;
+        }
       }
     }
 
@@ -41,8 +45,8 @@
     }
   }
 
-  // The remove button settles in as a file arrives, on its own scale, so that
-  // it still presses as any Button does.
+  // The remove button settles in as a file arrives (data-new), on its own
+  // scale, so that it still presses as any Button does.
   & > button.hbutton {
     transition:
       background-color $button-duration ease,
@@ -50,18 +54,22 @@
       border-color $button-duration ease,
       transform $button-duration $ease-out-quad,
       scale $duration-normal $ease-out-cubic,
-      opacity $duration-normal ease-out;
+      opacity $duration-normal $ease-out-cubic;
 
-    @starting-style {
-      opacity: 0;
-      scale: 0.9;
+    &[data-new] {
+      @starting-style {
+        opacity: 0;
+        scale: 0.9;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
       scale: none;
 
-      @starting-style {
-        scale: none;
+      &[data-new] {
+        @starting-style {
+          scale: none;
+        }
       }
     }
   }
@@ -250,7 +258,7 @@
       grid-area: 1 / 1;
 
       transition:
-        opacity $duration-normal ease-out,
+        opacity $duration-normal $ease-out-cubic,
         visibility $duration-normal;
     }
 
@@ -287,7 +295,7 @@
 }
 
 // The arrow rises as a file comes over the area; the check draws itself when
-// one has been taken.
+// one has been taken (data-new), not when the page loads with one.
 .hfile-input-arrow {
   transition: transform $duration-normal $ease-out-cubic;
 
@@ -301,10 +309,12 @@
 .hfile-input-check {
   stroke-dasharray: 1;
 
-  transition: stroke-dashoffset $duration-slow $ease-out-cubic;
+  transition: stroke-dashoffset $duration-normal $ease-out-cubic;
 
-  @starting-style {
-    stroke-dashoffset: 1;
+  &[data-new] {
+    @starting-style {
+      stroke-dashoffset: 1;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -411,8 +421,9 @@
   }
 }
 
-// The picture chosen, settling in over the circle. data-leaving fades it, and a
-// script takes it away once it has.
+// The picture chosen, settling in over the circle (data-new), not the one there
+// as the page loads. data-leaving fades it, and a script takes it away once it
+// has.
 .hfile-input-preview {
   position: absolute;
   inset: 0;
@@ -423,23 +434,25 @@
   object-fit: cover;
 
   transition:
-    opacity $duration-normal ease-out,
+    opacity $duration-normal $ease-out-cubic,
     transform $duration-normal $ease-out-cubic;
 
-  @starting-style {
-    opacity: 0;
-    transform: scale(1.06);
+  &[data-new] {
+    @starting-style {
+      opacity: 0;
+      transform: scale(1.06);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      @starting-style {
+        transform: none;
+      }
+    }
   }
 
   &[data-leaving] {
     opacity: 0;
 
     transition-duration: $duration-fast;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    @starting-style {
-      transform: none;
-    }
   }
 }

@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { example, onEachPlayground, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, openPopup, ready, settled, test } from "./playgrounds.ts";
 
 // What docs/components/phone-input.md says: a searchable country code, a number
 // formatted as it's typed with the caret kept among the digits, a full number
@@ -188,6 +188,20 @@ onEachPlayground("phone-input", () => {
     await expect(field).toBeFocused();
   });
 
+  test("a click the app stops, with preventDefault() in its own handler on a country, changes nothing", async ({ page }) => {
+    const { field, country, list } = await parts(page, "default");
+    await field.fill("4155552671");
+    await country.click();
+    const option = list.locator('.hoption:has-text("Azerbaijan")');
+    // On the option, so before the list's own handling, as an Option's
+    // onClick is in React.
+    await option.evaluate((node) => node.addEventListener("click", (event) => event.preventDefault(), { once: true }));
+    await option.click();
+    await expect(option).toHaveAttribute("aria-selected", "false");
+    await expect(country).toContainText("+1");
+    await expect(field).toHaveValue("(415) 555-2671");
+  });
+
   test("a number to start with sets the country", async ({ page }) => {
     const { field, country } = await parts(page, "with-a-number-already");
     await expect(field).toHaveValue("050 123 45 67");
@@ -202,6 +216,32 @@ onEachPlayground("phone-input", () => {
     await expect(status).toHaveText("+14155552671");
     await field.fill("415");
     await expect(status).toHaveText("Not a complete number yet");
+
+    // A reset that changes the number tells the app too.
+    await field.fill("4155552671");
+    await expect(status).toHaveText("+14155552671");
+    await container.getByRole("button", { name: "Reset" }).click();
+    await expect(field).toHaveValue("");
+    await expect(status).toHaveText("Not a complete number yet");
+  });
+
+  test("the country's button has a Select's insets, so it lines up with one", async ({ page }) => {
+    const { country } = await parts(page, "default");
+    const [box, value, chevron] = await boxes(country, country.locator(".hselect-value"), country.locator(".hexpand-chevron"));
+    expect(value.x - box.x).toBeCloseTo(11, 0);
+    expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
+  });
+
+  test("only the pointer on the field lights its border, not the pointer on its label", async ({ page }) => {
+    const { container, field } = await parts(page, "default");
+    const border = () => field.evaluate((node) => getComputedStyle(node).borderTopColor);
+    const rest = await border();
+    await container.locator(".play-demo .hlabel").hover();
+    await settled(field);
+    expect(await border()).toBe(rest);
+    await field.hover();
+    await settled(field);
+    expect(await border()).not.toBe(rest);
   });
 
   test("an example number can be the placeholder", async ({ page }) => {
@@ -254,5 +294,32 @@ onEachPlayground("phone-input", () => {
     await expect(field).toHaveValue("(415) 555-2671");
     await expect(country).toContainText("+1");
     await expect(hidden).toHaveValue("+14155552671");
+  });
+
+  // Country names come from Intl, whose data can differ between the server
+  // that rendered the page and the browser. Here every name the browser gives
+  // has a mark the build's didn't, in the same order, as a newer Intl might
+  // rename a country. The options' labels keep the server's text rather than
+  // failing the hydration, which the test's page fixture would see as an
+  // error in the console.
+  test("country names that differ from the server's, as Intl's data can, hydrate without a mismatch", async ({ page }) => {
+    test.skip(!test.info().titlePath.includes("react"), "only the React playground hydrates");
+    await page.addInitScript(() => {
+      const of = Intl.DisplayNames.prototype.of;
+      Intl.DisplayNames.prototype.of = function (code) {
+        const name = of.call(this, code);
+        return name && `·${name}`;
+      };
+    });
+    await page.reload();
+    await ready(page);
+    const container = await example(page, "phone-input-default");
+    const listbox = container.getByRole("listbox", { includeHidden: true });
+    // The example's six countries, each with the server's name.
+    const names = await listbox.locator(".hoption-label").allTextContents();
+    expect(names).toHaveLength(6);
+    expect(names.filter((name) => name.includes("·"))).toEqual([]);
+    await container.getByRole("combobox", { name: "Country code" }).click();
+    await expect(openPopup(container)).toHaveCount(1);
   });
 });

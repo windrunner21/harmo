@@ -34,13 +34,13 @@ itself.
 </div>
 ```
 
-To say why a file was refused, follow it with a Field's error, connected with
-`aria-describedby`:
+To say why a file was refused, follow it with a Field's error, a polite live
+region, connected with `aria-describedby`:
 
 ```html
 <input class="hfile-input-control" id="task-list" type="file" accept=".csv" aria-describedby="task-list-error" />
 …
-<p class="herror" id="task-list-error"></p>
+<p class="herror" id="task-list-error" aria-live="polite"></p>
 ```
 
 To take dropped files, give `.hfile-input` a `data-variant`. A strip puts
@@ -95,6 +95,7 @@ them can't move the circle:
 | `name` | The input | Sends the file with a form, except with `multiple`, where your app holds the files |
 | `disabled` | The input, and the remove button | Dims the button, and no file can be chosen or removed |
 | `hidden` | The remove button | While there's no file to remove |
+| `data-new` | `.hbutton-label`, the remove button, `.hfile-input-check`, and `.hfile-input-preview` | Set by a script on what it puts in or shows as a file comes or goes: it settles in. Leave it off what's there as the page loads, which doesn't |
 
 ## Appearance and states
 
@@ -113,8 +114,10 @@ them can't move the circle:
   and fills with `--harmo-color-primary-tint` when the file is over it, while the
   arrow in its icon rises 2px. On a touch screen, where nothing can be dragged,
   the frame and the drop text are hidden.
-- As a file arrives, the check in the icon draws itself over 300ms, the button
-  changes width over 200ms, and the remove button settles in.
+- As a file arrives, the check in the icon draws itself over 200ms, the button
+  changes width over 200ms, its new text fades in, and the remove button
+  settles in. What's there as the page loads, such as a file your app already
+  has, shows as it is.
 - An avatar's circle is 6rem and dashed, and solid once it has a picture. The
   picture fades and settles in over 200ms, and fades out in 150ms when removed,
   and the remove button sits beside the circle, in room the avatar keeps for it
@@ -145,14 +148,14 @@ them can't move the circle:
 
 | Change | When |
 | --- | --- |
-| The button's text, its `title` with the file's name, its icon, and `hidden` on the remove button | A file is chosen or removed, or the form is reset |
+| The button's text, its `title` with the file's name, its icon, and `hidden` on the remove button, with `data-new` on the new text, the check, and the remove button | A file is chosen or removed, or the form is reset |
 | Emptying the input (`value = ""`), and moving focus to it | The remove button is pressed |
 | Emptying the input, `aria-invalid`, and the `.herror`'s text | A file is refused |
 | `data-dragging` on `.hfile-input` | A file is dragged over the page or the area, and off once the drag ends or its events stop for two seconds |
 | Setting the input's `files` to the first file, or with `multiple` to all of them, leaving out folders, and sending `change` | Files are dropped on the area |
 | Checking each file, handing those accepted to your app, showing why any were refused, and emptying the input | Files are chosen or dropped, with `multiple`. The steps above for one file's name, icon, and remove button don't apply |
 | Stopping a drop elsewhere on the page, which would open the file in the tab | A file is dropped outside the area, except on a text field, on editable content, or on a drop target that has already accepted it |
-| Adding `.hfile-input-preview`, or setting `data-leaving` on it and taking it away once it has faded, and moving `data-inactive` between its two texts, for an avatar | A picture is chosen or removed |
+| Adding `.hfile-input-preview` with `data-new`, or setting `data-leaving` on it and taking it away once it has faded, and moving `data-inactive` between its two texts, for an avatar | A picture is chosen or removed |
 
 `examples/html/src/scripts/file-input.js` is an example script. It changes the
 button's width with `changeButtonWidth` from `button.js`, so include that script
@@ -160,15 +163,18 @@ too, before it.
 
 ## React
 
-`<FileInput>` renders all of this, and in a [Field](field.md#react) takes the
-field's id and descriptions. Its props go on the input, except `className` and
-`hidden`, which go on `.hfile-input`.
+`<FileInput>` renders all of this. With `label`, it renders the
+[Field](field.md#react) too; in a Field of your own, it takes the field's id and
+descriptions just the same. Its props go on the input, and `ref` is the input,
+except `className`, which goes on `.hfile-input`, and `hidden`, which goes on its
+Field, or on `.hfile-input` without a `label`.
 
 | Prop | Effect |
 | --- | --- |
+| `label`, `optional`, `description`, `error` | As for a [Field](field.md#react); the last three need a `label`. With `validate`, one message shows: why a file was refused, else `error` |
 | `chooseLabel` | Required. The button's text before there's a file |
 | `removeLabel` | Required. The remove button's name |
-| `onFileChange` | Called with the `File`, or `null` when there's none: removed, or refused |
+| `onFileChange` | Called with the `File`, or `null` when there's none: removed, refused, or gone with a form reset |
 | `validate` | Called with the chosen `File`. Return a message to refuse it, or `null`. The message shows below, and the input is emptied so that a form doesn't send the file. With `multiple`, its second argument is how many it has accepted so far from this pick, to limit their number |
 | `multiple` | Takes several files. Each goes through `validate`, and those that pass go to `onFilesAdd`. The input is emptied after each pick, so the same file can be picked again, and a form doesn't send them: your app holds them. Not on an avatar, and without `removeLabel`, `onFileChange`, or `defaultFileName` |
 | `onFilesAdd` | Required with `multiple`. Called with the files accepted, unless there are none |
@@ -189,16 +195,16 @@ Drop targets of your own that accept the drag, text fields, and editable content
 are left alone.
 
 ```tsx
-<Field label="Task list" description="A CSV file, up to 1 MB.">
-  <FileInput
-    name="task-list"
-    accept=".csv"
-    chooseLabel="Choose file"
-    removeLabel="Remove task list"
-    validate={(file) => (file.size > 1024 * 1024 ? "Use a file of 1 MB or less." : null)}
-    onFileChange={setFile}
-  />
-</Field>
+<FileInput
+  label="Task list"
+  description="A CSV file, up to 1 MB."
+  name="task-list"
+  accept=".csv"
+  chooseLabel="Choose file"
+  removeLabel="Remove task list"
+  validate={(file) => (file.size > 1024 * 1024 ? "Use a file of 1 MB or less." : null)}
+  onFileChange={setFile}
+/>
 ```
 
 ## Tokens
@@ -210,8 +216,8 @@ are left alone.
 `--harmo-color-text-secondary`, `--harmo-font-family`, `--harmo-font-size-base`,
 `--harmo-font-size-sm`, `--harmo-font-size-xs`, `--harmo-font-weight-medium`,
 `--harmo-font-line-height`, `--harmo-border-radius`, `--harmo-control-height`,
-`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-duration-slow`,
-`--harmo-ease-out-cubic`, `--harmo-ease-out-quad`, `--harmo-button-duration`,
-`--harmo-opacity-disabled`, `--harmo-focus-outline`,
-`--harmo-focus-outline-offset`, and those of [Button](button.md#tokens),
-[Avatar](avatar.md#tokens), and [Field](field.md#tokens).
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-out-cubic`,
+`--harmo-ease-out-quad`, `--harmo-button-duration`, `--harmo-opacity-disabled`,
+`--harmo-focus-outline`, `--harmo-focus-outline-offset`, and those of
+[Button](button.md#tokens), [Avatar](avatar.md#tokens), and
+[Field](field.md#tokens).

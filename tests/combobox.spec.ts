@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/combobox.md says, on the Combobox page: typing in the
 // field filters the list, the arrow keys move through it with focus staying
@@ -198,6 +198,184 @@ onEachPlayground("combobox", () => {
     await expect(container.locator('input[type="hidden"]')).toHaveCount(0);
   });
 
+  test("results that arrive later open the list, losing them closes it, and after Escape it stays closed until the next keystroke", async ({ page }) => {
+    const { input, popup, listbox, shown, hidden } = await parts(page, "combobox-searching-as-you-type");
+    await input.click();
+    expect(await isOpen(popup)).toBe(false);
+
+    // Nothing to show yet as the text is typed; the results open the list.
+    await page.keyboard.type("s");
+    await expect.poll(() => isOpen(popup)).toBe(true);
+    await expect(shown).toHaveText(["Sam Rivera", "Priya Shah"]);
+    expect(await activeLabel(input)).toBe("Sam Rivera");
+
+    // Results that go leave nothing to show, so the list closes.
+    await page.keyboard.type("zz");
+    await expect.poll(() => isOpen(popup)).toBe(false);
+    await expect(listbox.locator(".hoption")).toHaveCount(0);
+
+    // Closed with Escape, it stays closed as results arrive, until the next
+    // keystroke.
+    await page.keyboard.press("Backspace");
+    await page.keyboard.press("Backspace");
+    await expect.poll(() => isOpen(popup)).toBe(true);
+    await page.keyboard.type("h");
+    await page.keyboard.press("Escape");
+    expect(await isOpen(popup)).toBe(false);
+    await expect(listbox.locator(".hoption")).toHaveCount(1);
+    await page.waitForTimeout(100);
+    expect(await isOpen(popup)).toBe(false);
+    await page.keyboard.type("a");
+    await expect.poll(() => isOpen(popup)).toBe(true);
+    await expect(shown).toHaveText(["Priya Shah"]);
+
+    // A pick keeps its label when its option leaves the list.
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveValue("Priya Shah");
+    await expect(hidden).toHaveValue("priya");
+  });
+
+  test("in an HTML page, an option that arrives hidden, in a group that arrives with it, stays hidden whatever is typed", async ({ page }) => {
+    test.skip(test.info().titlePath.includes("react"), "React keeps an Option's hidden prop; this is the example script watching the list");
+    const { input, listbox, shown } = await parts(page, "combobox-default");
+    await listbox.evaluate((node) => {
+      const group = document.createElement("li");
+      group.className = "hoption-group";
+      group.setAttribute("role", "presentation");
+      group.innerHTML = `<span class="hoption-group-label" id="assignee-billing">Billing</span>
+        <ul role="group" aria-labelledby="assignee-billing">
+          <li class="hoption" id="assignee-kim" role="option" data-value="kim" aria-selected="false"><span class="hoption-label">Kim Park</span></li>
+          <li class="hoption" id="assignee-kai" role="option" data-value="kai" aria-selected="false" hidden><span class="hoption-label">Kai Park</span></li>
+        </ul>`;
+      node.append(group);
+    });
+    await input.click();
+    await page.keyboard.type("park");
+    await expect(shown).toHaveText(["Kim Park"]);
+
+    // Nor does typing its name pick it.
+    await input.fill("kai park");
+    await input.blur();
+    await expect(input).toHaveValue("");
+  });
+
+  test("pick mode: Enter with the list closed settles the text before a form is sent; text that names no option goes back and isn't sent", async ({ page }) => {
+    const { container, input } = await parts(page, "combobox-default");
+    await container.locator(".play-demo").evaluate((demo) => {
+      const form = document.createElement("form");
+      const send = document.createElement("button");
+      send.type = "submit";
+      send.textContent = "Send";
+      form.append(...demo.children, send);
+      demo.append(form);
+      const sent: string[] = [];
+      (window as unknown as { sent: string[] }).sent = sent;
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        sent.push(new URLSearchParams(new FormData(form) as unknown as Record<string, string>).toString());
+      });
+    });
+    const sent = () => page.evaluate(() => (window as unknown as { sent: string[] }).sent);
+
+    // Typed, the list closed with Escape, Enter picks what the text names,
+    // and the form sends it.
+    await input.click();
+    await page.keyboard.type("lee chen");
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveValue("Lee Chen");
+    await expect.poll(sent).toEqual(["assignee=lee"]);
+
+    // Text that names no one: Enter closes the list, then puts the pick back
+    // without sending; once it shows the pick, Enter sends it.
+    await page.keyboard.press("ControlOrMeta+a");
+    await page.keyboard.type("zz");
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Enter");
+    await expect(input).toHaveValue("Lee Chen");
+    expect(await sent()).toEqual(["assignee=lee"]);
+    await page.keyboard.press("Enter");
+    await expect.poll(sent).toEqual(["assignee=lee", "assignee=lee"]);
+
+    // With no status to show, text that names no one closes the list. Enter
+    // puts the pick back, and the list stays closed, though every option
+    // shows for it again.
+    const other = await parts(page, "combobox-picked-by-the-app");
+    await other.input.click();
+    await page.keyboard.type("sam");
+    await page.keyboard.press("Enter");
+    await expect(other.input).toHaveValue("Sam Rivera");
+    await page.keyboard.type("zz");
+    await expect.poll(() => isOpen(other.popup)).toBe(false);
+    await page.keyboard.press("Enter");
+    await expect(other.input).toHaveValue("Sam Rivera");
+    await page.waitForTimeout(100);
+    expect(await isOpen(other.popup)).toBe(false);
+  });
+
+  test("a click the app stops, with preventDefault() in its own handler on the option, picks nothing", async ({ page }) => {
+    // On the option, so before the list's own handling, as an Option's
+    // onClick is in React.
+    const stop = (option: Locator) =>
+      option.evaluate((node) => node.addEventListener("click", (event) => event.preventDefault(), { once: true }));
+
+    const { input, popup, listbox, hidden } = await parts(page, "combobox-default");
+    await input.click();
+    const lee = listbox.getByRole("option", { name: "Lee Chen" });
+    await stop(lee);
+    await lee.click();
+    await expect(input).toHaveValue("");
+    await expect(hidden).toHaveValue("");
+    await expect(lee).toHaveAttribute("aria-selected", "false");
+    expect(await isOpen(popup)).toBe(true);
+
+    // Choosing several, no tag comes, and the text stays.
+    const several = await parts(page, "combobox-several");
+    await several.input.click();
+    await page.keyboard.type("lee");
+    const chosen = several.listbox.getByRole("option", { name: "Lee Chen" });
+    await stop(chosen);
+    await chosen.click();
+    await expect(chips(several.container)).toHaveText(["Ana Lopez"]);
+    await expect(several.input).toHaveValue("lee");
+    await expect(chosen).toHaveAttribute("aria-selected", "false");
+    expect(await sent(several.container)).toEqual(["ana"]);
+  });
+
+  for (const [id, field] of [
+    ["combobox-default", ".hinput"],
+    ["combobox-several", ".hcombobox"],
+  ] as const) {
+    test(`${id === "combobox-default" ? "picking one" : "choosing several"}: only the pointer on the field lights its border, not the pointer on its label`, async ({ page }) => {
+      const demo = (await example(page, id)).locator(".play-demo");
+      const box = demo.locator(field).first();
+      const border = () => box.evaluate((node) => getComputedStyle(node).borderTopColor);
+      const rest = await border();
+      await demo.locator(".hlabel").hover();
+      await settled(box);
+      expect(await border()).toBe(rest);
+      await box.hover();
+      await settled(box);
+      expect(await border()).not.toBe(rest);
+    });
+  }
+
+  test("the chevron sits where a Select's does, 16px inside the border, with the text stopping 10px before it", async ({ page }) => {
+    for (const id of ["combobox-default", "combobox-several"]) {
+      const container = await example(page, id);
+      const field = container.locator(".play-demo .hcombobox");
+      const box = id === "combobox-default" ? field.locator(".hinput") : field;
+      const [outer, chevron] = await boxes(box, field.locator(".hexpand-chevron"));
+      expect(outer.x + outer.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
+      if (id !== "combobox-default") continue;
+      const textEnd = await box.evaluate((node) => {
+        const style = getComputedStyle(node);
+        return node.getBoundingClientRect().right - parseFloat(style.borderRightWidth) - parseFloat(style.paddingRight);
+      });
+      expect(chevron.x - textEnd).toBeCloseTo(10, 0);
+    }
+  });
+
   test("the chevron is Select's size, whatever the text around it", async ({ page }) => {
     const container = await example(page, "combobox-default");
     // The demo's: the code panel under it has one too.
@@ -341,6 +519,22 @@ onEachPlayground("combobox", () => {
     expect(rest.height).toBeCloseTo(34, 0);
   });
 
+  test("several: the text follows 12px after the last tag, and with no choice made, starts where an Input's does", async ({ page }) => {
+    const { container, input } = await parts(page, "combobox-several");
+    const field = container.locator(".hcombobox");
+    const textStart = () =>
+      input.evaluate((node) => node.getBoundingClientRect().left + parseFloat(getComputedStyle(node).paddingLeft));
+    const [tag] = await boxes(chips(container).last());
+    expect((await textStart()) - (tag.x + tag.width)).toBeCloseTo(12, 0);
+
+    await input.focus();
+    for (let left = 5; left > 0 && (await chips(container).count()); left--) await page.keyboard.press("Backspace");
+    await expect(chips(container)).toHaveCount(0);
+    const [box] = await boxes(field);
+    // 10px, past the field's 1px border, as in an Input.
+    expect((await textStart()) - box.x).toBeCloseTo(11, 0);
+  });
+
   test("several, at rest: the tags that fit, then +N, which shows the rest on hover", async ({ page }) => {
     const { container } = await parts(page, "combobox-several-with-free-text");
     const labels = ["Ana Lopez", "Sam Rivera", "lee@partner.org", "kim@partner.org"];
@@ -364,7 +558,7 @@ onEachPlayground("combobox", () => {
     const tooltip = list.getByRole("tooltip");
     await expect(tooltip).toBeVisible();
     await expect(tooltip.locator(".htag")).toHaveText(labels.slice(shown));
-    await expect(tooltip.locator(".htag-remove").first()).toBeHidden();
+    await expect(tooltip.locator(".htag-remove")).toHaveCount(0);
   });
 
   test("several, in the field: every tag shows, in a row that scrolls to its end as tags are added, and +N comes back on leaving", async ({ page }) => {
@@ -475,8 +669,11 @@ onEachPlayground("combobox", () => {
       container.locator("form").evaluate((form) =>
         [...new FormData(form as HTMLFormElement)].map(([key, value]) => `${key}=${value}`),
       );
-    const loaded = ["form-owner=sam", "form-reply-to=sam@example.com", "form-watchers=ana"];
+    // The record's id, a hidden input of the app's after Watchers, is the
+    // app's own: it isn't a choice, and the form sends it as it is.
+    const loaded = ["form-owner=sam", "form-reply-to=sam@example.com", "form-watchers=ana", "form-record=42"];
     expect(await sends()).toEqual(loaded);
+    await expect(chips(container)).toHaveText(["Ana Lopez"]);
 
     await owner.fill("ana lopez");
     await owner.blur();
@@ -490,6 +687,7 @@ onEachPlayground("combobox", () => {
       "form-reply-to=ana@example.com",
       "form-watchers=ana",
       "form-watchers=sam",
+      "form-record=42",
     ]);
 
     await container.getByRole("button", { name: "Reset" }).click();
@@ -569,5 +767,23 @@ onEachPlayground("combobox", () => {
     expect(await dialog.evaluate((node) => (node as HTMLDialogElement).open)).toBe(true);
     await page.keyboard.press("Escape");
     await expect.poll(() => dialog.evaluate((node) => (node as HTMLDialogElement).open)).toBe(false);
+  });
+
+  test("a key your own handler stops first is left to you: Down doesn't open the list, nor Enter pick", async ({ page }) => {
+    const container = await example(page, "combobox-default");
+    const field = container.getByRole("combobox").first();
+    // As an app's own keydown handler would, before Harmo's.
+    await page.evaluate(() =>
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown" || event.key === "Enter") event.preventDefault();
+      }, { capture: true }),
+    );
+    await field.focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(openPopup(container)).toHaveCount(0);
+    await field.fill("a");
+    const before = await field.inputValue();
+    await page.keyboard.press("Enter");
+    expect(await field.inputValue()).toBe(before);
   });
 });

@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { expectActive, expectChosen } from "./lists.ts";
-import { clickAt, example, onEachPlayground, openPopup, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/select.md says a script does, on the Select page.
 onEachPlayground("select", () => {
@@ -159,15 +159,19 @@ onEachPlayground("select", () => {
 
     await channel.click();
     await clickAt(page, container.getByRole("option", { name: "Viber" }));
+    await expect(sent).toHaveText("Save to see what the form sends.");
     await statuses.click();
     await clickAt(page, container.getByRole("option", { name: "Read" }));
     await page.keyboard.press("Escape");
     await save.click();
     await expect(sent).toHaveText("Sends channel=viber&statuses=read&statuses=failed");
 
+    // A reset changes the choices back, so what was sent no longer shows:
+    // React calls onValueChange for it.
     await container.getByRole("button", { name: "Reset" }).click();
     await expect(channel.locator(".hselect-value")).toHaveText("WhatsApp");
     await expect(statuses.locator(".hselect-value")).toHaveText("Failed");
+    await expect(sent).toHaveText("Save to see what the form sends.");
     await save.click();
     await expect(sent).toHaveText("Sends channel=whatsapp&statuses=failed");
     // The lists are back to their first choices too, check mark included.
@@ -175,6 +179,25 @@ onEachPlayground("select", () => {
       container.locator(".hfield").filter({ has: page.getByRole("combobox", { name, exact: true }) });
     await expectChosen(fieldOf("Channel"), ["WhatsApp"]);
     await expectChosen(fieldOf("Notify me about"), ["Failed"]);
+  });
+
+  test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", async ({ page }) => {
+    const { trigger } = await select(page, "select-default", "Channel");
+    const [box, value, chevron] = await boxes(trigger, trigger.locator(".hselect-value"), trigger.locator(".hexpand-chevron"));
+    expect(value.x - box.x).toBeCloseTo(11, 0);
+    expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
+  });
+
+  test("its label isn't the trigger's, so the pointer on it doesn't light the trigger's border", async ({ page }) => {
+    const { container, trigger } = await select(page, "select-default", "Channel");
+    const border = () => trigger.evaluate((node) => getComputedStyle(node).borderTopColor);
+    const rest = await border();
+    await container.locator(".play-demo .hlabel").hover();
+    await settled(trigger);
+    expect(await border()).toBe(rest);
+    await trigger.hover();
+    await settled(trigger);
+    expect(await border()).not.toBe(rest);
   });
 
   test("outside its form, it still sends its value once it's changed", async ({ page }) => {

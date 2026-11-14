@@ -94,16 +94,26 @@ const SelectControl = ({
   const submitted = multiple || values.length ? values : [""];
 
   const defaults = JSON.stringify(toList(defaultValue));
+  const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
     const form = trigger.current?.form;
     if (!form) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
-        if (!event.defaultPrevented) setUncontrolled(JSON.parse(defaults));
+    const reset = (event: Event) => {
+      clearTimeout(resetting.current);
+      resetting.current = setTimeout(() => {
+        if (event.defaultPrevented) return;
+        const restored: string[] = JSON.parse(defaults);
+        setUncontrolled(restored);
+        if (value !== undefined || restored.join("\n") === uncontrolled.join("\n")) return;
+        (onValueChange as ((value: string | string[]) => void) | undefined)?.(
+          multiple ? restored : (restored[0] ?? ""),
+        );
       });
+    };
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, [defaults, props.form]);
+  });
 
   const change = (next: string | string[]) => {
     setUncontrolled(toList(next));

@@ -10,7 +10,7 @@ you typed is lost.
 | Item | Requirement |
 | --- | --- |
 | CSS | `date-picker.css`, `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
-| Element | `<div class="hdate-picker">`, followed by `<div class="hpopup hdate-picker-popup" popover role="dialog">` |
+| Element | `<div class="hdate-picker">`, followed by `<div class="hpopup hdate-picker-popup" popover role="dialog">`, except when it's disabled |
 | Parts | In `.hdate-picker`: `<input class="hinput" type="text">`, a small tertiary `.hbutton` with only a `.hicon`, and a hidden input with the date for a form. In the popup: a [Calendar](calendar.md) |
 | Required | `anchor-name` on `.hdate-picker`, and the same name as the popup's `position-anchor`; `popovertarget` on the button, naming the popup; an `aria-label` on the button and on the popup, in the page's language; `aria-haspopup="dialog"` and `aria-expanded` on the button; `autocomplete="off"` on the input, which a [Field](field.md) labels |
 | Unique | The input's and the popup's `id`s, the Calendar title's `id`, and the anchor name |
@@ -137,14 +137,16 @@ the field shows.
 | Hook | Effect |
 | --- | --- |
 | `aria-invalid="true"` on the input | What's typed isn't a date that can be chosen: the Input's error look |
-| `disabled` on the input and the button | It can't be used |
+| `disabled` on the input and the button | It can't be used. Leave out the button's `popovertarget` and the popup, as nothing can open it |
+| `required` on the input | An empty field stops the form. Only that: a date that can't be chosen keeps its text while the hidden input is empty, so the form is sent without a date. Check for `aria-invalid` before sending |
 | `readonly` on the input, with `disabled` on the button | The date can be read and copied, and a form still sends it, but it can't be changed |
 | `disabled` on the hidden input | The date isn't sent with a form |
 
 ## Appearance and states
 
 - An [Input](input.md), with room at its end for a small tertiary
-  [Button](button.md) with a calendar icon, 2px from the edge.
+  [Button](button.md) with a calendar icon, 2px from the edge, and the text
+  stopping 6px (`--harmo-space-2xs`) before it.
 - The popup opens under the field, at its start, 16px around the Calendar, as
   wide as the Calendar whatever the field's width. Without room, it opens above,
   or moves, as any [Popup](popup.md) does.
@@ -187,8 +189,11 @@ does all of this, and `calendar.js` the Calendar.
 ## React
 
 `<DatePicker>` renders the Field, the field, the button, the popup, and the
-[Calendar](calendar.md), and does everything above. Dates are strings, as
-`"2026-11-18"`. Other props are the `<input>`'s attributes.
+[Calendar](calendar.md), and does everything above; disabled, it has no popup.
+Dates are strings, as `"2026-11-18"`. Other props are the `<input>`'s
+attributes, except `className`, which goes on `.hdate-picker`, and `hidden`,
+which goes on its Field, or on `.hdate-picker` without a `label`. `ref` is the
+input.
 
 | Prop | Effect |
 | --- | --- |
@@ -197,8 +202,9 @@ does all of this, and `calendar.js` the Calendar.
 | `calendarLabel` | Required: the name of the button and the popup, such as "Choose a date" |
 | `previousLabel`, `nextLabel` | Required: the Calendar's Previous and Next names |
 | `value`, `defaultValue` | The date, or `null` for none |
-| `onValueChange` | Called with the date, or `null` when it's cleared, or what's typed can't be chosen |
-| `onInvalidChange` | Called with `true` when what's typed can't be chosen, and `false` once that's over, so your app can set `error` |
+| `onValueChange` | Called with the date, or `null` when it's cleared, or what's typed can't be chosen. A form reset that changes the date calls it too, unless you hold the value |
+| `onInvalidChange` | Called with `true` when what's typed can't be chosen, and `false` once that's over, so your app can set `error`, and hold the form back |
+| `required` | Only stops an empty field: with a date that can't be chosen typed, the form is sent without a date. `onInvalidChange` says when that's so |
 | `name` | Sends the date with a form, in a hidden input, as `2026-11-18` |
 | `min`, `max` | The first and last dates that can be chosen, typed or picked. They're dates, as `"2026-11-05"`, even with `time`; check a time yourself in `onValueChange` |
 | `weekStartsOn`, `today` | As for the Calendar |
@@ -274,5 +280,6 @@ time field, put a [Time Picker](time-picker.md) beside it.
 
 ## Tokens
 
-None of its own: those of the [Input](input.md), the [Button](button.md), the
-[Popup](popup.md), and the [Calendar](calendar.md).
+`--harmo-control-height-small`, `--harmo-space-2xs`, `--harmo-space-sm`, and
+those of the [Input](input.md), the [Button](button.md), the [Popup](popup.md),
+and the [Calendar](calendar.md).

@@ -166,6 +166,12 @@ onEachPlayground("date-picker", () => {
     await page.keyboard.press("Enter");
     await expect(status).toHaveText("Sent 2026-12-25");
 
+    // A reset changes the date back, so what was sent no longer shows: React
+    // calls onValueChange for it.
+    await container.getByRole("button", { name: "Reset" }).click();
+    await expect(all.hidden).toHaveValue("2026-11-18");
+    await expect(status).toBeHidden();
+
     await retype(all.field, "02312026");
     await all.field.blur();
     await expect(all.field).toHaveAttribute("aria-invalid", "true");
@@ -362,11 +368,37 @@ onEachPlayground("date-picker", () => {
     await expect(all.field).toHaveValue(/^November 20, 2026.*9:00\sAM$/);
   });
 
-  test("disabled, the field and its button can't be used", async ({ page }) => {
+  test("disabled, the field and its button can't be used, and there's no popup", async ({ page }) => {
     const all = parts(await example(page, "date-picker-disabled"));
     await expect(all.field).toBeDisabled();
     await expect(all.button).toBeDisabled();
     await expect(all.hidden).toBeDisabled();
+    await expect(all.popup).toHaveCount(0);
+    await expect(all.button).not.toHaveAttribute("popovertarget");
+  });
+
+  test("the button sits 2px from the field's end, and the text stops a small step (6px) before it", async ({ page }) => {
+    const { field, button } = parts(await example(page, "date-picker-default"));
+    const [box, small] = await boxes(field, button);
+    const textEnd = await field.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return node.getBoundingClientRect().right - parseFloat(style.borderRightWidth) - parseFloat(style.paddingRight);
+    });
+    expect(box.x + box.width - (small.x + small.width)).toBeCloseTo(2, 0);
+    expect(small.x - textEnd).toBeCloseTo(6, 0);
+  });
+
+  test("only the pointer on the field lights its border, not the pointer on its label", async ({ page }) => {
+    const container = await example(page, "date-picker-default");
+    const { field } = parts(container);
+    const border = () => field.evaluate((node) => getComputedStyle(node).borderTopColor);
+    const rest = await border();
+    await container.locator(".play-demo .hlabel").hover();
+    await settled(field);
+    expect(await border()).toBe(rest);
+    await field.hover();
+    await settled(field);
+    expect(await border()).not.toBe(rest);
   });
 
   test("right to left, the button is at the left end, and the date is in the locale's digits", async ({ page }) => {

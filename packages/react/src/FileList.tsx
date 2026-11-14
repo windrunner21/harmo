@@ -91,9 +91,10 @@ const removeIcon = (
   </svg>
 );
 
-const doneIcon = (
+const doneIcon = (drawn: boolean) => (
   <svg
     className="hicon hfile-list-done"
+    data-new={drawn ? "" : undefined}
     width="24"
     height="24"
     viewBox="0 0 24 24"
@@ -201,6 +202,8 @@ const FileRow = ({
   const failed = renders(file.error);
   const value = file.progress === undefined ? undefined : Math.min(100, Math.max(0, file.progress));
   const status = failed ? "error" : value === undefined ? undefined : value >= 100 ? "done" : "uploading";
+  const [doneAtStart, setDoneAtStart] = useState(status === "done");
+  if (doneAtStart && status !== "done") setDoneAtStart(false);
 
   useLayoutEffect(() => {
     const node = row.current;
@@ -254,12 +257,13 @@ const FileRow = ({
         )}
       </div>
       <div className="hfile-list-actions">
-        {status === "done" && doneIcon}
+        {status === "done" && doneIcon(added || !doneAtStart)}
         {failed && onRetry && (
           <button
             className="hbutton"
             data-variant="tertiary"
             type="button"
+            aria-describedby={nameId}
             onFocus={() => (retryFocused.current = true)}
             onBlur={() => (retryFocused.current = false)}
             onClick={() => onRetry(file)}

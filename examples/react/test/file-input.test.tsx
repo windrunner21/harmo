@@ -29,6 +29,26 @@ describe("FileInput", () => {
     expect(markup).toMatch(/<button[^>]*disabled=""/);
   });
 
+  test("with a label, it renders its own Field, with one message for its error and validate's", () => {
+    const markup = renderToStaticMarkup(
+      <FileInput {...labels} label="Task list" description="A CSV file" error="Choose a task list" validate={() => null} />,
+    );
+    expect(markup).toStartWith('<div class="hfield">');
+    const id = /<label[^>]*for="([^"]+)"/.exec(markup)![1];
+    expect(markup).toMatch(new RegExp(`<input[^>]*id="${id}"`));
+    expect(markup.match(/class="herror"/g)).toHaveLength(1);
+    expect(markup).toContain(">Choose a task list</p>");
+    expect(markup).toMatch(/<input[^>]*aria-invalid="true"/);
+    const errorId = /<p[^>]*class="herror"[^>]*id="([^"]+)"|<p[^>]*id="([^"]+)"[^>]*class="herror"/.exec(markup)!;
+    expect(markup).toMatch(new RegExp(`aria-describedby="[^"]*${errorId[1] ?? errorId[2]}`));
+  });
+
+  test("with a label, hidden goes on its Field, and className on .hfile-input", () => {
+    const markup = renderToStaticMarkup(<FileInput {...labels} label="Attachment" className="x" hidden />);
+    expect(markup).toMatch(/^<div[^>]*hidden=""[^>]*class="hfield"|^<div[^>]*class="hfield"[^>]*hidden=""/);
+    expect(markup).toContain('<div class="hfile-input x">');
+  });
+
   test("in a Field, the label reaches the input", () => {
     const markup = renderToStaticMarkup(
       <Field label="Attachment">

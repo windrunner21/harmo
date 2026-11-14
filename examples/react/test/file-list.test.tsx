@@ -42,10 +42,11 @@ describe("FileList", () => {
     expect(markup([{ id: "a", name: "a", progress: -5 }])).toContain('aria-valuenow="0"');
   });
 
-  test("at 100 it's done, with a check", () => {
+  test("at 100 it's done, with a check, which isn't marked new when it's there from the start", () => {
     const html = markup([{ id: "a", name: "a.pdf", progress: 100 }]);
     expect(html).toContain('data-status="done"');
     expect(html).toContain("hfile-list-done");
+    expect(html).not.toContain("data-new");
   });
 
   test("a failure replaces the detail and the bar, and is announced", () => {
@@ -61,6 +62,12 @@ describe("FileList", () => {
     expect(markup([{ id: "a", name: "a", error: "No." }])).not.toContain("hbutton-label");
     expect(markup([{ id: "a", name: "a", error: "No." }], retry)).toContain('<span class="hbutton-label">Again</span>');
     expect(markup([{ id: "a", name: "a" }], retry)).not.toContain("hbutton-label");
+  });
+
+  test("a retry button is described by its file's name", () => {
+    const html = markup([{ id: "a", name: "a.pdf", error: "No." }], { onRetry: () => {}, retryLabel: "Again" });
+    const id = /<span class="hfile-list-name" id="([^"]+)"/.exec(html)![1];
+    expect(html).toMatch(new RegExp(`<button[^>]*aria-describedby="${id}"[^>]*><span class="hbutton-label">Again`));
   });
 
   test("a preview, an icon of your own, or the file icon", () => {

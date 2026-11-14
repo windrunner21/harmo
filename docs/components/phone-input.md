@@ -63,11 +63,13 @@ and whether it's valid.
 | `name` | The hidden input | Sends the number in E.164 with a form. It's empty until the number is valid |
 | `disabled` | The Select's button, the field, and the hidden input | Nothing can be chosen or typed |
 | `readonly` on the field, with `disabled` on the Select's button | The number can be read and copied, and a form still sends it, but neither it nor the country can be changed. The Select has no list, as when disabled |
+| `required` on the field | An empty field stops the form. Only that: a number that isn't complete, such as `415`, keeps its text while the hidden input is empty, so the form is sent without a number. Check the hidden input, or in React `details.valid`, before sending |
 
 ## Appearance and states
 
-- The Select is as wide as its flag and code, and the field takes the rest, 6px
-  away. Both are `--harmo-control-height` tall.
+- The Select is as wide as its flag and code, with a [Select](select.md)'s
+  insets, so its text and chevron line up with a Select's above or below it.
+  The field takes the rest, 6px away. Both are `--harmo-control-height` tall.
 - Choosing a country empties the field, as the digits were for the old one, and
   moves focus to it.
 - The list is all the countries the parser knows, by name in `locale`, unless
@@ -96,7 +98,7 @@ and whether it's valid.
 | --- | --- |
 | The field's text, formatted, with the caret kept among the digits | As it's typed |
 | The Select's value and the field's text | A complete international number is typed or pasted, starting with `+`. Until it's complete it stays international |
-| Emptying the field, and moving focus to it | A country is chosen |
+| Emptying the field, and moving focus to it | A country is chosen; not when your own click handler on its option calls `preventDefault()`, as in a [Listbox](listbox.md#what-a-script-does) |
 | The chosen option's `aria-selected="true"` and its check mark, and the flag, code, and name in the Select's button | The country changes, chosen or from a number |
 | The hidden input's value, in E.164, or empty until it's valid | As the number changes |
 | The country, the field's text, and the hidden input, back to what they were when the page loaded | The form is reset, unless a listener cancels the reset |
@@ -106,10 +108,12 @@ a parser with six countries.
 
 ## React
 
-`<PhoneInput>` renders all of this and does the above. In a [Field](field.md#react),
-the field takes the label and descriptions. `className` and `hidden` go on
-`.hphone-input`; other props, such as `readOnly`, `required`, or `aria-invalid`, go
-on the field. `disabled` and `readOnly` also disable the Select.
+`<PhoneInput>` renders all of this and does the above. With `label`, it renders the
+[Field](field.md#react) too; in a Field of your own, the field takes its label and
+descriptions just the same. `className` goes on `.hphone-input`, and `hidden` on its
+Field, or on `.hphone-input` without a `label`; other props, such as `readOnly`,
+`required`, or `aria-invalid`, go on the field, and `ref` is the field. `disabled` and
+`readOnly` also disable the Select.
 
 ```bash
 npm install libphonenumber-js
@@ -119,25 +123,25 @@ npm install libphonenumber-js
 "use client";
 
 import * as libphonenumber from "libphonenumber-js";
-import { Field, PhoneInput } from "@harmo-ui/react";
+import { PhoneInput } from "@harmo-ui/react";
 
-<Field label="Phone">
-  <PhoneInput
-    phone={libphonenumber}
-    locale="en"
-    defaultCountry="US"
-    countryLabel="Country code"
-    searchLabel="Search countries"
-    emptyMessage="No countries found"
-    onValueChange={(value, { valid, country }) => save(value, valid, country)}
-  />
-</Field>
+<PhoneInput
+  label="Phone"
+  phone={libphonenumber}
+  locale="en"
+  defaultCountry="US"
+  countryLabel="Country code"
+  searchLabel="Search countries"
+  emptyMessage="No countries found"
+  onValueChange={(value, { valid, country }) => save(value, valid, country)}
+/>
 ```
 
 The parser is a set of functions, so in Next.js this goes in a client component.
 
 | Prop | Effect |
 | --- | --- |
+| `label`, `optional`, `description`, `error` | As for a [Field](field.md#react); the last three need a `label` |
 | `phone` | Required. The parser: anything with `AsYouType`, `getCountries`, `getCountryCallingCode`, and `parsePhoneNumberFromString`, as `libphonenumber-js` has |
 | `locale` | Required. The language of the country names |
 | `defaultCountry` | Required. The country to start with |
@@ -148,7 +152,8 @@ The parser is a set of functions, so in Next.js this goes in a client component.
 | `validation` | `valid`, the default, or `possible`, which only checks the length, for numbers a country's rules don't cover |
 | `examples` | Number examples, such as `libphonenumber-js/examples.mobile.json`, to show one as the placeholder. The parser needs `getExampleNumber`, or it's ignored |
 | `renderFlag` | Replaces the emoji flag, given the country code |
-| `onValueChange` | Called with the number in E.164, or `""` until it's valid, and `{ country, valid }` |
+| `onValueChange` | Called with the number in E.164, or `""` until it's valid, and `{ country, valid }`. A form reset that changes the number or the country calls it too |
+| `required` | Only stops an empty field: with a number that isn't complete, the form is sent without one. `details.valid` says when that's so |
 
 `onValueChange` is also called once as it mounts when `defaultValue` is a number the
 parser understands, so a form knows from the start whether it's valid.
@@ -158,6 +163,6 @@ pasted. Arabic and fullwidth digits become ASCII ones.
 
 ## Tokens
 
-`--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-space-sm`, `--harmo-font-size-base`,
-and those of [Select](select.md#tokens), [Input](input.md#tokens), and
+`--harmo-space-2xs`, `--harmo-font-size-base`, and those of
+[Select](select.md#tokens), [Input](input.md#tokens), and
 [Listbox](listbox.md#tokens).

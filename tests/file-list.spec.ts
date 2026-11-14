@@ -114,12 +114,42 @@ onEachPlayground("file-list", () => {
     await expect(done.locator(".hfile-list-progress")).toHaveCSS("opacity", "0");
   });
 
+  test("a check there as the page loads doesn't draw itself, and one a finished upload adds does (data-new), over --harmo-duration-normal", async ({ page }) => {
+    const { list, rows } = await parts(page, "upload-progress");
+    await expect(rows.first().locator(".hfile-list-done")).not.toHaveAttribute("data-new");
+    const failed = rows.nth(2);
+    await failed.getByRole("button", { name: "Try again" }).click();
+    await expect(failed.locator(".hfile-list-done")).toHaveAttribute("data-new", "");
+    // As things coming in do, so a theme's timing reaches it.
+    await list.evaluate((node) => (node as HTMLElement).style.setProperty("--harmo-duration-normal", "123ms"));
+    await expect(failed.locator(".hfile-list-done > path")).toHaveCSS("transition-duration", "0.123s");
+  });
+
+  test("a row's fade and settle, and the bar's fade and growth, take --harmo-ease-out-cubic, so a theme's curve reaches them", async ({ page }) => {
+    const { list, rows } = await parts(page, "upload-progress");
+    const curve = "cubic-bezier(0.1, 0.9, 0.2, 1)";
+    await list.evaluate((node, curve) => (node as HTMLElement).style.setProperty("--harmo-ease-out-cubic", curve), curve);
+    // Each property's curve, as the browser pairs the two lists.
+    const curves = (element: Locator, pseudo: string | null = null) =>
+      element.evaluate((node, pseudo) => {
+        const style = getComputedStyle(node, pseudo);
+        const easings = style.transitionTimingFunction.split(/,\s*(?![^(]*\))/);
+        return Object.fromEntries(style.transitionProperty.split(/,\s*/).map((name, index) => [name, easings[index % easings.length]]));
+      }, pseudo);
+    const bar = rows.nth(1).locator(".hfile-list-progress");
+    expect(await curves(rows.first())).toEqual({ opacity: curve, transform: curve });
+    expect(await curves(bar)).toEqual({ opacity: curve });
+    expect(await curves(bar, "::before")).toEqual({ transform: curve });
+  });
+
   test("a failed file says why, and can be tried again", async ({ page }) => {
     const { rows } = await parts(page, "upload-progress");
     const failed = rows.nth(2);
     await expect(failed).toHaveAttribute("data-status", "error");
     await expect(failed.getByRole("alert")).toHaveText("That didn't upload. Check your connection.");
     await expect(failed.getByRole("progressbar")).toHaveCount(0);
+    // Each retry button is described by its file, so several are told apart.
+    await expect(failed.getByRole("button", { name: "Try again" })).toHaveAccessibleDescription("kickoff-notes.docx");
     await failed.getByRole("button", { name: "Try again" }).click();
     await expect(failed).toHaveAttribute("data-status", "done");
     await expect(failed.getByRole("alert")).toHaveCount(0);

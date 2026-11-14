@@ -9,7 +9,7 @@
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-sm;
 
   inline-size: fit-content;
 
@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: $space-2xs;
 
   &[hidden] {
     display: none;
@@ -45,7 +45,7 @@
   border-collapse: collapse;
 
   & th {
-    padding: 0 0 8px;
+    padding: 0 0 $space-2xs;
 
     font-size: $font-size-xs;
     font-weight: $font-weight-normal;

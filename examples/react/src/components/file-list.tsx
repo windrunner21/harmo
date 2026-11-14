@@ -25,7 +25,12 @@ const useObjectUrls = () => {
       return url;
     },
     release: (url?: string) => {
-      if (url && made.current.delete(url)) URL.revokeObjectURL(url);
+      if (!url || !made.current.delete(url)) return;
+      // A picture still loading when its file goes is released once it has
+      // loaded, as one released mid-load fails to load.
+      const loading = [...document.images].find((image) => image.src === url && !image.complete);
+      if (!loading) return URL.revokeObjectURL(url);
+      for (const type of ["load", "error"]) loading.addEventListener(type, () => URL.revokeObjectURL(url), { once: true });
     },
   };
 };

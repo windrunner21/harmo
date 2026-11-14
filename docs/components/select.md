@@ -87,11 +87,13 @@ the value instead, as a native `<select>` would send it:
 ## Appearance and states
 
 - The same box and states as [Input](input.md), so a select and an input are
-  the same 34px height side by side.
+  the same 34px height side by side, with the text 10px from the start, where
+  an Input's starts.
 - The value is one line and ends with an ellipsis when it doesn't fit,
   including several chosen labels.
 - The chevron is an [Expand Chevron](expand-chevron.md) in
-  `--harmo-color-text-secondary`, 20px from the end. It folds up in 200ms
+  `--harmo-color-text-secondary`, 16px from the end, and 16px after the value.
+  It folds up in 200ms
   (`--harmo-ease-in-out-cubic`) while open, and flips without motion under
   reduced motion.
 
@@ -101,11 +103,19 @@ the value instead, as a native `<select>` would send it:
   `aria-labelledby` names it from the Field's label.
 - Focus stays on the trigger while the list is open (the WAI-ARIA select-only
   combobox pattern); the trigger's `aria-activedescendant` names the
-  highlighted option.
+  highlighted option. With `searchLabel`, focus moves to the search field as
+  the list opens, and the search field's `aria-activedescendant` names it
+  instead.
 - Keys: Down and Up move the highlight, Home and End go to the first and last
   option, typing jumps to the option whose label starts with the typed
-  letters, Enter or Space chooses, Escape closes. Disabled options are
+  letters, Enter or Space chooses, Escape closes. With a search row, Down and
+  Up on the closed trigger open it too, as without one. Disabled options are
   skipped.
+- The default border is Input's light edge, which meets WCAG 1.4.11 only
+  beside a visible label, such as the Field's, or another visible cue. For a
+  select with neither, set `--harmo-input-color-border:
+  var(--harmo-color-border-control)`, as [Input](input.md#accessibility)
+  explains.
 
 ## What a script does
 
@@ -128,14 +138,18 @@ renders the Field too; without one, name it with `aria-label`, or place it in
 a [Setting](settings.md#react), which names it. A disabled Select
 has no popup. Its children are `<Option>`s and `<OptionGroup>`s, as in a
 [Listbox](listbox.md#react). Other props are the trigger `<button>`'s
-attributes.
+attributes, and `ref` is the trigger. `className` goes on the trigger, its
+outer element, and `hidden` on its Field, or on the trigger without a `label`.
+Your `onKeyDown` runs before its own keys: `preventDefault()` in it keeps a key
+from opening the list or moving the highlight, as in a
+[Listbox](listbox.md#react).
 
 | Prop | Effect |
 | --- | --- |
 | `label`, `optional`, `description`, `error` | As for a [Field](field.md#react); the last three need a `label` |
 | `multiple` | Lets several options be chosen; the popup stays open |
 | `value` or `defaultValue` | The chosen value, or an array of them with `multiple` |
-| `onValueChange` | Called with the new value or array |
+| `onValueChange` | Called with the new value or array. A form reset that changes the value calls it too, unless you hold the value, with `""` when a single select goes back to nothing chosen |
 | `name` | Adds the hidden inputs a form submits; a form reset restores `defaultValue`, as it is at the time |
 | `form` | The id of the form it belongs to, when it's outside it; the hidden inputs take it too |
 | `placeholder` | Shown, grayed, while nothing is chosen |
@@ -153,10 +167,11 @@ attributes.
 
 ## Tokens
 
-`--harmo-border-radius`, `--harmo-color-background-secondary`,
-`--harmo-color-danger`, `--harmo-color-focus`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
-`--harmo-control-height`, `--harmo-duration-fast`, `--harmo-font-family`,
+`--harmo-space-xs`, `--harmo-space-sm`, `--harmo-border-radius`,
+`--harmo-color-background-secondary`, `--harmo-color-danger`,
+`--harmo-color-focus`, `--harmo-color-text`, `--harmo-color-text-secondary`,
+`--harmo-color-text-tertiary`, `--harmo-control-height`,
+`--harmo-duration-fast`, `--harmo-font-family`,
 `--harmo-font-size-sm`, `--harmo-font-weight-normal`,
 `--harmo-input-box-shadow`, `--harmo-input-color-background`,
 `--harmo-input-color-border`.

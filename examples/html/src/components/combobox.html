@@ -12,6 +12,7 @@
       <input
         class="hinput"
         id="assignee"
+        data-name="assignee"
         type="text"
         role="combobox"
         autocomplete="off"
@@ -136,6 +137,7 @@
       <input
         class="hinput"
         id="notify"
+        data-name="notify"
         type="text"
         role="combobox"
         autocomplete="off"
@@ -246,6 +248,7 @@
       <input
         class="hinput"
         id="send-to"
+        data-name="send-to"
         type="text"
         role="combobox"
         autocomplete="off"
@@ -283,6 +286,41 @@
   </div>
 </play-example>
 
+<play-example title="Searching as you type" layout="stack">
+  <play-note>
+    Your app can find the options itself as the text changes, such as on a
+    server, and put them in the list. Here they arrive a moment after each
+    keystroke: the list opens once there are any, and closes when there are
+    none. <kbd class="hkbd">Escape</kbd> keeps it closed until the next
+    keystroke.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="find-agent" id="find-agent-label">Find an agent</label>
+    <div class="hcombobox" style="anchor-name: --find-agent">
+      <input
+        class="hinput"
+        id="find-agent"
+        data-name="find-agent"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls="find-agent-listbox"
+        aria-labelledby="find-agent-label"
+        placeholder="Search agents"
+        value=""
+        data-example-late-results="sam:Sam Rivera;ana:Ana Lopez;lee:Lee Chen;priya:Priya Shah"
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <div class="hpopup" id="find-agent-popup" popover="manual" style="position-anchor: --find-agent">
+      <ul class="hlistbox" id="find-agent-listbox" role="listbox" aria-labelledby="find-agent-label"></ul>
+    </div>
+    <input type="hidden" name="find-agent" value="" />
+  </div>
+</play-example>
+
 <play-example title="Picked by the app" layout="stack">
   <play-note>
     The app can pick too, such as Assign to me: the field shows its pick at
@@ -294,6 +332,7 @@
       <input
         class="hinput"
         id="owner"
+        data-name="owner"
         type="text"
         role="combobox"
         autocomplete="off"
@@ -338,6 +377,7 @@
       <input
         class="hinput"
         id="assigned"
+        data-name="assigned"
         type="text"
         role="combobox"
         autocomplete="off"
@@ -357,7 +397,9 @@
   <play-note>
     A form sends what each one holds: in pick mode, the hidden input; with
     free text, the field itself; choosing several, one hidden input for each
-    choice. Reset restores what the page loaded with.
+    choice. Each takes only the hidden inputs its <code>data-name</code>
+    names, so the app's own after Watchers, the record's id, is left alone.
+    Reset restores what the page loaded with.
   </play-note>
   <form style="display: flex; flex-direction: column; gap: 16px">
     <div class="hfield">
@@ -366,6 +408,7 @@
         <input
           class="hinput"
           id="form-owner"
+          data-name="form-owner"
           type="text"
           role="combobox"
           autocomplete="off"
@@ -444,6 +487,7 @@
         <input
           class="hinput"
           id="form-watchers"
+          data-name="form-watchers"
           type="text"
           role="combobox"
           autocomplete="off"
@@ -469,6 +513,7 @@
         </ul>
       </div>
       <input type="hidden" name="form-watchers" value="ana" />
+      <input type="hidden" name="form-record" value="42" />
     </div>
     <button class="hbutton" data-variant="secondary" type="reset" style="align-self: flex-start">
       <span class="hbutton-label">Reset</span>
