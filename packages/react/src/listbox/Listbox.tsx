@@ -56,9 +56,9 @@ interface ListboxState {
 
 const ListboxContext = createContext<ListboxState | undefined>(undefined);
 
-export const SelectContext = createContext<{ named: boolean } | undefined>(
-  undefined,
-);
+export const SelectContext = createContext<
+  { named: boolean; across?: boolean } | undefined
+>(undefined);
 
 // An OptionGroup around an option: whether a query filters it, and whether
 // the app hides the group, and so the option.
@@ -235,6 +235,19 @@ export const Listbox = ({
           next =
             index < 0 ? options.at(-1) : options[Math.max(index - 1, 0)];
           break;
+        case "ArrowRight":
+        case "ArrowLeft": {
+          if (!select?.across || typing || !open) return;
+          const rtl = list.current ? getComputedStyle(list.current).direction === "rtl" : false;
+          const back = (event.key === "ArrowLeft") !== rtl;
+          next =
+            index < 0
+              ? back
+                ? options.at(-1)
+                : options[0]
+              : options[back ? Math.max(index - 1, 0) : Math.min(index + 1, options.length - 1)];
+          break;
+        }
         case "Home":
           if (typing) return;
           next = options[0];
@@ -569,10 +582,16 @@ const isShown = (container: HTMLElement | null) =>
     ? container.open
     : (container?.matches(":popover-open") ?? false);
 
-const labelOf = (option: HTMLElement) =>
-  (option.querySelector(".hoption-label") ?? option).textContent
-    ?.trim()
-    .toLowerCase() ?? "";
+// An option's label as typing finds it, without its decorative parts, such as
+// a flag before a name.
+const labelOf = (option: HTMLElement) => {
+  let label = option.querySelector(".hoption-label") ?? option;
+  if (label.querySelector('[aria-hidden="true"]')) {
+    label = label.cloneNode(true) as Element;
+    for (const part of label.querySelectorAll('[aria-hidden="true"]')) part.remove();
+  }
+  return label.textContent?.trim().toLowerCase() ?? "";
+};
 
 const updateTitles = (list: HTMLElement | null) => {
   for (const label of list?.querySelectorAll<HTMLElement>(".hoption-label") ??

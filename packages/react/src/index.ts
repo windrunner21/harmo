@@ -50,6 +50,12 @@ export { Filters, type FiltersProps } from "./Filters.tsx";
 export { HarmoProvider, type HarmoProviderProps } from "./HarmoProvider.tsx";
 export { Input, type InputProps } from "./Input.tsx";
 export { Kbd, type KbdProps } from "./Kbd.tsx";
+export {
+  LanguagePicker,
+  type LanguagePickerLanguage,
+  type LanguagePickerProps,
+  type LanguagePickerRegion,
+} from "./LanguagePicker.tsx";
 export { Link, type LinkProps } from "./Link.tsx";
 export { Listbox, type ListboxProps } from "./listbox/Listbox.tsx";
 export { MenuButton, type MenuButtonProps } from "./MenuButton.tsx";

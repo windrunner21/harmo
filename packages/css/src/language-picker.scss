@@ -1,0 +1,241 @@
+@use "shortcuts" as *;
+
+// A tertiary Button that opens a Listbox of languages: a globe, the language in
+// use, and a chevron. Each language is named in its own.
+.hlanguage-picker {
+  &[aria-expanded="true"] {
+    background-color: $color-background-hover;
+  }
+
+  // One line, ending with an ellipsis when it's too long for the room it has.
+  & > .hbutton-label {
+    display: block;
+
+    min-inline-size: 0;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+// With regions, the region, then its language in parentheses, such as "United
+// States (English)". --hlanguage-picker-open and --hlanguage-picker-close change
+// them, such as to "（" and "）" in Chinese or Japanese.
+.hlanguage-picker-region + [lang] {
+  &::before {
+    content: var(--hlanguage-picker-open, "(");
+  }
+
+  &::after {
+    content: var(--hlanguage-picker-close, ")");
+  }
+}
+
+// A language's or a region's picture, such as a flag, which your app brings. It
+// sits in a 24px by 20px box before the name, as wide as a 3:2 flag 16px high.
+.hlanguage-picker-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  inline-size: 1.5rem;
+  block-size: 1.25rem;
+  margin-inline-end: $space-xs;
+
+  font-size: 1rem;
+  line-height: 1;
+  vertical-align: middle;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // A faint rim, so that a flag with white at its edge, such as Japan's, keeps
+  // its shape on a white panel.
+  & > img,
+  & > svg {
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: 100%;
+
+    border-radius: 3px;
+    outline: 1px solid color-mix(in srgb, #{$color-text} 12%, transparent);
+    outline-offset: -1px;
+  }
+}
+
+// With regions, a panel: the regions in columns, each with its picture and its
+// name, and its languages side by side under the name. The region in use shows
+// a check in its picture's place. Up to four columns, each as wide as its
+// longest region, as the window allows. The panel keeps its width rather than
+// fitting beside the button: below or above it, lined up with either of its
+// ends, as a Popup is, or else in the middle of the window, below or above, before
+// it would shrink. Not while it's pinned, closing, where Popup holds it still.
+$regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
+  --hlanguage-picker-middle-below, --hlanguage-picker-middle-above, --hpopup-shrink,
+  --hpopup-center;
+
+.hpopup.hlanguage-picker-regions:not([data-pinned]) {
+  inline-size: max-content;
+  max-inline-size: calc(100vw - 16px);
+  position-try-fallbacks: $regions-fallbacks;
+
+  // Each opening toggles data-refit, so the browser tries these afresh, as
+  // Popup's own list does.
+  &[data-refit] {
+    position-try-fallbacks: $regions-fallbacks, flip-block;
+  }
+}
+
+@position-try --hlanguage-picker-middle-below {
+  position-area: block-end span-all;
+  justify-self: center;
+  margin-inline: 0;
+}
+
+@position-try --hlanguage-picker-middle-above {
+  position-area: block-start span-all;
+  justify-self: center;
+  margin-inline: 0;
+}
+
+.hlanguage-picker-regions > .hlistbox {
+  --hlanguage-picker-columns: 1;
+
+  display: grid;
+  grid-template-columns: repeat(var(--hlanguage-picker-columns), minmax(9rem, max-content));
+  align-items: start;
+  gap: $space-md $space-lg;
+
+  max-block-size: min(30rem, 70dvh);
+  max-inline-size: calc(100vw - 18px);
+  padding: $space-md;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:has(> .hoption-group:nth-child(2)) {
+    --hlanguage-picker-columns: 2;
+  }
+
+  &:has(> .hoption-group:nth-child(3)) {
+    --hlanguage-picker-columns: 3;
+  }
+
+  &:has(> .hoption-group:nth-child(7)) {
+    --hlanguage-picker-columns: 4;
+  }
+
+  @media (width < 48rem) {
+    &:has(> .hoption-group:nth-child(3)) {
+      --hlanguage-picker-columns: 2;
+    }
+  }
+
+  @media (width < 30rem) {
+    &:has(> .hoption-group:nth-child(2)) {
+      --hlanguage-picker-columns: 1;
+    }
+  }
+}
+
+.hlanguage-picker-regions .hoption-group {
+  position: relative;
+
+  padding-inline-start: calc(1.5rem + #{$space-xs});
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The region's name, in the text color, beside its picture.
+  & > .hoption-group-label {
+    display: flex;
+    align-items: center;
+
+    min-block-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+
+    font-size: $font-size-sm;
+    font-weight: $font-weight-normal;
+    letter-spacing: normal;
+    text-transform: none;
+
+    color: $color-text;
+    border: 0;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  & > .hoption-group-label > .hlanguage-picker-icon {
+    position: absolute;
+    inset-block-start: 0.125rem;
+    inset-inline-start: 0;
+  }
+
+  & .hoption-check {
+    position: absolute;
+    inset-block-start: 0.125rem;
+    inset-inline-start: 0.125rem;
+  }
+
+  // Only while the check shows: a search can hide the language in use.
+  &:has(.hoption[aria-selected="true"]:not([hidden])) > .hoption-group-label > .hlanguage-picker-icon {
+    visibility: hidden;
+  }
+
+  // Its languages, beside one another, lined up under its name.
+  & > ul {
+    display: flex;
+    flex-wrap: wrap;
+
+    margin-block-start: 2px;
+    margin-inline-start: -6px;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  & .hoption {
+    gap: 0;
+
+    padding: 2px 6px;
+
+    &[aria-selected="true"] {
+      font-weight: $font-weight-medium;
+
+      color: $color-text;
+    }
+  }
+
+  // The check, in a circle in the picture's place, on the fill that keeps white
+  // readable in dark mode too.
+  & .hoption-check {
+    box-sizing: border-box;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    margin: 0;
+    padding: 0.1875rem;
+
+    color: $color-on-primary;
+    background-color: $color-primary-fill;
+    border-radius: 50%;
+
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+}

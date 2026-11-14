@@ -34,6 +34,7 @@ the same markup and does what the script would.
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
+| Language Picker | [language-picker.md](language-picker.md) |
 | Link | [link.md](link.md) |
 | Listbox | [listbox.md](listbox.md) |
 | Menu Button | [menu-button.md](menu-button.md) |
@@ -126,6 +127,7 @@ Some components are built from others, so their files need company:
 | `file-list.css` | `button.css` for its buttons |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `filters.css` | `filter-chip.css`, `popup.css`, and those of the filters in it |
+| `language-picker.css` | `button.css`, `popup.css`, `listbox.css`, `expand-chevron.css` |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer |
 | `time-picker.css` | `popup.css`, `expand-chevron.css`; `field.css` for a label |
@@ -277,6 +279,7 @@ the React components, set:
 | The button's text and icon, the remove button's `hidden`, the message and `aria-invalid` | File Input | Show the file, remove it, and say why one was refused |
 | `data-status`, the progress, the rows themselves | File List | Follow your app's uploads |
 | The field's text, the country, and the hidden value | Phone Input | Format the number and follow the country |
+| The button's label | Language Picker | Show the language chosen, and its region |
 | The count's text | Selection Bar | Follows the selection, which is your app's |
 | `checked` and `indeterminate`, hidden columns, the rows and the page | Table | Follow the selection, the columns chosen, and the page, which are your app's |
 | Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |

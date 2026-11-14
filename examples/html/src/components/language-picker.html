@@ -1,0 +1,519 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    A tertiary <a class="hlink" data-underlined href="button.html">Button</a> that
+    opens a <a class="hlink" data-underlined href="listbox.html">Listbox</a>, as a
+    <a class="hlink" data-underlined href="select.html">Select</a> does. Each
+    language is named in its own, in a span whose <code>lang</code> lets a screen
+    reader say it in that language. The label, here "Language", is its name, for
+    someone who can't read the language in use.
+  </play-note>
+  <button
+    class="hbutton hlanguage-picker"
+    data-variant="tertiary"
+    type="button"
+    role="combobox"
+    aria-label="Language"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="language-listbox"
+    popovertarget="language-popup"
+    style="anchor-name: --language"
+  >
+    <play-icon name="globe" class="hicon"></play-icon>
+    <span class="hbutton-label"><span lang="en">English</span></span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="language-popup" popover style="position-anchor: --language">
+    <ul class="hlistbox" id="language-listbox" role="listbox" aria-label="Language">
+      <li class="hoption" id="language-en" role="option" data-value="en" aria-selected="true">
+        <span class="hoption-label"><span lang="en">English</span></span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="language-de" role="option" data-value="de" aria-selected="false">
+        <span class="hoption-label"><span lang="de">Deutsch</span></span>
+      </li>
+      <li class="hoption" id="language-es" role="option" data-value="es" aria-selected="false">
+        <span class="hoption-label"><span lang="es">Español</span></span>
+      </li>
+      <li class="hoption" id="language-fr" role="option" data-value="fr" aria-selected="false">
+        <span class="hoption-label"><span lang="fr">Français</span></span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Names in the page's language" layout="stack">
+  <play-note>
+    Each option's <code>.hoption-description</code> names the language in the
+    page's own, for someone who can't read its script. The page's own language
+    needs none.
+  </play-note>
+  <button
+    class="hbutton hlanguage-picker"
+    data-variant="tertiary"
+    type="button"
+    role="combobox"
+    aria-label="Language"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="language-named-listbox"
+    popovertarget="language-named-popup"
+    style="anchor-name: --language-named"
+  >
+    <play-icon name="globe" class="hicon"></play-icon>
+    <span class="hbutton-label"><span lang="en">English</span></span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="language-named-popup" popover style="position-anchor: --language-named">
+    <ul class="hlistbox" id="language-named-listbox" role="listbox" aria-label="Language">
+      <li class="hoption" id="language-named-en" role="option" data-value="en" aria-selected="true">
+        <span class="hoption-label"><span lang="en">English</span></span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="language-named-de" role="option" data-value="de" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="de">Deutsch</span></span>
+          <span class="hoption-description">German</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-named-es" role="option" data-value="es" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="es">Español</span></span>
+          <span class="hoption-description">Spanish</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-named-fr" role="option" data-value="fr" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="fr">Français</span></span>
+          <span class="hoption-description">French</span>
+        </span>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="By region">
+  <play-note>
+    With regions, the popup is a panel: the regions in columns, each with its
+    flag, its name, and its languages beside one another under it. The region in
+    use has a check in its flag's place. The button shows the region too, with
+    the language in parentheses, since a language can be in several.
+    <kbd class="hkbd">Left</kbd> and <kbd class="hkbd">Right</kbd> move between
+    languages, as <kbd class="hkbd">Up</kbd> and <kbd class="hkbd">Down</kbd> do,
+    and a search would find a language by its region's name.
+  </play-note>
+  <button
+    class="hbutton hlanguage-picker"
+    data-variant="tertiary"
+    type="button"
+    role="combobox"
+    aria-label="Region and language"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="region-listbox"
+    popovertarget="region-popup"
+    style="anchor-name: --region"
+  >
+    <play-icon name="globe" class="hicon"></play-icon>
+    <span class="hbutton-label"><span class="hlanguage-picker-region">United States</span> <span lang="en-US">English</span></span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup hlanguage-picker-regions" id="region-popup" popover style="position-anchor: --region">
+    <ul class="hlistbox" id="region-listbox" role="listbox" aria-label="Region and language">
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-france"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/fr.svg" alt="" /></span>France</span>
+        <ul role="group" aria-labelledby="region-france">
+          <li class="hoption" id="region-fr-fr" role="option" data-value="fr-FR" data-example-keywords="France" aria-selected="false">
+            <span class="hoption-label"><span lang="fr-FR">Français</span></span>
+          </li>
+          <li class="hoption" id="region-en-fr" role="option" data-value="en-FR" data-example-keywords="France" aria-selected="false">
+            <span class="hoption-label"><span lang="en-FR">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-germany"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/de.svg" alt="" /></span>Germany</span>
+        <ul role="group" aria-labelledby="region-germany">
+          <li class="hoption" id="region-de-de" role="option" data-value="de-DE" data-example-keywords="Germany" aria-selected="false">
+            <span class="hoption-label"><span lang="de-DE">Deutsch</span></span>
+          </li>
+          <li class="hoption" id="region-en-de" role="option" data-value="en-DE" data-example-keywords="Germany" aria-selected="false">
+            <span class="hoption-label"><span lang="en-DE">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-japan"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/jp.svg" alt="" /></span>Japan</span>
+        <ul role="group" aria-labelledby="region-japan">
+          <li class="hoption" id="region-ja-jp" role="option" data-value="ja-JP" data-example-keywords="Japan" aria-selected="false">
+            <span class="hoption-label"><span lang="ja-JP">日本語</span></span>
+          </li>
+          <li class="hoption" id="region-en-jp" role="option" data-value="en-JP" data-example-keywords="Japan" aria-selected="false">
+            <span class="hoption-label"><span lang="en-JP">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-mexico"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/mx.svg" alt="" /></span>Mexico</span>
+        <ul role="group" aria-labelledby="region-mexico">
+          <li class="hoption" id="region-es-mx" role="option" data-value="es-MX" data-example-keywords="Mexico" aria-selected="false">
+            <span class="hoption-label"><span lang="es-MX">Español</span></span>
+          </li>
+          <li class="hoption" id="region-en-mx" role="option" data-value="en-MX" data-example-keywords="Mexico" aria-selected="false">
+            <span class="hoption-label"><span lang="en-MX">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-spain"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/es.svg" alt="" /></span>Spain</span>
+        <ul role="group" aria-labelledby="region-spain">
+          <li class="hoption" id="region-es-es" role="option" data-value="es-ES" data-example-keywords="Spain" aria-selected="false">
+            <span class="hoption-label"><span lang="es-ES">Español</span></span>
+          </li>
+          <li class="hoption" id="region-en-es" role="option" data-value="en-ES" data-example-keywords="Spain" aria-selected="false">
+            <span class="hoption-label"><span lang="en-ES">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-switzerland"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/ch.svg" alt="" /></span>Switzerland</span>
+        <ul role="group" aria-labelledby="region-switzerland">
+          <li class="hoption" id="region-de-ch" role="option" data-value="de-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="de-CH">Deutsch</span></span>
+          </li>
+          <li class="hoption" id="region-fr-ch" role="option" data-value="fr-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="fr-CH">Français</span></span>
+          </li>
+          <li class="hoption" id="region-it-ch" role="option" data-value="it-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="it-CH">Italiano</span></span>
+          </li>
+          <li class="hoption" id="region-en-ch" role="option" data-value="en-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="en-CH">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-united-kingdom"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/gb.svg" alt="" /></span>United Kingdom</span>
+        <ul role="group" aria-labelledby="region-united-kingdom">
+          <li class="hoption" id="region-en-gb" role="option" data-value="en-GB" data-example-keywords="United Kingdom" aria-selected="false">
+            <span class="hoption-label"><span lang="en-GB">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-united-states"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/us.svg" alt="" /></span>United States</span>
+        <ul role="group" aria-labelledby="region-united-states">
+          <li class="hoption" id="region-en-us" role="option" data-value="en-US" data-example-keywords="United States" aria-selected="true">
+            <span class="hoption-label"><span lang="en-US">English</span></span>
+            <play-icon name="check" class="hoption-check"></play-icon>
+          </li>
+          <li class="hoption" id="region-es-us" role="option" data-value="es-US" data-example-keywords="United States" aria-selected="false">
+            <span class="hoption-label"><span lang="es-US">Español</span></span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</play-example>
+
+<play-example title="Regions with search">
+  <play-note>
+    A search row above the panel. It finds a language by its own name or its
+    region's, so "Spain" leaves Spain's languages, and "English" one in each
+    region. A region whose language in use is hidden shows its flag again.
+  </play-note>
+  <button
+    class="hbutton hlanguage-picker"
+    data-variant="tertiary"
+    type="button"
+    role="combobox"
+    aria-label="Region and language"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="region-search-listbox"
+    popovertarget="region-search-popup"
+    style="anchor-name: --region-search"
+  >
+    <play-icon name="globe" class="hicon"></play-icon>
+    <span class="hbutton-label"><span class="hlanguage-picker-region">United States</span> <span lang="en-US">English</span></span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup hlanguage-picker-regions" id="region-search-popup" popover style="position-anchor: --region-search">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        placeholder="Search regions and languages"
+        aria-label="Search regions and languages"
+        data-example-empty="Nothing found"
+        aria-expanded="true"
+        aria-controls="region-search-listbox"
+        aria-autocomplete="list"
+      />
+    </div>
+    <ul class="hlistbox" id="region-search-listbox" role="listbox" aria-label="Region and language">
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-search-france"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/fr.svg" alt="" /></span>France</span>
+        <ul role="group" aria-labelledby="region-search-france">
+          <li class="hoption" id="region-search-fr-fr" role="option" data-value="fr-FR" data-example-keywords="France" aria-selected="false">
+            <span class="hoption-label"><span lang="fr-FR">Français</span></span>
+          </li>
+          <li class="hoption" id="region-search-en-fr" role="option" data-value="en-FR" data-example-keywords="France" aria-selected="false">
+            <span class="hoption-label"><span lang="en-FR">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-search-germany"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/de.svg" alt="" /></span>Germany</span>
+        <ul role="group" aria-labelledby="region-search-germany">
+          <li class="hoption" id="region-search-de-de" role="option" data-value="de-DE" data-example-keywords="Germany" aria-selected="false">
+            <span class="hoption-label"><span lang="de-DE">Deutsch</span></span>
+          </li>
+          <li class="hoption" id="region-search-en-de" role="option" data-value="en-DE" data-example-keywords="Germany" aria-selected="false">
+            <span class="hoption-label"><span lang="en-DE">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-search-spain"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/es.svg" alt="" /></span>Spain</span>
+        <ul role="group" aria-labelledby="region-search-spain">
+          <li class="hoption" id="region-search-es-es" role="option" data-value="es-ES" data-example-keywords="Spain" aria-selected="false">
+            <span class="hoption-label"><span lang="es-ES">Español</span></span>
+          </li>
+          <li class="hoption" id="region-search-en-es" role="option" data-value="en-ES" data-example-keywords="Spain" aria-selected="false">
+            <span class="hoption-label"><span lang="en-ES">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-search-switzerland"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/ch.svg" alt="" /></span>Switzerland</span>
+        <ul role="group" aria-labelledby="region-search-switzerland">
+          <li class="hoption" id="region-search-de-ch" role="option" data-value="de-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="de-CH">Deutsch</span></span>
+          </li>
+          <li class="hoption" id="region-search-fr-ch" role="option" data-value="fr-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="fr-CH">Français</span></span>
+          </li>
+          <li class="hoption" id="region-search-it-ch" role="option" data-value="it-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="it-CH">Italiano</span></span>
+          </li>
+          <li class="hoption" id="region-search-en-ch" role="option" data-value="en-CH" data-example-keywords="Switzerland" aria-selected="false">
+            <span class="hoption-label"><span lang="en-CH">English</span></span>
+          </li>
+        </ul>
+      </li>
+      <li class="hoption-group" role="presentation">
+        <span class="hoption-group-label" id="region-search-united-states"><span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/us.svg" alt="" /></span>United States</span>
+        <ul role="group" aria-labelledby="region-search-united-states">
+          <li class="hoption" id="region-search-en-us" role="option" data-value="en-US" data-example-keywords="United States" aria-selected="true">
+            <span class="hoption-label"><span lang="en-US">English</span></span>
+            <play-icon name="check" class="hoption-check"></play-icon>
+          </li>
+          <li class="hoption" id="region-search-es-us" role="option" data-value="es-US" data-example-keywords="United States" aria-selected="false">
+            <span class="hoption-label"><span lang="es-US">Español</span></span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p class="hlistbox-empty" role="status"></p>
+  </div>
+</play-example>
+
+<play-example title="With search" layout="stack">
+  <play-note>
+    A search row for a long list. It finds a language by either of its names.
+  </play-note>
+  <button
+    class="hbutton hlanguage-picker"
+    data-variant="tertiary"
+    type="button"
+    role="combobox"
+    aria-label="Language"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="language-search-listbox"
+    popovertarget="language-search-popup"
+    style="anchor-name: --language-search"
+  >
+    <play-icon name="globe" class="hicon"></play-icon>
+    <span class="hbutton-label"><span lang="en">English</span></span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="language-search-popup" popover style="position-anchor: --language-search">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        placeholder="Search languages"
+        aria-label="Search languages"
+        data-example-empty="No languages found"
+        aria-expanded="true"
+        aria-controls="language-search-listbox"
+        aria-autocomplete="list"
+      />
+    </div>
+    <ul class="hlistbox" id="language-search-listbox" role="listbox" aria-label="Language">
+      <li class="hoption" id="language-search-id" role="option" data-value="id" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="id">Bahasa Indonesia</span></span>
+          <span class="hoption-description">Indonesian</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-de" role="option" data-value="de" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="de">Deutsch</span></span>
+          <span class="hoption-description">German</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-en" role="option" data-value="en" aria-selected="true">
+        <span class="hoption-label"><span lang="en">English</span></span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="language-search-es" role="option" data-value="es" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="es">Español</span></span>
+          <span class="hoption-description">Spanish</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-fr" role="option" data-value="fr" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="fr">Français</span></span>
+          <span class="hoption-description">French</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-it" role="option" data-value="it" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="it">Italiano</span></span>
+          <span class="hoption-description">Italian</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-nl" role="option" data-value="nl" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="nl">Nederlands</span></span>
+          <span class="hoption-description">Dutch</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-pl" role="option" data-value="pl" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="pl">Polski</span></span>
+          <span class="hoption-description">Polish</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-pt" role="option" data-value="pt" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="pt">Português</span></span>
+          <span class="hoption-description">Portuguese</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-vi" role="option" data-value="vi" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="vi">Tiếng Việt</span></span>
+          <span class="hoption-description">Vietnamese</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-tr" role="option" data-value="tr" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="tr">Türkçe</span></span>
+          <span class="hoption-description">Turkish</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-ru" role="option" data-value="ru" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="ru">Русский</span></span>
+          <span class="hoption-description">Russian</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-uk" role="option" data-value="uk" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="uk">Українська</span></span>
+          <span class="hoption-description">Ukrainian</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-ar" role="option" data-value="ar" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="ar">العربية</span></span>
+          <span class="hoption-description">Arabic</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-hi" role="option" data-value="hi" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="hi">हिन्दी</span></span>
+          <span class="hoption-description">Hindi</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-zh" role="option" data-value="zh" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="zh">中文</span></span>
+          <span class="hoption-description">Chinese</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-ja" role="option" data-value="ja" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="ja">日本語</span></span>
+          <span class="hoption-description">Japanese</span>
+        </span>
+      </li>
+      <li class="hoption" id="language-search-ko" role="option" data-value="ko" aria-selected="false">
+        <span class="hoption-text">
+          <span class="hoption-label"><span lang="ko">한국어</span></span>
+          <span class="hoption-description">Korean</span>
+        </span>
+      </li>
+    </ul>
+    <p class="hlistbox-empty" role="status"></p>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="stack">
+  <play-note>
+    In a right-to-left page, the globe and the chevron swap sides.
+  </play-note>
+  <div dir="rtl" lang="ar">
+    <button
+      class="hbutton hlanguage-picker"
+      data-variant="tertiary"
+      type="button"
+      role="combobox"
+      aria-label="اللغة"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-controls="language-rtl-listbox"
+      popovertarget="language-rtl-popup"
+      style="anchor-name: --language-rtl"
+    >
+      <play-icon name="globe" class="hicon"></play-icon>
+      <span class="hbutton-label"><span lang="ar">العربية</span></span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="language-rtl-popup" popover style="position-anchor: --language-rtl">
+      <ul class="hlistbox" id="language-rtl-listbox" role="listbox" aria-label="اللغة">
+        <li class="hoption" id="language-rtl-ar" role="option" data-value="ar" aria-selected="true">
+          <span class="hoption-label"><span lang="ar">العربية</span></span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="language-rtl-en" role="option" data-value="en" aria-selected="false">
+          <span class="hoption-text">
+            <span class="hoption-label"><span lang="en">English</span></span>
+            <span class="hoption-description">الإنجليزية</span>
+          </span>
+        </li>
+        <li class="hoption" id="language-rtl-fr" role="option" data-value="fr" aria-selected="false">
+          <span class="hoption-text">
+            <span class="hoption-label"><span lang="fr">Français</span></span>
+            <span class="hoption-description">الفرنسية</span>
+          </span>
+        </li>
+        <li class="hoption" id="language-rtl-es" role="option" data-value="es" aria-selected="false">
+          <span class="hoption-text">
+            <span class="hoption-label"><span lang="es">Español</span></span>
+            <span class="hoption-description">الإسبانية</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</play-example>

@@ -303,6 +303,11 @@ const groups: CatalogGroup[] = [
           "Places to go and things to do, found by typing: under a search field, or in a dialog.",
       },
       {
+        slug: "language-picker",
+        title: "Language Picker",
+        purpose: "Switches the language a site or app is in, with each language named in its own.",
+      },
+      {
         slug: "menu-button",
         title: "Menu Button",
         purpose:

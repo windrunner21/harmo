@@ -15,12 +15,43 @@ minor version may change an API, and says how to upgrade when it does.
 
   ```html preview="table-of-contents/Default"
   <nav class="htoc" aria-label="On this page">
+    <span class="htoc-marker" aria-hidden="true"></span>
     <ul class="htoc-list" role="list">
       <li class="htoc-item"><a class="htoc-link" href="#overview" aria-current="location">Overview</a></li>
       <li class="htoc-item"><a class="htoc-link" href="#milestones">Milestones</a></li>
     </ul>
   </nav>
   ```
+
+- Language Picker: `.hlanguage-picker`, or `<LanguagePicker>`, which switches the
+  language a site or app is in. A quiet button shows the language in use, and its
+  list names each language in its own, with `lang` so that a screen reader says it
+  in that language. Grouped by region, the languages are a panel of regions in
+  columns, each with its flag, which your app brings, its name, and its languages
+  side by side. Languages can be searched.
+
+  ```html preview="language-picker/Default"
+  <button class="hbutton hlanguage-picker" data-variant="tertiary" type="button"
+    role="combobox" aria-label="Language" aria-haspopup="listbox" aria-expanded="false"
+    aria-controls="language-listbox" popovertarget="language-popup" style="anchor-name: --language">
+    <span class="hbutton-label"><span lang="en">English</span></span>
+  </button>
+  <div class="hpopup" id="language-popup" popover style="position-anchor: --language">
+    <ul class="hlistbox" id="language-listbox" role="listbox" aria-label="Language">
+      <li class="hoption" id="language-en" role="option" data-value="en" aria-selected="true">
+        <span class="hoption-label"><span lang="en">English</span></span>
+      </li>
+      <li class="hoption" id="language-fr" role="option" data-value="fr" aria-selected="false">
+        <span class="hoption-label"><span lang="fr">Français</span></span>
+      </li>
+    </ul>
+  </div>
+  ```
+
+### Changed
+
+- Listbox: typing to jump leaves out what's `aria-hidden` in an option's label,
+  such as a flag before a name.
 
 ### Fixed
 

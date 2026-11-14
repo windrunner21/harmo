@@ -29,6 +29,7 @@ import { examples as filters } from "./components/filters.tsx";
 import { examples as icons } from "./components/icons.tsx";
 import { examples as input } from "./components/input.tsx";
 import { examples as kbd } from "./components/kbd.tsx";
+import { examples as languagePicker } from "./components/language-picker.tsx";
 import { examples as link } from "./components/link.tsx";
 import { examples as listbox } from "./components/listbox.tsx";
 import { examples as menuButton } from "./components/menu-button.tsx";
@@ -89,6 +90,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   icons,
   input,
   kbd,
+  "language-picker": languagePicker,
   link,
   listbox,
   "menu-button": menuButton,

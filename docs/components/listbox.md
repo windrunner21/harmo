@@ -147,7 +147,8 @@ focus.
   its popup shows the focus ring.
 - Keys: Down and Up move the highlight, Home and End go to the first and last
   option, and typing jumps to the next option whose label starts with the
-  typed letters (except in a search field). Enter chooses; in a multi-select,
+  typed letters (except in a search field), leaving out what's `aria-hidden` in
+  it, such as a flag. Enter chooses; in a multi-select,
   Space toggles. Disabled options are skipped. With nothing to choose, Enter in
   the search field does nothing, so it can't submit the form around it.
 - The search field needs no focus ring: its caret shows focus.

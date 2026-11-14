@@ -41,6 +41,7 @@ const components: Record<string, string[]> = {
   filters: ["Filters.tsx"],
   input: ["Input.tsx"],
   kbd: ["Kbd.tsx"],
+  "language-picker": ["LanguagePicker.tsx"],
   link: ["Link.tsx"],
   listbox: [
     "listbox/Listbox.tsx",

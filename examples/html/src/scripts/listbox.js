@@ -14,7 +14,16 @@
     }
   };
 
-  const labelOf = (option) => (option.querySelector(".hoption-label") ?? option).textContent.trim().toLowerCase();
+  // An option's label as typing finds it, without its decorative parts, such as
+  // a flag before a name.
+  const labelOf = (option) => {
+    let label = option.querySelector(".hoption-label") ?? option;
+    if (label.querySelector('[aria-hidden="true"]')) {
+      label = label.cloneNode(true);
+      for (const part of label.querySelectorAll('[aria-hidden="true"]')) part.remove();
+    }
+    return label.textContent.trim().toLowerCase();
+  };
   // What a search finds an option by: its label, its description, and its
   // keywords, the words that mean the same, such as "billing" for Plans.
   const searchTextOf = (option) =>
