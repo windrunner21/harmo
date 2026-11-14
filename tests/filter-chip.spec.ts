@@ -3,16 +3,33 @@ import { clickAt, example, onEachPlayground, openPopup, settled, test } from "./
 
 // What docs/components/filter-chip.md says a script does, on the Filter Chip
 // page.
+const color = (page: Page, name: string) =>
+  page.evaluate((name) => {
+    const probe = document.createElement("span");
+    document.body.append(probe);
+    probe.style.color = `var(${name})`;
+    const value = getComputedStyle(probe).color;
+    probe.remove();
+    return value;
+  }, name);
+
 onEachPlayground("filter-chip", () => {
-  test("a value keeps its background on a chip that's open", async ({ page }) => {
+  test("a value keeps its background on a chip that's open, in the border color", async ({ page }) => {
     const { chip } = await openChip(page, "filter-chip-one-value");
     const value = chip.locator(".hfilter-chip-value");
     await settled(chip);
     await settled(value);
-    const backgrounds = await chip.evaluate((node) =>
-      [node, node.querySelector(".hfilter-chip-value")!].map((part) => getComputedStyle(part).backgroundColor),
-    );
-    expect(backgrounds[0]).not.toBe(backgrounds[1]);
+    const border = await color(page, "--harmo-color-border");
+    await expect(value).toHaveCSS("background-color", border);
+    await expect(chip).toHaveCSS("background-color", await color(page, "--harmo-color-background-hover"));
+  });
+
+  test("an app's own class on a value wins, on a chip that's open too", async ({ page }) => {
+    const { chip } = await openChip(page, "filter-chip-one-value");
+    const value = chip.locator(".hfilter-chip-value");
+    await value.evaluate((node) => node.classList.add("test-value"));
+    await page.addStyleTag({ content: ".test-value { background-color: rgb(0, 0, 200); }" });
+    await expect(value).toHaveCSS("background-color", "rgb(0, 0, 200)");
   });
 
   test("a multi-select chip shows two values, then a count, and stays open", async ({ page }) => {
@@ -88,6 +105,51 @@ onEachPlayground("filter-chip", () => {
     await input.fill("");
     await clickAt(page, apply);
     await expect(chip.locator(".hfilter-chip-value")).toHaveCount(0);
+  });
+
+  test("with search, focus starts in the field, which hides what doesn't match and says when nothing does", async ({ page }) => {
+    const container = await example(page, "filter-chip-with-search");
+    await container.locator(".hfilter-chip").click();
+    const search = container.getByRole("combobox", { name: "Search agents" });
+    await expect(search).toBeFocused();
+    await expect(search).toHaveAttribute("placeholder", "Search agents");
+
+    await search.fill("wei");
+    await expect(container.getByRole("option")).toHaveText(["Li Wei"]);
+    await expect(container.locator(".hlistbox-empty")).toHaveText("");
+    await search.fill("zzz");
+    await expect(container.getByRole("option")).toHaveCount(0);
+    await expect(container.getByRole("status")).toHaveText("No agents found");
+  });
+
+  test("with search, Clear filters moves focus to the search field, since it goes", async ({ page }) => {
+    const container = await example(page, "filter-chip-with-search");
+    const chip = container.locator(".hfilter-chip");
+    await chip.click();
+    const search = container.getByRole("combobox", { name: "Search agents" });
+    await expect(search).toBeFocused();
+    await clickAt(page, container.getByRole("button", { name: "Clear filters" }));
+
+    await expect(chip.locator(".hfilter-chip-value")).toHaveCount(0);
+    await expect(container.getByRole("button", { name: "Clear filters" })).toHaveCount(0);
+    await expect(openPopup(container)).toHaveCount(1);
+    await expect(search).toBeFocused();
+  });
+
+  test("a disabled chip is dimmed and can't be pressed", async ({ page }) => {
+    const chip = (await example(page, "filter-chip-disabled")).locator(".hfilter-chip");
+    await expect(chip).toBeDisabled();
+    await expect(chip).toHaveCSS("opacity", "0.5");
+    await expect(chip).toHaveCSS("cursor", "not-allowed");
+  });
+
+  test("a chip disabled while it's open closes its popup", async ({ page }, info) => {
+    // React's FilterChip leaves the popup out, from its disabled prop, which
+    // examples/react/test/filter-chip.test.tsx checks.
+    test.skip(!info.titlePath.includes("html"), "HTML only");
+    const { container, chip } = await openChip(page, "filter-chip-one-value");
+    await chip.evaluate((node: HTMLButtonElement) => (node.disabled = true));
+    await expect(openPopup(container)).toHaveCount(0);
   });
 });
 

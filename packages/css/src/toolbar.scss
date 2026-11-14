@@ -11,12 +11,14 @@
   &[hidden] {
     display: none;
   }
+}
 
-  & > :not(.htoolbar-controls, .hpopup) {
-    flex: 1 1 min-content;
+// What's at the start. Its context stays out of the weight, so an app's own
+// class on it wins.
+:where(.htoolbar) > :not(.htoolbar-controls, .hpopup) {
+  flex: 1 1 min-content;
 
-    min-inline-size: 0;
-  }
+  min-inline-size: 0;
 }
 
 .htoolbar-controls {

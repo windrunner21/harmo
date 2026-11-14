@@ -170,6 +170,69 @@
   </div>
 </play-example>
 
+<play-example title="With search">
+  <play-note>
+    A long list can have a Listbox's search row above it. Opening moves focus
+    to the search field, typing hides the options that don't match, and the
+    app's message shows when none do. Clear filters moves focus back to the
+    search field, since it goes.
+  </play-note>
+  <button
+    class="hfilter-chip"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="agent-filter"
+    style="anchor-name: --agent-filter"
+  >
+    <play-icon name="add-circle" class="hicon"></play-icon>
+    <span class="hfilter-chip-label">Agent</span>
+    <span class="hfilter-chip-values">
+      <span class="hfilter-chip-value">Jane Smith</span>
+    </span>
+  </button>
+  <div class="hpopup" id="agent-filter" popover style="position-anchor: --agent-filter">
+    <div class="hlistbox-search">
+      <play-icon name="search" class="hicon"></play-icon>
+      <input
+        class="hlistbox-search-input"
+        type="text"
+        role="combobox"
+        placeholder="Search agents"
+        aria-label="Search agents"
+        data-example-empty="No agents found"
+        aria-expanded="true"
+        aria-controls="agent-listbox"
+        aria-autocomplete="list"
+      />
+    </div>
+    <ul class="hlistbox" id="agent-listbox" role="listbox" aria-label="Agent" aria-multiselectable="true">
+      <li class="hoption" id="agent-jane" role="option" aria-selected="true">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Jane Smith</span>
+      </li>
+      <li class="hoption" id="agent-omar" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Omar Haddad</span>
+      </li>
+      <li class="hoption" id="agent-li" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Li Wei</span>
+      </li>
+      <li class="hoption" id="agent-ana" role="option" aria-selected="false">
+        <span class="hoption-checkbox" aria-hidden="true"></span>
+        <span class="hoption-label">Ana Souza</span>
+      </li>
+    </ul>
+    <p class="hlistbox-empty" role="status"></p>
+    <div class="hlistbox-footer">
+      <button class="hbutton" data-variant="tertiary" type="button">
+        <span class="hbutton-label">Clear filters</span>
+      </button>
+    </div>
+  </div>
+</play-example>
+
 <play-example title="Text filter">
   <play-note>
     A chip can open a small panel instead of a list, such as a text filter.

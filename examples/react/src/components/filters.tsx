@@ -99,6 +99,19 @@ export const examples = {
     );
   },
 
+  "A filter with a default": () => (
+    <Filters aria-label="Filter tasks" resetLabel="Reset filters">
+      <FilterChip label="Status" defaultValue="active">
+        <Option value="active">Active</Option>
+        <Option value="done">Done</Option>
+      </FilterChip>
+      <FilterChip label="Assignee">
+        <Option value="ana">Ana</Option>
+        <Option value="ben">Ben</Option>
+      </FilterChip>
+    </Filters>
+  ),
+
   "Right to left": () => (
     <Filters
       aria-label="تصفية المهام"

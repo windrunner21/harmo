@@ -1,10 +1,15 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { boxes, example, onEachPlayground, ready, settled, test } from "./playgrounds.ts";
 
 // What docs/components/table.md says: named rows and columns, in Harmo's sizes;
 // a row that's a link or a button all the way across; selecting rows, with focus
 // looked after; choosing columns, remembered; pages, with a footer that stays in
 // view; what shows with no rows; long text; and right to left.
+
+// Marks a row's link once it's pressed, as it would be followed.
+const watchPress = (link: Locator) =>
+  link.evaluate((node) => node.addEventListener("click", () => node.setAttribute("data-test-pressed", "")));
+
 const color = (page: Page, name: string) =>
   page.evaluate((name) => {
     const probe = document.createElement("span");
@@ -35,6 +40,19 @@ onEachPlayground("table", () => {
     await expect(name).toHaveCSS("font-weight", "400");
     await expect(name).toHaveCSS("color", await color(page, "--harmo-color-text-secondary"));
     await expect(name).toHaveCSS("text-align", "start");
+  });
+
+  test("an app's own class on a cell wins over the table's", async ({ page }) => {
+    const table = (await example(page, "table-default")).getByRole("table", { name: "Tasks" });
+    const cell = table.getByRole("cell", { name: "Blocked" });
+    const name = table.getByRole("rowheader", { name: "Write the brief" });
+    const header = table.getByRole("columnheader", { name: "Status" });
+    for (const each of [cell, name, header]) await each.evaluate((node) => node.classList.add("test-amount"));
+    await page.addStyleTag({ content: ".test-amount { text-align: end; color: rgb(0, 0, 200); }" });
+    for (const each of [cell, name, header]) {
+      await expect(each).toHaveCSS("text-align", "end");
+      await expect(each).toHaveCSS("color", "rgb(0, 0, 200)");
+    }
   });
 
   test("a column marked to stand out is heavier and darker than the rest", async ({ page }) => {
@@ -101,10 +119,12 @@ onEachPlayground("table", () => {
     const designs = container.getByRole("checkbox", { name: "Select Review the designs" });
     const release = container.getByRole("checkbox", { name: "Select Ship the release" });
     const indeterminate = () => all.evaluate((node: HTMLInputElement) => node.indeterminate);
+    const link = container.getByRole("link", { name: "Write the brief" });
+    await watchPress(link);
 
     await brief.click();
     await expect(brief).toBeChecked();
-    await expect(page).not.toHaveURL(/\?task=/);
+    await expect(link).not.toHaveAttribute("data-test-pressed");
     expect(await indeterminate()).toBe(true);
     await expect(all).not.toBeChecked();
     await expect(container.getByRole("status")).toHaveText("1 selected");
@@ -122,6 +142,18 @@ onEachPlayground("table", () => {
 
     await all.check();
     await expect(release).toBeChecked();
+  });
+
+  test("a press beside a row's checkbox, in its cell, neither opens the row nor ticks the box", async ({ page }) => {
+    const container = await example(page, "table-selecting-rows");
+    const brief = container.getByRole("checkbox", { name: "Select Write the brief" });
+    const link = container.getByRole("link", { name: "Write the brief" });
+    await watchPress(link);
+    const [cell, box] = await boxes(container.locator("tbody .htable-select").first(), brief);
+    expect(box!.x - cell!.x).toBeGreaterThan(4);
+    await page.mouse.click(cell!.x + 4, cell!.y + cell!.height / 2);
+    await expect(link).not.toHaveAttribute("data-test-pressed");
+    await expect(brief).not.toBeChecked();
   });
 
   test("Deselect clears the rows, and focus goes to the checkbox in the header", async ({ page }) => {

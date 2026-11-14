@@ -54,7 +54,7 @@ URL.
 <path d="M12 17.625C11.59 17.625 11.25 17.285 11.25 16.875V8.875C11.25 8.465 11.59 8.125 12 8.125C12.41 8.125 12.75 8.465 12.75 8.875V16.875C12.75 17.285 12.41 17.625 12 17.625Z" fill="currentColor" />
 </svg>
     <span class="hfilter-chip-label">More filters</span>
-    <span class="hfilters-count" hidden>0</span>
+    <span class="hfilters-count">1</span>
   </button>
   <div class="hpopup hfilters-more" id="applied-more-filters" role="dialog" aria-label="More filters" popover style="position-anchor:--applied-more-filters">
     <button class="hfilter-chip" type="button" aria-haspopup="listbox" popovertarget="applied-priority" aria-expanded="false" style="anchor-name:--applied-priority">
@@ -86,7 +86,7 @@ URL.
       </div>
     </div>
   </div>
-  <button class="hfilters-reset" type="button" hidden>Reset filters</button>
+  <button class="hfilters-reset" type="button">Reset filters</button>
 </div>
 ```
 
@@ -136,7 +136,7 @@ of your own that draws the same parts all count, with nothing to tell the row.
 | The text and `hidden` of `.hfilters-count` | A filter behind the chip gains or loses its value |
 | `hidden` on Reset | Any filter gains or loses its value |
 | Move focus to the panel's first filter that can take it | The panel opens |
-| Put every filter back as it started, close anything left open, and move focus to the first that can take it | Reset is pressed |
+| Empty every filter (in React, a filter with a `defaultValue` goes back to it), close anything left open, and move focus to the first that can take it | Reset is pressed |
 
 The playground's example script, `examples/html/src/scripts/filters.js`, does
 all of this.
@@ -189,9 +189,9 @@ there from the start.
 ## Tokens
 
 `--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-3xs`,
-`--harmo-font-weight-medium`, `--harmo-color-text-secondary`,
-`--harmo-color-background-hover`, `--harmo-color-border`,
-`--harmo-color-primary`, `--harmo-color-primary-hover`,
+`--harmo-font-line-height`, `--harmo-font-weight-medium`,
+`--harmo-color-text-secondary`, `--harmo-color-background-hover`,
+`--harmo-color-border`, `--harmo-color-primary`, `--harmo-color-primary-hover`,
 `--harmo-color-primary-active`, `--harmo-border-radius-full`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-duration-fast`, and those of the filters in it.

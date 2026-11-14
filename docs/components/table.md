@@ -10,10 +10,10 @@ and a footer of pages.
 | --- | --- |
 | CSS | `table.css`; `checkbox.css` to select rows; for a footer, `select.css`, `listbox.css`, `popup.css`, `expand-chevron.css`, `pagination.css`, `button.css`, `chevron.css` |
 | Element | `<table class="htable">` |
-| Parts | Optional: `.htable-container` around it all, `.htable-scroll` around the table, `.htable-row-link` in a row, `.htable-truncate` in a cell, and `.htable-footer` after `.htable-scroll` |
+| Parts | Optional: `.htable-container` around it all, `.htable-scroll` around the table, `.htable-select` on the cells of a column of checkboxes, `.htable-row-link` in a row, `.htable-truncate` in a cell, and `.htable-footer` after `.htable-scroll`, with `.htable-footer-summary`, then `.htable-footer-controls` around `.htable-footer-rows` (a `.htable-footer-label` and a Select), `.htable-footer-status`, and a Pagination |
 | Required | A name: `aria-label` or `aria-labelledby` on the table, in the page's language. `<th scope="col">` for the columns, and `<th scope="row">` for the cell that names each row |
 | Unique | Those of its footer's Select |
-| Script | None for the table. Yours for selecting rows, choosing columns, and pages. See What a script does |
+| Script | None for a table that fits its place. Yours for a scroll area that overflows, selecting rows, choosing columns, and pages. See What a script does |
 
 ## Markup
 
@@ -137,10 +137,10 @@ fill="currentColor"
 
 | Hook | Effect |
 | --- | --- |
-| `.htable-scroll` | Scrolls a table too wide for its place, in its own space. While it overflows, add `tabindex="0"`, `role="region"`, and an `aria-label` |
-| `.htable-row-link` | The row is a link or a button all the way across, with a hover background |
+| `.htable-scroll` | Scrolls a table too wide for its place, in its own space. While it overflows, add `tabindex="0"`, `role="region"`, and the table's `aria-label` or `aria-labelledby` |
+| `.htable-row-link` | The row is a link or a button all the way across, with a hover background. A `.htable-select` cell stays above it, so a press beside the checkbox doesn't open the row |
 | `data-emphasis` on a cell | The cell stands out, for a column that matters most, such as a name |
-| `.htable-truncate` | A span in a cell: ends with an ellipsis past 360px |
+| `.htable-truncate` | A span in a cell: ends with an ellipsis past the smaller of 360px and 42% of the window's width |
 | `.htable-footer` | The range, rows per page, the page, and Previous and Next. Stays at the bottom of the window while the table runs past it |
 | `data-footer="static"` on `.htable-container` | The footer stays under the table instead |
 
@@ -155,7 +155,8 @@ fill="currentColor"
   weight in `--harmo-color-text`.
 - A row that goes somewhere has `--harmo-color-background-hover` when hovered, and
   the focus ring around the whole row. Anything else in it that can be used, such
-  as a checkbox or a link, sits above that and works on its own.
+  as a checkbox or a link, sits above that and works on its own, and so does the
+  whole `.htable-select` cell, so a press just beside a checkbox does nothing.
 - The footer has 12px of padding above and below, a line above, and its background.
   Its two sides are at least 48px apart, and wrap on a narrow screen.
 - Right-to-left, the first column is on the right.
@@ -181,10 +182,11 @@ fill="currentColor"
 
 ## What a script does
 
-Nothing, for a table on its own. Your app:
+Nothing, for a table on its own that fits its place. Your app:
 
 | Change | When |
 | --- | --- |
+| `tabindex="0"`, `role="region"`, and the table's `aria-label` or `aria-labelledby` on `.htable-scroll` | The table overflows it. They come off once it fits |
 | `checked`, and `indeterminate` on the checkbox in the header | Rows are selected |
 | Leaves out, or sets `hidden` on, a column's cells | Columns are chosen |
 | The rows, the range, and the page | The page or rows per page changes |
@@ -204,7 +206,7 @@ outer element.
 | `getRowId` | Each row's id, as a string, which must be unique. Required unless rows have an `id`, which it uses by default |
 | `hiddenColumns` | The ids of columns to leave out |
 | `rowHref` | Makes each row a link, through `HarmoProvider`'s `linkComponent` (an `<a>` by default) |
-| `onRowClick` | Makes each row a button. With `rowHref`, it's called as the link is followed |
+| `onRowClick` | Makes each row a button. With `rowHref`, it's called as the link is followed, and not on a click with a modifier key, which opens the link in a new tab or window |
 | `selection` | From `useRowSelection`: adds a column of checkboxes. Needs `selectAllLabel` and `selectRowLabel` |
 | `selectAllLabel` | The name of the checkbox in the header |
 | `selectRowLabel` | Each row's checkbox's name, such as ``(row) => `Select ${row.name}` `` |
@@ -219,7 +221,7 @@ outer element.
 | `cell` | Required: what a row shows in it, as ``(row) => row.name`` |
 | `primary` | This column names the row, for screen readers. By default, the first one shown does. It changes how the cells are read, not how they look |
 | `emphasis` | Its cells stand out, in medium weight and the main text color, for a column that matters most, such as a name |
-| `truncate` | Ends with an ellipsis past 360px, with the whole text in a `title` if it's a string |
+| `truncate` | Ends with an ellipsis past the smaller of 360px and 42% of the window's width, with the whole text in a `title` if it's a string |
 
 When the selection empties and focus has nowhere to be, it goes to the checkbox in
 the header. With `rowHref` or `onRowClick`, pin the column that names the row, so
@@ -321,6 +323,7 @@ const visibility = useColumnVisibility({
 ## Tokens
 
 `--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-2xs`,
-`--harmo-font-weight-normal`, `--harmo-font-weight-medium`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-color-border`, `--harmo-color-background`,
-`--harmo-color-background-hover`, `--harmo-focus-outline`, `--harmo-duration-fast`.
+`--harmo-font-line-height`, `--harmo-font-weight-normal`, `--harmo-font-weight-medium`,
+`--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
+`--harmo-color-background`, `--harmo-color-background-hover`, `--harmo-focus-outline`,
+`--harmo-duration-fast`.

@@ -7,6 +7,15 @@
   const inForce = ".hfilter-chip-values:not(:empty)";
   const canTakeFocus = ".hfilter-chip:not(:disabled, [hidden])";
 
+  // The first that takes focus: one of your own may be in a wrapper that's
+  // hidden or inert, which the selector can't see.
+  const focusFirst = (scope) => {
+    for (const chip of scope?.querySelectorAll(canTakeFocus) ?? []) {
+      chip.focus();
+      if (document.activeElement === chip) return;
+    }
+  };
+
   for (const row of document.querySelectorAll(".hfilters")) {
     const more = row.querySelector(":scope > .hfilters-more");
     const count = row.querySelector(":scope > .hfilter-chip .hfilters-count");
@@ -26,7 +35,7 @@
     new MutationObserver(read).observe(row, { childList: true, subtree: true });
 
     more?.addEventListener("toggle", (event) => {
-      if (event.newState === "open") more.querySelector(canTakeFocus)?.focus();
+      if (event.newState === "open") focusFirst(more);
     });
 
     reset.addEventListener("click", () => {
@@ -34,7 +43,7 @@
         chip.dispatchEvent(new CustomEvent("example-filter-reset"));
       }
       more?.hidePopover();
-      row.querySelector(canTakeFocus)?.focus();
+      focusFirst(row);
     });
   }
 }

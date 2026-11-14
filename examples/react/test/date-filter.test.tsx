@@ -6,7 +6,9 @@ import {
   cleaned,
   describeRange,
   draftOf,
+  FIRST_DAY,
   isComplete,
+  LAST_DAY,
   rangeOf,
 } from "../../../packages/react/src/date-filter/range.ts";
 
@@ -84,8 +86,32 @@ describe("DateFilter", () => {
     }
   });
 
+  test("the first and last days the pickers offer stay applied in every time zone", () => {
+    for (const zone of ["UTC", "America/Juneau", "Pacific/Kiritimati", "Etc/GMT-14", "Etc/GMT+12"]) {
+      inZone(zone, () => {
+        for (const date of [FIRST_DAY, LAST_DAY]) {
+          for (const condition of ["equal", "after", "before"] as const) {
+            const range = rangeOf({ ...empty, condition, date }, null);
+            expect(cleaned(range)).toEqual(range);
+          }
+        }
+      });
+    }
+  });
+
   test("a value that can't be a date renders as nothing applied", () => {
     expect(filter({ gte: Number.NaN, lte: Number.NaN })).toContain('hidden=""');
+  });
+
+  test("disabled, it renders the chip without its panel, so one that's open closes", () => {
+    const markup = renderToStaticMarkup(
+      <DateFilter label="Due" locale="en-US" today="2026-11-09" labels={labels} disabled />,
+    );
+    expect(markup).toContain("disabled=");
+    expect(markup).toContain('aria-haspopup="dialog"');
+    expect(markup).toContain('aria-expanded="false"');
+    expect(markup).not.toContain("popovertarget=");
+    expect(markup).not.toContain("hdate-filter");
   });
 });
 

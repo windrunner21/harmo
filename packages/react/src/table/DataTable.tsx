@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
+  type MouseEvent,
   type ReactNode,
 } from "react";
 import { Checkbox } from "../Checkbox.tsx";
@@ -128,7 +129,14 @@ export const DataTable = <Row extends object>(tableProps: DataTableProps<Row>) =
   const named = (row: Row, inner: ReactNode) => {
     if (rowHref) {
       return (
-        <Anchor className="htable-row-link" href={rowHref(row)} onClick={() => onRowClick?.(row)}>
+        <Anchor
+          className="htable-row-link"
+          href={rowHref(row)}
+          onClick={(event: MouseEvent) => {
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            onRowClick?.(row);
+          }}
+        >
           {inner}
         </Anchor>
       );

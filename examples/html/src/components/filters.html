@@ -387,6 +387,50 @@
   </div>
 </play-example>
 
+<play-example title="A filter with a default" layout="wide">
+  <play-note>
+    In React, a filter given a <code>defaultValue</code> goes back to it on
+    Reset, so Reset stays while that's in force. The HTML example script
+    empties every chip instead, as the markup it starts from stands for what
+    your app holds.
+  </play-note>
+  <div class="hfilters" role="group" aria-label="Filter tasks">
+    <button class="hfilter-chip" type="button" aria-haspopup="listbox" popovertarget="default-status" aria-expanded="false" style="anchor-name:--default-status">
+      <play-icon name="add-circle" class="hicon"></play-icon>
+      <span class="hfilter-chip-label">Status</span>
+      <span class="hfilter-chip-values">
+        <span class="hfilter-chip-value">Active</span>
+      </span>
+    </button>
+    <div class="hpopup" id="default-status" popover style="position-anchor:--default-status">
+      <ul class="hlistbox" role="listbox" aria-label="Status" tabindex="-1">
+        <li class="hoption" id="default-status-active" role="option" aria-selected="true">
+          <span class="hoption-label">Active</span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="default-status-done" role="option" aria-selected="false">
+          <span class="hoption-label">Done</span>
+        </li>
+      </ul>
+    </div>
+    <button class="hfilter-chip" type="button" aria-haspopup="listbox" popovertarget="default-assignee" aria-expanded="false" style="anchor-name:--default-assignee">
+      <play-icon name="add-circle" class="hicon"></play-icon>
+      <span class="hfilter-chip-label">Assignee</span>
+    </button>
+    <div class="hpopup" id="default-assignee" popover style="position-anchor:--default-assignee">
+      <ul class="hlistbox" role="listbox" aria-label="Assignee" tabindex="-1">
+        <li class="hoption" id="default-assignee-ana" role="option" aria-selected="false">
+          <span class="hoption-label">Ana</span>
+        </li>
+        <li class="hoption" id="default-assignee-ben" role="option" aria-selected="false">
+          <span class="hoption-label">Ben</span>
+        </li>
+      </ul>
+    </div>
+    <button class="hfilters-reset" type="button" hidden>Reset filters</button>
+  </div>
+</play-example>
+
 <play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
   <play-note>
     The row reads from the right.

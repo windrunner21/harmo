@@ -3,7 +3,8 @@
 // then writes { gte, lte } in Unix seconds and shows the range in the chip. It
 // reopens on what's applied, with the condition worked out from it; what was
 // typed and not applied is dropped. Clear empties it and the fields, and leaves
-// the panel open.
+// the panel open. The pickers offer the days whose start and end read back as
+// dates in every time zone, and a chip disabled while it's open closes it.
 {
   const part = (value, length = 2) => String(value).padStart(length, "0");
   const localDate = (moment) =>
@@ -21,6 +22,12 @@
   const isOneWholeDay = (gte, lte) => gte === startOfDay(dayOf(gte)) && lte === endOfDay(dayOf(gte));
   const SECONDS = { minutes: 60, hours: 3600, days: 86400, weeks: 604800, months: 2678400 };
   const LONGEST = 50000000000;
+  // The first and last days the pickers offer, as in the React DateFilter: a
+  // little inside the Calendar's own, so each day's start and end are times
+  // it can read back in every time zone, from more than 15 hours ahead of UTC
+  // to 12 behind.
+  const FIRST_DAY = "0100-01-03";
+  const LAST_DAY = "9999-12-28";
 
   // The same day some months back, or that month's last day if it's shorter.
   const monthsBefore = (now, months) => {
@@ -81,9 +88,7 @@
     };
 
     const bound = (picker, name, limit) => {
-      const calendar = calendarOf(picker);
-      if (limit) calendar.dataset[name] = limit;
-      else delete calendar.dataset[name];
+      calendarOf(picker).dataset[name] = limit;
     };
 
     // Which fields the condition needs, and whether Apply can be used.
@@ -95,8 +100,10 @@
       and.hidden = !between;
       second.hidden = !between;
       first.querySelector(".hinput").setAttribute("aria-label", between ? startLabel : firstLabel);
-      bound(first, "exampleMax", between ? endDate : null);
-      bound(second, "exampleMin", date);
+      bound(first, "exampleMin", FIRST_DAY);
+      bound(first, "exampleMax", (between && endDate) || LAST_DAY);
+      bound(second, "exampleMin", date ?? FIRST_DAY);
+      bound(second, "exampleMax", LAST_DAY);
       clear.hidden = value.gte === null && value.lte === null;
       if (isComplete()) apply.removeAttribute("aria-disabled");
       else apply.setAttribute("aria-disabled", "true");
@@ -164,6 +171,11 @@
       setDate(second, endDate);
       refresh();
     };
+
+    // The React DateFilter leaves its panel out while it's disabled.
+    new MutationObserver(() => {
+      if (chip.disabled && popup.matches(":popover-open")) popup.hidePopover();
+    }).observe(chip, { attributeFilter: ["disabled"] });
 
     popup.addEventListener("beforetoggle", (event) => {
       if (event.newState === "open") fill();

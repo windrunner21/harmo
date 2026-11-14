@@ -130,19 +130,21 @@ const FilterChipList = ({
     onValueChange: change,
   } as ListboxSelection;
 
+  const chip = (
+    <Chip
+      {...props}
+      label={label}
+      values={chosen.map((option) => option.label)}
+      formatCount={formatCount}
+      aria-haspopup="listbox"
+      aria-expanded={false}
+    />
+  );
+
+  if (props.disabled) return chip;
+
   return (
-    <Popup
-      ref={popup}
-      trigger={
-        <Chip
-          {...props}
-          label={label}
-          values={chosen.map((option) => option.label)}
-          formatCount={formatCount}
-          aria-haspopup="listbox"
-        />
-      }
-    >
+    <Popup ref={popup} trigger={chip}>
       <Listbox
         {...selection}
         aria-label={label}

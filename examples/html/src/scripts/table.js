@@ -12,9 +12,12 @@
       if (area.scrollWidth > area.clientWidth) {
         area.tabIndex = 0;
         area.setAttribute("role", "region");
-        area.setAttribute("aria-label", table.getAttribute("aria-label"));
+        for (const name of ["aria-label", "aria-labelledby"]) {
+          if (table.hasAttribute(name)) area.setAttribute(name, table.getAttribute(name));
+          else area.removeAttribute(name);
+        }
       } else {
-        for (const name of ["tabindex", "role", "aria-label"]) area.removeAttribute(name);
+        for (const name of ["tabindex", "role", "aria-label", "aria-labelledby"]) area.removeAttribute(name);
       }
     };
     read();
@@ -89,7 +92,9 @@
     list.closest(".hpopup").addEventListener("click", () => {
       draw();
       const chosen = options.filter((option) => option.getAttribute("aria-selected") === "true");
-      localStorage.setItem(key, JSON.stringify(chosen.map((option) => nameOf(option).toLowerCase())));
+      try {
+        localStorage.setItem(key, JSON.stringify(chosen.map((option) => nameOf(option).toLowerCase())));
+      } catch {}
     });
   }
 

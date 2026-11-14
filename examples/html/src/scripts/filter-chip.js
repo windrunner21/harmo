@@ -2,7 +2,7 @@
 // does. Up to two values show as they are, more as a count. A multi-select
 // chip's list ends with Clear filters while anything is chosen; listbox.js
 // closes a single-select chip's list. A text filter applies and closes on
-// Apply or Enter.
+// Apply or Enter. A chip disabled while it's open closes it.
 {
   const pill = (text) => {
     const value = document.createElement("span");
@@ -22,6 +22,11 @@
     const popup = document.getElementById(chip.getAttribute("popovertarget"));
     const listbox = popup.querySelector(".hlistbox");
     const input = popup.querySelector("input");
+
+    // The React FilterChip leaves its popup out while it's disabled.
+    new MutationObserver(() => {
+      if (chip.disabled && popup.matches(":popover-open")) popup.hidePopover();
+    }).observe(chip, { attributeFilter: ["disabled"] });
 
     const show = (labels) => {
       let values = chip.querySelector(".hfilter-chip-values");

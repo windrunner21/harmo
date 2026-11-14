@@ -126,6 +126,6 @@ are the element's attributes.
 
 ## Tokens
 
-`--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-color-border`, `--harmo-focus-outline`,
-`--harmo-focus-outline-offset`, `--harmo-duration-fast`.
+`--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-line-height`,
+`--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
+`--harmo-focus-outline`, `--harmo-focus-outline-offset`, `--harmo-duration-fast`.

@@ -29,6 +29,13 @@ export type FiltersProps = ComponentPropsWithRef<"div"> &
 const IN_FORCE = ".hfilter-chip-values:not(:empty)";
 const CAN_TAKE_FOCUS = ".hfilter-chip:not(:disabled, [hidden])";
 
+const focusFirst = (scope: HTMLElement | null) => {
+  for (const chip of scope?.querySelectorAll<HTMLElement>(CAN_TAKE_FOCUS) ?? []) {
+    chip.focus();
+    if (chip.ownerDocument.activeElement === chip) return;
+  }
+};
+
 export const Filters = ({
   visibleCount,
   moreLabel,
@@ -65,7 +72,7 @@ export const Filters = ({
   }, []);
 
   useLayoutEffect(() => {
-    if (resets > 0) row.current?.querySelector<HTMLElement>(CAN_TAKE_FOCUS)?.focus();
+    if (resets > 0) focusFirst(row.current);
   }, [resets]);
 
   useEffect(() => {
@@ -73,7 +80,7 @@ export const Filters = ({
     if (!node) return;
     const toggled = (event: Event) => {
       if ((event as ToggleEvent).newState !== "open") return;
-      node.querySelector<HTMLElement>(CAN_TAKE_FOCUS)?.focus();
+      focusFirst(node);
     };
     node.addEventListener("toggle", toggled);
     return () => node.removeEventListener("toggle", toggled);

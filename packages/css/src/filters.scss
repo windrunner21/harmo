@@ -28,7 +28,7 @@
 
   font-size: $font-size-3xs;
   font-variant-numeric: tabular-nums;
-  line-height: 1.5;
+  line-height: $font-line-height;
   text-align: center;
 
   color: $color-text-secondary;
@@ -37,13 +37,14 @@
 
   transition: background-color $duration-fast ease;
 
-  // A chip that's hovered or open has this background itself.
-  .hfilter-chip[aria-expanded="true"] > & {
+  // A chip that's hovered or open has this background itself. Its context
+  // stays out of the weight, so an app's own class on the count wins.
+  :where(.hfilter-chip[aria-expanded="true"]) > & {
     background-color: $color-border;
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .hfilter-chip:hover:enabled > & {
+    :where(.hfilter-chip:hover:enabled) > & {
       background-color: $color-border;
     }
   }
@@ -52,7 +53,8 @@
 .hfilters-reset {
   max-inline-size: 100%;
   margin: 0;
-  // 25px tall, as a target should be at least 24px.
+  // 25px tall, as a target should be at least 24px: 2px above and below a
+  // line of 1.5, which stays so whatever --harmo-font-line-height is.
   padding: 2px 0;
 
   font-family: $font-family;

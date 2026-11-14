@@ -48,6 +48,12 @@ const isOneWholeDay = (gte: number, lte: number) =>
 const EARLIEST = dateOf(addDays(FIRST_DATE, 1)).getTime() / 1000;
 const LATEST = dateOf(addDays(LAST_DATE, -1)).getTime() / 1000;
 
+// The first and last days whose start and end are inside those in every time
+// zone, from more than 15 hours ahead of UTC to 12 behind: what the pickers
+// offer.
+export const FIRST_DAY = addDays(FIRST_DATE, 2);
+export const LAST_DAY = addDays(LAST_DATE, -3);
+
 // A URL can hold anything, so what can't be a date counts as not being there.
 const readable = (seconds: unknown) =>
   typeof seconds === "number" && seconds >= EARLIEST && seconds <= LATEST ? seconds : null;

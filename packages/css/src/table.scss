@@ -22,65 +22,69 @@
 
   font-family: $font-family;
   font-size: $font-size-sm;
-  line-height: 1.5;
+  line-height: $font-line-height;
+}
 
-  & > thead > tr > th {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 2;
+// The cells. Their context stays out of the weight, so an app's own class on a
+// cell wins.
+:where(.htable > thead > tr) > th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
 
-    inline-size: 0;
-    padding-inline: 16px;
-    padding-block-end: 12px;
+  inline-size: 0;
+  padding-inline: 16px;
+  padding-block-end: 12px;
 
-    font-size: $font-size-2xs;
-    font-weight: $font-weight-medium;
-    text-align: start;
-    white-space: nowrap;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-medium;
+  text-align: start;
+  white-space: nowrap;
 
-    color: $color-text;
-    background-color: $color-background;
+  color: $color-text;
+  background-color: $color-background;
 
-    &:nth-last-child(1 of :not([hidden])) {
-      inline-size: auto;
-    }
+  &:nth-last-child(1 of :not([hidden])) {
+    inline-size: auto;
   }
+}
 
-  & > tbody > tr > :is(td, th) {
-    padding: 12px 16px;
+:where(.htable > tbody > tr) > :is(td, th) {
+  padding: 12px 16px;
 
-    font-weight: $font-weight-normal;
-    text-align: start;
-    white-space: nowrap;
+  font-weight: $font-weight-normal;
+  text-align: start;
+  white-space: nowrap;
 
-    color: $color-text-secondary;
-    border-block-start: 1px solid $color-border;
-  }
+  color: $color-text-secondary;
+  border-block-start: 1px solid $color-border;
+}
 
-  // A column that should stand out, such as a name.
-  & > tbody > tr > [data-emphasis] {
-    font-weight: $font-weight-medium;
+// A column that should stand out, such as a name.
+:where(.htable > tbody > tr) > [data-emphasis] {
+  font-weight: $font-weight-medium;
 
-    color: $color-text;
-  }
+  color: $color-text;
+}
 
-  // A row that goes somewhere: its link or button covers the whole row.
-  & > tbody > tr:has(.htable-row-link) {
-    position: relative;
+// A row that goes somewhere: its link or button covers the whole row.
+.htable > tbody > tr:has(.htable-row-link) {
+  position: relative;
 
-    transition: background-color $duration-fast ease;
+  transition: background-color $duration-fast ease;
 
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        background-color: $color-background-hover;
-      }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: $color-background-hover;
     }
   }
 }
 
-// Anything else in the row that can be used sits above that. Without any
-// weight, so an app's own positioning of it wins.
-:where(.htable > tbody > tr:has(.htable-row-link) :is(a, button, input, select, textarea, label, [tabindex]):not(.htable-row-link)) {
+// Anything else in the row that can be used sits above that, and so does the
+// cell of a row's checkbox, so a press just beside the box doesn't open the
+// row. Without any weight, so an app's own positioning of it wins.
+:where(.htable > tbody > tr:has(.htable-row-link) :is(a, button, input, select, textarea, label, [tabindex]):not(.htable-row-link)),
+:where(.htable > tbody > tr:has(.htable-row-link) > .htable-select) {
   position: relative;
   z-index: 1;
 }
@@ -149,7 +153,7 @@
 
   font-family: $font-family;
   font-size: $font-size-sm;
-  line-height: 1.5;
+  line-height: $font-line-height;
 
   background-color: $color-background;
   border-block-start: 1px solid $color-border;
@@ -157,10 +161,11 @@
   &[hidden] {
     display: none;
   }
+}
 
-  .htable-container[data-footer="static"] > & {
-    position: static;
-  }
+// Under the table only, when it shouldn't follow the window.
+:where(.htable-container[data-footer="static"]) > .htable-footer {
+  position: static;
 }
 
 .htable-footer-summary {

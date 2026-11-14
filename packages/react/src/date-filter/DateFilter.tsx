@@ -23,7 +23,9 @@ import {
   cleaned,
   describeRange,
   draftOf,
+  FIRST_DAY,
   isComplete,
+  LAST_DAY,
   NO_RANGE,
   rangeOf,
   type DateFilterCondition,
@@ -80,6 +82,7 @@ export const DateFilter = ({
   onValueChange,
   weekStartsOn,
   today,
+  disabled,
   ref,
   ...props
 }: DateFilterProps) => {
@@ -103,7 +106,7 @@ export const DateFilter = ({
     };
     node.addEventListener("toggle", toggled);
     return () => node.removeEventListener("toggle", toggled);
-  }, []);
+  }, [disabled]);
 
   const edit = (change: Partial<DateFilterDraft>) => setDraft((was) => ({ ...was, ...change }));
 
@@ -122,7 +125,7 @@ export const DateFilter = ({
 
   const apply = () => {
     if (!complete) return;
-    change(rangeOf(draft, amount));
+    change(cleaned(rangeOf(draft, amount)));
     popup.current?.hidePopover();
     chip.current?.focus();
   };
@@ -144,6 +147,20 @@ export const DateFilter = ({
     today,
   };
 
+  const trigger = (
+    <FilterChip
+      {...props}
+      ref={chipRef}
+      label={label}
+      values={shown === null ? [] : [shown]}
+      aria-haspopup="dialog"
+      aria-expanded={false}
+      disabled={disabled}
+    />
+  );
+
+  if (disabled) return trigger;
+
   return (
     <Popup
       ref={popup}
@@ -155,15 +172,7 @@ export const DateFilter = ({
         setDraft(draftOf(current));
         setOpenings((count) => count + 1);
       }}
-      trigger={
-        <FilterChip
-          {...props}
-          ref={chipRef}
-          label={label}
-          values={shown === null ? [] : [shown]}
-          aria-haspopup="dialog"
-        />
-      }
+      trigger={trigger}
     >
       <Select
         aria-label={labels.condition}
@@ -209,7 +218,8 @@ export const DateFilter = ({
           aria-label={between ? labels.startDate : labels.date}
           value={draft.date}
           onValueChange={(date) => edit({ date })}
-          max={between ? (draft.endDate ?? undefined) : undefined}
+          min={FIRST_DAY}
+          max={(between && draft.endDate) || LAST_DAY}
         />
         <span className="hdate-filter-and" hidden={!between}>
           {labels.and}
@@ -221,7 +231,8 @@ export const DateFilter = ({
           hidden={!between}
           value={draft.endDate}
           onValueChange={(endDate) => edit({ endDate })}
-          min={draft.date ?? undefined}
+          min={draft.date ?? FIRST_DAY}
+          max={LAST_DAY}
         />
       </div>
       <div className="hdate-filter-actions">

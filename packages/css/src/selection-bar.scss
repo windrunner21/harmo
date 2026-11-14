@@ -25,7 +25,7 @@
 
   font-family: $font-family;
   font-size: $font-size-sm;
-  line-height: 1.5;
+  line-height: $font-line-height;
   overflow-wrap: anywhere;
 
   color: $color-text-secondary;
@@ -39,7 +39,8 @@
 .hselection-bar-deselect {
   max-inline-size: 100%;
   margin: 0;
-  // 25px tall, as a target should be at least 24px.
+  // 25px tall, as a target should be at least 24px: 2px above and below a
+  // line of 1.5, which stays so whatever --harmo-font-line-height is.
   padding: 2px 8px;
 
   font-family: $font-family;

@@ -118,7 +118,7 @@ element's attributes. For buttons, make the bar a group with `as="div"`.
 ## Tokens
 
 `--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-lg`,
-`--harmo-font-weight-normal`, `--harmo-font-weight-medium`,
+`--harmo-font-line-height`, `--harmo-font-weight-normal`, `--harmo-font-weight-medium`,
 `--harmo-opacity-disabled`,
 `--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
 `--harmo-color-primary`, `--harmo-border-radius`, `--harmo-focus-outline`,

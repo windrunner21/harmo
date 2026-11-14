@@ -401,6 +401,30 @@ onEachPlayground("date-filter", () => {
     await expect(panel.getByRole("textbox", { name: "تاريخ النهاية" })).toBeVisible();
   });
 
+  test("an amount in the locale's own digits counts", async ({ page }) => {
+    const now = baku(11, 9, 12);
+    await page.clock.setFixedTime(new Date(now * 1000));
+    const container = await example(page, "date-filter-right-to-left");
+    const chip = container.locator(".hfilter-chip");
+    await chip.click();
+    const panel = container.getByRole("dialog");
+    await expect(panel).toBeVisible();
+    await settled(panel);
+    const apply = panel.getByRole("button", { name: "تطبيق" });
+    await panel.getByRole("textbox", { name: "العدد" }).fill("٧");
+    await expect(apply).not.toHaveAttribute("aria-disabled");
+    await apply.click();
+
+    await expect(panel).toBeHidden();
+    await expect(chip).toBeFocused();
+    const week = await page.evaluate(
+      ([from, to]) =>
+        new Intl.DateTimeFormat("ar-EG", { calendar: "gregory", dateStyle: "medium" }).formatRange(from! * 1000, to! * 1000),
+      [now - 7 * 86400, now],
+    );
+    await expect(container.locator(".hfilter-chip-value")).toHaveText(week);
+  });
+
   test("on a narrow screen, two dates wrap inside the window", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
     const { panel, condition, start, end } = await open(page, "date-filter-default");

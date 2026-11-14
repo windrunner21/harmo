@@ -375,10 +375,11 @@ The fields for every condition are in the page, with those not needed hidden:
 | --- | --- |
 | `hidden` on the fields | The condition changes |
 | `aria-disabled` on Apply | The fields change. The amount must be a whole number above zero; two dates must be in order |
-| The first date's latest day, and the second's earliest | The dates change, under "is between" |
+| The days the dates can be: 0100-01-03 to 9999-12-28, whose start and end read back as dates in every time zone. Under "is between", the first date's latest day is the second, and the second's earliest is the first | The panel opens, and the dates change |
 | Fill the fields from the value applied, with the condition worked out from it | The panel opens |
 | Write the value, show it in the chip, close the panel, focus the chip | Apply, or Enter in the amount |
 | Empty the value, the chip, and the fields, and focus the condition. The panel stays open | Clear |
+| Close the panel | The chip is disabled while it's open |
 
 The value is `gte` and `lte`, in Unix seconds, either of which can be `null`:
 
@@ -405,7 +406,7 @@ does all of this.
 ## React
 
 `<DateFilter>` renders the chip and the panel, and does what the script above
-does. Other props go to the chip.
+does. Other props go to the chip; with `disabled`, it renders the chip alone.
 
 | Prop | Effect |
 | --- | --- |
@@ -475,4 +476,5 @@ With another router, the same: the value from its URL, and a replace on a change
 
 ## Tokens
 
-`--harmo-font-size-sm`, `--harmo-color-text-secondary`, and those of its parts.
+`--harmo-font-size-sm`, `--harmo-font-line-height`,
+`--harmo-color-text-secondary`, and those of its parts.

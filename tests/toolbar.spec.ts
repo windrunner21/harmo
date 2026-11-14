@@ -51,6 +51,14 @@ onEachPlayground("toolbar", () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   });
 
+  test("an app's own class on what's at the start wins over the toolbar's", async ({ page }) => {
+    const filters = (await example(page, "toolbar-default")).locator(".htoolbar > .hfilters");
+    await filters.evaluate((node) => node.classList.add("test-start"));
+    await page.addStyleTag({ content: ".test-start { flex: 0 0 160px; }" });
+    await expect(filters).toHaveCSS("flex-basis", "160px");
+    await expect(filters).toHaveCSS("flex-grow", "0");
+  });
+
   test("controls alone stay at the end", async ({ page }) => {
     const container = await example(page, "toolbar-controls-only");
     const toolbar = container.locator(".htoolbar");

@@ -75,6 +75,19 @@ onEachPlayground("filters", () => {
     await expect(all.more.locator(".hfilter-chip", { hasText: "Priority" })).toBeFocused();
   });
 
+  test("opening the panel skips a first filter in a wrapper that's hidden", async ({ page }) => {
+    const container = await example(page, "filters-default");
+    const all = parts(container);
+    await container.locator(".hfilters-more .hfilter-chip").first().evaluate((node) => {
+      const wrapper = document.createElement("span");
+      wrapper.hidden = true;
+      node.before(wrapper);
+      wrapper.append(node);
+    });
+    await openMore(all);
+    await expect(all.more.locator(".hfilter-chip", { hasText: "Priority" })).toBeFocused();
+  });
+
   test("three popups deep, Escape closes one at a time and hands focus back", async ({ page }) => {
     const c = await example(page, "filters-default");
     const all = parts(c);
@@ -212,6 +225,26 @@ onEachPlayground("filters", () => {
     await expect(all.chip("Status")).toBeFocused();
   });
 
+  test("in React, Reset puts back a filter's defaultValue, and stays while that's in force", async ({ page }, info) => {
+    // The HTML example script empties every chip, as its markup stands for
+    // what the app holds.
+    test.skip(!info.titlePath.includes("react"), "React only");
+    const container = await example(page, "filters-a-filter-with-a-default");
+    const { chip, reset, values } = parts(container);
+    await expect(chip("Status")).toContainText("Active");
+    await expect(reset).toBeVisible();
+
+    await choose(chip("Assignee"), container, "Ana");
+    await expect(values).toHaveText(["Active", "Ana"]);
+    await choose(chip("Status"), container, "Done");
+    await expect(values).toHaveText(["Done", "Ana"]);
+
+    await reset.click();
+    await expect(values).toHaveText(["Active"]);
+    await expect(reset).toBeVisible();
+    await expect(chip("Status")).toBeFocused();
+  });
+
   test("the row's spacing, the count, the panel, and Reset", async ({ page }) => {
     const container = await example(page, "filters-with-filters-in-force");
     const all = parts(container);
@@ -231,6 +264,14 @@ onEachPlayground("filters", () => {
     await expect(all.more).toHaveCSS("row-gap", "8px");
     const [panel, chip, filter] = await boxes(all.more, all.moreChip, all.more.locator(".hfilter-chip"));
     expect(panel!.width).toBeCloseTo(Math.max(chip!.width, filter!.width + 26), 0);
+  });
+
+  test("an app's own class on the count wins, on a chip that's open too", async ({ page }) => {
+    const all = parts(await example(page, "filters-with-filters-in-force"));
+    await openMore(all);
+    await all.count.evaluate((node) => node.classList.add("test-count"));
+    await page.addStyleTag({ content: ".test-count { background-color: rgb(0, 0, 200); }" });
+    await expect(all.count).toHaveCSS("background-color", "rgb(0, 0, 200)");
   });
 
   test("right to left, the first filter is on the right", async ({ page }) => {

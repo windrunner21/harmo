@@ -61,6 +61,23 @@ export const examples = {
     </FilterChip>
   ),
 
+  "With search": () => (
+    <FilterChip
+      label="Agent"
+      multiple
+      defaultValue={["jane"]}
+      searchLabel="Search agents"
+      emptyMessage="No agents found"
+      clearLabel="Clear filters"
+      formatCount={(count) => `${count} selected`}
+    >
+      <Option value="jane">Jane Smith</Option>
+      <Option value="omar">Omar Haddad</Option>
+      <Option value="li">Li Wei</Option>
+      <Option value="ana">Ana Souza</Option>
+    </FilterChip>
+  ),
+
   "Text filter": () => {
     const id = useId();
     const popup = useRef<HTMLDivElement>(null);

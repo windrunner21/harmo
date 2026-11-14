@@ -120,6 +120,7 @@ no padding, so the panel lays out its own content:
 | The values in `.hfilter-chip-values` | When the selection changes or a panel is applied |
 | Render or remove the Clear filters footer, and clear the selection when it's pressed | While a multi-select chip has values |
 | Close the popup | After Apply; a single-select list closes itself (see [Listbox](listbox.md)) |
+| Close the popup | The chip is disabled while it's open |
 
 `examples/html/src/scripts/filter-chip.js` is an example script.
 
@@ -127,7 +128,8 @@ no padding, so the panel lays out its own content:
 
 `<FilterChip>` renders the chip. Given options as children, it also renders
 the popup and list, shows the chosen labels, and shows Clear filters while a
-multi-select has values; a single choice closes it. Without children, it's
+multi-select has values; a single choice closes it. With `disabled`, it
+renders the chip alone, so a popup that's open closes. Without children, it's
 the chip alone, to give a [Popup](popup.md#react) of your own, such as a text
 filter. Other props are the chip `<button>`'s attributes.
 
