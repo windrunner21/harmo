@@ -38,7 +38,7 @@
   }
 }
 
-.hcopy[data-copied] > .hcopy-icons {
+:where(.hcopy[data-copied]) > .hcopy-icons {
   & > .hcopy-icon {
     opacity: 0;
 
@@ -101,5 +101,10 @@
     justify-self: end;
 
     margin-inline-end: 2px;
+  }
+
+  // Its ring stays inside the field, as the password toggle's does.
+  & > :where(.htooltip-trigger) > .hbutton:focus-visible {
+    outline-offset: 0;
   }
 }

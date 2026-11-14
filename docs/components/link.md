@@ -50,7 +50,9 @@ in place of the static chevron.
   set to `underline` also underlines a link on hover, as the mono accent does,
   whose links already have the text color.
 - With an icon, the link stays on the text's baseline, so put icons after the
-  text; an icon first would sit slightly high.
+  text; an icon first would sit slightly high. It's no wider than its
+  container: its text wraps, and a word too long for the line, such as an
+  address, breaks, so the icon stays beside it.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 
 ## Accessibility

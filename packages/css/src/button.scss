@@ -51,8 +51,8 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   // its own width and height say, so icons from different sets match, and
   // match the loading spinner. ChevronToArrow and the Expand Chevron keep
   // their own sizes, which they're drawn for.
-  & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron),
-  & > .hbutton-hold > .hicon:not(.hchevron-to-arrow, .hexpand-chevron) {
+  & > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron)),
+  & > :where(.hbutton-hold) > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron)) {
     inline-size: 1.25rem;
     block-size: 1.25rem;
   }
@@ -60,11 +60,11 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   // An icon beside the label sits 3px from the border: with the space drawn
   // around a 20px icon, it looks as far in as the label's text, 6px.
   // ChevronToArrow and the Expand Chevron keep their own spacing.
-  & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label) {
+  & > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label)) {
     margin-inline-start: 3px;
   }
 
-  & > .hbutton-label + .hicon:not(.hchevron-to-arrow, .hexpand-chevron) {
+  & > :where(.hbutton-label) + .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron)) {
     margin-inline-end: 3px;
   }
 
@@ -88,7 +88,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-block-end-color: transparent;
 
     // It fades in as loading starts, rather than appearing at once.
-    transition: opacity 0.2s ease-out;
+    transition: opacity $duration-normal ease-out;
 
     @starting-style {
       opacity: 0;
@@ -317,9 +317,8 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 // course's hold to delete. While it's held (data-holding), by pointer, Enter,
 // or Space, its fill, a copy of its content a clear step into its color,
 // wipes across from the start, linear, as time passing is, and snaps back in
-// 0.2s,
-// ease-out, when let go early. Held all the way (data-held), it stays full
-// for a moment, then the action starts. A script runs it.
+// 200ms, ease-out, when let go early. Held all the way (data-held), it stays
+// full for a moment, then the action starts. A script runs it.
 .hbutton[data-hold] {
   --hbutton-hold-duration: 1.5s;
   // The fill. An outlined or text button fills with its color's tint, with
@@ -433,9 +432,9 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   pointer-events: none;
 
-  // Hidden past its end edge; let go early, it snaps back in 0.2s.
+  // Hidden past its end edge; let go early, it snaps back in 200ms.
   clip-path: inset(0 100% 0 0);
-  transition: clip-path 0.2s ease-out;
+  transition: clip-path $duration-normal ease-out;
 
   &:dir(rtl) {
     clip-path: inset(0 0 0 100%);
@@ -446,11 +445,11 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     flex-shrink: 0;
   }
 
-  & > .hicon:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label) {
+  & > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label)) {
     margin-inline-start: 3px;
   }
 
-  & > .hbutton-label + .hicon:not(.hchevron-to-arrow, .hexpand-chevron) {
+  & > :where(.hbutton-label) + .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron)) {
     margin-inline-end: 3px;
   }
 
@@ -467,7 +466,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-color: currentColor;
     border-block-end-color: transparent;
 
-    transition: opacity 0.2s ease-out;
+    transition: opacity $duration-normal ease-out;
 
     @starting-style {
       opacity: 0;
@@ -517,7 +516,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     opacity: 0;
 
     clip-path: none;
-    transition: opacity 0.2s ease-out;
+    transition: opacity $duration-normal ease-out;
   }
 
   .hbutton[data-holding] > .hbutton-hold {

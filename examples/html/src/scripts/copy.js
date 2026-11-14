@@ -1,9 +1,10 @@
 // Example only: a Copy Button copies its text and says so for two seconds,
 // as the React CopyButton does: its icon turns into a check, its tooltip or
 // its text says it's copied, and a status tells screen readers. Its text
-// changes through button.js's changeButtonWidth, so its width follows. A
-// Share Button opens the device's share sheet where the browser has one, and
-// elsewhere copies the link. If copying fails, nothing changes.
+// changes through button.js's changeButtonWidth, loaded first, so its width
+// follows; without button.js, the text changes at once. A Share Button opens
+// the device's share sheet where the browser has one, and elsewhere copies
+// the link. If copying fails, nothing changes.
 {
   for (const button of document.querySelectorAll(".hcopy")) {
     const trigger = button.parentElement.matches(".htooltip-trigger") ? button.parentElement : null;
@@ -15,7 +16,8 @@
     // The tooltip's words change at once, and the button's with its width.
     const say = (words) => {
       if (tooltip) tooltip.textContent = words;
-      else changeButtonWidth(button, () => (text.textContent = words));
+      else if (typeof changeButtonWidth === "function") changeButtonWidth(button, () => (text.textContent = words));
+      else text.textContent = words;
     };
     const { exampleCopy, exampleCopied, exampleShare, exampleShareTitle } = button.dataset;
     let timer;

@@ -71,9 +71,10 @@ None.
 
 ## React
 
-`<Chevron>` draws the static chevron, with `.hicon` and `.hchevron`. Give your
-own icons `className="hicon"`, `aria-hidden="true"`, and `focusable="false"`.
-Other props are the `<svg>`'s attributes.
+`<Chevron>` draws the static chevron, with `.hicon` and `.hchevron`; copy it
+into a project with `npx harmo-ui add chevron`. Give your own icons
+`className="hicon"`, `aria-hidden="true"`, and `focusable="false"`. Other
+props are the `<svg>`'s attributes.
 
 | Prop | Effect |
 | --- | --- |

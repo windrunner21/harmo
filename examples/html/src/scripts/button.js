@@ -3,8 +3,9 @@
 // width goes from the old to the new over --harmo-duration-normal, with
 // --harmo-ease-out-cubic, rather than jumping; its content on one line and
 // clipped meanwhile, then its own inline styles back. A change while one
-// plays carries on from where that one had got to. With reduced motion, at
-// once.
+// plays carries on from where that one had got to. Appearing or
+// disappearing, such as with hidden, it shows or goes at once. With reduced
+// motion, at once.
 const buttonWidthChanges = new WeakMap();
 const stopButtonWidthChange = (button) => {
   const playing = buttonWidthChanges.get(button);
@@ -21,7 +22,7 @@ const changeButtonWidth = (button, change) => {
   stopButtonWidthChange(button);
   change();
   const to = button.offsetWidth;
-  if (Math.abs(from - to) < 1 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (from < 1 || to < 1 || Math.abs(from - to) < 1 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const style = getComputedStyle(button);
   const duration = parseFloat(style.getPropertyValue("--harmo-duration-normal"));
   const playing = {
@@ -42,19 +43,35 @@ const changeButtonWidth = (button, change) => {
   playing.animation.finished.then(done, done);
 };
 
+// Ignores activation on any .hbutton while aria-disabled, as the React
+// Button does: the click's default is prevented, so it sends no form, follows
+// no link, and runs no command. A click listener of your own leaves a click
+// whose default is prevented alone, as the loading example's below does.
+// Listening on the document covers buttons added later too.
+document.addEventListener(
+  "click",
+  (event) => {
+    if (event.target.closest?.(".hbutton")?.getAttribute("aria-disabled") === "true") event.preventDefault();
+  },
+  true,
+);
+
 // Example only: a button that loads for two seconds, as the React Button
-// does while its action runs. aria-disabled keeps focus on it, so the script
-// ignores presses while it is busy.
+// does while its action runs. aria-disabled keeps focus on it, and a press
+// meanwhile is ignored. The spinner follows the label, before any icon after
+// it.
 {
   for (const button of document.querySelectorAll("[data-example-loading]")) {
-    button.addEventListener("click", () => {
-      if (button.getAttribute("aria-busy") === "true") return;
+    button.addEventListener("click", (event) => {
+      if (event.defaultPrevented || button.getAttribute("aria-busy") === "true") return;
 
       const spinner = document.createElement("span");
       spinner.className = "hspinner";
       spinner.setAttribute("aria-hidden", "true");
+      const label = button.querySelector(":scope > .hbutton-label");
       changeButtonWidth(button, () => {
-        button.append(spinner);
+        if (label) label.after(spinner);
+        else button.append(spinner);
         button.setAttribute("aria-busy", "true");
         button.setAttribute("aria-disabled", "true");
       });
@@ -76,9 +93,10 @@ const changeButtonWidth = (button, change) => {
 // whatever the pointer or key does, then acts; let go early, nothing happens.
 // A screen reader presses with a click, which can't hold, so a click with no
 // press behind it acts at once. Its click never does what a button's click
-// does natively, such as sending a form. Disabled meanwhile, it stops. Here,
-// acting shows the button working for a moment, as an app's delete would,
-// saying data-example-working.
+// does natively, such as sending a form. Disabled meanwhile, with disabled or
+// aria-disabled, it stops at once, the moment after a full hold included.
+// Here, acting shows the button working for a moment, as an app's delete
+// would, saying data-example-working.
 {
   const pressKeys = new Set(["Enter", " "]);
 
@@ -90,7 +108,7 @@ const changeButtonWidth = (button, change) => {
   };
 
   for (const button of document.querySelectorAll(".hbutton[data-hold]")) {
-    const inactive = () => button.disabled || button.getAttribute("aria-disabled") === "true";
+    const inactive = () => button.matches(":disabled") || button.getAttribute("aria-disabled") === "true";
     let holdTimer;
     let beatTimer;
     let held = false;
@@ -195,5 +213,10 @@ const changeButtonWidth = (button, change) => {
     button.addEventListener("blur", () => {
       if (!held) stop();
     });
+    new MutationObserver(() => {
+      if (!inactive()) return;
+      stop();
+      unhold();
+    }).observe(button, { attributes: true, attributeFilter: ["disabled", "aria-disabled"] });
   }
 }

@@ -134,7 +134,8 @@ it. Harmo ships no brand logos: use the ones your app is allowed to.
   [Toast](toast.md).
 - In a field: a read-only [Input](input.md) in `--harmo-font-family-mono`, its
   value ending in an ellipsis when it doesn't fit, and a small button 2px from
-  its end, at the left in right-to-left text.
+  its end, at the left in right-to-left text. The button's focus ring has no
+  offset, so it stays inside the field.
 
 ## Accessibility
 
@@ -160,7 +161,10 @@ it. Harmo ships no brand logos: use the ones your app is allowed to.
 | A Share Button: call `navigator.share` where the browser has it, and confirm nothing, since the share sheet says what happened; ignore an `AbortError`, which is someone closing the sheet. Elsewhere, copy the link | On a click |
 
 The playground's example script, `examples/html/src/scripts/copy.js`, does
-this.
+this. It changes a button's text through `changeButtonWidth` from Button's
+script, `examples/html/src/scripts/button.js`, so load that first; without
+it, the text changes at once. An icon-only one also needs
+[Tooltip](tooltip.md)'s script, for Escape to hide its tooltip.
 
 ## React
 

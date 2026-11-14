@@ -40,9 +40,9 @@
 
   // Inside the control that opens, or after it, as beside a Combobox's field;
   // or in the summary of a <details> that's open, such as an Accordion item.
-  [aria-expanded="true"] > &,
-  [aria-expanded="true"] ~ &,
-  details[open] > summary > & {
+  :where([aria-expanded="true"]) > &,
+  :where([aria-expanded="true"]) ~ &,
+  :where(details[open] > summary) > & {
     .hexpand-chevron-head {
       transform: translateY(-1.57px);
     }

@@ -9,9 +9,9 @@ turns into an arrow, use [ChevronToArrow](chevron-to-arrow.md).
 | Item | Requirement |
 | --- | --- |
 | CSS | `expand-chevron.css`, and the containing control's CSS (`button.css` for the button below) |
-| Element | `<svg class="hexpand-chevron" viewBox="0 0 16 12">`, a direct child of the element with `aria-expanded`, or of a `<details>` element's `<summary>` |
+| Element | `<svg class="hexpand-chevron" viewBox="0 0 16 12">`, a direct child of the element with `aria-expanded`, or a later sibling of it, as beside a [Combobox](combobox.md)'s field; or a direct child of a `<details>` element's `<summary>` |
 | Parts | `.hexpand-chevron-head` holding `.hexpand-chevron-left` and `.hexpand-chevron-right` |
-| Required | `aria-hidden="true"` and `focusable="false"`; `aria-expanded` on its parent, unless it's in a `<summary>` |
+| Required | `aria-hidden="true"` and `focusable="false"`; `aria-expanded` on its parent, or on an earlier sibling, unless it's in a `<summary>` |
 | Unique | None |
 | Script | The control's script keeps `aria-expanded` current; in a `<summary>`, none |
 
@@ -37,6 +37,7 @@ The two strokes fold while the head group shifts.
 | --- | --- |
 | `aria-expanded="false"` on the parent | Points down |
 | `aria-expanded="true"` on the parent | Points up |
+| `aria-expanded="true"` on an earlier sibling | Points up, as beside a [Combobox](combobox.md)'s field, which has the `aria-expanded` |
 | `open` on the `<details>` whose `<summary>` holds it | Points up, as in an [Accordion](accordion.md) item |
 
 ## Appearance and states
@@ -70,7 +71,7 @@ current.
 ## React
 
 `<ExpandChevron>` draws this SVG. Put it in the control whose `aria-expanded`
-it follows, as a direct child; a `<Popup>` keeps its trigger's
+it follows, as a direct child, or after it; a `<Popup>` keeps its trigger's
 `aria-expanded` current, and a `<Select>` its own. Other props are the
 `<svg>`'s attributes.
 

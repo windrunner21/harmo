@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { example, onEachPlayground, ready, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, test } from "./playgrounds.ts";
 
 // What docs/components/button.md says a script does, on the Button page's
 // Loading example, whose last button loads for two seconds. The page runs on
@@ -36,6 +36,38 @@ onEachPlayground("button", () => {
     await page.clock.runFor(1000);
     await expect(button).not.toHaveAttribute("aria-busy");
     expect(await spinners.count(), "spinners once done").toBe(0);
+  });
+
+  test("while aria-disabled, a press is ignored: a submit button doesn't send its form", async ({ page }) => {
+    const button = (await example(page, "button-disabled")).getByRole("button", { name: "Publish" });
+    await expect(button).toHaveAttribute("aria-disabled", "true");
+    // Its own form, around it, and a submit button's type.
+    await button.evaluate((node) => {
+      const form = document.createElement("form");
+      (window as unknown as { submitted: boolean }).submitted = false;
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        (window as unknown as { submitted: boolean }).submitted = true;
+      });
+      node.parentElement!.append(form);
+      form.append(node);
+      (node as HTMLButtonElement).type = "submit";
+    });
+    // Forced: Playwright won't click what's aria-disabled, as a person can.
+    await button.click({ force: true });
+    await button.press("Enter");
+    expect(await page.evaluate(() => (window as unknown as { submitted: boolean }).submitted)).toBe(false);
+  });
+
+  test("loading, the spinner follows the label, before an icon after it", async ({ page }) => {
+    test.skip(!inHtml(), "adds an icon to the example's markup, which React's own rendering covers");
+    const button = await loadingButton(page);
+    await button.evaluate((node) => {
+      node.insertAdjacentHTML("beforeend", '<svg class="hicon" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6L15 12L9 18" /></svg>');
+    });
+    await button.click();
+    const order = await button.evaluate((node) => [...node.children].map((child) => child.getAttribute("class")));
+    expect(order).toEqual(["hbutton-label", "hspinner", "hicon"]);
   });
 });
 
@@ -279,6 +311,53 @@ onEachPlayground("button", () => {
     await expect(button).toHaveAttribute("aria-busy", "true");
   });
 
+  test("disabled while it's held, it lets go at once, and doesn't act", async ({ page }) => {
+    test.skip(!inHtml(), "the React Button's state comes from its props");
+    const { button } = await holdButton(page);
+    await press(page, button);
+    await page.clock.runFor(600);
+    await expect(button).toHaveAttribute("data-holding");
+    await button.evaluate((node) => node.setAttribute("aria-disabled", "true"));
+    await expect(button).not.toHaveAttribute("data-holding");
+    await page.clock.runFor(1500);
+    await page.mouse.up();
+    await expect(button).not.toHaveAttribute("data-held");
+    await expect(button).not.toHaveAttribute("aria-busy");
+  });
+
+  // A fieldset around it, which disables it without changing the button itself.
+  const inFieldset = (button: Locator) =>
+    button.evaluateHandle((node) => {
+      const fieldset = document.createElement("fieldset");
+      node.parentElement!.append(fieldset);
+      fieldset.append(node);
+      return fieldset;
+    });
+
+  test("disabled through its fieldset while it's held, it doesn't act", async ({ page }) => {
+    const { button } = await holdButton(page);
+    const fieldset = await inFieldset(button);
+    await press(page, button);
+    await page.clock.runFor(600);
+    await fieldset.evaluate((node) => ((node as HTMLFieldSetElement).disabled = true));
+    await page.clock.runFor(1500);
+    await page.mouse.up();
+    await expect(button).not.toHaveAttribute("data-held");
+    await expect(button).not.toHaveAttribute("aria-busy");
+  });
+
+  test("disabled through its fieldset in the moment after a full hold, it doesn't act", async ({ page }) => {
+    const { button } = await holdButton(page);
+    const fieldset = await inFieldset(button);
+    await press(page, button);
+    await page.clock.runFor(1500);
+    await expect(button).toHaveAttribute("data-held");
+    await fieldset.evaluate((node) => ((node as HTMLFieldSetElement).disabled = true));
+    await page.mouse.up();
+    await page.clock.runFor(200);
+    await expect(button).not.toHaveAttribute("aria-busy");
+  });
+
   test("leaving the button lets go, and it doesn't act", async ({ page }) => {
     const { button } = await holdButton(page);
     await press(page, button);
@@ -323,6 +402,15 @@ onEachPlayground("button", () => {
     // Once its own 150ms color change, which runs on real time, lands.
     const red = await token(page, "--harmo-color-danger-border");
     await expect.poll(() => styleOf(button, "border-top-color")).toBe(red);
+  });
+
+  test("the fill's snap-back and the spinner's fade take --harmo-duration-normal, so a theme's duration reaches them", async ({ page }) => {
+    const fill = (await example(page, "button-hold-to-confirm")).locator(".hbutton-hold").first();
+    const spinner = (await example(page, "button-loading")).locator(".hbutton > .hspinner").first();
+    for (const part of [fill, spinner]) {
+      await part.evaluate((node) => node.parentElement!.style.setProperty("--harmo-duration-normal", "300ms"));
+      expect(await part.evaluate((node) => getComputedStyle(node).transitionDuration)).toBe("0.3s");
+    }
   });
 
   test("with reduced motion, the fill fades in over the hold instead of wiping across", async ({ page }) => {
@@ -419,6 +507,14 @@ onEachPlayground("button", () => {
       return [...delta(withArrow, ".hbutton-label"), ...delta(iconOnly, ".hicon")];
     });
     for (const offset of offsets) expect(offset).toBeLessThan(0.5);
+  });
+
+  test("an app's rule of the same weight, loaded after Harmo's, sizes and spaces an icon beside the label", async ({ page }) => {
+    const icon = (await example(page, "button-hold-to-confirm")).locator(".hbutton[data-hold] > .hicon").first();
+    await page.addStyleTag({ content: ".hbutton > .hicon { inline-size: 16px; block-size: 16px; margin-inline-start: 0; }" });
+    const [box] = await boxes(icon);
+    expect(box.width).toBeCloseTo(16, 0);
+    expect(await styleOf(icon, "margin-inline-start")).toBe("0px");
   });
 
   test("an icon beside the label looks as far from the border as the label's text", async ({ page }) => {

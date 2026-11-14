@@ -1,4 +1,5 @@
 import { Chevron, ChevronToArrow, Link } from "@harmo-ui/react";
+import { useEffect, useState } from "react";
 
 export const examples = {
   Standalone: () => (
@@ -19,16 +20,23 @@ export const examples = {
     </p>
   ),
 
-  Visited: () => (
-    <>
-      <Link visited href="/help/getting-started">
-        Getting started
-      </Link>
-      <Link visited href="/release-notes">
-        Release notes
-      </Link>
-    </>
-  ),
+  Visited: () => {
+    // Once hydrated, the first names this page, which the browser counts as
+    // visited, as the HTML playground's script does.
+    const [href, setHref] = useState("/help/getting-started");
+    useEffect(() => setHref(""), []);
+
+    return (
+      <>
+        <Link visited href={href}>
+          Getting started
+        </Link>
+        <Link visited href="/release-notes">
+          Release notes
+        </Link>
+      </>
+    );
+  },
 
   "With an icon": () => (
     <>
@@ -54,9 +62,15 @@ export const examples = {
   ),
 
   "Long text": () => (
-    <Link href="/help/automations">
-      Set up your first automated campaign
-      <ChevronToArrow />
-    </Link>
+    <>
+      <Link href="/help/automations">
+        Set up your first automated campaign
+        <ChevronToArrow />
+      </Link>
+      <Link href="/help/automations">
+        help.example.com/automations/first-campaign
+        <ChevronToArrow />
+      </Link>
+    </>
   ),
 };

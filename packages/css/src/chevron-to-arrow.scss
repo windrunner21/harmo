@@ -64,9 +64,11 @@
 
     // Rest as a chevron; hovering any part of the control reveals the arrow.
     :where(
-        a[href]:not([aria-disabled="true"]),
-        button:enabled:not([aria-disabled="true"])
-      ):not(:hover):not(:focus-visible)
+        :is(
+          a[href]:not([aria-disabled="true"]),
+          button:enabled:not([aria-disabled="true"])
+        ):not(:hover):not(:focus-visible)
+      )
       & {
       .hchevron-to-arrow-head {
         transform: translateX(-4px);
@@ -79,9 +81,11 @@
   }
 
   :where(
-      a[href]:not([aria-disabled="true"]),
-      button:enabled:not([aria-disabled="true"])
-    ):focus-visible
+      :is(
+        a[href]:not([aria-disabled="true"]),
+        button:enabled:not([aria-disabled="true"])
+      ):focus-visible
+    )
     & {
     .hchevron-to-arrow-head,
     .hchevron-to-arrow-upper,

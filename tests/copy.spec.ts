@@ -125,7 +125,8 @@ onEachPlayground("copy", () => {
   });
 
   test("a disabled one copies nothing", async ({ page }, info) => {
-    // React's Button ignores the click, from its aria-disabled prop.
+    // React's Button ignores the click, from its aria-disabled prop, which
+    // examples/react/test/button.test.tsx checks.
     test.skip(!info.titlePath.includes("html"), "HTML only");
     await stubClipboard(page);
     const container = await example(page, "copy-copy-a-link");
@@ -211,6 +212,18 @@ onEachPlayground("copy", () => {
 
     await button.click();
     expect(await copied(page)).toEqual(["acc_7Hq2vX9pLm4"]);
+  });
+
+  test("in a field, the button's focus ring has no offset, so it stays inside the field", async ({ page }) => {
+    const container = await example(page, "copy-in-a-field");
+    const button = container.getByRole("button", { name: "Copy account ID" });
+    await container.getByRole("textbox").focus();
+    await page.keyboard.press("Tab");
+    await expect(button).toBeFocused();
+    await expect(button).toHaveCSS("outline-offset", "0px");
+    // The button 2px from the field's end, its 2px ring reaches no further.
+    const [field, target] = await boxes(container.getByRole("textbox"), button);
+    expect(field.x + field.width - (target.x + target.width)).toBeGreaterThanOrEqual(2 - 0.5);
   });
 
   test("with enlarged text, a long value stops short of the button", async ({ page }) => {

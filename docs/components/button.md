@@ -131,7 +131,8 @@ of its content in `.hbutton-hold`:
   `--harmo-ease-out-cubic`) rather than jumping, its content on one line and
   clipped to it meanwhile, then its own inline `overflow` and `white-space`
   back. A change while one plays carries on from where that one had got to.
-  A loading spinner fades in. With reduced motion, at once.
+  With reduced motion, the width changes at once; a loading spinner still
+  fades in, in 200ms.
 - An icon beside the label sits 3px from the border, so with the space drawn
   around it, it looks as far in as the label's text.
 
@@ -149,10 +150,11 @@ of its content in `.hbutton-hold`:
 - While it's held (`data-holding`), its fill, a copy of its content a clear
   step into the button's color, wipes across from its start edge over
   `--hbutton-hold-duration`, `linear`, as it shows time passing, its border
-  too. Let go early, it snaps back in 0.2s, `ease-out`: the hold slow and
-  even, the release fast, as the animations.dev course's hold to delete
-  does. Pressed, it shrinks to 0.97 in 160ms (`--harmo-ease-out-quad`), as in
-  the course, and keeps its resting colors, since the fill is its feedback.
+  too. Let go early, it snaps back in 200ms (`--harmo-duration-normal`),
+  `ease-out`: the hold slow and even, the release fast, as the
+  animations.dev course's hold to delete does. Pressed, it shrinks to 0.97
+  in 160ms (`--harmo-ease-out-quad`), as in the course, and keeps its
+  resting colors, since the fill is its feedback.
 - The fill on an outlined or text button, as in the course's recipe, is its
   color's tint with that color's text and border: `--harmo-color-primary` on
   `--harmo-color-primary-tint`, or, destructive, `--harmo-color-danger` on
@@ -193,10 +195,12 @@ of its content in `.hbutton-hold`:
 
 | Change | When |
 | --- | --- |
-| Ignore activation | While `aria-disabled="true"` |
-| Add `aria-busy="true"`, `aria-disabled="true"`, and a `.hspinner`; remove them when done | While an action is in progress |
-| The width, from the old to the new, over 200ms | When what it shows changes, its text or whether it's loading |
+| Ignore activation: prevent the click's default, so it sends no form, follows no link, and runs no command, and don't act | While `aria-disabled="true"` |
+| Add `aria-busy="true"`, `aria-disabled="true"`, and a `.hspinner` right after the `.hbutton-label`, before any icon that follows it; remove them when done | While an action is in progress |
+| The width, from the old to the new, over 200ms | When what it shows changes, its text or whether it's loading, unless it's appearing or disappearing, as when `hidden` changes too |
 | `data-holding`, for `--hbutton-hold-duration`, then `data-held` for 200ms, then the action | While a `data-hold` button is held by the primary pointer, or by Enter or Space; leaving it, a second finger, or letting go early stops it, and a held key's repeats are ignored |
+| Stop the hold, and the moment after a full one, at once | When a `data-hold` button turns `disabled` or `aria-disabled="true"` meanwhile |
+| No action when the hold, or the moment after it, ends | When a `data-hold` button is disabled through its `<fieldset disabled>` meanwhile, which changes nothing on the button itself |
 | The action, at once | On a `data-hold` button's click with no press behind it, such as a screen reader's |
 | Nothing native: the click's default is prevented | On every `data-hold` button's click, so it never sends a form or runs a command on its own; the action does that |
 | A finger's pointer capture, released | As a hold starts by touch or pen, so moving off the button lets go |
@@ -208,8 +212,10 @@ of its content in `.hbutton-hold`:
 `<Button>` renders a `<button type="button">`, or with `href` a link, with its
 text in `.hbutton-label`. An icon as its first or last child stays outside
 the label: Harmo's `<ChevronToArrow>`, `<Chevron>`, or `<ExpandChevron>`, or
-any element with the `hicon` class. Other props are the button's or the
-link's attributes, so `type="submit"` makes a submit button.
+any element with the `hicon` class, inside a fragment too. A child that draws
+nothing, such as an empty fragment, isn't a label, so an icon-only button
+stays square. Other props are the button's or the link's attributes, so
+`type="submit"` makes a submit button, and an `aria-busy` you pass is kept.
 
 | Prop | Effect |
 | --- | --- |

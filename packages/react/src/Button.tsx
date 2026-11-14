@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Children,
   isValidElement,
   type ComponentPropsWithRef,
   type CSSProperties,
@@ -11,6 +10,7 @@ import {
 } from "react";
 import { Chevron } from "./Chevron.tsx";
 import { ChevronToArrow } from "./ChevronToArrow.tsx";
+import { flatChildren } from "./children.ts";
 import { ExpandChevron } from "./ExpandChevron.tsx";
 import { useField } from "./field/Field.tsx";
 import { useLinkComponent } from "./HarmoProvider.tsx";
@@ -76,7 +76,7 @@ export const Button = ({
     "data-variant": variant,
     "data-size": size,
     "data-destructive": destructive ? "" : undefined,
-    "aria-busy": loading || undefined,
+    "aria-busy": loading || props["aria-busy"] || undefined,
     "aria-disabled": inactive || undefined,
     "aria-labelledby": field["aria-labelledby"],
     "aria-describedby": field["aria-describedby"],
@@ -168,7 +168,7 @@ export const Button = ({
 const spinner = <Spinner aria-hidden="true" />;
 
 const renderContent = (children: ReactNode, loading?: boolean) => {
-  const label = Children.toArray(children);
+  const label = flatChildren(children);
   const start = isIcon(label[0]) ? label.shift() : undefined;
   const end = isIcon(label.at(-1)) ? label.pop() : undefined;
 

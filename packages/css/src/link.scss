@@ -41,12 +41,16 @@
     outline-offset: $focus-outline-offset;
   }
 
+  // With an icon, the text is a flex item, which wouldn't shrink below its
+  // longest word: a long address or ID breaks instead, as in a Button.
   &:has(> .hicon) {
     display: inline-flex;
     align-items: center;
     gap: $icon-gap;
 
     max-inline-size: 100%;
+
+    overflow-wrap: anywhere;
 
     > .hicon {
       flex-shrink: 0;

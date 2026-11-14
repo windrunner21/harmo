@@ -33,7 +33,47 @@ onEachPlayground("expand-chevron", () => {
     await Promise.all(parts.map((part) => settled(part)));
     expect(await Promise.all(parts.map(transformOf))).toEqual(collapsed);
   });
+
+  test("it folds over 200ms; with reduced motion, it flips without moving", async ({ page }) => {
+    const container = await example(page, "expand-chevron-toggling");
+    const parts = ["head", "left", "right"].map((name) => container.locator(`.play-demo .hexpand-chevron-${name}`));
+    for (const part of parts) expect(await durationOf(part)).toBe("0.2s");
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const part of parts) expect(await durationOf(part)).toBe("0s");
+  });
+
+  test("it points up after the control it follows, as beside a Combobox's field, and in an open <details> element's summary", async ({ page }) => {
+    const container = await example(page, "expand-chevron-toggling");
+    // The example's chevron, in each place, with its control open and closed.
+    const angles = await container.locator(".play-demo .hexpand-chevron").evaluate((chevron) => {
+      const svg = chevron.outerHTML;
+      const host = document.createElement("div");
+      host.innerHTML = [
+        `<div><button aria-expanded="true">Open</button>${svg}</div>`,
+        `<div><button aria-expanded="false">Closed</button>${svg}</div>`,
+        `<details open><summary>Open${svg}</summary></details>`,
+        `<details><summary>Closed${svg}</summary></details>`,
+      ].join("");
+      document.body.append(host);
+      const angles = [...host.querySelectorAll(".hexpand-chevron-left")].map((left) => {
+        const [a = 1, b = 0] = getComputedStyle(left).transform.match(/matrix\(([^)]*)\)/)?.[1]?.split(",").map(Number) ?? [];
+        return Math.round((Math.atan2(b, a) * 180) / Math.PI);
+      });
+      host.remove();
+      return angles;
+    });
+    expect(angles).toEqual([-40, 40, -40, 40]);
+  });
+
+  test("an app's rule of the same weight, loaded after Harmo's, overrides an expanded one", async ({ page }) => {
+    const container = await example(page, "expand-chevron-collapsed-and-expanded");
+    await page.addStyleTag({ content: ".hexpand-chevron .hexpand-chevron-left { transform: rotate(10deg); transition: none; }" });
+    const expanded = container.locator('.play-demo [aria-expanded="true"] .hexpand-chevron-left');
+    expect(angleOf(await transformOf(expanded))).toBeCloseTo(10, 1);
+  });
 });
+
+const durationOf = (element: Locator) => element.evaluate((node) => getComputedStyle(node).transitionDuration);
 
 const transformOf = (element: Locator) => element.evaluate((node) => getComputedStyle(node).transform);
 

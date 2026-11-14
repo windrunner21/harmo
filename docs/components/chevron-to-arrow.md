@@ -9,9 +9,9 @@ focused from the keyboard. For a chevron that doesn't animate, use the static
 | Item | Requirement |
 | --- | --- |
 | CSS | `chevron-to-arrow.css` |
-| Element | `<svg class="hicon hchevron-to-arrow" viewBox="0 0 24 24">` inside an enabled `<a href>` or `<button>` |
+| Element | `<svg class="hicon hchevron-to-arrow" width="24" height="24" viewBox="0 0 24 24">` inside an enabled `<a href>` or `<button>` |
 | Parts | `.hchevron-to-arrow-head` holding `.hchevron-to-arrow-upper` and `.hchevron-to-arrow-lower`; `.hchevron-to-arrow-shaft` |
-| Required | `aria-hidden="true"` and `focusable="false"` |
+| Required | `width="24"` and `height="24"`, which size it, since its CSS doesn't; `aria-hidden="true"` and `focusable="false"` |
 | Unique | None |
 | Script | None |
 
