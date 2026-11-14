@@ -72,25 +72,68 @@ onEachPlayground("table-of-contents", () => {
     await expect(links.locator('xpath=self::*[@aria-current="location"]')).toHaveCount(1);
   });
 
+  // Where a heading is in the box, measured in the same frame as the click.
+  const followNow = (link: Locator, heading: string) =>
+    link.evaluate((node, heading) => {
+      const box = node.closest(".htoc")!.parentElement!;
+      (node as HTMLElement).click();
+      return document.getElementById(heading)!.getBoundingClientRect().top - box.getBoundingClientRect().top;
+    }, heading);
+
   test("following a link in a box glides, and is at once with reduced motion", async ({ page }) => {
-    const { links } = await parts(page);
-    const seen = () =>
-      page.evaluate(() => {
-        const calls: string[] = [];
-        (window as unknown as { calls: string[] }).calls = calls;
-        const scrollBy = Element.prototype.scrollBy;
-        Element.prototype.scrollBy = function (this: Element, ...args: unknown[]) {
-          calls.push((args[0] as ScrollToOptions | undefined)?.behavior ?? "");
-          return (scrollBy as (...a: unknown[]) => void).apply(this, args);
-        } as typeof scrollBy;
-      });
-    const calls = () => page.evaluate(() => (window as unknown as { calls: string[] }).calls);
-    await seen();
-    await links.nth(2).click();
-    await expect.poll(calls).toEqual(["smooth"]);
+    const { links, scroller } = await parts(page);
+    // A box that glides by itself must still go at once.
+    await scroller.evaluate((n) => ((n as HTMLElement).style.scrollBehavior = "smooth"));
+    expect(Math.abs(await followNow(links.nth(3), "budget"))).toBeGreaterThan(50);
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await links.nth(3).click();
-    await expect.poll(calls).toEqual(["smooth", "auto"]);
+    expect(Math.abs(await followNow(links.nth(1), "milestones"))).toBeLessThan(2);
+  });
+
+  test("it scrolls to where the browser would, after scroll-margin-top and scroll-padding-top", async ({ page }) => {
+    const { links, scroller, container } = await parts(page);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await container.locator("#risks").evaluate((n) => ((n as HTMLElement).style.scrollMarginTop = "30px"));
+    await scroller.evaluate((n) => ((n as HTMLElement).style.scrollPaddingTop = "12px"));
+    expect(await followNow(links.nth(2), "risks")).toBeCloseTo(42, 0);
+  });
+
+  test("a followed link moves focus to its heading, so Tab carries on from there", async ({ page }) => {
+    const { links, container } = await parts(page);
+    const heading = container.locator("#risks");
+    await links.nth(2).focus();
+    await page.keyboard.press("Enter");
+    await expect(heading).toBeFocused();
+    await expect(heading).toHaveAttribute("tabindex", "-1");
+    await page.keyboard.press("Tab");
+    await expect(heading).not.toBeFocused();
+    await expect(heading).not.toHaveAttribute("tabindex");
+    expect(await links.evaluateAll((all) => all.includes(document.activeElement as HTMLAnchorElement))).toBe(false);
+  });
+
+  test("following the same link again adds no entry to the history", async ({ page }) => {
+    const { links } = await parts(page);
+    const length = () => page.evaluate(() => history.length);
+    await links.nth(2).click();
+    const after = await length();
+    await links.nth(2).click();
+    await links.nth(2).click();
+    expect(await length()).toBe(after);
+  });
+
+  test("a key that doesn't scroll leaves a followed link marked as the box glides", async ({ page }) => {
+    const { links, nav } = await parts(page);
+    await nav.evaluate((n) => {
+      const seen: string[] = [];
+      (window as unknown as { seen: string[] }).seen = seen;
+      new MutationObserver(() => {
+        const current = n.querySelector("[aria-current]")?.textContent ?? "";
+        if (seen.at(-1) !== current) seen.push(current);
+      }).observe(n, { subtree: true, attributes: true, attributeFilter: ["aria-current"] });
+    });
+    await links.nth(4).click();
+    await page.keyboard.press("Shift");
+    await page.waitForTimeout(800);
+    expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual(["Contacts"]);
   });
 
   test("the marker is on whichever side the line is", async ({ page }) => {
@@ -249,6 +292,39 @@ onEachPlayground("table-of-contents", () => {
     const [link] = await boxes(links.nth(2));
     const marker = await settledBox(nav);
     expect(marker.y).toBeCloseTo(link!.y, 0);
+
+    // Partway there, a moment after the next section is reached.
+    const [from, to, partway] = await nav.evaluate(async (n) => {
+      const marker = n.querySelector(".htoc-marker")!;
+      const from = marker.getBoundingClientRect().top;
+      const link = n.querySelectorAll<HTMLElement>(".htoc-link")[4]!;
+      link.click();
+      await new Promise((done) => setTimeout(done, 70));
+      return [from, link.getBoundingClientRect().top, marker.getBoundingClientRect().top];
+    });
+    expect(partway).toBeGreaterThan(from + 1);
+    expect(partway).toBeLessThan(to - 1);
+  });
+
+  test("the marker follows a link that changes height while the list doesn't", async ({ page }) => {
+    const { nav, links, scroller } = await parts(page);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const long = "A heading long enough to take two lines in the list";
+    await links.nth(3).evaluate((n, long) => (n.textContent = long), long);
+    await scrollTo(scroller, 450);
+    await expect(links.nth(2)).toHaveAttribute("aria-current", "location");
+    const height = await nav.locator(".htoc-list").evaluate((n) => (n as HTMLElement).offsetHeight);
+    // One above the current link gains a line as one below loses its second.
+    await nav.evaluate((n, long) => {
+      const all = n.querySelectorAll(".htoc-link");
+      all[0]!.textContent = long;
+      all[3]!.textContent = "Budget";
+    }, long);
+    expect(await nav.locator(".htoc-list").evaluate((n) => (n as HTMLElement).offsetHeight)).toBe(height);
+    await expect.poll(async () => {
+      const [link, marker] = await boxes(links.nth(2), markerOf(nav));
+      return Math.round(marker!.y - link!.y);
+    }).toBe(0);
   });
 
   test("with reduced motion, the marker moves at once", async ({ page }) => {

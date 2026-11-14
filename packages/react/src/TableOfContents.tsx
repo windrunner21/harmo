@@ -64,6 +64,30 @@ const hashId = () => {
 
 const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+const scrollKeys = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "];
+
+const scrollsByKey = (event: KeyboardEvent) => {
+  if (event.defaultPrevented || !scrollKeys.includes(event.key)) return false;
+  const target = event.target instanceof Element ? event.target : null;
+  if (target?.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])")) return false;
+  return !(event.key === " " && target?.closest("button, summary, [role='button']"));
+};
+
+const goTo = (heading: HTMLElement, scroller: HTMLElement) => {
+  const top = scroller.getBoundingClientRect().top + scroller.clientTop;
+  const margin = parseFloat(getComputedStyle(heading).scrollMarginTop) || 0;
+  const padding = parseFloat(getComputedStyle(scroller).scrollPaddingTop) || 0;
+  scroller.scrollBy({
+    top: heading.getBoundingClientRect().top - top - margin - padding,
+    behavior: still() ? "instant" : "smooth",
+  });
+  if (!heading.hasAttribute("tabindex") && heading.tabIndex < 0) {
+    heading.setAttribute("tabindex", "-1");
+    heading.addEventListener("blur", () => heading.removeAttribute("tabindex"), { once: true });
+  }
+  heading.focus({ preventScroll: true });
+};
+
 const plainClick = (event: MouseEvent) =>
   !event.defaultPrevented &&
   event.button === 0 &&
@@ -102,6 +126,9 @@ export const TableOfContents = ({
     const release = () => {
       pinned.current = null;
     };
+    const releaseByKey = (event: KeyboardEvent) => {
+      if (scrollsByKey(event)) release();
+    };
     const followHash = () => {
       const id = hashId();
       if (!list.includes(id)) {
@@ -125,14 +152,16 @@ export const TableOfContents = ({
     window.addEventListener("scroll", schedule, { capture: true, passive: true });
     window.addEventListener("resize", schedule);
     window.addEventListener("hashchange", followHash);
-    for (const type of ["wheel", "touchmove", "keydown"]) window.addEventListener(type, release, { passive: true });
+    for (const type of ["wheel", "touchmove"]) window.addEventListener(type, release, { passive: true });
+    window.addEventListener("keydown", releaseByKey);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("scroll", schedule, { capture: true });
       window.removeEventListener("resize", schedule);
       window.removeEventListener("hashchange", followHash);
-      for (const type of ["wheel", "touchmove", "keydown"]) window.removeEventListener(type, release);
+      for (const type of ["wheel", "touchmove"]) window.removeEventListener(type, release);
+      window.removeEventListener("keydown", releaseByKey);
     };
   }, [ids, offset]);
 
@@ -152,8 +181,9 @@ export const TableOfContents = ({
     place();
     const observer = new ResizeObserver(place);
     observer.observe(list);
+    for (const link of list.querySelectorAll(".htoc-link")) observer.observe(link);
     return () => observer.disconnect();
-  }, [current]);
+  }, [current, ids]);
 
   useEffect(() => {
     const root = nav.current;
@@ -186,12 +216,8 @@ export const TableOfContents = ({
                 const scroller = heading && scrollerOf(heading);
                 if (heading && scroller) {
                   event.preventDefault();
-                  const top = scroller.getBoundingClientRect().top + scroller.clientTop;
-                  scroller.scrollBy({
-                    top: heading.getBoundingClientRect().top - top - offset,
-                    behavior: still() ? "auto" : "smooth",
-                  });
-                  history.pushState(null, "", `#${encodeURIComponent(item.id)}`);
+                  goTo(heading, scroller);
+                  if (hashId() !== item.id) history.pushState(null, "", `#${encodeURIComponent(item.id)}`);
                 }
                 pinned.current = item.id;
                 setCurrent(item.id);

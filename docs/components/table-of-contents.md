@@ -50,10 +50,10 @@ the keyboard reaches it.
   a Tab's indicator does. It's placed at once as the page loads, and moves at once
   with reduced motion. Until a script has placed it, the current link colors its
   own piece of the line instead.
-- Following a link inside a scrolling box glides there; with reduced motion it's
-  at once. On the page itself, the browser's own jump is used: give `html`
-  `scroll-behavior: smooth`, inside `@media (prefers-reduced-motion: no-preference)`,
-  for it to glide too.
+- Following a link inside a scrolling box glides there, to where the browser's own
+  jump would put the heading, or goes at once with reduced motion. On the page
+  itself, the browser's own jump is used: give `html` `scroll-behavior: smooth`,
+  inside `@media (prefers-reduced-motion: no-preference)`, for it to glide too.
 - Links are `--harmo-color-text-secondary`, and `--harmo-color-text` on hover.
 - It sticks to the top of what's scrolling, and scrolls itself if it's taller than
   the screen, keeping the current link in view.
@@ -76,11 +76,13 @@ the keyboard reaches it.
 | --- | --- |
 | `aria-current="location"` on the link to the last heading above the top of the view | As it scrolls or resizes, or the content's height changes |
 | `aria-current` on the last link | The end of the scrolling is reached, as a short last section can't reach the top |
-| `aria-current` on a link that's followed with a plain click, until you next scroll with a wheel, a touch, or a key | A link is followed |
-| Scrolling only the box to its heading, smoothly unless motion is reduced, and adding it to the address, in place of the browser's own jump, which would scroll the page too | A link is followed to a heading in a scrolling box |
+| `aria-current` on a link that's followed with a plain click, until you next scroll with a wheel, a touch, or a key that scrolls, such as Page Down, but not while typing | A link is followed |
+| Scrolling only the box to its heading, in place of the browser's own jump, which would scroll the page too: to the same place, after the heading's `scroll-margin-top` and the box's `scroll-padding-top`; smoothly, or at once when motion is reduced | A link is followed to a heading in a scrolling box |
+| Focus on that heading, without scrolling, so that Tab carries on from it as it would after the browser's jump; a heading that can't take focus gets `tabindex="-1"` until it loses it | The same |
+| Adding the heading to the address, unless it's there already | The same |
 | `aria-current` on the link to the address's `#id` | The page opens with one, or it changes with Back or Forward |
 | The list's `scrollTop`, to keep the current link in view | The current link changes |
-| `--htoc-marker-y` and `--htoc-marker-size` on `.htoc`, from the current link's `offsetTop` and `offsetHeight`, and `data-ready` once it's first placed | The current link changes, or the list's size does |
+| `--htoc-marker-y` and `--htoc-marker-size` on `.htoc`, from the current link's `offsetTop` and `offsetHeight`, and `data-ready` once it's first placed | The current link changes, or the size of the list or a link does |
 
 `examples/html/src/scripts/table-of-contents.js` is an example script, which reads
 a sticky header's height from `data-example-offset`.
@@ -95,7 +97,7 @@ they come on the page, whatever the order of `items`.
 | --- | --- |
 | `aria-label` | Required. The list's name |
 | `items` | Each has an `id`, the id of its heading, a `label`, and an optional `level` of 1, 2, or 3 |
-| `offset` | How many pixels a sticky header covers at the top |
+| `offset` | How many pixels a sticky header covers at the top, for which section counts as reached. Where a followed link scrolls to is up to `scroll-margin-top`, as for the browser's own jump |
 | `side` | `start`, the default, or `end`: which side of a flex row it goes to |
 
 ```tsx
