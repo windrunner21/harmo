@@ -64,6 +64,19 @@ describe("FileInput", () => {
     expect(markup).not.toContain('<label class="hbutton" data-variant="secondary"><input class="hfile-input-control" type="file"/><svg');
   });
 
+  test("an area's hint describes its input, before the message; an avatar's is in its label", () => {
+    const area = renderToStaticMarkup(
+      <FileInput {...labels} variant="area" dropLabel="D" hint="N" validate={() => null} />,
+    );
+    const hint = /<span class="hfile-input-hint" id="([^"]+)">N<\/span>/.exec(area)![1];
+    const error = /<p[^>]*id="([^"]+)"[^>]*class="herror"|<p[^>]*class="herror"[^>]*id="([^"]+)"/.exec(area)!;
+    expect(area).toContain(`aria-describedby="${hint} ${error[1] ?? error[2]}"`);
+
+    const avatar = renderToStaticMarkup(<FileInput {...labels} variant="avatar" hint="N" />);
+    expect(avatar).toContain('<span class="hfile-input-hint">N</span>');
+    expect(avatar).not.toContain("aria-describedby");
+  });
+
   test("an avatar is a label around the circle and its text", () => {
     const markup = renderToStaticMarkup(<FileInput {...labels} variant="avatar" hint="N" />);
     expect(markup).toContain('<label class="hfile-input-target">');

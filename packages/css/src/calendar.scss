@@ -61,30 +61,6 @@
     block-size: var(--hcalendar-day-size);
     padding: 0;
   }
-
-  // The chosen date, filled. In forced colors, where a fill is gone, in the
-  // system's highlight.
-  & [aria-selected="true"] > .hcalendar-day {
-    color: $color-on-primary;
-    background-color: $color-primary-fill;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover:not(:disabled) {
-        color: $color-on-primary;
-        background-color: $color-primary-fill-hover;
-      }
-    }
-
-    @media (forced-colors: active) {
-      &,
-      &:hover:not(:disabled) {
-        forced-color-adjust: none;
-
-        color: HighlightText;
-        background-color: Highlight;
-      }
-    }
-  }
 }
 
 .hcalendar-day {
@@ -120,8 +96,9 @@
   }
 
   // Today, tinted; in forced colors, where a tint is gone, a line just inside
-  // its edge.
-  &[aria-current="date"] {
+  // its edge. As low as the day itself, so the chosen date's fill, after it,
+  // covers it.
+  &:where([aria-current="date"]) {
     background-color: $color-background-secondary;
 
     @media (forced-colors: active) {
@@ -157,5 +134,29 @@
 
   @media (prefers-reduced-motion: reduce) {
     transition-property: background-color, color;
+  }
+}
+
+// The chosen date, filled, today too. In forced colors, where a fill is gone, in
+// the system's highlight.
+:where(.hcalendar-grid [aria-selected="true"]) > .hcalendar-day {
+  color: $color-on-primary;
+  background-color: $color-primary-fill;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled) {
+      color: $color-on-primary;
+      background-color: $color-primary-fill-hover;
+    }
+  }
+
+  @media (forced-colors: active) {
+    &,
+    &:hover:not(:disabled) {
+      forced-color-adjust: none;
+
+      color: HighlightText;
+      background-color: Highlight;
+    }
   }
 }

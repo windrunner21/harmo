@@ -115,7 +115,7 @@
   <div class="hfield">
     <label class="hlabel" for="notify" id="notify-label">Notify</label>
     <div class="hcombobox" data-multiple style="anchor-name: --notify">
-      <ul class="htag-list" data-example-more-label="{count} more">
+      <ul class="htag-list" role="list" data-example-more-label="{count} more">
         <li>
           <span class="htag">
             Ana Lopez
@@ -201,7 +201,7 @@
   <div class="hfield">
     <label class="hlabel" for="send-to" id="send-to-label">Send to</label>
     <div class="hcombobox" data-multiple style="anchor-name: --send-to">
-      <ul class="htag-list" data-example-more-label="{count} more">
+      <ul class="htag-list" role="list" data-example-more-label="{count} more">
         <li>
           <span class="htag">
             Ana Lopez
@@ -324,4 +324,154 @@
   <button class="hbutton" data-variant="secondary" type="button" data-example-pick="owner" data-example-pick-value="sam">
     <span class="hbutton-label">Assign to me</span>
   </button>
+</play-example>
+
+<play-example title="Disabled" layout="stack">
+  <play-note>
+    <code>disabled</code> on the input, as for an Input, with no
+    <code>aria-controls</code> and no popup, as nothing can open. Disable its
+    hidden input too, so a form doesn't send it.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="assigned" id="assigned-label">Assigned to</label>
+    <div class="hcombobox" style="anchor-name: --assigned">
+      <input
+        class="hinput"
+        id="assigned"
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-labelledby="assigned-label"
+        value="Sam Rivera"
+        disabled
+      />
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </div>
+    <input type="hidden" name="assigned" value="sam" disabled />
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    A form sends what each one holds: in pick mode, the hidden input; with
+    free text, the field itself; choosing several, one hidden input for each
+    choice. Reset restores what the page loaded with.
+  </play-note>
+  <form style="display: flex; flex-direction: column; gap: 16px">
+    <div class="hfield">
+      <label class="hlabel" for="form-owner" id="form-owner-label">Owner</label>
+      <div class="hcombobox" style="anchor-name: --form-owner">
+        <input
+          class="hinput"
+          id="form-owner"
+          type="text"
+          role="combobox"
+          autocomplete="off"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls="form-owner-listbox"
+          aria-labelledby="form-owner-label"
+          value="Sam Rivera"
+        />
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </div>
+      <div class="hpopup" id="form-owner-popup" popover="manual" style="position-anchor: --form-owner">
+        <ul class="hlistbox" id="form-owner-listbox" role="listbox" aria-labelledby="form-owner-label">
+          <li class="hoption" id="form-owner-sam" role="option" data-value="sam" aria-selected="true">
+            <span class="hoption-label">Sam Rivera</span>
+            <play-icon name="check" class="hoption-check"></play-icon>
+          </li>
+          <li class="hoption" id="form-owner-ana" role="option" data-value="ana" aria-selected="false">
+            <span class="hoption-label">Ana Lopez</span>
+          </li>
+        </ul>
+      </div>
+      <input type="hidden" name="form-owner" value="sam" />
+    </div>
+    <div class="hfield">
+      <label class="hlabel" for="form-reply-to" id="form-reply-to-label">Reply to</label>
+      <div class="hcombobox" style="anchor-name: --form-reply-to">
+        <input
+          class="hinput"
+          id="form-reply-to"
+          type="text"
+          role="combobox"
+          autocomplete="off"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls="form-reply-to-listbox"
+          aria-labelledby="form-reply-to-label"
+          data-free-text
+          name="form-reply-to"
+          value="sam@example.com"
+        />
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </div>
+      <div class="hpopup" id="form-reply-to-popup" popover="manual" style="position-anchor: --form-reply-to">
+        <ul class="hlistbox" id="form-reply-to-listbox" role="listbox" aria-labelledby="form-reply-to-label">
+          <li class="hoption" id="form-reply-to-sam" role="option" aria-selected="false">
+            <span class="hoption-label">sam@example.com</span>
+          </li>
+          <li class="hoption" id="form-reply-to-ana" role="option" aria-selected="false">
+            <span class="hoption-label">ana@example.com</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="hfield">
+      <label class="hlabel" for="form-watchers" id="form-watchers-label">Watchers</label>
+      <div class="hcombobox" data-multiple style="anchor-name: --form-watchers">
+        <ul class="htag-list" role="list" data-example-more-label="{count} more">
+          <li>
+            <span class="htag">
+              Ana Lopez
+              <button class="htag-remove" type="button" tabindex="-1" aria-label="Remove Ana Lopez">
+                <play-icon name="close" class="hicon"></play-icon>
+              </button>
+            </span>
+          </li>
+          <li class="htag-list-more" hidden>
+            <span class="htooltip-trigger">
+              <button class="htag-list-count" type="button" tabindex="-1" aria-describedby="form-watchers-more"></button>
+              <span class="htooltip" data-variant="hint" role="tooltip" id="form-watchers-more">
+                <span class="htag-list-rest"></span>
+              </span>
+            </span>
+          </li>
+        </ul>
+        <input
+          class="hinput"
+          id="form-watchers"
+          type="text"
+          role="combobox"
+          autocomplete="off"
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls="form-watchers-listbox"
+          aria-labelledby="form-watchers-label"
+          value=""
+          data-example-remove-label="Remove {label}"
+        />
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </div>
+      <div class="hpopup" id="form-watchers-popup" popover="manual" style="position-anchor: --form-watchers">
+        <ul class="hlistbox" id="form-watchers-listbox" role="listbox" aria-labelledby="form-watchers-label" aria-multiselectable="true">
+          <li class="hoption" id="form-watchers-sam" role="option" data-value="sam" aria-selected="false">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Sam Rivera</span>
+          </li>
+          <li class="hoption" id="form-watchers-ana" role="option" data-value="ana" aria-selected="true">
+            <span class="hoption-checkbox" aria-hidden="true"></span>
+            <span class="hoption-label">Ana Lopez</span>
+          </li>
+        </ul>
+      </div>
+      <input type="hidden" name="form-watchers" value="ana" />
+    </div>
+    <button class="hbutton" data-variant="secondary" type="reset" style="align-self: flex-start">
+      <span class="hbutton-label">Reset</span>
+    </button>
+  </form>
 </play-example>

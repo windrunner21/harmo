@@ -45,24 +45,25 @@ To say why a file was refused, follow it with a Field's error, connected with
 
 To take dropped files, give `.hfile-input` a `data-variant`. A strip puts
 `.hfile-input-drop` first; it shows after the button. A large area adds an icon, a
-heading, and a hint:
+heading, and a hint, which `aria-describedby` on the input connects, so it's read
+with the button:
 
 ```html
 <div class="hfile-input" data-variant="area">
   <span class="hfile-input-icon"><!-- an icon --></span>
   <span class="hfile-input-heading">Upload a task list</span>
   <span class="hfile-input-drop">Drag it here, or choose it below.</span>
-  <span class="hfile-input-hint">A CSV file, up to 1 MB.</span>
+  <span class="hfile-input-hint" id="tasks-hint">A CSV file, up to 1 MB.</span>
   <label class="hbutton" data-variant="secondary">
-    <input class="hfile-input-control" id="tasks" name="tasks" type="file" aria-label="Task list" />
+    <input class="hfile-input-control" id="tasks" name="tasks" type="file" aria-label="Task list" aria-describedby="tasks-hint" />
     <span class="hbutton-label">Choose file</span>
   </label>
   <!-- the remove button -->
 </div>
 ```
 
-An avatar's circle and text are one `<label>`, so all of it opens the picker. The
-picture goes last in the circle. With `data-stacked`, its two texts sit one over
+An avatar's circle and text are one `<label>`, so all of it opens the picker, and
+its hint is part of the name. The picture goes last in the circle. With `data-stacked`, its two texts sit one over
 the other, with `data-inactive` on the one not showing, so that changing between
 them can't move the circle:
 
@@ -100,7 +101,8 @@ them can't move the circle:
 - The button is a secondary [Button](button.md), 34px tall, with a 20px icon: it
   hovers, presses, and shows focus as one does, following the input inside it.
 - The icon gains a check once there's a file, and the text becomes its name.
-- The remove button is a tertiary icon-only Button, 6px after it.
+- The remove button is a tertiary icon-only Button, 6px after it. It presses as
+  any Button does.
 - A long name ends in an ellipsis, with the remove button still beside it. Its
   `title` shows the whole name on hover, and screen readers read all of it.
 - A strip is as wide as what's in it, up to the width it's given. A large area
@@ -133,6 +135,9 @@ them can't move the circle:
   type and size when a file is chosen, and again on your server.
 - Dropping is an extra for a pointer. The button, or an avatar's circle, does the
   same from the keyboard, and the drop text stays out of the button's name.
+- A hint, such as the types and size it takes, is read with the button: as a
+  description outside an avatar, connected by `aria-describedby`, and as part of
+  the name in one.
 - Set `aria-invalid="true"` and show the reason in the connected `.herror` when a
   file is refused.
 
@@ -149,7 +154,9 @@ them can't move the circle:
 | Stopping a drop elsewhere on the page, which would open the file in the tab | A file is dropped outside the area, except on a text field, on editable content, or on a drop target that has already accepted it |
 | Adding `.hfile-input-preview`, or setting `data-leaving` on it and taking it away once it has faded, and moving `data-inactive` between its two texts, for an avatar | A picture is chosen or removed |
 
-`examples/html/src/scripts/file-input.js` is an example script.
+`examples/html/src/scripts/file-input.js` is an example script. It changes the
+button's width with `changeButtonWidth` from `button.js`, so include that script
+too, before it.
 
 ## React
 
@@ -169,7 +176,7 @@ field's id and descriptions. Its props go on the input, except `className` and
 | `variant` | `strip`, `area`, or `avatar`: takes a dropped file too |
 | `dropLabel` | Required on a strip or an area. What tells people they can drop a file |
 | `heading` | An area's heading |
-| `hint` | A line of small text on an area or an avatar, such as the limits |
+| `hint` | A line of small text on an area or an avatar, such as the limits. On an area, it describes the input |
 | `icon` | Replaces the icon |
 | `changeLabel` | An avatar's text once it has a picture |
 | `defaultPreview` | The URL of a picture your app already has, for an avatar. It behaves as `defaultFileName` does |
@@ -200,8 +207,11 @@ are left alone.
 `--harmo-space-lg`, `--harmo-color-border-control`, `--harmo-color-primary`,
 `--harmo-color-primary-tint`, `--harmo-color-background`,
 `--harmo-color-background-secondary`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-font-size-base`, `--harmo-font-size-sm`,
-`--harmo-font-size-xs`, `--harmo-font-weight-medium`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-duration-slow`, and those of
-[Button](button.md#tokens), [Avatar](avatar.md#tokens), and
-[Field](field.md#tokens).
+`--harmo-color-text-secondary`, `--harmo-font-family`, `--harmo-font-size-base`,
+`--harmo-font-size-sm`, `--harmo-font-size-xs`, `--harmo-font-weight-medium`,
+`--harmo-font-line-height`, `--harmo-border-radius`, `--harmo-control-height`,
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-duration-slow`,
+`--harmo-ease-out-cubic`, `--harmo-ease-out-quad`, `--harmo-button-duration`,
+`--harmo-opacity-disabled`, `--harmo-focus-outline`,
+`--harmo-focus-outline-offset`, and those of [Button](button.md#tokens),
+[Avatar](avatar.md#tokens), and [Field](field.md#tokens).

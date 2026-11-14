@@ -117,7 +117,13 @@
     const parse = (text) => (words ? readWords(text) : typing.parse(text));
     const isValue = (value) => (time ? isDateTime(value) : isDate(value));
 
-    let current = hidden?.value || null;
+    // The date it holds: the hidden input's, or without one, as a picker that
+    // isn't in a form may be, the date its field shows.
+    const shownDate = () => {
+      const parsed = parse(input.value.trim());
+      return isValue(parsed) ? parsed : null;
+    };
+    let current = hidden ? hidden.value || null : shownDate();
 
     const showCalendar = () =>
       calendar.dispatchEvent(new CustomEvent("example-calendar-show", { detail: current?.slice(0, 10) ?? null }));
@@ -170,16 +176,24 @@
       }
     };
 
-    input.addEventListener("input", () => {
-      if (words) return;
+    // Digits take the locale's order, once an input method has finished
+    // composing: until then, what it shows is left alone.
+    const mask = () => {
       const position = typing.digitsIn(input.value.slice(0, input.selectionStart));
       const masked = typing.mask(input.value);
       input.value = masked;
       const caret = typing.caretAfter(masked, position);
       input.setSelectionRange(caret, caret);
+    };
+    input.addEventListener("input", (event) => {
+      if (!words && !event.isComposing) mask();
+    });
+    input.addEventListener("compositionend", () => {
+      if (!words) mask();
     });
     input.addEventListener("blur", commit);
     input.addEventListener("keydown", (event) => {
+      if (event.isComposing || event.keyCode === 229) return;
       if (event.key !== "Enter" || input.value.trim() === written(current)) return;
       event.preventDefault();
       commit();
@@ -193,7 +207,7 @@
     });
     popup.addEventListener("click", (event) => {
       const day = event.target.closest("[data-date]");
-      if (!day || day.disabled) return;
+      if (!day || day.disabled || input.disabled || input.readOnly) return;
       settle(time ? `${day.dataset.date}T${current?.slice(11) ?? "00:00"}` : day.dataset.date);
       input.value = written(current);
       setInvalid(false);
@@ -207,11 +221,22 @@
     button.addEventListener("click", () => {
       pressingButton = false;
     });
+    // A press on the button moves focus to it before its click toggles the
+    // Popup, so leaving for it then is left to the click. The press is
+    // forgotten once it's been read, so one dragged off, which never clicks,
+    // doesn't keep the Popup open the next time focus leaves for the button.
     popup.addEventListener("focusout", (event) => {
       const next = event.relatedTarget;
       const pressed = next === button && pressingButton;
+      pressingButton = false;
       if (next && !pressed && !popup.contains(next)) popup.hidePopover();
     });
+
+    // Disabled or made read-only while it's open, the Calendar closes, and a
+    // date can't be picked.
+    new MutationObserver(() => {
+      if ((input.disabled || input.readOnly) && popup.matches(":popover-open")) popup.hidePopover();
+    }).observe(input, { attributeFilter: ["disabled", "readonly"] });
 
     // A date another script sets, as a Date Filter's does as it opens.
     picker.addEventListener("example-date-picker-set", (event) => {

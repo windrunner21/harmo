@@ -41,6 +41,12 @@ export const addMonths = (iso: string, months: number) => {
   return isoOf(target);
 };
 
+// A month's last day, counted without leaving it, so December 9999 has one.
+export const lastDayOf = (month: string) => {
+  const first = dateOf(`${month}-01`);
+  return isoOf(new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)));
+};
+
 export const todayDate = () => {
   const now = new Date();
   const part = (value: number) => String(value).padStart(2, "0");

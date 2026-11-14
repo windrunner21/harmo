@@ -122,6 +122,7 @@ const ComboboxControl = ({
   onKeyDown,
   onBlur,
   onClick,
+  onCompositionEnd,
   ...props
 }: ComboboxControlProps) => {
   const field = useField(props);
@@ -269,8 +270,18 @@ const ComboboxControl = ({
   // can be picked picks it, an empty field clears the choice, and anything
   // else gives way to the chosen label, so the field never shows a value
   // that isn't one. Choosing several, the text becomes a choice if it can,
-  // and empties.
+  // and empties. Made read-only while typed in, nothing is picked: the field
+  // goes back to the choice, or, choosing several, empties.
   const settle = () => {
+    if (isReadOnly()) {
+      if (multiple) {
+        if ((input.current?.value ?? text) !== "") clearText();
+      } else if (!freeText && typed) {
+        setTyped(false);
+        report(labelOf(chosen) ?? "");
+      }
+      return;
+    }
     if (multiple) {
       const current = input.current?.value ?? text;
       if (current.trim() !== "") {
@@ -299,36 +310,60 @@ const ComboboxControl = ({
   };
 
   // A form reset restores the value the page loaded with.
+  const defaults = JSON.stringify(defaultValue ?? null);
   useEffect(() => {
     const form = input.current?.form;
     if (!form) return;
     const reset = (event: Event) =>
       setTimeout(() => {
         if (event.defaultPrevented) return;
+        const restored = JSON.parse(defaults) as string | string[] | null;
         setTyped(false);
         setDraft("");
-        if (multiple) setValuesState((defaultValue as string[] | undefined) ?? []);
-        else if (freeText) setFreeState((defaultValue as string | undefined) ?? "");
-        else setChosenState((defaultValue as string | undefined) ?? null);
+        if (multiple) setValuesState((restored as string[] | null) ?? []);
+        else if (freeText) setFreeState((restored as string | null) ?? "");
+        else setChosenState(restored as string | null);
       });
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, []);
+  }, [defaults, multiple, freeText, props.form]);
 
   // The list opens only with something to show: an option the query
   // matches, or a message; with filter off, any option. Options you hide
   // don't count. A read-only field keeps its list closed, so nothing can be
-  // picked.
+  // picked, as does one a disabled fieldset disables.
   const query = filter && (typed || multiple) ? text : "";
   const isReadOnly = () => input.current?.readOnly ?? false;
+  const isDisabled = () => input.current?.matches(":disabled") ?? false;
   const shows = (forQuery: string) => {
-    if (isReadOnly()) return false;
+    if (isReadOnly() || isDisabled()) return false;
     return (
       emptyMessage !== undefined ||
       options.some((option) =>
         shownFor(filter ? forQuery : "", option),
       )
     );
+  };
+
+  // What's typed: it filters the list, and opens or closes it. With free
+  // text, choosing several, a comma ends a choice, as when addresses are
+  // typed or pasted in, and the space after it goes; not while an input
+  // method is composing, which may use one.
+  const enter = (entered: string, composing: boolean) => {
+    let next = entered;
+    let added = false;
+    if (multiple && freeText && !composing && next.includes(",")) {
+      const parts = next.split(",");
+      next = (parts.pop() ?? "").trimStart();
+      added = addTyped(parts);
+    }
+    setTyped(true);
+    setDraft(next);
+    report(next);
+    if (freeText && !multiple) setFree(next);
+    const forQuery = filter ? next : "";
+    if (shows(forQuery) && !(added && next.trim() === "")) open(forQuery);
+    else close();
   };
 
   const isOpen = () => popup.current?.matches(":popover-open") ?? false;
@@ -404,7 +439,7 @@ const ComboboxControl = ({
           multiple
             ? (event) => {
                 const target = event.target as Element;
-                if (disabled || target === input.current) return;
+                if (isDisabled() || target === input.current) return;
                 if (target.closest(".htag-remove")) return;
                 input.current?.focus();
                 open();
@@ -468,23 +503,12 @@ const ComboboxControl = ({
           aria-required={multiple && required ? true : undefined}
           value={text}
           disabled={disabled}
-          onChange={(event) => {
-            let next = event.target.value;
-            // With free text, a comma ends a choice, as when addresses are
-            // typed or pasted in, and the space after it goes.
-            let added = false;
-            if (multiple && freeText && next.includes(",")) {
-              const parts = next.split(",");
-              next = (parts.pop() ?? "").trimStart();
-              added = addTyped(parts);
-            }
-            setTyped(true);
-            setDraft(next);
-            report(next);
-            if (freeText && !multiple) setFree(next);
-            const forQuery = filter ? next : "";
-            if (shows(forQuery) && !(added && next.trim() === "")) open(forQuery);
-            else close();
+          onChange={(event) =>
+            enter(event.target.value, (event.nativeEvent as InputEvent).isComposing)
+          }
+          onCompositionEnd={(event) => {
+            onCompositionEnd?.(event);
+            if (multiple && freeText) enter(event.currentTarget.value, false);
           }}
           onClick={(event) => {
             onClick?.(event);
@@ -563,6 +587,7 @@ const ComboboxControl = ({
           popover="manual"
           style={{ positionAnchor: anchor } as CSSProperties}
           onBeforeToggle={(event) => {
+            if (event.target !== event.currentTarget) return;
             setExpanded(event.newState === "open");
             placePopup(event.currentTarget, event.newState === "open");
           }}

@@ -13,7 +13,7 @@ import {
 import { renders } from "./children.ts";
 import { close as closePaths, file as filePaths, fileDone } from "./icons.ts";
 import { useMergedRef } from "./useMergedRef.ts";
-import { seconds } from "./useWidthChange.ts";
+import { milliseconds } from "./milliseconds.ts";
 import { withClass } from "./withClass.ts";
 
 export interface FileListItem {
@@ -148,7 +148,7 @@ const animateOut = (row: HTMLElement, grid: boolean) => {
     }
   }
   return row.animate([from, to], {
-    duration: seconds(token(row, "--harmo-duration-fast")) ?? 150,
+    duration: milliseconds(token(row, "--harmo-duration-fast"), 150),
     easing: token(row, "--harmo-ease-out-cubic") || "ease-out",
     fill: "forwards",
   });
@@ -324,7 +324,7 @@ export const FileList = (listProps: FileListProps) => {
         [{ translate: `${was[0] - element.offsetLeft}px ${was[1] - element.offsetTop}px` }, { translate: "0 0" }],
         {
           id: slideId,
-          duration: seconds(token(element, "--harmo-duration-normal")) ?? 200,
+          duration: milliseconds(token(element, "--harmo-duration-normal"), 200),
           easing: token(element, "--harmo-ease-in-out-cubic") || "ease-in-out",
         },
       );

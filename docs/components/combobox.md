@@ -60,7 +60,7 @@ wide as the field.
 <div class="hfield">
   <label class="hlabel" for="notify" id="notify-label">Notify</label>
   <div class="hcombobox" data-multiple style="anchor-name: --notify">
-    <ul class="htag-list">
+    <ul class="htag-list" role="list">
       <li>
         <span class="htag">
           Ana Lopez
@@ -120,10 +120,10 @@ sends it.
 | Pick mode (default) | The value is an option: its `data-value` goes in the hidden input, and the field shows its label |
 | `data-free-text` on the input | Free text: what's typed is the value, so the input itself has the `name`, and the list suggests; there's no hidden input |
 | `.hlistbox-empty` after the list | The status for no matches, `role="status"`, in the page from the start and empty; the script puts the app's message in it, such as "No agents found", when nothing matches. Without one, the list closes when nothing matches |
-| `data-multiple` on `.hcombobox` | Choosing several: the choices are `.htag`s in a `.htag-list` before the input, each with a `.htag-remove` button, `tabindex="-1"`, named in the app's language, such as "Remove Ana Lopez"; its "+N" button has `tabindex="-1"` too, so the field is one Tab stop. One hidden input for each choice, all with the `name`; `aria-multiselectable="true"` on the list. The input has no `name`, even with free text |
+| `data-multiple` on `.hcombobox` | Choosing several: the choices are `.htag`s in a `.htag-list` before the input, each with a `.htag-remove` button, `tabindex="-1"`, named in the app's language, such as "Remove Ana Lopez"; its "+N" button has `tabindex="-1"` too, so the field is one Tab stop. One hidden input for each choice, all with the `name`, and the input's `form` if it has one; `aria-multiselectable="true"` on the list. The input has no `name`, even with free text |
 | `aria-disabled="true"` on an option | Shown, but can't be picked, not even by typing its label and leaving the field |
-| `disabled` on the input | Disabled, as for an Input; leave out its `aria-controls` |
-| `readonly` on the input | Read-only: the list stays closed, however it's asked for, so nothing can be picked |
+| `disabled` on the input | Disabled, as for an Input; leave out its `aria-controls` and the popup, and disable the hidden inputs too, so a form doesn't send them. In a disabled `<fieldset>`, the list stays closed too |
+| `readonly` on the input | Read-only: the list stays closed, however it's asked for, so nothing can be picked, and leaving the field picks nothing from what was typed |
 | Choosing several, `aria-required="true"` on the input | Required: the choices satisfy it, not the text, so the input is `required` only while no choice is made, and `aria-required` says so throughout |
 | `hidden` on an option or a group | Stays hidden, whatever is typed, and isn't counted as something to show; typing its label doesn't pick it |
 
@@ -200,7 +200,8 @@ sends it.
 | Choosing several: take a choice's tag and hidden input away, uncheck its option, and move focus on as the keys above say | On its remove button, or Backspace in an empty field |
 | Keep the pointer from taking focus from the field, and open the list on a click anywhere in the box | On a press in the box, choosing several |
 | Show every tag, and scroll the list to its end; count again for "+N" | When focus comes into the field, and leaves it; `tag-list.js` does this for a list in a Combobox |
-| Restore the value the page loaded with | On a form reset |
+| Restore the value the page loaded with, its hidden inputs, and its tags | On a form reset, unless a listener cancels it |
+| Disable the hidden inputs, and the remove buttons, with the field | When the input is disabled later |
 
 `examples/html/src/scripts/combobox.js` is an example script for it, with
 `listbox.js` for the list and `popup.js` for where it opens.
@@ -220,6 +221,7 @@ hidden input. Its children are [Listbox](listbox.md#react) `<Option>`s and
 | `multiple` | Choosing several, as tags in the field |
 | `required` | Choosing several, the choices satisfy it, not the text: the input is `required` only while no choice is made, with `aria-required` throughout |
 | `readOnly` | The list stays closed, so nothing can be picked |
+| `disabled` | Disabled: no list, and a form doesn't send the value |
 | `removeLabel` | Choosing several, required: names each tag's remove button from its label, in your app's language, such as ``(label) => `Remove ${label}` `` |
 | `moreLabel` | Choosing several, required: names "+N" from the count, such as ``(count) => `${count} more` `` |
 | `inputValue`, `onInputChange` | The field's text, held by you, such as to fetch options as it changes |

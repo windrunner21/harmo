@@ -116,6 +116,24 @@ export const examples = {
       />
     </Field>
   ),
+  "Read-only": () => (
+    <form>
+      <Field label="Phone">
+        <PhoneInput
+          name="phone"
+          phone={libphonenumber}
+          locale="en"
+          defaultCountry="US"
+          defaultValue="+14155552671"
+          readOnly
+          countries={["AZ", "DE", "FR", "GB", "TR", "US"]}
+          countryLabel="Country code"
+          searchLabel="Search countries"
+          emptyMessage="No countries found"
+        />
+      </Field>
+    </form>
+  ),
   "In a form": () => (
     <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <Field label="Phone">

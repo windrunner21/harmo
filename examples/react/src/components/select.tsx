@@ -1,6 +1,17 @@
 import { Button, Checkbox, Field, Input, Option, Select } from "@harmo-ui/react";
 import { useState, type FormEvent } from "react";
 
+const sends = (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  const data = new URLSearchParams(
+    [...new FormData(event.currentTarget)].map(([key, value]) => [
+      key,
+      String(value),
+    ]),
+  ).toString();
+  return data ? `Sends ${data}` : "Sends nothing";
+};
+
 export const examples = {
   Default: () => (
     <Select label="Channel" name="channel" defaultValue="whatsapp">
@@ -92,21 +103,11 @@ export const examples = {
 
   "In a form": () => {
     const [sent, setSent] = useState("Save to see what the form sends.");
-    const save = (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const data = new URLSearchParams(
-        [...new FormData(event.currentTarget)].map(([key, value]) => [
-          key,
-          String(value),
-        ]),
-      ).toString();
-      setSent(data ? `Sends ${data}` : "Sends nothing");
-    };
 
     return (
       <form
         style={{ display: "flex", flexDirection: "column", gap: 16 }}
-        onSubmit={save}
+        onSubmit={(event) => setSent(sends(event))}
       >
         <Select label="Channel" name="channel" defaultValue="whatsapp">
           <Option value="whatsapp">WhatsApp</Option>
@@ -132,6 +133,32 @@ export const examples = {
         </div>
         <output className="hdescription">{sent}</output>
       </form>
+    );
+  },
+
+  "Outside its form": () => {
+    const [sent, setSent] = useState("Save to see what the form sends.");
+
+    return (
+      <>
+        <Select
+          label="Channel"
+          name="outside-channel"
+          form="outside-form"
+          defaultValue="whatsapp"
+        >
+          <Option value="whatsapp">WhatsApp</Option>
+          <Option value="telegram">Telegram</Option>
+        </Select>
+        <form
+          id="outside-form"
+          style={{ display: "flex", alignItems: "center", gap: 16 }}
+          onSubmit={(event) => setSent(sends(event))}
+        >
+          <Button type="submit">Save</Button>
+          <output className="hdescription">{sent}</output>
+        </form>
+      </>
     );
   },
 

@@ -35,8 +35,10 @@
     const hidden = multiple ? null : (hiddenInputs()[0] ?? null);
     const options = [...listbox.querySelectorAll(".hoption")];
     const groups = [...listbox.querySelectorAll(".hoption-group")];
-    // Options and groups the page hides stay hidden, whatever is typed.
+    // Options and groups the page hides stay hidden, whatever is typed, and
+    // so do the options in a group it hides.
     const kept = new Set([...options, ...groups].filter((element) => element.hidden));
+    const isKept = (option) => kept.has(option) || kept.has(option.closest(".hoption-group"));
     const labelOf = (option) => option.querySelector(".hoption-label").textContent.trim();
     // What typing finds an option by: its label, its description, and its
     // keywords (data-example-keywords).
@@ -68,7 +70,7 @@
     // groups left with any, and the empty message when there are none.
     const filter = (text) => {
       const wanted = text.trim().toLowerCase();
-      for (const option of options) option.hidden = kept.has(option) || !searchTextOf(option).includes(wanted);
+      for (const option of options) option.hidden = isKept(option) || !searchTextOf(option).includes(wanted);
       for (const group of groups) group.hidden = kept.has(group) || !group.querySelector(".hoption:not([hidden])");
       const none = options.every((option) => option.hidden);
       if (empty) empty.textContent = none ? (message ?? "") : "";
@@ -105,6 +107,15 @@
     // made.
     const required = multiple && input.getAttribute("aria-required") === "true";
     const canRemove = () => !input.disabled && !input.readOnly;
+    // Disabled by its own attribute or by a disabled fieldset around it.
+    const isDisabled = () => input.matches(":disabled");
+    // The hidden inputs go with the field: to the form it names, if it names
+    // one, and disabled with it.
+    const hiddenField = (value) => {
+      const field = Object.assign(document.createElement("input"), { type: "hidden", name, value, disabled: input.disabled });
+      if (input.hasAttribute("form")) field.setAttribute("form", input.getAttribute("form"));
+      return field;
+    };
     const towardStart = () => (getComputedStyle(wrapper).direction === "rtl" ? "ArrowRight" : "ArrowLeft");
     const towardEnd = () => (towardStart() === "ArrowLeft" ? "ArrowRight" : "ArrowLeft");
 
@@ -128,10 +139,7 @@
       if (name) {
         let after = popup;
         for (const value of values) {
-          const field = document.createElement("input");
-          field.type = "hidden";
-          field.name = name;
-          field.value = value;
+          const field = hiddenField(value);
           after.after(field);
           after = field;
         }
@@ -149,7 +157,7 @@
     const resolve = (text) => {
       const wanted = text.trim();
       if (!wanted) return null;
-      const named = options.find((option) => option.getAttribute("aria-disabled") !== "true" && !kept.has(option) && labelOf(option).toLowerCase() === wanted.toLowerCase());
+      const named = options.find((option) => option.getAttribute("aria-disabled") !== "true" && !isKept(option) && labelOf(option).toLowerCase() === wanted.toLowerCase());
       return named ? valueOf(named) : freeText ? wanted : null;
     };
     const addTyped = (texts) => {
@@ -181,7 +189,8 @@
     popup.addEventListener(
       "beforetoggle",
       (event) => {
-        if (event.newState === "open" && (input.readOnly || !filter(query()))) {
+        if (event.target !== popup) return;
+        if (event.newState === "open" && (input.readOnly || isDisabled() || !filter(query()))) {
           event.preventDefault();
           return;
         }
@@ -192,12 +201,13 @@
     // Clicking in the list keeps focus in the field.
     popup.addEventListener("mousedown", (event) => event.preventDefault());
 
-    input.addEventListener("input", () => {
+    // With free text, a comma ends a choice, as when addresses are typed or
+    // pasted in, and the space after it goes; not while an input method is
+    // composing, which may use one, so it's looked for again once it's done.
+    const enter = (composing) => {
       typed = true;
-      // With free text, a comma ends a choice, as when addresses are typed or
-      // pasted in, and the space after it goes.
       let added = false;
-      if (multiple && freeText && input.value.includes(",")) {
+      if (multiple && freeText && !composing && input.value.includes(",")) {
         const parts = input.value.split(",");
         input.value = parts.pop().trimStart();
         added = addTyped(parts);
@@ -208,7 +218,9 @@
       }
       open();
       highlight(freeText ? null : listbox.querySelector('.hoption:not([aria-disabled="true"], [hidden])'));
-    });
+    };
+    input.addEventListener("input", (event) => enter(event.isComposing));
+    if (multiple && freeText) input.addEventListener("compositionend", () => enter(false));
     input.addEventListener("click", open);
 
     // listbox.js marks a pick selected (not with free text) and closes; this
@@ -315,7 +327,7 @@
         if (event.target !== input) event.preventDefault();
       });
       wrapper.addEventListener("click", (event) => {
-        if (input.disabled || event.target === input) return;
+        if (isDisabled() || event.target === input) return;
         const button = event.target.closest(".htag-remove");
         if (button) {
           remove(removeButtons().indexOf(button));
@@ -329,6 +341,13 @@
     input.addEventListener("blur", () => {
       close();
       typed = false;
+      // Made read-only while typed in, what's typed is left out: in pick mode
+      // the field goes back to the choice, and choosing several it empties.
+      if (input.readOnly) {
+        if (multiple) input.value = "";
+        else if (!freeText) input.value = chosen() ? labelOf(chosen()) : "";
+        return;
+      }
       if (multiple) {
         if (input.value.trim()) addTyped([input.value]);
         input.value = "";
@@ -341,7 +360,7 @@
         input.value = "";
         return;
       }
-      const named = options.find((option) => option.getAttribute("aria-disabled") !== "true" && !kept.has(option) && labelOf(option).toLowerCase() === text);
+      const named = options.find((option) => option.getAttribute("aria-disabled") !== "true" && !isKept(option) && labelOf(option).toLowerCase() === text);
       if (named) choose(named);
       const current = chosen();
       input.value = current ? labelOf(current) : "";
@@ -368,5 +387,12 @@
         input.value = initial.text;
       });
     });
+
+    // Disabling the field later disables its hidden inputs, and its remove
+    // buttons, as well.
+    new MutationObserver(() => {
+      if (multiple) render();
+      else if (hidden) hidden.disabled = input.disabled;
+    }).observe(input, { attributeFilter: ["disabled"] });
   }
 }

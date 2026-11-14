@@ -99,4 +99,38 @@ export const examples = {
       </>
     );
   },
+
+  Disabled: () => (
+    <Combobox label="Assigned to" name="assigned" defaultValue="sam" disabled>
+      <Option value="sam">Sam Rivera</Option>
+      <Option value="ana">Ana Lopez</Option>
+    </Combobox>
+  ),
+
+  "In a form": () => (
+    <form style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <Combobox label="Owner" name="form-owner" defaultValue="sam">
+        <Option value="sam">Sam Rivera</Option>
+        <Option value="ana">Ana Lopez</Option>
+      </Combobox>
+      <Combobox label="Reply to" freeText name="form-reply-to" defaultValue="sam@example.com">
+        <Option value="sam">sam@example.com</Option>
+        <Option value="ana">ana@example.com</Option>
+      </Combobox>
+      <Combobox
+        label="Watchers"
+        multiple
+        name="form-watchers"
+        defaultValue={["ana"]}
+        removeLabel={(label) => `Remove ${label}`}
+        moreLabel={(count) => `${count} more`}
+      >
+        <Option value="sam">Sam Rivera</Option>
+        <Option value="ana">Ana Lopez</Option>
+      </Combobox>
+      <Button variant="secondary" type="reset" style={{ alignSelf: "flex-start" }}>
+        Reset
+      </Button>
+    </form>
+  ),
 };

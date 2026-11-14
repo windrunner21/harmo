@@ -126,7 +126,7 @@ where the week starts.
 - 16px between the header and the grid. The title: 14px at medium weight in
   `--harmo-color-text`. Previous and Next: small tertiary [Buttons](button.md)
   with a chevron, at the header's two ends.
-- Weekdays: 12px in `--harmo-color-text-secondary`, 8px above the days.
+- Weekdays: 13px in `--harmo-color-text-secondary`, 8px above the days.
 - Days: 40px squares, 14px numbers at medium weight, of one width each, with
   `--harmo-border-radius-sm` corners. Hovered, on
   `--harmo-color-background-hover`; pressed, they shrink slightly, as a Button
@@ -219,7 +219,9 @@ attributes.
 
 Only the browser knows today's date. Rendered on the server, with no `value`,
 `defaultMonth`, or `today`, it's blank at its full size until the page is
-interactive, so nothing shifts.
+interactive, so nothing shifts. Its title takes `aria-live` only once the month
+has filled in, so a screen reader doesn't announce the month appearing as the
+page loads, only a change to it.
 
 Servers and browsers word dates slightly differently, such as "Sunday, 1
 February" and "Sunday 1 February", so the names rendered on the server can

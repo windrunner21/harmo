@@ -176,6 +176,20 @@ onEachPlayground("select", () => {
     await expectChosen(fieldOf("Channel"), ["WhatsApp"]);
     await expectChosen(fieldOf("Notify me about"), ["Failed"]);
   });
+
+  test("outside its form, it still sends its value once it's changed", async ({ page }) => {
+    const { container, trigger, listbox } = await select(page, "select-outside-its-form", "Channel");
+    const sent = container.locator("output");
+    const save = container.getByRole("button", { name: "Save" });
+    await save.click();
+    await expect(sent).toHaveText("Sends outside-channel=whatsapp");
+
+    await trigger.click();
+    await clickAt(page, listbox.getByRole("option", { name: "Telegram" }));
+    await expect(hiddenInputs(container, "outside-channel")).toHaveAttribute("form", "outside-form");
+    await save.click();
+    await expect(sent).toHaveText("Sends outside-channel=telegram");
+  });
 });
 
 // An example's select, found by its label, and its list.

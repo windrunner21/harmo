@@ -73,7 +73,7 @@
   }
 
   // In the list, the same distance from the name as in the button.
-  .hoption-label > & {
+  :where(.hoption-label) > & {
     margin-inline-end: $space-2xs;
   }
 }

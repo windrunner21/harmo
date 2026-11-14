@@ -113,6 +113,7 @@ const DatePickerControl = ({
   ref,
   onBlur,
   onKeyDown,
+  onCompositionEnd,
   ...props
 }: DatePickerControlProps) => {
   const popupId = useId();
@@ -186,6 +187,11 @@ const DatePickerControl = ({
   }, []);
 
   useEffect(() => {
+    const node = popup.current;
+    if ((disabled || readOnly) && node?.matches(":popover-open")) node.hidePopover();
+  }, [disabled, readOnly]);
+
+  useEffect(() => {
     const owner = input.current?.form;
     if (!owner) return;
     const reset = (event: Event) =>
@@ -230,22 +236,26 @@ const DatePickerControl = ({
     }
   };
 
-  const type = (event: ChangeEvent<HTMLInputElement>) => {
-    const raw = event.target.value;
-    if (free) {
-      setText(raw);
-      return;
-    }
+  const mask = (field: HTMLInputElement) => {
+    const raw = field.value;
     const masked = typing.mask(raw);
-    const digits = typing.digitsIn(raw.slice(0, event.target.selectionStart ?? raw.length));
+    const digits = typing.digitsIn(raw.slice(0, field.selectionStart ?? raw.length));
     if (masked === text) {
       const position = typing.caretAfter(masked, digits);
-      event.target.value = masked;
-      event.target.setSelectionRange(position, position);
+      field.value = masked;
+      field.setSelectionRange(position, position);
       return;
     }
     caret.current = digits;
     setText(masked);
+  };
+
+  const type = (event: ChangeEvent<HTMLInputElement>) => {
+    if (free || (event.nativeEvent as InputEvent).isComposing) {
+      setText(event.target.value);
+      return;
+    }
+    mask(event.target);
   };
 
   const leaveField = (event: FocusEvent<HTMLInputElement>) => {
@@ -255,6 +265,7 @@ const DatePickerControl = ({
 
   const pressInField = (event: KeyboardEvent<HTMLInputElement>) => {
     onKeyDown?.(event);
+    if (event.nativeEvent.isComposing || event.keyCode === 229) return;
     if (event.defaultPrevented || event.key !== "Enter") return;
     if (text.trim() === written(current)) return;
     event.preventDefault();
@@ -262,6 +273,7 @@ const DatePickerControl = ({
   };
 
   const pick = (date: string) => {
+    if (disabled || readOnly) return;
     const next = time ? `${date}T${current?.slice(11) ?? "00:00"}` : date;
     setText(written(next));
     setInvalid(false);
@@ -273,6 +285,7 @@ const DatePickerControl = ({
   const leavePopup = (event: FocusEvent<HTMLDivElement>) => {
     const next = event.relatedTarget as Node | null;
     const pressed = next === button.current && pressingButton.current;
+    pressingButton.current = false;
     if (next && !pressed && !event.currentTarget.contains(next)) {
       event.currentTarget.hidePopover();
     }
@@ -297,6 +310,10 @@ const DatePickerControl = ({
           value={text}
           aria-invalid={invalid ? true : props["aria-invalid"]}
           onChange={type}
+          onCompositionEnd={(event) => {
+            onCompositionEnd?.(event);
+            if (!free) mask(event.currentTarget);
+          }}
           onBlur={leaveField}
           onKeyDown={pressInField}
           suppressHydrationWarning

@@ -150,7 +150,7 @@
     limited with <code>validate</code>, which is told how many it has accepted
     so far.
   </play-note>
-  <div data-example-files style="display:grid;gap:16px">
+  <div data-example-files data-example-remove-label="Remove {name}" style="display:grid;gap:16px">
     <div class="hfile-input" data-variant="strip" data-example-choose="Add files" data-example-max-files="3" data-example-too-many="Add up to 3 files.">
       <span class="hfile-input-drop">or drop up to 3 files here</span>
       <label class="hbutton" data-variant="secondary">
@@ -169,14 +169,14 @@
     Drop or choose files and they start at once. This one pretends to upload, so
     nothing leaves the page.
   </play-note>
-  <div data-example-files data-example-simulate style="display:grid;gap:26px;inline-size:100%">
+  <div data-example-files data-example-simulate data-example-remove-label="Remove {name}" style="display:grid;gap:26px;inline-size:100%">
     <div class="hfile-input" data-variant="area" data-example-choose="Choose files" data-example-max-bytes="10000000" data-example-too-large="{name} is over 10 MB.">
       <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
       <span class="hfile-input-heading">Upload your files</span>
       <span class="hfile-input-drop">Drag them here, or choose them below.</span>
-      <span class="hfile-input-hint">Any type, up to 10 MB each.</span>
+      <span class="hfile-input-hint" id="file-list-5-hint">Any type, up to 10 MB each.</span>
       <label class="hbutton" data-variant="secondary">
-        <input aria-label="Files to upload" aria-describedby="file-list-5-0" class="hfile-input-control" type="file" multiple="" name="uploads" />
+        <input aria-label="Files to upload" aria-describedby="file-list-5-hint file-list-5-0" class="hfile-input-control" type="file" multiple="" name="uploads" />
         <span class="hbutton-label">Choose files</span>
       </label>
     </div>
@@ -228,14 +228,14 @@
   <play-note>
     Images added to a grid, with a heading from a Section.
   </play-note>
-  <div data-example-files data-example-preview style="display:grid;gap:26px;inline-size:100%">
+  <div data-example-files data-example-preview data-example-remove-label="Remove {name}" style="display:grid;gap:26px;inline-size:100%">
     <div class="hfile-input" data-variant="area" data-example-choose="Choose images" data-example-image data-example-wrong-type="{name} isn't an image.">
       <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
       <span class="hfile-input-heading">Add images to the gallery</span>
       <span class="hfile-input-drop">Drag them here, or choose them below.</span>
-      <span class="hfile-input-hint">PNG or JPG.</span>
+      <span class="hfile-input-hint" id="file-list-6-hint">PNG or JPG.</span>
       <label class="hbutton" data-variant="secondary">
-        <input aria-label="Images to add" accept="image/*" aria-describedby="file-list-6-0" class="hfile-input-control" type="file" multiple="" name="gallery" />
+        <input aria-label="Images to add" accept="image/*" aria-describedby="file-list-6-hint file-list-6-0" class="hfile-input-control" type="file" multiple="" name="gallery" />
         <span class="hbutton-label">Choose images</span>
       </label>
     </div>
@@ -300,7 +300,7 @@
     Files in a Data Table instead of a File List, when they need columns of
     their own.
   </play-note>
-  <div data-example-files style="display:grid;gap:26px;inline-size:100%">
+  <div data-example-files data-example-remove-label="Remove {name}" data-example-download-label="Download {name}" style="display:grid;gap:26px;inline-size:100%">
     <div class="hfile-input" data-variant="area" data-example-choose="Choose files">
       <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
       <span class="hfile-input-heading">Add files</span>

@@ -49,6 +49,23 @@ onEachPlayground("calendar", () => {
     await expect(picked).toHaveCSS("background-color", await color(page, "--harmo-color-primary-fill"));
   });
 
+  test("today, chosen, is filled as the chosen date, not tinted", async ({ page }) => {
+    const calendar = (await example(page, "calendar-default")).locator(".hcalendar");
+    const today = calendar.getByRole("button", { name: "Monday, November 9, 2026" });
+    await today.click();
+    await expect(today.locator("xpath=..")).toHaveAttribute("aria-selected", "true");
+    await page.mouse.move(0, 0);
+    await expect(today).toHaveCSS("background-color", await color(page, "--harmo-color-primary-fill"));
+    await expect(today).toHaveCSS("color", await page.evaluate(() => {
+      const probe = document.createElement("span");
+      document.body.append(probe);
+      probe.style.color = "var(--harmo-color-on-primary)";
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    }));
+  });
+
   test("Previous and Next change the month and year, and nothing moves: the size stays, and so do the buttons", async ({ page }) => {
     const calendar = (await example(page, "calendar-default")).locator(".hcalendar");
     const before = await boxes(calendar, previous(calendar), next(calendar));

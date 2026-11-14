@@ -3,7 +3,6 @@
 import {
   useEffect,
   useId,
-  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -15,6 +14,7 @@ import {
 import { ExpandChevron } from "../ExpandChevron.tsx";
 import { Field, useField, type StackedFieldProps } from "../field/Field.tsx";
 import { Popup } from "../Popup.tsx";
+import { useMergedRef } from "../useMergedRef.ts";
 import { withClass } from "../withClass.ts";
 import { clockOf, isTime, minutesOf, type ClockColumn } from "./clock.ts";
 
@@ -107,7 +107,7 @@ const TimePickerControl = ({
   const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const pressingTrigger = useRef(false);
-  useImperativeHandle(ref, () => trigger.current as HTMLButtonElement, []);
+  const triggerRef = useMergedRef(trigger, ref);
 
   const clock = useMemo(() => clockOf(locale, hour12), [locale, hour12]);
 
@@ -147,7 +147,7 @@ const TimePickerControl = ({
       });
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, []);
+  }, [defaultValue, props.form]);
 
   const choose = (nextHour: number, nextMinute: number) => {
     const next = `${String(nextHour).padStart(2, "0")}:${String(nextMinute).padStart(2, "0")}`;
@@ -217,6 +217,7 @@ const TimePickerControl = ({
   const leave = (event: FocusEvent<HTMLDivElement>) => {
     const next = event.relatedTarget as Node | null;
     const pressed = next === trigger.current && pressingTrigger.current;
+    pressingTrigger.current = false;
     if (next && !pressed && !event.currentTarget.contains(next)) {
       event.currentTarget.hidePopover();
     }
@@ -229,7 +230,7 @@ const TimePickerControl = ({
       {...props}
       {...field}
       id={buttonId}
-      ref={trigger}
+      ref={triggerRef}
       className={withClass("htime-picker", className)}
       type="button"
       aria-labelledby={named ? `${named} ${valueId}` : undefined}

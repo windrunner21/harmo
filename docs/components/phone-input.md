@@ -62,6 +62,7 @@ and whether it's valid.
 | --- | --- | --- |
 | `name` | The hidden input | Sends the number in E.164 with a form. It's empty until the number is valid |
 | `disabled` | The Select's button, the field, and the hidden input | Nothing can be chosen or typed |
+| `readonly` on the field, with `disabled` on the Select's button | The number can be read and copied, and a form still sends it, but neither it nor the country can be changed. The Select has no list, as when disabled |
 
 ## Appearance and states
 
@@ -96,7 +97,9 @@ and whether it's valid.
 | The field's text, formatted, with the caret kept among the digits | As it's typed |
 | The Select's value and the field's text | A complete international number is typed or pasted, starting with `+`. Until it's complete it stays international |
 | Emptying the field, and moving focus to it | A country is chosen |
+| The chosen option's `aria-selected="true"` and its check mark, and the flag, code, and name in the Select's button | The country changes, chosen or from a number |
 | The hidden input's value, in E.164, or empty until it's valid | As the number changes |
+| The country, the field's text, and the hidden input, back to what they were when the page loaded | The form is reset, unless a listener cancels the reset |
 
 `examples/html/src/scripts/phone-input.js` is an example script, which stands in for
 a parser with six countries.
@@ -104,7 +107,9 @@ a parser with six countries.
 ## React
 
 `<PhoneInput>` renders all of this and does the above. In a [Field](field.md#react),
-the field takes the label and descriptions. Other props go on the field.
+the field takes the label and descriptions. `className` and `hidden` go on
+`.hphone-input`; other props, such as `readOnly`, `required`, or `aria-invalid`, go
+on the field. `disabled` and `readOnly` also disable the Select.
 
 ```bash
 npm install libphonenumber-js

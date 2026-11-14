@@ -129,6 +129,8 @@ you typed is lost.
 ```
 
 The hidden input holds the date as `2026-11-18`, whatever the field shows.
+Without one, as for a picker that isn't in a form, a script starts from the date
+the field shows.
 
 ## Options
 
@@ -136,6 +138,7 @@ The hidden input holds the date as `2026-11-18`, whatever the field shows.
 | --- | --- |
 | `aria-invalid="true"` on the input | What's typed isn't a date that can be chosen: the Input's error look |
 | `disabled` on the input and the button | It can't be used |
+| `readonly` on the input, with `disabled` on the button | The date can be read and copied, and a form still sends it, but it can't be changed |
 | `disabled` on the hidden input | The date isn't sent with a form |
 
 ## Appearance and states
@@ -166,12 +169,13 @@ The hidden input holds the date as `2026-11-18`, whatever the field shows.
 
 | Change | When |
 | --- | --- |
-| Keep only the digits typed, and add the separators in the locale's order, keeping the caret after the same digit | As someone types |
-| Rewrite the field, set the hidden input's value, and remove `aria-invalid` | When a real date is typed and the field is left, or Enter is pressed |
+| Keep only the digits typed, and add the separators in the locale's order, keeping the caret after the same digit | As someone types, and once an input method has finished composing |
+| Rewrite the field, set the hidden input's value, and remove `aria-invalid` | When a real date is typed and the field is left, or Enter is pressed, except the Enter that ends an input method's composing |
 | Keep the text, set `aria-invalid="true"`, and empty the hidden input | When what's typed is half a date, doesn't exist, or is outside the limits |
 | Show the Calendar on the date chosen, else today, and move focus to its day in the Tab order | As the popup opens |
 | Set the field and the hidden input, close the popup, and focus the button | When a day is picked |
-| Close the popup | When focus leaves it for something outside it, unless the button is being pressed, which toggles it |
+| Close the popup | When focus leaves it for something outside it, unless the button is being pressed, which toggles it. A press is forgotten once focus has left, so one dragged off the button doesn't keep the popup open later |
+| Close the popup, so no day can be picked | When the field is disabled or made read-only while it's open |
 | Restore the field, the hidden input, and `aria-invalid` to how the page loaded | On the form's reset |
 
 `Intl.DateTimeFormat`'s `formatToParts` gives the locale's order and separator.
@@ -218,7 +222,7 @@ does all of this, and `calendar.js` the Calendar.
 ```
 
 Enter settles a date that's changed rather than send the form; pressed again,
-it sends it.
+it sends it, unless what's typed can't be read, which Enter tries again.
 
 Harmo doesn't include a date parser or depend on one, so to read dates in words,
 add [chrono-node](https://github.com/wanasit/chrono) to your app:
@@ -270,5 +274,5 @@ time field, put a [Time Picker](time-picker.md) beside it.
 
 ## Tokens
 
-`--harmo-color-background`, as for a [Popup](popup.md); those of the
-[Input](input.md), the [Button](button.md), and the [Calendar](calendar.md).
+None of its own: those of the [Input](input.md), the [Button](button.md), the
+[Popup](popup.md), and the [Calendar](calendar.md).

@@ -46,6 +46,7 @@ onEachPlayground("phone-input", () => {
     await expect(name).toHaveText("Azerbaijan");
     const box = await name.boundingBox();
     expect(box!.width).toBeLessThanOrEqual(1);
+    await expect(country).toMatchAriaSnapshot(`- combobox "Country code": /\\+994\\s*Azerbaijan/`);
   });
 
   test("a number is formatted as it's typed", async ({ page }) => {
@@ -225,6 +226,20 @@ onEachPlayground("phone-input", () => {
     const { field, country } = await parts(page, "disabled");
     await expect(field).toBeDisabled();
     await expect(country).toBeDisabled();
+  });
+
+  test("read-only, the country can't be changed, and a form still sends the number", async ({ page }) => {
+    const { container, field, country, hidden } = await parts(page, "read-only");
+    await expect(field).toHaveAttribute("readonly", "");
+    await expect(field).toBeEnabled();
+    await expect(country).toBeDisabled();
+    await expect(country).not.toHaveAttribute("aria-controls");
+    await expect(container.locator(".hlistbox")).toHaveCount(0);
+    await field.press("End");
+    await page.keyboard.press("Backspace");
+    await expect(field).toHaveValue("(415) 555-2671");
+    await expect(hidden).toBeEnabled();
+    await expect(hidden).toHaveValue("+14155552671");
   });
 
   test("a form sends the number in E.164, and a reset brings the first one back", async ({ page }) => {

@@ -16,6 +16,11 @@
     target.setUTCDate(Math.min(date.getUTCDate(), target.getUTCDate()));
     return isoOf(target);
   };
+  // A month's last day, counted without leaving it, so December 9999 has one.
+  const lastDayOf = (month) => {
+    const first = dateOf(`${month}-01`);
+    return isoOf(new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)));
+  };
 
   for (const calendar of document.querySelectorAll(".hcalendar[data-example-locale]")) {
     const { exampleLocale: locale, exampleToday: today } = calendar.dataset;
@@ -112,14 +117,13 @@
       const weekday = (dateOf(from).getUTCDay() - firstDay + 7) % 7;
       const start = addDays(from, -weekday);
       const end = addDays(from, 6 - weekday);
-      const lastOfMonth = addDays(addMonths(`${month}-01`, 1), -1);
       const target = {
         ArrowRight: addDays(from, forward),
         ArrowLeft: addDays(from, -forward),
         ArrowDown: addDays(from, 7),
         ArrowUp: addDays(from, -7),
         Home: monthOf(start) === month ? start : `${month}-01`,
-        End: monthOf(end) === month ? end : lastOfMonth,
+        End: monthOf(end) === month ? end : lastDayOf(month),
         PageUp: addMonths(from, event.shiftKey ? -12 : -1),
         PageDown: addMonths(from, event.shiftKey ? 12 : 1),
       }[event.key];

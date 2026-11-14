@@ -148,8 +148,11 @@ a type or a download link, use a [Data Table](table.md) with the same files.
 `--harmo-color-background`, `--harmo-color-background-secondary`,
 `--harmo-color-border`, `--harmo-color-border-control`, `--harmo-color-primary`,
 `--harmo-color-success`, `--harmo-color-danger`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-font-size-sm`, `--harmo-font-size-xs`,
-`--harmo-font-weight-medium`, `--harmo-border-radius`, `--harmo-border-radius-sm`,
-`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-duration-slow`,
-`--harmo-ease-out-cubic`, `--harmo-ease-in-out-cubic`, and those of
-[Button](button.md#tokens).
+`--harmo-color-text-secondary`, `--harmo-font-family`, `--harmo-font-size-sm`,
+`--harmo-font-size-xs`, `--harmo-font-weight-medium`, `--harmo-border-radius`,
+`--harmo-border-radius-sm`, `--harmo-duration-normal`, `--harmo-duration-slow`,
+`--harmo-ease-out-cubic`, and those of [Button](button.md#tokens).
+
+A script also reads `--harmo-duration-fast` and `--harmo-ease-out-cubic` for a row
+that goes, and `--harmo-duration-normal` and `--harmo-ease-in-out-cubic` for the
+tiles that slide into its place.

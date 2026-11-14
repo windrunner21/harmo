@@ -3,7 +3,6 @@
 import {
   useEffect,
   useId,
-  useImperativeHandle,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -20,6 +19,7 @@ import {
   type ListboxSelection,
 } from "./listbox/Listbox.tsx";
 import { Popup } from "./Popup.tsx";
+import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
 type SelectControlProps = Omit<
@@ -83,7 +83,7 @@ const SelectControl = ({
   const field = useField(props);
   const listId = useId();
   const trigger = useRef<HTMLButtonElement>(null);
-  useImperativeHandle(ref, () => trigger.current as HTMLButtonElement, []);
+  const triggerRef = useMergedRef(trigger, ref);
 
   const [uncontrolled, setUncontrolled] = useState(() => toList(defaultValue));
   const selected = value === undefined ? uncontrolled : toList(value);
@@ -93,16 +93,17 @@ const SelectControl = ({
   const values = chosen.map((option) => option.value);
   const submitted = multiple || values.length ? values : [""];
 
+  const defaults = JSON.stringify(toList(defaultValue));
   useEffect(() => {
     const form = trigger.current?.form;
     if (!form) return;
     const reset = (event: Event) =>
       setTimeout(() => {
-        if (!event.defaultPrevented) setUncontrolled(toList(defaultValue));
+        if (!event.defaultPrevented) setUncontrolled(JSON.parse(defaults));
       });
     form.addEventListener("reset", reset);
     return () => form.removeEventListener("reset", reset);
-  }, []);
+  }, [defaults, props.form]);
 
   const change = (next: string | string[]) => {
     setUncontrolled(toList(next));
@@ -121,7 +122,7 @@ const SelectControl = ({
     <button
       {...props}
       {...field}
-      ref={trigger}
+      ref={triggerRef}
       className={withClass("hselect", className)}
       type="button"
       data-name={name}

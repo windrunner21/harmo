@@ -94,6 +94,7 @@ export const PhoneInput = ({
   className,
   hidden,
   disabled,
+  readOnly,
   placeholder,
   ...props
 }: PhoneInputProps) => {
@@ -255,7 +256,7 @@ export const PhoneInput = ({
   };
 
   const chooseCountry = (next: string) => {
-    if (next === country) return;
+    if (readOnly || next === country) return;
     setCountry(next);
     setText("");
     onValueChange?.("", { country: next, valid: false });
@@ -275,12 +276,14 @@ export const PhoneInput = ({
           onValueChange={chooseCountry}
           searchLabel={searchLabel}
           emptyMessage={emptyMessage}
-          disabled={disabled}
+          disabled={disabled || readOnly}
           renderValue={() => (
             <>
               {flag(country)}
               <span dir="ltr">+{calling}</span>
-              <span className="hphone-input-name">{current?.name}</span>
+              <span className="hphone-input-name" suppressHydrationWarning>
+                {current?.name}
+              </span>
             </>
           )}
         >
@@ -302,6 +305,7 @@ export const PhoneInput = ({
           apply(field.value, field.selectionStart ?? field.value.length);
         }}
         disabled={disabled}
+        readOnly={readOnly}
         placeholder={placeholder ?? example}
       />
       {name && <input type="hidden" name={name} value={value} form={props.form} disabled={disabled} />}

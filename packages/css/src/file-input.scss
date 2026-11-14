@@ -41,25 +41,27 @@
     }
   }
 
-  // The remove button settles in as a file arrives.
+  // The remove button settles in as a file arrives, on its own scale, so that
+  // it still presses as any Button does.
   & > button.hbutton {
     transition:
       background-color $button-duration ease,
       color $button-duration ease,
       border-color $button-duration ease,
-      transform $duration-normal $ease-out-cubic,
+      transform $button-duration $ease-out-quad,
+      scale $duration-normal $ease-out-cubic,
       opacity $duration-normal ease-out;
 
     @starting-style {
       opacity: 0;
-      transform: scale(0.9);
+      scale: 0.9;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      transform: none;
+      scale: none;
 
       @starting-style {
-        transform: none;
+        scale: none;
       }
     }
   }
@@ -195,8 +197,8 @@
   flex-shrink: 0;
 
   box-sizing: border-box;
-  inline-size: 40px;
-  block-size: 40px;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
   margin-block-end: $space-sm;
 
   color: $color-primary;
@@ -214,11 +216,11 @@
   }
 
   & > svg {
-    inline-size: 20px;
-    block-size: 20px;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
   }
 
-  [data-dragging="over"] > & {
+  :where([data-dragging="over"]) > & {
     background-color: $color-background;
 
     @media (prefers-reduced-motion: no-preference) {
@@ -269,7 +271,7 @@
 
   color: $color-text-secondary;
 
-  .hfile-input-heading + & {
+  :where(.hfile-input-heading) + & {
     margin-block-start: $space-2xs;
   }
 }
@@ -289,7 +291,7 @@
 .hfile-input-arrow {
   transition: transform $duration-normal $ease-out-cubic;
 
-  [data-dragging="over"] & {
+  :where([data-dragging="over"]) & {
     @media (prefers-reduced-motion: no-preference) {
       transform: translateY(-2px);
     }
@@ -363,11 +365,11 @@
       }
     }
 
-    [data-dragging] & {
+    :where([data-dragging]) & {
       border-color: $color-primary;
     }
 
-    [data-dragging="over"] & {
+    :where([data-dragging="over"]) & {
       background-color: $color-primary-tint;
 
       @media (prefers-reduced-motion: no-preference) {

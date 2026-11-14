@@ -58,9 +58,13 @@
           () => {},
         );
       }
-      const [choosing, changing] = text.children;
-      choosing.toggleAttribute("data-inactive", Boolean(src));
-      changing.toggleAttribute("data-inactive", !src);
+      // A heading with a change label stacks it on the choose label, and shows
+      // the one that fits; with only the choose label, it stays as it is.
+      if (text.hasAttribute("data-stacked")) {
+        const [choosing, changing] = text.children;
+        choosing.toggleAttribute("data-inactive", Boolean(src));
+        changing.toggleAttribute("data-inactive", !src);
+      }
       remove.hidden = !src;
     };
 

@@ -59,7 +59,8 @@
     const field = root.querySelector(".hinput");
     const hidden = root.querySelector('input[type="hidden"]');
     const list = root.querySelector(".hlistbox");
-    // A disabled one has no list, and nothing can change.
+    // A disabled or read-only one has no list, as its Select is disabled, and
+    // nothing can change.
     if (!list) continue;
     const trigger = root.querySelector(".hphone-input-country");
     const value = trigger.querySelector(".hselect-value");
@@ -144,7 +145,7 @@
 
     list.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.dataset.exampleValue === country) return;
+      if (!option || field.readOnly || option.dataset.exampleValue === country) return;
       markCountry(option.dataset.exampleValue);
       show("");
       requestAnimationFrame(() => field.focus());

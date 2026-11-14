@@ -22,6 +22,7 @@ import {
   isDate,
   isMonth,
   LAST_DATE,
+  lastDayOf,
   monthOf,
   todayDate,
   weeksOf,
@@ -105,6 +106,11 @@ export const Calendar = ({
 
   const [cursor, setCursor] = useState<string | null>(null);
 
+  const [live, setLive] = useState(Boolean(month));
+  useEffect(() => {
+    if (month && !live) setLive(true);
+  }, [month, live]);
+
   const formats = useMemo(() => formatsOf(locale), [locale]);
   const firstDay = weekStartsOn ?? firstDayOf(locale);
   const weekdays = useMemo(
@@ -161,14 +167,13 @@ export const Calendar = ({
     const weekday = (dateOf(from).getUTCDay() - firstDay + 7) % 7;
     const start = addDays(from, -weekday);
     const end = addDays(from, 6 - weekday);
-    const lastOfMonth = addDays(addMonths(`${month}-01`, 1), -1);
-    const targets: Record<string, string> = {
+      const targets: Record<string, string> = {
       ArrowRight: addDays(from, forward),
       ArrowLeft: addDays(from, -forward),
       ArrowDown: addDays(from, 7),
       ArrowUp: addDays(from, -7),
       Home: monthOf(start) === month ? start : `${month}-01`,
-      End: monthOf(end) === month ? end : lastOfMonth,
+      End: monthOf(end) === month ? end : lastDayOf(month),
       PageUp: addMonths(from, event.shiftKey ? -12 : -1),
       PageDown: addMonths(from, event.shiftKey ? 12 : 1),
     };
@@ -199,7 +204,12 @@ export const Calendar = ({
         >
           <Chevron direction="back" />
         </Button>
-        <p className="hcalendar-title" id={titleId} aria-live="polite" suppressHydrationWarning>
+        <p
+          className="hcalendar-title"
+          id={titleId}
+          aria-live={live ? "polite" : undefined}
+          suppressHydrationWarning
+        >
           {month && formats.title.format(dateOf(`${month}-01`))}
         </p>
         <Button

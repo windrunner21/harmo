@@ -20,7 +20,6 @@
     if (!Number.isFinite(number)) return fallback;
     return value.endsWith("ms") ? number : number * 1000;
   };
-  const size = new Intl.NumberFormat("en", { style: "unit", unit: "kilobyte", maximumFractionDigits: 0 });
   let made = 0;
 
   // Where a tile is now, partway through a slide included.
@@ -66,7 +65,11 @@
     const grid = list?.dataset.layout === "grid";
     const heading = host.querySelector("[data-example-count]");
     const sample = body?.firstElementChild.cloneNode(true);
-    const { exampleRetryDetail, exampleSimulate, examplePreview } = host.dataset;
+    const { exampleRetryDetail, exampleSimulate, examplePreview, exampleRemoveLabel, exampleDownloadLabel } = host.dataset;
+    // Its words, and the language sizes are written in, come from the page, as
+    // they would from your app.
+    const named = (label, file) => (label ?? "{name}").replace("{name}", file.name);
+    const size = new Intl.NumberFormat(host.closest("[lang]")?.lang || undefined, { style: "unit", unit: "kilobyte", maximumFractionDigits: 0 });
 
     const rows = () => [...parent.children].filter((row) => !row.hasAttribute("data-leaving"));
     const count = () => {
@@ -104,10 +107,13 @@
       );
     };
 
+    // To the next row's remove button, or the last one's; with none left, to
+    // the list, or for a table, whose body can't take focus, its File Input.
     const moveFocusFrom = (row) => {
       const others = rows().filter((other) => other !== row);
       const next = others.find((other) => row.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING) ?? others.at(-1);
-      (next?.querySelector(".hfile-list-remove") ?? parent).focus();
+      const fallback = body ? host.querySelector(".hfile-input-control") : parent;
+      (next?.querySelector(".hfile-list-remove, [data-example-remove]") ?? fallback)?.focus();
     };
 
     const finish = (row) => {
@@ -158,7 +164,7 @@
       name.textContent = file.name;
       name.title = file.name;
       row.querySelector(".hfile-list-detail").textContent = size.format(file.size / 1000);
-      row.querySelector(".hfile-list-remove").setAttribute("aria-label", `Remove ${file.name}`);
+      row.querySelector(".hfile-list-remove").setAttribute("aria-label", named(exampleRemoveLabel, file));
       const thumb = row.querySelector(".hfile-list-thumb");
       if (examplePreview === undefined) {
         thumb.innerHTML = fileIcon;
@@ -181,8 +187,8 @@
       const link = row.querySelector("[data-example-download]");
       link.href = URL.createObjectURL(file);
       link.download = file.name;
-      link.setAttribute("aria-label", `Download ${file.name}`);
-      row.querySelector("[data-example-remove]").setAttribute("aria-label", `Remove ${file.name}`);
+      link.setAttribute("aria-label", named(exampleDownloadLabel, file));
+      row.querySelector("[data-example-remove]").setAttribute("aria-label", named(exampleRemoveLabel, file));
       return row;
     };
 

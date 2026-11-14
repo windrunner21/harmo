@@ -7,7 +7,28 @@ import {
   Tag,
   type FileListItem,
 } from "@harmo-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const useObjectUrls = () => {
+  const made = useRef(new Set<string>());
+  useEffect(
+    () => () => {
+      for (const url of made.current) URL.revokeObjectURL(url);
+      made.current.clear();
+    },
+    [],
+  );
+  return {
+    create: (file: File) => {
+      const url = URL.createObjectURL(file);
+      made.current.add(url);
+      return url;
+    },
+    release: (url?: string) => {
+      if (url && made.current.delete(url)) URL.revokeObjectURL(url);
+    },
+  };
+};
 
 export const examples = {
   Default: () => {
@@ -187,9 +208,7 @@ export const examples = {
       { id: "dune", name: "dune.svg", detail: "1 kB", preview: "images/dune.svg" },
     ]);
     const size = new Intl.NumberFormat("en", { style: "unit", unit: "kilobyte", maximumFractionDigits: 0 });
-    const release = (url?: string) => {
-      if (url?.startsWith("blob:")) URL.revokeObjectURL(url);
-    };
+    const { create, release } = useObjectUrls();
 
     return (
       <div style={{ display: "grid", gap: 26, inlineSize: "100%" }}>
@@ -204,17 +223,15 @@ export const examples = {
           hint="PNG or JPG."
           chooseLabel="Choose images"
           validate={(file) => (file.type.startsWith("image/") ? null : `${file.name} isn't an image.`)}
-          onFilesAdd={(added) =>
-            setFiles((all) => [
-              ...all,
-              ...added.map((file, index) => ({
-                id: `${file.name}-${Date.now()}-${index}`,
-                name: file.name,
-                detail: size.format(file.size / 1000),
-                preview: URL.createObjectURL(file),
-              })),
-            ])
-          }
+          onFilesAdd={(added) => {
+            const entries = added.map((file, index) => ({
+              id: `${file.name}-${Date.now()}-${index}`,
+              name: file.name,
+              detail: size.format(file.size / 1000),
+              preview: create(file),
+            }));
+            setFiles((all) => [...all, ...entries]);
+          }}
         />
         <Section
           label={`Gallery (${files.length})`}
@@ -253,13 +270,13 @@ export const examples = {
       { id: "timeline", name: "timeline.xlsx", type: "Sheet", size: "86 kB", url: "#timeline" },
     ]);
     const size = new Intl.NumberFormat("en", { style: "unit", unit: "kilobyte", maximumFractionDigits: 0 });
-    const release = (url: string) => {
-      if (url.startsWith("blob:")) URL.revokeObjectURL(url);
-    };
+    const { create, release } = useObjectUrls();
+    const input = useRef<HTMLInputElement>(null);
 
     return (
       <div style={{ display: "grid", gap: 26, inlineSize: "100%" }}>
         <FileInput
+          ref={input}
           aria-label="Files to add"
           name="table-files"
           multiple
@@ -267,18 +284,16 @@ export const examples = {
           heading="Add files"
           dropLabel="Drag them here, or choose them below."
           chooseLabel="Choose files"
-          onFilesAdd={(added) =>
-            setRows((all) => [
-              ...all,
-              ...added.map((file, index) => ({
-                id: `${file.name}-${Date.now()}-${index}`,
-                name: file.name,
-                type: file.name.split(".").pop()?.toUpperCase() ?? "File",
-                size: size.format(file.size / 1000),
-                url: URL.createObjectURL(file),
-              })),
-            ])
-          }
+          onFilesAdd={(added) => {
+            const entries = added.map((file, index) => ({
+              id: `${file.name}-${Date.now()}-${index}`,
+              name: file.name,
+              type: file.name.split(".").pop()?.toUpperCase() ?? "File",
+              size: size.format(file.size / 1000),
+              url: create(file),
+            }));
+            setRows((all) => [...all, ...entries]);
+          }}
         />
         <Section
           label={`Files (${rows.length})`}
@@ -317,7 +332,12 @@ export const examples = {
                     <Button
                       variant="tertiary"
                       aria-label={`Remove ${row.name}`}
-                      onClick={() => {
+                      onClick={(event) => {
+                        if (event.currentTarget === document.activeElement) {
+                          const at = event.currentTarget.closest("tr");
+                          const next = at?.nextElementSibling ?? at?.previousElementSibling;
+                          (next?.querySelector<HTMLElement>("td:last-child .hbutton:last-child") ?? input.current)?.focus();
+                        }
                         release(row.url);
                         setRows((all) => all.filter((other) => other.id !== row.id));
                       }}

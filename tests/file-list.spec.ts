@@ -158,23 +158,34 @@ onEachPlayground("file-list", () => {
     expect(remove!.y).toBeGreaterThanOrEqual(thumb!.y + thumb!.height);
   });
 
-  test("when a tile goes, the others slide into its place", async ({ page }) => {
+  test("when a tile goes, the others slide into its place, over --harmo-duration-normal, eased", async ({ page }) => {
     const { list, rows } = await parts(page, "a-grid-of-thumbnails");
+    type Slide = { distance: number; duration: unknown; easing: unknown };
     await page.evaluate(() => {
-      const seen: number[] = [];
-      (window as unknown as { slides: number[] }).slides = seen;
+      const seen: Slide[] = [];
+      (window as unknown as { slides: Slide[] }).slides = seen;
       const animate = Element.prototype.animate;
       Element.prototype.animate = function (keyframes, options) {
         const first = (keyframes as Keyframe[])[0] as Keyframe & { translate?: string };
-        if (first?.translate) seen.push(parseFloat(first.translate));
+        const timing = typeof options === "object" ? options : { duration: options };
+        if (first?.translate) seen.push({ distance: parseFloat(first.translate), duration: timing?.duration, easing: timing?.easing });
         return animate.call(this, keyframes, options);
       };
     });
     await rows.first().locator(".hfile-list-remove").click();
     await expect(list.locator(".hfile-list-item")).toHaveCount(2);
-    const slides = () => page.evaluate(() => (window as unknown as { slides: number[] }).slides);
-    await expect.poll(slides).toHaveLength(2);
-    for (const distance of await slides()) expect(distance).toBeGreaterThan(0);
+    const slides = () => page.evaluate(() => (window as unknown as { slides: Slide[] }).slides);
+    await expect.poll(async () => (await slides()).length).toBe(2);
+    const tokens = await page.evaluate(() => {
+      const style = getComputedStyle(document.documentElement);
+      return { duration: style.getPropertyValue("--harmo-duration-normal").trim(), easing: style.getPropertyValue("--harmo-ease-in-out-cubic").trim() };
+    });
+    const duration = tokens.duration.endsWith("ms") ? parseFloat(tokens.duration) : parseFloat(tokens.duration) * 1000;
+    for (const slide of await slides()) {
+      expect(slide.distance).toBeGreaterThan(0);
+      expect(slide.duration).toBe(duration);
+      expect(slide.easing).toBe(tokens.easing);
+    }
   });
 
   test("in a narrow row, the actions keep their place on a line of their own", async ({ page }) => {
@@ -266,6 +277,15 @@ onEachPlayground("file-list", () => {
     await expect(body.last().locator(".htable-truncate")).toHaveAttribute("title", "plan.csv");
     await body.first().getByRole("button", { name: "Remove project-brief.pdf" }).click();
     await expect(container.locator("tbody tr")).toHaveCount(2);
+  });
+
+  test("removing a table's file by keyboard moves focus to the next one's remove button, and after the last, to the File Input", async ({ page }) => {
+    const { container, input } = await parts(page, "table");
+    await container.getByRole("button", { name: "Remove project-brief.pdf" }).focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator(":focus")).toHaveAccessibleName("Remove timeline.xlsx");
+    await page.keyboard.press("Enter");
+    await expect(input).toBeFocused();
   });
 
   test("a picture a file made is released when it goes", async ({ page }) => {

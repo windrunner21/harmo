@@ -100,6 +100,30 @@ onEachPlayground("file-input", () => {
     await expect(input).toHaveAccessibleName("Attachment tasks.csv");
   });
 
+  test("a large area's hint describes its input, so it's read with the button", async ({ page }) => {
+    const { input } = await parts(page, "file-input-large-drop-area");
+    await expect(input).toHaveAccessibleName("Task list Choose file");
+    await expect(input).toHaveAccessibleDescription("A CSV file, up to 1 MB.");
+  });
+
+  test("in an HTML page, an avatar whose heading is only its choose label takes and removes a picture", async ({ page }) => {
+    test.skip((await page.locator("[data-play-root]").count()) > 0, "React renders the heading from its props");
+    const { root, input, remove } = await parts(page, "file-input-avatar");
+    // The heading React renders without a changeLabel.
+    await root.locator(".hfile-input-heading").evaluate((heading) => {
+      heading.removeAttribute("data-stacked");
+      heading.textContent = "Upload picture";
+    });
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await input.setInputFiles(png);
+    await expect(root.locator(".hfile-input-preview")).toHaveCount(1);
+    await expect(root.locator(".hfile-input-heading")).toHaveText("Upload picture");
+    await remove.click();
+    await expect(root.locator(".hfile-input-preview")).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
   test("the button hovers as a Button does", async ({ page }) => {
     const { button } = await parts(page, "file-input-default");
     const rest = await button.evaluate((n) => getComputedStyle(n).borderTopColor);
@@ -280,19 +304,31 @@ onEachPlayground("file-input", () => {
     await expect(root).not.toHaveAttribute("data-dragging", { timeout: 4000 });
   });
 
-  test("the button's width moves to the name's", async ({ page }) => {
+  test("the button's width moves to the name's, over --harmo-duration-normal, eased out", async ({ page }) => {
     const { input } = await parts(page, "file-input-default");
+    type Change = { element: string; duration: unknown; easing: unknown };
     await page.evaluate(() => {
-      const seen: string[] = [];
-      (window as unknown as { widths: string[] }).widths = seen;
+      const seen: Change[] = [];
+      (window as unknown as { widths: Change[] }).widths = seen;
       const animate = Element.prototype.animate;
       Element.prototype.animate = function (keyframes, options) {
-        if (JSON.stringify(keyframes).includes("width")) seen.push(this.localName);
+        if (JSON.stringify(keyframes).includes("width")) {
+          const timing = typeof options === "object" ? options : { duration: options };
+          seen.push({ element: this.localName, duration: timing?.duration, easing: timing?.easing });
+        }
         return animate.call(this, keyframes, options);
       };
     });
     await input.setInputFiles(csv("a-name-much-longer-than-the-button-was.csv"));
-    await expect.poll(() => page.evaluate(() => (window as unknown as { widths: string[] }).widths)).toContain("label");
+    const changes = () => page.evaluate(() => (window as unknown as { widths: Change[] }).widths.filter((change) => change.element === "label"));
+    await expect.poll(async () => (await changes()).length).toBeGreaterThan(0);
+    const [change] = await changes();
+    const tokens = await page.evaluate(() => {
+      const style = getComputedStyle(document.documentElement);
+      return { duration: style.getPropertyValue("--harmo-duration-normal").trim(), easing: style.getPropertyValue("--harmo-ease-out-cubic").trim() };
+    });
+    expect(change!.duration).toBe(tokens.duration.endsWith("ms") ? parseFloat(tokens.duration) : parseFloat(tokens.duration) * 1000);
+    expect(change!.easing).toBe(tokens.easing);
   });
 
   test("in an HTML page, a field enabled or disabled later follows its state", async ({ page }) => {

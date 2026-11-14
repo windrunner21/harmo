@@ -115,6 +115,45 @@ onEachPlayground("date-picker", () => {
     await expect(all.popup).toBeHidden();
   });
 
+  test("a press dragged off the button is forgotten, so focus leaving for it later still closes it", async ({ page }) => {
+    const container = await example(page, "date-picker-default");
+    const all = parts(container);
+    await open(all);
+    // A press that moves focus to the button, then ends off it, with no click.
+    await all.button.evaluate((node) => {
+      node.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      (node as HTMLElement).focus();
+    });
+    await expect(all.popup).toBeVisible();
+
+    await container.locator('.hcalendar-day[tabindex="0"]').focus();
+    await all.button.focus();
+    await expect(all.popup).toBeHidden();
+  });
+
+  test("Enter that ends an input method's composing doesn't settle the date", async ({ page }) => {
+    const all = parts(await example(page, "date-picker-default"));
+    await retype(all.field, "12252026");
+    await all.field.evaluate((node) =>
+      node.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", isComposing: true, bubbles: true, cancelable: true })),
+    );
+    await expect(all.hidden).toHaveValue("2026-11-18");
+    await page.keyboard.press("Enter");
+    await expect(all.hidden).toHaveValue("2026-12-25");
+  });
+
+  test("nothing is arranged until an input method has finished composing", async ({ page }) => {
+    const { field } = parts(await example(page, "date-picker-default"));
+    await field.fill("");
+    await field.evaluate((node: HTMLInputElement) => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(node, "12252026");
+      node.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }));
+    });
+    await expect(field).toHaveValue("12252026");
+    await field.evaluate((node) => node.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true })));
+    await expect(field).toHaveValue("12/25/2026");
+  });
+
   test("in a form: Enter settles a changed date, again sends it, and Reset goes back", async ({ page }) => {
     const container = await example(page, "date-picker-in-a-form");
     const all = parts(container);

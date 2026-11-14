@@ -21,7 +21,13 @@
 
     // Show the chosen labels, and replace its hidden inputs with one per
     // chosen data-value; a single select always keeps one, as a native select
-    // always sends a value. They're disabled with the trigger.
+    // always sends a value. They're disabled with the trigger, and belong to
+    // the form it names, if it names one.
+    const hiddenInput = (value) => {
+      const input = Object.assign(document.createElement("input"), { type: "hidden", name, value, disabled: trigger.disabled });
+      if (trigger.hasAttribute("form")) input.setAttribute("form", trigger.getAttribute("form"));
+      return input;
+    };
     const sync = () => {
       const options = chosen();
       const labels = options.map((option) => option.querySelector(".hoption-label").textContent.trim());
@@ -32,7 +38,7 @@
       const values = options.map((option) => option.dataset.value ?? "");
       if (!multiple && !values.length) values.push("");
       for (const input of inputs) input.remove();
-      inputs = values.map((v) => Object.assign(document.createElement("input"), { type: "hidden", name, value: v, disabled: trigger.disabled }));
+      inputs = values.map(hiddenInput);
       popup.after(...inputs);
     };
 

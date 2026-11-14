@@ -84,7 +84,8 @@ The hidden input holds the time as `09:00`, 24-hour, whatever the trigger shows.
   `inline-size` to make it wider.
 - The popup opens under the trigger, one column beside the next with a line
   between them. Columns are 200px tall at most and scroll on their own.
-- Options: 40 by 32px, 14px text, with `--harmo-border-radius-sm` corners.
+- Options: at least 40 by 32px, growing with the text size and for a longer
+  period's name, 14px text, with `--harmo-border-radius-sm` corners.
   Hovered, on `--harmo-color-background-hover`. Chosen,
   `--harmo-color-on-primary` on `--harmo-color-primary-fill`, and in
   forced-colors mode in the system's highlight.
@@ -117,7 +118,7 @@ The hidden input holds the time as `09:00`, 24-hour, whatever the trigger shows.
 | Scroll each column to its chosen option, and focus the first column | As the popup opens |
 | Keep the chosen option in view | As the keyboard moves through a column |
 | Close the popup and focus the trigger | On Enter or Space in a column |
-| Close the popup | When focus leaves it for something outside it, unless the trigger is being pressed, which toggles it |
+| Close the popup | When focus leaves it for something outside it, unless the trigger is being pressed, which toggles it. A press is forgotten once focus has left, so one dragged off the trigger doesn't keep the popup open later |
 | Restore the time, the options, and the hidden input to how the page loaded | On the form's reset |
 
 What hasn't been chosen yet counts as its column's first option, so the first
@@ -163,6 +164,6 @@ the `<button>`'s attributes.
 `--harmo-color-background-hover`, `--harmo-color-primary-fill`,
 `--harmo-color-primary-fill-hover`, `--harmo-color-on-primary`,
 `--harmo-border-radius-sm`, `--harmo-focus-outline`, `--harmo-button-duration`,
-`--harmo-control-height`, `--harmo-color-text-secondary`,
+`--harmo-space-2xs`, `--harmo-control-height`, `--harmo-color-text-secondary`,
 `--harmo-color-text-tertiary`; those of an [Input](input.md) and the
 [Popup](popup.md).

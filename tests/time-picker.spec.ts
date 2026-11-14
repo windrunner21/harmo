@@ -141,6 +141,21 @@ onEachPlayground("time-picker", () => {
     await expect(all.popup).toBeHidden();
   });
 
+  test("a press dragged off the trigger is forgotten, so focus leaving for it later still closes it", async ({ page }) => {
+    const all = parts(await example(page, "time-picker-default"));
+    await open(all);
+    // A press that moves focus to the trigger, then ends off it, with no click.
+    await all.button.evaluate((node) => {
+      node.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      (node as HTMLElement).focus();
+    });
+    await expect(all.popup).toBeVisible();
+
+    await all.column("Hour").focus();
+    await all.button.focus();
+    await expect(all.popup).toBeHidden();
+  });
+
   test("in a form: it sends the time, and Reset goes back", async ({ page }) => {
     const container = await example(page, "time-picker-in-a-form");
     const all = parts(container);

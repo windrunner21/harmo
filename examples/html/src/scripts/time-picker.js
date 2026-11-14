@@ -88,9 +88,14 @@
     button.addEventListener("click", () => {
       pressingButton = false;
     });
+    // A press on the button moves focus to it before its click toggles the
+    // Popup, so leaving for it then is left to the click. The press is
+    // forgotten once it's been read, so one dragged off, which never clicks,
+    // doesn't keep the Popup open the next time focus leaves for the button.
     popup.addEventListener("focusout", (event) => {
       const next = event.relatedTarget;
       const pressed = next === button && pressingButton;
+      pressingButton = false;
       if (next && !pressed && !popup.contains(next)) popup.hidePopover();
     });
 

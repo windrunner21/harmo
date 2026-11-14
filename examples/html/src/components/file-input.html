@@ -64,8 +64,8 @@
 
 <play-example title="Large drop area" layout="stack">
   <play-note>
-    With a heading and a hint. <code>accept</code> doesn't apply to a drop, so
-    check the file too.
+    With a heading and a hint, which describes the input. <code>accept</code>
+    doesn't apply to a drop, so check the file too.
   </play-note>
   <div class="hfield">
     <label class="hlabel" for="task-list-area">Task list</label>
@@ -73,9 +73,9 @@
       <span class="hfile-input-icon"><play-icon name="upload" class="hicon"></play-icon></span>
       <span class="hfile-input-heading">Upload a task list</span>
       <span class="hfile-input-drop">Drag it here, or choose it below.</span>
-      <span class="hfile-input-hint">A CSV file, up to 1 MB.</span>
+      <span class="hfile-input-hint" id="task-list-area-hint">A CSV file, up to 1 MB.</span>
       <label class="hbutton" data-variant="secondary">
-        <input class="hfile-input-control" id="task-list-area" name="task-list-area" type="file" accept=".csv" aria-describedby="task-list-area-error" />
+        <input class="hfile-input-control" id="task-list-area" name="task-list-area" type="file" accept=".csv" aria-describedby="task-list-area-hint task-list-area-error" />
         <span class="hbutton-label">Choose file</span>
       </label>
       <button class="hbutton" data-variant="tertiary" type="button" aria-label="Remove task list" hidden>

@@ -1,18 +1,23 @@
 import { describe, expect, test } from "bun:test";
 import { Calendar } from "@harmo-ui/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { addDays, addMonths, isDate, isMonth, weeksOf } from "../../../packages/react/src/calendar/dates.ts";
+import { addDays, addMonths, isDate, isMonth, lastDayOf, weeksOf } from "../../../packages/react/src/calendar/dates.ts";
 
 const labels = { locale: "en-US", previousLabel: "Previous", nextLabel: "Next" };
 
 // What docs/components/calendar.md says about rendering on the server, and about
 // dates that don't exist.
 describe("Calendar", () => {
-  test("with no date to go on, the server renders it blank, with all its rows", () => {
+  test("with no date to go on, the server renders it blank, with all its rows, and a title that isn't live until it's filled in", () => {
     const markup = renderToStaticMarkup(<Calendar {...labels} />);
     expect(markup).not.toContain("hcalendar-day");
     expect(markup.match(/<tr>/g)).toHaveLength(7);
-    expect(markup).toContain('aria-live="polite"></p>');
+    expect(markup).toMatch(/<p class="hcalendar-title" id="[^"]+"><\/p>/);
+    expect(markup).not.toContain("aria-live");
+  });
+
+  test("with a month to show, the server renders its title live", () => {
+    expect(renderToStaticMarkup(<Calendar {...labels} today="2026-11-09" />)).toContain('aria-live="polite">November 2026<');
   });
 
   test("given today, or a value, or a month, it shows that month", () => {
@@ -94,6 +99,13 @@ describe("Calendar dates", () => {
     expect(addMonths("2028-02-29", 12)).toBe("2029-02-28");
     expect(addMonths("2026-12-15", 1)).toBe("2027-01-15");
     expect(addMonths("2027-01-15", -1)).toBe("2026-12-15");
+  });
+
+  test("a month's last day, December 9999's included", () => {
+    expect(lastDayOf("2026-11")).toBe("2026-11-30");
+    expect(lastDayOf("2028-02")).toBe("2028-02-29");
+    expect(lastDayOf("9999-12")).toBe("9999-12-31");
+    expect(lastDayOf("0100-01")).toBe("0100-01-31");
   });
 
   test("days count across months, years, and the leap day", () => {

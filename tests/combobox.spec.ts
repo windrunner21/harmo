@@ -432,6 +432,73 @@ onEachPlayground("combobox", () => {
     });
   }
 
+  test("made read-only while typed in, leaving the field picks nothing", async ({ page }) => {
+    const { input, hidden } = await parts(page, "combobox-default");
+    await input.fill("lee chen");
+    await input.evaluate((node) => ((node as HTMLInputElement).readOnly = true));
+    await input.blur();
+    await expect(input).toHaveValue("");
+    await expect(hidden).toHaveValue("");
+  });
+
+  test("several, in a disabled fieldset: a click on the box opens nothing, so nothing can be picked", async ({ page }) => {
+    const { container, popup } = await parts(page, "combobox-several");
+    await container.locator(".play-demo").evaluate((demo) => {
+      const fieldset = document.createElement("fieldset");
+      fieldset.disabled = true;
+      fieldset.append(...demo.children);
+      demo.append(fieldset);
+    });
+    await container.locator(".hcombobox").click({ position: { x: 3, y: 3 } });
+    await page.waitForTimeout(100);
+    expect(await isOpen(popup)).toBe(false);
+    await expect(chips(container)).toHaveText(["Ana Lopez"]);
+  });
+
+  test("disabled: there's no list, nothing opens, and a form doesn't send it", async ({ page }) => {
+    const container = await example(page, "combobox-disabled");
+    const input = container.getByRole("combobox");
+    await expect(input).toBeDisabled();
+    await expect(input).toHaveValue("Sam Rivera");
+    await expect(input).not.toHaveAttribute("aria-controls");
+    await expect(container.locator(".hpopup")).toHaveCount(0);
+    await expect(container.locator('input[type="hidden"]')).toBeDisabled();
+    expect(await sent(container)).toEqual([]);
+  });
+
+  test("a form reset brings back what each one loaded with, and what it sends", async ({ page }) => {
+    const container = await example(page, "combobox-in-a-form");
+    const owner = container.getByRole("combobox", { name: "Owner" });
+    const replyTo = container.getByRole("combobox", { name: "Reply to" });
+    const watchers = container.getByRole("combobox", { name: "Watchers" });
+    const sends = () =>
+      container.locator("form").evaluate((form) =>
+        [...new FormData(form as HTMLFormElement)].map(([key, value]) => `${key}=${value}`),
+      );
+    const loaded = ["form-owner=sam", "form-reply-to=sam@example.com", "form-watchers=ana"];
+    expect(await sends()).toEqual(loaded);
+
+    await owner.fill("ana lopez");
+    await owner.blur();
+    await replyTo.fill("ana@example.com");
+    await watchers.click();
+    await page.keyboard.type("sam");
+    await page.keyboard.press("Enter");
+    await expect(chips(container)).toHaveText(["Ana Lopez", "Sam Rivera"]);
+    expect(await sends()).toEqual([
+      "form-owner=ana",
+      "form-reply-to=ana@example.com",
+      "form-watchers=ana",
+      "form-watchers=sam",
+    ]);
+
+    await container.getByRole("button", { name: "Reset" }).click();
+    await expect(owner).toHaveValue("Sam Rivera");
+    await expect(replyTo).toHaveValue("sam@example.com");
+    await expect(chips(container)).toHaveText(["Ana Lopez"]);
+    await expect.poll(sends).toEqual(loaded);
+  });
+
   test("several, with free text: Enter, a comma, and leaving the field make the text a choice; a pick, or an option's name typed, adds the option's value", async ({ page }) => {
     const { container, input, popup, listbox } = await parts(page, "combobox-several-with-free-text");
     // The tags show people's names; a form sends their addresses.

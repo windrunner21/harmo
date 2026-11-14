@@ -65,6 +65,8 @@ the value instead, as a native `<select>` would send it:
   `<select multiple>`.
 - Disable the hidden inputs with the trigger, so a disabled select sends
   nothing; a disabled `<fieldset>` disables both.
+- Outside its form, give the trigger and each hidden input the form's id as
+  `form`, as for a native control.
 - Resetting the form leaves hidden inputs as they are, so a script restores
   them along with the selection.
 - Browsers don't validate hidden inputs, so `required` does nothing on them:
@@ -112,7 +114,7 @@ the value instead, as a native `<select>` would send it:
 | `aria-expanded` on the trigger | On every open and close (see [Popup](popup.md)) |
 | The [Listbox](listbox.md) behavior: highlight, `aria-activedescendant`, selection, and closing after a single-select choice | While open |
 | The value text, or `data-placeholder` when nothing is chosen | When the selection changes |
-| The hidden inputs: one per chosen `data-value`, named by `data-name` | When the selection changes |
+| The hidden inputs: one per chosen `data-value`, named by `data-name`, with the trigger's `form` and `disabled` | When the selection changes |
 | The selection, value text, and hidden inputs as the page loaded them | On the form's `reset` |
 | `disabled` on the hidden inputs | When the trigger is disabled or enabled |
 
@@ -134,7 +136,8 @@ attributes.
 | `multiple` | Lets several options be chosen; the popup stays open |
 | `value` or `defaultValue` | The chosen value, or an array of them with `multiple` |
 | `onValueChange` | Called with the new value or array |
-| `name` | Adds the hidden inputs a form submits; a form reset restores `defaultValue` |
+| `name` | Adds the hidden inputs a form submits; a form reset restores `defaultValue`, as it is at the time |
+| `form` | The id of the form it belongs to, when it's outside it; the hidden inputs take it too |
 | `placeholder` | Shown, grayed, while nothing is chosen |
 | `renderValue` | What the button shows for the chosen values, in place of their labels |
 | `searchLabel` | Adds a search row, with this as its placeholder and name |

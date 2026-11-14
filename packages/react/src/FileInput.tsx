@@ -261,13 +261,17 @@ export const FileInput = ({
   const inputRef = useMergedRef(input, ref);
   const widthRef = useWidthChange();
   const errorId = useId();
+  const hintId = useId();
   const [fileName, setFileName] = useState(defaultFileName ?? null);
   const [preview, setPreview] = useState(defaultPreview ?? null);
   const [picture, setPicture] = useState(preview);
   const [message, setMessage] = useState<ReactNode>(null);
   const dragging = useFileDrop(root, input, Boolean(variant) && !props.disabled);
+  const describedHint = variant !== "avatar" && renders(hint);
   const field = useField(props, {
-    describedBy: validate ? errorId : undefined,
+    describedBy:
+      [describedHint && hintId, validate && errorId].filter(Boolean).join(" ") ||
+      undefined,
   });
   if (preview && preview !== picture) setPicture(preview);
   const attached = fileName !== null || preview !== null;
@@ -422,7 +426,11 @@ export const FileInput = ({
             )}
             {renders(heading) && <span className="hfile-input-heading">{heading}</span>}
             {variant && <span className="hfile-input-drop">{dropLabel}</span>}
-            {renders(hint) && <span className="hfile-input-hint">{hint}</span>}
+            {describedHint && (
+              <span className="hfile-input-hint" id={hintId}>
+                {hint}
+              </span>
+            )}
             <label ref={widthRef} className="hbutton" data-variant="secondary">
               {control}
               {variant !== "area" && (icon ?? cloudIcon(attached))}
