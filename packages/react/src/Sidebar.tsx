@@ -45,14 +45,12 @@ export const Sidebar = ({
   expandLabel,
   header,
   footer,
-  id,
   ref,
   className,
   children,
   ...props
 }: SidebarProps) => {
   const generatedId = useId();
-  const sidebarId = id ?? generatedId;
   const root = useRef<HTMLDivElement>(null);
   const rootRef = useMergedRef(root, ref);
   const [collapsedState, setCollapsedState] = useState(defaultCollapsed);
@@ -195,7 +193,6 @@ export const Sidebar = ({
     <div
       {...props}
       ref={rootRef}
-      id={sidebarId}
       className={withClass("hsidebar", className)}
       data-collapsed={isCollapsed ? "" : undefined}
     >
@@ -205,13 +202,7 @@ export const Sidebar = ({
           side="right"
           className="hsidebar-toggle"
         >
-          <button
-            className="hsidebar-toggle-button"
-            type="button"
-            aria-expanded={!isCollapsed}
-            aria-controls={sidebarId}
-            onClick={toggle}
-          >
+          <button className="hsidebar-toggle-button" type="button" onClick={toggle}>
             {toggleIcon}
           </button>
         </Tooltip>
@@ -259,11 +250,33 @@ export const SidebarGroup = ({
   );
 };
 
-export interface SidebarItemProps extends ComponentPropsWithRef<"a"> {
+export interface SidebarSubItemProps extends ComponentPropsWithRef<"a"> {
   href: string;
+  current?: boolean;
+}
+
+export const SidebarSubItem = ({
+  current,
+  hidden,
+  className,
+  ...props
+}: SidebarSubItemProps) => {
+  const Anchor = useLinkComponent();
+
+  return (
+    <li hidden={hidden}>
+      <Anchor
+        {...props}
+        className={withClass("hsidebar-sub-item", className)}
+        aria-current={current ? "page" : undefined}
+      />
+    </li>
+  );
+};
+
+export interface SidebarItemProps extends SidebarSubItemProps {
   icon?: ReactNode;
   badge?: ReactNode;
-  current?: boolean;
 }
 
 export const SidebarItem = ({
@@ -281,15 +294,9 @@ export const SidebarItem = ({
 
   if (inSub) {
     return (
-      <li hidden={hidden}>
-        <Anchor
-          {...props}
-          className={withClass("hsidebar-sub-item", className)}
-          aria-current={current ? "page" : undefined}
-        >
-          {children}
-        </Anchor>
-      </li>
+      <SidebarSubItem {...props} current={current} hidden={hidden} className={className}>
+        {children}
+      </SidebarSubItem>
     );
   }
 

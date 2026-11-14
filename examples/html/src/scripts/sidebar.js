@@ -1,7 +1,8 @@
 // Example only: what the React Sidebar does. The toggle collapses the
-// sidebar to its icons (data-collapsed), and back: it says which in
-// aria-expanded and in its tooltip, the button's name, and closes any group
-// that's open. While collapsed, a group's links open beside its icon, one
+// sidebar to its icons (data-collapsed), and back: its tooltip, the button's
+// name, says which it will do, and it closes any group that's open. The width
+// glides in CSS.
+// While collapsed, a group's links open beside its icon, one
 // group at a time: a click or Enter opens them, as a <details> does, and so
 // does hovering, until the pointer leaves the group, whose links' panel
 // reaches back to the icon, so the pointer can cross to them; then Escape, a
@@ -26,7 +27,6 @@
       button.addEventListener("click", () => {
         const next = !collapsed();
         sidebar.toggleAttribute("data-collapsed", next);
-        button.setAttribute("aria-expanded", String(!next));
         if (tip) tip.textContent = next ? button.dataset.exampleExpandLabel : button.dataset.exampleCollapseLabel;
       });
     }

@@ -5,6 +5,7 @@ import {
   SidebarGroup,
   SidebarItem,
   SidebarSub,
+  SidebarSubItem,
 } from "@harmo-ui/react";
 import { useState, type CSSProperties, type MouseEvent } from "react";
 import {
@@ -115,20 +116,20 @@ export const examples = {
               Tickets
             </SidebarItem>
             <SidebarSub label="Campaigns" icon={<CampaignsIcon className="hicon" />}>
-              <SidebarItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
+              <SidebarSubItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
                 Runs
-              </SidebarItem>
-              <SidebarItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
                 Templates
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
             <SidebarSub label="More" icon={<MoreIcon className="hicon" />}>
-              <SidebarItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
+              <SidebarSubItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
                 Quick replies
-              </SidebarItem>
-              <SidebarItem href="/snippets" current={path === "/snippets"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/snippets" current={path === "/snippets"} onClick={go}>
                 Snippets
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
           </SidebarGroup>
         </Sidebar>
@@ -230,20 +231,20 @@ export const examples = {
               Tickets
             </SidebarItem>
             <SidebarSub label="Campaigns" icon={<CampaignsIcon className="hicon" />}>
-              <SidebarItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
+              <SidebarSubItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
                 Runs
-              </SidebarItem>
-              <SidebarItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
                 Templates
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
             <SidebarSub label="More" icon={<MoreIcon className="hicon" />}>
-              <SidebarItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
+              <SidebarSubItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
                 Quick replies
-              </SidebarItem>
-              <SidebarItem href="/snippets" current={path === "/snippets"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/snippets" current={path === "/snippets"} onClick={go}>
                 Snippets
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
           </SidebarGroup>
         </Sidebar>
@@ -345,20 +346,20 @@ export const examples = {
               Tickets
             </SidebarItem>
             <SidebarSub label="Campaigns" icon={<CampaignsIcon className="hicon" />}>
-              <SidebarItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
+              <SidebarSubItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
                 Runs
-              </SidebarItem>
-              <SidebarItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
                 Templates
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
             <SidebarSub label="More" icon={<MoreIcon className="hicon" />}>
-              <SidebarItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
+              <SidebarSubItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
                 Quick replies
-              </SidebarItem>
-              <SidebarItem href="/snippets" current={path === "/snippets"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/snippets" current={path === "/snippets"} onClick={go}>
                 Snippets
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
           </SidebarGroup>
         </Sidebar>
@@ -452,20 +453,20 @@ export const examples = {
               Tickets
             </SidebarItem>
             <SidebarSub label="Campaigns" icon={<CampaignsIcon className="hicon" />}>
-              <SidebarItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
+              <SidebarSubItem href="/campaigns/runs" current={path === "/campaigns/runs"} onClick={go}>
                 Runs
-              </SidebarItem>
-              <SidebarItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/campaigns/templates" current={path === "/campaigns/templates"} onClick={go}>
                 Templates
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
             <SidebarSub label="More" icon={<MoreIcon className="hicon" />}>
-              <SidebarItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
+              <SidebarSubItem href="/quick-replies" current={path === "/quick-replies"} onClick={go}>
                 Quick replies
-              </SidebarItem>
-              <SidebarItem href="/snippets" current={path === "/snippets"} onClick={go}>
+              </SidebarSubItem>
+              <SidebarSubItem href="/snippets" current={path === "/snippets"} onClick={go}>
                 Snippets
-              </SidebarItem>
+              </SidebarSubItem>
             </SidebarSub>
           </SidebarGroup>
         </Sidebar>

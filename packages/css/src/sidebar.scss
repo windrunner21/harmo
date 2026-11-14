@@ -7,9 +7,16 @@
 // <details>). With data-collapsed, it's a row of icons, each naming itself in
 // a tooltip, with those groups opening beside it. Its edge holds the toggle
 // between the two.
+//
+// Collapsing or expanding, its width glides over 200ms, on the curve for
+// things moving on screen, and the page beside it moves with it. The icons stay
+// where they are; the labels and chevrons, clipped by their rows, fade out
+// quickly as it narrows, and back in as it finishes widening. With reduced
+// motion, it changes at once.
 .hsidebar {
   --hsidebar-inline-size: 15rem;
   --hsidebar-collapsed-inline-size: 60px;
+  --hsidebar-color-background: #{$color-background};
   // Which way the edge bends on hover: toward the start, to collapse.
   --hsidebar-toward-start: -1;
 
@@ -17,21 +24,19 @@
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: $space-sm;
 
   box-sizing: border-box;
   inline-size: var(--hsidebar-inline-size);
   block-size: 100%;
-  padding: 16px;
+  padding: $space-sm;
 
   font-family: $font-family;
 
   color: $color-text-secondary;
-  background-color: $color-background;
-
-  transition:
-    inline-size $duration-normal $ease-out-cubic,
-    padding-inline $duration-normal $ease-out-cubic;
+  // Set --hsidebar-color-background rather than background-color, so a
+  // collapsed count's ring takes the same color.
+  background-color: var(--hsidebar-color-background);
 
   &[hidden] {
     display: none;
@@ -40,6 +45,13 @@
   &:dir(rtl) {
     --hsidebar-toward-start: 1;
   }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      inline-size $duration-normal $ease-in-out-cubic,
+      padding-inline $duration-normal $ease-in-out-cubic;
+  }
+
 
   // Its edge, a line the toggle bends: the toggle's own line sits on it, and
   // on hover both move toward where the sidebar would go.
@@ -54,7 +66,7 @@
 
     background-color: $color-border;
 
-    transition: translate $duration-fast ease;
+    transition: translate $duration-fast $ease-out-cubic;
 
     // A painted line, which forced colors would otherwise clear.
     @media (forced-colors: active) {
@@ -64,14 +76,14 @@
     }
   }
 
+  // Its padding at the sides, with its rows', sets the collapsed width's
+  // middle, where the icons rest.
   &[data-collapsed] {
     inline-size: var(--hsidebar-collapsed-inline-size);
     padding-inline: 8px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
     &::after {
       transition: none;
     }
@@ -80,6 +92,8 @@
 
 .hsidebar-header,
 .hsidebar-footer {
+  position: relative;
+
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -95,6 +109,8 @@
 // beside the icons are fixed to the window and anchored to their icons, so
 // they aren't cut off by it, and follow their icons as it scrolls.
 .hsidebar-nav {
+  position: relative;
+
   flex: 1 1 auto;
 
   min-block-size: 0;
@@ -117,12 +133,16 @@
   }
 
   & + & {
-    margin-block-start: 24px;
+    margin-block-start: $space-md;
   }
 }
 
+// One line, 6px above its links. Collapsed, it takes no room and isn't
+// drawn, but stays in the page, naming its list: the rows below glide up as
+// its room closes, and back down as it opens, while its text fades in.
 .hsidebar-group-label {
-  margin: 0 0 8px;
+  block-size: calc(1.5 * #{$font-size-2xs});
+  margin: 0 0 $space-2xs;
   padding-inline: 8px;
   overflow: hidden;
 
@@ -132,6 +152,27 @@
   white-space: nowrap;
 
   color: $color-text-tertiary;
+
+  :where(.hsidebar[data-collapsed]) & {
+    block-size: 0;
+    margin-block-end: 0;
+
+    opacity: 0;
+  }
+
+  // Its room opens and closes with the sidebar's width, and its text fades as
+  // the links' labels do: out quickly, back in as the sidebar finishes.
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      block-size $duration-normal $ease-in-out-cubic,
+      margin-block-end $duration-normal $ease-in-out-cubic,
+      opacity $duration-fast ease $duration-faster;
+
+    :where(.hsidebar[data-collapsed]) & {
+      transition-duration: $duration-normal, $duration-normal, $duration-faster;
+      transition-delay: 0s;
+    }
+  }
 }
 
 .hsidebar-list {
@@ -164,11 +205,13 @@
 
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $space-xs;
 
   box-sizing: border-box;
   inline-size: 100%;
   margin: 0;
+  // With the line height, sets the row's height, and the collapsed width's
+  // middle.
   padding: 8px;
 
   font-family: inherit;
@@ -188,6 +231,14 @@
   list-style: none;
 
   transition: background-color $duration-fast ease;
+
+  // Its icon slides with the row's padding as the sidebar glides.
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      background-color $duration-fast ease,
+      gap $duration-normal $ease-in-out-cubic,
+      padding-inline-start $duration-normal $ease-in-out-cubic;
+  }
 
   &[hidden] {
     display: none;
@@ -224,16 +275,9 @@
 }
 
 // A link, or the summary of a group of links: a 20px icon, the label, and a
-// count or a chevron at its end. Collapsing moves the icon in by its padding,
-// with the sidebar's width, so it stays at the start of its row.
+// count or a chevron at its end.
 .hsidebar-item {
   @extend %item;
-
-  @media (prefers-reduced-motion: no-preference) {
-    transition:
-      background-color $duration-fast ease,
-      padding-inline-start $duration-normal $ease-out-cubic;
-  }
 
   & > .hicon {
     flex-shrink: 0;
@@ -268,7 +312,7 @@
   box-sizing: border-box;
   min-inline-size: 20px;
   block-size: 20px;
-  padding: 0 6px;
+  padding: 0 $space-2xs;
 
   font-size: $font-size-3xs;
   font-weight: $font-weight-bold;
@@ -332,7 +376,7 @@
 .hsidebar-sub-item {
   @extend %item;
 
-  padding-inline-start: calc(8px + 1.25rem + 12px);
+  padding-inline-start: calc(8px + 1.25rem + #{$space-xs});
 }
 
 // A group holding the page you're on shows it on its own row while its
@@ -347,40 +391,43 @@
 // Collapsed: the icons alone, in the middle. The labels stay, hidden, as
 // each link's name; the tooltips show them. Each icon keeps to the start of
 // its row, with the padding that puts it in the middle of the collapsed
-// width, so it doesn't leap to the middle of a row that's still narrowing.
+// width.
+// A row's label and a group's chevron fade out quickly as the sidebar narrows,
+// before it has cut them short, and back in as it finishes widening. Faded,
+// a label still names its link, for a screen reader and the tooltip.
+.hsidebar-item:not(.hsidebar-sub-item) > :is(.hsidebar-label, .hexpand-chevron) {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: opacity $duration-fast ease $duration-faster;
+
+    :where(.hsidebar[data-collapsed]) & {
+      transition-duration: $duration-faster;
+      transition-delay: 0s;
+    }
+  }
+}
+
 .hsidebar[data-collapsed] {
-  & .hsidebar-group-label,
-  & .hsidebar-item > .hsidebar-label {
-    position: absolute;
-
-    inline-size: 1px;
-    block-size: 1px;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-
-    white-space: nowrap;
-
-    clip-path: inset(50%);
+  & .hsidebar-item:not(.hsidebar-sub-item) > :is(.hsidebar-label, .hexpand-chevron) {
+    opacity: 0;
   }
 
+  // The icon in the middle; the faded label and chevron, still in the row,
+  // are clipped at its end.
   & .hsidebar-item:not(.hsidebar-sub-item) {
     gap: 0;
 
     padding-inline-start: calc((var(--hsidebar-collapsed-inline-size) - 2 * 8px - 1.25rem) / 2);
-  }
-
-  & .hsidebar-item > .hexpand-chevron {
-    display: none;
+    overflow-x: clip;
   }
 
   // A group opens beside the icon, as a panel, at once rather than growing,
-  // 12px past its row, so 4px clear of the edge, as the tooltips are. The
-  // panel is its list, fixed to the window and anchored to its row (the
-  // tooltip's anchor), so the nav can scroll without cutting it off; where
-  // there's no room below, it opens upward. Its ::before fills the 12px
-  // between the row and the panel, so the pointer crosses to the links
-  // without leaving the group, and the group can close the moment it does.
+  // --harmo-space-xs past its row, so 2px clear of the edge, as the tooltips
+  // are. The panel is its list, fixed to the window and anchored to its row
+  // (the tooltip's anchor), so the nav can scroll without cutting it off;
+  // where there's no room below, it opens upward. Its ::before fills the room
+  // between the row and the panel, and its border, so the pointer crosses to
+  // the links without leaving the group, and the group can close the moment
+  // it does.
   & .hsidebar-sub::details-content {
     display: block;
 
@@ -404,7 +451,7 @@
     box-sizing: border-box;
     min-inline-size: 160px;
     margin: 0;
-    margin-inline-start: 12px;
+    margin-inline-start: $space-xs;
     padding: 4px;
 
     background-color: $color-background;
@@ -419,7 +466,7 @@
       inset-block: -1px;
       inset-inline-end: 100%;
 
-      inline-size: 13px;
+      inline-size: calc(#{$space-xs} + 1px);
     }
   }
 
@@ -447,8 +494,8 @@
 }
 
 // Collapsed, a count is a dot on its icon's top corner, placed from the
-// collapsed width, so it doesn't follow a row that's still narrowing. In
-// forced colors, a dot in the system's colors, without its hidden digits.
+// collapsed width, ringed in the sidebar's background. In forced colors, a dot in
+// the system's colors, without its hidden digits.
 :where(.hsidebar[data-collapsed] .hsidebar-item) > .hsidebar-badge {
   position: absolute;
   inset-block-start: 4px;
@@ -461,7 +508,7 @@
   overflow: hidden;
 
   color: transparent;
-  border: 2px solid $color-background;
+  border: 2px solid var(--hsidebar-color-background);
 
   @media (forced-colors: active) {
     forced-color-adjust: none;
@@ -484,12 +531,15 @@
   }
 }
 
-// A link's tooltip, 12px past its row, so 4px clear of the edge, and at once:
-// in a row of icons, the name is what you're looking for. As specific as
+// A link's tooltip, --harmo-space-xs past its row, so 2px clear of the edge,
+// and at once, without a fade or grow, so two never overlap down the rail: in
+// a row of icons, the name is what you're looking for. As specific as
 // Tooltip's own rules, which come later, and more.
 .htooltip.hsidebar-tooltip {
-  --htooltip-gap: 12px;
+  --htooltip-gap: #{$space-xs};
   --htooltip-delay: 0ms;
+
+  transition: none;
 }
 
 // The tooltips open toward the page, which is on the left on a
@@ -551,7 +601,7 @@
 
   cursor: pointer;
 
-  transition: translate $duration-fast ease;
+  transition: translate $duration-fast $ease-out-cubic;
 
   &[hidden] {
     display: none;
@@ -578,7 +628,7 @@
 .hsidebar-toggle-head {
   translate: 4px 0;
 
-  transition: translate $duration-fast ease;
+  transition: translate $duration-fast $ease-out-cubic;
 }
 
 .hsidebar-toggle-start,
@@ -589,7 +639,7 @@
   transform-box: view-box;
   transform-origin: 12px 12px;
 
-  transition: transform $duration-fast ease;
+  transition: transform $duration-fast $ease-out-cubic;
 }
 
 // The svg is mirrored on a right-to-left page, so its own coordinates always

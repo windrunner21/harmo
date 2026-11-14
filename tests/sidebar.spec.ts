@@ -1,12 +1,13 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, release, settled, slowDown, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/sidebar.md says, on the Sidebar page: links in named
 // groups, with the current page marked; a group of links opens under its
 // row, each on its own; the toggle, just past the edge, collapses it to its
-// icons, each naming itself in a tooltip, and its groups then open beside
-// it, one at a time, by a click, Enter, or hover, until Escape, a press
-// elsewhere, focus moving on, or a pick.
+// icons, its width gliding with the page beside it, each icon
+// naming itself in a tooltip, and its groups then open beside it, one at a
+// time, by a click, Enter, or hover, until Escape, a press elsewhere, focus
+// moving on, or a pick.
 const parts = async (page: Page, id: string) => {
   const container = await example(page, id);
   const sidebar = container.locator(".hsidebar");
@@ -21,6 +22,52 @@ const parts = async (page: Page, id: string) => {
 };
 const isOpen = (details: Locator) => details.evaluate((node) => (node as HTMLDetailsElement).open);
 const width = (element: Locator) => element.evaluate((node) => node.getBoundingClientRect().width);
+
+// A stand-in for the page beside the sidebar, as an app's layout has it,
+// positioned, as many are, so it would paint over the sidebar's surface if
+// the sidebar weren't lifted above it.
+const pageBeside = async (sidebar: Locator) => {
+  await sidebar.evaluate((node) => {
+    const row = node.parentElement as HTMLElement;
+    row.style.display = "flex";
+    const beside = Object.assign(document.createElement("div"), { className: "test-page" });
+    beside.style.cssText = "position: relative; flex: 1; align-self: stretch;";
+    row.append(beside);
+  });
+  return sidebar.locator("xpath=following-sibling::div[@class='test-page']");
+};
+
+const token = (page: Page, name: string) =>
+  page.evaluate((name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim().replaceAll(" ", ""), name);
+// A transition's duration, delay, and curve for one property, as an element
+// has them now.
+const transitionOf = (element: Locator, property: string) =>
+  element.evaluate((node, property) => {
+    const style = getComputedStyle(node);
+    const index = style.transitionProperty.split(", ").indexOf(property);
+    const pick = (list: string) => {
+      const items = list.split(/,\s*(?![^()]*\))/);
+      return items[index % items.length]!.replaceAll(" ", "");
+    };
+    return index < 0 ? null : { duration: pick(style.transitionDuration), delay: pick(style.transitionDelay), easing: pick(style.transitionTimingFunction) };
+  }, property);
+
+// The sidebar's width transition, held halfway; returns the width there.
+const holdHalfway = (sidebar: Locator) =>
+  sidebar.evaluate((node) => {
+    const glide = node
+      .getAnimations()
+      // Chromium names a logical property's transition by its physical one.
+      .find((animation) => animation instanceof CSSTransition && ["inline-size", "width"].includes(animation.transitionProperty));
+    if (!glide) return null;
+    glide.pause();
+    glide.currentTime = Number(glide.effect!.getTiming().duration) / 2;
+    return node.getBoundingClientRect().width;
+  });
+const finish = (sidebar: Locator) =>
+  sidebar.evaluate((node) => {
+    for (const animation of node.getAnimations({ subtree: true })) animation.finish();
+  });
 
 onEachPlayground("sidebar", () => {
   test("links in named groups, the current page marked; a click moves it, as the example's router does", async ({ page }) => {
@@ -49,22 +96,25 @@ onEachPlayground("sidebar", () => {
     expect([await isOpen(campaigns), await isOpen(more)]).toEqual([false, true]);
   });
 
-  test("the toggle collapses it to its icons and back, saying which, and closes an open group", async ({ page }) => {
+  test("the toggle collapses it to its icons and back, named by what it does, and closes an open group", async ({ page }) => {
     const { sidebar, nav, toggle, group } = await parts(page, "sidebar-default");
     await expect(toggle).toHaveAccessibleName("Collapse");
-    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    // The name says what pressing it does; aria-expanded would say the state
+    // again, in the opposite word.
+    await expect(toggle).not.toHaveAttribute("aria-expanded");
+    await expect(toggle).not.toHaveAttribute("aria-controls");
     await group("Campaigns").locator("summary").click();
 
     await toggle.click();
     await expect(sidebar).toHaveAttribute("data-collapsed", "");
     await expect(toggle).toHaveAccessibleName("Expand");
-    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(toggle).not.toHaveAttribute("aria-expanded");
     expect(await isOpen(group("Campaigns"))).toBe(false);
     await settled(sidebar);
     expect(await width(sidebar)).toBeCloseTo(60, 0);
-    // The labels are hidden, but still name the links.
+    // The labels are faded out, but still name the links.
     const home = nav.getByRole("link", { name: "Home" });
-    await expect(home.locator(".hsidebar-label")).toHaveCSS("clip-path", "inset(50%)");
+    await expect(home.locator(".hsidebar-label")).toHaveCSS("opacity", "0");
     await expect(home).toBeVisible();
 
     await toggle.click();
@@ -107,7 +157,7 @@ onEachPlayground("sidebar", () => {
     expect(await tooltipOf(home).evaluate((node) => getComputedStyle(node).transitionDelay)).toMatch(/^0s(, 0s)*$/);
     await settled(tooltipOf(home));
     const [row, tip] = await boxes(home.locator("xpath=.."), tooltipOf(home));
-    expect(tip.x - (row.x + row.width)).toBeCloseTo(12, 0);
+    expect(tip.x - (row.x + row.width)).toBeCloseTo(10, 0);
     await page.mouse.move(0, 0);
     await home.focus();
     await page.keyboard.press("Tab");
@@ -120,6 +170,20 @@ onEachPlayground("sidebar", () => {
     await homeExpanded.hover();
     await page.waitForTimeout(400);
     await expect(expanded.tooltipOf(homeExpanded)).toBeHidden();
+  });
+
+  test("collapsed, a link's tooltip swaps in and out at once, without a fade, so two never overlap down the rail", async ({ page }) => {
+    const { nav, tooltipOf } = await parts(page, "sidebar-collapsed");
+    const home = nav.getByRole("link", { name: "Home" });
+    const analytics = nav.getByRole("link", { name: "Analytics" });
+    // A fade that ran would take 100 seconds.
+    await slowDown(tooltipOf(home));
+    await slowDown(tooltipOf(analytics));
+    await home.hover();
+    expect(await tooltipOf(home).evaluate((node) => Number(getComputedStyle(node).opacity))).toBe(1);
+    await analytics.hover();
+    expect(await tooltipOf(analytics).evaluate((node) => Number(getComputedStyle(node).opacity))).toBe(1);
+    expect(await tooltipOf(home).evaluate((node) => getComputedStyle(node).visibility)).toBe("hidden");
   });
 
   test("a count is in the current page's color; collapsed, it's a dot on its icon", async ({ page }) => {
@@ -151,15 +215,15 @@ onEachPlayground("sidebar", () => {
     const runs = nav.getByRole("link", { name: "Runs" });
     await expect(runs).toBeVisible();
     await expect(campaigns.locator(".hsidebar-sub-heading")).toHaveText("Campaigns");
-    // The panel, 12px past the icon's row, so 4px clear of the edge, as its
-    // tooltip is.
+    // The panel, --harmo-space-xs past the icon's row, so 2px clear of the
+    // edge, as its tooltip is.
     const panel = await campaigns.evaluate((node) => ({
       row: (node.parentElement as HTMLElement).getBoundingClientRect().right,
       start: (node.querySelector(".hsidebar-sub-list") as HTMLElement).getBoundingClientRect().left,
     }));
-    expect(panel.start - panel.row).toBeCloseTo(12, 0);
+    expect(panel.start - panel.row).toBeCloseTo(10, 0);
     const [rail] = await boxes(sidebar);
-    expect(panel.start - (rail.x + rail.width)).toBeCloseTo(4, 0);
+    expect(panel.start - (rail.x + rail.width)).toBeCloseTo(2, 0);
 
     await page.keyboard.press("Tab");
     await expect(runs).toBeFocused();
@@ -319,36 +383,114 @@ onEachPlayground("sidebar", () => {
     await expect(sidebar.locator(".hsidebar-toggle")).toHaveCount(0);
     await expect(sidebar).toHaveCSS("padding-left", "0px");
     expect(await sidebar.evaluate((node) => getComputedStyle(node, "::after").display)).toBe("none");
-    const [body, box] = await boxes(dialog.locator(".hdrawer-body"), sidebar);
-    expect(box.width).toBeCloseTo(body.width - 40, 0);
+    const drawerBody = dialog.locator(".hdrawer-body");
+    const [body, box] = await boxes(drawerBody, sidebar);
+    const padding = await drawerBody.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+    });
+    expect(box.width).toBeCloseTo(body.width - padding, 0);
   });
 
   test("with reduced motion, it collapses at once", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const { sidebar, toggle } = await parts(page, "sidebar-default");
     await toggle.click();
+    expect(await sidebar.evaluate((node) => node.getAnimations().length)).toBe(0);
     expect(await width(sidebar)).toBeCloseTo(60, 0);
   });
 
-  test("collapsing, the icons and a count's dot keep to the start of their rows while the width narrows", async ({ page }) => {
-    const { sidebar, nav, toggle } = await parts(page, "sidebar-default");
-    const home = nav.getByRole("link", { name: "Home" });
-    const messages = nav.getByRole("link", { name: "Messages 3 unread" });
-    // The sidebar's own width barely moves, so its rows stay wide.
-    await slowDown(sidebar);
+  test("collapsing, its width glides in 200ms on the ease-in-out curve, and the page beside it moves with it", async ({ page }) => {
+    const { sidebar, toggle } = await parts(page, "sidebar-default");
+    const curve = await token(page, "--harmo-ease-in-out-cubic");
+    expect(await transitionOf(sidebar, "inline-size")).toEqual({ duration: "0.2s", delay: "0s", easing: curve });
+    const beside = await pageBeside(sidebar);
+    const open = await width(sidebar);
     await toggle.click();
-    await expect(sidebar).toHaveAttribute("data-collapsed", "");
-    await settled(home);
-    const [rail, icon, dot] = await boxes(sidebar, home.locator(".hicon"), messages.locator(".hsidebar-badge"));
-    expect(icon.x - rail.x).toBeGreaterThan(19);
-    expect(icon.x - rail.x).toBeLessThan(32);
-    expect(dot.x - rail.x).toBeLessThan(48);
-    await release(sidebar);
+    const halfway = await holdHalfway(sidebar);
+    expect(halfway).not.toBeNull();
+    expect(halfway!).toBeLessThan(open - 20);
+    expect(halfway!).toBeGreaterThan(60 + 20);
+    const [rail, next] = await boxes(sidebar, beside);
+    expect(next!.x).toBeCloseTo(rail!.x + rail!.width, 0);
+    await finish(sidebar);
+    expect(await width(sidebar)).toBeCloseTo(60, 0);
+  });
 
-    // At rest, each icon is in the middle of the collapsed width.
-    await settled(sidebar);
-    const [collapsed, resting] = await boxes(sidebar, home.locator(".hicon"));
-    expect(resting.x - collapsed.x + resting.width / 2).toBeCloseTo(30, 0);
+  test("its labels fade out quickly as it narrows, and back in as it finishes widening; faded, they still name the links", async ({ page }) => {
+    const { sidebar, toggle, nav } = await parts(page, "sidebar-default");
+    const label = nav.locator(".hsidebar-item > .hsidebar-label").first();
+    expect(await transitionOf(label, "opacity")).toMatchObject({ duration: "0.15s", delay: "0.1s" });
+    await toggle.click();
+    expect(await transitionOf(label, "opacity")).toMatchObject({ duration: "0.1s", delay: "0s" });
+    await expect(label).toHaveCSS("opacity", "0");
+    await finish(sidebar);
+    await expect(nav.getByRole("link", { name: "Home" })).toHaveCount(1);
+  });
+
+  test("its icons stay where they were as it collapses and expands", async ({ page }) => {
+    const { sidebar, toggle, nav } = await parts(page, "sidebar-default");
+    const icon = nav.locator(".hsidebar-item > .hicon").first();
+    const [before] = await boxes(icon);
+    await toggle.click();
+    await finish(sidebar);
+    const [after] = await boxes(icon);
+    expect(Math.abs(after!.x - before!.x)).toBeLessThanOrEqual(4.5);
+  });
+
+  test("changed midway, it turns around from where it had got to, without a jump", async ({ page }) => {
+    const { sidebar, toggle } = await parts(page, "sidebar-default");
+    await toggle.click();
+    const halfway = await holdHalfway(sidebar);
+    expect(halfway).not.toBeNull();
+    // Let go, and toggled back at the same moment, two frames on it's barely
+    // moved from there.
+    const turned = await sidebar.evaluate(async (node) => {
+      for (const animation of node.getAnimations()) animation.play();
+      (node.querySelector(".hsidebar-toggle-button") as HTMLElement).click();
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      return node.getBoundingClientRect().width;
+    });
+    expect(Math.abs(turned - halfway!)).toBeLessThan(20);
+  });
+
+  test("collapsed, a group's label takes no room but still names its list; its room moves with the width, and its text fades as the links' labels do", async ({ page }) => {
+    const { sidebar, nav, toggle } = await parts(page, "sidebar-default");
+    const label = nav.locator(".hsidebar-group-label").first();
+    await expect(label).toHaveCSS("transition-property", "block-size, margin-block-end, opacity");
+    await expect(label).toHaveCSS("transition-duration", "0.2s, 0.2s, 0.15s");
+    await expect(label).toHaveCSS("transition-delay", "0s, 0s, 0.1s");
+    await toggle.click();
+    await finish(sidebar);
+    await expect(label).toHaveCSS("transition-duration", "0.2s, 0.2s, 0.1s");
+    await expect(label).toHaveCSS("height", "0px");
+    await expect(label).toHaveCSS("margin-bottom", "0px");
+    await expect(label).toHaveCSS("opacity", "0");
+    await expect(nav.getByRole("list", { name: "Tools" })).toBeVisible();
+  });
+
+  test("a link's icon is 10px before its label, groups are 26px apart, and a group's label is 6px above its links", async ({ page }) => {
+    const { nav } = await parts(page, "sidebar-default");
+    const home = nav.getByRole("link", { name: "Home" });
+    const [icon, label] = await boxes(home.locator(".hicon"), home.locator(".hsidebar-label"));
+    expect(label.x - (icon.x + icon.width)).toBeCloseTo(10, 0);
+    const groups = nav.locator(".hsidebar-group");
+    const [first, second, tools, list] = await boxes(
+      groups.nth(0),
+      groups.nth(1),
+      groups.nth(1).locator(".hsidebar-group-label"),
+      groups.nth(1).locator(".hsidebar-list"),
+    );
+    expect(second.y - (first.y + first.height)).toBeCloseTo(26, 0);
+    expect(list.y - (tools.y + tools.height)).toBeCloseTo(6, 0);
+  });
+
+  test("its background takes --hsidebar-color-background, and a collapsed count's ring with it", async ({ page }) => {
+    const { sidebar, nav } = await parts(page, "sidebar-collapsed");
+    await sidebar.evaluate((node) => (node as HTMLElement).style.setProperty("--hsidebar-color-background", "rgb(200, 0, 0)"));
+    await expect(sidebar).toHaveCSS("background-color", "rgb(200, 0, 0)");
+    await expect(nav.getByRole("link", { name: "Messages 3 unread" }).locator(".hsidebar-badge")).toHaveCSS("border-top-color", "rgb(200, 0, 0)");
   });
 
   test("icons follow the text size", async ({ page }) => {
