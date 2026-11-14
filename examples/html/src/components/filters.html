@@ -433,7 +433,8 @@
 
 <play-example title="Right to left" layout="wide" dir="rtl" lang="ar">
   <play-note>
-    The row reads from the right.
+    The row reads from the right, and the count behind the chip is written in
+    the page's own digits, as your app writes it.
   </play-note>
   <div class="hfilters" role="group" aria-label="تصفية المهام">
     <button class="hfilter-chip" type="button" aria-haspopup="listbox" popovertarget="rtl-1" aria-expanded="false" style="anchor-name:--rtl-1">
@@ -453,7 +454,7 @@
     <button class="hfilter-chip" type="button" aria-haspopup="dialog" popovertarget="rtl-2" aria-expanded="false" style="anchor-name:--rtl-2">
       <play-icon name="add-circle" class="hicon"></play-icon>
       <span class="hfilter-chip-label">مرشحات أخرى</span>
-      <span class="hfilters-count" hidden>0</span>
+      <span class="hfilters-count" hidden data-example-locale="ar-EG">٠</span>
     </button>
     <div class="hpopup hfilters-more" id="rtl-2" role="dialog" aria-label="مرشحات أخرى" popover style="position-anchor:--rtl-2">
       <button class="hfilter-chip" type="button" aria-haspopup="listbox" popovertarget="rtl-3" aria-expanded="false" style="anchor-name:--rtl-3">

@@ -10,8 +10,8 @@ timestamps, the shape a URL or an API holds, so a link can restore the filter.
 | --- | --- |
 | CSS | `date-filter.css`, `filter-chip.css`, `popup.css`, `select.css`, `listbox.css`, `expand-chevron.css`, `input.css`, `date-picker.css`, `calendar.css`, `button.css`, `chevron.css` |
 | Element | `<button class="hfilter-chip" aria-haspopup="dialog">`, opening `<div class="hpopup hdate-filter" popover role="dialog">` |
-| Parts | In the panel, in order: a [Select](select.md) of conditions; `.hdate-filter-fields` with `.hdate-filter-amount` and a Select of units; `.hdate-filter-fields` with a [Date Picker](date-picker.md), `.hdate-filter-and`, and a second Date Picker; `.hdate-filter-actions` with Clear and Apply as `.hbutton`s |
-| Required | An `aria-label` on the panel and on each field, in the page's language. `popovertarget` and anchor names, as each popup needs. `hidden` on what the condition doesn't need |
+| Parts | In the panel, in order: a [Select](select.md) of conditions; `.hdate-filter-fields` with `.hdate-filter-amount` and a Select of units; `.hdate-filter-fields` with a [Date Picker](date-picker.md), `.hdate-filter-and`, and a second Date Picker; optionally `<p class="hdate-filter-message" role="status">`; `.hdate-filter-actions` with Clear and Apply as `.hbutton`s |
+| Required | An `aria-label` on the panel and on each field, in the page's language. `popovertarget` and anchor names, as each popup needs. `hidden` on what the condition doesn't need. With a message, Apply's `aria-describedby` points at it |
 | Unique | The `id`s of the popups, lists, options, and Calendar titles, and the anchor names |
 | Script | Required: for everything but opening and closing, which are the browser's, from `popover`. See What a script does |
 
@@ -321,16 +321,21 @@ The fields for every condition are in the page, with those not needed hidden:
       </div>
     </div>
   </div>
+  <p class="hdate-filter-message" id="due-message" role="status"></p>
   <div class="hdate-filter-actions">
     <button class="hbutton" data-variant="tertiary" type="button" hidden>
       <span class="hbutton-label">Clear</span>
     </button>
-    <button class="hbutton" type="button" aria-disabled="true">
+    <button class="hbutton" type="button" aria-disabled="true" aria-describedby="due-message">
       <span class="hbutton-label">Apply</span>
     </button>
   </div>
 </div>
 ```
+
+The message is empty until a date can't be used, and is in the page from the
+start, so a screen reader reads its text as it appears. Leave it out, and Apply's
+`aria-describedby`, if your app has no words for it.
 
 ## Options
 
@@ -339,18 +344,23 @@ The fields for every condition are in the page, with those not needed hidden:
 | `hidden` on `.hdate-filter-fields`, `.hdate-filter-and`, or the second `.hdate-picker` | Fields the condition doesn't need |
 | `hidden` on Clear | Nothing is applied to clear |
 | `aria-disabled="true"` on Apply | The fields aren't complete |
+| Text in `.hdate-filter-message` | Why a date can't be used: one that isn't a date, or under "is between", two out of order |
 | `.hfilter-chip-values` in the chip | The range applied: one `.hfilter-chip-value`, as a [Filter Chip](filter-chip.md) shows |
 
 ## Appearance and states
 
 - The chip is a Filter Chip. The panel is a Popup at least 200px wide, or as wide
-  as the chip, with 8px of padding and 8px between its rows. Its width follows
-  the fields of the condition.
+  as the chip, with 10px (`--harmo-space-xs`) of padding and between its rows, as
+  [Filters](filters.md)' panel and a [Filter Chip](filter-chip.md)'s own are.
+  Its width follows the fields of the condition. Fields in a row are 10px apart.
 - The amount is 4rem wide and the unit takes the rest. Two dates are side by side
   at 9.75rem each with the word between them, and wrap on a narrow screen, where
   each takes the whole row.
 - The word between the dates is 14px in `--harmo-color-text-secondary`.
-- The buttons are 8px further down, and share the row equally.
+- The message is 12px in `--harmo-color-danger`, on 1rem lines, and takes no room
+  while it's empty.
+- The buttons are 6px further down, so 16px below what's above them, 10px apart,
+  and share the row equally.
 - Apply looks as a Button with `aria-disabled` does until the fields are complete.
 - Right-to-left, the panel and its calendars read from the right.
 
@@ -366,6 +376,12 @@ The fields for every condition are in the page, with those not needed hidden:
 - Apply uses `aria-disabled` rather than `disabled`, so a date typed and Apply
   pressed in one click both count: the date settles as the field loses focus,
   and the press lands on a button that is by then ready.
+- Why it can't be used yet is said in text: a date that isn't one, or two out of
+  order, shows the app's message under the fields, as a status, which is also
+  Apply's description. The field itself has `aria-invalid`.
+- Enter applies from the amount, and from a date once the fields are complete.
+  Under "is between", Enter in the start date only settles it, even with an end
+  date there, so it applies from the end date.
 - A list or a Calendar opens over the panel: Escape closes it first, then the
   panel, and a press inside it leaves the panel open.
 
@@ -375,9 +391,10 @@ The fields for every condition are in the page, with those not needed hidden:
 | --- | --- |
 | `hidden` on the fields | The condition changes |
 | `aria-disabled` on Apply | The fields change. The amount must be a whole number above zero; two dates must be in order |
+| The text of `.hdate-filter-message`: your app's words for a date out of order under "is between", or else for one that isn't a date, and nothing once they're fixed | A date settles, or the condition changes |
 | The days the dates can be: 0100-01-03 to 9999-12-28, whose start and end read back as dates in every time zone. Under "is between", the first date's latest day is the second, and the second's earliest is the first | The panel opens, and the dates change |
 | Fill the fields from the value applied, with the condition worked out from it | The panel opens |
-| Write the value, show it in the chip, close the panel, focus the chip | Apply, or Enter in the amount |
+| Write the value, show it in the chip, close the panel, focus the chip. With nothing changed since the panel opened, keep the value as it is | Apply, or Enter in the amount, or in a date once the fields are complete (under "is between", the end date) |
 | Empty the value, the chip, and the fields, and focus the condition. The panel stays open | Clear |
 | Close the panel | The chip is disabled while it's open |
 
@@ -399,6 +416,11 @@ The value says when, not how it was chosen, so the panel works the condition out
 from it: only `gte` is "is after", only `lte` is "is before", one whole day is
 "is equal to", and anything else, a number of days back included, is "is
 between". The chip shows a range of days, or the times where it's part of one.
+Since the fields hold only days, Apply with nothing changed keeps the value as it
+was, so an exact range from a link, or the last 30 minutes, isn't widened to
+whole days. For a date with only one side, the chip's text is your app's words
+around the date, such as "is after Nov 18, 2026"; a language that puts the word
+after the date writes it there.
 
 The playground's example script, `examples/html/src/scripts/date-filter.js`,
 does all of this.
@@ -419,7 +441,7 @@ does. Other props go to the chip; with `disabled`, it renders the chip alone.
 
 | `labels` | What it names |
 | --- | --- |
-| `conditions` | The five conditions: `last`, `equal`, `between`, `after`, `before`. `after` and `before` also go in front of the date in the chip |
+| `conditions` | The five conditions: `last`, `equal`, `between`, `after`, `before`. `after` and `before` also go in front of the date in the chip, unless `afterDate` and `beforeDate` say otherwise |
 | `units` | `minutes`, `hours`, `days`, `weeks`, `months` |
 | `condition`, `amount`, `unit` | The fields' names |
 | `date`, `startDate`, `endDate` | The date field's name, and the two dates' under "is between" |
@@ -427,6 +449,9 @@ does. Other props go to the chip; with `disabled`, it renders the chip alone.
 | `datePlaceholder` | Optional: what an empty date field shows, such as "mm/dd/yyyy" |
 | `calendar`, `previousMonth`, `nextMonth` | A Date Picker's button, and its Calendar's |
 | `apply`, `clear` | The buttons |
+| `afterDate`, `beforeDate` | Optional: the chip's text for a date with only one side, given the date as the locale writes it, for a language that puts the word after it, such as ``(date) => `${date} sonrası` ``. Without them, the condition's word goes in front |
+| `invalidDate` | Optional: the message for a date that isn't one, such as "Enter a real date" |
+| `endBeforeStart` | Optional: the message for two dates out of order, such as "The end date can't be before the start date". Without it, `invalidDate` shows. With neither, there's no message |
 
 Rendered on a server, the chip shows no dates until the page is ready in the
 browser, since the day a timestamp falls on is the viewer's.
@@ -476,5 +501,7 @@ With another router, the same: the value from its URL, and a replace on a change
 
 ## Tokens
 
-`--harmo-font-size-sm`, `--harmo-font-line-height`,
-`--harmo-color-text-secondary`, and those of its parts.
+`--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-2xs`,
+`--harmo-font-line-height`, `--harmo-color-text-secondary`,
+`--harmo-color-danger`, `--harmo-space-2xs`, `--harmo-space-xs`, and those of
+its parts.

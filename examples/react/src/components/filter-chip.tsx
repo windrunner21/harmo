@@ -24,7 +24,7 @@ export const examples = {
   ),
 
   "One value": () => (
-    <FilterChip label="Channel" defaultValue="whatsapp">
+    <FilterChip label="Channel" defaultValue="whatsapp" clearLabel="Clear filter">
       <Option value="whatsapp">WhatsApp</Option>
       <Option value="telegram">Telegram</Option>
       <Option value="email">Email</Option>
@@ -96,7 +96,7 @@ export const examples = {
           <FilterChip label="Name contains" values={text ? [text] : undefined} />
         }
       >
-        <div style={{ display: "grid", gap: 16, padding: 12 }}>
+        <div className="hfilter-chip-panel">
           <Field label="Name contains">
             <Input
               ref={input}

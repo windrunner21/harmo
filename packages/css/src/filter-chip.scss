@@ -6,12 +6,13 @@
 .hfilter-chip {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: $space-2xs;
 
   box-sizing: border-box;
   max-inline-size: 100%;
   margin: 0;
-  padding: 2px 8px;
+  // The 2px above and below make it 27px tall.
+  padding: 2px $space-2xs;
 
   font-family: $font-family;
   font-size: $font-size-sm;
@@ -61,18 +62,26 @@
   }
 }
 
+// Once the values have given way, a label too long for the room ends with an
+// ellipsis; all of it stays in the chip's name.
 .hfilter-chip-label {
-  flex-shrink: 0;
+  min-inline-size: 0;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
 }
 
-// Left out, or left empty, until something is chosen.
+// Left out, or left empty, until something is chosen. Far readier to shrink
+// than the label, so the values give way first.
 .hfilter-chip-values {
   display: flex;
+  flex-shrink: 1000000;
   align-items: center;
-  gap: 4px;
+  gap: $space-2xs;
 
   min-inline-size: 0;
-  padding-inline-start: 4px;
+  padding-inline-start: $space-2xs;
+  overflow: hidden;
 
   border-inline-start: 1px solid $color-border;
 
@@ -111,4 +120,22 @@
       background-color: $color-border;
     }
   }
+}
+
+// A panel of a chip's own, such as a text filter's, since the Popup has no
+// padding: its content in a column.
+.hfilter-chip-panel {
+  display: grid;
+  gap: $space-xs;
+
+  padding: $space-xs;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A button under the fields sits 16px below them, as a Date Filter's do.
+:where(.hfilter-chip-panel) > .hbutton {
+  margin-block-start: $space-2xs;
 }

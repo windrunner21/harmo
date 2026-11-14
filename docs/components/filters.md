@@ -12,7 +12,7 @@ URL.
 | CSS | `filters.css`, `filter-chip.css`, `popup.css`, and those of the filters in it |
 | Element | `<div class="hfilters" role="group">` |
 | Parts | Filter Chips, with their popups. With filters behind a chip: `<button class="hfilter-chip" aria-haspopup="dialog">` holding `.hfilters-count`, opening `<div class="hpopup hfilters-more" popover role="dialog">`, which holds them. Last, `<button class="hfilters-reset" type="button">` |
-| Required | An `aria-label` on the row and on the panel, in the page's language. `popovertarget` and anchor names, as each popup needs |
+| Required | A name on the row, an `aria-label` in the page's language or an `aria-labelledby` pointing at a heading, and an `aria-label` on the panel. `popovertarget` and anchor names, as each popup needs |
 | Unique | The `id`s of the popups, lists, and options, and the anchor names |
 | Script | Required: for the count and Reset. Opening and closing are the browser's, from `popover`. See What a script does |
 
@@ -97,17 +97,20 @@ Without filters behind a chip, leave out that chip and its panel.
 | Hook | Effect |
 | --- | --- |
 | `hidden` on `.hfilters-count` | None of the filters behind the chip are in force |
+| The text of `.hfilters-count` | How many are, written as your app writes numbers, such as `3` or `٣` |
 | `hidden` on `.hfilters-reset` | There's nothing to reset |
 
 ## Appearance and states
 
-- Filters in a row 8px apart, which wraps when they don't fit.
+- Filters in a row 10px (`--harmo-space-xs`) apart, which wraps when they don't
+  fit.
 - The chip that opens the rest is a Filter Chip. Its count is 11px in
   `--harmo-color-text-secondary` on `--harmo-color-background-hover`, or
   `--harmo-color-border` while the chip is hovered or open, fully rounded and at
   least 18px wide, with digits of one width.
 - The panel is a Popup as wide as its widest filter, and never narrower than the
-  chip, with 12px of padding and its filters in a column 8px apart. It grows as a
+  chip, with 10px of padding and its filters in a column 10px apart, as a
+  [Date Filter](date-filter.md)'s panel and a chip's own are. It grows as a
   filter gains values.
 - Reset is 14px and medium weight in `--harmo-color-primary`, with no background,
   and 25px tall. It darkens on hover and press, and long text wraps.
@@ -133,7 +136,7 @@ of your own that draws the same parts all count, with nothing to tell the row.
 
 | Change | When |
 | --- | --- |
-| The text and `hidden` of `.hfilters-count` | A filter behind the chip gains or loses its value |
+| The text and `hidden` of `.hfilters-count`. The text is your app's: the number as it is, or in the page's own digits | A filter behind the chip gains or loses its value |
 | `hidden` on Reset | Any filter gains or loses its value |
 | Move focus to the panel's first filter that can take it | The panel opens |
 | Empty every filter (in React, a filter with a `defaultValue` goes back to it), close anything left open, and move focus to the first that can take it | Reset is pressed |
@@ -149,12 +152,13 @@ Other props go to the row.
 
 | Prop | Effect |
 | --- | --- |
-| `aria-label` | Required: the row's name, such as "Filter tasks" |
+| `aria-label` or `aria-labelledby` | Required: the row's name, such as "Filter tasks", or the id of a heading that names it |
 | `visibleCount` | How many filters stay in the row; the rest go behind a chip. Without it, all stay |
 | `moreLabel` | Required with `visibleCount`: the chip's text, and the panel's name |
 | `resetLabel` | Required: Reset's text |
 | `onReset` | Called when Reset is pressed. Clear what your app holds here |
 | `showReset` | Shows Reset with no filter in force, for filters outside the row, such as a search field |
+| `formatCount` | Writes the count behind the chip, such as ``(count) => count.toLocaleString("ar-EG")``. Without it, the number shows as it is |
 
 The row holds no filter state. Filters given a `defaultValue` go back to it on
 Reset. Those given a `value` show what your app sets in `onReset`. A filter that
@@ -194,4 +198,4 @@ there from the start.
 `--harmo-color-border`, `--harmo-color-primary`, `--harmo-color-primary-hover`,
 `--harmo-color-primary-active`, `--harmo-border-radius-full`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
-`--harmo-duration-fast`, and those of the filters in it.
+`--harmo-duration-fast`, `--harmo-space-xs`, and those of the filters in it.

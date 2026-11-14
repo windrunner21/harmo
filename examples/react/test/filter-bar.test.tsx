@@ -39,6 +39,18 @@ describe("FilterBar", () => {
     expect(markup).toContain('type="button"');
   });
 
+  test("a heading can name it, with aria-labelledby in place of aria-label", () => {
+    const markup = renderToStaticMarkup(
+      <FilterBar aria-labelledby="status-heading">
+        <FilterBarItem href="?" label="All" count={3} />
+      </FilterBar>,
+    );
+    expect(markup).toContain('<nav aria-labelledby="status-heading" class="hfilter-bar">');
+    // @ts-expect-error: a bar needs a name.
+    const unnamed = <FilterBar />;
+    expect(unnamed).toBeDefined();
+  });
+
   test("a link takes a link's attributes, and a count of 0 shows", () => {
     const markup = renderToStaticMarkup(
       <FilterBar aria-label="Status">

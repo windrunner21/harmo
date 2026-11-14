@@ -133,32 +133,64 @@ fill="currentColor"
 </div>
 ```
 
+### A long table whose headers stay in view
+
+`.htable-scroll` is what scrolls, so a long table's headers stay in view only when
+it has a height of its own. Give it one, and keep the footer under the table, since
+the scroll area holds the rows:
+
+```css
+.tasks .htable-scroll {
+  max-block-size: 24rem;
+}
+```
+
+```html
+<div class="htable-container tasks" data-footer="static">
+  <div class="htable-scroll">
+    <table class="htable" aria-label="Tasks">…</table>
+  </div>
+  <div class="htable-footer">…</div>
+</div>
+```
+
+In React, `<DataTable className="tasks" stickyFooter={false} …>`. While the rows
+overflow the height, the scroll area is a named region that takes focus, as it is
+for a table too wide.
+
 ## Options
 
 | Hook | Effect |
 | --- | --- |
-| `.htable-scroll` | Scrolls a table too wide for its place, in its own space. While it overflows, add `tabindex="0"`, `role="region"`, and the table's `aria-label` or `aria-labelledby` |
+| `.htable-scroll` | Scrolls a table too wide for its place, or given a height, too long, in its own space. While it overflows, add `tabindex="0"`, `role="region"`, and the table's `aria-label` or `aria-labelledby` |
 | `.htable-row-link` | The row is a link or a button all the way across, with a hover background. A `.htable-select` cell stays above it, so a press beside the checkbox doesn't open the row |
 | `data-emphasis` on a cell | The cell stands out, for a column that matters most, such as a name |
 | `.htable-truncate` | A span in a cell: ends with an ellipsis past the smaller of 360px and 42% of the window's width |
 | `.htable-footer` | The range, rows per page, the page, and Previous and Next. Stays at the bottom of the window while the table runs past it |
 | `data-footer="static"` on `.htable-container` | The footer stays under the table instead |
+| `--htable-color-background` on `.htable-container`, or anything around it | What the headers and footer paint behind them, so the rows they cover as they stick don't show through. By default the page's background, `--harmo-color-background`; in a tinted Card, the card's, and in a raised Card, the page's again. A ghost Card leaves what's around it |
 
 ## Appearance and states
 
 - The columns fit their content and the last takes what's left. Text stays on one
   line: a table too wide for its place scrolls.
-- Headers are 12px and medium weight in `--harmo-color-text`, with 16px either side
-  and 12px under them. In a `.htable-scroll` with a height, they stay in view.
+- Headers are 12px and medium weight in `--harmo-color-text`, with 16px
+  (`--harmo-space-sm`) either side and 10px (`--harmo-space-xs`) under them. They
+  stick to the top of `.htable-scroll`, not the window: given a height, as in
+  [A long table whose headers stay in view](#a-long-table-whose-headers-stay-in-view),
+  it keeps them in view, and without one they scroll away with the page.
 - Cells are 14px in `--harmo-color-text-secondary`, with 12px by 16px of padding and
-  a 1px `--harmo-color-border` line above. A cell with `data-emphasis` is medium
-  weight in `--harmo-color-text`.
+  a 1px `--harmo-color-border` line above. The 12px set the rows' height. A cell
+  with `data-emphasis` is medium weight in `--harmo-color-text`.
 - A row that goes somewhere has `--harmo-color-background-hover` when hovered, and
   the focus ring around the whole row. Anything else in it that can be used, such
   as a checkbox or a link, sits above that and works on its own, and so does the
   whole `.htable-select` cell, so a press just beside a checkbox does nothing.
-- The footer has 12px of padding above and below, a line above, and its background.
-  Its two sides are at least 48px apart, and wrap on a narrow screen.
+- The footer has 10px of padding above and below, and 16px at its sides, so its
+  text lines up with the cells' text. It has a line above, and paints
+  `--htable-color-background`. Its two sides, and its controls, are at least 42px
+  (`--harmo-space-lg`) apart, and wrap on a narrow screen, 10px apart. Rows per
+  page is 6px (`--harmo-space-2xs`) from its Select.
 - Right-to-left, the first column is on the right.
 
 ## Accessibility
@@ -186,7 +218,7 @@ Nothing, for a table on its own that fits its place. Your app:
 
 | Change | When |
 | --- | --- |
-| `tabindex="0"`, `role="region"`, and the table's `aria-label` or `aria-labelledby` on `.htable-scroll` | The table overflows it. They come off once it fits |
+| `tabindex="0"`, `role="region"`, and the table's `aria-label` or `aria-labelledby` on `.htable-scroll` | The table overflows it, across or, given a height, down. They come off once it fits |
 | `checked`, and `indeterminate` on the checkbox in the header | Rows are selected |
 | Leaves out, or sets `hidden` on, a column's cells | Columns are chosen |
 | The rows, the range, and the page | The page or rows per page changes |
@@ -325,5 +357,7 @@ const visibility = useColumnVisibility({
 `--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-size-2xs`,
 `--harmo-font-line-height`, `--harmo-font-weight-normal`, `--harmo-font-weight-medium`,
 `--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
-`--harmo-color-background`, `--harmo-color-background-hover`, `--harmo-focus-outline`,
-`--harmo-duration-fast`.
+`--harmo-color-background`, `--harmo-color-background-hover`,
+`--harmo-color-background-secondary`, `--harmo-focus-outline`,
+`--harmo-duration-fast`, `--harmo-space-2xs`, `--harmo-space-xs`,
+`--harmo-space-sm`, `--harmo-space-lg`; and its own `--htable-color-background`.

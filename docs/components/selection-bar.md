@@ -13,7 +13,7 @@ deselect, then the actions. It often takes the place of a
 | Parts | `<span class="hselection-bar-count" role="status">`, `<button class="hselection-bar-deselect" type="button">`, then the actions |
 | Required | The count and the button's text, in the page's language |
 | Unique | None |
-| Script | Yours: to keep the count and to deselect. See What a script does |
+| Script | Yours: to show it, keep the count, and deselect. See What a script does |
 
 ## Markup
 
@@ -51,18 +51,29 @@ Button with `aria-disabled`:
 
 ## Options
 
-None of its own: small [Buttons](button.md) suit the actions, with `destructive`
-on one that deletes and `loading` while one runs.
+| Attribute | On | Effect |
+| --- | --- | --- |
+| `data-new` | `.hselection-bar` | It settles in as it's shown, such as when a selection begins. Leave it off a bar there as the page loads |
+
+Small [Buttons](button.md) suit the actions, with `destructive` on one that
+deletes and `loading` while one runs.
 
 ## Appearance and states
 
-- In a row, vertically centered, 8px apart, which wraps when it doesn't fit.
+- In a row, vertically centered, 10px (`--harmo-space-xs`) apart, which wraps
+  when it doesn't fit.
 - The count is 14px in `--harmo-color-text-secondary`, at least 28px tall, with
-  16px after it and then a 1px `--harmo-color-border` divider on its end. Long
-  text wraps.
-- Deselect is 14px, underlined, in `--harmo-color-text-secondary`, with 2px 8px
-  of padding, and 25px tall. Hovered, it's `--harmo-color-text`. Focused, the
-  standard ring. Long text wraps.
+  16px (`--harmo-space-sm`) after it and then a 1px `--harmo-color-border`
+  divider on its end. Long text wraps.
+- Deselect is 14px, underlined, in `--harmo-color-text-secondary`, with 2px 6px
+  of padding, so its text is 16px from the divider too, and 25px tall. Hovered
+  or pressed, it's `--harmo-color-text`. Focused, the standard ring. Long text
+  wraps.
+- With `data-new`, as it appears, such as when it takes a toolbar's controls'
+  place, it fades in and settles 4px down over 200ms (`--harmo-duration-normal`,
+  `--harmo-ease-out-cubic`), and it goes at once. A new count doesn't play it
+  again, as the bar stays. With reduced motion, it only fades. A bar that's
+  there as the page loads, without `data-new`, doesn't play it.
 - Right-to-left, the count starts on the right, with its divider on its left.
 
 ## Accessibility
@@ -81,6 +92,7 @@ on one that deletes and `loading` while one runs.
 
 | Change | When |
 | --- | --- |
+| Add the bar with `data-new`, in place of what it replaces | A selection begins |
 | The count's text | The selection changes |
 | Remove the bar, and move focus | Deselect is pressed, or the selection is emptied |
 
@@ -90,7 +102,10 @@ does this for its example.
 ## React
 
 `<SelectionBar>` renders the count and Deselect, then its children. Other props
-are the element's attributes.
+are the element's attributes. It sets `data-new` when it mounts in the browser,
+so it settles in as your app shows it, but not when it's rendered on the server
+and hydrated. In an app rendered only in the browser, a bar shown as the page
+first renders plays it once; pass `data-new={undefined}` to leave it out.
 
 | Prop | Effect |
 | --- | --- |
@@ -128,4 +143,6 @@ are the element's attributes.
 
 `--harmo-font-family`, `--harmo-font-size-sm`, `--harmo-font-line-height`,
 `--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
-`--harmo-focus-outline`, `--harmo-focus-outline-offset`, `--harmo-duration-fast`.
+`--harmo-focus-outline`, `--harmo-focus-outline-offset`, `--harmo-duration-fast`,
+`--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-space-2xs`,
+`--harmo-space-xs`, `--harmo-space-sm`.

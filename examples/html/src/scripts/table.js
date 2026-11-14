@@ -1,15 +1,17 @@
 // Example only: what the React DataTable does, and what your app does around
-// it. Ticking rows swaps the toolbar's controls for a Selection Bar, and the
-// checkbox in the header says whether all of them, or some, are ticked; when
-// the selection empties and focus has nowhere to be, it goes to that checkbox.
-// Edit columns hides and shows columns, and remembers them. Pages are drawn as
-// your app would from what it fetched.
+// it. Ticking rows swaps the toolbar's controls for a Selection Bar, marked
+// data-new so it settles in, and the checkbox in the header says whether all
+// of them, or some, are ticked; when the selection empties and focus has
+// nowhere to be, it goes to that checkbox. Edit columns hides and shows
+// columns, and remembers them. Pages are drawn as your app would from what it
+// fetched.
 {
-  // While a table overflows, its scroll area can be reached from the keyboard.
+  // While a table overflows, across or, given a height, down, its scroll area
+  // can be reached from the keyboard.
   for (const area of document.querySelectorAll(".htable-scroll")) {
     const table = area.querySelector(".htable");
     const read = () => {
-      if (area.scrollWidth > area.clientWidth) {
+      if (area.scrollWidth > area.clientWidth || area.scrollHeight > area.clientHeight) {
         area.tabIndex = 0;
         area.setAttribute("role", "region");
         for (const name of ["aria-label", "aria-labelledby"]) {
@@ -34,6 +36,7 @@
 
     const bar = document.createElement("div");
     bar.className = "hselection-bar";
+    bar.dataset.new = "";
     bar.innerHTML = `
       <span class="hselection-bar-count" role="status"></span>
       <button class="hselection-bar-deselect" type="button">Deselect</button>

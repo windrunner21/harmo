@@ -79,6 +79,37 @@ describe("Filters", () => {
     expect(markup).toMatch(/hidden=""[^>]*>Reset<|class="hfilters-reset" hidden=""/);
   });
 
+  test("a heading can name the row, with aria-labelledby in place of aria-label", () => {
+    const markup = renderToStaticMarkup(
+      <Filters aria-labelledby="tasks-heading" resetLabel="Reset">
+        {chip("A")}
+      </Filters>,
+    );
+    expect(markup).toContain('aria-labelledby="tasks-heading"');
+    expect(markup).not.toContain("aria-label=");
+  });
+
+  test("the row needs a name", () => {
+    // @ts-expect-error: neither aria-label nor aria-labelledby.
+    const unnamed = <Filters resetLabel="Reset">{chip("A")}</Filters>;
+    // @ts-expect-error: one name, not both.
+    const twice = <Filters aria-label="Filter" aria-labelledby="tasks-heading" resetLabel="Reset" />;
+    expect([unnamed, twice]).toHaveLength(2);
+  });
+
+  test("formatCount writes the count behind the chip, and without it the number shows", () => {
+    const behind = (formatCount?: (count: number) => string) =>
+      renderToStaticMarkup(
+        <Filters {...labels} visibleCount={0} moreLabel="More" formatCount={formatCount}>
+          {chip("A")}
+        </Filters>,
+      );
+    expect(behind((count) => count.toLocaleString("ar-EG"))).toMatch(
+      /<span class="hfilters-count" hidden="">٠<\/span>/,
+    );
+    expect(behind()).toMatch(/<span class="hfilters-count" hidden="">0<\/span>/);
+  });
+
   test("showReset shows Reset with nothing chosen", () => {
     const markup = renderToStaticMarkup(
       <Filters {...labels} showReset>

@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, release, test } from "./playgrounds.ts";
 
 // What docs/components/selection-bar.md says: a count that's read out, a way to
 // deselect, and the actions after; taking the place of a toolbar's controls; an
@@ -35,7 +35,30 @@ onEachPlayground("selection-bar", () => {
     await expect(container.getByRole("button", { name: "Delete" })).toHaveAttribute("data-size", "small");
 
     const [first, second] = await boxes(count, deselect);
-    expect(second!.x - (first!.x + first!.width)).toBeCloseTo(8, 0);
+    expect(second!.x - (first!.x + first!.width)).toBeCloseTo(10, 0);
+    // Its text 16px from the divider, as the count's is on the other side.
+    await expect(count).toHaveCSS("padding-right", "16px");
+    await expect(deselect).toHaveCSS("padding-left", "6px");
+  });
+
+  test("on a touch screen, pressed, Deselect darkens", async ({ page, browserName, browser }) => {
+    test.skip(browserName !== "chromium", "Only Chromium emulates a touch screen");
+    const context = await browser.newContext({ hasTouch: true, isMobile: true });
+    try {
+      const touch = await context.newPage();
+      await touch.goto(page.url());
+      await ready(touch);
+      const container = await example(touch, "selection-bar-default");
+      const deselect = container.getByRole("button", { name: "Deselect" });
+      await expect(deselect).toHaveCSS("color", await color(touch, "--harmo-color-text-secondary"));
+      const box = (await deselect.boundingBox())!;
+      await touch.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await touch.mouse.down();
+      await expect(deselect).toHaveCSS("color", await color(touch, "--harmo-color-text"));
+      await touch.mouse.up();
+    } finally {
+      await context.close();
+    }
   });
 
   test("hovered, Deselect darkens; focused, it shows the ring", async ({ page }) => {
@@ -75,6 +98,60 @@ onEachPlayground("selection-bar", () => {
     await expect(first).not.toBeChecked();
     await expect(second).not.toBeChecked();
     await expect(first).toBeFocused();
+  });
+
+  test("it settles in as it takes the controls' place, once, and without moving under reduced motion", async ({ page }) => {
+    const container = await example(page, "selection-bar-in-a-toolbar");
+    const bar = container.locator(".hselection-bar");
+    const transitions = () =>
+      bar.evaluate((node) =>
+        node
+          .getAnimations()
+          .map((animation) => (animation as CSSTransition).transitionProperty)
+          .sort(),
+      );
+    await page.addStyleTag({ content: ".hselection-bar { transition-duration: 100s !important; }" });
+
+    await container.getByRole("checkbox", { name: "Write the brief" }).check();
+    expect(await transitions()).toEqual(["opacity", "transform"]);
+    expect(Number(await bar.evaluate((node) => getComputedStyle(node).opacity))).toBeLessThan(1);
+    await release(bar);
+
+    // A new count is the same bar: nothing plays again.
+    await container.getByRole("checkbox", { name: "Review the designs" }).check();
+    await expect(container.getByRole("status")).toHaveText("2 selected");
+    expect(await transitions()).toEqual([]);
+
+    await container.getByRole("button", { name: "Deselect" }).click();
+    await expect(bar).toHaveCount(0);
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await container.getByRole("checkbox", { name: "Write the brief" }).check();
+    expect(await transitions()).toEqual(["opacity"]);
+  });
+
+  test("a bar there as the page loads doesn't settle in, and one a selection shows does (data-new)", async ({ page }) => {
+    const loaded = (await example(page, "selection-bar-default")).locator(".hselection-bar");
+    await expect(loaded).not.toHaveAttribute("data-new");
+    const container = await example(page, "selection-bar-in-a-toolbar");
+    await container.getByRole("checkbox", { name: "Write the brief" }).check();
+    await expect(container.locator(".hselection-bar")).toHaveAttribute("data-new", "");
+
+    // Only a bar with data-new plays it: the loaded one, put in again without
+    // it, doesn't.
+    const transitions = (marked: boolean) =>
+      loaded.evaluate(async (node, marked) => {
+        const copy = node.cloneNode(true) as HTMLElement;
+        copy.toggleAttribute("data-new", marked);
+        copy.style.transitionDuration = "100s";
+        node.after(copy);
+        await new Promise(requestAnimationFrame);
+        const playing = copy.getAnimations().length;
+        copy.remove();
+        return playing;
+      }, marked);
+    expect(await transitions(false)).toBe(0);
+    expect(await transitions(true)).toBe(2);
   });
 
   test("a blocked action stays reachable, and its reason shows on keyboard focus", async ({ page }) => {

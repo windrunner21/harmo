@@ -1,8 +1,10 @@
 <play-example title="Default">
   <play-note>
     The chip opens a panel of a condition and the fields it needs. Apply stays off
-    until they're complete. Today is fixed here, so the example looks the same
-    whenever you read it.
+    until they're complete, and Enter in the amount or a date applies them, from the
+    end date under "is between". A date
+    that isn't one, or two out of order, is explained under the fields. Today is
+    fixed here, so the example looks the same whenever you read it.
   </play-note>
   <button class="hfilter-chip" type="button" aria-haspopup="dialog" popovertarget="due-filter" data-example-start-label="Start date" aria-expanded="false" style="anchor-name:--due-filter">
     <play-icon name="add-circle" class="hicon"></play-icon>
@@ -239,11 +241,12 @@
         </div>
       </div>
     </div>
+    <p class="hdate-filter-message" id="due-message" role="status" data-example-invalid="Enter a real date, such as 11/18/2026." data-example-order="The end date can't be before the start date."></p>
     <div class="hdate-filter-actions">
       <button class="hbutton" data-variant="tertiary" type="button" hidden>
         <span class="hbutton-label">Clear</span>
       </button>
-      <button class="hbutton" type="button" aria-disabled="true">
+      <button class="hbutton" type="button" aria-disabled="true" aria-describedby="due-message">
         <span class="hbutton-label">Apply</span>
       </button>
     </div>
@@ -253,8 +256,9 @@
 <play-example title="Kept in the URL">
   <play-note>
     A filter from a shared link: <code>gte</code> and <code>lte</code>, in Unix seconds,
-    shown as the viewer's days. It reopens on the condition they describe. Below
-    it, what your router would write.
+    shown as the viewer's days. It reopens on the condition they describe, and
+    Apply with nothing changed keeps them as they are. Below it, what your router
+    would write.
   </play-note>
   <div style="display:grid;gap:12px;justify-items:start;max-width:100%">
     <button class="hfilter-chip" type="button" aria-haspopup="dialog" popovertarget="linked-filter" data-example-start-label="Start date" aria-expanded="false" data-example-gte="1793491200" data-example-lte="1794268799" style="anchor-name:--linked-filter">
@@ -492,11 +496,12 @@
           </div>
         </div>
       </div>
+      <p class="hdate-filter-message" id="linked-message" role="status" data-example-invalid="Enter a real date, such as 11/18/2026." data-example-order="The end date can't be before the start date."></p>
       <div class="hdate-filter-actions">
         <button class="hbutton" data-variant="tertiary" type="button">
           <span class="hbutton-label">Clear</span>
         </button>
-        <button class="hbutton" type="button" aria-disabled="true">
+        <button class="hbutton" type="button" aria-disabled="true" aria-describedby="linked-message">
           <span class="hbutton-label">Apply</span>
         </button>
       </div>
@@ -744,11 +749,12 @@
         </div>
       </div>
     </div>
+    <p class="hdate-filter-message" id="rtl-message" role="status" data-example-invalid="أدخل تاريخًا صحيحًا." data-example-order="لا يمكن أن يكون تاريخ النهاية قبل تاريخ البداية."></p>
     <div class="hdate-filter-actions">
       <button class="hbutton" data-variant="tertiary" type="button" hidden>
         <span class="hbutton-label">مسح</span>
       </button>
-      <button class="hbutton" type="button" aria-disabled="true">
+      <button class="hbutton" type="button" aria-disabled="true" aria-describedby="rtl-message">
         <span class="hbutton-label">تطبيق</span>
       </button>
     </div>

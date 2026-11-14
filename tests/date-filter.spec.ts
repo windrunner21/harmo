@@ -26,6 +26,7 @@ const parts = (container: Locator) => {
     and: panel.locator(".hdate-filter-and"),
     apply: panel.getByRole("button", { name: "Apply" }),
     clear: panel.getByRole("button", { name: "Clear" }),
+    message: panel.locator(".hdate-filter-message"),
     query: container.locator("[data-example-query]"),
   };
 };
@@ -325,6 +326,121 @@ onEachPlayground("date-filter", () => {
     await expect(query).toHaveText(`?due[gte]=${baku(11, 9, 12) - 2 * 86400}&due[lte]=${baku(11, 9, 12)}`);
   });
 
+  test("Apply, or Enter, with nothing changed keeps the value applied, as exact as it was", async ({ page }) => {
+    await page.clock.setFixedTime(new Date(baku(3, 31, 14, 30) * 1000));
+    const { panel, chip, condition, amount, unit, start, end, apply, query } = await open(page, url);
+    const exact = `?due[gte]=${baku(3, 31, 14)}&due[lte]=${baku(3, 31, 14, 30)}`;
+    const reopen = async () => {
+      await chip.click();
+      await expect(panel).toBeVisible();
+      await settled(panel);
+    };
+    await choose(condition, panel, "is in the last");
+    await amount.fill("30");
+    await choose(unit, panel, "minutes");
+    await apply.click();
+    await expect(query).toHaveText(exact);
+
+    await reopen();
+    await expect(condition).toContainText("is between");
+    await apply.click();
+    await expect(panel).toBeHidden();
+    await expect(chip).toBeFocused();
+    await expect(query).toHaveText(exact);
+
+    // Under "is between", the start date's Enter only settles it, even here.
+    await reopen();
+    await start.press("Enter");
+    await expect(panel).toBeVisible();
+    await end.press("Enter");
+    await expect(panel).toBeHidden();
+    await expect(query).toHaveText(exact);
+  });
+
+  test("Enter in a date applies once the fields are complete", async ({ page }) => {
+    const { panel, chip, condition, date, start, end, query } = await open(page, url);
+    await choose(condition, panel, "is after");
+    await type(date, "11182026");
+    await date.press("Enter");
+    await expect(panel).toBeHidden();
+    await expect(chip).toBeFocused();
+    await expect(query).toHaveText(`?due[gte]=${baku(11, 18)}`);
+
+    await chip.click();
+    await expect(panel).toBeVisible();
+    await settled(panel);
+    await choose(condition, panel, "is between");
+    await expect(end).toHaveValue("");
+    await type(start, "11202026");
+    await start.press("Enter");
+    await expect(panel).toBeVisible();
+    await expect(start).toHaveValue("11/20/2026");
+    await type(end, "11222026");
+    await end.press("Enter");
+    await expect(panel).toBeHidden();
+    await expect(query).toHaveText(`?due[gte]=${baku(11, 20)}&due[lte]=${baku(11, 22, 23, 59, 59)}`);
+
+    // With an end date already there, a new start date's Enter still only
+    // settles it, so the end can be changed too before it applies.
+    await chip.click();
+    await expect(panel).toBeVisible();
+    await settled(panel);
+    await expect(end).toHaveValue("11/22/2026");
+    await type(start, "11212026");
+    await start.press("Enter");
+    await expect(panel).toBeVisible();
+    await expect(start).toHaveValue("11/21/2026");
+    await expect(query).toHaveText(`?due[gte]=${baku(11, 20)}&due[lte]=${baku(11, 22, 23, 59, 59)}`);
+    await end.press("Enter");
+    await expect(panel).toBeHidden();
+    await expect(query).toHaveText(`?due[gte]=${baku(11, 21)}&due[lte]=${baku(11, 22, 23, 59, 59)}`);
+  });
+
+  test("a date out of order, or one that isn't a date, is explained under the fields and to Apply", async ({ page }) => {
+    const { panel, condition, start, end, apply, message } = await open(page, "date-filter-default");
+    await expect(message).toHaveAttribute("role", "status");
+    await expect(message).toHaveText("");
+    await expect(apply).toHaveAccessibleDescription("");
+
+    await choose(condition, panel, "is between");
+    await type(start, "11102026");
+    await start.press("Tab");
+    await type(end, "11012026");
+    await end.press("Tab");
+    await expect(message).toHaveText("The end date can't be before the start date.");
+    await expect(apply).toHaveAccessibleDescription("The end date can't be before the start date.");
+
+    await type(end, "11152026");
+    await end.press("Tab");
+    await expect(message).toHaveText("");
+
+    await type(start, "13452026");
+    await start.press("Tab");
+    await expect(start).toHaveAttribute("aria-invalid", "true");
+    await expect(message).toHaveText("Enter a real date, such as 11/18/2026.");
+    await expect(apply).toHaveAttribute("aria-disabled", "true");
+
+    // A day picked in the Calendar fixes it too, and the message goes with it.
+    const button = panel.getByRole("button", { name: "Choose a date" }).first();
+    const calendar = panel.getByRole("dialog", { name: "Choose a date" }).first();
+    await button.click();
+    await expect(calendar).toBeVisible();
+    await settled(calendar);
+    await calendar.locator('[data-date="2026-11-10"]').click();
+    await expect(calendar).toBeHidden();
+    await expect(start).toHaveValue("11/10/2026");
+    await expect(start).not.toHaveAttribute("aria-invalid");
+    await expect(apply).not.toHaveAttribute("aria-disabled");
+    await expect(message).toHaveText("");
+    await expect(apply).toHaveAccessibleDescription("");
+
+    await type(start, "13452026");
+    await start.press("Tab");
+    await expect(message).toHaveText("Enter a real date, such as 11/18/2026.");
+    await choose(condition, panel, "is in the last");
+    await expect(message).toHaveText("");
+  });
+
   test("two dates out of order aren't accepted, whichever was typed last", async ({ page }) => {
     const { panel, condition, start, end, apply } = await open(page, "date-filter-default");
     await choose(condition, panel, "is between");
@@ -434,6 +550,23 @@ onEachPlayground("date-filter", () => {
     expect(box.x + box.width).toBeLessThanOrEqual(320);
     expect(second.y).toBeGreaterThan(first.y);
     expect(await panel.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
+  });
+
+  test("the panel has 10px of padding and between its rows, and its buttons sit 16px below the fields", async ({ page }) => {
+    const { panel, amount, unit, apply, message } = await open(page, "date-filter-default");
+    await expect(panel).toHaveCSS("padding-top", "10px");
+    await expect(panel).toHaveCSS("row-gap", "10px");
+    await expect(message).toHaveText("");
+    const [fields, first, second, button] = await boxes(panel.locator(".hdate-filter-fields").first(), amount, unit, apply);
+    expect(second.x - (first.x + first.width)).toBeCloseTo(10, 0);
+    // The empty message takes no room.
+    expect(button.y - (fields.y + fields.height)).toBeCloseTo(16, 0);
+    await page.keyboard.press("Escape");
+    await expect(panel).toBeHidden();
+
+    const linked = await open(page, url);
+    const [clear, applied] = await boxes(linked.clear, linked.apply);
+    expect(applied.x - (clear.x + clear.width)).toBeCloseTo(10, 0);
   });
 });
 

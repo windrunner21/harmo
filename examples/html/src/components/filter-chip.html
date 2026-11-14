@@ -43,7 +43,9 @@
     label after a divider, with each value in a
     <code>.hfilter-chip-value</code>. The values become part of the chip's
     name: "Channel WhatsApp". A single-select chip closes when an option is
-    chosen.
+    chosen. Given a footer, as here, its list ends with Clear filter while
+    something is chosen, so the filter can be dropped without choosing
+    another.
   </play-note>
   <button
     class="hfilter-chip"
@@ -72,6 +74,11 @@
         <span class="hoption-label">Email</span>
       </li>
     </ul>
+    <div class="hlistbox-footer">
+      <button class="hbutton" data-variant="tertiary" type="button">
+        <span class="hbutton-label">Clear filter</span>
+      </button>
+    </div>
   </div>
 </play-example>
 
@@ -236,8 +243,8 @@
 <play-example title="Text filter">
   <play-note>
     A chip can open a small panel instead of a list, such as a text filter.
-    The popup has no padding, so the panel lays itself out with
-    <code>style</code> here. Type a name and press Apply or <kbd class="hkbd">Enter</kbd>.
+    The popup has no padding, so <code>.hfilter-chip-panel</code> lays out
+    what's in it. Type a name and press Apply or <kbd class="hkbd">Enter</kbd>.
   </play-note>
   <button
     class="hfilter-chip"
@@ -250,7 +257,7 @@
     <span class="hfilter-chip-label">Name contains</span>
   </button>
   <div class="hpopup" id="name-filter" popover style="position-anchor: --name-filter">
-    <div style="display: grid; gap: 16px; padding: 12px">
+    <div class="hfilter-chip-panel">
       <div class="hfield">
         <label class="hlabel" for="name-filter-value">Name contains</label>
         <input class="hinput" id="name-filter-value" name="name" type="text" />

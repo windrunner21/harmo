@@ -1,19 +1,20 @@
 @use "shortcuts" as *;
 
 // The panel a Date Filter's chip opens: a condition, the fields it needs, and
-// its buttons. Its parts are other components; this only lays them out.
+// its buttons. Its parts are other components; this only lays them out, as
+// Filters' panel and a chip's own are.
 .hpopup.hdate-filter {
-  gap: 8px;
+  gap: $space-xs;
 
   min-inline-size: max(200px, anchor-size(inline));
-  padding: 8px;
+  padding: $space-xs;
 }
 
 .hdate-filter-fields {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: $space-xs;
 
   &[hidden] {
     display: none;
@@ -50,11 +51,29 @@
   }
 }
 
+// Why a date can't be used, under the fields, as a status that's in the page
+// from the start. Empty, it takes no room: its margin takes back the gap.
+.hdate-filter-message {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  line-height: 1rem;
+  overflow-wrap: anywhere;
+
+  color: $color-danger;
+
+  &:empty {
+    margin-block-start: calc(-1 * #{$space-xs});
+  }
+}
+
+// 16px below the fields: the gap and this margin.
 .hdate-filter-actions {
   display: flex;
-  gap: 8px;
+  gap: $space-xs;
 
-  margin-block-start: 8px;
+  margin-block-start: $space-2xs;
 
   &[hidden] {
     display: none;

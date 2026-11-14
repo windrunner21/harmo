@@ -2,12 +2,16 @@
 
 import type { ComponentPropsWithRef, ReactNode } from "react";
 import { useLinkComponent } from "./HarmoProvider.tsx";
+import type { Naming } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
-export type FilterBarProps = ComponentPropsWithRef<"nav"> & {
-  "aria-label": string;
-  as?: "nav" | "div";
-};
+export type FilterBarProps = Omit<
+  ComponentPropsWithRef<"nav">,
+  "aria-label" | "aria-labelledby"
+> &
+  Naming & {
+    as?: "nav" | "div";
+  };
 
 interface FilterBarItemOptions {
   label: ReactNode;

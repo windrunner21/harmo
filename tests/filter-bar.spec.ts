@@ -29,7 +29,7 @@ onEachPlayground("filter-bar", () => {
     const container = await example(page, "filter-bar-default");
     const [all, active] = await container.getByRole("link").all();
     const primary = await color(page, "--harmo-color-primary");
-    await expect(all!).toHaveCSS("padding", "12px 16px");
+    await expect(all!).toHaveCSS("padding", "10px 16px");
     await expect(all!.locator(".hfilter-bar-label")).toHaveCSS("font-size", "14px");
     await expect(all!.locator(".hfilter-bar-count")).toHaveCSS("font-size", "20px");
 
@@ -127,7 +127,7 @@ onEachPlayground("filter-bar", () => {
       expect(card.width).toBeCloseTo(cards[0]!.width, 0);
       expect(card.y).toBeCloseTo(cards[0]!.y, 0);
     }
-    expect(cards[1]!.x - (cards[0]!.x + cards[0]!.width)).toBeCloseTo(8, 0);
+    expect(cards[1]!.x - (cards[0]!.x + cards[0]!.width)).toBeCloseTo(10, 0);
 
     await page.setViewportSize({ width: 320, height: 800 });
     await example(page, "filter-bar-default");

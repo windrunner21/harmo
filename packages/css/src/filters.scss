@@ -6,18 +6,19 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: $space-xs;
 
   &[hidden] {
     display: none;
   }
 }
 
+// As a Date Filter's panel and a chip's own are.
 .hpopup.hfilters-more {
   align-items: flex-start;
-  gap: 8px;
+  gap: $space-xs;
 
-  padding: 12px;
+  padding: $space-xs;
 }
 
 // How many of the filters behind the chip are in force.

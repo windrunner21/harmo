@@ -118,6 +118,7 @@ export const examples = {
       visibleCount={1}
       moreLabel="مرشحات أخرى"
       resetLabel="إعادة التعيين"
+      formatCount={(count) => count.toLocaleString("ar-EG")}
     >
       <FilterChip label="الحالة">
         <Option value="active">نشطة</Option>

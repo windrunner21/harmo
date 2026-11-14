@@ -1,6 +1,7 @@
 // Example only: what your app does around a Selection Bar. Choosing tasks swaps
-// the toolbar's controls for the bar and keeps its count; Deselect clears them,
-// swaps back, and moves focus to the first task, since the button is gone.
+// the toolbar's controls for the bar, marked data-new so it settles in, and
+// keeps its count; Deselect clears them, swaps back, and moves focus to the
+// first task, since the button is gone.
 {
   for (const example of document.querySelectorAll("[data-example-selection]")) {
     const controls = example.querySelector(".htoolbar-controls");
@@ -9,6 +10,7 @@
 
     const bar = document.createElement("div");
     bar.className = "hselection-bar";
+    bar.dataset.new = "";
     bar.innerHTML = `
       <span class="hselection-bar-count" role="status"></span>
       <button class="hselection-bar-deselect" type="button">Deselect</button>

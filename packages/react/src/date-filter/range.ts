@@ -122,16 +122,27 @@ export const rangeOf = (draft: DateFilterDraft, amount: number | null): DateFilt
   }
 };
 
-// What the chip shows: a range of days, or of times within one day.
-export const describeRange = (
-  { gte, lte }: DateFilterValue,
-  locale: string,
-  words: { after: string; before: string },
-) => {
+export interface RangeWords {
+  after: string;
+  before: string;
+  afterDate?: (date: string) => string;
+  beforeDate?: (date: string) => string;
+}
+
+// What the chip shows: a range of days, or of times within one day. A day
+// with only one side is the app's words around it, or the condition's word
+// before it.
+export const describeRange = ({ gte, lte }: DateFilterValue, locale: string, words: RangeWords) => {
   const dates = new Intl.DateTimeFormat(locale, { calendar: "gregory", dateStyle: "medium" });
   if (gte === null && lte === null) return null;
-  if (lte === null) return `${words.after} ${dates.format(gte! * 1000)}`;
-  if (gte === null) return `${words.before} ${dates.format(lte * 1000)}`;
+  if (lte === null) {
+    const date = dates.format(gte! * 1000);
+    return words.afterDate ? words.afterDate(date) : `${words.after} ${date}`;
+  }
+  if (gte === null) {
+    const date = dates.format(lte * 1000);
+    return words.beforeDate ? words.beforeDate(date) : `${words.before} ${date}`;
+  }
   if (gte > lte) return `${dates.format(gte * 1000)} – ${dates.format(lte * 1000)}`;
   const partOfDay = dayOf(gte) === dayOf(lte) && !isOneWholeDay(gte, lte);
   const format = partOfDay

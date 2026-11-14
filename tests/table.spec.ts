@@ -231,6 +231,55 @@ onEachPlayground("table", () => {
     await expect(footer).toHaveCSS("border-top-width", "1px");
   });
 
+  test("the footer's text lines up with the cells' text", async ({ page }) => {
+    const container = await example(page, "table-in-pages");
+    const footer = container.locator(".htable-footer");
+    await expect(footer).toHaveCSS("padding", "10px 16px");
+    const [summary, cell] = await boxes(container.locator(".htable-footer-summary"), container.getByRole("rowheader").first());
+    expect(summary!.x).toBeCloseTo(cell!.x + 16, 0);
+    await expect(container.getByRole("columnheader").first()).toHaveCSS("padding-bottom", "10px");
+    await expect(container.locator(".htable-footer-rows")).toHaveCSS("column-gap", "6px");
+  });
+
+  test("in a Card, the headers and footer paint the card's background, and an app's own value wins", async ({ page }) => {
+    const container = await example(page, "table-in-pages");
+    const header = container.getByRole("columnheader").first();
+    const footer = container.locator(".htable-footer");
+    const card = await container.locator(".htable-container").evaluateHandle((node) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "hcard";
+      node.before(wrapper);
+      wrapper.append(node);
+      return wrapper;
+    });
+    const secondary = await color(page, "--harmo-color-background-secondary");
+    await expect(header).toHaveCSS("background-color", secondary);
+    await expect(footer).toHaveCSS("background-color", secondary);
+
+    await card.evaluate((node) => node.setAttribute("data-variant", "raised"));
+    const background = await color(page, "--harmo-color-background");
+    await expect(header).toHaveCSS("background-color", background);
+    await expect(footer).toHaveCSS("background-color", background);
+
+    await container.locator(".htable-container").evaluate((node: HTMLElement) =>
+      node.style.setProperty("--htable-color-background", "rgb(1, 2, 3)"),
+    );
+    await expect(header).toHaveCSS("background-color", "rgb(1, 2, 3)");
+    await expect(footer).toHaveCSS("background-color", "rgb(1, 2, 3)");
+  });
+
+  test("given a height, its scroll area keeps the headers in view and becomes a region the keyboard can scroll", async ({ page }) => {
+    const container = await example(page, "table-in-pages");
+    const scroll = container.locator(".htable-scroll");
+    await expect(scroll).not.toHaveAttribute("tabindex");
+    await scroll.evaluate((node: HTMLElement) => (node.style.maxBlockSize = "200px"));
+    await expect(container.getByRole("region", { name: "Tasks" })).toHaveAttribute("tabindex", "0");
+
+    await scroll.evaluate((node) => (node.scrollTop = 120));
+    const [area, header] = await boxes(scroll, container.getByRole("columnheader").first());
+    expect(header!.y).toBeCloseTo(area!.y, 0);
+  });
+
   test("with nothing to show, what it's given stands in for the table", async ({ page }) => {
     const container = await example(page, "table-with-nothing-to-show");
     await expect(container.getByRole("table")).toHaveCount(0);

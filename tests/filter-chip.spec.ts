@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/filter-chip.md says a script does, on the Filter Chip
 // page.
@@ -73,6 +73,61 @@ onEachPlayground("filter-chip", () => {
     await expect(openPopup(container)).toHaveCount(0);
     await expect(chip).toBeFocused();
     await expect(chip).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("a single-select chip given a footer clears with it, keeps focus in the popup, and gets it back", async ({ page }) => {
+    const { container, chip } = await openChip(page, "filter-chip-one-value");
+    const clear = container.getByRole("button", { name: "Clear filter" });
+    await clickAt(page, clear);
+
+    await expect(chip.locator(".hfilter-chip-value")).toHaveCount(0);
+    await expect(clear).toHaveCount(0);
+    await expect(container.getByRole("option", { selected: true })).toHaveCount(0);
+    await expect(openPopup(container)).toHaveCount(1);
+    await expect(container.getByRole("listbox")).toBeFocused();
+
+    await clickAt(page, container.getByRole("option", { name: "Email" }));
+    await expect(chip.locator(".hfilter-chip-value")).toHaveText(["Email"]);
+    await expect(openPopup(container)).toHaveCount(0);
+    await openChip(page, "filter-chip-one-value");
+    await expect(clear).toBeVisible();
+  });
+
+  test("where it doesn't fit, the values give way first, then the label ends with an ellipsis", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 720 });
+    const container = await example(page, "filter-chip-two-values");
+    const chip = container.locator(".hfilter-chip");
+    const label = chip.locator(".hfilter-chip-label");
+    const values = chip.locator(".hfilter-chip-value");
+    const cut = (element: typeof label) => element.evaluate((node) => node.scrollWidth > node.clientWidth);
+
+    await values.evaluateAll((nodes) => {
+      for (const node of nodes) node.textContent = "A value far too long to show in full";
+    });
+    await expect(label).toHaveCSS("text-overflow", "ellipsis");
+    expect(await cut(label)).toBe(false);
+    expect(await cut(values.first())).toBe(true);
+
+    await label.evaluate((node) => (node.textContent = "A label for this filter that's far too long to fit on a phone"));
+    expect(await cut(label)).toBe(true);
+    const [demo, box] = await boxes(container.locator(".play-demo"), chip);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(demo!.x + demo!.width + 0.5);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
+    await expect(chip).toHaveAccessibleName(/^A label for this filter that's far too long to fit on a phone/);
+    expect((await boxes(chip))[0]!.height).toBeCloseTo(27, 0);
+  });
+
+  test("a chip's own panel lays out its field and button, with room around them", async ({ page }) => {
+    const container = await example(page, "filter-chip-text-filter");
+    await container.locator(".hfilter-chip").click();
+    const panel = container.locator(".hfilter-chip-panel");
+    await expect(panel).toBeVisible();
+    await settled(openPopup(container));
+    await expect(panel).toHaveCSS("display", "grid");
+    await expect(panel).toHaveCSS("padding-top", "10px");
+    await expect(panel).toHaveCSS("row-gap", "10px");
+    const [field, button] = await boxes(container.locator(".hfilter-chip-panel > .hfield"), container.getByRole("button", { name: "Apply" }));
+    expect(button!.y - (field!.y + field!.height)).toBeCloseTo(16, 0);
   });
 
   test("a text filter applies on Enter, closes, and doesn't open again", async ({ page }) => {

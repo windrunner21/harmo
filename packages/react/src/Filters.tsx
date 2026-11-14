@@ -11,6 +11,7 @@ import {
 import { flatChildren } from "./children.ts";
 import { plus } from "./FilterChip.tsx";
 import { Popup } from "./Popup.tsx";
+import type { FormatCount, Naming } from "./types.ts";
 import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
@@ -18,12 +19,16 @@ type FiltersOverflow =
   | { visibleCount?: undefined; moreLabel?: undefined }
   | { visibleCount: number; moreLabel: string };
 
-export type FiltersProps = ComponentPropsWithRef<"div"> &
+export type FiltersProps = Omit<
+  ComponentPropsWithRef<"div">,
+  "aria-label" | "aria-labelledby"
+> &
+  Naming &
   FiltersOverflow & {
-    "aria-label": string;
     resetLabel: string;
     onReset?: () => void;
     showReset?: boolean;
+    formatCount?: FormatCount;
   };
 
 const IN_FORCE = ".hfilter-chip-values:not(:empty)";
@@ -42,6 +47,7 @@ export const Filters = ({
   resetLabel,
   onReset,
   showReset = false,
+  formatCount,
   className,
   children,
   ref,
@@ -100,7 +106,7 @@ export const Filters = ({
               {plus}
               <span className="hfilter-chip-label">{moreLabel}</span>
               <span className="hfilters-count" hidden={inForce.more === 0}>
-                {inForce.more}
+                {formatCount ? formatCount(inForce.more) : inForce.more}
               </span>
             </button>
           }

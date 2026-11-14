@@ -16,6 +16,7 @@ import {
   type ListboxSelection,
 } from "./listbox/Listbox.tsx";
 import { Popup } from "./Popup.tsx";
+import type { FormatCount } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
 interface ChipProps
@@ -26,27 +27,36 @@ interface ChipProps
   label: string;
 }
 
-type Count = (count: number) => ReactNode;
-
 interface ChipValues {
   values?: ReactNode[];
-  formatCount?: Count;
+  formatCount?: FormatCount;
 }
 
+type SingleChoice = Omit<
+  Exclude<ListboxSelection, { multiple: true }>,
+  "onValueChange"
+> & { formatCount?: undefined } & (
+    | { clearLabel?: undefined; onValueChange?: (value: string) => void }
+    | {
+        clearLabel: Exclude<ReactNode, null | undefined>;
+        onValueChange?: (value: string | null) => void;
+      }
+  );
+
 type ListChoice =
-  | (Exclude<ListboxSelection, { multiple: true }> & {
-      clearLabel?: undefined;
-      formatCount?: undefined;
-    })
+  | SingleChoice
   | (Extract<ListboxSelection, { multiple: true }> & {
       clearLabel: ReactNode;
-      formatCount: Count;
+      formatCount: FormatCount;
     });
 
-type ListProps = ListChoice & ListboxSearch;
+type ListProps = ListChoice &
+  ListboxSearch & {
+    renderValue?: (values: string[]) => ReactNode[];
+  };
 
 export type FilterChipProps =
-  | (ChipProps & ChipValues & { children?: undefined })
+  | (ChipProps & ChipValues & { children?: undefined; clearLabel?: undefined })
   | (ChipProps & ListProps & { values?: undefined; children: ReactNode });
 
 export const FilterChip = (props: FilterChipProps) =>
@@ -98,6 +108,7 @@ const FilterChipList = ({
   emptyMessage,
   clearLabel,
   formatCount,
+  renderValue,
   label,
   children,
   ...props
@@ -108,12 +119,13 @@ const FilterChipList = ({
   const chosen = optionsOf(children).filter((option) =>
     selected.includes(option.value),
   );
+  const report = onValueChange as
+    | ((value: string | string[] | null) => void)
+    | undefined;
 
   const change = (next: string | string[]) => {
     setUncontrolled(toList(next));
-    (onValueChange as ((value: string | string[]) => void) | undefined)?.(
-      next,
-    );
+    report?.(next);
   };
 
   const clear = () => {
@@ -121,7 +133,8 @@ const FilterChipList = ({
       ".hlistbox-search-input",
     );
     (search ?? popup.current?.querySelector<HTMLElement>(".hlistbox"))?.focus();
-    change([]);
+    setUncontrolled([]);
+    report?.(multiple ? [] : null);
   };
 
   const selection = {
@@ -134,7 +147,11 @@ const FilterChipList = ({
     <Chip
       {...props}
       label={label}
-      values={chosen.map((option) => option.label)}
+      values={
+        renderValue
+          ? renderValue(chosen.map((option) => option.value))
+          : chosen.map((option) => option.label)
+      }
       formatCount={formatCount}
       aria-haspopup="listbox"
       aria-expanded={false}
@@ -150,7 +167,7 @@ const FilterChipList = ({
         aria-label={label}
         {...({ searchLabel, emptyMessage } as ListboxSearch)}
         footer={
-          multiple && chosen.length > 0 ? (
+          clearLabel !== undefined && chosen.length > 0 ? (
             <Button variant="tertiary" onClick={clear}>
               {clearLabel}
             </Button>

@@ -11,7 +11,7 @@ value in a form, use a [Select](select.md).
 | --- | --- |
 | CSS | `filter-chip.css`, `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | Element | `<button class="hfilter-chip" type="button">`, followed by a `.hpopup[popover]` |
-| Parts | The plus as a direct `.hicon`, `.hfilter-chip-label`, `.hfilter-chip-values`, `.hfilter-chip-value` |
+| Parts | The plus as a direct `.hicon`, `.hfilter-chip-label`, `.hfilter-chip-values`, `.hfilter-chip-value`; in a panel's popup, `.hfilter-chip-panel` |
 | Required | `aria-expanded`, `popovertarget` (the popup's id), and `style="anchor-name: --…"` matching the popup's `position-anchor`; `aria-haspopup="listbox"` when it opens a list |
 | Unique | Every id, and each anchor name |
 | Script | Required: the shown values, the Clear filters footer, and closing; see [What a script does](#what-a-script-does) |
@@ -57,11 +57,12 @@ value in a form, use a [Select](select.md).
   "3 selected". The app supplies the wording.
 - While a multi-select chip has values, end its list with a Clear filters
   button in a `.hlistbox-footer`, so the values don't have to be removed one by
-  one. Render the footer only then.
+  one. A single-select chip can end with one too, so its value can be dropped
+  without choosing another. Render the footer only while there's a value.
 - Resetting every chip at once is what a [Filters](filters.md) row is for.
 
 A chip can open a panel instead of a list, such as a text filter. The popup has
-no padding, so the panel lays out its own content:
+no padding, so `.hfilter-chip-panel` lays out what's in it:
 
 ```html
 <button class="hfilter-chip" type="button" aria-expanded="false"
@@ -70,7 +71,7 @@ no padding, so the panel lays out its own content:
   <span class="hfilter-chip-label">Name contains</span>
 </button>
 <div class="hpopup" id="name-filter" popover style="position-anchor: --name-filter">
-  <div style="display: grid; gap: 16px; padding: 12px">
+  <div class="hfilter-chip-panel">
     <div class="hfield">
       <label class="hlabel" for="name-filter-value">Name contains</label>
       <input class="hinput" id="name-filter-value" name="name" type="text" />
@@ -89,19 +90,27 @@ no padding, so the panel lays out its own content:
 | `.hfilter-chip-values` with values | A divider, then each `.hfilter-chip-value` as a small gray pill |
 | `aria-expanded="true"` | Open: the hover background stays |
 | `disabled` | Dimmed, not-allowed cursor; it can't open |
+| `.hfilter-chip-panel` | A panel of the chip's own, in its popup: a column with room around it |
 
 ## Appearance and states
 
-- 27px tall: 2px 8px padding, 14px `--harmo-color-text-secondary` text on a
-  1.5 line, a 1px dashed `--harmo-color-border` border, fully rounded, 4px
+- 27px tall: 2px 6px padding, 14px `--harmo-color-text-secondary` text on a
+  1.5 line, a 1px dashed `--harmo-color-border` border, fully rounded, 6px
   between its parts.
 - The plus is an `.hicon`, 18px at 14px text.
 - Hover (hover devices) and open: `--harmo-color-background-hover`, fading in
   over 150ms (`--harmo-duration-fast`).
-- Values: a 1px `--harmo-color-border` divider and 4px before them; each is
-  11px on `--harmo-color-background-hover`, or `--harmo-color-border` while the
-  chip is hovered or open, with a 4px radius, 2px 4px padding, and ends with an
-  ellipsis past 12rem. The chip itself never wraps.
+- Values: a 1px `--harmo-color-border` divider and 6px before them, 6px apart;
+  each is 11px on `--harmo-color-background-hover`, or `--harmo-color-border`
+  while the chip is hovered or open, with a 4px radius, 2px 4px padding, and
+  ends with an ellipsis past 12rem.
+- The chip never wraps. Where it doesn't fit, the values give way first, each
+  ending with an ellipsis, and then the label does. All of its text stays in
+  its name.
+- A panel: `.hfilter-chip-panel` holds its content in a column, with 10px
+  (`--harmo-space-xs`) of padding and between, and a Button directly in it 6px
+  further down, so it sits 16px below the field above it, as a
+  [Date Filter](date-filter.md)'s buttons do.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
 
@@ -118,7 +127,7 @@ no padding, so the panel lays out its own content:
 | --- | --- |
 | `aria-expanded` on the chip | On every open and close (see [Popup](popup.md)) |
 | The values in `.hfilter-chip-values` | When the selection changes or a panel is applied |
-| Render or remove the Clear filters footer, and clear the selection when it's pressed | While a multi-select chip has values |
+| Render or remove the Clear filters footer, and clear the selection when it's pressed. Focus moves to the search field, or else the list, as the footer goes | While a chip with a footer has values: every multi-select chip, and a single-select chip given one |
 | Close the popup | After Apply; a single-select list closes itself (see [Listbox](listbox.md)) |
 | Close the popup | The chip is disabled while it's open |
 
@@ -128,10 +137,11 @@ no padding, so the panel lays out its own content:
 
 `<FilterChip>` renders the chip. Given options as children, it also renders
 the popup and list, shows the chosen labels, and shows Clear filters while a
-multi-select has values; a single choice closes it. With `disabled`, it
+multi-select has values, or a single choice given `clearLabel` has one; a
+single choice closes the list. With `disabled`, it
 renders the chip alone, so a popup that's open closes. Without children, it's
 the chip alone, to give a [Popup](popup.md#react) of your own, such as a text
-filter. Other props are the chip `<button>`'s attributes.
+filter laid out in a `<div className="hfilter-chip-panel">`. Other props are the chip `<button>`'s attributes.
 
 | Prop | Effect |
 | --- | --- |
@@ -140,10 +150,11 @@ filter. Other props are the chip `<button>`'s attributes.
 | `formatCount` | The text shown for more than two values, such as ``(count) => `${count} selected` ``. Required with `multiple`; with `values`, every value shows without it |
 | `multiple` | Lets several options be chosen |
 | `value` or `defaultValue` | The chosen value, or an array of them with `multiple` |
-| `onValueChange` | Called with the new value or array |
+| `onValueChange` | Called with the new value or array. On a single choice with `clearLabel`, with `null` when it's cleared |
+| `renderValue` | With options as children: what the chip shows for the chosen values, in place of their labels, one pill for each item it returns, such as ``(values) => values.map((value) => <Translated id={value} />)`` for labels that are components, which the chip can't read as text |
 | `searchLabel` | Adds a search row, with this as its placeholder and name |
 | `emptyMessage` | Required with `searchLabel`: shown when the search matches nothing, such as "No channels found" |
-| `clearLabel` | Required with `multiple`: the footer button's text, such as "Clear filters" |
+| `clearLabel` | The footer button's text, such as "Clear filters". Required with `multiple`; on a single choice, it adds the footer, so the value can be cleared |
 
 ```tsx
 <FilterChip
@@ -167,4 +178,5 @@ filter. Other props are the chip `<button>`'s attributes.
 `--harmo-color-text-secondary`, `--harmo-duration-fast`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-3xs`,
-`--harmo-font-size-sm`, `--harmo-opacity-disabled`.
+`--harmo-font-size-sm`, `--harmo-opacity-disabled`, `--harmo-space-2xs`,
+`--harmo-space-xs`.

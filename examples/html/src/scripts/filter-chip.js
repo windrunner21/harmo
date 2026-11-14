@@ -1,7 +1,8 @@
 // Example only: show what's chosen in a Filter Chip, as the React FilterChip
 // does. Up to two values show as they are, more as a count. A multi-select
-// chip's list ends with Clear filters while anything is chosen; listbox.js
-// closes a single-select chip's list. A text filter applies and closes on
+// chip's list ends with Clear filters while anything is chosen, and so does a
+// single-select chip's whose markup has the footer; listbox.js closes a
+// single-select chip's list on a choice. A text filter applies and closes on
 // Apply or Enter. A chip disabled while it's open closes it.
 {
   const pill = (text) => {
@@ -41,7 +42,9 @@
 
     if (listbox) {
       const multiple = listbox.getAttribute("aria-multiselectable") === "true";
-      const footer = popup.querySelector(".hlistbox-footer") ?? clearFooter();
+      // A single choice can be cleared where your app gives it the words,
+      // here the footer in its markup, as React's clearLabel does.
+      const footer = popup.querySelector(".hlistbox-footer") ?? (multiple ? clearFooter() : null);
 
       // On the popup, so listbox.js has updated the selection by then.
       popup.addEventListener("click", (event) => {
@@ -56,7 +59,7 @@
         const selected = listbox.querySelectorAll('.hoption[aria-selected="true"] .hoption-label');
         const labels = [...selected].map((label) => label.textContent.trim());
         show(labels);
-        if (!multiple) return;
+        if (!footer) return;
         if (labels.length) {
           popup.append(footer);
         } else {
@@ -74,7 +77,7 @@
         for (const option of listbox.querySelectorAll('.hoption[aria-selected="true"]')) {
           option.setAttribute("aria-selected", "false");
         }
-        footer.remove();
+        footer?.remove();
         show([]);
         popup.hidePopover();
       });

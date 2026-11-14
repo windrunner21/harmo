@@ -17,7 +17,7 @@ onEachPlayground("toolbar", () => {
     await expect(container.getByRole("toolbar")).toHaveCount(0);
 
     const [first, second] = await boxes(controls.locator(".hbutton").first(), controls.locator(".hbutton").last());
-    expect(second!.x - (first!.x + first!.width)).toBeCloseTo(8, 0);
+    expect(second!.x - (first!.x + first!.width)).toBeCloseTo(10, 0);
   });
 
   test("filters that don't fit wrap on their own side, and the controls stay at the end", async ({ page }) => {
@@ -31,7 +31,7 @@ onEachPlayground("toolbar", () => {
     const [bar, start, end] = await boxes(toolbar, filters, toolbar.locator(".htoolbar-controls"));
     expect(start!.height).toBeGreaterThan(40);
     expect(end!.x + end!.width).toBeCloseTo(bar!.x + bar!.width, 0);
-    expect(end!.x).toBeGreaterThanOrEqual(start!.x + start!.width + 39);
+    expect(end!.x).toBeGreaterThanOrEqual(start!.x + start!.width + 41);
   });
 
   test("short filters leave the controls beside them, in a row with room for both", async ({ page }) => {

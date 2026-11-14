@@ -249,7 +249,7 @@ onEachPlayground("filters", () => {
     const container = await example(page, "filters-with-filters-in-force");
     const all = parts(container);
     await expect(all.row).toHaveCSS("display", "flex");
-    await expect(all.row).toHaveCSS("gap", "8px");
+    await expect(all.row).toHaveCSS("gap", "10px");
     await expect(all.count).toHaveCSS("font-size", "11px");
     expect((await all.count.boundingBox())!.width).toBeGreaterThanOrEqual(18);
 
@@ -260,10 +260,10 @@ onEachPlayground("filters", () => {
 
     await openMore(all);
     await expect(all.count).toHaveCSS("background-color", await color(page, "--harmo-color-border"));
-    await expect(all.more).toHaveCSS("padding-top", "12px");
-    await expect(all.more).toHaveCSS("row-gap", "8px");
+    await expect(all.more).toHaveCSS("padding-top", "10px");
+    await expect(all.more).toHaveCSS("row-gap", "10px");
     const [panel, chip, filter] = await boxes(all.more, all.moreChip, all.more.locator(".hfilter-chip"));
-    expect(panel!.width).toBeCloseTo(Math.max(chip!.width, filter!.width + 26), 0);
+    expect(panel!.width).toBeCloseTo(Math.max(chip!.width, filter!.width + 22), 0);
   });
 
   test("an app's own class on the count wins, on a chip that's open too", async ({ page }) => {
@@ -279,6 +279,21 @@ onEachPlayground("filters", () => {
     const row = container.getByRole("group", { name: "تصفية المهام" });
     const [first, second] = await boxes(row.locator(":scope > .hfilter-chip").first(), row.locator(":scope > .hfilter-chip").last());
     expect(first!.x).toBeGreaterThan(second!.x);
+  });
+
+  test("the count behind the chip is written as the app writes it", async ({ page }) => {
+    const container = await example(page, "filters-right-to-left");
+    const row = container.getByRole("group", { name: "تصفية المهام" });
+    const moreChip = row.locator(":scope > .hfilter-chip", { hasText: "مرشحات أخرى" });
+    const more = container.getByRole("dialog", { name: "مرشحات أخرى" });
+    const count = moreChip.locator(".hfilters-count");
+    await expect(count).toBeHidden();
+    await moreChip.click();
+    await expect(more).toBeVisible();
+    await settled(more);
+    await choose(more.locator(".hfilter-chip", { hasText: "الأولوية" }), more, "عالية");
+    await expect(count).toBeVisible();
+    await expect(count).toHaveText("١");
   });
 
   test("a long Reset wraps inside the row on a narrow screen", async ({ page }) => {

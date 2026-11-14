@@ -11,7 +11,7 @@ own, use a [Filter Chip](filter-chip.md).
 | CSS | `filter-bar.css` |
 | Element | `<nav class="hfilter-bar">` around links, or `<div class="hfilter-bar" role="group">` around buttons |
 | Parts | `<a class="hfilter-bar-item">` or `<button class="hfilter-bar-item" type="button">`, each holding `.hfilter-bar-label` and `.hfilter-bar-count` |
-| Required | An `aria-label` on the bar, in the page's language. On the filter in force: `aria-current="true"` on a link, or `aria-pressed="true"` on a button, whose siblings have `aria-pressed="false"` |
+| Required | A name on the bar: an `aria-label` in the page's language, or an `aria-labelledby` pointing at a heading. On the filter in force: `aria-current="true"` on a link, or `aria-pressed="true"` on a button, whose siblings have `aria-pressed="false"` |
 | Unique | None |
 | Script | Only where your app holds the filter, to move `aria-pressed`. With links, your router renders the one in force |
 
@@ -61,13 +61,13 @@ Buttons, where your app holds the filter:
 ## Appearance and states
 
 - As many cards to a row as fit, 120px wide at least, or the whole width of a
-  narrower container, all the same width, 8px apart, filling the row. On a
-  narrow screen they wrap.
-- A card: 12px by 16px of padding, a 1px `--harmo-color-border` border, and
-  `--harmo-border-radius` corners. The label is 14px in
-  `--harmo-color-text-secondary`, over the count at `--harmo-font-size-lg` and
-  medium weight in `--harmo-color-text`, with digits of one width. Long text
-  wraps.
+  narrower container, all the same width, 10px (`--harmo-space-xs`) apart,
+  filling the row. On a narrow screen they wrap.
+- A card: 10px by 16px of padding (`--harmo-space-xs` and `-sm`), a 1px
+  `--harmo-color-border` border, and `--harmo-border-radius` corners. The label
+  is 14px in `--harmo-color-text-secondary`, over the count at
+  `--harmo-font-size-lg` and medium weight in `--harmo-color-text`, with digits
+  of one width. Long text wraps.
 - Hovered, the border is `--harmo-color-primary`; pressed, it shrinks slightly,
   as a Button does.
 - The filter in force: the border, the label, and the count in
@@ -100,7 +100,7 @@ element's attributes. For buttons, make the bar a group with `as="div"`.
 
 | Prop | Effect |
 | --- | --- |
-| `aria-label` | Required on `<FilterBar>`: its name, such as "Task status" |
+| `aria-label` or `aria-labelledby` | Required on `<FilterBar>`: its name, such as "Task status", or the id of a heading that names it |
 | `as` | On `<FilterBar>`: `"div"` for a group, around buttons |
 | `label` | The card's label |
 | `count` | How many items it would leave; `0` shows |
@@ -123,4 +123,4 @@ element's attributes. For buttons, make the bar a group with `as="div"`.
 `--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-color-border`,
 `--harmo-color-primary`, `--harmo-border-radius`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-button-duration`,
-`--harmo-ease-out-quad`.
+`--harmo-ease-out-quad`, `--harmo-space-xs`, `--harmo-space-sm`.

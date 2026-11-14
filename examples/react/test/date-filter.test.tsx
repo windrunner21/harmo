@@ -103,6 +103,23 @@ describe("DateFilter", () => {
     expect(filter({ gte: Number.NaN, lte: Number.NaN })).toContain('hidden=""');
   });
 
+  test("with words for a date that can't be used, an empty status under the fields describes Apply", () => {
+    const markup = renderToStaticMarkup(
+      <DateFilter
+        label="Due"
+        locale="en-US"
+        today="2026-11-09"
+        labels={{ ...labels, invalidDate: "Enter a real date", endBeforeStart: "End before start" }}
+      />,
+    );
+    const id = markup.match(/<p class="hdate-filter-message" id="([^"]+)" role="status"><\/p>/)?.[1];
+    expect(id).toBeDefined();
+    expect(markup).toContain(`aria-describedby="${id}"`);
+    expect(markup.indexOf("hdate-filter-message")).toBeLessThan(markup.indexOf("hdate-filter-actions"));
+    expect(filter()).not.toContain("hdate-filter-message");
+    expect(filter()).not.toContain("aria-describedby");
+  });
+
   test("disabled, it renders the chip without its panel, so one that's open closes", () => {
     const markup = renderToStaticMarkup(
       <DateFilter label="Due" locale="en-US" today="2026-11-09" labels={labels} disabled />,
@@ -185,6 +202,18 @@ describe("what the chip shows", () => {
     expect(describeRange({ gte: start + 86400 * 2, lte: start }, "en-US", words)).toBe(
       "Nov 20, 2026 – Nov 18, 2026",
     );
+  });
+
+  test("a date with one side, in the app's own words where it gives them", () => {
+    const start = local(2026, 11, 18);
+    const turkish = {
+      ...words,
+      afterDate: (date: string) => `${date} sonrası`,
+      beforeDate: (date: string) => `${date} öncesi`,
+    };
+    expect(describeRange({ gte: start, lte: null }, "en-US", turkish)).toBe("Nov 18, 2026 sonrası");
+    expect(describeRange({ gte: null, lte: start }, "en-US", turkish)).toBe("Nov 18, 2026 öncesi");
+    expect(describeRange({ gte: start, lte: start + 86399 }, "en-US", turkish)).toBe("Nov 18, 2026");
   });
 
   test("one whole day as a date, and part of a day with its times", () => {

@@ -45,9 +45,10 @@ None of its own: it takes its look from what's in it. Small secondary
 
 ## Appearance and states
 
-- Filters and controls in one row, vertically centered, at least 40px apart.
-- The controls are 8px apart, and stay at the end.
-- Filters that don't fit wrap on their own side. The controls go below them, 8px
+- Filters and controls in one row, vertically centered, at least 42px
+  (`--harmo-space-lg`) apart.
+- The controls are 10px (`--harmo-space-xs`) apart, and stay at the end.
+- Filters that don't fit wrap on their own side. The controls go below them, 10px
   down, only when they and the widest filter can't share a row.
 - Right-to-left, the filters start on the right and the controls end on the left.
 
@@ -81,4 +82,4 @@ Nothing: it has no behavior.
 
 ## Tokens
 
-None of its own.
+`--harmo-space-xs`, `--harmo-space-lg`, and those of what's in it.

@@ -29,6 +29,8 @@ export const examples = {
         nextMonth: "Next month",
         apply: "Apply",
         clear: "Clear",
+        invalidDate: "Enter a real date, such as 11/18/2026.",
+        endBeforeStart: "The end date can't be before the start date.",
       }}
     />
   ),
@@ -73,6 +75,8 @@ export const examples = {
             nextMonth: "Next month",
             apply: "Apply",
             clear: "Clear",
+            invalidDate: "Enter a real date, such as 11/18/2026.",
+            endBeforeStart: "The end date can't be before the start date.",
           }}
         />
         <code data-example-query="" style={{ overflowWrap: "anywhere" }}>
@@ -108,6 +112,8 @@ export const examples = {
         nextMonth: "الشهر التالي",
         apply: "تطبيق",
         clear: "مسح",
+        invalidDate: "أدخل تاريخًا صحيحًا.",
+        endBeforeStart: "لا يمكن أن يكون تاريخ النهاية قبل تاريخ البداية.",
       }}
     />
   ),

@@ -14,6 +14,7 @@ import { renders } from "../children.ts";
 import { useLinkComponent } from "../HarmoProvider.tsx";
 import { Option } from "../listbox/Option.tsx";
 import { Select } from "../Select.tsx";
+import type { Naming } from "../types.ts";
 import { withClass } from "../withClass.ts";
 import type { RowSelection } from "./useRowSelection.ts";
 
@@ -25,10 +26,6 @@ export interface DataTableColumn<Row> {
   emphasis?: boolean;
   truncate?: boolean;
 }
-
-type Naming =
-  | { "aria-label": string; "aria-labelledby"?: undefined }
-  | { "aria-label"?: undefined; "aria-labelledby": string };
 
 type Selecting<Row> =
   | { selection?: undefined; selectAllLabel?: undefined; selectRowLabel?: undefined }
@@ -87,7 +84,8 @@ export const DataTable = <Row extends object>(tableProps: DataTableProps<Row>) =
   useLayoutEffect(() => {
     const area = scroll.current;
     if (!area) return;
-    const read = () => setOverflows(area.scrollWidth > area.clientWidth);
+    const read = () =>
+      setOverflows(area.scrollWidth > area.clientWidth || area.scrollHeight > area.clientHeight);
     read();
     const observer = new ResizeObserver(read);
     observer.observe(area);

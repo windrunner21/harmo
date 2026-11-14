@@ -1,4 +1,6 @@
-import type { ComponentPropsWithRef, ReactNode } from "react";
+"use client";
+
+import { useState, useSyncExternalStore, type ComponentPropsWithRef, type ReactNode } from "react";
 import { withClass } from "./withClass.ts";
 
 export interface SelectionBarProps extends ComponentPropsWithRef<"div"> {
@@ -7,6 +9,8 @@ export interface SelectionBarProps extends ComponentPropsWithRef<"div"> {
   onDeselect: () => void;
 }
 
+const subscribe = () => () => {};
+
 export const SelectionBar = ({
   label,
   deselectLabel,
@@ -14,14 +18,19 @@ export const SelectionBar = ({
   className,
   children,
   ...props
-}: SelectionBarProps) => (
-  <div {...props} className={withClass("hselection-bar", className)}>
-    <span className="hselection-bar-count" role="status">
-      {label}
-    </span>
-    <button type="button" className="hselection-bar-deselect" onClick={onDeselect}>
-      {deselectLabel}
-    </button>
-    {children}
-  </div>
-);
+}: SelectionBarProps) => {
+  const inBrowser = useSyncExternalStore(subscribe, () => true, () => false);
+  const [added] = useState(inBrowser);
+
+  return (
+    <div data-new={added ? "" : undefined} {...props} className={withClass("hselection-bar", className)}>
+      <span className="hselection-bar-count" role="status">
+        {label}
+      </span>
+      <button type="button" className="hselection-bar-deselect" onClick={onDeselect}>
+        {deselectLabel}
+      </button>
+      {children}
+    </div>
+  );
+};
