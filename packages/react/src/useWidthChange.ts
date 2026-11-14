@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useLayoutEffect, useRef } from "react";
+import { milliseconds } from "./milliseconds.ts";
 
 // Each button's last width, kept as it lays out, so a change has a "before".
 const widths = new WeakMap<Element, number>();
@@ -21,12 +22,6 @@ const restore = (node: HTMLElement, change: Change) => {
   changes.delete(node);
 };
 
-export const seconds = (value: string) => {
-  const number = parseFloat(value);
-  if (!Number.isFinite(number)) return undefined;
-  return value.trim().endsWith("ms") ? number : number * 1000;
-};
-
 // Stops a change that's playing, at once, with its inline styles back.
 export const stopChange = (node: HTMLElement) => {
   const playing = changes.get(node);
@@ -43,14 +38,16 @@ export const widthBefore = (node: HTMLElement) =>
 // --harmo-ease-out-cubic; its content on one line and clipped meanwhile, then
 // the inline styles it had before. Measure `from` before stopping a change
 // that's playing, and `to` after, so a new change carries on from where that
-// one had got to, toward the new width.
+// one had got to, toward the new width. Appearing or disappearing isn't a
+// change of width: it shows or goes at once.
 export const changeWidth = (node: HTMLElement, from: number, to: number) => {
   stopChange(node);
-  if (Math.abs(from - to) < 1 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (from < 1 || to < 1 || Math.abs(from - to) < 1) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const style = getComputedStyle(node);
   const change: Change = {
     animation: node.animate([{ width: `${from}px` }, { width: `${to}px` }], {
-      duration: seconds(style.getPropertyValue("--harmo-duration-normal")) ?? 200,
+      duration: milliseconds(style.getPropertyValue("--harmo-duration-normal"), 200),
       easing: style.getPropertyValue("--harmo-ease-out-cubic").trim() || "cubic-bezier(0.215, 0.61, 0.355, 1)",
     }),
     overflow: [node.style.getPropertyValue("overflow"), node.style.getPropertyPriority("overflow")],
@@ -76,7 +73,9 @@ export const useWidthChange = (loading?: boolean) => {
   const attach = useCallback((element: HTMLElement | null) => {
     node.current = element;
     if (!element) return;
-    widths.set(element, element.offsetWidth);
+    // Attached again, as a ref callback that changes each render makes it,
+    // it keeps the width it had, which the observer keeps current.
+    if (!widths.has(element)) widths.set(element, element.offsetWidth);
     observer ??= new ResizeObserver((entries) => {
       for (const entry of entries) {
         widths.set(entry.target, entry.borderBoxSize[0]?.inlineSize ?? entry.contentRect.width);

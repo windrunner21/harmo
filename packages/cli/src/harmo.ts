@@ -54,7 +54,7 @@ const stylesHeader = `/* Harmo's styles. Import this file once. harmo-ui add kee
 const styleOrder = (path: string) => {
   const folder = path.split("/")[0] as string;
   return [
-    path === "tokens.css" ? 0 : path === "accents.css" ? 1 : folder === "settings" ? 3 : 2,
+    path === "tokens.css" ? 0 : path === "accents.css" ? 1 : 2,
     folder,
   ] as const;
 };
@@ -259,9 +259,12 @@ const add = async (
     );
 
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-  if (!manifest.dependencies?.react && !manifest.devDependencies?.react) {
+  const unlisted = ["react", "react-dom"].filter(
+    (name) => !manifest.dependencies?.[name] && !manifest.devDependencies?.[name],
+  );
+  if (unlisted.length > 0) {
     console.log(
-      "\nHarmo's components need React 19.3 or later, which this project doesn't list.",
+      `\nHarmo's components need React and React DOM 19.3 or later, and this project doesn't list ${unlisted.join(" or ")}.`,
     );
   }
 };

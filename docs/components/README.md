@@ -112,38 +112,42 @@ Some components are built from others, so their files need company:
 | File | Also load |
 | --- | --- |
 | `accordion.css` | `expand-chevron.css` |
-| `breadcrumb.css` | `link.css`, `chevron.css` |
-| `combobox.css` | `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label; `tag-list.css`, `tag.css`, and `tooltip.css` to choose several |
-| `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |
-| `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, or `tooltip.css` when used |
 | `banner.css` | `button.css` for its action |
+| `breadcrumb.css` | `link.css`, `chevron.css` |
+| `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, `kbd.css`, or `tooltip.css` when used |
 | `calendar.css` | `button.css`, `chevron.css` |
 | `card.css` | `chevron-to-arrow.css` for a chevron |
+| `combobox.css` | `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label; `tag-list.css`, `tag.css`, and `tooltip.css` to choose several |
+| `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |
 | `copy.css` | `button.css`; `tooltip.css` for an icon-only one; `input.css` and `field.css` for a field |
 | `date-filter.css` | `filter-chip.css`, `popup.css`, `select.css`, `listbox.css`, `expand-chevron.css`, `input.css`, `date-picker.css`, `calendar.css`, `button.css`, `chevron.css` |
 | `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
+| `dialog.css`, `drawer.css` | `button.css` for the close button |
 | `empty-state.css` | `button.css` for actions |
+| `field.css` | The control's own, such as `input.css` or `checkbox.css` |
 | `file-input.css` | `button.css`; `avatar.css` for an avatar; `field.css` for a label and a message |
 | `file-list.css` | `button.css` for its buttons |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `filters.css` | `filter-chip.css`, `popup.css`, and those of the filters in it |
 | `language-picker.css` | `button.css`, `popup.css`, `listbox.css`, `expand-chevron.css` |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
-| `listbox.css` | `popup.css`; `button.css` for a footer |
-| `time-picker.css` | `popup.css`, `expand-chevron.css`; `field.css` for a label |
+| `listbox.css` | `popup.css`; `button.css` for a footer or a button that opens it |
 | `menu-button.css` | `button.css`; `popup.css` to open a Popup |
 | `navigation-menu.css` | `expand-chevron.css` |
 | `pagination.css` | `button.css`, `chevron.css` |
+| `password.css` | `input.css`, `field.css`, `tooltip.css`; `meter.css` for the strength |
 | `phone-input.css` | `select.css`, `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label |
-| `password.css` | `input.css`, `field.css`; `meter.css` for the strength; `tooltip.css` for the toggle's tooltip |
-| `selection-bar.css` | `button.css` for its actions; `tooltip.css` for a reason one is blocked |
-| `table.css` | `checkbox.css` to select rows; `select.css`, `listbox.css`, `popup.css`, `expand-chevron.css`, `pagination.css`, `button.css`, `chevron.css` for a footer |
 | `search.css` | `input.css`; `field.css` for a label; `kbd.css` for a shortcut |
-| `stat.css` | `tooltip.css` for a hint; `link.css` for a link as its action |
-| `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
+| `selection-bar.css` | `button.css` for its actions; `tooltip.css` for a reason one is blocked |
 | `settings.css` | The controls it holds, such as `switch.css` |
+| `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
+| `stat.css` | `tooltip.css` for a hint; `link.css` for a link as its action |
+| `table.css` | `checkbox.css` to select rows; `select.css`, `listbox.css`, `popup.css`, `expand-chevron.css`, `pagination.css`, `button.css`, `chevron.css` for a footer |
 | `tag-list.css` | `tag.css`, `tooltip.css` |
+| `time-picker.css` | `popup.css`, `expand-chevron.css`; `field.css` for a label |
+| `toast.css` | `button.css` for an action |
+| `toolbar.css` | Those of what's in it |
 | `input.css`, `textarea.css`, `checkbox.css`, `radio.css`, `switch.css`, `segmented.css` | `field.css` for labels and messages |
 
 ## Shared conventions
@@ -191,19 +195,22 @@ Some components are built from others, so their files need company:
 
   | Attribute | Meaning | Used by |
   | --- | --- | --- |
-  | `data-variant` | Appearance | Button, Tag, Status, Tooltip, Banner, Card, Empty State, Kbd |
-  | `data-status` | `success`, `warning`, `info`, or `error` (Password Input's word and hint: no `info`) | Status, Banner, Meter, Password Input |
+  | `data-variant` | Appearance | Button, Tag, Status, Tooltip, Card, Empty State, File Input |
+  | `data-status` | `success`, `warning`, `info`, or `error` (Password Input's word and hint: no `info`); on a file, `uploading`, `done`, or `error` | Status, Banner, Meter, Password Input, Toast, File List |
   | `data-size` | `small` or `large` | Spinner; `small` on Button, Accordion, Empty State |
   | `data-orientation` | `horizontal` on Field, `vertical` on Navigation Menu | Field, Navigation Menu |
   | `data-direction` | `back` on the chevrons, `up` or `down` on a trend | ChevronToArrow, Chevron, Stat |
-  | `data-side` | Preferred or actual side | Tooltip, Popup |
+  | `data-side` | Preferred or actual side; `end` puts a Table of Contents after the content | Tooltip, Popup, Table of Contents |
   | `data-position` | Where the region is: `top-start`, `top-center`, `top-end`, `bottom-start`, `bottom-end`; or, on a panel waiting beside the open one, `before` or `after` (script) | Toast, Navigation Menu |
   | `data-delay` | Wait 300ms before showing | Spinner |
-  | `data-placeholder` | No value chosen | Select |
+  | `data-placeholder` | No value chosen | Select, Time Picker |
   | `data-filled` | A filled segment | Meter |
   | `data-active` | Highlighted option (script) | Listbox |
-| `data-value`, `data-name` | An option's value, and the name a form sends it under | Listbox, Select |
-  | `data-ready`, `data-on-current` | Measured, pill over current (script) | Tabs |
+  | `data-value` | An option's value | Listbox, and what's built on it: Select, Combobox, Filter Chip, Language Picker |
+  | `data-name` | The name a form sends the chosen values under | Select |
+  | `data-ready` | Measured and placed (script) | Tabs, Table of Contents |
+  | `data-on-current` | The pill is over the current tab (script) | Tabs |
+  | `data-level` | `2` or `3`: a heading under another | Table of Contents |
   | `data-dismissed` | Hidden by Escape (script) | Tooltip |
   | `data-underlined`, `data-visited` | Opt-in underline / visited color | Link |
   | `data-align` | `start`: lined up at the start, or a panel opening there | Empty State, Navigation Menu |
@@ -215,11 +222,20 @@ Some components are built from others, so their files need company:
   | `data-copied` | Just copied (script) | Copy Button |
   | `data-collapsed` | Down to its icons | Sidebar |
   | `data-multiple` | Choosing several | Combobox |
+  | `data-free-text` | What's typed is the value | Combobox |
+  | `data-closing` | Closing, while its exit plays (script) | Dialog, Drawer |
+  | `data-dragging` | `page` or `over`: a file is being dragged (script) | File Input |
+  | `data-stacked`, `data-inactive` | Two texts in one place, and the one not showing | File Input |
+  | `data-leaving` | Fading out before it's taken away (script) | File Input, Toast |
+  | `data-layout` | `grid`: thumbnails | File List |
+  | `data-new` | Just added, settling in | File List |
+  | `data-emphasis`, `data-footer` | A cell that stands out; `static`, a footer that stays under the table | Table |
+  | `data-front`, `data-beyond`, `data-expanded`, `data-removed`, `data-moved` | Its place in the stack, spread out, leaving, and moving (script) | Toast |
 - **Text sizes are in rem**, so text follows the browser's default font-size
-  setting as well as zoom. The scale runs `--harmo-font-size-base` (16px),
-  `-sm` (14px), `-xs` (13px), `-2xs` (12px), and `-3xs` (11px); line heights
-  are unitless or rem, never px. Pixel sizes in these docs are at the default
-  16px.
+  setting as well as zoom. The scale runs `--harmo-font-size-lg` (20px),
+  `-base` (16px), `-sm` (14px), `-xs` (13px), `-2xs` (12px), and `-3xs`
+  (11px); line heights are unitless or rem, never px. Pixel sizes in these
+  docs are at the default 16px.
 - **Control height.** Buttons, inputs, and select triggers share
   `--harmo-control-height` (34px), so they line up in a row. Inputs and select
   triggers also share their box, border, focus ring, and states through the
@@ -232,7 +248,8 @@ Some components are built from others, so their files need company:
 - **Motion.** Durations come from `--harmo-duration-*` and curves from
   `--harmo-ease-*`. Most entrances take 200ms and exits 150ms; the others,
   such as Tooltip's 150ms in and 100ms out or a Field error's 300ms in, are on
-  their pages. Exits are always quicker than entrances. A color or background fading on hover uses the
+  their pages. Exits are quicker than entrances, except Toast's, whose exit
+  matches its 400ms entrance. A color or background fading on hover uses the
   plain CSS `ease`, which has no token. Reduced motion keeps
   the state change and drops the movement.
 - **Hiding.** `hidden` hides any component or part of one, at once, since
@@ -245,11 +262,13 @@ Some components are built from others, so their files need company:
 - **Focus rings** are `--harmo-focus-outline` (2px solid `--harmo-color-focus`),
   named after Stripe's `focusOutline`, at `--harmo-focus-outline-offset`
   (2px). Some keep their own offset: tabs (always 2px, so the ring stays above
-  the divider), and controls inside another control or a clipped panel, such
-  as the password toggle, Search's clear button, a Sidebar item, or a
-  Navigation Menu row, whose ring stays inside it. Text
-  fields and select triggers instead turn their border the focus color and add
-  a 3px tinted ring.
+  the divider); a Sidebar item (0, in the room its nav keeps around the items,
+  so its scrolling can't cut the ring off); controls inside another control or
+  a clipped or scrolling panel, such as the password toggle, Search's clear
+  button, a Copy Field's button, a Navigation Menu row, or a Table of Contents
+  link, whose ring stays inside it; and Stat's hint, whose ring is on its 24px
+  button, with no offset. Text fields and select triggers instead turn their
+  border the focus color and add a 3px tinted ring.
 
 ## What scripts handle
 
@@ -259,37 +278,43 @@ the React components, set:
 | Attribute | Where | Purpose |
 | --- | --- | --- |
 | `indeterminate` (property) | Checkbox | Mixed state |
-| `aria-busy`, `aria-disabled` | Button | Loading state; scripts also ignore presses while busy |
+| `aria-busy`, `aria-disabled`, `data-holding`, `data-held`, the width | Button | Loading; ignoring presses while disabled; hold to confirm; the width following its content |
 | `--htabs-*`, `data-ready`, the strip's scroll position | Tabs | Sliding hover pill and underline; the current tab in view |
-| `aria-current="location"` | Table of Contents | Follow the section you've reached |
+| `aria-current="location"`, `--htoc-marker-y`, `--htoc-marker-size`, `data-ready` | Table of Contents | Follow the section you've reached, and move the marker to it |
 | `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
 | `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
 | `aria-expanded` | Popup triggers, select triggers, Menu Button | Open ring, chevron direction, the bars' cross |
 | `aria-expanded`, `aria-activedescendant`, `data-active`, option `hidden`, `.hoption-match`, the status, tags, hidden inputs | Combobox | Filter, highlight, pick, and choose several |
 | `aria-expanded`, `aria-activedescendant`, `aria-keyshortcuts`, `data-active`, option `hidden`, `.hoption-match` | Command Menu | Filter, highlight, the shortcut, and opening |
 | `aria-expanded`, `inert`, `data-open`, `data-moving`, `data-position`, `--hnavigation-menu-*` | Navigation Menu | Open and close its panels, and size its frame |
-| `data-collapsed`, `aria-expanded`, a group's `open` | Sidebar | Collapse, and the groups beside its icons |
+| `data-collapsed`, `aria-expanded`, the toggle's tooltip text, a group's `open` | Sidebar | Collapse, and the groups beside its icons |
 | The clear button's `hidden`, the field's value | Search | Show the clear button; empty the field on it, or on Escape |
+| The tag itself, focus | Tag | Remove it, and keep the keyboard's place |
 | Tags' `hidden`, `.htag-list-rest`, the count, `data-open` | Tag List | Count what fits, and pin its tooltip open |
-| `data-open` | Stat | Pin a hint's tooltip open on a press |
+| `data-open` | Stat | Pin a hint's or a trend's tooltip open on a press |
 | `data-copied`, `data-open`, the tooltip's or label's text, the status | Copy Button, Share Button | Copy or share, and say so for two seconds |
 | Ignoring activation | Pagination | On a disabled Previous or Next |
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
+| `aria-pressed`, or `aria-current` from your router | Filter Bar | The filter in force |
 | The button's text and icon, the remove button's `hidden`, the message and `aria-invalid` | File Input | Show the file, remove it, and say why one was refused |
 | `data-status`, the progress, the rows themselves | File List | Follow your app's uploads |
 | The field's text, the country, and the hidden value | Phone Input | Format the number and follow the country |
-| The button's label | Language Picker | Show the language chosen, and its region |
+| The button's label; the highlight, by Left and Right in a panel of regions | Language Picker | Show the language chosen, and its region; move between columns |
 | The count's text | Selection Bar | Follows the selection, which is your app's |
-| `checked` and `indeterminate`, hidden columns, the rows and the page | Table | Follow the selection, the columns chosen, and the page, which are your app's |
-| Which fields are `hidden`, Apply's `aria-disabled`, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
-| `data-side="top"` | Popup | Slide away from a trigger it opened above |
+| `checked` and `indeterminate`, hidden columns, the rows and the page; `tabindex`, `role`, and the table's `aria-label` or `aria-labelledby` on `.htable-scroll` while it overflows | Table | Follow the selection, the columns chosen, and the page, which are your app's; make a scroll area that overflows a named region the keyboard can scroll |
+| Which fields are `hidden`, Apply's `aria-disabled`, the dates' first and last days, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
+| The title, the rows, Previous's and Next's `aria-disabled`, `aria-selected`, focus and `tabindex` | Calendar | Change the month, choose a day, and move by keyboard |
+| The field's text, `aria-invalid`, the hidden input, the Calendar's day | Date Picker | Write and read the date in the locale's order, or pick it from the Calendar |
+| `aria-selected`, `aria-activedescendant`, `.htime-picker-value`, `data-placeholder`, the hidden input | Time Picker | Choose the time, by pointer or keyboard, and show it |
+| `data-side="top"`, `data-refit`, `data-pinned`, focus back on the trigger | Popup | Slide away from a trigger it opened above, find its place afresh as it opens, close where it is, and hand focus back when one opened over another closes |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
 | `aria-selected` | Listbox option | Selection |
 | `aria-activedescendant` | Select trigger, search field, or the list | Announces the highlighted option |
 | Hidden inputs | Select in a form | The chosen values, kept in step, restored on reset, disabled with the trigger |
 | Error text, `hidden` | Field | Shows a validation error; `hidden` closes it, then the text is cleared |
 | Counter text | TextArea | Characters used |
+| The backdrop's text and `<mark>`s, its size and scrolling | Input, TextArea | Mark parts of the text |
 | `aria-pressed`, input `type`, `hidden`, `data-status`, `aria-invalid` | Password Input | Show/hide, reveal the strength, color it |
 | `aria-valuenow`, `aria-valuetext`, `data-filled`, `data-status` | Meter | The value |
 | `role="status"` or `role="alert"` | Banner | Announce a banner that appears after load |
@@ -302,8 +327,13 @@ Each component page's "What a script does" section has the details.
 
 The popover attribute; CSS anchor positioning, including `anchor-scope` and
 `@position-try` (in all major browsers since January 2026);
-`field-sizing: content` (since June 2026); `@starting-style` and
-`allow-discrete` transitions, for Popup and Tooltip; `interpolate-size`, for
+`field-sizing: content` (since June 2026); `@starting-style`, for what
+fades or slides in as it appears, such as Tooltip, Dialog, Drawer, and Toast;
+`allow-discrete` transitions, for Popup, Tooltip, Dialog, and Drawer, with
+`overlay` for Popup, Dialog, and Drawer, which leave the top layer as they
+fade; for Dialog and Drawer, invoker commands (`commandfor` and `command`),
+`closedby`, `requestClose()`, and the dialog's `beforetoggle` and `toggle`
+events; `interpolate-size`, for
 Field's error, with a fallback where it's missing; `::details-content`, for
 Accordion and Sidebar; `subgrid`, for Stat's group; the `inert` attribute and
 `overflow: clip`, for Navigation Menu; the Clipboard and Web Share APIs, in

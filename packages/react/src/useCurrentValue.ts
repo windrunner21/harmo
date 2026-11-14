@@ -27,16 +27,22 @@ export const useCurrentValue = <
   });
 
   useEffect(() => {
-    const form = element.current?.form;
-    if (!form) return;
-    const reset = (event: Event) =>
-      setTimeout(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const reset = (event: Event) => {
+      if (event.target !== element.current?.form) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
         if (!event.defaultPrevented && element.current) {
           setTyped(element.current.value);
         }
       });
-    form.addEventListener("reset", reset);
-    return () => form.removeEventListener("reset", reset);
+    };
+    const root = element.current?.getRootNode() ?? document;
+    root.addEventListener("reset", reset, true);
+    return () => {
+      root.removeEventListener("reset", reset, true);
+      clearTimeout(timer);
+    };
   }, []);
 
   return {

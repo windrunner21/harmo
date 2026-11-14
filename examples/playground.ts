@@ -473,7 +473,9 @@ function checkPage(file: string, html: string) {
   for (const [, id] of live.matchAll(/\sid="([^"]+)"/g)) (known.has(id) ? duplicates : known).add(id);
   if (duplicates.size) throw new Error(`${file} repeats the id ${[...duplicates].join(", ")}`);
 
-  for (const [, attribute, value] of live.matchAll(/\s(aria-labelledby|aria-describedby|aria-controls|for|popovertarget)="([^"]+)"/gi)) {
+  for (const [, attribute, value] of live.matchAll(
+    /\s(aria-labelledby|aria-describedby|aria-controls|aria-errormessage|for|headers|popovertarget|commandfor)="([^"]+)"/gi,
+  )) {
     for (const id of value.split(/\s+/)) {
       if (!known.has(id)) throw new Error(`${file} has ${attribute}="${id}", but no element has that id`);
     }

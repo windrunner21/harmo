@@ -1,5 +1,5 @@
 import { test as base, expect, type Locator, type Page } from "@playwright/test";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -17,12 +17,30 @@ const dist = (playground: Playground) => {
   return folder;
 };
 
-// The slug of every page: "index", "avatar", "banner", and so on.
-export const pages = (playground: Playground) =>
-  readdirSync(dist(playground))
+// The slug of every component in examples/catalog.ts, which both playgrounds
+// show, read from its source.
+const catalogued = () =>
+  [
+    ...readFileSync(join(import.meta.dirname, "..", "examples", "catalog.ts"), "utf8").matchAll(
+      /^\s*slug: "([a-z0-9-]+)",$/gm,
+    ),
+  ].map((match) => match[1] as string);
+
+// The slug of every page: "index", "avatar", "banner", and so on. A component
+// in the catalog without a page, or a page the catalog doesn't list, fails,
+// rather than going untested.
+export const pages = (playground: Playground) => {
+  const built = readdirSync(dist(playground))
     .filter((file) => file.endsWith(".html"))
     .map((file) => file.slice(0, -".html".length))
     .sort();
+  const expected = ["index", ...catalogued()];
+  const missing = expected.filter((slug) => !built.includes(slug));
+  const extra = built.filter((slug) => !expected.includes(slug));
+  if (missing.length) throw new Error(`examples/${playground}/dist has no page for ${missing.join(", ")}`);
+  if (extra.length) throw new Error(`examples/${playground}/dist has pages examples/catalog.ts doesn't list: ${extra.join(", ")}`);
+  return built;
+};
 
 export const url = (playground: Playground, slug: string) =>
   pathToFileURL(join(dist(playground), `${slug}.html`)).href;

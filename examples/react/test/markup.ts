@@ -77,6 +77,9 @@ const idAttributes = new Set([
 
 const voidElements = new Set(["br", "hr", "img", "input", "meta", "link"]);
 
+// Elements whose text is a value or is shown as written, so its whitespace counts.
+const verbatimElements = new Set(["textarea", "pre"]);
+
 // One line per tag and text, indented by depth, so a failing comparison
 // shows a readable diff. Markup that renders the same way normalizes to the
 // same text:
@@ -86,7 +89,9 @@ const voidElements = new Set(["br", "hr", "img", "input", "meta", "link"]);
 // - class names are sorted, and style declarations are spaced the same way;
 // - ids, anchor names, and the names that group <details> are numbered in
 //   order of appearance, since React generates its own;
-// - whitespace between tags is dropped and whitespace in text collapsed;
+// - whitespace between tags is dropped and whitespace in text collapsed,
+//   except inside <textarea> and <pre>, whose text is kept as written, less
+//   the one newline the parser drops after the opening tag;
 // - <path /> equals <path></path>, and character references are decoded;
 // - data-example-* hooks, which only the playground's scripts read, are left
 //   out.
@@ -132,18 +137,30 @@ export const normalize = (markup: string) => {
   const lines: string[] = [];
   let depth = 0;
   const line = (text: string) => lines.push(`${"  ".repeat(depth)}${text}`);
+  // How many <textarea> or <pre> it's inside, and whether this text is the
+  // first after one's opening tag.
+  let verbatim = 0;
+  let opened = false;
 
   for (const [, closing, tag, source, selfClosing, text] of markup.matchAll(
     /<!--[\s\S]*?-->|<(\/?)([a-zA-Z][\w-]*)((?:\s+[^\s=>/]+(?:="[^"]*")?)*)\s*(\/?)>|([^<]+)/g,
   )) {
+    const first = opened;
+    opened = false;
     if (text !== undefined) {
-      const content = decode(text).replace(/\s+/g, " ").trim();
+      const decoded = decode(text);
+      const content = !verbatim
+        ? decoded.replace(/\s+/g, " ").trim()
+        : first
+          ? decoded.replace(/^\r?\n/, "")
+          : decoded;
       if (content) line(JSON.stringify(content));
       continue;
     }
     if (!tag) continue;
     const name = tag.toLowerCase();
     if (closing) {
+      if (verbatimElements.has(name)) verbatim = Math.max(0, verbatim - 1);
       depth--;
       line(`</${name}>`);
       continue;
@@ -165,6 +182,10 @@ export const normalize = (markup: string) => {
     if (selfClosing) {
       line(`</${name}>`);
       continue;
+    }
+    if (verbatimElements.has(name)) {
+      verbatim++;
+      opened = true;
     }
     depth++;
   }

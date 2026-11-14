@@ -37,7 +37,7 @@ Consumers of the compiled CSS need none of this.
 ```text
 packages/css/          @harmo-ui/css: SCSS in src/, compiled to dist/
 packages/react/        @harmo-ui/react: TypeScript in src/, compiled to dist/esm and dist/cjs
-packages/cli/          harmo: the CLI that copies components into a project, and the
+packages/cli/          harmo-ui: the CLI that copies components into a project, and the
                        script that builds what it copies
 examples/catalog.ts    the playgrounds' table of contents
 examples/playground.ts builds the pages of both playgrounds
@@ -123,13 +123,15 @@ stay in step:
 3. **Docs:** its page in `docs/components` (the sections are listed in
    [docs/components/README.md](docs/components/README.md#page-structure)),
    the tables in that README, the README's component table, and
-   [llms.txt](llms.txt).
+   [llms.txt](llms.txt): its index, and its rules wherever the component
+   belongs in them, such as the list of components that need a script, the
+   text the React components take, and those that use the provider's link.
 4. **React:** the component in `packages/react/src`, exported from
    `src/index.ts`, and its entry in `packages/cli/build-registry.ts`, whose build
    fails until every source file has a place in the copy.
 5. **React examples:** `examples/react/src/components/<slug>.tsx`, listed in
    `examples/react/src/examples.ts`, until `mise run test:react` shows no
-   failure and no to-do for it.
+   failure for it.
 6. **Browser tests:** for a component with behavior, `tests/<slug>.spec.ts`,
    testing what its page's "What a script does" table says, on both
    playgrounds.
@@ -140,10 +142,12 @@ stay in step:
 version, so the CLI copies the code of the packages with its version.
 
 1. Set the version in the three `package.json` files, then run `bun install`.
-   In `CHANGELOG.md`, move what's under Unreleased to a new section for the
-   version, with the date and a one-line summary under its heading, and update
-   the links at the end. Packing copies the
-   changelog into each package, for npm and for the website's changelog page.
+   For a new minor version, also set the CDN link's, such as `@0.6`, in
+   `README.md` and `packages/css/README.md`. In `CHANGELOG.md`, move what's
+   under Unreleased to a new section for the version, with the date and a
+   one-line summary under its heading, and update the links at the end.
+   Packing copies the changelog into each package, for npm and for the
+   website's changelog page.
 2. Run `mise run check:react`, `mise run test:react`, `mise run test:cli`, and
    `mise run test:browser`, in Chromium. CI runs all three browsers on the
    push in step 4.
@@ -191,9 +195,10 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   That file exports `examples`, keyed by the HTML examples' titles, and is
   listed in `src/examples.ts`.
 - The build renders every example with React, as a server would, and
-  `src/client.tsx` hydrates it in the browser. Both wrap it in
-  `src/Ready.tsx`, which marks it `data-play-ready` once its effects have
-  run, for the browser tests.
+  `src/client.tsx` hydrates it in the browser. Both wrap it in `StrictMode`,
+  as a framework's development server does, and in `src/Ready.tsx`, which
+  marks it `data-play-ready` once its effects have run, for the browser
+  tests.
 - Write each example on its own, without helpers shared across the file,
   since the playground shows its code to copy. `src/app-icons.tsx` stands in
   for an app's own icons.
@@ -205,17 +210,21 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   and with unused code reported.
 - `mise run test:react` renders every React example and compares its markup
   with the HTML example of the same title. An HTML example without a React
-  version shows as a to-do.
+  version fails, unless the test lists it as one only HTML can show, such as
+  Tabs before its script runs.
 - Both playground builds check every page: no repeated ids, and every
-  `aria-labelledby`, `aria-describedby`, `aria-controls`, `for`, and
-  `popovertarget` points to an element.
+  `aria-labelledby`, `aria-describedby`, `aria-controls`,
+  `aria-errormessage`, `for`, `headers`, `popovertarget`, and `commandfor`
+  points to an element.
 - `mise run test:cli` runs the built CLI in throwaway projects: each component
   brings every file it imports and the styles of every class it uses, everything
   copied type-checks under a default Next.js setup, and a file you've changed is
   never replaced without asking.
 - `mise run test:browser` opens every page of both playgrounds in Chromium:
-  no console errors, every React example gets ready, and axe finds no WCAG
-  2.2 A or AA violation, as the page loads and with each popup open. Then it
+  one for each component in the catalog, no console errors, every React
+  example gets ready, and axe finds no WCAG 2.2 A or AA violation, as the
+  page loads and with each popup and dialog open, a popup inside another and
+  a list a script opens included; one that doesn't open fails. Then it
   tests what each component's scripts do, such as Listbox's keys and Tabs'
   underline. Each test in `tests/` runs on both playgrounds, and the
   config lists Chromium, Firefox, and WebKit; `mise run test:browser:all`

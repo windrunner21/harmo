@@ -8,18 +8,15 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from "react";
+import { milliseconds } from "./milliseconds.ts";
 
 // Held all the way, the full fill shows for a moment before the action.
 const BEAT = 200;
 const pressKeys = new Set(["Enter", " "]);
 
 // The hold's length, from --hbutton-hold-duration, so CSS and the timer agree.
-const durationOf = (button: HTMLElement) => {
-  const value = getComputedStyle(button).getPropertyValue("--hbutton-hold-duration").trim();
-  const number = parseFloat(value);
-  if (!Number.isFinite(number)) return 1500;
-  return value.endsWith("ms") ? number : number * 1000;
-};
+const durationOf = (button: HTMLElement) =>
+  milliseconds(getComputedStyle(button).getPropertyValue("--hbutton-hold-duration"), 1500);
 
 // A button whose action runs once it's held, by pointer, Enter, or Space, for
 // its whole duration: full, it stays so for a moment, whatever the pointer or
@@ -40,6 +37,10 @@ export const useHold = (onHold: (() => void) | undefined, inactive: boolean) => 
   useLayoutEffect(() => {
     latest.current = { onHold, inactive };
   });
+  // The button held, so the timers see it disabled by a fieldset meanwhile,
+  // which no prop says.
+  const button = useRef<HTMLElement | null>(null);
+  const stopped = () => latest.current.inactive || !!button.current?.matches(":disabled");
 
   const stop = () => {
     clearTimeout(holdTimer.current);
@@ -53,20 +54,21 @@ export const useHold = (onHold: (() => void) | undefined, inactive: boolean) => 
   const act = () => {
     stop();
     unhold();
-    if (!latest.current.inactive) latest.current.onHold?.();
+    if (!stopped()) latest.current.onHold?.();
   };
   // Full: it stays so, whatever the pointer or key does now, then acts.
   const complete = () => {
     stop();
-    if (latest.current.inactive || !latest.current.onHold) return;
+    if (stopped() || !latest.current.onHold) return;
     setHeld(true);
     beatTimer.current = setTimeout(act, BEAT);
   };
-  const start = (button: HTMLElement, source: "pointer" | "key") => {
+  const start = (element: HTMLElement, source: "pointer" | "key") => {
+    button.current = element;
     by.current = source;
     setHolding(true);
     clearTimeout(holdTimer.current);
-    holdTimer.current = setTimeout(complete, durationOf(button));
+    holdTimer.current = setTimeout(complete, durationOf(element));
   };
 
   // Turned inactive, or no longer a hold button: whatever was under way stops,
@@ -99,9 +101,9 @@ export const useHold = (onHold: (() => void) | undefined, inactive: boolean) => 
         if (event.button !== 0 || inactive) return;
         // A finger stays with what it pressed, even moved off it; let it go,
         // so moving off the button lets go of the hold, as with a mouse.
-        const button = event.currentTarget;
-        if (button.hasPointerCapture(event.pointerId)) button.releasePointerCapture(event.pointerId);
-        start(button, "pointer");
+        const target = event.currentTarget;
+        if (target.hasPointerCapture(event.pointerId)) target.releasePointerCapture(event.pointerId);
+        start(target, "pointer");
       },
       onPointerUp: () => {
         if (by.current === "pointer") stop();
@@ -122,6 +124,7 @@ export const useHold = (onHold: (() => void) | undefined, inactive: boolean) => 
         const fromPress = pressed.current && event.detail > 0;
         pressed.current = false;
         if (fromPress || inactive || held) return;
+        button.current = event.currentTarget;
         act();
       },
       onKeyDown: (event: KeyboardEvent<HTMLButtonElement>) => {

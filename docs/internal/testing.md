@@ -1,9 +1,10 @@
-# Testing the React components
+# Testing
 
 Internal, for contributors. The HTML examples in `examples/html/src` are
 Harmo's contract: hand-written markup that the CSS is built and documented
 against. A React component is correct when it renders that markup, and when
-it does what the HTML example's script does. Harmo tests the two separately.
+it does what the HTML example's script does. Harmo tests the two separately,
+and the CLI on its own.
 
 ## 1. Markup comparison
 
@@ -14,6 +15,13 @@ fails the test with a line-by-line diff.
 `examples/react/test/hidden.test.tsx` renders the components whose other props
 go to an element inside, such as PasswordInput's to its input, and checks that
 `hidden` still reaches the whole component. No example shows that.
+
+The other `examples/react/test/<slug>.test.tsx` files test what a component
+renders from its props where no example shows it, such as the name an exclusive
+Accordion gives its items, or a Calendar's days in another locale. They render
+to static markup too, so they see no effects or layout; behavior is the
+browser tests' (step 2). `mise run test:react` runs them all, with the markup
+comparison.
 
 `examples/react/test/package.test.tsx` checks what an app gets from npm. The
 playground already imports `@harmo-ui/react` as compiled, so every test runs on the
@@ -49,7 +57,9 @@ then brings both sides to one canonical form:
 - ids, and the anchor names in `anchor-name` and `position-anchor`, numbered
   in order of appearance, since React generates its own; references to an id
   must still point at the same element;
-- whitespace between tags dropped, and whitespace in text collapsed;
+- whitespace between tags dropped, and whitespace in text collapsed, except
+  inside `<textarea>` and `<pre>`, whose text is a value or shown as written,
+  so it's kept, less the one newline the parser drops after the opening tag;
 - `<path />` equal to `<path></path>`, and character references decoded;
 - `data-example-*` hooks, which only the playground's scripts read, left out;
 - React's preload hints for images left out: in a page, React puts them in
@@ -65,7 +75,7 @@ It can't see:
   render the state the HTML example shows on load;
 - CSS;
 - whether whitespace between inline elements matters, since all of it is
-  dropped.
+  dropped outside `<textarea>` and `<pre>`.
 
 ### Adding examples
 
@@ -85,8 +95,10 @@ export const examples = {
 ```
 
 - The HTML partials set what's tested. An HTML example without a React
-  version, or a whole component without one, shows as to-dos, so what's left
-  is visible.
+  version fails, unless `markup.test.tsx` lists it as HTML only, for what only
+  HTML can show: Tabs before its script runs, and the list a typed search
+  leaves empty. Each one on that list must still be in the HTML, and still
+  have no React version.
 - A React example whose title isn't in the HTML fails, and so does a file in
   `src/components` that `src/examples.ts` doesn't list.
 - Write each example the way an app would use the component, not to make the
@@ -118,38 +130,42 @@ mise run test:browser    # builds both playgrounds, then tests them in Chromium
 
 `tests/pages.spec.ts` opens every page of both playgrounds and checks that:
 
+- it has a page for every component in `examples/catalog.ts`, and no other,
+  so a component left out of a playground fails rather than going untested;
 - every React example gets ready: hydrated, with its effects run, which add
-  listeners such as Listbox's keys. `examples/react/src/Ready.tsx` wraps each
-  example, on the server too, so the markup and ids stay the same, and marks
-  its root `data-play-ready` once every effect inside has run;
+  listeners such as Listbox's keys. Each example runs under `StrictMode`, as
+  a framework's development server runs an app, so every effect and ref
+  callback runs, is cleaned up, and runs again. `examples/react/src/Ready.tsx`
+  wraps each example, on the server too, so the markup and ids stay the same,
+  and marks its root `data-play-ready` once every effect inside has run;
 - [axe](https://github.com/dequelabs/axe-core) finds no WCAG 2.2 A or AA
   violation, as the page loads and with each example's popup open, its
-  trigger included. axe is loaded into the page once, and the whole check,
-  each popup opened and checked once it's fully open, runs in one call to
-  the page;
+  trigger included: each popup opened by its `popovertarget` button, one that
+  doesn't open failing; each popup a button inside an open one opens, with
+  both open; and each list a script opens from its field, such as a
+  Combobox's, opened with a click, unless it stays closed, as a read-only one
+  does. Each example's dialog is opened by its button, or by script for one
+  opened from a link, and every `commandfor` must reach a dialog, so a button
+  that misses its dialog fails. axe is loaded into the page once, and the
+  whole check, each popup opened and checked once it's fully open, runs in
+  one call to the page;
 - `hidden` hides every part of every example, except Field's error and the
   password details, which stay rendered to animate closed.
 
-The other files test one component each, from the "What a script does"
-table on its page in `docs/components`, except `hidden.spec.ts`, which tests
-what `hidden` does across components:
+The other files are named after what they test. A component's,
+`<slug>.spec.ts`, tests what the "What a script does" table on its page in
+`docs/components` says, and what its Appearance section promises that a script
+or a measurement can check, such as a popup's 8px from its trigger. A few test
+something across components or the playgrounds themselves:
 
 | File | Tests |
 | --- | --- |
-| `listbox.spec.ts` | Focus and the highlight on opening; the arrow keys, Home, and End; type-ahead with one letter, several, and a pause; Enter, Space, and clicks choosing, and a single-select closing; disabled options; the pointer; the highlight scrolling into view; titles on truncated options, as the window resizes; search, groups it empties, the empty message, and Enter with no match; reopening after a search, on the side the whole list fits |
-| `select.spec.ts` | Focus staying on the trigger; the keys that open it, and keys sent straight after, even in one task; the value text, the placeholder, and the hidden inputs; Space not reopening it; Tab closing it; disabling and enabling it; a form's submit and reset, list included |
-| `filter-chip.spec.ts` | The values, then a count; the values in the chip's name; Clear filters; a single choice closing; the text filter's Enter and Apply |
-| `tabs.spec.ts` | Selecting with clicks and keys, wrapping, right to left, and skipping a disabled tab, with each tab's own panel; Tab into the panel; the underline sliding on a click and moving at once on a key or a resize, and with no width when no tab is current; links; the pill; right-to-left placement; tabs that don't fit staying on one line, with only the strip scrolling; the current tab in view on load and after a resize, sliding to the middle on a click, and moving at once on a key or with reduced motion; room for the focus ring at both ends; lining up with what's around it when the tabs fit; the divider in forced colors |
-| `popup.spec.ts` | `aria-expanded` with the trigger, Escape (focus returning), and a click outside; 8px below, aligned to the start, and at least as wide; above without room below; the other edge without room at the end; each opening starting fresh, even after being squeezed while closed; closing in place, sliding back toward its trigger |
-| `tooltip.spec.ts` | Naming and describing; the delay on hover and none on keyboard focus; no delay right after another closes, until a pause; the pointer moving onto it; Escape until the pointer or focus leaves; an unavailable action; 8px from each side; escaping a clipping container |
-| `field.spec.ts` | A validation error showing, marking the control, and describing it; its text kept while it closes, then cleared; shown again while it closes |
-| `password.spec.ts` | The toggle showing with a value, and disabled with the input; showing and hiding the password, with the name kept and the tooltip naming the next click; the strength word, hint, meter, and status at each level, and all of them cleared |
-| `textarea.spec.ts` | The counter counting toward `maxlength`, and describing the textarea |
-| `button.spec.ts` | Loading: busy, a spinner, focus kept; a press while loading ignored |
-| `banner.spec.ts` | A hidden banner staying hidden, then showing as an alert |
-| `hidden.spec.ts` | The password details still animating closed; Settings rows and Breadcrumb items taking the first or last one's look, and the arrow keys skipping a tab, when one is hidden |
-| `checkbox.spec.ts` | The mixed state, until it's checked |
-| `expand-chevron.spec.ts` | Each stroke and the head folding with `aria-expanded`, and back |
+| `pages.spec.ts` | Every page, as above |
+| `hidden.spec.ts` | What `hidden` does across components: the password details still animating closed; Settings rows and Breadcrumb items taking the first or last one's look, and the arrow keys skipping a tab, when one is hidden |
+| `accents.spec.ts` | `data-harmo-accent` recoloring what's inside it |
+| `color-scheme.spec.ts` | Dark mode from `color-scheme` |
+| `input-highlight.spec.ts` | Marking text in an Input or a TextArea |
+| `playground-nav.spec.ts` | The playgrounds' own navigation, built with Sidebar: the page you're on marked, and the sheet a menu button opens on a narrow screen |
 
 Every test fails if the page logs a console error or throws, which includes
 React's hydration mismatches; `test` in `tests/playgrounds.ts` adds that

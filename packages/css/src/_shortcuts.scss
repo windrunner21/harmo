@@ -75,8 +75,10 @@ $avatar-color-background: var(--harmo-avatar-color-background);
 $icon-color: var(--harmo-icon-color);
 $icon-hover-color: var(--harmo-icon-hover-color);
 
-// Component roles: secondary button.
+// Component roles: dialog.
 $dialog-backdrop-color: var(--harmo-dialog-backdrop-color);
+
+// Component roles: secondary button.
 $button-secondary-color-text: var(--harmo-button-secondary-color-text);
 $button-secondary-color-border: var(--harmo-button-secondary-color-border);
 $button-secondary-hover-color-border: var(--harmo-button-secondary-hover-color-border);
@@ -85,10 +87,10 @@ $button-secondary-box-shadow: var(--harmo-button-secondary-box-shadow);
 // Typography.
 $font-family: var(--harmo-font-family);
 $font-family-mono: var(--harmo-font-family-mono);
+$font-size-lg: var(--harmo-font-size-lg);
 $font-size-base: var(--harmo-font-size-base);
 $font-size-sm: var(--harmo-font-size-sm);
 $font-size-xs: var(--harmo-font-size-xs);
-$font-size-lg: var(--harmo-font-size-lg);
 $font-size-2xs: var(--harmo-font-size-2xs);
 $font-size-3xs: var(--harmo-font-size-3xs);
 $font-weight-normal: var(--harmo-font-weight-normal);
@@ -101,6 +103,7 @@ $button-font-line-height: var(--harmo-button-font-line-height);
 // Sizes and spacing.
 $control-height: var(--harmo-control-height);
 $avatar-size: var(--harmo-avatar-size);
+$card-padding: var(--harmo-card-padding);
 $checkbox-size: var(--harmo-checkbox-size);
 $switch-height: var(--harmo-switch-height);
 $icon-gap: var(--harmo-icon-gap);
@@ -111,7 +114,6 @@ $space-md: var(--harmo-space-md);
 $space-lg: var(--harmo-space-lg);
 $space-xl: var(--harmo-space-xl);
 $space-2xl: var(--harmo-space-2xl);
-$card-padding: var(--harmo-card-padding);
 $opacity-disabled: var(--harmo-opacity-disabled);
 
 // Shape and elevation.

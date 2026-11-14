@@ -143,6 +143,7 @@ and tokens live in [docs/components](components/README.md).
   `transition: all` rules.
 - Use native CSS for simple feedback. Keep reusable effects such as
   ChevronToArrow independent of the control containing them.
-- Use the installed animations.dev course-based guidance during motion
-  work, and validate behavior in a browser rather than treating source
-  review as visual approval.
+- Follow the motion principles of
+  [Animations on the Web](https://animations.dev) during motion work, and
+  validate behavior in a browser rather than treating source review as
+  visual approval.

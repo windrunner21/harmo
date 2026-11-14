@@ -85,6 +85,7 @@ const helpers = [
   "children.ts",
   "highlight.tsx",
   "icons.ts",
+  "milliseconds.ts",
   "modal.tsx",
   "useCurrentValue.ts",
   "useHold.ts",
@@ -96,7 +97,7 @@ const helpers = [
 
 // Stylesheets a component needs without importing that component's code.
 const alsoStyledBy: Record<string, string[]> = {
-  breadcrumb: ["chevron"],
+  breadcrumb: ["chevron", "link"],
   combobox: ["input"],
   "command-menu": ["dialog"],
   "file-input": ["avatar", "button"],
@@ -233,7 +234,7 @@ for (const name of Object.keys(components)) {
 write("registry.json", {
   $schema: "https://ui.shadcn.com/schema/registry.json",
   name: "harmo",
-  homepage: "https://github.com/windrunner21/harmo",
+  homepage: "https://harmo-ui.com",
   items: Object.keys(components).map((name) => ({
     name,
     type: "registry:item",

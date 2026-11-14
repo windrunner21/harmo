@@ -75,7 +75,7 @@ Load the full stylesheet, tokens and every component, then use the `.h*`
 classes:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.1/dist/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.5/dist/index.css" />
 
 <button class="hbutton" type="button">
   <span class="hbutton-label">Save changes</span>
@@ -126,7 +126,10 @@ import { Button, Field, Input, Link } from "@harmo-ui/react";
 ```
 
 Set your router's link component and your framework's image component once,
-at the root, and Link, Button, TabLink, and Avatar use them. In the Next.js App
+at the root. Every link a component renders uses the link component: Link,
+Button and Card with `href`, TabLink, FilterBarItem with `href`,
+NavigationMenuLink and NavigationMenuRow, Pagination with `href`, SidebarItem,
+and DataTable's `rowHref`; Avatar uses the image component. In the Next.js App
 Router, do it in a Client Component, because a Server Component can't pass
 functions to one, and wrap your root layout's `{children}` in it:
 
@@ -155,8 +158,8 @@ section lists its props.
 | Group | Components |
 | --- | --- |
 | Actions | [Button](docs/components/button.md), [Copy Button](docs/components/copy.md), [Link](docs/components/link.md) |
-| Forms | [Calendar](docs/components/calendar.md), [Date Picker](docs/components/date-picker.md), [Time Picker](docs/components/time-picker.md), [Field](docs/components/field.md), [Input](docs/components/input.md), [TextArea](docs/components/textarea.md), [Password Input](docs/components/password.md), [Phone Input](docs/components/phone-input.md), [Search](docs/components/search.md), [File Input](docs/components/file-input.md), [File List](docs/components/file-list.md), [Select](docs/components/select.md), [Combobox](docs/components/combobox.md), [Checkbox](docs/components/checkbox.md), [Radio](docs/components/radio.md), [Switch](docs/components/switch.md), [Segmented Control](docs/components/segmented.md), [Settings List](docs/components/settings.md) |
-| Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Popup](docs/components/popup.md), [Listbox](docs/components/listbox.md), [Tooltip](docs/components/tooltip.md) |
+| Forms | [Calendar](docs/components/calendar.md), [Checkbox](docs/components/checkbox.md), [Combobox](docs/components/combobox.md), [Date Picker](docs/components/date-picker.md), [Field](docs/components/field.md), [File Input](docs/components/file-input.md), [File List](docs/components/file-list.md), [Input](docs/components/input.md), [Password Input](docs/components/password.md), [Phone Input](docs/components/phone-input.md), [Radio](docs/components/radio.md), [Search](docs/components/search.md), [Segmented Control](docs/components/segmented.md), [Select](docs/components/select.md), [Settings List](docs/components/settings.md), [Switch](docs/components/switch.md), [TextArea](docs/components/textarea.md), [Time Picker](docs/components/time-picker.md) |
+| Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Listbox](docs/components/listbox.md), [Popup](docs/components/popup.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Command Menu](docs/components/command-menu.md), [Language Picker](docs/components/language-picker.md), [Menu Button](docs/components/menu-button.md), [Navigation Menu](docs/components/navigation-menu.md), [Pagination](docs/components/pagination.md), [Sidebar](docs/components/sidebar.md), [Table of Contents](docs/components/table-of-contents.md), [Tabs](docs/components/tabs.md) |
 | Data | [Date Filter](docs/components/date-filter.md), [Filter Bar](docs/components/filter-bar.md), [Filter Chip](docs/components/filter-chip.md), [Filters](docs/components/filters.md), [Selection Bar](docs/components/selection-bar.md), [Table](docs/components/table.md), [Toolbar](docs/components/toolbar.md) |
 | Feedback | [Banner](docs/components/banner.md), [Empty State](docs/components/empty-state.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |

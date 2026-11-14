@@ -24,7 +24,7 @@ beforeEach(() => {
   project = mkdtempSync(join(output, "project-"));
   writeFileSync(
     join(project, "package.json"),
-    JSON.stringify({ dependencies: { react: "19.3.0" } }),
+    JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0" } }),
   );
 });
 
@@ -118,6 +118,12 @@ describe("add", () => {
     expect(code).toContain('from "../field/Field"');
     expect(code).toContain('from "../lib/icons"');
     expect(code).not.toMatch(/from "\.[^"]*\.tsx?"/);
+  });
+
+  test("breadcrumb brings link.css, for the links you put in it", () => {
+    run("add", "breadcrumb");
+    expect(copied()).toContain("link/link.css");
+    expect(importsIn(read(`${harmo}/harmo.css`))).toContain("link/link.css");
   });
 
   for (const name of names) {
@@ -243,8 +249,8 @@ describe("add", () => {
       "chevron/chevron.css",
       "chevron-to-arrow/chevron-to-arrow.css",
       "field/field.css",
-      "tag/tag.css",
       "settings/settings.css",
+      "tag/tag.css",
     ]);
     expect(styles).toContain(".mine { color: red; }");
     expect(styles.lastIndexOf("@import")).toBeLessThan(styles.indexOf(".mine"));
@@ -401,9 +407,13 @@ describe("add", () => {
     expect(err).toContain("There's no package.json here.");
   });
 
-  test("says when the project doesn't list React", () => {
+  test("says when the project doesn't list React or React DOM", () => {
     write("package.json", "{}");
-    expect(run("add", "tag").out).toContain("need React 19.3 or later");
+    expect(run("add", "tag").out).toContain(
+      "need React and React DOM 19.3 or later, and this project doesn't list react or react-dom",
+    );
+    write("package.json", JSON.stringify({ dependencies: { react: "^19.3.0" } }));
+    expect(run("add", "tag").out).toContain("this project doesn't list react-dom.");
   });
 });
 

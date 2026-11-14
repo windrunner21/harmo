@@ -10,7 +10,7 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { createElement } from "react";
+import { createElement, StrictMode } from "react";
 import { renderToString } from "react-dom/server";
 import { buildPlayground, dedent, runBuild, watchPlayground } from "../playground.ts";
 import { AccentPicker } from "./src/AccentPicker.tsx";
@@ -57,7 +57,9 @@ if (process.argv.includes("--watch")) {
       render: ({ slug, title, id }) => {
         const Example = components[slug]?.[title];
         if (!Example) return undefined;
-        const demo = renderToString(createElement(Ready, null, createElement(Example)), { identifierPrefix: `${id}-` });
+        const demo = renderToString(createElement(StrictMode, null, createElement(Ready, null, createElement(Example))), {
+          identifierPrefix: `${id}-`,
+        });
         return { demo: withoutHints(demo), code: code.get(slug)?.get(title) ?? "", hydrate: true };
       },
     });
@@ -74,8 +76,8 @@ function codeOf(slug: string) {
   const entries = [...body.matchAll(/^  (?:"([^"]+)"|(\w+)): \(\) => (.*)$/gm)];
   const code = new Map<string, string>();
   // What an example needs from outside Harmo and React, so its code says where
-  // that comes from.
-  const imports = [...source.matchAll(/^import \* as (\w+) from "[^"]+";$/gm)];
+  // that comes from: a whole module, or a default export such as a JSON file.
+  const imports = [...source.matchAll(/^import (?:\* as )?(\w+) from "[^"]+";$/gm)];
   entries.forEach((entry, index) => {
     const title = entry[1] ?? entry[2] ?? "";
     const opening = entry[3] ?? "";

@@ -1,7 +1,11 @@
 // Hydrates each example the build rendered, marks it data-play-ready once its
 // effects have run, and mounts it again when its Replay button is pressed,
-// which restarts its animations.
+// which restarts its animations. Under StrictMode, as a framework's
+// development server runs an app, so every effect and ref callback runs,
+// is cleaned up, and runs again; the build renders it the same way, so the
+// trees and their ids match.
 
+import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { AccentPicker } from "./AccentPicker.tsx";
 import { components } from "./examples.ts";
@@ -22,9 +26,11 @@ for (const element of document.querySelectorAll<HTMLElement>("[data-play-root]")
   const ready = () => element.setAttribute("data-play-ready", "");
   const root = hydrateRoot(
     element,
-    <Ready onReady={ready}>
-      <Example />
-    </Ready>,
+    <StrictMode>
+      <Ready onReady={ready}>
+        <Example />
+      </Ready>
+    </StrictMode>,
     { identifierPrefix },
   );
 
@@ -35,9 +41,11 @@ for (const element of document.querySelectorAll<HTMLElement>("[data-play-root]")
     ?.addEventListener("click", () => {
       element.removeAttribute("data-play-ready");
       root.render(
-        <Ready key={++mounts} onReady={ready}>
-          <Example />
-        </Ready>,
+        <StrictMode>
+          <Ready key={++mounts} onReady={ready}>
+            <Example />
+          </Ready>
+        </StrictMode>,
       );
     });
 }

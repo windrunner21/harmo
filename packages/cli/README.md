@@ -41,8 +41,8 @@ import { Tabs, TabList, Tab, TabPanel } from "@/components/harmo/tabs/Tabs";
 `@/` is the path alias a default Next.js project sets up. Without one, use a relative
 path.
 
-The files are yours to change, and only React is left to depend on. They need React
-19.3 or later and TypeScript.
+The files are yours to change, and only React and React DOM are left to depend on.
+They need both at 19.3 or later, and TypeScript.
 
 ## Commands
 

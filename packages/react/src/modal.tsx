@@ -97,12 +97,32 @@ export const useModal = ({
       }
       toggling(event);
     };
+    // A command="request-close" button's value, kept for the cancel event its
+    // press fires, in the same task, so stopping that event to play the exit
+    // doesn't drop it. Only for that task, so a later Escape can't reuse it.
+    let requested: string | undefined;
+    const commanded = (event: Event) => {
+      const { command, source } = event as Event & {
+        command?: string;
+        source?: Element | null;
+      };
+      if (
+        command !== "request-close" ||
+        !(source instanceof HTMLButtonElement) ||
+        !source.hasAttribute("value")
+      )
+        return;
+      requested = source.value;
+      setTimeout(() => (requested = undefined));
+    };
     // An app that stops it, such as to confirm unsaved changes, keeps it open;
     // its onCancel runs first, as React listens on the dialog before this.
     const cancelled = (event: Event) => {
+      const value = requested;
+      requested = undefined;
       if (!event.cancelable || event.defaultPrevented) return;
       event.preventDefault();
-      closeAfterExit(element, closing);
+      closeAfterExit(element, closing, value);
     };
     const submitted = (event: SubmitEvent) => {
       const form = event.target as HTMLFormElement;
@@ -120,14 +140,26 @@ export const useModal = ({
         submitter?.hasAttribute("value") ? submitter.value : undefined,
       );
     };
+    // Wanted open again while its exit plays, as Command Menu's shortcut does
+    // by removing data-closing, the exit stops, and it stays open.
+    const observer = new MutationObserver(() => {
+      if (!element.hasAttribute("data-closing")) closing.current = null;
+    });
+    observer.observe(element, {
+      attributes: true,
+      attributeFilter: ["data-closing"],
+    });
     element.addEventListener("toggle", after);
     element.addEventListener("beforetoggle", before);
+    element.addEventListener("command", commanded);
     element.addEventListener("cancel", cancelled);
     document.addEventListener("submit", submitted);
     return () => {
+      observer.disconnect();
       closing.current = null;
       element.removeEventListener("toggle", after);
       element.removeEventListener("beforetoggle", before);
+      element.removeEventListener("command", commanded);
       element.removeEventListener("cancel", cancelled);
       document.removeEventListener("submit", submitted);
     };
