@@ -8,6 +8,20 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Table of Contents: `.htoc`, or `<TableOfContents>`, the headings of a long page,
+  beside it, with the one you've reached marked.
+
+  ```html preview="table-of-contents/Default"
+  <nav class="htoc" aria-label="On this page">
+    <ul class="htoc-list" role="list">
+      <li class="htoc-item"><a class="htoc-link" href="#overview" aria-current="location">Overview</a></li>
+      <li class="htoc-item"><a class="htoc-link" href="#milestones">Milestones</a></li>
+    </ul>
+  </nav>
+  ```
+
 ### Fixed
 
 - File Input: an avatar's remove button stays beside the circle when something

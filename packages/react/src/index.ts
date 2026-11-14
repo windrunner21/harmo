@@ -123,6 +123,11 @@ export {
   type DataTableFooterProps,
   type DataTableProps,
 } from "./table/DataTable.tsx";
+export {
+  TableOfContents,
+  type TableOfContentsItem,
+  type TableOfContentsProps,
+} from "./TableOfContents.tsx";
 export { useColumnVisibility, type ColumnVisibilityOptions } from "./table/useColumnVisibility.ts";
 export { useRowSelection, type RowSelection } from "./table/useRowSelection.ts";
 export {

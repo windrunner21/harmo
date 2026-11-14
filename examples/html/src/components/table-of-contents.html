@@ -1,0 +1,166 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    Stays in view beside the page and marks the section you've reached. Scroll the box, or follow a link.
+  </play-note>
+  <div tabindex="0" style="display: flex; gap: 26px; block-size: 320px; overflow-y: auto; inline-size: 100%">
+    <nav class="htoc" aria-label="On this page">
+      <span class="htoc-marker" aria-hidden="true"></span>
+      <ul class="htoc-list" role="list">
+        <li class="htoc-item"><a class="htoc-link" href="#overview">Overview</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#milestones">Milestones</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#risks">Risks</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#budget">Budget</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#contacts">Contacts</a></li>
+      </ul>
+    </nav>
+    <div style="flex: 1; min-inline-size: 0">
+      <section style="min-block-size: 220px">
+        <h3 id="overview" style="margin: 0">Overview</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="milestones" style="margin: 0">Milestones</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="risks" style="margin: 0">Risks</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="budget" style="margin: 0">Budget</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="contacts" style="margin: 0">Contacts</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="At the end" layout="wide">
+  <play-note>
+    <code>data-side="end"</code> puts it after the content, with its line on the edge that faces it. It does this in a flex row, whatever the order in the markup.
+  </play-note>
+  <div tabindex="0" style="display: flex; gap: 26px; block-size: 320px; overflow-y: auto; inline-size: 100%">
+    <nav class="htoc" aria-label="On this page" data-side="end">
+      <span class="htoc-marker" aria-hidden="true"></span>
+      <ul class="htoc-list" role="list">
+        <li class="htoc-item"><a class="htoc-link" href="#end-overview">Overview</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#end-milestones">Milestones</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#end-risks">Risks</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#end-budget">Budget</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#end-contacts">Contacts</a></li>
+      </ul>
+    </nav>
+    <div style="flex: 1; min-inline-size: 0">
+      <section style="min-block-size: 220px">
+        <h3 id="end-overview" style="margin: 0">Overview</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="end-milestones" style="margin: 0">Milestones</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="end-risks" style="margin: 0">Risks</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="end-budget" style="margin: 0">Budget</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="end-contacts" style="margin: 0">Contacts</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With sub-sections" layout="wide">
+  <play-note>
+    <code>level</code> indents the headings under another.
+  </play-note>
+  <div tabindex="0" style="display: flex; gap: 26px; block-size: 320px; overflow-y: auto; inline-size: 100%">
+    <nav class="htoc" aria-label="On this page">
+      <span class="htoc-marker" aria-hidden="true"></span>
+      <ul class="htoc-list" role="list">
+        <li class="htoc-item"><a class="htoc-link" href="#plan">Plan</a></li>
+        <li class="htoc-item" data-level="2"><a class="htoc-link" href="#plan-scope">Scope</a></li>
+        <li class="htoc-item" data-level="2"><a class="htoc-link" href="#plan-dates">Dates</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#team">Team</a></li>
+        <li class="htoc-item" data-level="2"><a class="htoc-link" href="#team-roles">Roles</a></li>
+        <li class="htoc-item" data-level="3"><a class="htoc-link" href="#team-leads">Leads</a></li>
+      </ul>
+    </nav>
+    <div style="flex: 1; min-inline-size: 0">
+      <section style="min-block-size: 220px">
+        <h3 id="plan" style="margin: 0">Plan</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="plan-scope" style="margin: 0">Scope</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="plan-dates" style="margin: 0">Dates</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="team" style="margin: 0">Team</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="team-roles" style="margin: 0">Roles</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="team-leads" style="margin: 0">Leads</h3>
+        <p>Notes for this part of the project go here.</p>
+      </section>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Right to left" layout="wide">
+  <play-note>
+    The list, its side, and the marker follow the page's direction.
+  </play-note>
+  <div dir="rtl" lang="ar" style="inline-size: 100%">
+  <div tabindex="0" style="display: flex; gap: 26px; block-size: 320px; overflow-y: auto; inline-size: 100%">
+    <nav class="htoc" aria-label="في هذه الصفحة">
+      <span class="htoc-marker" aria-hidden="true"></span>
+      <ul class="htoc-list" role="list">
+        <li class="htoc-item"><a class="htoc-link" href="#rtl-overview">نظرة عامة</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#rtl-milestones">المراحل</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#rtl-risks">المخاطر</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#rtl-budget">الميزانية</a></li>
+        <li class="htoc-item"><a class="htoc-link" href="#rtl-contacts">جهات الاتصال</a></li>
+      </ul>
+    </nav>
+    <div style="flex: 1; min-inline-size: 0">
+      <section style="min-block-size: 220px">
+        <h3 id="rtl-overview" style="margin: 0">نظرة عامة</h3>
+        <p>تذهب ملاحظات هذا الجزء من المشروع هنا.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="rtl-milestones" style="margin: 0">المراحل</h3>
+        <p>تذهب ملاحظات هذا الجزء من المشروع هنا.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="rtl-risks" style="margin: 0">المخاطر</h3>
+        <p>تذهب ملاحظات هذا الجزء من المشروع هنا.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="rtl-budget" style="margin: 0">الميزانية</h3>
+        <p>تذهب ملاحظات هذا الجزء من المشروع هنا.</p>
+      </section>
+      <section style="min-block-size: 220px">
+        <h3 id="rtl-contacts" style="margin: 0">جهات الاتصال</h3>
+        <p>تذهب ملاحظات هذا الجزء من المشروع هنا.</p>
+      </section>
+    </div>
+  </div>
+  </div>
+</play-example>

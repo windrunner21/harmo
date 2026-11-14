@@ -327,6 +327,11 @@ const groups: CatalogGroup[] = [
           "An app's navigation down the side: groups of links with icons, collapsing to the icons alone.",
       },
       {
+        slug: "table-of-contents",
+        title: "Table of Contents",
+        purpose: "The headings of a long page, beside it, with the one you've reached marked.",
+      },
+      {
         slug: "tabs",
         title: "Tabs",
         purpose:

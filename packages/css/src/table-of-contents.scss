@@ -1,0 +1,162 @@
+@use "shortcuts" as *;
+
+// The headings of a page, beside it, with the one you've reached marked. In a flex
+// row it goes to its side whatever the order in the markup, with its line on the
+// edge that faces the content.
+.htoc {
+  --htoc-gutter: 0px;
+
+  position: sticky;
+  inset-block-start: var(--htoc-top, #{$space-sm});
+  align-self: start;
+  flex: none;
+  order: -1;
+
+  inline-size: var(--htoc-width, 11rem);
+  max-inline-size: 100%;
+  max-block-size: var(--htoc-max-height, calc(100dvh - 2 * var(--htoc-top, #{$space-sm})));
+  overflow-y: auto;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.25rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-side="end"] {
+    --htoc-gutter: #{$space-sm};
+
+    order: 1;
+  }
+}
+
+.htoc-list {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.htoc-item {
+  &[data-level="2"] {
+    --htoc-indent: #{$space-xs};
+  }
+
+  &[data-level="3"] {
+    --htoc-indent: #{$space-md};
+  }
+}
+
+// Each link draws its piece of the line on the edge that faces the content, so
+// that the current one only has to color its own.
+.htoc-link {
+  display: block;
+
+  padding-block: $space-2xs;
+  padding-inline: calc(var(--htoc-gutter) + var(--htoc-indent, 0px)) $space-sm;
+
+  overflow-wrap: anywhere;
+  text-decoration: none;
+
+  color: $color-text-secondary;
+  border-inline-end: 1px solid $color-border;
+
+  transition:
+    color $duration-fast ease,
+    border-color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-text;
+    }
+  }
+
+  &[aria-current] {
+    color: $color-primary;
+  }
+
+  // Until a script places the marker, the current link colors its own piece.
+  :where(.htoc:not([data-ready])) &[aria-current] {
+    border-inline-end-color: $color-primary;
+
+    @media (forced-colors: active) {
+      border-inline-end-color: Highlight;
+    }
+  }
+
+  // Inside, so that the list's scrolling can't clip it.
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: -2px;
+
+    transition: none;
+  }
+}
+
+:where(.htoc[data-side="end"] .htoc-item) > .htoc-link {
+  padding-inline-end: 0;
+
+  border-inline-start: 1px solid $color-border;
+  border-inline-end: 0;
+
+  :where(.htoc:not([data-ready])) &[aria-current] {
+    border-inline-start-color: $color-primary;
+
+    @media (forced-colors: active) {
+      border-inline-start-color: Highlight;
+    }
+  }
+}
+
+// Slides along the line to the current link, as a Tab's indicator does. It's
+// placed at once as the page loads, and moves at once with reduced motion.
+.htoc-marker {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+
+  inline-size: 1px;
+  block-size: 1px;
+
+  background-color: $color-primary;
+
+  pointer-events: none;
+
+  transform: translateY(var(--htoc-marker-y, 0px)) scaleY(var(--htoc-marker-size, 0));
+  transform-origin: top;
+
+  transition: transform $duration-normal $ease-in-out-cubic;
+
+  :where(.htoc[data-side="end"]) > & {
+    inset-inline: 0 auto;
+  }
+
+  .htoc:not([data-ready]) > & {
+    visibility: hidden;
+
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  @media (forced-colors: active) {
+    forced-color-adjust: none;
+
+    background-color: Highlight;
+  }
+}

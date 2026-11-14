@@ -40,6 +40,9 @@
     // A link to a dialog that an example's script opens is that script's.
     const named = new URL(link.href).searchParams.get("dialog");
     if (named && document.getElementById(named)?.hasAttribute("data-example-url-dialog")) return;
+    // A link to something on this page goes there.
+    const target = link.getAttribute("href");
+    if (target.startsWith("#") && document.getElementById(decodeURIComponent(target.slice(1)))) return;
     event.preventDefault();
   });
 

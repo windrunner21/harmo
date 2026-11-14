@@ -56,6 +56,7 @@ the same markup and does what the script would.
 | Status | [status.md](status.md) |
 | Switch | [switch.md](switch.md) |
 | Table | [table.md](table.md) |
+| Table of Contents | [table-of-contents.md](table-of-contents.md) |
 | Tabs | [tabs.md](tabs.md) |
 | Tag | [tag.md](tag.md) |
 | Tag List | [tag-list.md](tag-list.md) |
@@ -258,6 +259,7 @@ the React components, set:
 | `indeterminate` (property) | Checkbox | Mixed state |
 | `aria-busy`, `aria-disabled` | Button | Loading state; scripts also ignore presses while busy |
 | `--htabs-*`, `data-ready`, the strip's scroll position | Tabs | Sliding hover pill and underline; the current tab in view |
+| `aria-current="location"` | Table of Contents | Follow the section you've reached |
 | `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
 | `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
 | `aria-expanded` | Popup triggers, select triggers, Menu Button | Open ring, chevron direction, the bars' cross |
