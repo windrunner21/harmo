@@ -10,7 +10,7 @@ loading or step indicator: for loading, use a [Spinner](spinner.md).
 | CSS | `meter.css` |
 | Element | `<div class="hmeter" role="meter">` |
 | Parts | One `.hmeter-segment` per step of the scale |
-| Required | `aria-label`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`; `aria-valuetext` when the number alone means little |
+| Required | `aria-label` or `aria-labelledby`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`; `aria-valuetext` when the number alone means little |
 | Unique | None |
 | Script | Required to change the value; see [What a script does](#what-a-script-does) |
 
@@ -28,6 +28,11 @@ loading or step indicator: for loading, use a [Spinner](spinner.md).
 The meter is only the bar. Words such as "Too weak", hints, and when to show
 it belong to the component using it, such as [Password Input](password.md).
 
+The filled segments carry the value, and the unfilled ones are deliberately
+faint, below the 3:1 contrast that WCAG asks of a graphic's parts. Where the
+exact value matters, show it as text near the meter too, as Password Input
+does with its strength word, so no one has to count segments.
+
 ## Options
 
 | Hook | Effect |
@@ -42,8 +47,8 @@ it belong to the component using it, such as [Password Input](password.md).
 
 ## Appearance and states
 
-- 4px rounded segments share the width with 12px gaps; unfilled segments are
-  `--harmo-color-border-control` at 50%.
+- 4px rounded segments share the width with 10px gaps (`--harmo-space-xs`);
+  unfilled segments are `--harmo-color-border-control` at 50%.
 - Filling and color changes fade over 150ms. Reduced motion keeps the fade,
   since nothing moves.
 - In forced-colors mode every segment is outlined and filled ones are solid.
@@ -51,7 +56,9 @@ it belong to the component using it, such as [Password Input](password.md).
 ## Accessibility
 
 `role="meter"` and its `aria-value*` attributes give screen readers the value,
-for example "Password strength, Medium".
+for example "Password strength, Medium". Sighted people read it from the
+filled segments, so where the exact value matters, show it as text near the
+meter too, as in [Markup](#markup).
 
 ## What a script does
 
@@ -65,14 +72,15 @@ meter.
 ## React
 
 `<Meter>` renders the meter, one segment per step, and sets `role` and the
-`aria-value*` attributes from its value. Name it with `aria-label`, and put
-the value in words with `aria-valuetext`. Other props are the `<div>`'s
-attributes.
+`aria-value*` attributes from its value. Name it with `aria-label`, or with
+`aria-labelledby` and the id of a visible name; TypeScript requires one of
+them. Put the value in words with `aria-valuetext`. Other props are the
+`<div>`'s attributes.
 
 | Prop | Effect |
 | --- | --- |
-| `value` | How many segments are filled |
-| `max` | How many segments there are |
+| `value` | How many segments are filled: kept between 0 and `max`, as a native `<meter>` does, and a fraction fills only the whole steps it has reached; `aria-valuenow` is the value kept |
+| `max` | How many segments there are: rounded down to a whole number of at least 1, and 1 when it isn't a finite number; `aria-valuemax` is that number |
 | `status` | `success`, `warning`, `info`, or `error`; gray when left out |
 
 ```tsx
@@ -82,6 +90,6 @@ attributes.
 ## Tokens
 
 `--harmo-border-radius-full`, `--harmo-color-border-control`,
-`--harmo-color-text-tertiary`, `--harmo-duration-fast`,
+`--harmo-color-text-tertiary`, `--harmo-duration-fast`, `--harmo-space-xs`,
 `--harmo-status-color-error`, `--harmo-status-color-info`,
 `--harmo-status-color-success`, `--harmo-status-color-warning`.

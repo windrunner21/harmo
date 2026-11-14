@@ -1,5 +1,10 @@
 @use "shortcuts" as *;
 
+$icon-size: calc(20em / 14);
+// Room around the toasts while the region scrolls, for their shadows and the
+// focus ring.
+$scroll-room: 16px;
+
 // A short message at the edge of the window that goes away by itself, such as
 // "Quick reply saved": an icon, a title, an optional description, and an
 // optional action. Toasts stack, newest in front, and spread out on hover or
@@ -15,14 +20,19 @@
 .htoaster {
   // Which way is away from the edge: up from the bottom, down from the top.
   --htoaster-lift: 1;
-  // How wide a toast can be: the window, less the room on each side, and less
-  // the safe areas at its sides, such as a phone's notch and rounded corners.
+  // How wide a toast can be: the window, less 16px on each side, and less the
+  // safe areas at its sides, such as a phone's notch and rounded corners.
+  // Distances from the window's edges, like the 24px below, rather than
+  // spacing, so they stay in px.
   --htoaster-room: calc(
     100vw - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
   );
+  // How long what a changed toast showed takes to fade out: from the toast's
+  // own duration, so --harmo-toast-duration: 0ms turns it off too.
+  --htoast-leave-duration: calc(#{$toast-duration} * 0.625);
 
   // Within the safe areas, so a toast at the start or end, or centered,
-  // keeps clear of them too.
+  // keeps clear of them too: 24px from the bottom, an offset, not spacing.
   position: fixed;
   inset: auto env(safe-area-inset-right, 0px) calc(24px + env(safe-area-inset-bottom, 0px))
     env(safe-area-inset-left, 0px);
@@ -34,7 +44,11 @@
   inline-size: var(--htoaster-width, fit-content);
   max-inline-size: var(--htoaster-room);
   block-size: auto;
-  max-block-size: none;
+  // The window's height, less 24px above and below and the safe areas: the
+  // script reads it, and a stack spread out taller than this scrolls.
+  max-block-size: calc(
+    100dvh - 48px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+  );
   margin: 0 auto;
   padding: 0;
   overflow: visible;
@@ -54,8 +68,8 @@
     inset-block: calc(24px + env(safe-area-inset-top, 0px)) auto;
   }
 
-  // At the start or end edge, 24px in from it, or from its safe area: toasts
-  // line up on that edge.
+  // At the start or end edge, 24px in from it, or from its safe area, an
+  // offset like the one from the bottom: toasts line up on that edge.
   &[data-position$="-start"],
   &[data-position$="-end"] {
     --htoaster-room: calc(
@@ -72,10 +86,51 @@
   }
 }
 
-// The toasts, stacked in one cell the region's width, each at the edge.
+// Spread out taller than the window allows (data-overflowing, from the
+// script), it scrolls. The toasts keep their size and place: the room around
+// them is padding outside it, which its margins take back.
+.htoaster[data-overflowing] {
+  box-sizing: content-box;
+  margin-block-end: -$scroll-room;
+  padding: $scroll-room;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  scrollbar-width: thin;
+
+  // A column from the edge, so it's scrolled to the newest from the start,
+  // and stays there as toasts come or change size, unless you scroll away.
+  &:popover-open {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-position^="top"] {
+    flex-direction: column;
+    margin-block: (-$scroll-room) 0;
+  }
+
+  &[data-position$="-start"] {
+    margin-inline: (24px - $scroll-room) auto;
+  }
+
+  &[data-position$="-end"] {
+    margin-inline: auto (24px - $scroll-room);
+  }
+}
+
+// The toasts, stacked in one cell the region's width, each at the edge. Its
+// row-gap, which the one row doesn't use, is the gap between them spread out:
+// the script reads it.
 .htoaster-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  row-gap: $space-xs;
 
   margin: 0;
   padding: 0;
@@ -181,8 +236,16 @@
   }
 }
 
+// At the top, the newest comes first in the page, as on screen, so it
+// paints under the others unless --htoast-index lifts it: the front one on
+// top, and one leaving just above the one taking its place.
 .htoaster[data-position^="top"] .htoast {
   align-self: start;
+  z-index: calc(1000 - 2 * var(--htoast-index, 0));
+
+  &[data-removed] {
+    z-index: calc(1001 - 2 * var(--htoast-index, 0));
+  }
 }
 
 .htoaster[data-position$="-start"] .htoast {
@@ -198,13 +261,14 @@
 .htoast-body {
   flex-shrink: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: $space-xs;
 
   box-sizing: border-box;
   inline-size: var(--htoast-body-width, max-content);
   max-inline-size: calc(var(--htoaster-room) - 2px);
-  padding: 12px 16px;
+  padding: $space-xs $space-sm;
 
   transition:
     opacity $toast-duration $toast-ease,
@@ -234,7 +298,7 @@
   // Only its fade: moved into or out of a dialog, it would otherwise start
   // the content's way in, too, which outranks the fade.
   transition: none;
-  animation: htoast-leave 250ms $toast-ease forwards;
+  animation: htoast-leave var(--htoast-leave-duration) $toast-ease forwards;
 }
 
 @keyframes htoast-leave {
@@ -248,15 +312,19 @@
 .htoast-icon {
   flex-shrink: 0;
 
-  inline-size: calc(20em / 14);
-  block-size: calc(20em / 14);
+  inline-size: $icon-size;
+  block-size: $icon-size;
 
   color: var(--htoast-color);
 }
 
-// The title and description, wrapping at 480px.
+// The title and description, wrapping at 480px. Beside the icon, at least
+// 12em of them, or all of them if they're shorter (--htoast-content-width,
+// which the script measures): where the action doesn't fit beside that, it
+// moves under them.
 .htoast-content {
   display: flex;
+  flex: 1 1 min(12em, 100% - #{$icon-size} - #{$space-xs}, var(--htoast-content-width, 12em));
   flex-direction: column;
 
   min-inline-size: 0;
@@ -273,6 +341,33 @@
   font-weight: $font-weight-medium;
 
   color: $color-text;
+}
+
+// Moved under the message, the action keeps to the end.
+:where(.htoast-body) > .hbutton {
+  margin-inline-start: auto;
+}
+
+// The same as a Banner's action: it fills on hover, and a step more pressed.
+.htoast-body > .hbutton[data-variant="secondary"] {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:where(:not(:disabled, [aria-disabled="true"])) {
+      background-color: $color-background-hover;
+      border-color: $button-secondary-color-border;
+    }
+  }
+
+  &:active:where(:not(:disabled, [aria-disabled="true"])) {
+    background-color: $color-background-active;
+    border-color: $button-secondary-color-border;
+  }
+}
+
+// F8 focuses the region: the ring goes on the front toast, as on any focused
+// control, and shows even with one toast, where spreading out changes nothing.
+:where(.htoaster:focus-visible) .htoast[data-front]:not([data-removed]) {
+  outline: $focus-outline;
+  outline-offset: $focus-outline-offset;
 }
 
 // Behind the front one, collapsed: the front one's size, with its content
@@ -297,6 +392,12 @@
 .htoaster[data-expanded] .htoast {
   transform: scale(1)
     translateY(calc(var(--htoast-offset, 0px) * -1 * var(--htoaster-lift)));
+
+  // One that comes while it's spread out comes in from the edge too, rather
+  // than starting where this rule puts it, and only fading in.
+  @starting-style {
+    transform: scale(1) translateY(calc(100% * var(--htoaster-lift)));
+  }
 }
 
 // Leaving: the front one slides back to the edge, the way it came.
@@ -315,7 +416,7 @@
   transform: scale(calc(1 - var(--htoast-index, 0) * 0.05))
     translateY(calc(40% * var(--htoaster-lift)));
   transition:
-    transform calc($toast-duration + 100ms) $toast-ease,
+    transform calc($toast-duration * 1.25) $toast-ease,
     opacity $duration-normal $toast-ease;
 }
 
@@ -347,7 +448,8 @@
 
 // It fades where it is, and its size changes at once.
 @media (prefers-reduced-motion: reduce) {
-  .htoast {
+  .htoast,
+  .htoaster[data-expanded] .htoast {
     transition: opacity $duration-normal $toast-ease;
 
     @starting-style {

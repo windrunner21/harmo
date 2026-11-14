@@ -2,8 +2,8 @@ import { expect, type Locator, type Page } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/meter.md says, on the Meter page: one segment per step
-// of the scale, the filled ones first, in the status's color, or gray without
-// one; the others in the control border color at half strength.
+// of the scale, 10px apart, the filled ones first, in the status's color, or
+// gray without one; the others in the control border color at half strength.
 
 // Each of a meter's segments' colors.
 const colors = (meter: Locator) =>
@@ -50,5 +50,17 @@ onEachPlayground("meter", () => {
     const warning = await computed(page, "var(--harmo-status-color-warning)");
     expect(await colors(completeness)).toEqual([info, info, info, empty, empty]);
     expect(await colors(quality)).toEqual([warning, empty, empty, empty]);
+  });
+
+  test("its segments are 10px apart", async ({ page }) => {
+    const meter = (await example(page, "meter-other-scales")).getByRole("meter", { name: "Profile completeness" });
+    await expect(meter).toHaveCSS("column-gap", "10px");
+    const [first, second] = await meter.locator(".hmeter-segment").evaluateAll((segments) =>
+      segments.slice(0, 2).map((segment) => {
+        const { left, right } = segment.getBoundingClientRect();
+        return { left, right };
+      }),
+    );
+    expect(second!.left - first!.right).toBeCloseTo(10, 0);
   });
 });

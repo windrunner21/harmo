@@ -70,36 +70,57 @@ colors it by its status.
 | A time limit | 4 seconds by default; any other, or none, which keeps it until it's dismissed or changed |
 | An id | Sent again with the same id, a toast changes in place, rather than another coming |
 | `data-position` on the region | `top-start`, `top-center`, `top-end`, `bottom-start`, or `bottom-end`; the bottom center when left out |
+| `--htoast-leave-duration` on the region | How long what a changed toast showed takes to fade out: `--harmo-toast-duration` × 0.625, 250ms by default, so `--harmo-toast-duration: 0ms` turns it off too |
 
 ## Appearance and states
 
 - A card on `--harmo-color-background`: 1px `--harmo-color-border` border, 8px
-  radius, `--harmo-box-shadow-sm`, 12px 16px padding, and 12px gaps, 24px
-  above the bottom of the window, centered.
+  radius, `--harmo-box-shadow-sm`, 10px 16px padding (`--harmo-space-xs` and
+  `--harmo-space-sm`), and 10px gaps, 24px above the bottom of the window,
+  centered. The 24px, and the room kept at the window's sides, are distances
+  from the window's edges, so they stay in px.
 - At the top (`top-*`), it's 24px below the top of the window, and everything
   that moves toward or away from the bottom edge moves toward or away from the
   top instead: toasts come in from above, the stack goes down, and they leave
   upward. At the start or end (`*-start`, `*-end`), toasts line up on that
   edge, 24px in, and are no wider than the window less 48px. The title is 14px medium in
   `--harmo-color-text`, with the description under it in
-  `--harmo-color-text-secondary`; the icon is 20px. Text wraps at 480px, and
-  a toast is never wider than the window less 32px. On a phone, each of
-  these is measured from the safe area (`env(safe-area-inset-*)`), clear of
-  its notch and rounded corners.
-- It comes in from below, fading in, in 400ms with `ease`.
+  `--harmo-color-text-secondary`; the icon is 20px, as in a Banner. Text
+  wraps at 480px, and a toast is never wider than the window less 32px. On a
+  phone, each of these is measured from the safe area
+  (`env(safe-area-inset-*)`), clear of its notch and rounded corners.
+- The action is a small secondary [Button](button.md), as in a Banner: on
+  hover its background fills with `--harmo-color-background-hover`, and
+  pressed with `--harmo-color-background-active`, and its border doesn't
+  darken. Where the window is too narrow for it beside at least 12em of the
+  title and description (or all of them, if they're shorter), it moves under
+  them, at the end, rather than squeezing them.
+- It comes in from below, fading in, in 400ms with `ease`, also while the
+  stack is spread out.
 - Toasts stack: the newest in front, each one further back 5% smaller and 14px
   higher, in the front one's shape, with its content hidden; past three back,
   hidden. When one comes or goes, the stack changes shape into the new front
   one's, with a spring, in 500ms.
-- Hovered with a mouse, tapped, or with focus inside, the stack spreads out
-  into a list, newest at the bottom, 12px apart, each at its own size.
+- Hovered with a mouse, tapped, or with keyboard focus inside, the stack
+  spreads out into a list, newest at the bottom, 10px apart
+  (`--harmo-space-xs`), each at its own size. A mouse press that focuses the
+  region, on a toast's text or on an action that closes its toast, doesn't
+  hold it: it goes back once the pointer leaves. Spread out taller than the
+  window less 48px, the list scrolls, with the newest kept at the edge unless
+  you scroll away from it, and room around the toasts for their shadows and
+  the focus ring.
+- With keyboard focus on the region, as after F8, the front toast has the
+  focus ring, `--harmo-focus-outline` at `--harmo-focus-outline-offset`, even
+  when it's the only one.
 - Each toast counts its own time, held while the stack is spread out or the
   page is hidden. Those whose time is up leave one at a time, the oldest
   first, 0.7 seconds apart: the front one slides back down in 400ms, as long
   as it took to come in, unlike Harmo's other exits, which are quicker, and
-  one further back sinks behind it as it fades.
+  one further back sinks behind it as it fades, in 500ms
+  (`--harmo-toast-duration` × 1.25).
 - Changed in place, a toast's box changes size with the spring, while what it
-  showed fades out, slightly blurred, over what it shows now.
+  showed fades out, slightly blurred, over what it shows now, in 250ms
+  (`--htoast-leave-duration`).
 - With reduced motion, toasts fade in and out where they are, and their sizes
   change at once.
 
@@ -113,10 +134,17 @@ colors it by its status.
   and the toasts themselves stay list items. They're `aria-atomic="false"`,
   so each toast is read once, as it's added, rather than with the ones before
   it.
-- F8 moves focus to the region, which spreads the stack out and holds it, so
-  a keyboard user can reach an action before the toast goes; Tab moves
-  through the actions, and Escape puts focus back where it was. Name the
-  hotkey in the region's `aria-label`, such as "Notifications (F8)".
+- F8 moves focus to the region, which spreads the stack out and holds it
+  until focus leaves the toasts, so a keyboard user can reach an action
+  before the toast goes, and draws the focus ring on the front toast; it does
+  so even when a mouse press had already put focus there. Tab moves through
+  the actions, and Escape puts focus back where it was. Name the hotkey in
+  the region's `aria-label`, such as "Notifications (F8)".
+- The toasts are in the page in the order they're on screen: oldest first at
+  the bottom of the window, newest first at the top, so Tab and a screen
+  reader go the way the eye does. Spread out taller than the window, the
+  region scrolls, so every toast can still be reached; with focus on it, the
+  arrow keys scroll it.
 - While a Dialog or Drawer is open, the page behind it is inert: a toast
   there couldn't be clicked, focused, or read. So the region moves into the
   open dialog, and back out once it has closed: while its exit plays, it's
@@ -143,27 +171,44 @@ Everything but the look:
 - **Measures each toast** as it comes or changes, and again when the window
   is resized, a font loads, or its content takes more or less room while it
   shows, such as with text spacing someone sets (a `ResizeObserver` on each
-  `.htoast-content`): its content's width at `max-content`, rounded
-  up to a whole pixel, since rounded down the last word no longer fits and
-  wraps, and its height at that width. It sets `--htoast-body-width`,
-  `--htoast-width`, and `--htoast-height` on the toast, two pixels more for
-  the border, and `--htoaster-width` on the region: the widest toast shown at
-  its own size, so the toasts stay centered as they change size.
+  `.htoast-content`): first the title and description's own width, at
+  `max-content` with `flex: none`, rounded down, as `--htoast-content-width`,
+  so that at the content's width the action fits beside them; then its
+  content's width at `max-content`, rounded up to a whole pixel, since
+  rounded down the last word no longer fits and wraps, and its height at
+  that width, with `--htoast-content-width` set on it, so a capped toast's
+  action moves under its text as it will once placed. It sets
+  `--htoast-body-width`, `--htoast-width`, `--htoast-height`, and
+  `--htoast-content-width` on the toast, the first two with two pixels more
+  for the border, and `--htoaster-width` on the region: the widest toast
+  shown at its own size, so the toasts stay centered as they change size.
 - **Announces each toast** as it comes or changes, a tenth of a second later,
   once the region is where it can be read:
   a `<div>` with its title and description, each in a `<p>`, added to the
   announcer for its status, and taken out again after a second and a half.
 - **Places them,** newest first: `--htoast-index` and `data-front` on the
   front one, `data-beyond` past three back, and `--htoast-offset`, the height
-  of the ones in front of it with 12px gaps, for when the stack is spread out.
-  On the region: `--htoaster-front-width` and `--htoaster-front-height`, and
-  `--htoaster-spread`, how far the spread-out list reaches above the front.
+  of the ones in front of it with the list's `row-gap` between them, for
+  when the stack is spread out. On the region: `--htoaster-front-width` and
+  `--htoaster-front-height`, and `--htoaster-spread`, how far the spread-out
+  list reaches above the front.
+- **Keeps the page's order the screen's:** each new toast goes at the end of
+  the list at the bottom positions, and at the start at the top ones
+  (`data-position="top-*"`), and the list turns around when the region
+  moves between the two. Index and offset follow the order the toasts came
+  in, whatever their order in the page.
 - **Spreads the stack out** with `data-expanded` on the region, while it's
-  hovered with a mouse, tapped, or has focus inside, and holds the toasts'
-  time meanwhile, and while the page is hidden.
+  hovered with a mouse, tapped, or has keyboard focus inside
+  (`region.matches(":focus-visible, :has(:focus-visible)")`, or since F8,
+  until focus leaves the toasts), and holds the toasts' time meanwhile, and
+  while the page is hidden. Spread out, when the toasts and the gaps between
+  them are taller than the region's `max-block-size`, it sets
+  `data-overflowing` on the region, which then scrolls.
 - **Times them,** and sends them out one at a time, 0.7 seconds apart. A
   time limit longer than a timer can wait, 2,147,483,647 milliseconds, keeps
   a toast as no limit does.
+- **Closes a toast when its action is pressed,** after the app's own handler
+  for it, unless that calls `event.preventDefault()`.
 - **Changes a toast in place:** what it showed stays, absolutely placed, with
   `data-leaving` and `inert`, until its fade ends, each change's on its own;
   if a stylesheet turns the fade off, at once, or after as long as the fade
@@ -182,7 +227,9 @@ Everything but the look:
   showed before gets an `animation-delay` of minus the time its fade has
   played, so the fade carries on too.
 - **F8 and Escape,** as above: F8 remembers where focus was only when it
-  comes from outside the toasts.
+  comes from outside the toasts, and spreads the stack out itself, since
+  with focus already on the region, such as after a mouse press on a
+  toast's text, focusing it again fires no `focus` event.
 
 `examples/html/src/scripts/toast.js` is an example script that does this.
 
@@ -215,6 +262,26 @@ toast({
 });
 ```
 
+Pressing the action calls `onClick`, then closes the toast. To keep it, call
+`event.preventDefault()`, such as when the action changes the toast in place:
+
+```tsx
+toast({
+  id: "connection",
+  status: "error",
+  title: "You're offline",
+  duration: Infinity,
+  action: {
+    label: "Try again",
+    onClick: (event) => {
+      event.preventDefault();
+      toast({ id: "connection", status: "info", title: "Reconnecting…", duration: Infinity });
+      reconnect();
+    },
+  },
+});
+```
+
 | `<Toaster>` prop | Effect |
 | --- | --- |
 | `label` | Required. The region's `aria-label`, naming its hotkey, in your app's language |
@@ -229,7 +296,7 @@ Other props are the `<section>`'s attributes.
 | `title` | Required. What happened, in a few words |
 | `description` | More, under the title |
 | `status` | `success`, `warning`, `info`, or `error`; `info` when left out |
-| `action` | `{ label, onClick, disabled? }`: a small secondary button |
+| `action` | `{ label, onClick, disabled? }`: a small secondary button. Pressing it calls `onClick` with the click event, then closes the toast, unless `onClick` calls `event.preventDefault()` |
 | `duration` | How long it stays, in milliseconds: 4000 by default; `Infinity` keeps it |
 | `id` | Changes the toast with this id in place, if it's still shown |
 
@@ -246,12 +313,16 @@ toast({ id: "connection", status: "success", title: "Back online", duration: 200
 
 ## Tokens
 
-`--harmo-border-radius`, `--harmo-box-shadow-sm`, `--harmo-color-background`,
+`--harmo-border-radius`, `--harmo-box-shadow-sm`,
+`--harmo-button-secondary-color-border`, `--harmo-color-background`,
+`--harmo-color-background-active`, `--harmo-color-background-hover`,
 `--harmo-color-border`, `--harmo-color-text`, `--harmo-color-text-secondary`,
-`--harmo-duration-normal`, `--harmo-ease-spring`, `--harmo-font-family`,
+`--harmo-duration-normal`, `--harmo-ease-spring`, `--harmo-focus-outline`,
+`--harmo-focus-outline-offset`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-sm`,
-`--harmo-font-weight-medium`, `--harmo-status-color-error`,
-`--harmo-status-color-info`, `--harmo-status-color-success`,
-`--harmo-status-color-warning`, `--harmo-toast-duration`,
-`--harmo-toast-ease`, `--harmo-toast-morph-duration`. The action's tokens are
+`--harmo-font-weight-medium`, `--harmo-space-sm`, `--harmo-space-xs`,
+`--harmo-status-color-error`, `--harmo-status-color-info`,
+`--harmo-status-color-success`, `--harmo-status-color-warning`,
+`--harmo-toast-duration`, `--harmo-toast-ease`,
+`--harmo-toast-morph-duration`. The action's other tokens are
 [Button](button.md)'s.

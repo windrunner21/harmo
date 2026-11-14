@@ -63,17 +63,19 @@ read as a whole, title, description, and button together.
 
 ## Appearance and states
 
-- 40px of space above and below it, and 24px at its sides; small, 24px and
-  12px.
+- 42px of space above and below it (`--harmo-space-lg`), and 26px at its
+  sides (`--harmo-space-md`); small, 26px and 10px (`--harmo-space-xs`).
 - The icon: 24px in `--harmo-color-primary`, in a 40px tile of
   `--harmo-color-background-secondary` with the 8px corners, 16px above the
-  title. An `<img>` there is sized the same, and in forced-colors mode the
-  tile keeps a border.
+  title (`--harmo-space-sm`); small, a 20px icon in a 32px tile, 10px above.
+  An `<img>` there is sized the same, and in forced-colors mode the tile
+  keeps a border.
 - The title: 20px bold in `--harmo-color-text`. The description: 14px in
-  `--harmo-color-text-secondary`, 4px under the title, and at most 400px
-  wide, so a long one wraps into a short block.
-- The actions: in a row, 8px apart, 16px under the text, wrapping when they
-  don't fit.
+  `--harmo-color-text-secondary`, 6px (`--harmo-space-2xs`) under the title,
+  and at most 400px wide, so a long one wraps into a short block.
+- The actions: in a row, 10px apart (`--harmo-space-xs`), 26px under the
+  text (`--harmo-space-md`), or 10px in a small one, wrapping when they don't
+  fit.
 - Dashed: a 1px dashed `--harmo-color-border-control` border with the 8px
   corners.
 
@@ -95,14 +97,15 @@ None. Showing it when there's nothing to show is your app's.
 
 ## React
 
-`<EmptyState>` renders it, with the parts you give it. Other props are the
+`<EmptyState>` renders it, with the parts you give it; TypeScript requires a
+`label` or a `description`, as the Contract does. Other props are the
 `<div>`'s attributes, such as `id` or `hidden`. One shown after a search or
 a filter goes inside a `role="status"` element that's in the page from the
 start, as in [Markup](#markup), rather than taking the role itself.
 
 | Prop | Effect |
 | --- | --- |
-| `label` | The title |
+| `label` | The title; this, `description`, or both |
 | `labelAs` | The title's element: `"h2"` by default, or `"h3"` to `"h6"`, or `"p"` where it's no heading |
 | `description` | The description |
 | `icon` | The icon, such as an `<svg className="hicon">` |
@@ -129,4 +132,6 @@ start, as in [Markup](#markup), rather than taking the role itself.
 `--harmo-color-border-control`, `--harmo-border-radius`,
 `--harmo-font-family`, `--harmo-font-size-lg`, `--harmo-font-size-sm`,
 `--harmo-font-size-xs`, `--harmo-font-weight-bold`,
-`--harmo-font-weight-medium`, `--harmo-font-line-height`.
+`--harmo-font-weight-medium`, `--harmo-font-line-height`,
+`--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-space-sm`,
+`--harmo-space-md`, `--harmo-space-lg`.

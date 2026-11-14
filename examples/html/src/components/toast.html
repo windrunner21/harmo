@@ -4,7 +4,7 @@
     goes once in the page; a script adds each toast to its list. A toast
     comes in from below, stays 4 seconds, and slides back down. Hover the
     stack, tap it, or press <kbd class="hkbd">F8</kbd> to spread it out and
-    hold it.
+    hold it; <kbd class="hkbd">F8</kbd> also rings the front toast.
   </play-note>
   <button
     class="hbutton"
@@ -86,8 +86,9 @@
 <play-example title="With an action">
   <play-note>
     A small secondary button, as in a Banner, such as Undo for what was just
-    done. Press <kbd class="hkbd">F8</kbd> to reach it from the keyboard
-    before it goes.
+    done. Pressing it closes the toast, unless the action's own handler calls
+    <code>preventDefault()</code>. Press <kbd class="hkbd">F8</kbd> to reach
+    it from the keyboard before it goes.
   </play-note>
   <button
     class="hbutton"
@@ -139,8 +140,9 @@
     window, at the start, center, or end: <code>top-start</code>,
     <code>top-center</code>, <code>top-end</code>, <code>bottom-start</code>,
     <code>bottom-end</code>, or the bottom center when left out. At the top,
-    toasts come in from above and stack downward; at the start or end, they
-    line up on that edge, 24px in.
+    toasts come in from above and stack downward, and the newest comes first
+    in the page, as on screen; at the start or end, they line up on that edge,
+    24px in.
   </play-note>
   <button
     class="hbutton"

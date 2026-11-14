@@ -8,6 +8,7 @@ import {
   useSyncExternalStore,
   type ComponentPropsWithRef,
   type FocusEvent,
+  type MouseEvent,
   type PointerEvent,
   type ReactElement,
   type ReactNode,
@@ -22,7 +23,7 @@ export type ToastStatus = "success" | "warning" | "info" | "error";
 
 export interface ToastAction {
   label: ReactNode;
-  onClick: () => void;
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }
 
@@ -107,7 +108,6 @@ export interface ToasterProps
   hotkey?: string;
 }
 
-const GAP = 12;
 const DURATION = 4000;
 const EXIT_SPACING = 700;
 const ANNOUNCE_DELAY = 100;
@@ -127,17 +127,32 @@ interface Size {
   epoch: number;
   width: number;
   height: number;
+  text: number;
 }
 
 // The content's own size: its exact width, which can be a fraction of a pixel,
-// rounded up, since rounded down the last word no longer fits and wraps.
+// rounded up, since rounded down the last word no longer fits and wraps. First
+// the title and description's own width, rounded down, so that at the
+// content's width the action still fits beside them; where the window caps
+// that width, the action moves under them instead of squeezing them.
 const measure = (body: HTMLElement) => {
+  const content = body.querySelector<HTMLElement>(":scope > .htoast-content");
+  let text = NaN;
+  if (content) {
+    content.style.flex = "none";
+    content.style.inlineSize = "max-content";
+    text = Math.floor(parseFloat(getComputedStyle(content).width));
+    content.style.flex = "";
+    content.style.inlineSize = "";
+  }
   body.style.inlineSize = "max-content";
   const width = Math.ceil(parseFloat(getComputedStyle(body).width));
   body.style.inlineSize = `${width}px`;
+  if (Number.isFinite(text)) body.style.setProperty("--htoast-content-width", `${text}px`);
   const height = parseFloat(getComputedStyle(body).height);
   body.style.inlineSize = "";
-  return { width, height };
+  body.style.removeProperty("--htoast-content-width");
+  return { width, height, text };
 };
 
 const urgent = (status?: ToastStatus) => status === "error" || status === "warning";
@@ -194,7 +209,10 @@ const ToastBody = ({
           variant="secondary"
           size="small"
           disabled={item.action.disabled}
-          onClick={item.action.onClick}
+          onClick={(event: MouseEvent<HTMLButtonElement>) => {
+            item.action?.onClick(event);
+            if (!event.defaultPrevented) dismiss(item.id);
+          }}
         >
           {item.action.label}
         </Button>
@@ -268,6 +286,7 @@ export const Toaster = ({
   );
   const [epoch, setEpoch] = useState(0);
   const hovered = useRef(false);
+  const summoned = useRef(false);
   const returnTo = useRef<HTMLElement | null>(null);
   const lastFocused = useRef<Element | null>(null);
   const lostFocusAt = useRef(0);
@@ -281,13 +300,25 @@ export const Toaster = ({
   const paused = expanded || hidden;
   const pausedNow = useRef(paused);
   pausedNow.current = paused;
+  // At the top, the newest comes first in the page, as on screen.
+  const top = position.startsWith("top");
+  const topNow = useRef(top);
+  topNow.current = top;
 
-  // Spread out while hovered with a mouse, or while focus is inside.
-  const update = () =>
+  // Spread out while hovered with a mouse, or while keyboard focus is inside,
+  // such as after F8 or Tab: focus that a mouse press put there, on a toast's
+  // text or by an action that closed its toast, doesn't hold it once the
+  // pointer has gone. F8 holds it until focus leaves the toasts, even when
+  // focus was there already and so doesn't move.
+  const update = () => {
+    if (!region.current?.contains(document.activeElement)) summoned.current = false;
     setExpanded(
       shown.some((item) => !item.removed) &&
-        (hovered.current || !!region.current?.contains(document.activeElement)),
+        (hovered.current ||
+          summoned.current ||
+          !!region.current?.matches(":focus-visible, :has(:focus-visible)")),
     );
+  };
 
   // Focus goes back where it was before F8, or, with nowhere to go back to,
   // leaves the toasts.
@@ -295,7 +326,9 @@ export const Toaster = ({
     const back = returnTo.current;
     returnTo.current = null;
     if (back?.isConnected && !region.current?.contains(back)) back.focus();
-    else (document.activeElement as HTMLElement | null)?.blur();
+    if (region.current?.contains(document.activeElement)) {
+      (document.activeElement as HTMLElement).blur();
+    }
   };
 
   // Those whose time is up leave one at a time, the oldest first.
@@ -387,15 +420,19 @@ export const Toaster = ({
 
   // Measures each toast as it comes or changes, or when the window or its
   // fonts change, then places them: newest in front, each further one back by
-  // its place, or, spread out, above the ones in front of it. Announces each
-  // as it comes or changes, and keeps focus with the toasts, or gives it
-  // back, when the one it was in leaves.
+  // its place, or, spread out, above the ones in front of it, the list's
+  // row-gap apart. Spread out taller than the region may be, it scrolls.
+  // Announces each as it comes or changes, and keeps focus with the toasts,
+  // or gives it back, when the one it was in leaves.
   useLayoutEffect(() => {
     const element = region.current;
-    const items = element?.querySelector(".htoaster-list")?.children;
-    if (!element || !items) return;
+    const list = element?.querySelector<HTMLElement>(".htoaster-list");
+    const items = list?.children;
+    if (!element || !list || !items) return;
+    const nodeOf = (index: number) =>
+      items[top ? items.length - 1 - index : index] as HTMLElement | undefined;
     toasts.forEach((item, index) => {
-      const node = items[index] as HTMLElement | undefined;
+      const node = nodeOf(index);
       if (!node) return;
       let size = sizes.current.get(item.key);
       if (!size || size.version !== item.version || size.epoch !== epoch) {
@@ -421,15 +458,16 @@ export const Toaster = ({
         }
         const body = node.querySelector<HTMLElement>(":scope > .htoast-body:not([data-leaving])");
         if (!body) return;
-        const { width, height } = measure(body);
+        const { width, height, text } = measure(body);
         // Not shown, it has no size; it's measured again once it is.
         if (!Number.isFinite(width) || !Number.isFinite(height)) return;
-        size = { version: item.version, epoch, width: width + 2, height: height + 2 };
+        size = { version: item.version, epoch, width: width + 2, height: height + 2, text };
         sizes.current.set(item.key, size);
       }
       node.style.setProperty("--htoast-body-width", `${size.width - 2}px`);
       node.style.setProperty("--htoast-width", `${size.width}px`);
       node.style.setProperty("--htoast-height", `${size.height}px`);
+      if (Number.isFinite(size.text)) node.style.setProperty("--htoast-content-width", `${size.text}px`);
 
       if (!item.removed && announced.current.get(item.key) !== item.version) {
         announced.current.set(item.key, item.version);
@@ -481,9 +519,10 @@ export const Toaster = ({
     // left, rather than staying on a region with nothing in it.
     if (!toasts.some((item) => !item.removed) && element.contains(document.activeElement)) giveFocusBack();
     const live = toasts
-      .map((item, index) => ({ item, node: items[index] as HTMLElement | undefined }))
+      .map((item, index) => ({ item, node: nodeOf(index) }))
       .filter(({ item, node }) => node && !item.removed)
       .reverse();
+    const gap = parseFloat(getComputedStyle(list).rowGap) || 0;
     let offset = 0;
     live.forEach(({ item, node }, index) => {
       if (!node) return;
@@ -491,21 +530,26 @@ export const Toaster = ({
       node.style.setProperty("--htoast-offset", `${offset}px`);
       node.toggleAttribute("data-front", index === 0);
       node.toggleAttribute("data-beyond", index > 2);
-      offset += (sizes.current.get(item.key)?.height ?? 0) + GAP;
+      offset += (sizes.current.get(item.key)?.height ?? 0) + gap;
     });
     const front = live[0] && sizes.current.get(live[0].item.key);
     if (front) {
       element.style.setProperty("--htoaster-front-width", `${front.width}px`);
       element.style.setProperty("--htoaster-front-height", `${front.height}px`);
-      element.style.setProperty("--htoaster-spread", `${offset - front.height - GAP}px`);
+      element.style.setProperty("--htoaster-spread", `${offset - front.height - gap}px`);
     }
     // The region's width: the widest toast shown at its own size, the front
     // one, one leaving from the front, or, spread out, any of them.
     const widths = toasts
-      .filter((_, index) => expanded || (items[index] as HTMLElement | undefined)?.hasAttribute("data-front"))
+      .filter((_, index) => expanded || nodeOf(index)?.hasAttribute("data-front"))
       .map((item) => sizes.current.get(item.key)?.width ?? 0);
     const width = Math.max(front?.width ?? 0, ...widths);
     if (width) element.style.setProperty("--htoaster-width", `${width}px`);
+    const reach = live.length ? offset - gap : 0;
+    element.toggleAttribute(
+      "data-overflowing",
+      expanded && reach > parseFloat(getComputedStyle(element).maxHeight) + 0.5,
+    );
     if (!live.length && expanded) setExpanded(false);
   });
 
@@ -517,9 +561,10 @@ export const Toaster = ({
     if (!items) return;
     const bodies = () =>
       toasts.flatMap((item, index) => {
+        const node = items[topNow.current ? items.length - 1 - index : index];
         const body = item.removed
           ? null
-          : items[index]?.querySelector<HTMLElement>(":scope > .htoast-body:not([data-leaving])");
+          : node?.querySelector<HTMLElement>(":scope > .htoast-body:not([data-leaving])");
         return body ? [{ key: item.key, body }] : [];
       });
     let frame = 0;
@@ -669,8 +714,9 @@ export const Toaster = ({
   }, [position]);
 
   // The hotkey moves focus to the toasts, remembering where it was, unless
-  // it's already there; Escape there gives it back. The window's size and
-  // late fonts change how toasts fit, so they're measured again.
+  // it's already there, and spreads them out; Escape there gives it back.
+  // The window's size and late fonts change how toasts fit, so they're
+  // measured again.
   useEffect(() => {
     const keydown = (event: KeyboardEvent) => {
       const element = region.current;
@@ -680,7 +726,9 @@ export const Toaster = ({
         if (!element.contains(document.activeElement)) {
           returnTo.current = document.activeElement as HTMLElement | null;
         }
+        summoned.current = true;
         element.focus();
+        update();
       } else if (event.key === "Escape" && element.contains(document.activeElement)) {
         event.preventDefault();
         giveFocusBack();
@@ -760,7 +808,7 @@ export const Toaster = ({
       }}
     >
       <ol className="htoaster-list">
-        {toasts.map((item) => (
+        {(top ? [...toasts].reverse() : toasts).map((item) => (
           <ToastItem key={item.key} item={item} icons={icons} />
         ))}
       </ol>

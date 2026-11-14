@@ -3,7 +3,11 @@
 .hspinner {
   --hspinner-size: 1.5rem;
   --hspinner-stroke: 2px;
-  --hspinner-motion: hspinner-rotate 1s linear infinite;
+  // How long a turn takes, or under reduced motion each way of the fade, so a
+  // whole pulse takes twice as long; and how long data-delay keeps it hidden.
+  --hspinner-duration: 1s;
+  --hspinner-delay: 300ms;
+  --hspinner-motion: hspinner-rotate var(--hspinner-duration) linear infinite;
   --hspinner-appear: none;
 
   position: relative;
@@ -38,11 +42,11 @@
   }
 
   &[data-delay] {
-    --hspinner-appear: hspinner-appear 0s 300ms both;
+    --hspinner-appear: hspinner-appear 0s var(--hspinner-delay) both;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    --hspinner-motion: hspinner-pulse 1s ease-in-out infinite alternate;
+    --hspinner-motion: hspinner-pulse var(--hspinner-duration) #{$ease-in-out-cubic} infinite alternate;
   }
 
   @media (forced-colors: active) {

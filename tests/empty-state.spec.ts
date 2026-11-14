@@ -3,7 +3,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/empty-state.md says, on the Empty State page: a title
 // that's a heading, an icon hidden from screen readers, centered or at the
-// start; small and dashed; and after a search, read out as it appears.
+// start; spaced on the scale; small and dashed; and after a search, read out
+// as it appears.
 onEachPlayground("empty-state", () => {
   test("a title that's a heading, what it's for, and its action, centered; the icon is hidden from screen readers", async ({ page }) => {
     const container = await example(page, "empty-state-default");
@@ -61,11 +62,30 @@ onEachPlayground("empty-state", () => {
     await expect(status.locator(".hempty-state")).toBeHidden();
   });
 
+  test("spaced on the scale: 42px and 26px around it, 16px under the icon, 6px under the title, and its actions 10px apart, 26px under the text", async ({ page }) => {
+    const state = (await example(page, "empty-state-at-the-start")).locator(".hempty-state");
+    await expect(state).toHaveCSS("padding-top", "42px");
+    await expect(state).toHaveCSS("padding-left", "26px");
+    await expect(state.locator(".hempty-state-icon")).toHaveCSS("margin-bottom", "16px");
+    await expect(state.locator(".hempty-state-description")).toHaveCSS("margin-top", "6px");
+    const actions = state.locator(".hempty-state-actions");
+    await expect(actions).toHaveCSS("margin-top", "26px");
+    await expect(actions).toHaveCSS("column-gap", "10px");
+    const [create, other] = await boxes(
+      state.getByRole("button", { name: "Create campaign" }),
+      state.getByRole("button", { name: "Import contacts" }),
+    );
+    expect(other.x - (create.x + create.width)).toBeCloseTo(10, 0);
+  });
+
   test("small and dashed: smaller text, less room, and a dashed border", async ({ page }) => {
     const container = await example(page, "empty-state-small-and-dashed");
     const [column, files] = await container.locator(".hempty-state").all();
     await expect(column).toHaveCSS("border-top-style", "dashed");
-    await expect(column).toHaveCSS("padding-top", "24px");
+    await expect(column).toHaveCSS("padding-top", "26px");
+    await expect(column).toHaveCSS("padding-left", "10px");
+    const search = (await example(page, "empty-state-after-a-search")).locator(".hempty-state-actions");
+    await expect(search).toHaveCSS("margin-top", "10px");
     await expect(column.locator(".hempty-state-description")).toHaveCSS("font-size", "13px");
     await expect(files.getByRole("heading", { level: 3, name: "No files yet" })).toHaveCSS("font-size", "14px");
   });

@@ -24,8 +24,9 @@
 
 <play-example title="With an action" layout="wide">
   <play-note>
-    The action is a small secondary Button. Inside a banner, hovering fills its
-    background instead of darkening its border.
+    The action is a small secondary Button, as in a Toast. Inside a banner,
+    hovering fills its background instead of darkening its border, and
+    pressing fills it a step more.
   </play-note>
   <div class="hbanner" data-status="warning">
     <play-icon name="warning" class="hbanner-icon"></play-icon>
@@ -39,10 +40,11 @@
 <play-example title="Added after the page loads" layout="wide">
   <play-note>
     The banners above are on the page from the start, so they have no
-    <code>role</code>. One shown later must announce itself:
-    <code>role="alert"</code> when it's urgent, as here, or
-    <code>role="status"</code> when it can wait. Keep it in the page with
-    <code>hidden</code> and remove that to show it. Press Send message.
+    <code>role</code>. One shown later must be announced: when it's urgent, as
+    here, with <code>role="alert"</code> on it; when it can wait, inside an
+    element with <code>role="status"</code> that's in the page from the
+    start. Keep it in the page with <code>hidden</code> and remove that to
+    show it. Press Send message.
   </play-note>
   <div>
     <button class="hbutton" data-variant="secondary" type="button" data-example-show="send-error">
@@ -57,8 +59,9 @@
 
 <play-example title="Long message" frame="20rem">
   <play-note>
-    In a narrow container, drawn dashed here, the message wraps and the icon
-    and action keep their size.
+    In a narrow container, drawn dashed here, the icon and action keep their
+    size, and where the action doesn't fit beside at least 12em of the
+    message, it moves under it, at the end, rather than squeezing it.
   </play-note>
   <div class="hbanner" data-status="warning">
     <play-icon name="warning" class="hbanner-icon"></play-icon>

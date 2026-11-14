@@ -3,30 +3,65 @@ import { example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/spinner.md says, on the Spinner page: it turns; with
 // data-delay it's hidden for its first 300ms; with reduced motion it fades
-// where it is instead of turning; and in forced colors its track and arc are
-// the system's colors.
+// where it is instead of turning, on the in-out curve; its turn and its delay
+// are properties of its own; and in forced colors its track and arc are the
+// system's colors.
 
 // What moves it: the first of its animations, the second being its delay.
 const motion = (spinner: Locator) =>
   spinner.evaluate((node) => getComputedStyle(node).animationName.split(",")[0]!.trim());
 
 onEachPlayground("spinner", () => {
-  test("it turns; with reduced motion, it fades toward 40% opacity and back, without turning", async ({ page }) => {
+  test("it turns; with reduced motion, it fades toward 40% opacity and back, each way in --hspinner-duration, without turning", async ({ page }) => {
     const spinner = (await example(page, "spinner-sizes")).locator(".hspinner").nth(1);
     expect(await motion(spinner)).toBe("hspinner-rotate");
 
     await page.emulateMedia({ reducedMotion: "reduce" });
     expect(await motion(spinner)).toBe("hspinner-pulse");
-    // Held halfway through a fade: partway to 40%, and not turned.
-    const halfway = await spinner.evaluate((node) => {
+    // Held halfway through the fade out, at its end, and halfway back:
+    // partway to 40%, at 40%, and partway back, and not turned.
+    const seen = await spinner.evaluate((node) => {
       const pulse = node.getAnimations().find((animation) => (animation as CSSAnimation).animationName === "hspinner-pulse")!;
       pulse.pause();
-      pulse.currentTime = 500;
-      const { opacity, transform } = getComputedStyle(node);
-      return { opacity: Number(opacity), transform };
+      return [500, 1000, 1500].map((time) => {
+        pulse.currentTime = time;
+        const { opacity, transform } = getComputedStyle(node);
+        return { opacity: Number(opacity), transform };
+      });
     });
-    expect(halfway.opacity).toBeCloseTo(0.7, 1);
-    expect(halfway.transform).toBe("none");
+    expect(seen.map(({ opacity }) => opacity)).toEqual([
+      expect.closeTo(0.7, 1),
+      expect.closeTo(0.4, 1),
+      expect.closeTo(0.7, 1),
+    ]);
+    expect(seen.every(({ transform }) => transform === "none")).toBe(true);
+    const curve = await page.evaluate(() => {
+      const probe = document.createElement("i");
+      probe.style.animationTimingFunction = "var(--harmo-ease-in-out-cubic)";
+      document.body.append(probe);
+      const value = getComputedStyle(probe).animationTimingFunction;
+      probe.remove();
+      return value;
+    });
+    // The pulse's curve comes first, its delay's after it.
+    const timingFunctions = await spinner.evaluate((node) => getComputedStyle(node).animationTimingFunction);
+    expect(timingFunctions.startsWith(`${curve},`)).toBe(true);
+  });
+
+  test("its turn takes --hspinner-duration, 1s, and data-delay waits --hspinner-delay, 300ms", async ({ page }) => {
+    const spinner = (await example(page, "spinner-sizes")).locator(".hspinner").nth(1);
+    const delayed = (await example(page, "spinner-delayed")).locator(".hspinner");
+    const timing = (node: Element) => {
+      const { animationDuration, animationDelay } = getComputedStyle(node);
+      return [animationDuration.split(",")[0]!.trim(), animationDelay.split(",")[1]?.trim()];
+    };
+    expect(await spinner.evaluate(timing)).toEqual(["1s", "0s"]);
+    expect(await delayed.evaluate(timing)).toEqual(["1s", "0.3s"]);
+
+    await spinner.evaluate((node) => (node as HTMLElement).style.setProperty("--hspinner-duration", "2s"));
+    await delayed.evaluate((node) => (node as HTMLElement).style.setProperty("--hspinner-delay", "1s"));
+    expect((await spinner.evaluate(timing))[0]).toBe("2s");
+    expect((await delayed.evaluate(timing))[1]).toBe("1s");
   });
 
   test("with data-delay, it's hidden for its first 300ms, then shows", async ({ page }) => {

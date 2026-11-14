@@ -2,17 +2,18 @@ import type { ComponentPropsWithRef, ReactNode } from "react";
 import { renders } from "./children.ts";
 import { withClass } from "./withClass.ts";
 
-export interface EmptyStateProps
-  extends Omit<ComponentPropsWithRef<"div">, "children"> {
-  label?: ReactNode;
-  labelAs?: "h2" | "h3" | "h4" | "h5" | "h6" | "p";
-  description?: ReactNode;
-  icon?: ReactNode;
-  actions?: ReactNode;
-  align?: "start";
-  size?: "small";
-  variant?: "dashed";
-}
+export type EmptyStateProps = Omit<ComponentPropsWithRef<"div">, "children"> &
+  (
+    | { label: ReactNode; description?: ReactNode }
+    | { label?: ReactNode; description: ReactNode }
+  ) & {
+    labelAs?: "h2" | "h3" | "h4" | "h5" | "h6" | "p";
+    icon?: ReactNode;
+    actions?: ReactNode;
+    align?: "start";
+    size?: "small";
+    variant?: "dashed";
+  };
 
 export const EmptyState = ({
   label,

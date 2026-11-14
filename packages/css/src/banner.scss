@@ -1,17 +1,21 @@
 @use "shortcuts" as *;
 
+$icon-size: calc(20em / 14);
+
 // An inline notice: an icon colored by data-status, a message, and an optional
-// compact action. A banner present on load needs no role; one that appears
-// later takes role="status" (non-urgent) or role="alert" (urgent).
+// compact action. A banner present on load needs no role. One shown later goes
+// inside a role="status" element that's in the page from the start, or, when
+// it's urgent, takes role="alert" itself.
 .hbanner {
   --hbanner-color: #{$status-color-info};
 
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: $space-xs;
 
   box-sizing: border-box;
-  padding: 12px 16px;
+  padding: $space-xs $space-sm;
 
   font-family: $font-family;
   font-size: $font-size-sm;
@@ -43,14 +47,16 @@
 .hbanner-icon {
   flex-shrink: 0;
 
-  inline-size: calc(18em / 14);
-  block-size: calc(18em / 14);
+  inline-size: $icon-size;
+  block-size: $icon-size;
 
   color: var(--hbanner-color);
 }
 
+// At least 12em wide beside the icon: where the action doesn't fit beside
+// that, it moves under the message.
 .hbanner-message {
-  flex: 1;
+  flex: 1 1 min(12em, 100% - #{$icon-size} - #{$space-xs});
 
   min-inline-size: 0;
   margin: 0;
@@ -58,16 +64,22 @@
   overflow-wrap: anywhere;
 }
 
+// Moved under the message, the action keeps to the end.
+:where(.hbanner) > .hbutton {
+  margin-inline-start: auto;
+}
+
+// The same as a Toast's action: it fills on hover, and a step more pressed.
 .hbanner > .hbutton[data-variant="secondary"] {
   @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled):not([aria-disabled="true"]) {
-      background-color: $color-background-secondary;
+    &:hover:where(:not(:disabled, [aria-disabled="true"])) {
+      background-color: $color-background-hover;
       border-color: $button-secondary-color-border;
     }
   }
 
-  &:active:not(:disabled):not([aria-disabled="true"]) {
-    background-color: $color-background-secondary;
+  &:active:where(:not(:disabled, [aria-disabled="true"])) {
+    background-color: $color-background-active;
     border-color: $button-secondary-color-border;
   }
 }

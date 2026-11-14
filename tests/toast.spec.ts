@@ -5,8 +5,12 @@ import { boxes, example, onEachPlayground, ready, rendered, settled, test } from
 // What docs/components/toast.md says, on the Toast page: a toast comes in at
 // the bottom center, above everything, and leaves after 4 seconds; toasts
 // stack and leave one at a time; hover, a tap, or F8 spreads them out and
-// holds them, as a hidden page does; the same id changes a toast in place;
-// over an open Drawer, toasts move inside it, where they can be used.
+// holds them, as a hidden page does, but focus a mouse press put there
+// doesn't, unless F8 is pressed with it there; F8 rings the front toast; spread out taller than the window, the
+// stack scrolls; at the top, the newest comes first in the page; an action
+// closes its toast unless its handler prevents it; the same id changes a
+// toast in place; over an open Drawer, toasts move inside it, where they can
+// be used.
 const region = (page: Page) => page.locator(".htoaster");
 const live = (page: Page) => page.locator(".htoast:not([data-removed])");
 
@@ -126,6 +130,24 @@ const motion = (page: Page) =>
 const centerX = async (element: Locator) => {
   const [box] = await boxes(element);
   return box.x + box.width / 2;
+};
+
+// A color as the page computes it, such as a token's.
+const computed = (page: Page, color: string) =>
+  page.evaluate((color) => {
+    const probe = document.createElement("i");
+    probe.style.backgroundColor = color;
+    document.body.append(probe);
+    const value = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return value;
+  }, color);
+
+// Presses an example's button as the app would, without the pointer, which
+// would spread the stack out as it passes, or moving focus.
+const press = async (page: Page, id: string, button: string) => {
+  const container = await example(page, id);
+  await container.getByRole("button", { name: button, exact: true }).evaluate((node) => (node as HTMLElement).click());
 };
 
 onEachPlayground("toast", () => {
@@ -333,8 +355,9 @@ onEachPlayground("toast", () => {
     await expect(region(page)).toHaveAttribute("data-expanded");
     for (const index of [0, 1, 2]) await settled(live(page).nth(index));
     const [newest, middle, oldest] = await boxes(live(page).nth(2), live(page).nth(1), live(page).nth(0));
-    expect(middle.y + middle.height).toBeLessThanOrEqual(newest.y - 11);
-    expect(oldest.y + oldest.height).toBeLessThanOrEqual(middle.y - 11);
+    // 10px apart, the list's row-gap, --harmo-space-xs.
+    expect(newest.y - (middle.y + middle.height)).toBeCloseTo(10, 0);
+    expect(middle.y - (oldest.y + oldest.height)).toBeCloseTo(10, 0);
     expect(middle.width).toBeGreaterThan(newest.width);
 
     // Moving up the list, over the gaps, keeps it spread out.
@@ -348,6 +371,137 @@ onEachPlayground("toast", () => {
     await expect(region(page)).not.toHaveAttribute("data-expanded");
     await page.clock.fastForward(3000);
     await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 5000 });
+  });
+
+  test("focus a mouse press put on the region, on a toast's text or by an action that closed its toast, doesn't hold the stack once the pointer has gone", async ({ page }) => {
+    await fakeClock(page);
+    await send(page, "toast-default", "Save quick reply");
+    await expect(live(page)).toHaveCount(1);
+    await settled(front(page));
+    // Its text can't take focus, so the region, with tabindex="-1", does.
+    await front(page).locator(".htoast-title").click();
+    await expect(region(page)).toBeFocused();
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    await page.mouse.move(5, 5);
+    await expect(region(page)).not.toHaveAttribute("data-expanded");
+    await expect(region(page)).toBeFocused();
+    // Longer than a toast lasts: it left all the same.
+    await page.clock.fastForward(4500);
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 3000 });
+
+    // Undo closes its toast and puts focus on the region, with one left.
+    await send(page, "toast-default", "Save quick reply");
+    await send(page, "toast-with-an-action", "Archive conversation");
+    await expect(live(page)).toHaveCount(2);
+    await settled(front(page));
+    await front(page).getByRole("button", { name: "Undo" }).click();
+    await expect(live(page)).toHaveCount(1);
+    await page.mouse.move(5, 5);
+    await expect(region(page)).not.toHaveAttribute("data-expanded");
+    await page.clock.fastForward(4500);
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 3000 });
+  });
+
+  test("F8 spreads the stack out and holds it when a mouse press had already put focus on the region, where focus doesn't move", async ({ page }) => {
+    await fakeClock(page);
+    await send(page, "toast-default", "Save quick reply");
+    await expect(live(page)).toHaveCount(1);
+    await settled(front(page));
+    await front(page).locator(".htoast-title").click();
+    await expect(region(page)).toBeFocused();
+    await page.mouse.move(5, 5);
+    await expect(region(page)).not.toHaveAttribute("data-expanded");
+
+    await page.keyboard.press("F8");
+    await expect(region(page)).toBeFocused();
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    // Longer than a toast lasts: it's held.
+    await page.clock.fastForward(4500);
+    await expect(live(page)).toHaveCount(1);
+
+    // Escape takes focus out of the toasts, and lets them go.
+    await page.keyboard.press("Escape");
+    await expect(region(page)).not.toBeFocused();
+    await expect(region(page)).not.toHaveAttribute("data-expanded");
+    await page.clock.fastForward(4500);
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 3000 });
+  });
+
+  test("F8 draws the focus ring on the front toast, even when it's the only one; a mouse press on it doesn't", async ({ page }) => {
+    await send(page, "toast-default", "Save quick reply");
+    await expect(live(page)).toHaveCount(1);
+    await settled(front(page));
+    await expect(front(page)).toHaveCSS("outline-style", "none");
+    await page.keyboard.press("F8");
+    await expect(region(page)).toBeFocused();
+    const ring = await page.evaluate(() => {
+      const probe = document.createElement("i");
+      probe.style.outline = "var(--harmo-focus-outline)";
+      probe.style.outlineOffset = "var(--harmo-focus-outline-offset)";
+      document.body.append(probe);
+      const style = getComputedStyle(probe);
+      const ring = [style.outlineStyle, style.outlineWidth, style.outlineColor, style.outlineOffset];
+      probe.remove();
+      return ring;
+    });
+    await expect(front(page)).toHaveCSS("outline-style", ring[0]!);
+    await expect(front(page)).toHaveCSS("outline-width", ring[1]!);
+    await expect(front(page)).toHaveCSS("outline-color", ring[2]!);
+    await expect(front(page)).toHaveCSS("outline-offset", ring[3]!);
+
+    await page.keyboard.press("Escape");
+    await expect(region(page)).not.toBeFocused();
+    await front(page).locator(".htoast-title").click();
+    await expect(region(page)).toBeFocused();
+    await expect(front(page)).toHaveCSS("outline-style", "none");
+  });
+
+  test("spread out taller than the window, the stack scrolls, kept in the window with the newest at its edge, and every toast can be reached", async ({ page }) => {
+    await page.setViewportSize({ width: 800, height: 360 });
+    // Held, as while the page is hidden, so none leaves meanwhile.
+    await setHidden(page, true);
+    for (const name of ["Success", "Error", "Warning", "Info"]) await press(page, "toast-each-status", name);
+    await press(page, "toast-a-stack", "Send three");
+    await expect(live(page)).toHaveCount(7);
+    await expect(region(page)).not.toHaveAttribute("data-overflowing");
+
+    await page.keyboard.press("F8");
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    await expect(region(page)).toHaveAttribute("data-overflowing");
+    for (let index = 0; index < 7; index++) await settled(live(page).nth(index));
+    const [scrolled, shown] = await region(page).evaluate((node) => [node.scrollHeight, node.clientHeight]);
+    expect(scrolled).toBeGreaterThan(shown! + 1);
+    const [box, newest] = await boxes(region(page), front(page));
+    expect(box.y).toBeGreaterThanOrEqual(0);
+    expect(box.y + box.height).toBeLessThanOrEqual(360);
+    // The newest where it was, 24px above the bottom of the window.
+    expect(newest.y + newest.height).toBeCloseTo(360 - 24, 0);
+
+    // Scrolled all the way, the oldest shows, inside the region.
+    await region(page).evaluate((node) => node.scrollBy(0, -node.scrollHeight));
+    const [oldest] = await boxes(live(page).first());
+    expect(oldest.y).toBeGreaterThanOrEqual(box.y);
+    expect(oldest.y + oldest.height).toBeLessThanOrEqual(box.y + box.height);
+
+    await page.keyboard.press("Escape");
+    await expect(region(page)).not.toHaveAttribute("data-overflowing");
+  });
+
+  test("a toast that comes while the stack is spread out comes in from below too, rather than only fading in", async ({ page }) => {
+    await setHidden(page, true);
+    await send(page, "toast-a-stack", "Send three");
+    await expect(live(page)).toHaveCount(3);
+    await page.keyboard.press("F8");
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    for (const index of [0, 1, 2]) await settled(live(page).nth(index));
+    await recordMotion(page);
+    // Sent by the app, so focus stays on the region, which stays spread out.
+    await press(page, "toast-default", "Save quick reply");
+    await expect.poll(async () => (await motion(page)).entering).toBeTruthy();
+    const { entering } = await motion(page);
+    expect(entering!.y).toBeGreaterThan(1);
+    expect(entering!.opacity).toBeLessThan(1);
+    await expect(region(page)).toHaveAttribute("data-expanded");
   });
 
   test.describe("on a touch screen", () => {
@@ -459,16 +613,29 @@ onEachPlayground("toast", () => {
     await expect(button).toBeFocused();
   });
 
-  test("when the window narrows, a toast kept open is measured again, and fits", async ({ page }) => {
+  test("when the window narrows, a toast kept open is measured again, and fits, its action moving under its text rather than squeezing it", async ({ page }) => {
     await send(page, "toast-kept-open-then-changed", "Go offline");
     await expect(live(page)).toHaveCount(1);
     await settled(live(page).first());
+    const parts = () => {
+      const body = front(page).locator(".htoast-body:not([data-leaving])");
+      return boxes(body, body.locator(".htoast-content"), body.getByRole("button", { name: "Try again" }));
+    };
+    const [, wideContent, wideAction] = await parts();
+    expect(wideAction.y).toBeLessThan(wideContent.y + wideContent.height);
+
     await page.setViewportSize({ width: 300, height: 700 });
     await page.waitForTimeout(700);
     expect(await overflowing(page)).toEqual([]);
     const [box] = await boxes(front(page));
     expect(box.width).toBeLessThanOrEqual(300 - 32 + 1);
     expect(box.x).toBeGreaterThanOrEqual(15);
+    const [body, content, action] = await parts();
+    expect(action.y).toBeGreaterThanOrEqual(content.y + content.height - 0.5);
+    // At the end: 16px in from the content's edge.
+    expect(action.x + action.width).toBeCloseTo(body.x + body.width - 16, 0);
+    // The text takes the rest of the row beside the icon, at least 12em.
+    expect(content.width).toBeGreaterThanOrEqual(12 * 14 - 0.5);
   });
 
   test("on a right-to-left page, a changed toast's old content fades out over the middle of it", async ({ page }) => {
@@ -505,6 +672,96 @@ onEachPlayground("toast", () => {
     await page.waitForTimeout(800);
     await expect(page.locator(".htoast[data-removed]")).toHaveCount(1);
     await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 2000 });
+  });
+
+  test("what a changed toast showed fades out in --htoast-leave-duration, and one further back sinks in 1.25 times the toast's duration, so --harmo-toast-duration: 0ms turns both off", async ({ page }) => {
+    await page.evaluate(() => {
+      const seen: string[] = [];
+      new MutationObserver((records) => {
+        for (const { target } of records) {
+          const node = target as HTMLElement;
+          if (node.hasAttribute("data-leaving")) seen.push(getComputedStyle(node).animationDuration);
+        }
+      }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["data-leaving"] });
+      (window as unknown as { leaving: string[] }).leaving = seen;
+    });
+    const leaving = () => page.evaluate(() => (window as unknown as { leaving: string[] }).leaving);
+    // How long one further back takes to sink, were it leaving now.
+    const sinking = () =>
+      live(page)
+        .first()
+        .evaluate((node) => {
+          node.setAttribute("data-removed", "");
+          const [transform] = getComputedStyle(node).transitionDuration.split(",");
+          node.removeAttribute("data-removed");
+          return transform!.trim();
+        });
+    // Held, as while the page is hidden, so none leaves meanwhile.
+    await setHidden(page, true);
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    await page.waitForTimeout(300);
+    await send(page, "toast-kept-open-then-changed", "Reconnect");
+    await expect.poll(leaving).toEqual(["0.25s"]);
+    await send(page, "toast-default", "Save quick reply");
+    await expect(live(page)).toHaveCount(2);
+    await page.mouse.move(5, 5);
+    await expect(region(page)).not.toHaveAttribute("data-expanded");
+    expect(await sinking()).toBe("0.5s");
+
+    await page.addStyleTag({ content: ":root { --harmo-toast-duration: 0ms; }" });
+    expect(await sinking()).toBe("0s");
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    await expect.poll(leaving).toEqual(["0.25s", "0s"]);
+    await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(0);
+  });
+
+  test("pressing an action closes its toast, after the action's own handler, unless that calls preventDefault()", async ({ page }) => {
+    await send(page, "toast-with-an-action", "Archive conversation");
+    await expect(live(page)).toHaveCount(1);
+    await settled(front(page));
+    // A listener that runs before the toast's own, as the action's handler
+    // would, and keeps it.
+    await page.evaluate(() =>
+      document.addEventListener(
+        "click",
+        (event) => {
+          if ((event.target as Element).closest(".htoast .hbutton")) event.preventDefault();
+        },
+        { capture: true, once: true },
+      ),
+    );
+    const undo = front(page).getByRole("button", { name: "Undo" });
+    await undo.click();
+    await rendered(page);
+    await expect(live(page)).toHaveCount(1);
+
+    await undo.click();
+    await expect(live(page)).toHaveCount(0);
+  });
+
+  test("10px 16px of padding and 10px gaps, a 20px icon, and its action fills on hover, and a step more pressed, as in a Banner, with its border kept", async ({ page }) => {
+    await send(page, "toast-with-an-action", "Archive conversation");
+    await settled(front(page));
+    const body = front(page).locator(".htoast-body:not([data-leaving])");
+    await expect(body).toHaveCSS("padding-top", "10px");
+    await expect(body).toHaveCSS("padding-left", "16px");
+    await expect(body).toHaveCSS("column-gap", "10px");
+    await expect(body.locator(".htoast-icon")).toHaveCSS("width", "20px");
+    await expect(body.locator(".htoast-icon")).toHaveCSS("height", "20px");
+
+    const action = body.getByRole("button", { name: "Undo" });
+    const border = await computed(page, "var(--harmo-button-secondary-color-border)");
+    await action.hover();
+    await expect(action).toHaveCSS("background-color", await computed(page, "var(--harmo-color-background-hover)"));
+    await settled(action);
+    await expect(action).toHaveCSS("border-top-color", border);
+    await page.mouse.down();
+    await expect(action).toHaveCSS("background-color", await computed(page, "var(--harmo-color-background-active)"));
+    await settled(action);
+    await expect(action).toHaveCSS("border-top-color", border);
+    // Let go elsewhere, so it isn't pressed.
+    await page.mouse.move(5, 5);
+    await page.mouse.up();
   });
 
   test("moved into a drawer partway through changing, its old content's fade carries on rather than starting again", async ({ page }) => {
@@ -683,10 +940,54 @@ onEachPlayground("toast", () => {
     await page.mouse.move(5, 700);
     await expect(live(page)).toHaveCount(2);
     for (const index of [0, 1]) await settled(live(page).nth(index));
-    const [newest, older] = await boxes(front(page), live(page).nth(0));
+    // At the top, the newest comes first in the page.
+    const [newest, older] = await boxes(front(page), live(page).nth(1));
     expect(newest.x).toBeCloseTo(24, 0);
     expect(newest.y).toBeCloseTo(24, 0);
     expect(older.y + older.height).toBeGreaterThan(newest.y + newest.height);
+  });
+
+  test("at the top, the newest comes first in the page, as on screen, and the front one still covers the others; back at the bottom, the oldest comes first again", async ({ page }) => {
+    await page.mouse.move(5, 700);
+    // Held, as while the page is hidden, so none leaves meanwhile.
+    await setHidden(page, true);
+    for (const button of ["Top start", "Top center", "Top end"]) await send(page, "toast-positions", button);
+    await page.mouse.move(5, 700);
+    await expect(live(page)).toHaveCount(3);
+    await expect(live(page).locator(".htoast-title")).toHaveText([
+      "Shown at the top end",
+      "Shown at the top center",
+      "Shown at the top start",
+    ]);
+    await expect(live(page).first()).toHaveAttribute("data-front");
+    for (const index of [0, 1, 2]) await settled(live(page).nth(index));
+    // Collapsed, where all three overlap, the front one is what's there.
+    const [box] = await boxes(front(page));
+    expect(
+      await page.evaluate(
+        ([x, y]) => document.elementFromPoint(x!, y!)?.closest(".htoast")?.hasAttribute("data-front"),
+        [box.x + box.width / 2, box.y + box.height / 2],
+      ),
+    ).toBe(true);
+
+    // Spread out, the page's order runs down the screen.
+    await page.keyboard.press("F8");
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    for (const index of [0, 1, 2]) await settled(live(page).nth(index));
+    const tops = await live(page).evaluateAll((items) => items.map((item) => item.getBoundingClientRect().top));
+    expect(tops).toEqual([...tops].sort((a, b) => a - b));
+    await page.keyboard.press("Escape");
+
+    await send(page, "toast-positions", "Bottom center");
+    await page.mouse.move(5, 5);
+    await expect(region(page)).not.toHaveAttribute("data-position");
+    await expect(live(page).locator(".htoast-title")).toHaveText([
+      "Shown at the top start",
+      "Shown at the top center",
+      "Shown at the top end",
+      "Shown at the bottom center",
+    ]);
+    await expect(live(page).last()).toHaveAttribute("data-front");
   });
 
   test("at the top center, and at the bottom end", async ({ page }) => {

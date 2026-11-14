@@ -4,7 +4,7 @@
   --hmeter-color: #{$color-text-tertiary};
 
   display: flex;
-  gap: 12px;
+  gap: $space-xs;
 
   margin: 0;
   padding: 0;

@@ -40,13 +40,6 @@ const positions: [ToastPosition, string][] = [
   ["bottom-end", "Bottom end"],
 ];
 
-const icons = {
-  success: <SuccessIcon />,
-  error: <ErrorIcon />,
-  warning: <WarningIcon />,
-  info: <InfoIcon />,
-};
-
 export const examples = {
   Default: () => (
     <>
@@ -62,7 +55,16 @@ export const examples = {
       >
         Save quick reply
       </Button>
-      <Toaster label="Notifications (F8)" icons={icons} position={usePosition()} />
+      <Toaster
+        label="Notifications (F8)"
+        icons={{
+          success: <SuccessIcon />,
+          error: <ErrorIcon />,
+          warning: <WarningIcon />,
+          info: <InfoIcon />,
+        }}
+        position={usePosition()} // playground only
+      />
     </>
   ),
 
@@ -142,14 +144,14 @@ export const examples = {
   "With an action": () => (
     <Button
       variant="secondary"
-      onClick={() => {
-        const id = toast({
+      onClick={() =>
+        toast({
           status: "success",
           title: "Conversation archived",
           description: "Sam Rivera · Order #1042",
-          action: { label: "Undo", onClick: () => toast.dismiss(id) },
-        });
-      }}
+          action: { label: "Undo", onClick: () => {} },
+        })
+      }
     >
       Archive conversation
     </Button>
@@ -166,10 +168,7 @@ export const examples = {
             title: "You're offline",
             description: "New messages will show when you reconnect.",
             duration: Infinity,
-            action: {
-              label: "Try again",
-              onClick: () => toast.dismiss("connection"),
-            },
+            action: { label: "Try again", onClick: () => {} },
           })
         }
       >
@@ -198,7 +197,7 @@ export const examples = {
           key={value}
           variant="secondary"
           onClick={() => {
-            moveTo(value);
+            moveTo(value); // playground only
             toast({ title: `Shown at the ${label.toLowerCase()}` });
           }}
         >
@@ -256,4 +255,25 @@ export const examples = {
       </Field>
     </Drawer>
   ),
+};
+
+// The Positions example's buttons move the one Toaster the playground has, in
+// the Default example, as a second Toaster would show every toast again. Its
+// code is an app's own Toaster, placed where it goes.
+export const shownCode = {
+  Positions: `<>
+  <Button variant="secondary" onClick={() => toast({ title: "Shown at the top end" })}>
+    Show a toast
+  </Button>
+  <Toaster
+    label="Notifications (F8)"
+    icons={{
+      success: <SuccessIcon />,
+      error: <ErrorIcon />,
+      warning: <WarningIcon />,
+      info: <InfoIcon />,
+    }}
+    position="top-end"
+  />
+</>`,
 };

@@ -2,13 +2,17 @@
 // <section class="htoaster">.
 //
 // It shows the region as a manual popover, adds and removes toasts, measures
-// each one so its box can change size, and places them in the stack. Each
+// each one so its box can change size, and places them in the stack, the
+// newest first in the page at the top of the window, last at the bottom. Each
 // toast counts 4 seconds of its own, held while the stack is spread out (on
-// hover with a mouse, a tap, or focus inside) or the page is hidden; those
-// whose time is up leave one at a time, the oldest first. Each toast's text
-// goes to one of the region's announcers, for screen readers. F8 moves focus
-// to the toasts, and Escape puts it back. While a Dialog or Drawer is open,
-// the region moves inside it, where it isn't inert, and back as it closes.
+// hover with a mouse, a tap, or keyboard focus inside) or the page is hidden;
+// those whose time is up leave one at a time, the oldest first. Spread out
+// taller than the window allows, the region scrolls. Pressing a toast's
+// action closes it, unless the action's own handler calls preventDefault().
+// Each toast's text goes to one of the region's announcers, for screen
+// readers. F8 moves focus to the toasts, and Escape puts it back. While a
+// Dialog or Drawer is open, the region moves inside it, where it isn't inert,
+// and back as it closes.
 //
 // A button with data-example-toast-title sends a toast; its other
 // data-example-toast-* attributes give the rest.
@@ -19,7 +23,6 @@
     const polite = toaster.querySelector('.htoaster-announce[role="status"]');
     const assertive = toaster.querySelector('.htoaster-announce[role="alert"]');
     const fine = matchMedia("(hover: hover) and (pointer: fine)");
-    const GAP = 12;
     const DURATION = 4000;
     const EXIT_SPACING = 700;
     // The longest a timer can wait: a longer one would go off at once.
@@ -42,7 +45,10 @@
         '<svg class="htoast-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d="M12 1.25C17.93 1.25 22.75 6.07 22.75 12C22.75 17.93 17.93 22.75 12 22.75C6.07 22.75 1.25 17.93 1.25 12C1.25 6.07 6.07 1.25 12 1.25ZM12 21.25C17.1 21.25 21.25 17.1 21.25 12C21.25 6.9 17.1 2.75 12 2.75C6.9 2.75 2.75 6.9 2.75 12C2.75 17.1 6.9 21.25 12 21.25Z" fill="currentColor" /><path d="M12 10.25C12.41 10.25 12.75 10.59 12.75 11V16C12.75 16.41 12.41 16.75 12 16.75C11.59 16.75 11.25 16.41 11.25 16V11C11.25 10.59 11.59 10.25 12 10.25Z" fill="currentColor" /><circle cx="12" cy="8" r="1" fill="currentColor" /></svg>',
     };
 
-    const body = (options) => {
+    // At the top, the newest comes first in the page, as on screen.
+    const top = () => toaster.dataset.position?.startsWith("top") ?? false;
+
+    const body = (options, id) => {
       const element = document.createElement("div");
       element.className = "htoast-body";
       element.innerHTML = icons[options.status ?? "info"];
@@ -69,7 +75,10 @@
         label.className = "hbutton-label";
         label.textContent = options.action.label;
         button.append(label);
-        button.addEventListener("click", options.action.onClick);
+        button.addEventListener("click", (event) => {
+          options.action.onClick?.(event);
+          if (!event.defaultPrevented) dismiss(id);
+        });
         element.append(button);
       }
       return element;
@@ -77,20 +86,32 @@
 
     // The content's own size: its exact width, which can be a fraction of a
     // pixel, rounded up, since rounded down the last word no longer fits; and
-    // the box's, two pixels more for the border.
+    // the box's, two pixels more for the border. First the title and
+    // description's own width, rounded down, so that at the content's width
+    // the action still fits beside them; where the window caps that width,
+    // the action moves under them instead of squeezing them.
     const natural = (entry) => {
       const content = entry.item.querySelector(":scope > .htoast-body:not([data-leaving])");
+      const words = content.querySelector(":scope > .htoast-content");
+      words.style.flex = "none";
+      words.style.inlineSize = "max-content";
+      const text = Math.floor(parseFloat(getComputedStyle(words).width));
+      words.style.flex = "";
+      words.style.inlineSize = "";
       content.style.inlineSize = "max-content";
       const width = Math.ceil(parseFloat(getComputedStyle(content).width));
       content.style.inlineSize = `${width}px`;
+      if (Number.isFinite(text)) content.style.setProperty("--htoast-content-width", `${text}px`);
       const height = parseFloat(getComputedStyle(content).height);
       content.style.inlineSize = "";
-      return { width: width + 2, height: height + 2 };
+      content.style.removeProperty("--htoast-content-width");
+      return { width: width + 2, height: height + 2, text };
     };
-    const measure = (entry, { width, height } = natural(entry)) => {
+    const measure = (entry, { width, height, text } = natural(entry)) => {
       entry.item.style.setProperty("--htoast-body-width", `${width - 2}px`);
       entry.item.style.setProperty("--htoast-width", `${width}px`);
       entry.item.style.setProperty("--htoast-height", `${height}px`);
+      if (Number.isFinite(text)) entry.item.style.setProperty("--htoast-content-width", `${text}px`);
       entry.width = width;
       entry.height = height;
     };
@@ -114,25 +135,38 @@
       });
     });
 
-    // Newest in front; spread out, each above the ones in front of it.
+    // Newest in front; spread out, each above the ones in front of it, the
+    // list's row-gap apart. The toasts in the order they came, whichever
+    // order they're in in the page.
+    let reach = 0;
     const layout = () => {
-      const live = [...list.children].filter((item) => !item.hasAttribute("data-removed")).reverse();
+      const live = [...toasts.keys()].reverse();
+      const gap = parseFloat(getComputedStyle(list).rowGap) || 0;
       let offset = 0;
       live.forEach((item, index) => {
         item.style.setProperty("--htoast-index", index);
         item.style.setProperty("--htoast-offset", `${offset}px`);
         item.toggleAttribute("data-front", index === 0);
         item.toggleAttribute("data-beyond", index > 2);
-        offset += toasts.get(item).height + GAP;
+        offset += toasts.get(item).height + gap;
       });
       const front = live[0] && toasts.get(live[0]);
       if (front) {
         toaster.style.setProperty("--htoaster-front-width", `${front.width}px`);
         toaster.style.setProperty("--htoaster-front-height", `${front.height}px`);
-        toaster.style.setProperty("--htoaster-spread", `${offset - front.height - GAP}px`);
+        toaster.style.setProperty("--htoaster-spread", `${offset - front.height - gap}px`);
       }
+      reach = live.length ? offset - gap : 0;
       if (!live.length) setExpanded(false);
       size();
+      fit();
+    };
+
+    // Spread out taller than the region may be, it scrolls: CSS keeps the
+    // newest at the edge.
+    const fit = () => {
+      const tall = reach > parseFloat(getComputedStyle(toaster).maxHeight) + 0.5;
+      toaster.toggleAttribute("data-overflowing", toaster.hasAttribute("data-expanded") && tall);
     };
 
     // The region's width: the widest toast shown at its own size, the front
@@ -176,7 +210,7 @@
         exitTimer = setTimeout(leaveInTurn, wait);
         return;
       }
-      const oldest = [...list.children].map((item) => toasts.get(item)).find((entry) => entry && due.has(entry));
+      const oldest = [...toasts.values()].find((entry) => due.has(entry));
       if (!oldest) return due.clear();
       lastExit = Date.now();
       dismiss(oldest.id);
@@ -216,13 +250,15 @@
       const back = returnTo;
       returnTo = null;
       if (back?.isConnected && !toaster.contains(back)) back.focus();
-      else document.activeElement?.blur();
+      // Focus that had nowhere to go back to, such as the page itself, which
+      // can't take it, leaves the toasts all the same.
+      if (toaster.contains(document.activeElement)) document.activeElement.blur();
     };
 
     const toast = (options) => {
       const id = options.id ?? `htoast-${++count}`;
       let entry = find(id);
-      const content = body({ ...options, action: options.action && { ...options.action, onClick: () => dismiss(id) } });
+      const content = body(options, id);
       if (entry) {
         // Changed in place: what it showed fades out over what it shows now,
         // while the box changes size.
@@ -246,7 +282,8 @@
         const item = document.createElement("li");
         item.className = "htoast";
         item.append(content);
-        list.append(item);
+        if (top()) list.prepend(item);
+        else list.append(item);
         entry = { id, item };
         toasts.set(item, entry);
       }
@@ -290,16 +327,25 @@
       }, seconds * 1000 + 50);
     };
 
-    // Spread out: hovered with a mouse, tapped, or with focus inside.
+    // Spread out: hovered with a mouse, tapped, or with keyboard focus inside,
+    // such as after F8 or Tab. Focus that a mouse press put there, on a
+    // toast's text or by an action that closed its toast, doesn't hold it
+    // once the pointer has gone. F8 holds it until focus leaves the toasts,
+    // even when focus was there already and so doesn't move.
     let hovered = false;
+    let summoned = false;
     const setExpanded = (on) => {
       on = on && toasts.size > 0;
       if (toaster.hasAttribute("data-expanded") === on) return;
       toaster.toggleAttribute("data-expanded", on);
       size();
+      fit();
       syncTimers();
     };
-    const update = () => setExpanded(hovered || toaster.contains(document.activeElement));
+    const update = () => {
+      if (!toaster.contains(document.activeElement)) summoned = false;
+      setExpanded(hovered || summoned || toaster.matches(":focus-visible, :has(:focus-visible)"));
+    };
     toaster.addEventListener("pointerenter", (event) => {
       if (event.pointerType !== "mouse" || !fine.matches) return;
       hovered = true;
@@ -328,7 +374,9 @@
       if (event.key === "F8" && toasts.size) {
         event.preventDefault();
         if (!toaster.contains(document.activeElement)) returnTo = document.activeElement;
+        summoned = true;
         toaster.focus();
+        update();
       } else if (event.key === "Escape" && toaster.contains(document.activeElement)) {
         event.preventDefault();
         giveFocusBack();
@@ -431,11 +479,15 @@
     document.addEventListener("click", (event) => {
       const button = event.target.closest("[data-example-toast-title], [data-example-toast-stack]");
       if (!button) return;
-      // Where the region is: a toast at the start or end has less room.
+      // Where the region is: a toast at the start or end has less room. From
+      // the bottom to the top, or back, the toasts' order in the page turns
+      // around.
       const position = button.dataset.exampleToastPosition;
       if (position) {
+        const wasTop = top();
         if (position === "bottom-center") toaster.removeAttribute("data-position");
         else toaster.dataset.position = position;
+        if (top() !== wasTop) for (const item of [...list.children].reverse().slice(1)) list.append(item);
         for (const entry of toasts.values()) measure(entry);
         layout();
       }
