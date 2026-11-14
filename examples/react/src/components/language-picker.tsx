@@ -1,27 +1,6 @@
 import { LanguagePicker } from "@harmo-ui/react";
 import { useState } from "react";
 
-const many = [
-  { value: "id", label: "Bahasa Indonesia", description: "Indonesian" },
-  { value: "de", label: "Deutsch", description: "German" },
-  { value: "en", label: "English" },
-  { value: "es", label: "Español", description: "Spanish" },
-  { value: "fr", label: "Français", description: "French" },
-  { value: "it", label: "Italiano", description: "Italian" },
-  { value: "nl", label: "Nederlands", description: "Dutch" },
-  { value: "pl", label: "Polski", description: "Polish" },
-  { value: "pt", label: "Português", description: "Portuguese" },
-  { value: "vi", label: "Tiếng Việt", description: "Vietnamese" },
-  { value: "tr", label: "Türkçe", description: "Turkish" },
-  { value: "ru", label: "Русский", description: "Russian" },
-  { value: "uk", label: "Українська", description: "Ukrainian" },
-  { value: "ar", label: "العربية", description: "Arabic" },
-  { value: "hi", label: "हिन्दी", description: "Hindi" },
-  { value: "zh", label: "中文", description: "Chinese" },
-  { value: "ja", label: "日本語", description: "Japanese" },
-  { value: "ko", label: "한국어", description: "Korean" },
-];
-
 export const examples = {
   Default: () => {
     const [language, setLanguage] = useState("en");
@@ -186,7 +165,26 @@ export const examples = {
       defaultValue="en"
       searchLabel="Search languages"
       emptyMessage="No languages found"
-      languages={many}
+      languages={[
+        { value: "id", label: "Bahasa Indonesia", description: "Indonesian" },
+        { value: "de", label: "Deutsch", description: "German" },
+        { value: "en", label: "English" },
+        { value: "es", label: "Español", description: "Spanish" },
+        { value: "fr", label: "Français", description: "French" },
+        { value: "it", label: "Italiano", description: "Italian" },
+        { value: "nl", label: "Nederlands", description: "Dutch" },
+        { value: "pl", label: "Polski", description: "Polish" },
+        { value: "pt", label: "Português", description: "Portuguese" },
+        { value: "vi", label: "Tiếng Việt", description: "Vietnamese" },
+        { value: "tr", label: "Türkçe", description: "Turkish" },
+        { value: "ru", label: "Русский", description: "Russian" },
+        { value: "uk", label: "Українська", description: "Ukrainian" },
+        { value: "ar", label: "العربية", description: "Arabic" },
+        { value: "hi", label: "हिन्दी", description: "Hindi" },
+        { value: "zh", label: "中文", description: "Chinese" },
+        { value: "ja", label: "日本語", description: "Japanese" },
+        { value: "ko", label: "한국어", description: "Korean" },
+      ]}
     />
   ),
 

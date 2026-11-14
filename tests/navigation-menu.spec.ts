@@ -1,5 +1,5 @@
 import { expect, type Locator } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
+import { animations, boxes, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/navigation-menu.md says: triggers open a panel on hover,
 // a click, or Enter; one frame resizes as you move between them; Tab goes from
@@ -371,6 +371,54 @@ onEachPlayground("navigation-menu", () => {
     expect(await page.locator("#around").evaluate((popover) => popover.matches(":popover-open"))).toBe(true);
   });
 
+  test("an Escape pressed in a popup over the page, or already taken, leaves the panel open", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { trigger } = await parts(container);
+    await trigger("Solutions").click();
+    await page.mouse.move(0, 0);
+    await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "true");
+    const prevented = await page.evaluate(() => {
+      const layer = Object.assign(document.createElement("div"), { popover: "manual" });
+      const button = document.createElement("button");
+      layer.append(button);
+      document.body.append(layer);
+      layer.showPopover();
+      const escape = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+      button.dispatchEvent(escape);
+      layer.remove();
+      return escape.defaultPrevented;
+    });
+    expect(prevented).toBe(false);
+    await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "true");
+
+    await page.evaluate(() =>
+      addEventListener("keydown", (event) => event.key === "Escape" && event.preventDefault(), { capture: true, once: true }),
+    );
+    await trigger("Solutions").focus();
+    await page.keyboard.press("Escape");
+    await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "true");
+  });
+
+  test("the rows are capped by the window's width without its scrollbar", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { nav, trigger, panel } = await parts(container);
+    await trigger("Solutions").click();
+    const room = await page.evaluate(() => document.documentElement.clientWidth);
+    await expect.poll(() => nav.evaluate((element) => element.style.getPropertyValue("--hnavigation-menu-room"))).toBe(`${room}px`);
+    await expect((await panel("Solutions")).locator(".hnavigation-menu-rows")).toHaveCSS("max-width", `${room - 34}px`);
+  });
+
+  test("a row's icon follows the text size", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { trigger, panel } = await parts(container);
+    await page.evaluate(() => (document.documentElement.style.fontSize = "20px"));
+    await trigger("Solutions").hover();
+    const solutions = await panel("Solutions");
+    await settled(solutions);
+    const [icon] = await boxes(solutions.getByRole("link", { name: /^Commerce/ }).locator(".hnavigation-menu-icon > svg"));
+    expect([icon.width, icon.height]).toEqual([20, 20]);
+  });
+
   test("a vertical menu leaves Escape to its Popup, stays open through a press on the Popup, and starts closed each time", async ({ page }) => {
     const container = await example(page, "navigation-menu-on-a-phone");
     const button = container.getByRole("button", { name: "Menu" });
@@ -496,6 +544,16 @@ onEachPlayground("menu-button", () => {
     await expect(button).toHaveAttribute("aria-expanded", "false");
     await settled(top);
     await expect(top).toHaveCSS("transform", "none");
+  });
+
+  test("with reduced motion, the bars turn at once", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const button = (await example(page, "menu-button-default")).getByRole("button", { name: "Menu" });
+    const top = button.locator(".hmenu-button-top");
+    await button.click();
+    await expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(await animations(top)).toBe(0);
+    await expect(top).not.toHaveCSS("transform", "none");
   });
 
   test("it's at least the 24px WCAG asks of a target, its bars hidden from screen readers", async ({ page }) => {

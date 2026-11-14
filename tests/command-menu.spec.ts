@@ -202,6 +202,93 @@ onEachPlayground("command-menu", () => {
       await page.keyboard.press("/");
       await expect(input).toBeFocused();
     });
+
+    test("↑ opens the list at the last option", async ({ page }) => {
+      const { input, popup } = await parts(page, "command-menu-default");
+      await input.focus();
+      expect(await isOpen(popup)).toBe(false);
+      await page.keyboard.press("ArrowUp");
+      expect(await isOpen(popup)).toBe(true);
+      expect(await activeLabel(input)).toBe("New team");
+    });
+
+    test("Enter with nothing highlighted is kept from a form around it", async ({ page }) => {
+      const { input, popup } = await parts(page, "command-menu-default");
+      await input.click();
+      await page.keyboard.press("Escape");
+      await expect.poll(() => isOpen(popup)).toBe(false);
+      await page.evaluate(() =>
+        addEventListener("keydown", (event) => {
+          if (event.key === "Enter") document.body.dataset.enterPrevented = String(event.defaultPrevented);
+        }),
+      );
+      await page.keyboard.press("Enter");
+      await expect(page.locator("body")).toHaveAttribute("data-enter-prevented", "true");
+    });
+
+    test("read-only, the list stays closed, and Escape and leaving keep the text", async ({ page }) => {
+      const { input, popup } = await parts(page, "command-menu-default");
+      await input.click();
+      await page.keyboard.type("plans");
+      await page.keyboard.press("Escape");
+      await expect.poll(() => isOpen(popup)).toBe(false);
+      await input.evaluate((node: HTMLInputElement) => (node.readOnly = true));
+      await input.click();
+      expect(await isOpen(popup)).toBe(false);
+      await page.keyboard.press("ArrowDown");
+      expect(await isOpen(popup)).toBe(false);
+      await expect(input).toHaveAttribute("aria-expanded", "false");
+      await page.keyboard.press("Escape");
+      await expect(input).toHaveValue("plans");
+      await page.locator("body").click({ position: { x: 1, y: 1 } });
+      await expect(input).toHaveValue("plans");
+      await page.keyboard.press("/");
+      await expect(input).toBeFocused();
+      expect(await isOpen(popup)).toBe(false);
+    });
+
+    test("becoming read-only, an open list can't be picked from", async ({ page }) => {
+      const { input, picked } = await parts(page, "command-menu-default");
+      await input.click();
+      await page.keyboard.type("plans");
+      await input.evaluate((node: HTMLInputElement) => (node.readOnly = true));
+      await page.keyboard.press("Enter");
+      await expect(picked).toBeHidden();
+      await expect(input).toHaveValue("plans");
+    });
+
+    test("becoming read-only, an open list closes", async ({ page }, info) => {
+      test.skip(!info.titlePath.includes("html"), "sets readonly directly, as an app's own script would");
+      const { input, popup } = await parts(page, "command-menu-default");
+      await input.click();
+      expect(await isOpen(popup)).toBe(true);
+      await input.evaluate((node: HTMLInputElement) => (node.readOnly = true));
+      await expect.poll(() => isOpen(popup)).toBe(false);
+      await expect(input).toHaveAttribute("aria-expanded", "false");
+    });
+
+    test("disabled, or inside something hidden, it leaves the shortcut to the page", async ({ page }) => {
+      const { container, input, popup } = await parts(page, "command-menu-default");
+      const body = page.locator("body");
+      // Last to see the key: whether anything took it.
+      await page.evaluate(() =>
+        addEventListener("keydown", (event) => {
+          if (event.key === "/") document.body.dataset.slashPrevented = String(event.defaultPrevented);
+        }),
+      );
+      await input.evaluate((node: HTMLInputElement) => (node.disabled = true));
+      await body.click({ position: { x: 1, y: 1 } });
+      await page.keyboard.press("/");
+      await expect(body).toHaveAttribute("data-slash-prevented", "false");
+      expect(await isOpen(popup)).toBe(false);
+
+      await input.evaluate((node: HTMLInputElement) => (node.disabled = false));
+      await container.locator(".play-demo").evaluate((node) => node.setAttribute("hidden", ""));
+      await body.evaluate((node) => delete node.dataset.slashPrevented);
+      await page.keyboard.press("/");
+      await expect(body).toHaveAttribute("data-slash-prevented", "false");
+      expect(await isOpen(popup)).toBe(false);
+    });
   });
 
   test.describe("in a dialog", () => {
@@ -296,6 +383,81 @@ onEachPlayground("command-menu", () => {
       await page.mouse.click(4, 4);
       await expect(dialog).toHaveJSProperty("open", false);
       await expect(picked).toBeHidden();
+    });
+
+    test("opened by the shortcut, closing returns focus to what had it", async ({ page }) => {
+      const { container, dialog } = await parts(page, "command-menu-in-a-dialog");
+      const elsewhere = page.getByRole("switch", { name: "Single-key shortcuts" });
+      await elsewhere.focus();
+      await page.keyboard.press("Control+k");
+      await expect(dialog).toHaveJSProperty("open", true);
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveJSProperty("open", false);
+      await expect(elsewhere).toBeFocused();
+      await expect(container.locator(".hcommand-menu-trigger")).not.toBeFocused();
+    });
+
+    test("the shortcut pressed while it fades out keeps it open", async ({ page }) => {
+      const { input, dialog } = await parts(page, "command-menu-in-a-dialog");
+      await page.locator("body").click({ position: { x: 1, y: 1 } });
+      await page.keyboard.press("Control+k");
+      await expect(dialog).toHaveJSProperty("open", true);
+      // A close it holds, as Escape's is, then the shortcut, before its exit
+      // has played.
+      const closing = await dialog.evaluate((node) => {
+        node.dispatchEvent(new Event("cancel", { cancelable: true }));
+        const started = node.hasAttribute("data-closing");
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true, cancelable: true }));
+        return { started, after: node.hasAttribute("data-closing") };
+      });
+      expect(closing).toEqual({ started: true, after: false });
+      await page.waitForTimeout(400);
+      await expect(dialog).toHaveJSProperty("open", true);
+      await expect(input).toBeFocused();
+    });
+
+    test("a disabled trigger looks disabled, and leaves the shortcut to the page", async ({ page }) => {
+      const { container, dialog } = await parts(page, "command-menu-in-a-dialog");
+      const trigger = container.locator(".hcommand-menu-trigger");
+      const tertiary = await page.evaluate(() => {
+        const probe = document.createElement("span");
+        document.body.append(probe);
+        probe.style.color = "var(--harmo-color-text-tertiary)";
+        const value = getComputedStyle(probe).color;
+        probe.remove();
+        return value;
+      });
+      await trigger.evaluate((node: HTMLButtonElement) => (node.disabled = true));
+      await expect(trigger).toHaveCSS("cursor", "not-allowed");
+      await expect(trigger).toHaveCSS("color", tertiary);
+      const border = await trigger.evaluate((node) => getComputedStyle(node).borderTopColor);
+      await trigger.hover({ force: true });
+      await page.waitForTimeout(200);
+      await expect(trigger).toHaveCSS("border-top-color", border);
+
+      await page.locator("body").click({ position: { x: 1, y: 1 } });
+      await page.keyboard.press("Control+k");
+      await page.waitForTimeout(100);
+      await expect(dialog).toHaveJSProperty("open", false);
+    });
+
+    test("inside something hidden, it leaves the shortcut to the page", async ({ page }) => {
+      const { container, dialog } = await parts(page, "command-menu-in-a-dialog");
+      await page.locator("body").click({ position: { x: 1, y: 1 } });
+      await container.locator(".play-demo").evaluate((node) => node.setAttribute("hidden", ""));
+      await page.keyboard.press("Control+k");
+      await page.waitForTimeout(100);
+      await expect(dialog).toHaveJSProperty("open", false);
+    });
+
+    test("right to left, the trigger's padding mirrors", async ({ page }) => {
+      const { container } = await parts(page, "command-menu-in-a-dialog");
+      const trigger = container.locator(".hcommand-menu-trigger");
+      await expect(trigger).toHaveCSS("padding-left", "12px");
+      await expect(trigger).toHaveCSS("padding-right", "10px");
+      await container.locator(".play-demo").evaluate((node) => node.setAttribute("dir", "rtl"));
+      await expect(trigger).toHaveCSS("padding-left", "10px");
+      await expect(trigger).toHaveCSS("padding-right", "12px");
     });
   });
 });

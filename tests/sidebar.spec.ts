@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, release, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/sidebar.md says, on the Sidebar page: links in named
 // groups, with the current page marked; a group of links opens under its
@@ -328,5 +328,104 @@ onEachPlayground("sidebar", () => {
     const { sidebar, toggle } = await parts(page, "sidebar-default");
     await toggle.click();
     expect(await width(sidebar)).toBeCloseTo(60, 0);
+  });
+
+  test("collapsing, the icons and a count's dot keep to the start of their rows while the width narrows", async ({ page }) => {
+    const { sidebar, nav, toggle } = await parts(page, "sidebar-default");
+    const home = nav.getByRole("link", { name: "Home" });
+    const messages = nav.getByRole("link", { name: "Messages 3 unread" });
+    // The sidebar's own width barely moves, so its rows stay wide.
+    await slowDown(sidebar);
+    await toggle.click();
+    await expect(sidebar).toHaveAttribute("data-collapsed", "");
+    await settled(home);
+    const [rail, icon, dot] = await boxes(sidebar, home.locator(".hicon"), messages.locator(".hsidebar-badge"));
+    expect(icon.x - rail.x).toBeGreaterThan(19);
+    expect(icon.x - rail.x).toBeLessThan(32);
+    expect(dot.x - rail.x).toBeLessThan(48);
+    await release(sidebar);
+
+    // At rest, each icon is in the middle of the collapsed width.
+    await settled(sidebar);
+    const [collapsed, resting] = await boxes(sidebar, home.locator(".hicon"));
+    expect(resting.x - collapsed.x + resting.width / 2).toBeCloseTo(30, 0);
+  });
+
+  test("icons follow the text size", async ({ page }) => {
+    const { nav } = await parts(page, "sidebar-default");
+    await page.evaluate(() => (document.documentElement.style.fontSize = "20px"));
+    const [icon] = await boxes(nav.getByRole("link", { name: "Home" }).locator(".hicon"));
+    expect([icon.width, icon.height]).toEqual([25, 25]);
+  });
+
+  test("in forced colors, the edge and a collapsed count's dot are drawn in the system's colors", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
+    await page.emulateMedia({ forcedColors: "active" });
+    const expanded = await parts(page, "sidebar-default");
+    expect(await expanded.sidebar.evaluate((node) => getComputedStyle(node, "::after").forcedColorAdjust)).toBe("none");
+    const { nav } = await parts(page, "sidebar-collapsed");
+    await expect(nav.getByRole("link", { name: "Messages 3 unread" }).locator(".hsidebar-badge")).toHaveCSS("forced-color-adjust", "none");
+  });
+
+  test("collapsed, while focus is in a group's links, hovering another group's icon leaves it open", async ({ page }) => {
+    const { nav, group } = await parts(page, "sidebar-collapsed");
+    const campaigns = group("Campaigns");
+    await campaigns.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    await expect(nav.getByRole("link", { name: "Runs" })).toBeFocused();
+    await group("More").locator("summary").hover();
+    expect([await isOpen(campaigns), await isOpen(group("More"))]).toEqual([true, false]);
+    await expect(nav.getByRole("link", { name: "Runs" })).toBeFocused();
+  });
+
+  test("collapsed, picking a link from the keyboard closes its group and returns focus to its icon", async ({ page }) => {
+    const { nav, group } = await parts(page, "sidebar-collapsed");
+    const campaigns = group("Campaigns");
+    const summary = campaigns.locator("summary");
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    // Found even once its group has closed around it.
+    const runs = nav.getByRole("link", { name: "Runs", includeHidden: true });
+    await expect(runs).toBeFocused();
+    await page.keyboard.press("Enter");
+    expect(await isOpen(campaigns)).toBe(false);
+    await expect(summary).toBeFocused();
+    await expect(runs).toHaveAttribute("aria-current", "page");
+  });
+
+  test("collapsed, an Escape in a popup over the page is the popup's, and the open group stays", async ({ page }) => {
+    const { group } = await parts(page, "sidebar-collapsed");
+    const campaigns = group("Campaigns");
+    // Opened with no pointer or focus on it, so no tooltip takes the Escape.
+    await campaigns.evaluate((node) => ((node as HTMLDetailsElement).open = true));
+    expect(await isOpen(campaigns)).toBe(true);
+    const prevented = await page.evaluate(() => {
+      const layer = Object.assign(document.createElement("div"), { popover: "manual" });
+      const button = document.createElement("button");
+      layer.append(button);
+      document.body.append(layer);
+      layer.showPopover();
+      const escape = new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true });
+      button.dispatchEvent(escape);
+      layer.remove();
+      return escape.defaultPrevented;
+    });
+    expect(prevented).toBe(false);
+    expect(await isOpen(campaigns)).toBe(true);
+  });
+
+  // The playground itself cancels every click on a demo's links, so that no demo
+  // navigates away; what's checked here is that the example's router leaves a
+  // click with a modifier key alone, as an app's should, for the browser.
+  test("a click with a modifier key isn't taken by the example's router", async ({ page }) => {
+    const { nav } = await parts(page, "sidebar-default");
+    const home = nav.getByRole("link", { name: "Home" });
+    const current = nav.locator('[aria-current="page"]');
+    const before = await current.textContent();
+    await home.click({ modifiers: ["ControlOrMeta"] });
+    await expect(home).not.toHaveAttribute("aria-current");
+    await expect(current).toHaveText(before ?? "");
   });
 });

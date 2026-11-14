@@ -110,7 +110,8 @@
 }
 
 // What opens the dialog: a button that looks like a Search field, with its
-// placeholder-like text, and the shortcut at its end.
+// placeholder-like text, and the shortcut at its end; disabled, as a disabled
+// Search field looks.
 .hcommand-menu-trigger {
   --harmo-input-color-background: #{$color-background-secondary};
   --harmo-input-color-border: transparent;
@@ -124,7 +125,8 @@
 
   inline-size: 100%;
   min-block-size: $control-height;
-  padding: 0 10px 0 12px;
+  padding-block: 0;
+  padding-inline: 12px 10px;
 
   text-align: start;
 
@@ -150,7 +152,7 @@
   }
 
   @media (hover: hover) and (pointer: fine) {
-    &:hover {
+    &:hover:where(:not(:disabled)) {
       @include control.focused;
     }
   }
@@ -158,6 +160,10 @@
   &:focus-visible {
     @include control.focused;
     @include control.ring;
+  }
+
+  &:disabled {
+    @include control.disabled;
   }
 
   @media (hover: none) {

@@ -1,7 +1,9 @@
 // Example only: once a language is chosen (listbox.js selects it), show it in
 // the button, with its region when it has one, as the React Language Picker
-// does. In a panel of regions, Left and Right move between languages as Up and
-// Down do, the other way round right to left.
+// does, through button.js's changeButtonWidth, so its width follows. While the
+// button has aria-disabled="true", it doesn't open, and an open one closes. In
+// a panel of regions, Left and Right move between languages as Up and Down do,
+// the other way round right to left.
 {
   for (const trigger of document.querySelectorAll(".hlanguage-picker[popovertarget]")) {
     const popup = document.getElementById(trigger.getAttribute("popovertarget"));
@@ -16,13 +18,23 @@
         .join("")
         .trim();
 
+    // Before popup.js and listbox.js, which leave an opening that's cancelled.
+    const inactive = () => trigger.getAttribute("aria-disabled") === "true";
+    popup.addEventListener("beforetoggle", (event) => {
+      if (event.newState === "open" && inactive()) event.preventDefault();
+    });
+    new MutationObserver(() => inactive() && popup.matches(":popover-open") && popup.hidePopover()).observe(trigger, {
+      attributes: true,
+      attributeFilter: ["aria-disabled"],
+    });
+
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.getAttribute("aria-disabled") === "true") return;
+      if (!option || option.getAttribute("aria-disabled") === "true" || inactive()) return;
       const region = option.closest(".hoption-group")?.querySelector(".hoption-group-label");
       const parts = [option.querySelector(".hoption-label [lang]").cloneNode(true)];
       if (region) parts.unshift(Object.assign(document.createElement("span"), { className: "hlanguage-picker-region", textContent: nameOf(region) }), " ");
-      label.replaceChildren(...parts);
+      changeButtonWidth(trigger, () => label.replaceChildren(...parts));
     });
 
     if (!popup.matches(".hlanguage-picker-regions")) continue;

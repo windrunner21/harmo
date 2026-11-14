@@ -21,9 +21,11 @@ import {
 
 export const examples = {
   Default: () => {
-    // Your router knows the page you're on; here a click only moves it.
+    // Your router knows the page you're on; here a click only moves it, and a
+    // click with a modifier key is left to the browser.
     const [path, setPath] = useState("/tickets");
     const go = (event: MouseEvent<HTMLAnchorElement>) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       setPath(event.currentTarget.getAttribute("href") ?? "");
     };
@@ -135,9 +137,11 @@ export const examples = {
   },
 
   "One group at a time": () => {
-    // Your router knows the page you're on; here a click only moves it.
+    // Your router knows the page you're on; here a click only moves it, and a
+    // click with a modifier key is left to the browser.
     const [path, setPath] = useState("/tickets");
     const go = (event: MouseEvent<HTMLAnchorElement>) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       setPath(event.currentTarget.getAttribute("href") ?? "");
     };
@@ -248,9 +252,11 @@ export const examples = {
   },
 
   Collapsed: () => {
-    // Your router knows the page you're on; here a click only moves it.
+    // Your router knows the page you're on; here a click only moves it, and a
+    // click with a modifier key is left to the browser.
     const [path, setPath] = useState("/tickets");
     const go = (event: MouseEvent<HTMLAnchorElement>) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       setPath(event.currentTarget.getAttribute("href") ?? "");
     };
@@ -361,9 +367,11 @@ export const examples = {
   },
 
   "In a drawer": () => {
-    // Your router knows the page you're on; here a click only moves it.
+    // Your router knows the page you're on; here a click only moves it, and a
+    // click with a modifier key is left to the browser.
     const [path, setPath] = useState("/tickets");
     const go = (event: MouseEvent<HTMLAnchorElement>) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       setPath(event.currentTarget.getAttribute("href") ?? "");
     };

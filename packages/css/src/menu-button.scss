@@ -17,23 +17,23 @@
       opacity $duration-normal $ease-in-out-cubic;
   }
 
-  .hmenu-button[aria-expanded="true"] > & {
-    & > .hmenu-button-top {
-      transform: translateY(5px) rotate(45deg);
-    }
-
-    & > .hmenu-button-middle {
-      opacity: 0;
-    }
-
-    & > .hmenu-button-bottom {
-      transform: translateY(-5px) rotate(-45deg);
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     & > line {
       transition: none;
     }
+  }
+}
+
+:where(.hmenu-button[aria-expanded="true"] > .hmenu-button-bars) {
+  & > .hmenu-button-top {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  & > .hmenu-button-middle {
+    opacity: 0;
+  }
+
+  & > .hmenu-button-bottom {
+    transform: translateY(-5px) rotate(-45deg);
   }
 }

@@ -2,14 +2,16 @@
 
 import {
   createContext,
+  isValidElement,
   useContext,
   useId,
   useState,
   type ComponentPropsWithRef,
   type KeyboardEvent,
+  type ReactElement,
   type ReactNode,
 } from "react";
-import { shownChildren } from "../children.ts";
+import { flatChildren, shownChildren } from "../children.ts";
 import { withClass } from "../withClass.ts";
 import { useTabsMotion } from "./useTabsMotion.ts";
 
@@ -25,6 +27,7 @@ interface TabsState {
 }
 
 const TabsContext = createContext<TabsState | undefined>(undefined);
+const FocusableContext = createContext<string | undefined>(undefined);
 
 const useTabs = () => {
   const tabs = useContext(TabsContext);
@@ -71,16 +74,17 @@ export const TabList = ({
   onPointerLeave,
   ...props
 }: TabListProps) => {
-  useTabs();
+  const tabs = useTabs();
   const motion = useTabsMotion<HTMLDivElement>();
   const alone = !alwaysShow && shownChildren(children).length <= 1;
+  const focusable = focusableTab(children, tabs.selected);
 
   const move = (event: KeyboardEvent<HTMLDivElement>) => {
     const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
     if (!step && event.key !== "Home" && event.key !== "End") return;
     const all = Array.from(
       event.currentTarget.querySelectorAll<HTMLElement>(
-        ':scope > [role="tab"]:not(:disabled, [hidden])',
+        ':scope > [role="tab"]:not(:disabled, [hidden], [aria-disabled="true"])',
       ),
     );
     const index = all.indexOf(document.activeElement as HTMLElement);
@@ -118,11 +122,11 @@ export const TabList = ({
           onPointerLeave?.(event);
         }}
         onKeyDown={(event) => {
-          move(event);
           onKeyDown?.(event);
+          if (!event.defaultPrevented) move(event);
         }}
       >
-        {children}
+        <FocusableContext value={focusable}>{children}</FocusableContext>
       </div>
       <span className="htabs-highlight" aria-hidden="true" />
       <span className="htabs-indicator" aria-hidden="true" />
@@ -137,7 +141,7 @@ export interface TabProps
 
 export const Tab = ({ value, onClick, ...props }: TabProps) => {
   const tabs = useTabs();
-  const selected = tabs.selected === value;
+  const focusable = useContext(FocusableContext) ?? tabs.selected;
 
   return (
     <button
@@ -145,12 +149,14 @@ export const Tab = ({ value, onClick, ...props }: TabProps) => {
       {...props}
       role="tab"
       id={tabs.idOf(value, "tab")}
-      aria-selected={selected}
+      aria-selected={tabs.selected === value}
       aria-controls={tabs.idOf(value, "panel")}
-      tabIndex={selected ? undefined : -1}
+      tabIndex={focusable === value ? undefined : -1}
       onClick={(event) => {
-        tabs.select(value);
         onClick?.(event);
+        if (event.defaultPrevented) return;
+        if (event.currentTarget.getAttribute("aria-disabled") === "true") return;
+        tabs.select(value);
       }}
     />
   );
@@ -160,7 +166,7 @@ export interface TabPanelProps extends ComponentPropsWithRef<"div"> {
   value: string;
 }
 
-export const TabPanel = ({ value, ...props }: TabPanelProps) => {
+export const TabPanel = ({ value, hidden, ...props }: TabPanelProps) => {
   const tabs = useTabs();
 
   return (
@@ -170,9 +176,28 @@ export const TabPanel = ({ value, ...props }: TabPanelProps) => {
       role="tabpanel"
       id={tabs.idOf(value, "panel")}
       aria-labelledby={tabs.idOf(value, "tab")}
-      hidden={tabs.selected !== value}
+      hidden={hidden || tabs.selected !== value}
     />
   );
+};
+
+const usable = (tab: ReactElement<TabProps>) =>
+  !tab.props.hidden &&
+  !tab.props.disabled &&
+  tab.props["aria-disabled"] !== true &&
+  tab.props["aria-disabled"] !== "true";
+
+const focusableTab = (children: ReactNode, selected: string) => {
+  const shown = flatChildren(children)
+    .filter(
+      (child): child is ReactElement<TabProps> =>
+        isValidElement(child) && child.type === Tab,
+    )
+    .filter(usable);
+  if (shown.length === 0 || shown.some((tab) => tab.props.value === selected)) {
+    return selected;
+  }
+  return shown[0]?.props.value;
 };
 
 const encode = (value: string) =>

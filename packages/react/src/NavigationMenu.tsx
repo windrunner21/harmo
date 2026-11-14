@@ -66,9 +66,11 @@ const contents = (nav: HTMLElement) => [
   ...nav.querySelectorAll<HTMLElement>(":scope > ul > li > .hnavigation-menu-content"),
 ];
 
-// The frame's size, from the rows', and how far to move it to stay 8px inside
-// the window. It sits at the menu's end, or with data-align="start", its start.
+// The window's width without its scrollbar, which caps the rows; the frame's
+// size, from the rows', and how far to move it to stay 8px inside the window.
+// It sits at the menu's end, or with data-align="start", its start.
 const placeFrame = (nav: HTMLElement, rows: HTMLElement) => {
+  nav.style.setProperty("--hnavigation-menu-room", `${document.documentElement.clientWidth}px`);
   nav.style.setProperty("--hnavigation-menu-width", `${rows.offsetWidth}px`);
   nav.style.setProperty("--hnavigation-menu-height", `${rows.offsetHeight}px`);
   const width = rows.offsetWidth + 18;
@@ -161,11 +163,17 @@ export const NavigationMenu = ({
 
   // A vertical menu is part of the page, as an Accordion is: Escape and a
   // press outside are for whatever it's in. A panel takes Escape for itself,
-  // so whatever it's in stays open.
+  // so whatever it's in stays open, but not one already taken, or pressed in
+  // a dialog or a popup over the menu.
   useEffect(() => {
     if (active === null || vertical) return;
     const escape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      const layer =
+        event.target instanceof Element
+          ? event.target.closest("dialog[open], :popover-open")
+          : null;
+      if (layer && nav.current && !layer.contains(nav.current)) return;
       event.preventDefault();
       const inside = nav.current?.contains(document.activeElement);
       const trigger = document.getElementById(active)?.previousElementSibling as HTMLElement | null;

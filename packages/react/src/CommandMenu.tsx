@@ -78,6 +78,7 @@ export const CommandMenu = ({
   const anchor = `--${useId()}`;
   const input = useRef<HTMLInputElement>(null);
   useImperativeHandle(ref, () => input.current as HTMLInputElement, []);
+  const opener = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const [expanded, setExpanded] = useState(false);
   const apple = useApple();
@@ -117,8 +118,10 @@ export const CommandMenu = ({
 
   // A pick closes the list and empties the field, or closes the dialog as
   // Escape does, which empties it once it's closed, so the list doesn't
-  // change as it fades. Then the app goes where it leads.
+  // change as it fades. Then the app goes where it leads. Under a read-only
+  // field, nothing is picked.
   const pick = (value: string) => {
+    if (!modal && input.current?.readOnly) return;
     if (modal) {
       const element = dialog.current;
       if (element?.requestClose) element.requestClose();
@@ -131,15 +134,21 @@ export const CommandMenu = ({
   };
 
   // The shortcut opens the dialog, or reaches the field and opens its list;
-  // pressed again, it takes focus back to the field. A hidden or disabled
-  // menu leaves the key to the page, and the browser.
+  // pressed again, it takes focus back to the field, and while the dialog
+  // fades out, it keeps it open. A hidden or disabled menu, or one inside
+  // something hidden, leaves the key to the page, and the browser.
   const keys = shortcut ? parseKeys(shortcut.keys) : null;
   const reach = useEffectEvent((event: KeyboardEvent) => {
     const field = input.current;
-    if (!field || disabled || hidden) return;
+    const owner = modal ? opener.current : field?.parentElement;
+    if (!field || !owner || disabled || hidden) return;
+    if (field.disabled || opener.current?.disabled || owner.closest("[hidden]")) return;
     event.preventDefault();
-    if (modal && !dialog.current?.open) {
-      dialog.current?.showModal();
+    const element = dialog.current;
+    if (modal && element?.hasAttribute("data-closing")) {
+      element.removeAttribute("data-closing");
+    } else if (modal && !element?.open) {
+      element?.showModal();
       return;
     }
     field.focus();
@@ -162,6 +171,11 @@ export const CommandMenu = ({
     hide();
     if (dialog.current?.open) dialog.current.close();
   }, [hidden]);
+
+  // Becoming read-only, an open list closes.
+  useEffect(() => {
+    if (props.readOnly) hide();
+  }, [props.readOnly]);
 
   const shortcutLabel = shortcut && (
     <Kbd aria-hidden="true">
@@ -259,6 +273,7 @@ export const CommandMenu = ({
       <>
         <button
           {...{ commandfor: dialogId, command: "show-modal" }}
+          ref={opener}
           className="hcommand-menu-trigger"
           type="button"
           aria-haspopup="dialog"
@@ -308,6 +323,7 @@ export const CommandMenu = ({
           popover="manual"
           style={{ positionAnchor: anchor } as CSSProperties}
           onBeforeToggle={(event) => {
+            if (event.target !== event.currentTarget) return;
             setExpanded(event.newState === "open");
             placePopup(event.currentTarget, event.newState === "open");
           }}

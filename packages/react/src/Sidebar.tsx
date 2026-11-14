@@ -86,9 +86,15 @@ export const Sidebar = ({
         ? target.closest<HTMLDetailsElement>(".hsidebar-sub")
         : null;
     const itemOf = (sub: HTMLDetailsElement) => sub.parentElement as HTMLElement;
+    const focusInLinks = (sub: HTMLDetailsElement) =>
+      !!sub
+        .querySelector(":scope > .hsidebar-sub-list")
+        ?.contains(document.activeElement);
 
+    // While focus is in an open group's links, the pointer opens no other.
     const enter = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
+      if (subs().some((sub) => sub.open && focusInLinks(sub))) return;
       for (const sub of subs()) {
         if (sub.open || event.target !== itemOf(sub)) continue;
         sub.open = true;
@@ -119,12 +125,15 @@ export const Sidebar = ({
         other.open = false;
       }
     };
+    // Picking a link closes its group; focus in it goes back to the summary.
     const click = (event: MouseEvent) => {
       if (!(event.target instanceof Element)) return;
       const picked = subOf(event.target.closest(".hsidebar-sub-item"));
       if (picked) {
+        const inside = focusInLinks(picked);
         hovered.delete(picked);
         picked.open = false;
+        if (inside) picked.querySelector<HTMLElement>(":scope > summary")?.focus();
         return;
       }
       const sub = subOf(event.target.closest(".hsidebar-sub > summary"));
@@ -140,9 +149,15 @@ export const Sidebar = ({
     };
     // Escape closes an open group from anywhere, as one a hover opened may
     // be over the page while focus is elsewhere; focus inside goes back to
-    // its summary, and focus elsewhere stays.
+    // its summary, and focus elsewhere stays. An Escape in a dialog or a
+    // popup over the sidebar is that layer's.
     const keyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape" || event.defaultPrevented) return;
+      const layer =
+        event.target instanceof Element
+          ? event.target.closest("dialog[open], :popover-open")
+          : null;
+      if (layer && !layer.contains(element)) return;
       const sub = subs().find((each) => each.open);
       if (!sub) return;
       event.preventDefault();
@@ -201,13 +216,13 @@ export const Sidebar = ({
           </button>
         </Tooltip>
       )}
-      {renders(header) && <div className="hsidebar-header">{header}</div>}
-      <nav className="hsidebar-nav" aria-label={ariaLabel}>
-        <GroupsContext value={exclusive ? `${generatedId}-groups` : undefined}>
+      <GroupsContext value={exclusive ? `${generatedId}-groups` : undefined}>
+        {renders(header) && <div className="hsidebar-header">{header}</div>}
+        <nav className="hsidebar-nav" aria-label={ariaLabel}>
           {children}
-        </GroupsContext>
-      </nav>
-      {renders(footer) && <div className="hsidebar-footer">{footer}</div>}
+        </nav>
+        {renders(footer) && <div className="hsidebar-footer">{footer}</div>}
+      </GroupsContext>
     </div>
   );
 };

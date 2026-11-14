@@ -164,11 +164,17 @@
       popup.addEventListener(
         "beforetoggle",
         (event) => {
+          if (event.target !== popup) return;
           if (event.newState === "open" && !shows()) event.preventDefault();
         },
         { capture: true },
       );
-      popup.addEventListener("beforetoggle", (event) => input.setAttribute("aria-expanded", String(event.newState === "open")));
+      popup.addEventListener("beforetoggle", (event) => {
+        if (event.defaultPrevented) return;
+        input.setAttribute("aria-expanded", String(event.newState === "open"));
+      });
+      // Becoming read-only, an open list closes.
+      new MutationObserver(() => input.readOnly && hide()).observe(input, { attributes: true, attributeFilter: ["readonly"] });
       // Clicking in the list keeps focus in the field.
       popup.addEventListener("mousedown", (event) => event.preventDefault());
       input.addEventListener("click", show);
@@ -199,9 +205,10 @@
       if (event.key === "Enter") event.preventDefault();
     });
 
+    // Under a read-only field, nothing is picked.
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.getAttribute("aria-disabled") === "true") return;
+      if (!option || option.getAttribute("aria-disabled") === "true" || (popup && input.readOnly)) return;
       if (picked) {
         picked.textContent = picked.dataset.examplePicked.replace("{value}", option.dataset.exampleValue ?? "");
         picked.hidden = false;
@@ -216,7 +223,9 @@
     });
 
     // The shortcut, with what it's named for this device, while it's on. A
-    // hidden or disabled menu leaves the key to the page, and the browser.
+    // hidden or disabled menu, or one inside something hidden, leaves the key
+    // to the page, and the browser. While the dialog fades out, it keeps it
+    // open: dialog.js stops the exit once data-closing is gone.
     const owner = trigger ?? input;
     const shortcut = owner.dataset.exampleShortcut;
     if (shortcut) {
@@ -234,9 +243,10 @@
       name();
       document.addEventListener("keydown", (event) => {
         if (event.defaultPrevented || event.repeat || event.isComposing || !on() || !pressed(event, keys)) return;
-        if (input.disabled || (trigger ?? input.parentElement).closest("[hidden]")) return;
+        if (input.disabled || trigger?.disabled || (trigger ?? input.parentElement).closest("[hidden]")) return;
         event.preventDefault();
-        if (dialog && !dialog.open) {
+        if (dialog?.hasAttribute("data-closing")) dialog.removeAttribute("data-closing");
+        else if (dialog && !dialog.open) {
           dialog.showModal();
           return;
         }

@@ -69,6 +69,13 @@
   }
 }
 
+// A region's picture, in the space before its name and its languages.
+:where(.hlanguage-picker-regions .hoption-group > .hoption-group-label) > .hlanguage-picker-icon {
+  position: absolute;
+  inset-block-start: 0.125rem;
+  inset-inline-start: 0;
+}
+
 // With regions, a panel: the regions in columns, each with its picture and its
 // name, and its languages side by side under the name. The region in use shows
 // a check in its picture's place. Up to four columns, each as wide as its
@@ -174,12 +181,6 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
     &[hidden] {
       display: none;
     }
-  }
-
-  & > .hoption-group-label > .hlanguage-picker-icon {
-    position: absolute;
-    inset-block-start: 0.125rem;
-    inset-inline-start: 0;
   }
 
   & .hoption-check {

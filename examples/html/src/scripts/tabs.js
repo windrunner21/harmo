@@ -2,7 +2,11 @@
 // the tabs so the hover pill and underline slide, and keeps the current tab in
 // view when they don't all fit. Links move the current tab here instead of
 // leaving the page; in a tablist, choosing a tab selects it and shows its
-// panel, and the arrow keys, Home, and End move between tabs.
+// panel, and the arrow keys, Home, and End move between tabs, skipping those
+// that are hidden, disabled, or aria-disabled. A click or a key your own
+// handler has prevented is left alone, and an aria-disabled tab isn't chosen.
+// One tab is in the Tab order: the selected one, or, when it isn't shown and
+// enabled, the first that is.
 {
   // Asked each time, as the React version does: in WebKit, a query kept from
   // earlier can be a frame late to see a change of setting.
@@ -76,14 +80,22 @@
       jump: () => (instant = true),
       reveal: () => current() && reveal(current(), true),
     });
+    const usable = (tab) => !tab.disabled && !tab.hidden && tab.getAttribute("aria-disabled") !== "true";
+    const keepOneFocusable = () => {
+      const all = items();
+      const shown = all.filter(usable);
+      const selected = all.find((tab) => tab.getAttribute("aria-selected") === "true");
+      const focusable = shown.length === 0 || shown.includes(selected) ? selected : shown[0];
+      for (const tab of all) tab.tabIndex = tab === focusable ? 0 : -1;
+    };
     const choose = (item) => {
       if (isTablist) {
         for (const tab of items()) {
           const selected = tab === item;
           tab.setAttribute("aria-selected", String(selected));
-          tab.tabIndex = selected ? 0 : -1;
           document.getElementById(tab.getAttribute("aria-controls")).hidden = !selected;
         }
+        keepOneFocusable();
       } else {
         current()?.removeAttribute("aria-current");
         item.setAttribute("aria-current", "page");
@@ -114,17 +126,17 @@
     });
     list.addEventListener("click", (event) => {
       const item = event.target.closest('a, [role="tab"]');
-      if (!item) return;
+      if (!item || event.defaultPrevented) return;
       event.preventDefault();
-      choose(item);
+      if (item.getAttribute("aria-disabled") !== "true") choose(item);
     });
 
     // Arrow keys follow the reading direction, and selection follows focus.
     if (isTablist) {
       list.addEventListener("keydown", (event) => {
         const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
-        if (!step && event.key !== "Home" && event.key !== "End") return;
-        const all = items().filter((tab) => !tab.disabled && !tab.hidden);
+        if (event.defaultPrevented || (!step && event.key !== "Home" && event.key !== "End")) return;
+        const all = items().filter(usable);
         const index = all.indexOf(document.activeElement);
         if (index < 0) return;
         let next;
@@ -140,6 +152,14 @@
       });
     }
 
+    if (isTablist) {
+      keepOneFocusable();
+      new MutationObserver(keepOneFocusable).observe(list, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["hidden", "disabled", "aria-disabled", "aria-selected"],
+      });
+    }
     if (current()) reveal(current(), true);
     placeIndicator();
     tabs.setAttribute("data-ready", "");

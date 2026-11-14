@@ -55,6 +55,13 @@
     background-color: $color-border;
 
     transition: translate $duration-fast ease;
+
+    // A painted line, which forced colors would otherwise clear.
+    @media (forced-colors: active) {
+      forced-color-adjust: none;
+
+      background-color: CanvasText;
+    }
   }
 
   &[data-collapsed] {
@@ -217,15 +224,22 @@
 }
 
 // A link, or the summary of a group of links: a 20px icon, the label, and a
-// count or a chevron at its end.
+// count or a chevron at its end. Collapsing moves the icon in by its padding,
+// with the sidebar's width, so it stays at the start of its row.
 .hsidebar-item {
   @extend %item;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      background-color $duration-fast ease,
+      padding-inline-start $duration-normal $ease-out-cubic;
+  }
 
   & > .hicon {
     flex-shrink: 0;
 
-    inline-size: 20px;
-    block-size: 20px;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
   }
 
   & > .hexpand-chevron {
@@ -318,7 +332,7 @@
 .hsidebar-sub-item {
   @extend %item;
 
-  padding-inline-start: calc(8px + 20px + 12px);
+  padding-inline-start: calc(8px + 1.25rem + 12px);
 }
 
 // A group holding the page you're on shows it on its own row while its
@@ -331,7 +345,9 @@
 }
 
 // Collapsed: the icons alone, in the middle. The labels stay, hidden, as
-// each link's name; the tooltips show them.
+// each link's name; the tooltips show them. Each icon keeps to the start of
+// its row, with the padding that puts it in the middle of the collapsed
+// width, so it doesn't leap to the middle of a row that's still narrowing.
 .hsidebar[data-collapsed] {
   & .hsidebar-group-label,
   & .hsidebar-item > .hsidebar-label {
@@ -349,27 +365,13 @@
   }
 
   & .hsidebar-item:not(.hsidebar-sub-item) {
-    justify-content: center;
     gap: 0;
+
+    padding-inline-start: calc((var(--hsidebar-collapsed-inline-size) - 2 * 8px - 1.25rem) / 2);
   }
 
   & .hsidebar-item > .hexpand-chevron {
     display: none;
-  }
-
-  & .hsidebar-item > .hsidebar-badge {
-    position: absolute;
-    inset-block-start: 4px;
-    inset-inline-start: calc(50% + 3px);
-
-    min-inline-size: 0;
-    inline-size: 10px;
-    block-size: 10px;
-    padding: 0;
-    overflow: hidden;
-
-    color: transparent;
-    border: 2px solid $color-background;
   }
 
   // A group opens beside the icon, as a panel, at once rather than growing,
@@ -441,6 +443,32 @@
 
   & .hsidebar-sub-item {
     padding-inline-start: 8px;
+  }
+}
+
+// Collapsed, a count is a dot on its icon's top corner, placed from the
+// collapsed width, so it doesn't follow a row that's still narrowing. In
+// forced colors, a dot in the system's colors, without its hidden digits.
+:where(.hsidebar[data-collapsed] .hsidebar-item) > .hsidebar-badge {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-start: calc((var(--hsidebar-collapsed-inline-size) - 2 * 8px) / 2 + 3px);
+
+  min-inline-size: 0;
+  inline-size: 10px;
+  block-size: 10px;
+  padding: 0;
+  overflow: hidden;
+
+  color: transparent;
+  border: 2px solid $color-background;
+
+  @media (forced-colors: active) {
+    forced-color-adjust: none;
+
+    color: transparent;
+    background-color: Highlight;
+    border-color: Canvas;
   }
 }
 

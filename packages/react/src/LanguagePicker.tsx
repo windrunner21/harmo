@@ -1,7 +1,9 @@
 "use client";
 
 import {
+  useEffect,
   useId,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -115,6 +117,7 @@ export const LanguagePicker = ({
   ...props
 }: LanguagePickerProps) => {
   const listId = useId();
+  const popup = useRef<HTMLDivElement>(null);
   const inactive =
     disabled ||
     hidden ||
@@ -141,6 +144,12 @@ export const LanguagePicker = ({
     onValueChange?.(next);
   };
 
+  useEffect(() => {
+    if (inactive && popup.current?.matches(":popover-open")) {
+      popup.current.hidePopover();
+    }
+  }, [inactive]);
+
   const button = (
     <Button
       {...props}
@@ -165,12 +174,14 @@ export const LanguagePicker = ({
     </Button>
   );
 
-  if (inactive) return button;
-
   return (
     <Popup
+      ref={popup}
       trigger={button}
       className={grouped ? "hlanguage-picker-regions" : undefined}
+      onBeforeToggle={(event) => {
+        if (inactive && event.newState === "open") event.preventDefault();
+      }}
     >
       <SelectContext value={{ named: true, across: grouped }}>
         <Listbox

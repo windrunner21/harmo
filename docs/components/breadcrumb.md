@@ -45,8 +45,9 @@ A navigation trail ending at the current page. For a single link back, use a
 - Separators are `1.125em` in `--harmo-color-text-secondary`, with
   `--harmo-icon-gap` (6px) between them and the text. In right-to-left text
   they point left.
-- Links look like [Link](link.md) and turn `--harmo-color-text` (black) on
-  hover; the current page is `--harmo-color-text`.
+- Links look like [Link](link.md), and on hover take its hover color,
+  `--harmo-link-hover-color-text`, which is `--harmo-color-text` unless your
+  theme changes it; the current page is `--harmo-color-text`.
 
 ## Accessibility
 

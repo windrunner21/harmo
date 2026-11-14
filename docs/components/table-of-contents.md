@@ -35,7 +35,7 @@ the keyboard reaches it.
 
 | Attribute | On | Effect |
 | --- | --- | --- |
-| `aria-current="location"` | `.htoc-link` | Marks the section you've reached, in `--harmo-color-primary` |
+| `aria-current="location"` | `.htoc-link` | Marks the section you've reached, in `--harmo-color-primary`; `aria-current="false"` marks none |
 | `data-side="end"` | `.htoc` | Puts it after the content in a flex row, with its line on the edge that faces the content. Without it, it comes first |
 | `data-level` | `.htoc-item` | `2` or `3`: indents a heading under another |
 | `--htoc-width` | `.htoc` | Its width; the default is 11rem |
@@ -117,4 +117,5 @@ they come on the page, whatever the order of `items`.
 `--harmo-space-2xs`, `--harmo-space-xs`, `--harmo-space-sm`, `--harmo-space-md`,
 `--harmo-color-border`, `--harmo-color-primary`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-font-family`, `--harmo-font-size-sm`,
-`--harmo-duration-fast`, `--harmo-focus-outline`.
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-in-out-cubic`,
+`--harmo-focus-outline`.

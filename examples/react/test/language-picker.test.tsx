@@ -67,14 +67,18 @@ describe("LanguagePicker", () => {
     expect(markup).not.toContain("hbutton-label");
   });
 
-  test("one that's disabled, aria-disabled, or hidden has no popup", () => {
+  test("one that's disabled, aria-disabled, or hidden names no list, and keeps its elements, so focus stays as it changes", () => {
+    const elements = (markup: string) =>
+      [...markup.matchAll(/<([a-z]+)([^>]*)>/g)].map(([, tag, attributes = ""]) => `${tag}.${/class="([^"]*)"/.exec(attributes)?.[1] ?? ""}`);
+    const active = renderToStaticMarkup(<LanguagePicker aria-label="Language" defaultValue="en" languages={languages} />);
+    expect(active).toContain("aria-controls");
     for (const markup of [
       renderToStaticMarkup(<LanguagePicker aria-label="Language" defaultValue="en" disabled languages={languages} />),
       renderToStaticMarkup(<LanguagePicker aria-label="Language" defaultValue="en" aria-disabled languages={languages} />),
       renderToStaticMarkup(<LanguagePicker aria-label="Language" defaultValue="en" hidden languages={languages} />),
     ]) {
-      expect(markup).not.toContain("hpopup");
       expect(markup).not.toContain("aria-controls");
+      expect(elements(markup)).toEqual(elements(active));
     }
     expect(renderToStaticMarkup(<LanguagePicker aria-label="Language" hidden languages={languages} />)).toContain("hidden");
   });

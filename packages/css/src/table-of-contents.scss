@@ -84,12 +84,12 @@
     }
   }
 
-  &[aria-current] {
+  &[aria-current]:where(:not([aria-current="false"])) {
     color: $color-primary;
   }
 
   // Until a script places the marker, the current link colors its own piece.
-  :where(.htoc:not([data-ready])) &[aria-current] {
+  :where(.htoc:not([data-ready])) &[aria-current]:where(:not([aria-current="false"])) {
     border-inline-end-color: $color-primary;
 
     @media (forced-colors: active) {
@@ -112,7 +112,7 @@
   border-inline-start: 1px solid $color-border;
   border-inline-end: 0;
 
-  :where(.htoc:not([data-ready])) &[aria-current] {
+  :where(.htoc:not([data-ready])) &[aria-current]:where(:not([aria-current="false"])) {
     border-inline-start-color: $color-primary;
 
     @media (forced-colors: active) {

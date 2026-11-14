@@ -42,33 +42,25 @@
         min-inline-size: 0;
       }
 
-      & > .hbreadcrumb-separator {
-        flex-shrink: 0;
-
-        inline-size: 1.125em;
-        block-size: 1.125em;
-
-        color: $color-text-secondary;
-
-        pointer-events: none;
-      }
-
-      // The first item still shown.
-      &:nth-child(1 of :not([hidden])) > .hbreadcrumb-separator {
-        display: none;
-      }
-
       & > [aria-current="page"] {
         color: $color-text;
       }
-
-      & > a {
-        @media (hover: hover) and (pointer: fine) {
-          &:hover {
-            color: $color-text;
-          }
-        }
-      }
     }
   }
+}
+
+:where(.hbreadcrumb > ol > li) > .hbreadcrumb-separator {
+  flex-shrink: 0;
+
+  inline-size: 1.125em;
+  block-size: 1.125em;
+
+  color: $color-text-secondary;
+
+  pointer-events: none;
+}
+
+// The first item still shown.
+:where(.hbreadcrumb > ol > li:nth-child(1 of :not([hidden]))) > .hbreadcrumb-separator {
+  display: none;
 }

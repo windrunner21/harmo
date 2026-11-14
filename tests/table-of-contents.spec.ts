@@ -356,6 +356,21 @@ onEachPlayground("table-of-contents", () => {
     await expect(links.first()).toHaveCSS("outline-offset", "-2px");
   });
 
+  test('a link with aria-current="false" isn\'t marked', async ({ page }) => {
+    const { links } = await parts(page);
+    await expect(links.first()).toHaveAttribute("aria-current", "location");
+    const secondary = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      document.body.append(probe);
+      probe.style.color = "var(--harmo-color-text-secondary)";
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    });
+    await links.nth(2).evaluate((node) => node.setAttribute("aria-current", "false"));
+    await expect(links.nth(2)).toHaveCSS("color", secondary);
+  });
+
   test("in forced colors, the marker is drawn in the system's colors", async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const { nav } = await parts(page);

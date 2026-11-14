@@ -39,13 +39,16 @@
     }).observe(sidebar, { attributes: true, attributeFilter: ["data-collapsed"] });
 
     // Collapsed, a group opened by hovering closes as the pointer leaves it,
-    // unless a click has kept it open, or focus has gone into it.
+    // unless a click has kept it open, or focus has gone into it. While focus
+    // is in an open group's links, hovering opens no other.
     const hovered = new WeakSet();
+    const focusInLinks = (group) => !!group.querySelector(":scope > .hsidebar-sub-list")?.contains(document.activeElement);
     for (const group of groups()) {
       const item = group.parentElement;
       const summary = group.querySelector(":scope > summary");
       item.addEventListener("pointerenter", (event) => {
         if (!collapsed() || event.pointerType !== "mouse" || group.open) return;
+        if (groups().some((other) => other.open && focusInLinks(other))) return;
         group.open = true;
         hovered.add(group);
       });
@@ -82,19 +85,25 @@
         if (group.open && !group.parentElement.contains(event.target)) group.open = false;
       }
     });
-    // Collapsed, picking a link closes the group it's in.
+    // Collapsed, picking a link closes the group it's in; focus in it goes
+    // back to the group's summary.
     sidebar.addEventListener("click", (event) => {
       const link = event.target.closest(".hsidebar-sub-item");
       if (!link || !collapsed()) return;
       const group = link.closest(".hsidebar-sub");
+      const inside = focusInLinks(group);
       hovered.delete(group);
       group.open = false;
+      if (inside) group.querySelector(":scope > summary").focus();
     });
     // Escape closes an open group from anywhere, as one a hover opened may
     // be over the page while focus is elsewhere; focus inside goes back to
-    // its summary, and focus elsewhere stays.
+    // its summary, and focus elsewhere stays. An Escape in a dialog or a
+    // popup over the sidebar is that layer's.
     addEventListener("keydown", (event) => {
       if (event.key !== "Escape" || event.defaultPrevented || !collapsed()) return;
+      const layer = event.target instanceof Element ? event.target.closest("dialog[open], :popover-open") : null;
+      if (layer && !layer.contains(sidebar)) return;
       const group = groups().find((each) => each.open);
       if (!group) return;
       event.preventDefault();
@@ -106,7 +115,7 @@
     if (sidebar.hasAttribute("data-example-router")) {
       sidebar.addEventListener("click", (event) => {
         const link = event.target.closest("a.hsidebar-item, a.hsidebar-sub-item");
-        if (!link || event.metaKey || event.ctrlKey || event.shiftKey) return;
+        if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         event.preventDefault();
         for (const current of sidebar.querySelectorAll('[aria-current="page"]')) current.removeAttribute("aria-current");
         link.setAttribute("aria-current", "page");

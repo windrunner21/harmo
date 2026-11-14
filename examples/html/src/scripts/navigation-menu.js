@@ -15,11 +15,13 @@
     let open = null;
     let pinned = false;
 
-    // The frame's size, from the rows', and how far to move it to stay 8px
+    // The window's width without its scrollbar, which caps the rows; the
+    // frame's size, from the rows', and how far to move it to stay 8px
     // inside the window.
     const place = () => {
       if (!open || vertical()) return;
       const rows = panelOf(open).querySelector(".hnavigation-menu-rows");
+      nav.style.setProperty("--hnavigation-menu-room", `${document.documentElement.clientWidth}px`);
       nav.style.setProperty("--hnavigation-menu-width", `${rows.offsetWidth}px`);
       nav.style.setProperty("--hnavigation-menu-height", `${rows.offsetHeight}px`);
       const width = rows.offsetWidth + 18;
@@ -114,9 +116,12 @@
       if (!vertical() && event.relatedTarget && !nav.contains(event.relatedTarget)) hide();
     });
 
-    // A panel takes Escape for itself, so whatever it's in stays open.
+    // A panel takes Escape for itself, so whatever it's in stays open, but
+    // not one already taken, or pressed in a dialog or a popup over the menu.
     addEventListener("keydown", (event) => {
-      if (event.key !== "Escape" || !open || vertical()) return;
+      if (event.key !== "Escape" || event.defaultPrevented || !open || vertical()) return;
+      const layer = event.target instanceof Element ? event.target.closest("dialog[open], :popover-open") : null;
+      if (layer && !layer.contains(nav)) return;
       event.preventDefault();
       const trigger = open;
       const inside = nav.contains(document.activeElement);

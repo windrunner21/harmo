@@ -96,7 +96,7 @@ group of links, put `hidden` on its `<li>`, so the list leaves no gap.
 
 - 15rem wide, with 16px of padding, the background color, and a 1px
   `--harmo-color-border` line on its end edge.
-- A link: a 20px icon and its 14px label, 12px apart, with 8px of padding,
+- A link: a 20px (1.25rem) icon and its 14px label, 12px apart, with 8px of padding,
   in `--harmo-color-text-secondary`; on hover, the hover background. The
   page you're on is in `--harmo-color-primary`, medium weight, with the
   primary tint on hover. A count is a pill at the link's end, in the same
@@ -116,7 +116,9 @@ group of links, put `hidden` on its `<li>`, so the list leaves no gap.
   its tip comes to where the edge was; collapsed, the button moves 8px
   further out. Its tooltip, just past the chevron, says what it does.
 - Collapsed: 60px wide, and 8px of padding at the sides; the width changes
-  in 200ms (`--harmo-ease-out-cubic`). The icons alone, centered; hovering
+  in 200ms (`--harmo-ease-out-cubic`). The icons alone, centered; as the
+  width changes, each icon moves in with it, at the start of its row, rather
+  than leaping to the middle of a row that's still wide. Hovering
   or focusing one shows its tooltip at once, 12px past its row, so 4px clear
   of the edge. A count is a 10px dot on its icon, in the same color. A
   group's links open beside its icon, at once, in a panel the same distance
@@ -130,6 +132,8 @@ group of links, put `hidden` on its `<li>`, so the list leaves no gap.
   groups don't move.
 - On a right-to-left page, the edge, the toggle, the tooltips, and the
   panels mirror.
+- Forced colors (Windows contrast themes): the edge is drawn in `CanvasText`,
+  as backgrounds are removed, and a collapsed count's dot in `Highlight`.
 
 ## Accessibility
 
@@ -146,8 +150,12 @@ group of links, put `hidden` on its `<li>`, so the list leaves no gap.
   Space, and by hovering with a mouse, until the pointer leaves the group
   and its links, unless focus is inside; Tab moves into them. Escape closes
   them from anywhere, returning focus to the group's icon if it was inside,
-  and leaving it where it was otherwise; so does a press elsewhere, focus
-  moving out, or picking a link. Opening one group closes another.
+  and leaving it where it was otherwise, unless it's pressed in a dialog or a
+  popup over the sidebar; so does a press elsewhere, focus moving out, or
+  picking a link, which returns focus to the group's icon if it was in its
+  links. Opening one group closes another, and while focus is in a group's
+  links, hovering another icon doesn't open it, so focus isn't left in a
+  closed group.
 - The heading at the top of a collapsed group's panel repeats the group's
   name for sight only, so it's hidden from screen readers.
 
@@ -157,9 +165,9 @@ group of links, put `hidden` on its `<li>`, so the list leaves no gap.
 | --- | --- |
 | Toggle `data-collapsed` on `.hsidebar`, `aria-expanded` on the toggle, and its tooltip's text | On a click of the toggle |
 | Close any group that's open | When the sidebar becomes collapsed, by the toggle or by your app |
-| Collapsed, open a group, and close it again | When a mouse comes over its icon, and when it leaves the group and its links, unless a click has kept it open or focus is inside |
+| Collapsed, open a group, and close it again | When a mouse comes over its icon, unless focus is in another open group's links; and when it leaves the group and its links, unless a click has kept it open or focus is inside |
 | Collapsed, close any other open group | When a group opens |
-| Collapsed, close an open group | On Escape, anywhere, which returns focus to its summary if it was inside; on a press outside it; when focus moves out of it; and when a link in it is picked |
+| Collapsed, close an open group | On Escape, anywhere but in a dialog or a popup over the sidebar, which returns focus to its summary if it was inside; on a press outside it; when focus moves out of it; and when a link in it is picked, which returns focus to its summary if it was in its links |
 
 `examples/html/src/scripts/sidebar.js` is an example script for it, with
 `tooltip.js` for the tooltips' Escape. Opening and closing a group while the
@@ -175,7 +183,7 @@ the nav around its children: `<SidebarGroup>`s holding `<SidebarItem>`s and
 | Prop | Effect |
 | --- | --- |
 | `aria-label` on `Sidebar` | Required: the nav's name, such as "Main" |
-| `exclusive` | One group of links open at a time: its groups share a generated `name` |
+| `exclusive` | One group of links open at a time: its groups, in the header and footer too, share a generated `name` |
 | `collapsed`, `defaultCollapsed`, `onCollapsedChange` | Collapsed, held by you or from the start, and told when the toggle changes it |
 | `collapseLabel`, `expandLabel` | The toggle's names, in your app's language, such as "Collapse" and "Expand"; without both, there's no toggle |
 | `header`, `footer` | What goes above and below the nav |

@@ -207,11 +207,12 @@
 }
 
 // The rows, as wide as they need to be, but for the frame and 8px either side
-// of it to fit the window. A panel that isn't open waits to one side of the
+// of it to fit the window, measured without its scrollbar by the script
+// (--hnavigation-menu-room). A panel that isn't open waits to one side of the
 // frame, on the side its trigger is.
 .hnavigation-menu-rows {
   inline-size: max-content;
-  max-inline-size: calc(100vw - 34px);
+  max-inline-size: calc(var(--hnavigation-menu-room, 100vw) - 34px);
   margin: 0;
   padding: 0;
 
@@ -244,10 +245,12 @@
     & .hnavigation-menu-rows {
       transition: translate $duration-normal $ease-in-out-cubic;
     }
+  }
 
-    & .hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {
-      transition-delay: 0s;
-    }
+  // As heavy as the transitions above, which it follows, so the open panel
+  // shows at once.
+  :where(.hnavigation-menu[data-moving]) .hnavigation-menu-trigger[aria-expanded="true"] + .hnavigation-menu-content {
+    transition-delay: 0s;
   }
 }
 
@@ -351,8 +354,8 @@
   & > :is(svg, img) {
     display: block;
 
-    inline-size: 16px;
-    block-size: 16px;
+    inline-size: 1rem;
+    block-size: 1rem;
 
     &[hidden] {
       display: none;

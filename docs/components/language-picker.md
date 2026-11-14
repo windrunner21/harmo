@@ -69,6 +69,7 @@ that a description in the page's language isn't marked as the other one.
 | `data-size="small"` | The small [Button](button.md) size |
 | `aria-expanded="true"` | Open: the hover background, and the chevron folds up |
 | `disabled` | Disabled, as a Button is |
+| `aria-disabled="true"` | Looks disabled but keeps focus, as a Button does; the script keeps the popup from opening, and closes an open one |
 
 ## Appearance and states
 
@@ -155,17 +156,20 @@ With every language in a region, the popup is a panel:
 | `aria-expanded` on the button | On every open and close (see [Popup](popup.md)) |
 | The [Listbox](listbox.md) behavior: highlight, `aria-activedescendant`, selection, and closing after a choice | While open |
 | The highlight moved by Left and Right, as by Up and Down, the other way round right to left | In a panel of regions, while open |
-| The button's label: a copy of the chosen option's `<span lang>`, after a `.hlanguage-picker-region` with its region's name and a space when it's in one | When a language is chosen |
+| The button's label: a copy of the chosen option's `<span lang>`, after a `.hlanguage-picker-region` with its region's name and a space when it's in one; the button's width follows, as for any [Button](button.md#what-a-script-does) whose text changes | When a language is chosen |
+| Cancel the popup's opening, and close it if it's open | While the button has `aria-disabled="true"`, and as it gets it |
 | Telling your app, which saves the language, such as in a cookie, or goes to that language's address | When a language other than the one in use is chosen |
 
-`examples/html/src/scripts/popup.js`, `listbox.js`, and `language-picker.js` are
-example scripts that do the first three.
+`examples/html/src/scripts/popup.js`, `listbox.js`, `language-picker.js`, and
+`button.js`, for the width, are example scripts that do all but telling your app.
 
 ## React
 
 `<LanguagePicker>` renders this markup and does all of the above. One that's
-`disabled`, `aria-disabled`, or `hidden` has no popup, so that no key can open it
-and an open one closes. Other props are the `<button>`'s attributes.
+`disabled`, `aria-disabled`, or `hidden` names no list and doesn't open, so that
+no key can open it, and an open one closes; it keeps its elements as it changes,
+so an `aria-disabled` one keeps focus. Other props are the `<button>`'s
+attributes.
 
 | Prop | Effect |
 | --- | --- |
@@ -204,6 +208,9 @@ Each language is `{ value, label, lang, description, keywords, icon, disabled }`
 
 ## Tokens
 
-`--harmo-color-background-hover`, `--harmo-color-border`, `--harmo-space-2xs`,
-and those of [Button](button.md#tokens), [Popup](popup.md#tokens), and
+`--harmo-color-background-hover`, `--harmo-color-on-primary`,
+`--harmo-color-primary-fill`, `--harmo-color-text`, `--harmo-font-size-sm`,
+`--harmo-font-weight-medium`, `--harmo-font-weight-normal`, `--harmo-space-lg`,
+`--harmo-space-md`, `--harmo-space-xs`, and those of
+[Button](button.md#tokens), [Popup](popup.md#tokens), and
 [Listbox](listbox.md#tokens).

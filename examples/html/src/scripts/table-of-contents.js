@@ -62,7 +62,7 @@
     // sliding as the page loads.
     const place = () => {
       if (!line) return;
-      const link = toc.querySelector(".htoc-link[aria-current]");
+      const link = toc.querySelector('.htoc-link[aria-current]:not([aria-current="false"])');
       toc.style.setProperty("--htoc-marker-y", `${link?.offsetTop ?? 0}px`);
       toc.style.setProperty("--htoc-marker-size", String(link?.offsetHeight ?? 0));
       if (!link || toc.hasAttribute("data-ready")) return;
@@ -83,7 +83,7 @@
         else link.removeAttribute("aria-current");
       }
       place();
-      const link = toc.querySelector("[aria-current]");
+      const link = toc.querySelector('.htoc-link[aria-current]:not([aria-current="false"])');
       if (!link || toc.scrollHeight <= toc.clientHeight) return;
       const outer = toc.getBoundingClientRect();
       const inner = link.getBoundingClientRect();

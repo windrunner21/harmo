@@ -49,6 +49,40 @@ onEachPlayground("tabs", () => {
     await expectSelected(container, "Team");
   });
 
+  test("the arrow keys skip an aria-disabled tab, and a click doesn't select it", async ({ page }) => {
+    const container = await example(page, "tabs-switching-panels");
+    await tab(container, "Private").evaluate((element) => element.setAttribute("aria-disabled", "true"));
+    await tab(container, "All").click();
+    await page.keyboard.press("ArrowRight");
+    await expect(tab(container, "Team")).toBeFocused();
+    await expectSelected(container, "Team");
+    // Playwright waits for an aria-disabled element to be enabled, unless forced.
+    await tab(container, "Private").click({ force: true });
+    await expectSelected(container, "Team");
+  });
+
+  test("a click or a key that the app's own handler prevents leaves the selection", async ({ page }) => {
+    const container = await example(page, "tabs-switching-panels");
+    await tab(container, "All").click();
+    await tab(container, "Private").evaluate((element) => element.addEventListener("click", (event) => event.preventDefault()));
+    await tab(container, "Private").click();
+    await expectSelected(container, "All");
+    await tab(container, "All").evaluate((element) => element.addEventListener("keydown", (event) => event.preventDefault()));
+    await tab(container, "All").focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(tab(container, "All")).toBeFocused();
+    await expectSelected(container, "All");
+  });
+
+  test("with the selected tab hidden, the first tab shown is in the Tab order, and none is selected for it", async ({ page }, info) => {
+    test.skip(!info.titlePath.includes("html"), "hides the tab directly, as an app's own script would; the React unit tests render it");
+    const container = await example(page, "tabs-switching-panels");
+    await tab(container, "All").evaluate((element) => ((element as HTMLElement).hidden = true));
+    await expect(tab(container, "Private")).toHaveJSProperty("tabIndex", 0);
+    await expect(tab(container, "Private")).toHaveAttribute("aria-selected", "false");
+    await expect(tab(container, "Team")).toHaveJSProperty("tabIndex", -1);
+  });
+
   test("Tab moves from the selected tab into its panel", async ({ page }) => {
     const container = await example(page, "tabs-switching-panels");
     await tab(container, "Team").click();

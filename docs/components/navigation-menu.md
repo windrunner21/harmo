@@ -78,7 +78,7 @@ place, so they look like one.
 - Opening: it fades in and grows from `scale(0.98)` in 200ms, and closes in
   150ms. Moving from one trigger to another, the frame resizes while the rows slide
   sideways, both in 200ms, with no fade. Reduced motion: it only fades.
-- A row: 12px and 16px of padding, a bordered 34px tile with a 16px icon, 12px
+- A row: 12px and 16px of padding, a bordered 34px tile with a 16px (1rem) icon, 12px
   before a 14px medium title with a 12px description in
   `--harmo-color-text-secondary` 8px under it. Hovered or focused, the tile fills
   with `--harmo-color-primary-fill`, in 200ms, and the description darkens. On a
@@ -98,7 +98,8 @@ place, so they look like one.
   A closed panel's links are out of the Tab order and hidden from screen readers.
 - Enter or Space opens a panel; Tab moves into its links and on to the next
   trigger, closing it; Escape closes it and returns focus to its trigger, and
-  leaves anything around the menu, such as a dialog, open.
+  leaves anything around the menu, such as a dialog, open. An Escape pressed in
+  a dialog or a popup over the menu is that layer's, and leaves the panel open.
 - While the keyboard is in the open item, the pointer leaves it alone, so focus
   isn't lost. A closed panel is `inert` at once, while it fades.
 - Choosing a link closes the panel and returns focus to its trigger, so focus
@@ -115,9 +116,9 @@ place, so they look like one.
 | Change | When |
 | --- | --- |
 | `aria-expanded="true"` on the trigger, no `inert` on its panel, and `data-open` on the nav; on close, undo them | Open: the pointer enters a trigger, unless the keyboard is in the open item or the trigger is disabled, or on a click or Enter |
-| Close | The pointer leaves the menu, unless a click opened the panel or the keyboard is in it; a click on a panel's own trigger, once a click has opened it; a press outside; Escape, which is prevented, so what's around the menu stays open; focus leaving the panel's item; choosing a link, without a modifier key; the [Popup](popup.md) around it closing. A vertical menu closes only on a click on its trigger, or with its Popup |
+| Close | The pointer leaves the menu, unless a click opened the panel or the keyboard is in it; a click on a panel's own trigger, once a click has opened it; a press outside; Escape, which is prevented, so what's around the menu stays open, unless it's already prevented or pressed in a dialog or a popup over the menu; focus leaving the panel's item; choosing a link, without a modifier key; the [Popup](popup.md) around it closing. A vertical menu closes only on a click on its trigger, or with its Popup |
 | Keep a panel the pointer opened when its trigger is clicked | On that click |
-| Set `--hnavigation-menu-width` and `--hnavigation-menu-height` on the nav to the size of the open panel's `.hnavigation-menu-rows`, and `--hnavigation-menu-shift` to how far, in px, the panel has to move to stay 8px inside the window | When a panel opens, and as its rows or the window change size, unless `data-orientation="vertical"` |
+| Set `--hnavigation-menu-room` on the nav to the window's width without its scrollbar (`document.documentElement.clientWidth`), in px, which caps the rows; then `--hnavigation-menu-width` and `--hnavigation-menu-height` to the size of the open panel's `.hnavigation-menu-rows`, and `--hnavigation-menu-shift` to how far, in px, the panel has to move to stay 8px inside the window | When a panel opens, and as its rows or the window change size, unless `data-orientation="vertical"` |
 | `data-position="before"` or `"after"` on the other panels, by where their triggers are | When a panel opens, unless `data-orientation="vertical"` |
 | `data-moving` on the nav, which animates the frame and the rows | When moving from one trigger to another, until a panel next opens from closed, so a move finishes as it fades |
 | Return focus to the trigger | On Escape or choosing a link, if focus was in the menu |

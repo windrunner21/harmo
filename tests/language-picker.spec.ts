@@ -206,16 +206,56 @@ onEachPlayground("language-picker", () => {
 
   test("the check's circle keeps white readable, in light and dark", async ({ page }) => {
     const { trigger, listbox } = await picker(page, "language-picker-by-region", "Region and language");
-    const fill = await page.evaluate(() => {
-      const probe = document.createElement("span");
-      document.body.append(probe);
-      probe.style.color = "var(--harmo-color-primary-fill)";
-      const value = getComputedStyle(probe).color;
-      probe.remove();
-      return value;
-    });
+    const resolved = (token: string) =>
+      page.evaluate((token) => {
+        const probe = document.createElement("span");
+        document.body.append(probe);
+        probe.style.color = `var(${token})`;
+        const value = getComputedStyle(probe).color;
+        probe.remove();
+        return value;
+      }, token);
     await trigger.click();
-    await expect(listbox.locator(".hoption-check:visible")).toHaveCSS("background-color", fill);
+    const check = listbox.locator(".hoption-check:visible");
+    for (const scheme of ["light", "dark"]) {
+      // As the playground's Dark switch sets it.
+      await page.evaluate((scheme) => (document.documentElement.style.colorScheme = scheme), scheme);
+      await expect(check).toHaveCSS("background-color", await resolved("--harmo-color-primary-fill"));
+      await expect(check).toHaveCSS("color", await resolved("--harmo-color-on-primary"));
+    }
+  });
+
+  test("choosing a language eases the button to its new width, as a Button's text change does", async ({ page }) => {
+    const { container, trigger, listbox } = await picker(page, "language-picker-default", "Language");
+    await trigger.click();
+    await settled(openPopup(container));
+    const id = await listbox.getByRole("option", { name: "Français" }).getAttribute("id");
+    const animating = await trigger.evaluate(async (button, id) => {
+      document.getElementById(id ?? "")?.click();
+      await new Promise(requestAnimationFrame);
+      // Its width's, not a color's as it closes.
+      return button.getAnimations().filter((animation) => (animation.effect as KeyframeEffect | null)?.getKeyframes().some((frame) => "width" in frame)).length;
+    }, id);
+    expect(animating).toBeGreaterThan(0);
+    await expect(trigger.locator(".hbutton-label")).toHaveText("Français");
+  });
+
+  test("with aria-disabled, it doesn't open, and an open one closes, keeping focus", async ({ page }, info) => {
+    test.skip(!info.titlePath.includes("html"), "sets aria-disabled directly, as an app's own script would");
+    const { container, trigger } = await picker(page, "language-picker-default", "Language");
+    await trigger.click();
+    await expect(openPopup(container)).toHaveCount(1);
+    await trigger.evaluate((node) => node.setAttribute("aria-disabled", "true"));
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+    await trigger.click({ force: true });
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("f");
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await expect(trigger.locator(".hbutton-label")).toHaveText("English");
   });
 
   test("typing finds a name, not a flag put before it", async ({ page }) => {

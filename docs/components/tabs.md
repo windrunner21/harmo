@@ -12,7 +12,7 @@ tabs. For one choice among a few options in a form, use a
 | CSS | `tabs.css` |
 | Element | `<nav class="htabs">` around a `<ul>` of links, or `<div class="htabs">` around a `role="tablist"` of buttons |
 | Parts | `.htabs-highlight` and `.htabs-indicator`, after the list |
-| Required | `aria-label` on the nav or tablist; links: `aria-current="page"` on the current one; buttons: `role="tab"`, `aria-selected`, `aria-controls`, and `tabindex="-1"` on unselected tabs |
+| Required | `aria-label` on the nav or tablist; links: `aria-current="page"` on the current one; buttons: `role="tab"`, `aria-selected`, `aria-controls`, and `tabindex="-1"` on every tab but one: the selected tab, or, when it isn't shown and enabled, the first tab that is |
 | Unique | The tabs' and panels' ids |
 | Script | Optional for links (the sliding pill and underline, and keeping the current tab in view); required for panels; see [What a script does](#what-a-script-does) |
 
@@ -56,6 +56,7 @@ The panels are the application's own; Tabs doesn't style them.
 | `aria-current="page"` on a link | The current tab |
 | `aria-selected="true"` on a `role="tab"` button | The selected tab, drawn like the current link |
 | `hidden` on a `<li>` or a `role="tab"` button | Hides that tab, with no gap left |
+| `disabled` or `aria-disabled="true"` on a `role="tab"` button | A tab that can't be chosen: the arrow keys skip it, and the script doesn't select it. `aria-disabled` keeps it focusable, so a [Tooltip](tooltip.md) can say why |
 | `data-ready` on `.htabs` | Set by the script: the sliding pill and underline take over |
 | `data-on-current` on `.htabs-highlight` | Set by the script: the pill is over the current tab |
 
@@ -103,7 +104,9 @@ The panels are the application's own; Tabs doesn't style them.
   `aria-label` holds `role="tab"` buttons, each pointing at its
   `role="tabpanel"` with `aria-controls`. Only the selected tab is in the Tab
   order (`tabindex="-1"` on the others), so Tab moves from the tabs into the
-  panel, and the arrow keys move between tabs.
+  panel, and the arrow keys move between tabs. When the selected tab is hidden
+  or disabled, or none is selected, the first tab that's shown and enabled is
+  in the Tab order instead, so the tabs can still be reached.
 - The pill and underline are `aria-hidden`.
 
 ## What a script does
@@ -125,8 +128,9 @@ On one page it also:
 
 | Change | When |
 | --- | --- |
-| `aria-selected` and `tabindex` on the tabs, `hidden` on the panels | When a tab is chosen |
-| Focus and select the next or previous enabled tab that's shown, following the reading direction; Home and End go to the first and last such tab | Arrow keys on a tab |
+| `aria-selected` and `tabindex` on the tabs, `hidden` on the panels | When a tab is chosen, unless it's `aria-disabled`; `tabindex` also as tabs are hidden or disabled |
+| Focus and select the next or previous tab that's shown and enabled, and not `aria-disabled`, following the reading direction; Home and End go to the first and last such tab | Arrow keys on a tab |
+| Leave the selection as it is | A click on a tab, or a key, that your own handler has already prevented |
 
 `examples/html/src/scripts/tabs.js` is an example script. For the playground,
 it stops links from leaving the page and moves the current tab instead; on a
@@ -143,7 +147,10 @@ connections are built. Both strips run the highlight and underline, and are
 `<TabList>` handles the arrow keys, Home, and End. Other props are each
 element's attributes, except that a `<TabList>`'s `className` and `style` go to
 the `.htabs` wrapper, and its other props and `ref` to the `role="tablist"`
-element. Name a `<TabNav>` or `<TabList>` with `aria-label`.
+element. Name a `<TabNav>` or `<TabList>` with `aria-label`. A `<Tab>`'s
+`onClick` and a `<TabList>`'s `onKeyDown` run first: `preventDefault()` there
+keeps the selection. `hidden` on a `<TabPanel>` hides it even while its tab is
+selected.
 
 | Prop | On | Effect |
 | --- | --- | --- |

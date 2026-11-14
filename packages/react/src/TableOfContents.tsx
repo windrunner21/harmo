@@ -171,7 +171,7 @@ export const TableOfContents = ({
     if (!root || !list || !marker.current) return;
     const line = marker.current;
     const place = () => {
-      const link = root.querySelector<HTMLElement>(".htoc-link[aria-current]");
+      const link = root.querySelector<HTMLElement>('.htoc-link[aria-current]:not([aria-current="false"])');
       root.style.setProperty("--htoc-marker-y", `${link?.offsetTop ?? 0}px`);
       root.style.setProperty("--htoc-marker-size", String(link?.offsetHeight ?? 0));
       if (!link || root.hasAttribute("data-ready")) return;
@@ -187,7 +187,7 @@ export const TableOfContents = ({
 
   useEffect(() => {
     const root = nav.current;
-    const link = root?.querySelector("[aria-current]");
+    const link = root?.querySelector('.htoc-link[aria-current]:not([aria-current="false"])');
     if (!root || !link || root.scrollHeight <= root.clientHeight) return;
     const outer = root.getBoundingClientRect();
     const inner = link.getBoundingClientRect();

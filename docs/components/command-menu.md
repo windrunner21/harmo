@@ -107,8 +107,9 @@ customers".
 | `.hkbd` at the end of `.hsearch`, or of the trigger | The shortcut, as a hint; not shown on a device that can't hover, such as a phone, which has no keyboard to press it |
 | `.hlistbox-empty` after the list | The status when nothing shows, `role="status"`, in the page from the start and empty: such as "No results", or "Searching…" while your app looks |
 | `.hcommand-menu-footer` | The keys to use, each in a span with its [Kbd](kbd.md)s, in your app's language; hidden while nothing shows, and on a device that can't hover |
-| `readonly` on the input | Read-only: under a field, the list stays closed, and neither Escape nor leaving empties the text |
-| `hidden` on `.hsearch` or the trigger | Hidden, as anything is; the script leaves its shortcut to the page |
+| `readonly` on the input | Read-only: under a field, the list stays closed, and closes if it's open, nothing is picked, and neither Escape nor leaving empties the text |
+| `hidden` on `.hsearch` or the trigger, or on something around it | Hidden, as anything is; the script leaves its shortcut to the page |
+| `disabled` on the input, or on the trigger | Disabled; the script leaves its shortcut to the page. The trigger looks as a disabled Search field does |
 
 ## Appearance and states
 
@@ -123,7 +124,9 @@ customers".
 - In a dialog, the trigger looks like a Search field: the secondary
   background, the magnifier, its text in the secondary color, and the
   shortcut at its end. It shows its border on hover and its ring on keyboard
-  focus. The dialog has no title or padding of its own: the field, at the
+  focus. Disabled, its text is in the tertiary color, with a not-allowed
+  cursor and no border on hover, as a disabled Search field's. The dialog has
+  no title or padding of its own: the field, at the
   page's text size, is its top row, over a border.
 - Each option shows its label in the text color, and its description under
   it, smaller, each cut to one line. What's typed is marked in both, in the
@@ -146,7 +149,7 @@ customers".
   | ↓ / ↑ | Move through the list; under a field, open it at the first option, or the last |
   | Enter | Goes to the highlighted option: the list or the dialog closes, and the field empties. With none, nothing happens, and a form around it isn't sent |
   | Escape | Under a field, closes the list; closed, empties the field. In a dialog, closes it, as Escape does any dialog |
-  | The shortcut | Opens the dialog, or moves focus to the field and opens its list; pressed again, takes focus back to the field |
+  | The shortcut | Opens the dialog, or moves focus to the field and opens its list; pressed again, takes focus back to the field, and while the dialog fades out, keeps it open |
 
 - A shortcut with ⌘, written `Mod`, is ⌘ on Apple devices and Ctrl elsewhere,
   and works anywhere on the page; a key alone, such as <kbd>/</kbd>, works
@@ -167,15 +170,15 @@ customers".
 | Change | When |
 | --- | --- |
 | Hide the options whose label, description, and keywords don't hold the text, and the groups left with none; mark the text in each label and description (`<mark class="hoption-match">`); highlight the first match (`data-active`, and `aria-activedescendant` on the field); put the message in the status when nothing shows, and empty it otherwise | On typing |
-| Under a field: show the popup and set `aria-expanded`; with nothing to show and no status, keep it closed | On typing, a click on the field, ↓ or ↑, and the shortcut |
-| Under a field: close the popup, and empty the field | Escape closes; again, it empties. Leaving the field does both, unless the window lost focus |
-| In a dialog: open it with `showModal()`, or focus the field when it's open | On the shortcut; its trigger opens it itself |
+| Under a field: show the popup and set `aria-expanded`; with nothing to show and no status, or while the field is read-only, keep it closed, and `aria-expanded="false"` | On typing, a click on the field, ↓ or ↑, and the shortcut |
+| Under a field: close the popup, and empty the field | Escape closes; again, it empties. Leaving the field does both, unless the window lost focus. A read-only field only closes, also as it becomes read-only |
+| In a dialog: open it with `showModal()`, or focus the field when it's open; while it fades out, remove `data-closing`, which keeps it open, and focus the field | On the shortcut; its trigger opens it itself |
 | In a dialog: empty the field, and show the whole list again | Once the dialog has closed, so the list doesn't change as it fades |
 | Highlight the first option | As the popup or the dialog opens |
-| Close the popup and empty the field, or close the dialog with `requestClose()`, as Escape does; then go where the option leads | On a pick, by Enter or a click |
+| Close the popup and empty the field, or close the dialog with `requestClose()`, as Escape does; then go where the option leads | On a pick, by Enter or a click, unless the field is read-only under a field |
 | Keep the pointer from taking focus from the field | On a press in the list |
 | Set `aria-keyshortcuts` for the device, and the `.hkbd`'s text | As the page loads |
-| Leave the key to the page, and the browser | While the shortcut is off, or the menu is hidden or disabled |
+| Leave the key to the page, and the browser | While the shortcut is off, or the menu or something around it is hidden, or the field or the trigger is disabled |
 
 `examples/html/src/scripts/command-menu.js` is an example script for it, with
 `listbox.js` for the list, `popup.js` for where the popup opens, and
@@ -202,8 +205,8 @@ you send them. Other props are the input's attributes.
 | `emptyMessage` | The status shown, and read, when nothing shows, such as "No results", or "Searching…" while you look |
 | `hints` | The keys to use, at the end of the list, such as `<span><Kbd>Enter</Kbd> to open</span>` |
 | `disabled` | The field, or the trigger, can't be used, and the shortcut is left to the page |
-| `hidden` | Hides the field, or the trigger, and closes the list or the dialog; the shortcut is left to the page |
-| `readOnly` | Under a field, the list stays closed, and the text stays |
+| `hidden` | Hides the field, or the trigger, and closes the list or the dialog; the shortcut is left to the page, as it is inside something hidden |
+| `readOnly` | Under a field, the list stays closed, and closes as it becomes read-only, nothing is picked, and the text stays |
 
 ```tsx
 <CommandMenu
@@ -244,7 +247,7 @@ click don't open it in a new tab.
 ## Tokens
 
 `--harmo-border-radius`, `--harmo-color-background-secondary`,
-`--harmo-color-border`, `--harmo-color-danger`, `--harmo-color-focus`,
+`--harmo-color-border`, `--harmo-color-focus`,
 `--harmo-color-text`, `--harmo-color-text-secondary`,
 `--harmo-color-text-tertiary`, `--harmo-control-height`,
 `--harmo-duration-fast`, `--harmo-font-family`, `--harmo-font-line-height`,
