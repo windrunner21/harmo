@@ -69,4 +69,28 @@ onEachPlayground("empty-state", () => {
     await expect(column.locator(".hempty-state-description")).toHaveCSS("font-size", "13px");
     await expect(files.getByRole("heading", { level: 3, name: "No files yet" })).toHaveCSS("font-size", "14px");
   });
+
+  test("an app's own size for a part, set on the part's class alone, holds on a small one too", async ({ page }) => {
+    await page.addStyleTag({
+      content: ".hempty-state-title { font-size: 30px; } .hempty-state-description { font-size: 18px; }",
+    });
+    const container = await example(page, "empty-state-small-and-dashed");
+    const [column, files] = await container.locator(".hempty-state").all();
+    await expect(files.locator(".hempty-state-title")).toHaveCSS("font-size", "30px");
+    await expect(column.locator(".hempty-state-description")).toHaveCSS("font-size", "18px");
+  });
+
+  test("actions that don't fit in a row wrap onto the next, lined up as the rest is", async ({ page }) => {
+    const state = (await example(page, "empty-state-at-the-start")).locator(".hempty-state");
+    await state.evaluate((node) => {
+      (node as HTMLElement).style.inlineSize = "260px";
+      (node as HTMLElement).style.maxInlineSize = "260px";
+    });
+    const [create, other] = await boxes(
+      state.getByRole("button", { name: "Create campaign" }),
+      state.getByRole("button", { name: "Import contacts" }),
+    );
+    expect(other.y).toBeGreaterThanOrEqual(create.y + create.height);
+    expect(other.x).toBeCloseTo(create.x, 0);
+  });
 });

@@ -15,11 +15,17 @@
 .htoaster {
   // Which way is away from the edge: up from the bottom, down from the top.
   --htoaster-lift: 1;
-  // How wide a toast can be: the window, less the room on each side.
-  --htoaster-room: calc(100vw - 32px);
+  // How wide a toast can be: the window, less the room on each side, and less
+  // the safe areas at its sides, such as a phone's notch and rounded corners.
+  --htoaster-room: calc(
+    100vw - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
+  );
 
+  // Within the safe areas, so a toast at the start or end, or centered,
+  // keeps clear of them too.
   position: fixed;
-  inset: auto 0 calc(24px + env(safe-area-inset-bottom, 0px)) 0;
+  inset: auto env(safe-area-inset-right, 0px) calc(24px + env(safe-area-inset-bottom, 0px))
+    env(safe-area-inset-left, 0px);
 
   box-sizing: border-box;
   // As wide as the widest toast shown at its own size, which the script sets:
@@ -48,10 +54,13 @@
     inset-block: calc(24px + env(safe-area-inset-top, 0px)) auto;
   }
 
-  // At the start or end edge, 24px in: toasts line up on that edge.
+  // At the start or end edge, 24px in from it, or from its safe area: toasts
+  // line up on that edge.
   &[data-position$="-start"],
   &[data-position$="-end"] {
-    --htoaster-room: calc(100vw - 48px);
+    --htoaster-room: calc(
+      100vw - 48px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)
+    );
   }
 
   &[data-position$="-start"] {
@@ -254,6 +263,10 @@
   max-inline-size: 480px;
 
   overflow-wrap: anywhere;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 .htoast-title {

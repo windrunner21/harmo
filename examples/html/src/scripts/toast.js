@@ -22,8 +22,13 @@
     const GAP = 12;
     const DURATION = 4000;
     const EXIT_SPACING = 700;
+    // The longest a timer can wait: a longer one would go off at once.
+    const LONGEST = 2 ** 31 - 1;
     const toasts = new Map();
     let count = 0;
+
+    // The longest of a list of durations, such as "0.25s, 0s", in seconds.
+    const longest = (durations) => Math.max(0, ...durations.split(",").map(parseFloat).filter(Number.isFinite));
 
     // An app brings its own icons; these are the playground's.
     const icons = {
@@ -71,20 +76,43 @@
     };
 
     // The content's own size: its exact width, which can be a fraction of a
-    // pixel, rounded up, since rounded down the last word no longer fits.
-    const measure = (entry) => {
+    // pixel, rounded up, since rounded down the last word no longer fits; and
+    // the box's, two pixels more for the border.
+    const natural = (entry) => {
       const content = entry.item.querySelector(":scope > .htoast-body:not([data-leaving])");
       content.style.inlineSize = "max-content";
       const width = Math.ceil(parseFloat(getComputedStyle(content).width));
       content.style.inlineSize = `${width}px`;
       const height = parseFloat(getComputedStyle(content).height);
       content.style.inlineSize = "";
-      entry.item.style.setProperty("--htoast-body-width", `${width}px`);
-      entry.item.style.setProperty("--htoast-width", `${width + 2}px`);
-      entry.item.style.setProperty("--htoast-height", `${height + 2}px`);
-      entry.width = width + 2;
-      entry.height = height + 2;
+      return { width: width + 2, height: height + 2 };
     };
+    const measure = (entry, { width, height } = natural(entry)) => {
+      entry.item.style.setProperty("--htoast-body-width", `${width - 2}px`);
+      entry.item.style.setProperty("--htoast-width", `${width}px`);
+      entry.item.style.setProperty("--htoast-height", `${height}px`);
+      entry.width = width;
+      entry.height = height;
+    };
+
+    // Text that takes more or less room while it shows, such as with text
+    // spacing someone sets, is measured again. The change that measuring
+    // makes leaves its own size as measured, so it stops there.
+    let watchFrame = 0;
+    const watch = new ResizeObserver(() => {
+      cancelAnimationFrame(watchFrame);
+      watchFrame = requestAnimationFrame(() => {
+        let changed = false;
+        for (const entry of toasts.values()) {
+          const size = natural(entry);
+          if (!Number.isFinite(size.width) || !Number.isFinite(size.height)) continue;
+          if (Math.abs(size.width - entry.width) <= 0.5 && Math.abs(size.height - entry.height) <= 0.5) continue;
+          measure(entry, size);
+          changed = true;
+        }
+        if (changed) layout();
+      });
+    });
 
     // Newest in front; spread out, each above the ones in front of it.
     const layout = () => {
@@ -201,10 +229,17 @@
         // If focus was in it, it stays with the toasts.
         const old = entry.item.querySelector(":scope > .htoast-body:not([data-leaving])");
         const hadFocus = old.contains(document.activeElement);
+        watch.unobserve(old.querySelector(".htoast-content"));
         old.style.inlineSize = `${entry.width - 2}px`;
         old.setAttribute("data-leaving", "");
         old.inert = true;
-        old.addEventListener("animationend", () => old.remove(), { once: true });
+        // Gone once its fade ends; and if a stylesheet turns the fade off, so
+        // that it never ends, at once, or after as long as the fade would
+        // have taken.
+        const gone = () => old.remove();
+        old.addEventListener("animationend", gone, { once: true });
+        if (!old.getAnimations().length) gone();
+        else setTimeout(gone, longest(getComputedStyle(old).animationDuration) * 1000 + 50);
         entry.item.append(content);
         if (hadFocus) toaster.focus();
       } else {
@@ -218,8 +253,11 @@
       entry.item.dataset.status = options.status ?? "info";
       announce(options);
       measure(entry);
+      watch.observe(content.querySelector(".htoast-content"));
       due.delete(entry);
-      entry.remaining = options.duration ?? DURATION;
+      // One longer than a timer can wait stays, as with no time limit.
+      const duration = options.duration ?? DURATION;
+      entry.remaining = duration >= LONGEST ? Infinity : duration;
       layout();
       run(entry);
       return id;
@@ -231,19 +269,21 @@
       clearTimeout(entry.timer);
       toasts.delete(entry.item);
       due.delete(entry);
+      watch.unobserve(entry.item.querySelector(":scope > .htoast-body:not([data-leaving]) > .htoast-content"));
       // Inert as it leaves, so its action can't run again; focus that was in
-      // it stays with the toasts, or goes back.
+      // it stays with the toasts, or goes back, as focus on the region itself,
+      // as after F8, does once none is left.
       const hadFocus = entry.item.contains(document.activeElement);
       entry.item.setAttribute("data-removed", "");
       entry.item.inert = true;
-      if (hadFocus) {
+      if (hadFocus || (!toasts.size && toaster.contains(document.activeElement))) {
         if (toasts.size) toaster.focus();
         else giveFocusBack();
       }
       layout();
       // Gone once its exit has played: as long as its longest transition,
       // whatever the tokens make that.
-      const seconds = Math.max(0, ...getComputedStyle(entry.item).transitionDuration.split(",").map(parseFloat));
+      const seconds = longest(getComputedStyle(entry.item).transitionDuration);
       setTimeout(() => {
         entry.item.remove();
         size();
@@ -380,9 +420,10 @@
       }
     }).observe(document.body, { subtree: true, childList: true });
     // Any already open: the one with focus on top, since only the topmost
-    // modal can have it; the others in the page's order.
+    // modal can have it, and of one inside another, the inner one, which
+    // comes later in the page; the others in the page's order.
     const open = [...document.querySelectorAll("dialog")].filter((dialog) => dialog.matches(":modal"));
-    const focused = open.find((dialog) => dialog.contains(document.activeElement));
+    const focused = open.filter((dialog) => dialog.contains(document.activeElement)).at(-1);
     modals.push(...open.filter((dialog) => dialog !== focused), ...(focused ? [focused] : []));
     place();
 

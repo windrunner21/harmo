@@ -96,7 +96,9 @@ None. Showing it when there's nothing to show is your app's.
 ## React
 
 `<EmptyState>` renders it, with the parts you give it. Other props are the
-`<div>`'s attributes, such as `role` or `hidden`.
+`<div>`'s attributes, such as `id` or `hidden`. One shown after a search or
+a filter goes inside a `role="status"` element that's in the page from the
+start, as in [Markup](#markup), rather than taking the role itself.
 
 | Prop | Effect |
 | --- | --- |

@@ -1,12 +1,12 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { axe } from "./axe.ts";
-import { boxes, example, onEachPlayground, ready, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, rendered, settled, test } from "./playgrounds.ts";
 
 // What docs/components/toast.md says, on the Toast page: a toast comes in at
 // the bottom center, above everything, and leaves after 4 seconds; toasts
 // stack and leave one at a time; hover, a tap, or F8 spreads them out and
-// holds them; the same id changes a toast in place; over an open Drawer,
-// toasts move inside it, where they can be used.
+// holds them, as a hidden page does; the same id changes a toast in place;
+// over an open Drawer, toasts move inside it, where they can be used.
 const region = (page: Page) => page.locator(".htoaster");
 const live = (page: Page) => page.locator(".htoast:not([data-removed])");
 
@@ -57,6 +57,33 @@ const fakeClock = async (page: Page) => {
   await ready(page);
 };
 const announcer = (page: Page, role: "status" | "alert") => page.locator(`.htoaster-announce[role="${role}"]`);
+
+// As if the page were hidden, or shown again, then two frames, so what that
+// changes has happened.
+const setHidden = async (page: Page, hidden: boolean) => {
+  await page.evaluate((hidden) => {
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => hidden });
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => (hidden ? "hidden" : "visible") });
+    document.dispatchEvent(new Event("visibilitychange"));
+  }, hidden);
+  await rendered(page);
+};
+
+// What axe finds wrong with the contrast of the toasts' text, once nothing in
+// the region is moving: while they fade in or out, they're faint on purpose.
+const contrast = (page: Page) =>
+  page.evaluate(async () => {
+    await new Promise(requestAnimationFrame);
+    const moving = document.querySelector(".htoaster")!.getAnimations({ subtree: true });
+    await Promise.all(moving.map((animation) => animation.finished.catch(() => {})));
+    const { axe } = window as unknown as { axe: typeof import("axe-core") };
+    const { violations } = await axe.run(document.querySelector(".htoaster-list")!, {
+      runOnly: { type: "rule", values: ["color-contrast"] },
+      resultTypes: ["violations"],
+      preload: false,
+    });
+    return violations.flatMap(({ nodes }) => nodes.map((node) => node.target.join(" ")));
+  });
 
 // Where the first toast to come in, and the first to leave, are 100ms into
 // their transitions: how far below their place, and how opaque. Their
@@ -140,6 +167,18 @@ onEachPlayground("toast", () => {
     expect(colors[0]).toBe(probe);
   });
 
+  test("a warning is read at once too; success and info when the screen reader is free", async ({ page }) => {
+    await send(page, "toast-each-status", "Success");
+    await expect(announcer(page, "status")).toContainText("Contact added");
+    await expect(announcer(page, "alert")).toBeEmpty();
+    await send(page, "toast-each-status", "Info");
+    await expect(announcer(page, "status")).toContainText("Export started");
+    await expect(announcer(page, "alert")).toBeEmpty();
+    await send(page, "toast-each-status", "Warning");
+    await expect(announcer(page, "alert")).toContainText("3 contacts weren't imported");
+    await expect(announcer(page, "status")).not.toContainText("3 contacts weren't imported");
+  });
+
   test("with toasts showing, one with an action and one changed in place, axe finds nothing wrong in the region", async ({ page }) => {
     await page.addScriptTag({ path: axe });
     await send(page, "toast-with-an-action", "Archive conversation");
@@ -150,8 +189,8 @@ onEachPlayground("toast", () => {
     const violations = await page.evaluate(async () => {
       const { axe } = window as unknown as { axe: typeof import("axe-core") };
       // Its structure, names, and roles: not contrast, since toasts that are
-      // fading in or out are faint on purpose; pages.spec.ts checks contrast
-      // with nothing moving.
+      // fading in or out are faint on purpose; the next test checks contrast
+      // once they've settled.
       const { violations } = await axe.run(document.querySelector(".htoaster")!, {
         resultTypes: ["violations"],
         preload: false,
@@ -160,6 +199,46 @@ onEachPlayground("toast", () => {
       return violations.map(({ id, nodes }) => `${id}: ${nodes.length}`);
     });
     expect(violations).toEqual([]);
+  });
+
+  test("settled, collapsed and spread out, in light and dark, the toasts' text has enough contrast", async ({ page }) => {
+    await page.addScriptTag({ path: axe });
+    // Held, as while the page is hidden, so none leaves while it's checked.
+    await setHidden(page, true);
+    await send(page, "toast-a-stack", "Send three");
+    await expect(live(page)).toHaveCount(3);
+    await page.mouse.move(5, 5);
+    expect(await contrast(page), "collapsed, in light mode").toEqual([]);
+
+    await page.keyboard.press("F8");
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    expect(await contrast(page), "spread out, in light mode").toEqual([]);
+
+    await page.evaluate(() => (document.documentElement.style.colorScheme = "dark"));
+    expect(await contrast(page), "spread out, in dark mode").toEqual([]);
+
+    await page.keyboard.press("Escape");
+    await expect(region(page)).not.toHaveAttribute("data-expanded");
+    expect(await contrast(page), "collapsed, in dark mode").toEqual([]);
+  });
+
+  test("hidden hides any part of a toast, as it does any component's", async ({ page }) => {
+    await send(page, "toast-with-an-action", "Archive conversation");
+    const toast = live(page).first();
+    await expect(toast).toBeVisible();
+    // Browsers ignore hidden on SVG, such as the icon.
+    const shown = await toast.evaluate((node) =>
+      [node, ...node.querySelectorAll("*")]
+        .filter((element): element is HTMLElement => element instanceof HTMLElement)
+        .filter((element) => {
+          element.hidden = true;
+          const { display } = getComputedStyle(element);
+          element.hidden = false;
+          return display !== "none";
+        })
+        .map((element) => element.className),
+    );
+    expect(shown).toEqual([]);
   });
 
   test("it comes in from below, fading in, and after 4 seconds slides back down, fading out, and goes", async ({ page }) => {
@@ -271,6 +350,60 @@ onEachPlayground("toast", () => {
     await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 5000 });
   });
 
+  test.describe("on a touch screen", () => {
+    test.use({ hasTouch: true });
+
+    test("a tap spreads the stack out and holds it; a tap elsewhere puts it back", async ({ page }) => {
+      await fakeClock(page);
+      const container = await example(page, "toast-a-stack");
+      await container.getByRole("button", { name: "Send three" }).click();
+      await expect(live(page)).toHaveCount(3);
+      await page.waitForTimeout(900);
+      await front(page).tap();
+      await expect(region(page)).toHaveAttribute("data-expanded");
+      // Longer than a toast lasts.
+      await page.clock.fastForward(4000);
+      await expect(live(page)).toHaveCount(3);
+
+      await container.locator(".play-demo").tap({ position: { x: 5, y: 5 } });
+      await expect(region(page)).not.toHaveAttribute("data-expanded");
+      await page.clock.fastForward(3000);
+      await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 5000 });
+    });
+  });
+
+  test("while the page is hidden, a toast's time is held, and goes on once it's shown again", async ({ page }) => {
+    await fakeClock(page);
+    await send(page, "toast-default", "Save quick reply");
+    await expect(live(page)).toHaveCount(1);
+    await page.clock.fastForward(1000);
+    await setHidden(page, true);
+    // Longer than a toast lasts.
+    await page.clock.fastForward(5000);
+    await expect(live(page)).toHaveCount(1);
+
+    await setHidden(page, false);
+    await page.clock.fastForward(3500);
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 3000 });
+  });
+
+  test("past three back, collapsed, a toast is hidden; spread out, it shows", async ({ page }) => {
+    await send(page, "toast-a-stack", "Send three");
+    await expect(live(page)).toHaveCount(3);
+    await send(page, "toast-default", "Save quick reply");
+    await expect(live(page)).toHaveCount(4);
+    await page.mouse.move(5, 5);
+    const oldest = live(page).first();
+    await expect(oldest).toHaveAttribute("data-beyond");
+    await expect(oldest).toHaveCSS("opacity", "0");
+    await expect(live(page).nth(1)).not.toHaveAttribute("data-beyond");
+    await expect(live(page).nth(1)).toHaveCSS("opacity", "1");
+
+    await page.keyboard.press("F8");
+    await expect(region(page)).toHaveAttribute("data-expanded");
+    await expect(oldest).toHaveCSS("opacity", "1");
+  });
+
   test("F8 moves focus to the toasts and holds them; Tab reaches the action, which works; Escape goes back", async ({ page }) => {
     const container = await example(page, "toast-with-an-action");
     const button = container.getByRole("button", { name: "Archive conversation" });
@@ -300,6 +433,29 @@ onEachPlayground("toast", () => {
     await page.keyboard.press("Enter");
     await expect(live(page)).toHaveCount(0);
     expect(await page.locator(".htoast[data-removed]").evaluate((node) => (node as HTMLElement).inert)).toBe(true);
+    await expect(button).toBeFocused();
+  });
+
+  test("with focus on the region itself, when the last toast leaves, focus goes back where it was before F8", async ({ page }) => {
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    const container = await example(page, "toast-with-an-action");
+    const button = container.getByRole("button", { name: "Archive conversation" });
+    await button.click();
+    await expect(live(page)).toHaveCount(2);
+    await page.keyboard.press("F8");
+    await expect(region(page)).toBeFocused();
+
+    // An action sends its toast out, with another left: focus moves to the
+    // region.
+    await page.keyboard.press("Tab");
+    await expect(live(page).getByRole("button", { name: "Try again" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(live(page)).toHaveCount(1);
+    await expect(region(page)).toBeFocused();
+
+    // The app sends the last one out, without moving focus first.
+    await live(page).getByRole("button", { name: "Undo" }).evaluate((node) => (node as HTMLElement).click());
+    await expect(live(page)).toHaveCount(0);
     await expect(button).toBeFocused();
   });
 
@@ -385,6 +541,44 @@ onEachPlayground("toast", () => {
     await page.waitForTimeout(100);
     await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(0);
     await expect(live(page)).toHaveCount(1);
+  });
+
+  test("with its fade turned off by a stylesheet, a changed toast's old content still goes", async ({ page }) => {
+    await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation: none !important; }" });
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    await page.waitForTimeout(300);
+    await send(page, "toast-kept-open-then-changed", "Reconnect");
+    await expect(live(page).locator(".htoast-body:not([data-leaving]) .htoast-title")).toHaveText("Back online");
+    await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(0);
+  });
+
+  test("changed twice in a moment, what it showed each time fades out on its own, at the width it had", async ({ page }) => {
+    await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation-duration: 100s !important; }" });
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    await page.waitForTimeout(300);
+    await send(page, "toast-kept-open-then-changed", "Reconnect");
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    const old = page.locator(".htoast-body[data-leaving]");
+    await expect(old).toHaveCount(2);
+    await expect(old.locator(".htoast-title")).toHaveText(["You're offline", "Back online"]);
+    expect(await old.evaluateAll((bodies) => bodies.map((body) => (body as HTMLElement).style.inlineSize !== ""))).toEqual([
+      true,
+      true,
+    ]);
+  });
+
+  test("when its text takes more room while it shows, such as with wider text spacing, it's measured again, and fits", async ({ page }) => {
+    await send(page, "toast-kept-open-then-changed", "Go offline");
+    await expect(live(page)).toHaveCount(1);
+    const toast = live(page).first();
+    await settled(toast);
+    const width = () => toast.evaluate((node) => parseFloat((node as HTMLElement).style.getPropertyValue("--htoast-width")));
+    const before = await width();
+    // WCAG's text spacing, as a reader's own stylesheet sets it.
+    await page.addStyleTag({ content: ".htoast-content { line-height: 1.5; letter-spacing: 0.12em; word-spacing: 0.16em; }" });
+    await expect.poll(width).toBeGreaterThan(before);
+    await settled(toast);
+    expect(await overflowing(page)).toEqual([]);
   });
 
   test("with no time limit it stays; the same id changes it in place, and its box takes the new size", async ({ page }) => {

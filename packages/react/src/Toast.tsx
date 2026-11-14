@@ -14,6 +14,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "./Button.tsx";
+import { renders } from "./children.ts";
 import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
 
@@ -111,6 +112,8 @@ const DURATION = 4000;
 const EXIT_SPACING = 700;
 const ANNOUNCE_DELAY = 100;
 const ANNOUNCE_TIME = 1500;
+// The longest a timer can wait: a longer one would go off at once.
+const LONGEST = 2 ** 31 - 1;
 
 interface Clock {
   version: number;
@@ -139,6 +142,10 @@ const measure = (body: HTMLElement) => {
 
 const urgent = (status?: ToastStatus) => status === "error" || status === "warning";
 
+// The longest of a list of durations, such as "0.25s, 0s", in seconds.
+const longest = (durations: string) =>
+  Math.max(0, ...durations.split(",").map(parseFloat).filter(Number.isFinite));
+
 const ToastBody = ({
   item,
   icon,
@@ -149,36 +156,52 @@ const ToastBody = ({
   icon: ReactElement<ComponentPropsWithRef<"svg">>;
   leaving?: boolean;
   onLeft?: () => void;
-}) => (
-  <div
-    className="htoast-body"
-    data-leaving={leaving ? "" : undefined}
-    inert={leaving || undefined}
-    onAnimationEnd={leaving ? onLeft : undefined}
-  >
-    {cloneElement(icon, {
-      className: withClass("htoast-icon", icon.props.className),
-      "aria-hidden": true,
-      focusable: "false",
-    })}
-    <div className="htoast-content">
-      <span className="htoast-title">{item.title}</span>
-      {item.description && (
-        <span className="htoast-description">{item.description}</span>
+}) => {
+  const body = useRef<HTMLDivElement>(null);
+  // Gone once its fade ends; and if a stylesheet turns the fade off, so that
+  // it never ends, at once, or after as long as the fade would have taken.
+  useEffect(() => {
+    const element = body.current;
+    if (!leaving || !element || !onLeft) return;
+    if (!element.getAnimations().length) {
+      onLeft();
+      return;
+    }
+    const timer = setTimeout(onLeft, longest(getComputedStyle(element).animationDuration) * 1000 + 50);
+    return () => clearTimeout(timer);
+  }, [leaving]);
+  return (
+    <div
+      ref={body}
+      className="htoast-body"
+      data-leaving={leaving ? "" : undefined}
+      inert={leaving || undefined}
+      onAnimationEnd={leaving ? onLeft : undefined}
+    >
+      {cloneElement(icon, {
+        className: withClass("htoast-icon", icon.props.className),
+        "aria-hidden": true,
+        focusable: "false",
+      })}
+      <div className="htoast-content">
+        <span className="htoast-title">{item.title}</span>
+        {renders(item.description) && (
+          <span className="htoast-description">{item.description}</span>
+        )}
+      </div>
+      {item.action && (
+        <Button
+          variant="secondary"
+          size="small"
+          disabled={item.action.disabled}
+          onClick={item.action.onClick}
+        >
+          {item.action.label}
+        </Button>
       )}
     </div>
-    {item.action && (
-      <Button
-        variant="secondary"
-        size="small"
-        disabled={item.action.disabled}
-        onClick={item.action.onClick}
-      >
-        {item.action.label}
-      </Button>
-    )}
-  </div>
-);
+  );
+};
 
 const ToastItem = ({
   item,
@@ -187,9 +210,15 @@ const ToastItem = ({
   item: Shown;
   icons: ToasterProps["icons"];
 }) => {
-  const [left, setLeft] = useState(-1);
+  // What it showed before each change, fading out over what it shows now,
+  // each until its own fade ends: changed twice in a moment, both fade.
+  const [leaving, setLeaving] = useState<Shown[]>([]);
+  const [changed, setChanged] = useState<Shown | undefined>(undefined);
+  if (item.previous !== changed) {
+    setChanged(item.previous);
+    if (item.previous) setLeaving([...leaving, item.previous]);
+  }
   const status = item.status ?? "info";
-  const previous = item.previous && item.previous.version > left ? item.previous : undefined;
   return (
     <li
       className="htoast"
@@ -197,16 +226,18 @@ const ToastItem = ({
       data-removed={item.removed ? "" : undefined}
       inert={item.removed || undefined}
     >
-      {previous && (
-        <ToastBody
-          key={previous.version}
-          item={previous}
-          icon={icons[previous.status ?? "info"]}
-          leaving
-          onLeft={() => setLeft(previous.version)}
-        />
-      )}
-      <ToastBody key={item.version} item={item} icon={icons[status]} />
+      {[
+        ...leaving.map((previous) => (
+          <ToastBody
+            key={previous.version}
+            item={previous}
+            icon={icons[previous.status ?? "info"]}
+            leaving
+            onLeft={() => setLeaving((list) => list.filter((other) => other !== previous))}
+          />
+        )),
+        <ToastBody key={item.version} item={item} icon={icons[status]} />,
+      ]}
     </li>
   );
 };
@@ -288,7 +319,8 @@ export const Toaster = ({
   };
 
   // Each toast counts its own time, held while the stack is spread out or the
-  // page is hidden; a changed toast starts again.
+  // page is hidden; a changed toast starts again. One longer than a timer can
+  // wait stays, as with no time limit.
   useEffect(() => {
     const live = toasts.filter((item) => !item.removed);
     const keys = new Set(live.map((item) => item.key));
@@ -303,7 +335,8 @@ export const Toaster = ({
       if (!clock || clock.version !== item.version) {
         clearTimeout(clock?.handle);
         due.current.delete(item.key);
-        clock = { version: item.version, remaining: item.duration ?? DURATION };
+        const duration = item.duration ?? DURATION;
+        clock = { version: item.version, remaining: duration >= LONGEST ? Infinity : duration };
         clocks.current.set(item.key, clock);
       }
       if (paused) {
@@ -366,18 +399,22 @@ export const Toaster = ({
       if (!node) return;
       let size = sizes.current.get(item.key);
       if (!size || size.version !== item.version || size.epoch !== epoch) {
-        const leaving = node.querySelector<HTMLElement>(":scope > .htoast-body[data-leaving]");
-        if (leaving && size && size.version !== item.version && !leaving.style.inlineSize) {
-          leaving.style.inlineSize = `${size.width - 2}px`;
+        // What it showed until now, the last of any still fading, keeps the
+        // width it had.
+        const leaving = [...node.querySelectorAll<HTMLElement>(":scope > .htoast-body[data-leaving]")];
+        const latest = leaving.at(-1);
+        if (latest && size && size.version !== item.version && !latest.style.inlineSize) {
+          latest.style.inlineSize = `${size.width - 2}px`;
         }
         // What was focused is in what it showed before, now inert: focus
         // stays with the toasts.
         const active = document.activeElement;
         const justLost = Date.now() - lostFocusAt.current < 300;
+        const last = lastFocused.current;
         if (
-          leaving &&
-          (leaving.contains(active) ||
-            (active === document.body && justLost && !!lastFocused.current && leaving.contains(lastFocused.current)))
+          leaving.some(
+            (body) => body.contains(active) || (active === document.body && justLost && !!last && body.contains(last)),
+          )
         ) {
           lastFocused.current = null;
           element.focus();
@@ -420,10 +457,7 @@ export const Toaster = ({
       // whatever the tokens make that.
       if (item.removed && !forgetting.current.has(item.key)) {
         forgetting.current.add(item.key);
-        const seconds = Math.max(
-          0,
-          ...getComputedStyle(node).transitionDuration.split(",").map(parseFloat),
-        );
+        const seconds = longest(getComputedStyle(node).transitionDuration);
         setTimeout(() => {
           forgetting.current.delete(item.key);
           sizes.current.delete(item.key);
@@ -443,6 +477,9 @@ export const Toaster = ({
         }
       }
     });
+    // Focus on the region itself, as after F8, goes back too once none is
+    // left, rather than staying on a region with nothing in it.
+    if (!toasts.some((item) => !item.removed) && element.contains(document.activeElement)) giveFocusBack();
     const live = toasts
       .map((item, index) => ({ item, node: items[index] as HTMLElement | undefined }))
       .filter(({ item, node }) => node && !item.removed)
@@ -471,6 +508,43 @@ export const Toaster = ({
     if (width) element.style.setProperty("--htoaster-width", `${width}px`);
     if (!live.length && expanded) setExpanded(false);
   });
+
+  // Content that takes more or less room while it shows, such as a countdown
+  // in it, or text spacing someone sets, is measured again. The change that
+  // measuring makes leaves its own size as measured, so it stops there.
+  useEffect(() => {
+    const items = region.current?.querySelector(".htoaster-list")?.children;
+    if (!items) return;
+    const bodies = () =>
+      toasts.flatMap((item, index) => {
+        const body = item.removed
+          ? null
+          : items[index]?.querySelector<HTMLElement>(":scope > .htoast-body:not([data-leaving])");
+        return body ? [{ key: item.key, body }] : [];
+      });
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const changed = bodies().some(({ key, body }) => {
+          const size = sizes.current.get(key);
+          if (!size) return false;
+          const { width, height } = measure(body);
+          if (!Number.isFinite(width) || !Number.isFinite(height)) return false;
+          return Math.abs(width + 2 - size.width) > 0.5 || Math.abs(height + 2 - size.height) > 0.5;
+        });
+        if (changed) setEpoch((value) => value + 1);
+      });
+    });
+    for (const { body } of bodies()) {
+      const content = body.querySelector(":scope > .htoast-content");
+      if (content) observer.observe(content);
+    }
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [toasts, host]);
 
   // A holder it owns, which it moves, so the region moves without React
   // building it again: in the page, or inside an open modal dialog, where it
@@ -570,9 +644,10 @@ export const Toaster = ({
       }
     });
     // Any already open: the one with focus on top, since only the topmost
-    // modal can have it; the others in the page's order.
+    // modal can have it, and of one inside another, the inner one, which
+    // comes later in the page; the others in the page's order.
     const open = [...document.querySelectorAll("dialog")].filter((dialog) => dialog.matches(":modal"));
-    const focused = open.find((dialog) => dialog.contains(document.activeElement));
+    const focused = open.filter((dialog) => dialog.contains(document.activeElement)).at(-1);
     modals.push(...open.filter((dialog) => dialog !== focused), ...(focused ? [focused] : []));
     place();
     document.addEventListener("toggle", toggled, true);

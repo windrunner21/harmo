@@ -83,7 +83,9 @@ colors it by its status.
   edge, 24px in, and are no wider than the window less 48px. The title is 14px medium in
   `--harmo-color-text`, with the description under it in
   `--harmo-color-text-secondary`; the icon is 20px. Text wraps at 480px, and
-  a toast is never wider than the window less 32px.
+  a toast is never wider than the window less 32px. On a phone, each of
+  these is measured from the safe area (`env(safe-area-inset-*)`), clear of
+  its notch and rounded corners.
 - It comes in from below, fading in, in 400ms with `ease`.
 - Toasts stack: the newest in front, each one further back 5% smaller and 14px
   higher, in the front one's shape, with its content hidden; past three back,
@@ -93,8 +95,9 @@ colors it by its status.
   into a list, newest at the bottom, 12px apart, each at its own size.
 - Each toast counts its own time, held while the stack is spread out or the
   page is hidden. Those whose time is up leave one at a time, the oldest
-  first, 0.7 seconds apart: the front one slides back down in 400ms, and one
-  further back sinks behind it as it fades.
+  first, 0.7 seconds apart: the front one slides back down in 400ms, as long
+  as it took to come in, unlike Harmo's other exits, which are quicker, and
+  one further back sinks behind it as it fades.
 - Changed in place, a toast's box changes size with the spring, while what it
   showed fades out, slightly blurred, over what it shows now.
 - With reduced motion, toasts fade in and out where they are, and their sizes
@@ -125,6 +128,7 @@ colors it by its status.
   (`duration: Infinity`) until it's dealt with. Keep a toast short.
 - A leaving toast is `inert`, so its action can't run twice; focus that was
   in it stays with the other toasts, or goes back where it was before F8.
+  Focus on the region itself goes back too, once the last toast leaves.
   Changed while focus is on its action, a toast keeps focus in the region.
 
 ## What a script does
@@ -137,7 +141,9 @@ Everything but the look:
   `inert` for its exit, then goes, after its longest transition, so a longer
   `--harmo-toast-duration` still plays out.
 - **Measures each toast** as it comes or changes, and again when the window
-  is resized or a font loads: its content's width at `max-content`, rounded
+  is resized, a font loads, or its content takes more or less room while it
+  shows, such as with text spacing someone sets (a `ResizeObserver` on each
+  `.htoast-content`): its content's width at `max-content`, rounded
   up to a whole pixel, since rounded down the last word no longer fits and
   wraps, and its height at that width. It sets `--htoast-body-width`,
   `--htoast-width`, and `--htoast-height` on the toast, two pixels more for
@@ -155,12 +161,16 @@ Everything but the look:
 - **Spreads the stack out** with `data-expanded` on the region, while it's
   hovered with a mouse, tapped, or has focus inside, and holds the toasts'
   time meanwhile, and while the page is hidden.
-- **Times them,** and sends them out one at a time, 0.7 seconds apart.
+- **Times them,** and sends them out one at a time, 0.7 seconds apart. A
+  time limit longer than a timer can wait, 2,147,483,647 milliseconds, keeps
+  a toast as no limit does.
 - **Changes a toast in place:** what it showed stays, absolutely placed, with
-  `data-leaving` and `inert`, until its fade ends. If focus was on its
-  action, focus moves to the region.
+  `data-leaving` and `inert`, until its fade ends, each change's on its own;
+  if a stylesheet turns the fade off, at once, or after as long as the fade
+  would have taken. If focus was on its action, focus moves to the region.
 - **Moves the region** into the topmost open modal dialog, which is the one
-  with focus, and back where it was once the dialog closes or is taken out of
+  with focus (of one inside another, the inner one), and back where it was
+  once the dialog closes or is taken out of
   the page. Moved, each toast is in the page again and would start over, so
   first it notes where each one is, as `--htoast-moved-opacity`,
   `--htoast-moved-transform`, `--htoast-moved-width`, `--htoast-moved-height`,
@@ -211,6 +221,8 @@ toast({
 | `icons` | Required. An icon for each status, as elements from your app; Toaster adds `.htoast-icon` and hides them from screen readers |
 | `position` | Where toasts show: `"bottom-center"` by default, or `"top-start"`, `"top-center"`, `"top-end"`, `"bottom-start"`, `"bottom-end"` |
 | `hotkey` | The key that moves focus to the toasts: `"F8"` by default |
+
+Other props are the `<section>`'s attributes.
 
 | `toast()` option | Effect |
 | --- | --- |
