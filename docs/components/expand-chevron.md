@@ -48,8 +48,10 @@ The two strokes fold while the head group shifts.
 - Takes the text color. Select sets it to `--harmo-color-text-secondary`, and
   to the disabled text color when disabled.
 - Expanding and collapsing: the two strokes fold through flat while the head
-  shifts about 5px, in 200ms (`--harmo-duration-normal`,
-  `--harmo-ease-in-out-cubic`). Reduced motion: it flips without moving.
+  shifts about 5px, on `--harmo-ease-in-out-cubic`: up in 200ms
+  (`--harmo-duration-normal`) as its control opens, and back down in 150ms
+  (`--harmo-duration-fast`) as it closes, so it ends with the popup, list, or
+  panel it belongs to. Reduced motion: it flips without moving.
 - Pointing down or up, it sits at the same height, centered on the text's
   lowercase letters, which sit about 1px below the middle of a 14px line.
 - As the last thing in a [Button](button.md), such as a menu button, it keeps
@@ -84,4 +86,5 @@ it follows, as a direct child, or after it; a `<Popup>` keeps its trigger's
 
 ## Tokens
 
-`--harmo-duration-normal`, `--harmo-ease-in-out-cubic`.
+`--harmo-duration-fast`, `--harmo-duration-normal`,
+`--harmo-ease-in-out-cubic`.

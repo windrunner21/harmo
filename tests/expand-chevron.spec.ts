@@ -2,8 +2,8 @@ import { expect, type Locator } from "@playwright/test";
 import { example, onEachPlayground, settled, test, watchTransitions } from "./playgrounds.ts";
 
 // docs/components/expand-chevron.md: the chevron follows its control's
-// aria-expanded, folding its two strokes through flat over 200ms, so it
-// points the other way.
+// aria-expanded, folding its two strokes through flat, up over 200ms and back
+// down over 150ms, so it points the other way.
 onEachPlayground("expand-chevron", () => {
   test("the chevron folds with aria-expanded, and back", async ({ page }) => {
     const container = await example(page, "expand-chevron-toggling");
@@ -34,11 +34,20 @@ onEachPlayground("expand-chevron", () => {
     expect(await Promise.all(parts.map(transformOf))).toEqual(collapsed);
   });
 
-  test("it folds over 200ms; with reduced motion, it flips without moving", async ({ page }) => {
+  test("it folds up over 200ms and back down over 150ms, as what it opens closes; with reduced motion, it flips without moving", async ({ page }) => {
     const container = await example(page, "expand-chevron-toggling");
+    const button = container.getByRole("button", { name: "More options" });
     const parts = ["head", "left", "right"].map((name) => container.locator(`.play-demo .hexpand-chevron-${name}`));
+    // A transition takes the duration of the state it goes to: collapsed for
+    // folding back down, expanded for folding up.
+    for (const part of parts) expect(await durationOf(part)).toBe("0.15s");
+    await button.click();
+    await expect(button).toHaveAttribute("aria-expanded", "true");
     for (const part of parts) expect(await durationOf(part)).toBe("0.2s");
     await page.emulateMedia({ reducedMotion: "reduce" });
+    for (const part of parts) expect(await durationOf(part)).toBe("0s");
+    await button.click();
+    await expect(button).toHaveAttribute("aria-expanded", "false");
     for (const part of parts) expect(await durationOf(part)).toBe("0s");
   });
 

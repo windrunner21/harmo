@@ -18,7 +18,10 @@
     transform-box: view-box;
     transform-origin: 8px 6px;
 
-    transition: transform $duration-normal $ease-in-out-cubic;
+    // Folding back down in 150ms, as what it opened closes; opening, in the
+    // expanded rule below, in 200ms. A transition takes the duration of the
+    // state it goes to.
+    transition: transform $duration-fast $ease-in-out-cubic;
   }
 
   // The 8-unit strokes rise 8 × sin 40° ≈ 5.14 units from the tip, so the
@@ -27,7 +30,7 @@
   // its line, and the chevron lines up with the text rather than the line.
   .hexpand-chevron-head {
     transform: translateY(3.57px);
-    transition: transform $duration-normal $ease-in-out-cubic;
+    transition: transform $duration-fast $ease-in-out-cubic;
   }
 
   .hexpand-chevron-left {
@@ -43,6 +46,12 @@
   :where([aria-expanded="true"]) > &,
   :where([aria-expanded="true"]) ~ &,
   :where(details[open] > summary) > & {
+    .hexpand-chevron-head,
+    .hexpand-chevron-left,
+    .hexpand-chevron-right {
+      transition-duration: $duration-normal;
+    }
+
     .hexpand-chevron-head {
       transform: translateY(-1.57px);
     }

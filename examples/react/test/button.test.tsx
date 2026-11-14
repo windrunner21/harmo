@@ -5,7 +5,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 // What docs/components/button.md says the React Button does: a loading or
 // aria-disabled one ignores a press, and prevents its default, such as sending
-// a form; holdDuration sets --hbutton-hold-duration; an icon first or last,
+// a form, and a link's middle click; holdDuration sets --hbutton-hold-duration; instant sets
+// data-instant, which turns its width change off; an icon first or last,
 // inside a fragment too, stays out of the label, and a child that draws
 // nothing isn't one; and an aria-busy you pass is kept. And what copy.md says:
 // an aria-disabled Copy Button copies nothing.
@@ -16,10 +17,11 @@ interface Click {
 }
 
 // Presses the first .hbutton an element renders, with a click whose default
-// can be prevented. The server's markup leaves the click handler out, so the
-// element is rendered as the server would, with each component called in
-// place, down to the .hbutton, whose handler is kept.
-const press = (element: ReactNode) => {
+// can be prevented, or with `handler`, another kind of click, such as a
+// middle click's onAuxClick. The server's markup leaves the click handler
+// out, so the element is rendered as the server would, with each component
+// called in place, down to the .hbutton, whose handler is kept.
+const press = (element: ReactNode, handler: "onClick" | "onAuxClick" = "onClick") => {
   let onClick: ((event: Click) => unknown) | undefined;
   let found = false;
   const find = (node: ReactNode): void => {
@@ -28,14 +30,14 @@ const press = (element: ReactNode) => {
       for (const child of node) find(child);
       return;
     }
-    if (!isValidElement<{ className?: string; children?: ReactNode; onClick?: typeof onClick }>(node)) return;
+    if (!isValidElement<{ className?: string; children?: ReactNode } & Record<typeof handler, typeof onClick>>(node)) return;
     if (typeof node.type === "function") {
       find((node.type as (props: object) => ReactNode)(node.props));
       return;
     }
     if (typeof node.type === "string" && node.props.className?.split(" ").includes("hbutton")) {
       found = true;
-      onClick = node.props.onClick;
+      onClick = node.props[handler];
       return;
     }
     find(node.props.children);
@@ -99,6 +101,21 @@ describe("Button", () => {
     for (const click of clicks) expect(click.defaultPrevented).toBe(true);
   });
 
+  test("with aria-disabled or loading, a link's middle click is ignored too, which would open it in a new tab; enabled, it's the app's", () => {
+    const pressed: unknown[] = [];
+    const record = (event: unknown) => pressed.push(event);
+    const ignored = [
+      press(<Button href="/reports" aria-disabled="true" onAuxClick={record}>Reports</Button>, "onAuxClick"),
+      press(<Button href="/reports" loading onAuxClick={record}>Reports</Button>, "onAuxClick"),
+    ];
+    expect(pressed).toEqual([]);
+    for (const click of ignored) expect(click.defaultPrevented).toBe(true);
+
+    const kept = press(<Button href="/reports" onAuxClick={record}>Reports</Button>, "onAuxClick");
+    expect(pressed).toHaveLength(1);
+    expect(kept.defaultPrevented).toBe(false);
+  });
+
   test("holdDuration sets --hbutton-hold-duration, in milliseconds", () => {
     const markup = renderToStaticMarkup(
       <Button onHold={() => {}} holdDuration={3000}>
@@ -160,6 +177,12 @@ describe("Button", () => {
     expect(label).toBeGreaterThan(-1);
     expect(spinner).toBeGreaterThan(label);
     expect(icon).toBeGreaterThan(spinner);
+  });
+
+  test("instant sets data-instant, which its width change reads, and leaving it out or false sets nothing", () => {
+    expect(renderToStaticMarkup(<Button instant>Resend code in 30s</Button>)).toContain('data-instant=""');
+    expect(renderToStaticMarkup(<Button instant={false}>Resend code</Button>)).not.toContain("data-instant");
+    expect(renderToStaticMarkup(<Button>Resend code</Button>)).not.toContain("data-instant");
   });
 
   test("an aria-busy you pass is kept, without loading, and without making it disabled", () => {

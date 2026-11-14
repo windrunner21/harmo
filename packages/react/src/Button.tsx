@@ -25,6 +25,7 @@ interface ButtonOptions {
   size?: "small";
   destructive?: boolean;
   loading?: boolean;
+  instant?: boolean;
   commandfor?: string;
   command?:
     | "show-modal"
@@ -55,6 +56,7 @@ export const Button = ({
   size,
   destructive,
   loading,
+  instant,
   onHold,
   holdDuration,
   className,
@@ -76,6 +78,7 @@ export const Button = ({
     "data-variant": variant,
     "data-size": size,
     "data-destructive": destructive ? "" : undefined,
+    "data-instant": instant ? "" : undefined,
     "aria-busy": loading || props["aria-busy"] || undefined,
     "aria-disabled": inactive || undefined,
     "aria-labelledby": field["aria-labelledby"],
@@ -83,6 +86,10 @@ export const Button = ({
     onClick: (event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
       if (inactive) event.preventDefault();
       else props.onClick?.(event);
+    },
+    onAuxClick: (event: MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {
+      if (inactive) event.preventDefault();
+      else props.onAuxClick?.(event);
     },
   };
   const content = renderContent(children, loading);

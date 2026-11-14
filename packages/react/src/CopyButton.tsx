@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ComponentPropsWithRef,
@@ -76,10 +77,21 @@ const doneIcon = (
 );
 
 // For two seconds after it's done, the button says so; not if it has gone
-// by then, such as with a menu that closed.
-const useDone = () => {
+// by then, such as with a menu that closed. Nor once what it was done for
+// changes, such as a key that's regenerated, even before it's done: the new
+// one wasn't copied.
+const useDone = (confirms: unknown) => {
   const [done, setDone] = useState(false);
   const [times, setTimes] = useState(0);
+  const [confirmed, setConfirmed] = useState(confirms);
+  if (confirmed !== confirms) {
+    setConfirmed(confirms);
+    setDone(false);
+  }
+  const current = useRef(confirms);
+  useLayoutEffect(() => {
+    current.current = confirms;
+  });
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const mounted = useRef(false);
   useEffect(() => {
@@ -89,8 +101,8 @@ const useDone = () => {
       clearTimeout(timer.current);
     };
   }, []);
-  const confirm = () => {
-    if (!mounted.current) return;
+  const confirm = (doneFor: unknown) => {
+    if (!mounted.current || doneFor !== current.current) return;
     setDone(true);
     setTimes((count) => count + 1);
     clearTimeout(timer.current);
@@ -100,10 +112,13 @@ const useDone = () => {
 };
 
 // The button, its tooltip or its text, and the status. The action resolves
-// true when it's done something the button should confirm.
+// true when it's done something the button should confirm; `confirms` is
+// what it acts on, and a new one takes the confirmation back, or stops one
+// for what was there when it was pressed.
 const Control = ({
   icon,
   action,
+  confirms,
   label,
   copiedLabel,
   showLabel,
@@ -119,13 +134,13 @@ const Control = ({
   holdDuration: _holdDuration,
   type: _type,
   ...props
-}: ControlOptions & { icon: ReactNode; action: () => Promise<boolean> }) => {
-  const { done, times, confirm } = useDone();
+}: ControlOptions & { icon: ReactNode; action: () => Promise<boolean>; confirms?: string }) => {
+  const { done, times, confirm } = useDone(confirms);
   const run = async (event: MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
     if (event.defaultPrevented) return;
     try {
-      if (await action()) confirm();
+      if (await action()) confirm(confirms);
     } catch (error) {
       onError?.(error);
     }
@@ -171,6 +186,7 @@ export const CopyButton = ({ value, onCopy, ...props }: CopyButtonProps) => (
   <Control
     {...props}
     icon={copyIcon}
+    confirms={typeof value === "string" ? value : undefined}
     action={async () => {
       await navigator.clipboard.writeText(typeof value === "function" ? value() : value);
       onCopy?.();
@@ -185,6 +201,7 @@ export const ShareButton = ({ url, shareTitle, text, onShare, onCopy, ...props }
   <Control
     {...props}
     icon={shareIcon}
+    confirms={url}
     action={async () => {
       const data = { url, title: shareTitle, text };
       if (navigator.share && (!navigator.canShare || navigator.canShare(data))) {

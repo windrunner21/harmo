@@ -1,4 +1,5 @@
 import { Button, CopyButton, CopyField, ShareButton, Tooltip } from "@harmo-ui/react";
+import { useState } from "react";
 import { FacebookIcon, LinkedInIcon, XIcon } from "../app-icons.tsx";
 
 export const examples = {
@@ -11,7 +12,7 @@ export const examples = {
   ),
 
   "With its text": () => (
-    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--harmo-space-xs)" }}>
       <code>npm install @harmo-ui/css</code>
       <CopyButton value="npm install @harmo-ui/css" label="Copy" copiedLabel="Copied" showLabel />
     </div>
@@ -28,13 +29,26 @@ export const examples = {
     />
   ),
 
+  "Regenerating a key": () => {
+    const [key, setKey] = useState("key_3rt9wq2mxa8");
+
+    return (
+      <>
+        <CopyField id="api-key" label="API key" value={key} copyLabel="Copy API key" copiedLabel="Copied" />
+        <Button variant="secondary" onClick={() => setKey(`key_${Math.random().toString(36).slice(2, 13)}`)}>
+          Regenerate
+        </Button>
+      </>
+    );
+  },
+
   Share: () => {
     const url = "https://example.com/blog/first-response-time";
     const text = "First response time, explained";
     const link = encodeURIComponent(url);
 
     return (
-      <div style={{ display: "flex", gap: 4 }}>
+      <div style={{ display: "flex", gap: "var(--harmo-space-2xs)" }}>
         <Tooltip label="Share on X">
           <Button
             variant="tertiary"

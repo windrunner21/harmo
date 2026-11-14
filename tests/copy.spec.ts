@@ -1,27 +1,40 @@
 import { expect, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, rendered, settled, test } from "./playgrounds.ts";
 
 // What docs/components/copy.md says: a Copy Button copies, then says so for
-// two seconds, in its icon, its tooltip or text, and a status; a field copies
+// two seconds, in its icon, its tooltip or text, and a status, unless the
+// value changes meanwhile, even before the copy is done; a field copies
 // what's in it; a failure changes nothing; and a Share Button shares where
 // the browser can, and elsewhere copies the link.
-type Recorded = Window & { copied: string[]; shared: ShareData[]; widths: number };
+type Recorded = Window & { copied: string[]; shared: ShareData[]; widths: number; finish: () => void };
 
-// Records what's copied or shared, or, with `fail`, fails to copy.
-const stubClipboard = (page: Page, { fail = false } = {}) =>
-  page.evaluate((fail) => {
-    const recorded = window as unknown as Recorded;
-    recorded.copied = [];
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: {
-        writeText: async (text: string) => {
-          if (fail) throw new Error("Denied");
-          recorded.copied.push(text);
+// Records what's copied or shared, or, with `fail`, fails to copy. With
+// `wait`, each copy is done only once finishCopy says so.
+const stubClipboard = (page: Page, { fail = false, wait = false } = {}) =>
+  page.evaluate(
+    ({ fail, wait }) => {
+      const recorded = window as unknown as Recorded;
+      recorded.copied = [];
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: async (text: string) => {
+            if (wait) await new Promise<void>((resolve) => (recorded.finish = resolve));
+            if (fail) throw new Error("Denied");
+            recorded.copied.push(text);
+          },
         },
-      },
-    });
-  }, fail);
+      });
+    },
+    { fail, wait },
+  );
+
+// Finishes the copy that's waiting, then waits for the page to render what
+// follows it.
+const finishCopy = async (page: Page) => {
+  await page.evaluate(() => (window as unknown as Recorded).finish());
+  await rendered(page);
+};
 
 const stubShare = (page: Page, outcome: "shared" | "cancelled" | "none") =>
   page.evaluate((outcome) => {
@@ -109,6 +122,102 @@ onEachPlayground("copy", () => {
     await expect(button).not.toHaveAttribute("data-copied");
   });
 
+  test("a new value, such as a key that's regenerated, takes the confirmation back at once, and copying again copies it", async ({ page }) => {
+    // Paused, so its two seconds can't run out meanwhile.
+    await page.clock.install({ time: new Date("2026-01-01T00:00:00") });
+    await page.clock.pauseAt(new Date("2026-01-01T00:00:10"));
+    await stubClipboard(page);
+    const container = await example(page, "copy-regenerating-a-key");
+    const input = container.getByRole("textbox", { name: "API key" });
+    const button = container.locator(".hcopy");
+    const status = container.getByRole("status");
+    const before = await input.inputValue();
+    await button.click();
+    await expect(button).toHaveAttribute("data-copied");
+    await expect(status).toHaveText("Copied");
+    await expect(button).toHaveAccessibleName("Copied");
+
+    await container.getByRole("button", { name: "Regenerate" }).click();
+    await expect(input).not.toHaveValue(before);
+    await expect(button).not.toHaveAttribute("data-copied");
+    await expect(status).toBeEmpty();
+    await expect(button).toHaveAccessibleName("Copy API key");
+
+    const after = await input.inputValue();
+    await button.click();
+    expect(await copied(page)).toEqual([before, after]);
+    await expect(button).toHaveAttribute("data-copied");
+  });
+
+  test("a copy that's done once the value has changed doesn't say it's copied, and copying again does", async ({ page }) => {
+    await stubClipboard(page, { wait: true });
+    const container = await example(page, "copy-regenerating-a-key");
+    const input = container.getByRole("textbox", { name: "API key" });
+    const button = container.locator(".hcopy");
+    const status = container.getByRole("status");
+    const before = await input.inputValue();
+    await button.click();
+    await container.getByRole("button", { name: "Regenerate" }).click();
+    await expect(input).not.toHaveValue(before);
+
+    await finishCopy(page);
+    expect(await copied(page)).toEqual([before]);
+    // Checked once: its two seconds would take a confirmation back anyway.
+    expect(await button.getAttribute("data-copied")).toBeNull();
+    expect(await status.textContent()).toBe("");
+    await expect(button).toHaveAccessibleName("Copy API key");
+
+    const after = await input.inputValue();
+    await button.click();
+    await finishCopy(page);
+    expect(await copied(page)).toEqual([before, after]);
+    await expect(button).toHaveAttribute("data-copied");
+    await expect(status).toHaveText("Copied");
+  });
+
+  test("a form reset that puts another value back takes the confirmation back", async ({ page }, info) => {
+    // React's CopyField shows the value it's given, which a reset leaves as
+    // it is.
+    test.skip(!info.titlePath.includes("html"), "HTML only");
+    // Paused, so its two seconds can't run out meanwhile.
+    await page.clock.install({ time: new Date("2026-01-01T00:00:00") });
+    await page.clock.pauseAt(new Date("2026-01-01T00:00:10"));
+    await stubClipboard(page);
+    const container = await example(page, "copy-regenerating-a-key");
+    const input = container.getByRole("textbox", { name: "API key" });
+    const button = container.locator(".hcopy");
+    const status = container.getByRole("status");
+    // In a form with a reset button, joined after the page loaded.
+    await input.evaluate((node) => {
+      const form = document.createElement("form");
+      const field = node.closest(".hfield")!;
+      field.before(form);
+      const reset = Object.assign(document.createElement("button"), { type: "reset", textContent: "Reset" });
+      form.append(field, reset);
+    });
+    const before = await input.inputValue();
+    await container.getByRole("button", { name: "Regenerate" }).click();
+    await expect(input).not.toHaveValue(before);
+    await button.click();
+    await expect(button).toHaveAttribute("data-copied");
+
+    await container.getByRole("button", { name: "Reset" }).click();
+    await page.clock.runFor(1);
+    await expect(input).toHaveValue(before);
+    await expect(button).not.toHaveAttribute("data-copied");
+    await expect(status).toBeEmpty();
+    await expect(button).toHaveAccessibleName("Copy API key");
+
+    // A reset that puts back what it copied leaves it as it is.
+    await button.click();
+    await expect(button).toHaveAttribute("data-copied");
+    await container.getByRole("button", { name: "Reset" }).click();
+    await page.clock.runFor(1);
+    await expect(input).toHaveValue(before);
+    await expect(button).toHaveAttribute("data-copied");
+    await expect(status).toHaveText("Copied");
+  });
+
   test("copying again while it confirms is read again", async ({ page }) => {
     await stubClipboard(page);
     const container = await example(page, "copy-copy-a-link");
@@ -136,6 +245,27 @@ onEachPlayground("copy", () => {
     await button.click({ force: true });
     expect(await copied(page)).toEqual([]);
     await expect(button).not.toHaveAttribute("data-copied");
+  });
+
+  test("in a field, the value stops 6px before the button, and the room kept for it follows --harmo-control-height-small, as the button does", async ({ page }) => {
+    const container = await example(page, "copy-in-a-field");
+    const input = container.getByRole("textbox");
+    // From where the value ends to the button.
+    const measure = () =>
+      input.evaluate((node) => {
+        const style = getComputedStyle(node);
+        const end = node.getBoundingClientRect().right - parseFloat(style.borderRightWidth) - parseFloat(style.paddingRight);
+        const button = node.parentElement!.querySelector(".hcopy")!.getBoundingClientRect();
+        return { gap: button.left - end, width: button.width, height: button.height };
+      });
+    const before = await measure();
+    expect(before.width).toBeCloseTo(29, 0);
+    expect(before.gap).toBeCloseTo(6, 0);
+    await page.evaluate(() => document.documentElement.style.setProperty("--harmo-control-height-small", "2rem"));
+    const after = await measure();
+    expect(after.width).toBeCloseTo(32, 0);
+    expect(after.height).toBeCloseTo(32, 0);
+    expect(after.gap).toBeCloseTo(before.gap, 1);
   });
 
   test("with its text, it's spaced as any Button, and Copy turns into Copied with its width following", async ({ page }) => {

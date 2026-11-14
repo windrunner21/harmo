@@ -5,7 +5,8 @@
 // clipped meanwhile, then its own inline styles back. A change while one
 // plays carries on from where that one had got to. Appearing or
 // disappearing, such as with hidden, it shows or goes at once. With reduced
-// motion, at once.
+// motion, or data-instant on the button, for text that changes often, such as
+// a countdown, at once.
 const buttonWidthChanges = new WeakMap();
 const stopButtonWidthChange = (button) => {
   const playing = buttonWidthChanges.get(button);
@@ -22,7 +23,8 @@ const changeButtonWidth = (button, change) => {
   stopButtonWidthChange(button);
   change();
   const to = button.offsetWidth;
-  if (from < 1 || to < 1 || Math.abs(from - to) < 1 || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (from < 1 || to < 1 || Math.abs(from - to) < 1 || button.hasAttribute("data-instant")) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const style = getComputedStyle(button);
   const duration = parseFloat(style.getPropertyValue("--harmo-duration-normal"));
   const playing = {
@@ -45,16 +47,20 @@ const changeButtonWidth = (button, change) => {
 
 // Ignores activation on any .hbutton while aria-disabled, as the React
 // Button does: the click's default is prevented, so it sends no form, follows
-// no link, and runs no command. A click listener of your own leaves a click
-// whose default is prevented alone, as the loading example's below does.
-// Listening on the document covers buttons added later too.
-document.addEventListener(
-  "click",
-  (event) => {
-    if (event.target.closest?.(".hbutton")?.getAttribute("aria-disabled") === "true") event.preventDefault();
-  },
-  true,
-);
+// no link, and runs no command, and so is a middle click's, which would open
+// a link in a new tab. A link's context menu and dragging it still work. A
+// click listener of your own leaves a click whose default is prevented alone,
+// as the loading example's below does. Listening on the document covers
+// buttons added later too.
+for (const type of ["click", "auxclick"]) {
+  document.addEventListener(
+    type,
+    (event) => {
+      if (event.target.closest?.(".hbutton")?.getAttribute("aria-disabled") === "true") event.preventDefault();
+    },
+    true,
+  );
+}
 
 // Example only: a button that loads for two seconds, as the React Button
 // does while its action runs. aria-disabled keeps focus on it, and a press

@@ -90,8 +90,9 @@
   }
 
   & > .hinput {
-    // A small button, its 2px from the end, and 5px before it.
-    padding-inline-end: calc(1.8125rem + 7px);
+    // A small button, the scale's 2xs before it, and the button's 2px from
+    // the field's outer edge, less the 1px border the padding starts inside.
+    padding-inline-end: calc(#{$control-height-small} + 1px + #{$space-2xs});
 
     font-family: $font-family-mono;
     text-overflow: ellipsis;
@@ -100,6 +101,8 @@
   & > .htooltip-trigger {
     justify-self: end;
 
+    // An inset, not a step of the spacing scale: as far from the end as the
+    // small button is from the field's top and bottom, (34 - 29) / 2.
     margin-inline-end: 2px;
   }
 

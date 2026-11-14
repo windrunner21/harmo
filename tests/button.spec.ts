@@ -59,6 +59,22 @@ onEachPlayground("button", () => {
     expect(await page.evaluate(() => (window as unknown as { submitted: boolean }).submitted)).toBe(false);
   });
 
+  test("while aria-disabled, a link's middle click is ignored too, which would open it in a new tab", async ({ page }) => {
+    // React's Button ignores it from its aria-disabled prop, which
+    // examples/react/test/button.test.tsx checks.
+    test.skip(!inHtml(), "sets aria-disabled on the example's link, which React's props set");
+    const link = (await example(page, "button-links")).getByRole("link", { name: "View reports" });
+    const middleClick = () =>
+      link.evaluate((node) => {
+        const event = new MouseEvent("auxclick", { button: 1, bubbles: true, cancelable: true });
+        node.dispatchEvent(event);
+        return event.defaultPrevented;
+      });
+    expect(await middleClick(), "enabled").toBe(false);
+    await link.evaluate((node) => node.setAttribute("aria-disabled", "true"));
+    expect(await middleClick(), "aria-disabled").toBe(true);
+  });
+
   test("loading, the spinner follows the label, before an icon after it", async ({ page }) => {
     test.skip(!inHtml(), "adds an icon to the example's markup, which React's own rendering covers");
     const button = await loadingButton(page);
@@ -158,8 +174,8 @@ const catchWidthChanges = (button: Locator) =>
     };
   });
 
-// What docs/components/button.md says about destructive buttons and holding
-// to confirm.
+// What docs/components/button.md says about destructive buttons, holding to
+// confirm, and its icons.
 onEachPlayground("button", () => {
   test("destructive: filled red with white text, outlined with red text, or red text alone", async ({ page }) => {
     const container = await example(page, "button-destructive");
@@ -198,7 +214,7 @@ onEachPlayground("button", () => {
     await page.clock.runFor(600);
     await page.mouse.up();
     await expect(button).not.toHaveAttribute("data-holding");
-    expect(await transitionOf(fill)).toEqual({ property: "clip-path", duration: "0.2s", easing: "ease-out" });
+    expect(await transitionOf(fill)).toEqual({ property: "clip-path", duration: "0.2s", easing: "cubic-bezier(0.215, 0.61, 0.355, 1)" });
     await page.clock.runFor(2000);
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(labels).toHaveText(["Hold to delete", "Hold to delete"]);
@@ -404,13 +420,33 @@ onEachPlayground("button", () => {
     await expect.poll(() => styleOf(button, "border-top-color")).toBe(red);
   });
 
-  test("the fill's snap-back and the spinner's fade take --harmo-duration-normal, so a theme's duration reaches them", async ({ page }) => {
+  test("the fill's snap-back and the spinner's fade take --harmo-duration-normal and --harmo-ease-out-cubic, so a theme's reach them, with reduced motion too", async ({ page }) => {
+    const theme = (node: Element) => {
+      const parent = node.parentElement!;
+      parent.style.setProperty("--harmo-duration-normal", "300ms");
+      parent.style.setProperty("--harmo-ease-out-cubic", "cubic-bezier(0.1, 0.9, 0.2, 1)");
+      const style = getComputedStyle(node);
+      return { duration: style.transitionDuration, easing: style.transitionTimingFunction };
+    };
+    const themed = { duration: "0.3s", easing: "cubic-bezier(0.1, 0.9, 0.2, 1)" };
     const fill = (await example(page, "button-hold-to-confirm")).locator(".hbutton-hold").first();
     const spinner = (await example(page, "button-loading")).locator(".hbutton > .hspinner").first();
-    for (const part of [fill, spinner]) {
-      await part.evaluate((node) => node.parentElement!.style.setProperty("--harmo-duration-normal", "300ms"));
-      expect(await part.evaluate((node) => getComputedStyle(node).transitionDuration)).toBe("0.3s");
-    }
+    for (const part of [fill, spinner]) expect(await part.evaluate(theme)).toEqual(themed);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    expect(await fill.evaluate(theme)).toEqual(themed);
+  });
+
+  test("--hbutton-press-duration sets how long a hold button takes to shrink as it's pressed: 160ms by default", async ({ page }) => {
+    const { button } = await holdButton(page, "send");
+    const pressOf = () =>
+      button.evaluate((node) => {
+        const style = getComputedStyle(node);
+        const index = style.transitionProperty.split(", ").indexOf("transform");
+        return style.transitionDuration.split(", ")[index];
+      });
+    expect(await pressOf()).toBe("0.16s");
+    await button.evaluate((node) => (node as HTMLElement).style.setProperty("--hbutton-press-duration", "100ms"));
+    expect(await pressOf()).toBe("0.1s");
   });
 
   test("with reduced motion, the fill fades in over the hold instead of wiping across", async ({ page }) => {
@@ -462,6 +498,20 @@ onEachPlayground("button", () => {
     expect(await again.evaluate((node) => (node as WithChanges).changes.length)).toBe(0);
   });
 
+  test("with data-instant, for text that changes often, its width changes at once", async ({ page }) => {
+    const container = await example(page, "button-loading");
+    const button = container.getByRole("button", { name: "Save changes" });
+    // As an app puts it on a countdown's button; React leaves an attribute it
+    // doesn't render alone, as <Button instant> renders this one.
+    await button.evaluate((node) => node.setAttribute("data-instant", ""));
+    const before = await button.evaluate((node) => (node as HTMLElement).offsetWidth);
+    await catchWidthChanges(button);
+    await button.click();
+    await expect(button).toHaveAttribute("aria-busy", "true");
+    expect(await button.evaluate((node) => (node as WithChanges).changes.length)).toBe(0);
+    expect(await button.evaluate((node) => (node as HTMLElement).offsetWidth)).toBeGreaterThan(before + 5);
+  });
+
   test("changed again while its width changes, it carries on toward the newest width, and keeps its own inline styles", async ({ page }) => {
     test.skip(!inHtml(), "drives the example script's width change directly");
     const container = await example(page, "button-loading");
@@ -507,6 +557,28 @@ onEachPlayground("button", () => {
       return [...delta(withArrow, ".hbutton-label"), ...delta(iconOnly, ".hicon")];
     });
     for (const offset of offsets) expect(offset).toBeLessThan(0.5);
+  });
+
+  test("a ChevronToArrow keeps its 24px beside a label, and alone in an icon-only button is drawn at 20px, as every icon there", async ({ page }) => {
+    const container = await example(page, "button-with-an-arrow");
+    const sizes = await container.locator(".play-demo").evaluate((demo) => {
+      const labelled = demo.querySelector(".hbutton:has(> .hchevron-to-arrow)")!;
+      const alone = labelled.cloneNode(true) as HTMLElement;
+      alone.querySelector(".hbutton-label")!.remove();
+      alone.setAttribute("aria-label", "Go back");
+      demo.append(alone);
+      const size = (button: Element) => {
+        const box = button.querySelector(".hchevron-to-arrow")!.getBoundingClientRect();
+        return { width: box.width, height: box.height };
+      };
+      const sizes = { labelled: size(labelled), alone: size(alone) };
+      alone.remove();
+      return sizes;
+    });
+    expect(sizes.labelled.width).toBeCloseTo(24, 1);
+    expect(sizes.labelled.height).toBeCloseTo(24, 1);
+    expect(sizes.alone.width).toBeCloseTo(20, 1);
+    expect(sizes.alone.height).toBeCloseTo(20, 1);
   });
 
   test("an app's rule of the same weight, loaded after Harmo's, sizes and spaces an icon beside the label", async ({ page }) => {

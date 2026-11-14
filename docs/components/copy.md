@@ -125,7 +125,9 @@ it. Harmo ships no brand logos: use the ones your app is allowed to.
 - It's a [Button](button.md), with the icon at 20px.
 - Once it has copied, for two seconds: the icon shrinks and fades out in 150ms
   as the check grows and fades in, in 200ms, and back again after. With
-  reduced motion, they only fade.
+  reduced motion, they only fade. If what it copies changes meanwhile, such
+  as a key that's regenerated, it goes back at once; if it changes before
+  the copy is done, it doesn't say it's copied at all.
 - An icon-only one's tooltip says it's copied, and shows through those two
   seconds, even with no pointer over it, as on a touch screen.
 - With its text, the word changes, and the button's width goes from the old
@@ -134,8 +136,10 @@ it. Harmo ships no brand logos: use the ones your app is allowed to.
   [Toast](toast.md).
 - In a field: a read-only [Input](input.md) in `--harmo-font-family-mono`, its
   value ending in an ellipsis when it doesn't fit, and a small button 2px from
-  its end, at the left in right-to-left text. The button's focus ring has no
-  offset, so it stays inside the field.
+  its end, at the left in right-to-left text. The value stops 6px
+  (`--harmo-space-2xs`) before the button: the field keeps room for it,
+  worked out from `--harmo-control-height-small`, so a theme that resizes
+  small buttons resizes the room too. The button's focus ring has no offset, so it stays inside the field.
 
 ## Accessibility
 
@@ -157,13 +161,17 @@ it. Harmo ships no brand logos: use the ones your app is allowed to.
 | Ignore activation | While `aria-disabled="true"`, as for a [Button](button.md) |
 | Copy the text with `navigator.clipboard.writeText` | On a click |
 | Add `data-copied` to `.hcopy`, and `data-open` to its Tooltip trigger; set the status, and the tooltip's text or the `.hbutton-label`'s, to your "Copied" text; two seconds later, undo all of it. Make the status different each time, if only by an invisible space, so copying again is read again | Once it has copied |
+| Undo all of it at once | When what it copies changes while it says it's copied, such as a field's value when its key is regenerated or its form resets to another: the new one wasn't copied |
+| Confirm nothing | When what it copies has changed by the time the copy is done, such as a key regenerated while the clipboard was busy: the new one wasn't copied |
 | The width, from the old to the new, over 200ms, as [Button](button.md)'s script does | When the `.hbutton-label`'s text changes |
 | A Share Button: call `navigator.share` where the browser has it, and confirm nothing, since the share sheet says what happened; ignore an `AbortError`, which is someone closing the sheet. Elsewhere, copy the link | On a click |
 
 The playground's example script, `examples/html/src/scripts/copy.js`, does
 this. It changes a button's text through `changeButtonWidth` from Button's
 script, `examples/html/src/scripts/button.js`, so load that first; without
-it, the text changes at once. An icon-only one also needs
+it, the text changes at once. Setting a field's value sends no event, nor
+does a form reset, so it watches the field's `value` where a script sets it,
+and compares it after its form resets. An icon-only one also needs
 [Tooltip](tooltip.md)'s script, for Escape to hide its tooltip.
 
 ## React
@@ -175,15 +183,15 @@ tooltip and the status with the button. Without `href`: it's always a button.
 
 | Prop | Effect |
 | --- | --- |
-| `value` | `CopyButton`, `CopyField`: what to copy; on `CopyButton`, or a function that returns it |
-| `url`, `shareTitle`, `text` | `ShareButton`: what to share |
+| `value` | `CopyButton`, `CopyField`: what to copy; on `CopyButton`, or a function that returns it. A new string takes back a confirmation that's showing, or one for a copy not yet done |
+| `url`, `shareTitle`, `text` | `ShareButton`: what to share; a new `url` takes back a confirmation that's showing, or one for a copy not yet done |
 | `label` | `CopyButton`, `ShareButton`: the tooltip, or with `showLabel`, the text. `CopyField`: the field's label |
 | `copyLabel` | `CopyField`: the button's tooltip |
 | `copiedLabel` | What it says once it has copied |
 | `showLabel` | Shows the text, rather than a tooltip |
 | `variant`, `size` | Button's: `tertiary`, or with `showLabel`, `secondary` by default |
 | `optional`, `description` | `CopyField`: Field's |
-| `onCopy` | Called once it has copied, even if the button has gone by then, such as with a menu that closed |
+| `onCopy` | Called once it has copied, even if the button has gone by then, such as with a menu that closed, or what it copies has changed |
 | `onShare` | `ShareButton`: called once it has shared |
 | `onError` | Called with the error if it can't copy or share, such as to show a [Toast](toast.md) |
 
@@ -200,5 +208,6 @@ tooltip and the status with the button. Without `href`: it's always a button.
 ## Tokens
 
 `--harmo-font-family-mono`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`; Button's, and Tooltip's
-and Input's where they're used.
+`--harmo-duration-normal`, `--harmo-ease-out-cubic`; in a field,
+`--harmo-control-height-small` and `--harmo-space-2xs`, for the room kept
+for the button; Button's, and Tooltip's and Input's where they're used.

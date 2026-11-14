@@ -49,8 +49,9 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   // Every icon a button carries is 20px, beside a label or alone, whatever
   // its own width and height say, so icons from different sets match, and
-  // match the loading spinner. ChevronToArrow and the Expand Chevron keep
-  // their own sizes, which they're drawn for.
+  // match the loading spinner. Beside a label, ChevronToArrow and the Expand
+  // Chevron keep their own sizes, which they're drawn for; alone, in the
+  // icon-only rule below, ChevronToArrow is 20px too, as any icon there.
   & > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron)),
   & > :where(.hbutton-hold) > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron)) {
     inline-size: 1.25rem;
@@ -58,8 +59,10 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   }
 
   // An icon beside the label sits 3px from the border: with the space drawn
-  // around a 20px icon, it looks as far in as the label's text, 6px.
-  // ChevronToArrow and the Expand Chevron keep their own spacing.
+  // around a 20px icon, it looks as far in as the label's text, 6px. An
+  // optical inset, so a px value under the spacing scale, as are the
+  // spinner's 3px below. ChevronToArrow and the Expand Chevron keep their own
+  // spacing.
   & > .hicon:where(:not(.hchevron-to-arrow, .hexpand-chevron):has(+ .hbutton-label)) {
     margin-inline-start: 3px;
   }
@@ -68,7 +71,8 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     margin-inline-end: 3px;
   }
 
-  // The label spaces itself from icons and the border. Its block padding only
+  // The label spaces itself from icons and the border, by --harmo-icon-gap,
+  // 6px, as the scale's 2xs. Its block padding, 4px inside the label, only
   // shows when a long label wraps past the control height.
   & > .hbutton-label {
     padding: 0.25rem $icon-gap;
@@ -88,7 +92,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-block-end-color: transparent;
 
     // It fades in as loading starts, rather than appearing at once.
-    transition: opacity $duration-normal ease-out;
+    transition: opacity $duration-normal $ease-out-cubic;
 
     @starting-style {
       opacity: 0;
@@ -120,7 +124,8 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   // A resting ChevronToArrow sits 15px from the border on its side, keeping
   // room to slide into an arrow. Back arrows lead the label and forward arrows
   // follow it; match that space on the label's other side so the button is
-  // balanced at rest. Icon-only buttons stay square.
+  // balanced at rest. Icon-only buttons stay square. The 15px is where the
+  // chevron rests in its 24px drawing, not a step of the spacing scale.
   &:where(
     :has(> .hbutton-label):has(> .hchevron-to-arrow[data-direction="back"])
   ) {
@@ -202,7 +207,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
   }
 
   &[data-size="small"] {
-    min-block-size: 1.8125rem;
+    min-block-size: $control-height-small;
 
     font-size: $font-size-xs;
     line-height: 1.2;
@@ -211,7 +216,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-radius: calc(#{$border-radius-sm} + 2px);
 
     &:where(:not(:has(> .hbutton-label))) {
-      min-inline-size: 1.8125rem;
+      min-inline-size: $control-height-small;
     }
   }
 
@@ -317,10 +322,12 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 // course's hold to delete. While it's held (data-holding), by pointer, Enter,
 // or Space, its fill, a copy of its content a clear step into its color,
 // wipes across from the start, linear, as time passing is, and snaps back in
-// 200ms, ease-out, when let go early. Held all the way (data-held), it stays
-// full for a moment, then the action starts. A script runs it.
+// 200ms, easing out, when let go early. Held all the way (data-held), it
+// stays full for a moment, then the action starts. A script runs it.
 .hbutton[data-hold] {
   --hbutton-hold-duration: 1.5s;
+  // The course's press, a little deeper than other buttons'.
+  --hbutton-press-duration: 160ms;
   // The fill. An outlined or text button fills with its color's tint, with
   // that color's text and border, as in the course's recipe; a filled one
   // deepens, a clear step darker, keeping its white text.
@@ -330,12 +337,11 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   position: relative;
 
-  // The course's press, a little deeper than other buttons'.
   transition:
     background-color $button-duration ease,
     color $button-duration ease,
     border-color $button-duration ease,
-    transform 160ms $ease-out-quad;
+    transform var(--hbutton-press-duration) $ease-out-quad;
 
   // A long press on a touch screen would select its text or open a menu.
   -webkit-touch-callout: none;
@@ -434,7 +440,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
 
   // Hidden past its end edge; let go early, it snaps back in 200ms.
   clip-path: inset(0 100% 0 0);
-  transition: clip-path $duration-normal ease-out;
+  transition: clip-path $duration-normal $ease-out-cubic;
 
   &:dir(rtl) {
     clip-path: inset(0 0 0 100%);
@@ -466,7 +472,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     border-color: currentColor;
     border-block-end-color: transparent;
 
-    transition: opacity $duration-normal ease-out;
+    transition: opacity $duration-normal $ease-out-cubic;
 
     @starting-style {
       opacity: 0;
@@ -516,7 +522,7 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     opacity: 0;
 
     clip-path: none;
-    transition: opacity $duration-normal ease-out;
+    transition: opacity $duration-normal $ease-out-cubic;
   }
 
   .hbutton[data-holding] > .hbutton-hold {

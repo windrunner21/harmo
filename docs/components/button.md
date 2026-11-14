@@ -91,10 +91,10 @@ of its content in `.hbutton-hold`:
 | (default) | Primary: filled `--harmo-color-primary-fill` |
 | `data-variant="secondary"` | Outlined, lightly raised |
 | `data-variant="tertiary"` | Text only; tinted background on hover |
-| `data-size="small"` | Compact: 29px, 13px text, 6px radius, for notices, rows, and cards |
+| `data-size="small"` | Compact: `--harmo-control-height-small` (29px), 13px text, 6px radius, for notices, rows, and cards |
 | `.hbutton-label` | Spaces the text 6px from the border and from icons; long labels wrap |
 | No `.hbutton-label` | Icon only: a square as wide as it is tall |
-| A direct `.hicon` | Drawn at 20px, whatever size the SVG declares, so icons from different sets match; ChevronToArrow and the Expand Chevron keep their own |
+| A direct `.hicon` | Drawn at 20px, whatever size the SVG declares, so icons from different sets match; beside a label, ChevronToArrow and the Expand Chevron keep their own |
 | A trailing `.hexpand-chevron` | Kept 6px (`--harmo-icon-gap`) from the border, like the label's text |
 | `disabled` | Dimmed, not-allowed cursor (`<button>` only) |
 | `aria-disabled="true"` | Looks disabled but stays focusable; a script must ignore activation |
@@ -102,6 +102,8 @@ of its content in `.hbutton-hold`:
 | `data-destructive` | Destructive, in any variant: filled red, outlined with red text, or red text alone; the focus ring keeps the accent |
 | `data-hold` | Hold to confirm: the action runs once the button is held; see [Hold to confirm](#hold-to-confirm) |
 | `--hbutton-hold-duration` | How long it's held: `1.5s` by default |
+| `--hbutton-press-duration` | How long a hold button takes to shrink as it's pressed: `160ms` by default |
+| `data-instant` | Its width follows a change of its text at once, for text that changes often, such as a countdown or a live count; read by the script |
 
 ## Appearance and states
 
@@ -112,8 +114,8 @@ of its content in `.hbutton-hold`:
   instead of the button. `vertical-align: middle`, so icon-first and
   text-first buttons line up.
 - Icon only: a 34px square (29px when small) with the icon centered and drawn
-  at 20px, whatever size the SVG declares. While loading, a `.hspinner` takes
-  the icon's place.
+  at 20px, whatever size the SVG declares, a ChevronToArrow too. While
+  loading, a `.hspinner` takes the icon's place.
 - Loading: the spinner follows the label and the button grows to fit it. The
   spinner is 16px, drawn in the button's text color with a gap, 9px after the
   text and 6px from the border. The button looks disabled and shows a progress
@@ -131,8 +133,9 @@ of its content in `.hbutton-hold`:
   `--harmo-ease-out-cubic`) rather than jumping, its content on one line and
   clipped to it meanwhile, then its own inline `overflow` and `white-space`
   back. A change while one plays carries on from where that one had got to.
-  With reduced motion, the width changes at once; a loading spinner still
-  fades in, in 200ms.
+  With reduced motion, or `data-instant`, the width changes at once; a
+  loading spinner still fades in, in 200ms (`--harmo-duration-normal`,
+  `--harmo-ease-out-cubic`).
 - An icon beside the label sits 3px from the border, so with the space drawn
   around it, it looks as far in as the label's text.
 
@@ -150,11 +153,11 @@ of its content in `.hbutton-hold`:
 - While it's held (`data-holding`), its fill, a copy of its content a clear
   step into the button's color, wipes across from its start edge over
   `--hbutton-hold-duration`, `linear`, as it shows time passing, its border
-  too. Let go early, it snaps back in 200ms (`--harmo-duration-normal`),
-  `ease-out`: the hold slow and even, the release fast, as the
+  too. Let go early, it snaps back in 200ms (`--harmo-duration-normal`,
+  `--harmo-ease-out-cubic`): the hold slow and even, the release fast, as the
   animations.dev course's hold to delete does. Pressed, it shrinks to 0.97
-  in 160ms (`--harmo-ease-out-quad`), as in the course, and keeps its
-  resting colors, since the fill is its feedback.
+  in 160ms (`--hbutton-press-duration`, `--harmo-ease-out-quad`), as in the
+  course, and keeps its resting colors, since the fill is its feedback.
 - The fill on an outlined or text button, as in the course's recipe, is its
   color's tint with that color's text and border: `--harmo-color-primary` on
   `--harmo-color-primary-tint`, or, destructive, `--harmo-color-danger` on
@@ -170,7 +173,7 @@ of its content in `.hbutton-hold`:
 - On a right-to-left page, the fill comes in from the right.
 - With reduced motion, the fill fades in over the hold instead of wiping
   across, so the hold still shows its time passing without anything sweeping
-  across the screen, and fades out when let go.
+  across the screen, and fades out in 200ms when let go.
 - A long press doesn't select its text or open the touch screen's menu.
 
 ## Accessibility
@@ -195,15 +198,19 @@ of its content in `.hbutton-hold`:
 
 | Change | When |
 | --- | --- |
-| Ignore activation: prevent the click's default, so it sends no form, follows no link, and runs no command, and don't act | While `aria-disabled="true"` |
+| Ignore activation: prevent the click's default, so it sends no form, follows no link, and runs no command, and don't act; prevent a middle click's (`auxclick`) default too, which would open a link in a new tab | While `aria-disabled="true"` |
 | Add `aria-busy="true"`, `aria-disabled="true"`, and a `.hspinner` right after the `.hbutton-label`, before any icon that follows it; remove them when done | While an action is in progress |
-| The width, from the old to the new, over 200ms | When what it shows changes, its text or whether it's loading, unless it's appearing or disappearing, as when `hidden` changes too |
+| The width, from the old to the new, over 200ms | When what it shows changes, its text or whether it's loading, unless it's appearing or disappearing, as when `hidden` changes too, or it has `data-instant` |
 | `data-holding`, for `--hbutton-hold-duration`, then `data-held` for 200ms, then the action | While a `data-hold` button is held by the primary pointer, or by Enter or Space; leaving it, a second finger, or letting go early stops it, and a held key's repeats are ignored |
 | Stop the hold, and the moment after a full one, at once | When a `data-hold` button turns `disabled` or `aria-disabled="true"` meanwhile |
 | No action when the hold, or the moment after it, ends | When a `data-hold` button is disabled through its `<fieldset disabled>` meanwhile, which changes nothing on the button itself |
 | The action, at once | On a `data-hold` button's click with no press behind it, such as a screen reader's |
 | Nothing native: the click's default is prevented | On every `data-hold` button's click, so it never sends a form or runs a command on its own; the action does that |
 | A finger's pointer capture, released | As a hold starts by touch or pen, so moving off the button lets go |
+
+An `aria-disabled` link keeps its `href`, so its context menu, with Open in
+new tab, and dragging it to another tab still go to it; only removing the
+`href` would stop those.
 
 `examples/html/src/scripts/button.js` is an example script for all of it.
 
@@ -221,11 +228,12 @@ stays square. Other props are the button's or the link's attributes, so
 | --- | --- |
 | `variant` | `secondary` or `tertiary`; primary when left out |
 | `size` | `small` |
-| `loading` | Shows the spinner after the label, sets `aria-busy` and `aria-disabled`, and ignores clicks |
+| `loading` | Shows the spinner after the label, sets `aria-busy` and `aria-disabled`, and ignores clicks and middle clicks |
 | `href` | Renders a link, through `HarmoProvider`'s `linkComponent` (an `<a>` by default) |
-| `aria-disabled` | `"true"` keeps it focusable but ignores clicks, so a [Tooltip](tooltip.md) can explain why |
+| `aria-disabled` | `"true"` keeps it focusable but ignores clicks and middle clicks, so a [Tooltip](tooltip.md) can explain why; a link's context menu and dragging it still work |
 | `commandfor`, `command` | The button's command for another element, such as `command="show-modal"` to open the [Dialog](dialog.md) whose id `commandfor` names |
 | `destructive` | For an action that destroys something: red, in any variant |
+| `instant` | Sets `data-instant`: its width follows a change of its text at once, for text that changes often, such as a countdown's "Resend code in 30s" |
 | `onHold` | Makes it a hold button, and runs once it's held, as React Native's `onLongPress` does; `onClick` still runs on every click. Its click doesn't do what a button's click does natively, so a `type="submit"` hold button doesn't send its form; send it from `onHold`, such as with `form.requestSubmit()` |
 | `holdDuration` | How long it's held, in milliseconds: 1500 by default |
 
@@ -263,6 +271,7 @@ stays square. Other props are the button's or the link's attributes, so
 `--harmo-color-primary-fill-active`, `--harmo-color-primary-fill-hover`,
 `--harmo-color-primary-tint`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-control-height`,
-`--harmo-ease-out-quad`, `--harmo-focus-outline`,
+`--harmo-control-height-small`, `--harmo-ease-out-quad`,
+`--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-font-family`, `--harmo-font-size-sm`,
 `--harmo-font-size-xs`, `--harmo-icon-gap`, `--harmo-opacity-disabled`.
