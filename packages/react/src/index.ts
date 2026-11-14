@@ -41,7 +41,7 @@ export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
-export { Field, type FieldProps } from "./field/Field.tsx";
+export { Field, useField, type FieldControl, type FieldProps } from "./field/Field.tsx";
 export { FilterBar, FilterBarItem, type FilterBarItemProps, type FilterBarProps } from "./FilterBar.tsx";
 export { FileInput, type FileInputProps } from "./FileInput.tsx";
 export { FileList, type FileListItem, type FileListProps } from "./FileList.tsx";
@@ -108,9 +108,11 @@ export {
   SidebarGroup,
   SidebarItem,
   SidebarSub,
+  SidebarSubItem,
   type SidebarGroupProps,
   type SidebarItemProps,
   type SidebarProps,
+  type SidebarSubItemProps,
   type SidebarSubProps,
 } from "./Sidebar.tsx";
 export { Spinner, type SpinnerProps } from "./Spinner.tsx";

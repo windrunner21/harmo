@@ -55,6 +55,25 @@ accents; otherwise load `accents.css` after `tokens.css`.
 
 For React, use [`@harmo-ui/react`](https://www.npmjs.com/package/@harmo-ui/react).
 
+## SCSS source
+
+The SCSS that the CSS is compiled from ships in `src`. With Dart Sass's
+`pkg:` importer, your own SCSS can use its shortcuts, named after the tokens.
+Give the file's whole name:
+
+```scss
+@use "pkg:@harmo-ui/css/src/_shortcuts.scss" as *;
+
+.invoice-total {
+  padding: $space-xs;
+
+  color: $color-text-secondary;
+}
+```
+
+The shortcuts are references, such as `var(--harmo-color-text-secondary)`,
+not values, so the page still needs `tokens.css`, or `index.css`, loaded once.
+
 ## Learn more
 
 - [Components](https://github.com/windrunner21/harmo/blob/master/docs/components/README.md):

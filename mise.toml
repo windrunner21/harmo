@@ -1,7 +1,9 @@
 [tools]
-bun = "latest"
+# Exact versions, so CI runs what was tested; move them on purpose, with a
+# release (see CONTRIBUTING.md).
+bun = "1.4.4"
 # Only for Playwright's test runner, which runs on Node; Bun does the rest.
-node = "lts"
+node = "26.13.1"
 
 # Standalone Dart Sass. The aqua registry lists only the musl build for Linux,
 # which cannot run on glibc systems, so name the glibc builds explicitly.

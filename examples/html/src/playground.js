@@ -68,6 +68,50 @@
     } catch {}
   });
 
+  // With ?events in the address, a panel lists what a hold button receives,
+  // newest first: each event, its pointer type, a click's detail, where it
+  // landed from the button's center, and the hold's own states. It's for
+  // finding out on a phone, which has no developer tools, what a screen
+  // reader sends when it activates one.
+  if (new URLSearchParams(location.search).has("events")) {
+    const log = document.createElement("ol");
+    log.className = "play-events";
+    document.body.append(log);
+    let last;
+    const note = (text, at) => {
+      const item = document.createElement("li");
+      item.textContent = `${last === undefined ? "" : `+${Math.round(at - last)}ms `}${text}`;
+      last = at;
+      log.prepend(item);
+    };
+    const types = ["pointerdown", "pointerup", "pointercancel", "pointerleave", "touchstart", "touchend", "mousedown", "mouseup", "keydown", "keyup", "click", "contextmenu"];
+    for (const type of types) {
+      document.addEventListener(
+        type,
+        (event) => {
+          const button = event.target.closest?.(".hbutton[data-hold]");
+          if (!button) return;
+          const parts = [type];
+          if (event.pointerType !== undefined) parts.push(event.pointerType || "no pointer type");
+          if (type === "click") parts.push(`detail ${event.detail}`);
+          if (event.key !== undefined) parts.push(event.key);
+          if (event.clientX !== undefined && !(type === "click" && event.detail === 0)) {
+            const box = button.getBoundingClientRect();
+            parts.push(`${Math.round(event.clientX - box.left - box.width / 2)}, ${Math.round(event.clientY - box.top - box.height / 2)} from center`);
+          }
+          note(parts.join(" · "), event.timeStamp);
+        },
+        true,
+      );
+    }
+    new MutationObserver((records) => {
+      for (const { target, attributeName } of records) {
+        if (!target.matches(".hbutton[data-hold]")) continue;
+        note(`${target.hasAttribute(attributeName) ? "+" : "−"} ${attributeName}`, performance.now());
+      }
+    }).observe(document.body, { subtree: true, attributeFilter: ["data-holding", "data-held", "aria-busy"] });
+  }
+
   // The Accent picker in the HTML playground, a Select like any other: once
   // an accent is chosen, set it on the page and remember it. The React
   // playground's picker does the same in AccentPicker.tsx.

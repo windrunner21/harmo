@@ -98,6 +98,9 @@ Options when nothing changes the component.
    element named there.
 9. **Tokens**: every `--harmo-*` it reads, taken from its stylesheet.
 
+A modal's page, Dialog's and Drawer's, adds **Opening and closing** after
+Markup: every way it opens and closes, and what each one plays.
+
 ## Loading the CSS
 
 `@harmo-ui/css` (`index.css`) contains the token defaults and every component. For
@@ -167,8 +170,11 @@ Some components are built from others, so their files need company:
   state, about (0,2,0), with any context they depend on in `:where()`, which
   counts as nothing. An app's rule of the same weight, loaded after Harmo,
   wins: `.hoption[aria-selected="true"]` overrides Harmo's selected option
-  without `!important`. A few rules that combine states are heavier, such as a
-  banner's action button on hover; override those with a matching selector.
+  without `!important`. A few rules are heavier, and a matching selector
+  overrides them: a Field's description under its label, and the control in a
+  horizontal Field; a Setting's control; the room Search and Password Input
+  keep for their buttons; the field under a highlight in Input and TextArea;
+  and a Banner's or Toast's action on hover and press.
 - **Token names** are inspired by Stripe's Elements Appearance API: what is colored,
   then the variant, then the state (`--harmo-color-text-secondary`,
   `--harmo-color-primary-hover`); component tokens start with the component
@@ -207,7 +213,7 @@ Some components are built from others, so their files need company:
   | `data-filled` | A filled segment | Meter |
   | `data-active` | Highlighted option (script) | Listbox |
   | `data-value` | An option's value | Listbox, and what's built on it: Select, Combobox, Filter Chip, Language Picker |
-  | `data-name` | The name a form sends the chosen values under | Select |
+  | `data-name` | The name a form sends the chosen values under | Select, Combobox |
   | `data-ready` | Measured and placed (script) | Tabs, Table of Contents |
   | `data-on-current` | The pill is over the current tab (script) | Tabs |
   | `data-level` | `2` or `3`: a heading under another | Table of Contents |
@@ -228,30 +234,52 @@ Some components are built from others, so their files need company:
   | `data-stacked`, `data-inactive` | Two texts in one place, and the one not showing | File Input |
   | `data-leaving` | Fading out before it's taken away (script) | File Input, Toast |
   | `data-layout` | `grid`: thumbnails | File List |
-  | `data-new` | Just added, settling in | File List |
+  | `data-new` | Just added or changed, settling in; left off what's there as the page loads | File List, File Input, Selection Bar |
+  | `data-instant` | Changes at once, without its motion: yours on a Button whose text changes often, such as a countdown, for its width; a script's on a tooltip's trigger, when it shows with no delay, and on a Time Picker's column while the arrow keys move its choice | Button, Tooltip, Time Picker |
   | `data-emphasis`, `data-footer` | A cell that stands out; `static`, a footer that stays under the table | Table |
-  | `data-front`, `data-beyond`, `data-expanded`, `data-removed`, `data-moved` | Its place in the stack, spread out, leaving, and moving (script) | Toast |
+  | `data-front`, `data-beyond`, `data-expanded`, `data-overflowing`, `data-removed`, `data-moved` | Its place in the stack, spread out, scrolling when spread out taller than the window, leaving, and moving (script) | Toast |
 - **Text sizes are in rem**, so text follows the browser's default font-size
   setting as well as zoom. The scale runs `--harmo-font-size-lg` (20px),
-  `-base` (16px), `-sm` (14px), `-xs` (13px), `-2xs` (12px), and `-3xs`
-  (11px); line heights are unitless or rem, never px. Pixel sizes in these
-  docs are at the default 16px.
+  `-base` (16px), `-md` (15px), `-sm` (14px), `-xs` (13px), `-2xs` (12px),
+  and `-3xs` (11px); line heights are unitless or rem, never px. Pixel sizes
+  in these docs are at the default 16px.
+- **Spacing** follows a scale in rem, each step the one before it times the
+  golden ratio: `--harmo-space-2xs` (6px), `-xs` (10px), `-sm` (16px), `-md`
+  (26px), `-lg` (42px), `-xl` (68px), and `-2xl` (110px). Separate things sit
+  a big step apart, such as the buttons in a row, 10px; parts of one thing a
+  small one, 6px (`-2xs`), with no exception: a Field's label and its
+  control, a title and its description, an icon and its text in a row, or
+  the tags in a Tag List. Padding that sets a row's or a
+  chip's height, such as a list option's or a table cell's, hairlines, insets
+  under 6px, and the room kept for focus rings stay in px, and so do the
+  distances of popups, tooltips, and toasts from what they open from and from
+  the window's edges.
 - **Control height.** Buttons, inputs, and select triggers share
-  `--harmo-control-height` (34px), so they line up in a row. Inputs and select
-  triggers also share their box, border, focus ring, and states through the
-  `%control` placeholder in `_control.scss`.
+  `--harmo-control-height` (34px), so they line up in a row; a small Button
+  is `--harmo-control-height-small` (29px), and a field that holds one, such
+  as a Copy Field, keeps room for it. Inputs and select triggers also share
+  their box, border, focus ring, and states through the `%control`
+  placeholder in `_control.scss`, and where their text starts, 10px in, from
+  its `$padding-inline`.
 - **Icons scale with text.** Inline icons are sized in `em`, and a Button
-  draws its icons at 20px, in `rem`; ChevronToArrow,
-  a fixed 24px, is the exception. The space between text and an icon's box is
+  draws its icons at 20px, in `rem`. ChevronToArrow is the exception: 24px
+  by default, the size it's drawn for, and 20px only alone in an icon-only
+  Button, as every icon there. The space between text and an icon's box is
   `--harmo-icon-gap` (6px); icons with wide blank margins, such as the static
   chevron, offset them so every visible gap matches.
 - **Motion.** Durations come from `--harmo-duration-*` and curves from
   `--harmo-ease-*`. Most entrances take 200ms and exits 150ms; the others,
-  such as Tooltip's 150ms in and 100ms out or a Field error's 300ms in, are on
+  such as Tooltip's 150ms in and 100ms out or the Drawer's 300ms slide, are on
   their pages. Exits are quicker than entrances, except Toast's, whose exit
-  matches its 400ms entrance. A color or background fading on hover uses the
-  plain CSS `ease`, which has no token. Reduced motion keeps
-  the state change and drops the movement.
+  matches its 400ms entrance. Fades, like entrances, use
+  `--harmo-ease-out-cubic`; a color or background fading on hover uses the
+  plain CSS `ease`, which has no token. A timing a component keeps for itself,
+  such as a spinner's turn, is a property of its own, such as
+  `--hspinner-duration`, in its page's Options. What happens often, or
+  follows the arrow keys, changes at once: a selection moving with the arrow
+  keys, Command Menu's dialog, a checkbox or radio toggled from the keyboard,
+  and a tooltip that shows with no delay. Reduced motion keeps the state
+  change and drops the movement.
 - **Hiding.** `hidden` hides any component or part of one, at once, since
   `display: none` can't animate. A Field's error and the password details are
   the exceptions: with `hidden` they stay rendered and collapse, which is how
@@ -259,6 +287,12 @@ Some components are built from others, so their files need company:
   instead, so don't add `hidden` to one that should fade. Browsers ignore
   `hidden` on SVG, so leave an icon out to hide it.
 - **Hover** styles apply only on devices that hover with a fine pointer.
+- **Disabled.** A box or a mark, such as a button, a checkbox, a switch, an
+  option's checkbox, or an icon in a field, dims to
+  `--harmo-opacity-disabled`. Text, such as an option, a tab, or a Navigation
+  Menu trigger, turns `--harmo-color-text-tertiary`. Text fields and select
+  triggers take the secondary background, with tertiary text. Each has a
+  `not-allowed` cursor and no hover.
 - **Focus rings** are `--harmo-focus-outline` (2px solid `--harmo-color-focus`),
   named after Stripe's `focusOutline`, at `--harmo-focus-outline-offset`
   (2px). Some keep their own offset: tabs (always 2px, so the ring stays above
@@ -280,14 +314,14 @@ the React components, set:
 | `indeterminate` (property) | Checkbox | Mixed state |
 | `aria-busy`, `aria-disabled`, `data-holding`, `data-held`, the width | Button | Loading; ignoring presses while disabled; hold to confirm; the width following its content |
 | `--htabs-*`, `data-ready`, the strip's scroll position | Tabs | Sliding hover pill and underline; the current tab in view |
-| `aria-current="location"`, `--htoc-marker-y`, `--htoc-marker-size`, `data-ready` | Table of Contents | Follow the section you've reached, and move the marker to it |
+| `aria-current="location"`, `--htable-of-contents-marker-y`, `--htable-of-contents-marker-size`, `data-ready` | Table of Contents | Follow the section you've reached, and move the marker to it |
 | `aria-selected`, `tabindex`, panel `hidden` | Tabs in a tablist | Selection, arrow keys, the shown panel |
 | `data-dismissed`, `--htooltip-delay` | Tooltip | Escape to hide; neighbors show at once |
 | `aria-expanded` | Popup triggers, select triggers, Menu Button | Open ring, chevron direction, the bars' cross |
 | `aria-expanded`, `aria-activedescendant`, `data-active`, option `hidden`, `.hoption-match`, the status, tags, hidden inputs | Combobox | Filter, highlight, pick, and choose several |
 | `aria-expanded`, `aria-activedescendant`, `aria-keyshortcuts`, `data-active`, option `hidden`, `.hoption-match` | Command Menu | Filter, highlight, the shortcut, and opening |
 | `aria-expanded`, `inert`, `data-open`, `data-moving`, `data-position`, `--hnavigation-menu-*` | Navigation Menu | Open and close its panels, and size its frame |
-| `data-collapsed`, `aria-expanded`, the toggle's tooltip text, a group's `open` | Sidebar | Collapse, and the groups beside its icons |
+| `data-collapsed`, the toggle's tooltip text, a group's `open` | Sidebar | Collapse to its icons, with the toggle named by what it does next, while CSS glides the width; close the open groups as it collapses; and, collapsed, open a group's links beside its icon, one group at a time |
 | The clear button's `hidden`, the field's value | Search | Show the clear button; empty the field on it, or on Escape |
 | The tag itself, focus | Tag | Remove it, and keep the keyboard's place |
 | Tags' `hidden`, `.htag-list-rest`, the count, `data-open` | Tag List | Count what fits, and pin its tooltip open |
@@ -297,16 +331,16 @@ the React components, set:
 | `.hfilter-chip-value` items | Filter Chip | The chosen values, or a count past two |
 | The count and `hidden` on it, `hidden` on Reset | Filters | Follow which chips show a value |
 | `aria-pressed`, or `aria-current` from your router | Filter Bar | The filter in force |
-| The button's text and icon, the remove button's `hidden`, the message and `aria-invalid` | File Input | Show the file, remove it, and say why one was refused |
-| `data-status`, the progress, the rows themselves | File List | Follow your app's uploads |
+| The button's text and icon, the remove button's `hidden`, `data-new` on what a change puts in, the message and `aria-invalid` | File Input | Show the file, remove it, and say why one was refused |
+| `data-status`, the progress, the rows themselves, and a finished file's check, with `data-new` | File List | Follow your app's uploads |
 | The field's text, the country, and the hidden value | Phone Input | Format the number and follow the country |
 | The button's label; the highlight, by Left and Right in a panel of regions | Language Picker | Show the language chosen, and its region; move between columns |
-| The count's text | Selection Bar | Follows the selection, which is your app's |
+| The bar, with `data-new` as a selection begins, and the count's text | Selection Bar | Follows the selection, which is your app's |
 | `checked` and `indeterminate`, hidden columns, the rows and the page; `tabindex`, `role`, and the table's `aria-label` or `aria-labelledby` on `.htable-scroll` while it overflows | Table | Follow the selection, the columns chosen, and the page, which are your app's; make a scroll area that overflows a named region the keyboard can scroll |
 | Which fields are `hidden`, Apply's `aria-disabled`, the dates' first and last days, the chip's value | Date Filter | Follow the condition, the fields, and the value applied |
 | The title, the rows, Previous's and Next's `aria-disabled`, `aria-selected`, focus and `tabindex` | Calendar | Change the month, choose a day, and move by keyboard |
 | The field's text, `aria-invalid`, the hidden input, the Calendar's day | Date Picker | Write and read the date in the locale's order, or pick it from the Calendar |
-| `aria-selected`, `aria-activedescendant`, `.htime-picker-value`, `data-placeholder`, the hidden input | Time Picker | Choose the time, by pointer or keyboard, and show it |
+| `aria-selected`, `aria-activedescendant`, `data-instant`, `.htime-picker-value`, `data-placeholder`, the hidden input | Time Picker | Choose the time, by pointer or keyboard, and show it; the keyboard's moves change at once |
 | `data-side="top"`, `data-refit`, `data-pinned`, focus back on the trigger | Popup | Slide away from a trigger it opened above, find its place afresh as it opens, close where it is, and hand focus back when one opened over another closes |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
 | `aria-selected` | Listbox option | Selection |
@@ -319,7 +353,7 @@ the React components, set:
 | `aria-valuenow`, `aria-valuetext`, `data-filled`, `data-status` | Meter | The value |
 | `role="status"` or `role="alert"` | Banner | Announce a banner that appears after load |
 | `data-closing` | Dialog, Drawer | Hold the close while the exit plays |
-| The toasts, the announcers' text, `--htoast-*`, `--htoaster-*`, `data-front`, `data-beyond`, `data-expanded`, `data-removed`, `data-leaving`, `data-moved`, `inert` | Toast | Show, announce, measure, stack, spread out, time, and move them into an open dialog |
+| The toasts, the announcers' text, `--htoast-*`, `--htoaster-*`, `data-front`, `data-beyond`, `data-expanded`, `data-overflowing`, `data-removed`, `data-leaving`, `data-moved`, `inert` | Toast | Show, announce, measure, stack, spread out, scroll, time, close on an action, and move them into an open dialog |
 
 Each component page's "What a script does" section has the details.
 

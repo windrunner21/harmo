@@ -38,12 +38,14 @@ const pairs = (css: string) =>
   );
 
 describe("theme's colors", () => {
-  // Blue, teal, green, a light yellow, orange, red, violet, near-black, gray, and white.
-  const brands = ["#0f75b6", "#00c2a8", "#16a34a", "#ffd400", "#ff6b00", "#e11d48", "#7c3aed", "#222222", "#6b7280", "#ffffff"];
+  // Blue, teal, green, a light yellow, orange, red, violet, near-black, gray, a
+  // gray just dark enough for white text, and white.
+  const brands = ["#0f75b6", "#00c2a8", "#16a34a", "#ffd400", "#ff6b00", "#e11d48", "#7c3aed", "#222222", "#6b7280", "#767676", "#ffffff"];
 
   for (const brand of brands) {
     test(`${brand}: every role reaches WCAG AA, in light and dark mode`, () => {
-      const p = pairs(theme(brand).css);
+      const generated = theme(brand);
+      const p = pairs(generated.css);
       const value = (token: string, mode: 0 | 1) => {
         const pair = p[token];
         if (!pair) throw new Error(`no ${token}`);
@@ -55,6 +57,10 @@ describe("theme's colors", () => {
         expect(contrast(value("color-primary", mode), page), "text on the page").toBeGreaterThanOrEqual(4.5);
         expect(contrast(value("color-primary-hover", mode), page), "hovered text").toBeGreaterThanOrEqual(4.5);
         expect(contrast(value("color-primary", mode), value("color-primary-tint", mode)), "marks on the tint").toBeGreaterThanOrEqual(3);
+        // Text on the tint, as on Pagination's current page. Only a gray's
+        // theme reaches it so far; a colored one reaches about 3.8:1 to 4.7:1.
+        if (generated.basis === "mono")
+          expect(contrast(value("color-primary", mode), value("color-primary-tint", mode)), "text on the tint").toBeGreaterThanOrEqual(4.5);
         for (const fill of ["color-primary-fill", "color-primary-fill-hover", "color-primary-fill-active"])
           expect(contrast(label, value(fill, mode)), `text on ${fill}`).toBeGreaterThanOrEqual(4.5);
         expect(contrast(value("color-primary-fill", mode), page), "a switch's track").toBeGreaterThanOrEqual(3);
@@ -89,6 +95,28 @@ describe("theme's colors", () => {
     expect(gray.basis).toBe("mono");
     expect(gray.css).toContain("--harmo-color-on-primary: light-dark(#ffffff, #14151b);");
     expect(gray.css).toContain("--harmo-link-hover-text-decoration: underline;");
+  });
+
+  test("a gray that reads on white but not on its tint lightens the tint, then darkens only as far as it needs, and says so", () => {
+    const gray = theme("#767676");
+    const p = pairs(gray.css);
+    const [primary, tint] = [p["color-primary"]?.[0] as string, p["color-primary-tint"]?.[0] as string];
+    expect(gray.darkened).toBe(primary);
+    expect(gray.tooLightFor).toBe("text on its tint");
+    expect(gray.css).toContain(`#767676 is too light for text on its tint, so text and buttons use ${primary}.`);
+    expect(contrast(primary, tint)).toBeGreaterThanOrEqual(4.5);
+    // Lighter than mono's tint, still a tint, and the gray darkened no further
+    // than a tint that faint needs.
+    expect(contrast(tint, WHITE)).toBeLessThan(contrast("#ebeef1", WHITE));
+    expect(contrast(tint, WHITE)).toBeGreaterThanOrEqual(1.1);
+    expect(contrast(primary, WHITE)).toBeLessThan(5.2);
+  });
+
+  test("a gray that already reads on its tint keeps it and stays as it is", () => {
+    const gray = theme("#5f6b7a");
+    expect(gray.darkened).toBeUndefined();
+    expect(gray.css).toContain("--harmo-color-primary: light-dark(#5f6b7a, ");
+    expect(gray.css).toContain("--harmo-color-primary-tint: light-dark(#ebeef1, ");
   });
 
   test("reads a hex code with or without #, and short ones, and refuses anything else", () => {

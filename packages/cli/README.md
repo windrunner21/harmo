@@ -69,7 +69,8 @@ That writes `harmo-theme.css` next to `harmo.css`, and adds it there: your color
 every role, in light and dark mode, adapted from the nearest of Harmo's accents at
 the same contrast, so text and buttons pass WCAG AA. A color too light for white
 text, such as a bright yellow, is darkened for text and buttons, and the file says
-so. Change any line you like; running it again asks before replacing a file you've
+so. A gray's tint, behind the page you're on in Pagination, is lightened until the
+gray reads on it, and the gray is darkened only if that isn't enough. Change any line you like; running it again asks before replacing a file you've
 changed.
 
 ## Updates

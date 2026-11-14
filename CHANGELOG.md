@@ -8,17 +8,276 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Upgrading
+
+- **With `open` held by you, Dialog, Drawer, and Command Menu ask before they
+  open.** While your `open` is `false`, a button that would open one, its
+  `trigger` included, and Command Menu's shortcut call `onOpenChange(true)` and
+  leave it closed until your `open` is `true`. A close is still the browser's,
+  and calls `onOpenChange(false)`, so your `open` must follow it. And
+  `onOpenChange` is no longer called as one follows a change you made to `open`.
+
+  What you'll notice: if your `onOpenChange` handles only `false`, its button no
+  longer opens it.
+
+  In 0.5, the button opened it, whatever `open` said:
+
+  ```tsx
+  <Dialog label="Invite people" closeLabel="Close" trigger={<Button>Invite people</Button>}
+    open={open} onOpenChange={(next) => { if (!next) setOpen(false); }}>
+  ```
+
+  Now, `open` follows both ways:
+
+  ```tsx
+  <Dialog label="Invite people" closeLabel="Close" trigger={<Button>Invite people</Button>}
+    open={open} onOpenChange={setOpen}>
+  ```
+
+- **Avatar's `alt` is required (React).** `<Avatar>` without `alt` no longer
+  compiles, as it rendered an image, or a placeholder with `role="img"`, with no
+  name. Pass the person's name, or `alt=""` when the name is shown beside it,
+  which hides the avatar from screen readers.
+
+  What you'll notice: a type error where an `<Avatar>` has no `alt`.
+
+  In 0.5, this compiled:
+
+  ```tsx
+  <Avatar>JS</Avatar>
+  ```
+
+  Now, name it, or hide it beside its name:
+
+  ```tsx
+  <Avatar alt="Jane Smith">JS</Avatar>
+  <Avatar alt="">JS</Avatar> Jane Smith
+  ```
+
+- **Combobox and Date Picker put `className` on their outer element.** In React,
+  `className` now goes on `.hcombobox` or `.hdate-picker`, not on the text field
+  inside, as it already does on Phone Input and File Input, and on Select's and Time
+  Picker's trigger, so a layout class such as `w-40` sizes the whole control. `ref`
+  is still the text field.
+
+  What you'll notice: a class that styled the text field itself, such as its text
+  color, now lands on the wrapper.
+
+  In 0.5, the class was on the field:
+
+  ```css
+  .assignee { color: var(--harmo-color-text-secondary); }
+  ```
+
+  Now, reach the field inside it:
+
+  ```css
+  .assignee > .hinput { color: var(--harmo-color-text-secondary); }
+  ```
+
+- **A Combobox's input names its hidden inputs with `data-name`.** In HTML, the
+  example script takes as its own only the hidden inputs right after the popup
+  whose `name` is the input's `data-name`, so a hidden input of yours after it is
+  left alone. React renders it for you.
+
+  What you'll notice: without `data-name`, a Combobox in pick mode no longer fills
+  its hidden input, and one choosing several no longer sends its choices.
+
+  In 0.5:
+
+  ```html
+  <input class="hinput" id="assignee" type="text" role="combobox" …>
+  …
+  <input type="hidden" name="assignee" value="">
+  ```
+
+  Now:
+
+  ```html
+  <input class="hinput" id="assignee" data-name="assignee" type="text" role="combobox" …>
+  …
+  <input type="hidden" name="assignee" value="">
+  ```
+
+- **Empty State (React) needs a title or a description.** `<EmptyState>` takes
+  `label`, `description`, or both, and TypeScript now requires one, as the
+  Contract on its page always has.
+
+  What you'll notice: an Empty State with only an icon or actions stops
+  compiling.
+
+  In 0.5:
+
+  ```tsx
+  <EmptyState icon={<InboxIcon className="hicon" />} />
+  ```
+
+  Now:
+
+  ```tsx
+  <EmptyState icon={<InboxIcon className="hicon" />} label="No quick replies yet" />
+  ```
+
+- **Filters and Filter Bar take one name (React).** `<Filters>` and
+  `<FilterBar>` are named with `aria-label`, or now with `aria-labelledby`
+  pointing at a heading, and TypeScript requires exactly one.
+
+  What you'll notice: a `<Filters>` or `<FilterBar>` given both stops compiling.
+
+  In 0.5, this compiled, and the browser used the heading:
+
+  ```tsx
+  <Filters aria-label="Filters" aria-labelledby="replies-heading" resetLabel="Reset">…</Filters>
+  ```
+
+  Now, keep the one that names it, here the heading:
+
+  ```tsx
+  <Filters aria-labelledby="replies-heading" resetLabel="Reset">…</Filters>
+  ```
+
+- **Your `onClick` and `onKeyDown` on a list or tabs run first, and
+  `preventDefault()` in them stops Harmo's handling.** This is your `onClick` on
+  an `<Option>`, in any list, a Select's, Combobox's, Filter Chip's, or Command
+  Menu's too, and on a `<Tab>`, and your `onKeyDown` on a `<Listbox>`, a
+  `<TabList>`, a `<Select>` or `<LanguagePicker>`, a `<Combobox>` or
+  `<CommandMenu>`, or the trigger of a `<Popup>` around a Listbox. In 0.5 they ran
+  after the choice, the highlight's move, or the selection; now `preventDefault()`
+  keeps the option from being chosen, the highlight from moving or the list from
+  opening, or the tab from being selected; on a Combobox's or Command Menu's
+  field, it also keeps Enter from picking and Escape from closing or emptying.
+  A disabled `<Option>` no longer calls `onClick`. In HTML, the example scripts
+  leave alone a click on an option, a click or key on a tab, or a key on a
+  select's or a language picker's trigger, or on a Combobox's or Command Menu's
+  field, that your own handler on it has stopped.
+
+  What you'll notice: a handler that calls `preventDefault()` for another reason,
+  such as to keep the page from scrolling, now also stops the choice or the key.
+  Harmo already prevents the browser's default for the keys it handles, so call
+  `preventDefault()` only for what you handle yourself.
+
+  In 0.5, the arrow keys still moved the highlight:
+
+  ```tsx
+  <Listbox aria-label="Assignee" onKeyDown={(event) => {
+    event.preventDefault();
+    if (event.key === "Delete") unassign();
+  }}>
+  ```
+
+  Now, prevent only your own key:
+
+  ```tsx
+  <Listbox aria-label="Assignee" onKeyDown={(event) => {
+    if (event.key === "Delete") {
+      event.preventDefault();
+      unassign();
+    }
+  }}>
+  ```
+
+- **Meter (React) needs a name.** `<Meter>` takes `aria-label` or
+  `aria-labelledby`, and TypeScript now requires one, as the Contract on its page
+  always has.
+
+  What you'll notice: a `<Meter>` with neither stops compiling.
+
+  In 0.5:
+
+  ```tsx
+  <Meter value={2} max={3} />
+  ```
+
+  Now, name it, or give `aria-labelledby` the id of a visible name:
+
+  ```tsx
+  <Meter value={2} max={3} aria-label="Password strength" />
+  ```
+
+- **TabNav and TabList need a name.** Their types now require `aria-label`, or
+  `aria-labelledby` naming a visible heading, as Breadcrumb's and Pagination's
+  already do.
+
+  What you'll notice: a `<TabNav>` or `<TabList>` with neither name, or with both,
+  no longer compiles.
+
+  In 0.5, this compiled, and rendered an unnamed landmark:
+
+  ```tsx
+  <TabNav>…</TabNav>
+  ```
+
+  Now, name it:
+
+  ```tsx
+  <TabNav aria-label="Settings">…</TabNav>
+  <TabList aria-labelledby="replies-heading">…</TabList>
+  ```
+
+- **Toast: pressing an action closes its toast.** The Toaster calls your
+  `onClick` with the click event, then closes the toast, unless `onClick` calls
+  `event.preventDefault()`. A `toast.dismiss(id)` in `onClick` is no longer
+  needed.
+
+  What you'll notice: an action meant to keep its toast open, such as one that
+  changes it in place, now closes it.
+
+  In 0.5:
+
+  ```tsx
+  action: { label: "Try again", onClick: () => toast({ id: "connection", title: "Reconnecting…" }) }
+  ```
+
+  Now:
+
+  ```tsx
+  action: {
+    label: "Try again",
+    onClick: (event) => {
+      event.preventDefault();
+      toast({ id: "connection", title: "Reconnecting…" });
+    },
+  }
+  ```
+
+- **Some props are types now, which an interface can't extend (React).**
+  `FilterBarProps`, `MeterProps`, `TabListProps`, and `TabNavProps` require one
+  of two names, `EmptyStateProps` a title or a description, and
+  `PhoneInputProps` and `SegmentedProps` take a Field's `optional`,
+  `description`, and `error` only with its `label`. So each is a union, no longer
+  an interface or an object type an interface can extend.
+
+  What you'll notice: `interface … extends PhoneInputProps` stops compiling, with
+  "An interface can only extend an object type or intersection of object types
+  with statically known members".
+
+  In 0.5:
+
+  ```tsx
+  interface ContactPhoneProps extends PhoneInputProps {
+    contact: Contact;
+  }
+  ```
+
+  Now, write a type, with what you add after `&`:
+
+  ```tsx
+  type ContactPhoneProps = PhoneInputProps & {
+    contact: Contact;
+  };
+  ```
+
 ### Added
 
-- Table of Contents: `.htoc`, or `<TableOfContents>`, the headings of a long page,
-  beside it, with the one you've reached marked.
+- Table of Contents: `.htable-of-contents`, or `<TableOfContents>`, the headings
+  of a long page, beside it, with the one you've reached marked.
 
   ```html preview="table-of-contents/Default"
-  <nav class="htoc" aria-label="On this page">
-    <span class="htoc-marker" aria-hidden="true"></span>
-    <ul class="htoc-list" role="list">
-      <li class="htoc-item"><a class="htoc-link" href="#overview" aria-current="location">Overview</a></li>
-      <li class="htoc-item"><a class="htoc-link" href="#milestones">Milestones</a></li>
+  <nav class="htable-of-contents" aria-label="On this page">
+    <span class="htable-of-contents-marker" aria-hidden="true"></span>
+    <ul class="htable-of-contents-list" role="list">
+      <li class="htable-of-contents-item"><a class="htable-of-contents-link" href="#overview" aria-current="location">Overview</a></li>
+      <li class="htable-of-contents-item"><a class="htable-of-contents-link" href="#milestones">Milestones</a></li>
     </ul>
   </nav>
   ```
@@ -51,14 +310,326 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Button: `data-instant`, or `<Button instant>`, makes its width follow a change
+  of its text at once, for text that changes often, such as a countdown's
+  "Resend code in 30s". `--hbutton-press-duration` sets how long a hold button
+  takes to shrink as it's pressed, 160ms by default.
+- Combobox: `formatCount`, when choosing several, writes the text of "+N", as on a
+  Tag List, such as in your app's digits.
+- Date Filter: optional `labels.invalidDate` and `labels.endBeforeStart` explain,
+  under the fields, a date that isn't real or two dates out of order. The message
+  is a status that also describes Apply; in HTML, it's `.hdate-filter-message`.
+  Optional `labels.afterDate` and `labels.beforeDate` word the chip for a date
+  with only one side, for languages that put the word after the date.
+- Field: `useField`, and its type `FieldControl`, are exported, so a control of
+  your own, or another library's, gets a Field's id, its description and error
+  in `aria-describedby`, and `aria-invalid`. It passes on the control's own
+  `aria-label` too, which names it outside a Field and wins over a Field's label.
+- File Input, Phone Input: `label`, `optional`, `description`, and `error`, which
+  render the Field, as Select, Combobox, Date Picker, and Time Picker already do.
+  A `<Field>` of your own around them still works. File Input shows one message
+  below: why a file was refused, or else your `error`.
+- Filter Chip: a single-select chip can be cleared. Give it `clearLabel` (in
+  HTML, a `.hlistbox-footer` with a button) and, while it has a value, its list
+  ends with that button, which empties the chip and calls `onValueChange(null)`.
+  `renderValue` shows what you return for the chosen values in the chip, one
+  pill each, so option labels written as components, such as a translation, no
+  longer show as empty pills. `.hfilter-chip-panel` lays out a panel of the
+  chip's own, such as a text filter, with 10px of padding and between its parts;
+  use it in place of the inline style the docs showed.
+- Filters: `formatCount` writes the count behind More filters, such as in the
+  page's own digits; without it, the number shows as before.
+- Search: `shortcutHint`, or a Kbd after the input in HTML, shows the shortcut
+  that reaches the field, hidden from screen readers. It only shows the hint:
+  name the keys with `aria-keyshortcuts` and handle them yourself, as Command
+  Menu's `shortcut` does for you. Once there's text, the clear button takes the
+  hint's place.
+- Segmented Control: `optional`, `description`, and `error`, as on RadioGroup.
+  The group is described by them and marked `aria-invalid` while there's an
+  error. An `aria-labelledby` you pass now wins over `label`, and inside a
+  `<Field control="button">` of your own, that Field's label names the group.
+- Sidebar: `<SidebarSubItem>`, a link in a `<SidebarSub>`. It takes text only, so
+  TypeScript tells you when an `icon` or `badge` would be dropped. A
+  `<SidebarItem>` there still renders as before. `--hsidebar-color-background`
+  is the color of its surface.
+- Spinner: `--hspinner-duration`, how long a turn takes, 1s, or with reduced
+  motion each way of its pulse, so a whole pulse takes 2s; and
+  `--hspinner-delay`, how long `data-delay` keeps it hidden, 300ms, set on the
+  spinner.
+- Table: `--htable-color-background` sets what the headers and footer paint, and
+  in a Card they paint the card's background instead of the page's. A
+  `.htable-scroll` given a height keeps the headers in view and becomes a named
+  region the keyboard can scroll, as a table too wide does; the Table page shows
+  how, and says that headers don't stick to the window.
+- Tag List: "+N"'s text can be your own, such as Arabic digits, with
+  `formatCount` in React, or by your script in HTML; it's `+N` by default, as
+  before. Each count it could show is measured as you write it, so the row still
+  fits where a smaller count is wider, such as "one other" beside "4 others".
+- TextArea: `formatCount` writes the counter in your words and digits, such as
+  `` (length, maxLength) => `${maxLength - length} characters left` ``; without
+  it, the counter still reads `5/160`.
+- Toast: `--htoast-leave-duration` on the region, how long what a changed toast
+  showed takes to fade out: 250ms by default, worked out from
+  `--harmo-toast-duration`.
+- Tokens: `--harmo-control-height-small`, a small Button's 29px;
+  `--harmo-font-size-md`, 15px, between `-base` and `-sm`;
+  `--harmo-switch-width` and `--harmo-switch-thumb-size`, beside
+  `--harmo-switch-height`, all three in rem; and
+  `--harmo-color-background-active`, the pressed step past
+  `--harmo-color-background-hover`.
+- CSS package: `@harmo-ui/css/src/*` reaches the SCSS source, so Dart Sass's
+  `pkg:` importer can use the shortcuts, as
+  `@use "pkg:@harmo-ui/css/src/_shortcuts.scss" as *`. They write
+  `var(--harmo-*)`, so `tokens.css` is still needed on the page.
+
 ### Changed
 
+- Accordion: in a small item, the chevron is 10px after the text (was 12px).
+- Banner, Spinner: their pages recommend putting a banner or spinner that appears
+  after the page loads inside a `role="status"` element that's in the page from
+  the start; `role="alert"` on an urgent banner stays as it is.
+- Banner, Toast: the action fills with `--harmo-color-background-hover` on hover
+  and `--harmo-color-background-active` when pressed, the same in both, and the
+  status icon is 20px in both (Banner's was 18px). Where the action doesn't fit
+  beside at least 12em of the message, it moves under it, at the end, instead of
+  squeezing the message to a word a line. Padding is 10px 16px and gaps 10px
+  (were 12px 16px and 12px), from `--harmo-space-xs` and `--harmo-space-sm`;
+  spread out, toasts are 10px apart. Toast stays 24px from the window's edges.
+- Breadcrumb: the current page now differs from the links in weight as well as
+  color. Links are the normal weight, and the current page is medium. The docs
+  say the last item is the page's name as plain text.
+- Button: while loading or `aria-disabled`, a link Button also ignores a middle
+  click, which would open it in a new tab. Its context menu and dragging it still
+  work, since only removing its `href` would stop them. The loading spinner's
+  fade-in, a hold button's snap-back when let go early, and its fade with reduced
+  motion use `--harmo-ease-out-cubic`, so they start a little faster and a
+  theme's curve reaches them. A small Button is `--harmo-control-height-small`
+  tall (29px, as before), so a theme that changes it resizes small buttons, and
+  the room a Copy Field keeps for one.
+- Calendar: the weekdays sit 6px above the days, and Previous and Next at least
+  6px from the month's name (both were 8px).
+- Card: a link or button card is a step darker while pressed, so a tap on a touch
+  screen shows.
+- Card, Stat: a description, value, or caption sits 6px under what's above it
+  (was 4px), a Stat's trend sits at least 6px from its title (was 8px), and a
+  Stat's actions are 10px apart (was 8px).
+- ChevronToArrow: in React, `width` and `height` size it, 24 when left out;
+  before, they were ignored, so a `width` you passed now takes effect. Alone in an
+  icon-only Button it's drawn at 20px, as every icon there, which its docs now
+  say.
+- Combobox: while you type, the list follows the options your app adds or takes
+  away, such as a search's results with `filter={false}`. It opens once there's
+  something to show and closes when there's nothing; after Escape, Enter, or a
+  pick it stays closed until the next keystroke. In pick mode, Enter with the list closed settles
+  what's typed, as leaving the field does, so a form sends what the field shows.
+  Text that names no option goes back to the pick, and the form isn't sent.
+- Command Menu: its dialog opens and closes at once, without a Dialog's fade and
+  grow, as its list under a field already does, since a shortcut opens it many
+  times a day. In the dialog, the field has 10px above and below (was 12px), the
+  empty message 26px (was 24px), and the footer 10px either side (was 12px), with
+  6px from a key to its words (was 4px). The trigger's magnifier and shortcut sit
+  10px from its ends, and its text 6px after the magnifier (was 8px), where a
+  Search field has them.
+- Copy Button: it stops saying it's copied as soon as what it copies changes,
+  such as a Copy Field's key being regenerated or its form resetting to another,
+  rather than up to two seconds later, and a copy that's done only after the
+  change doesn't say it's copied at all. In React, that's a new string `value`,
+  or a Share Button's new `url`; `onCopy` is still called.
+- Date Filter: Apply, or Enter, with nothing changed since the panel opened keeps
+  the value exactly as it was, so "the last 30 minutes" or a link's exact range is
+  no longer widened to whole days. Enter in a date field applies the filter once
+  the fields are complete, as Enter in the amount does; under "is between",
+  Enter in the start date only settles it, even with an end date there, and the
+  end date's applies. The panel has 10px of padding and between its rows (was
+  8px), and its buttons sit 16px below the fields.
+- Date Picker: disabled, it renders no popup or Calendar; in HTML, leave out the button's
+  `popovertarget` and the popup.
+- Dialog: its padding and its distance from the window's edges are 26px
+  (`--harmo-space-md`), 16px and 10px on a phone, and its actions sit 10px apart.
+  The description sits 6px under the title (was 8px).
+- Dialog: an "Unsaved changes" example shows how to keep a dialog open: closing a
+  settings form with changes that aren't saved asks first, in a second dialog,
+  where Discard fades both out together, in one 150ms exit, and Keep editing goes
+  back to the form. The docs explain it: in React, call `preventDefault()` in
+  `onCancel`, since `onBeforeToggle` can't stop a close; in HTML, the app's
+  `cancel` listener runs before the example script's; and the first closes the
+  second as it starts closing, so the second always closes first and focus goes
+  back to the button that opened them.
+- Drawer: it slides in over 300ms (`--harmo-duration-slow`), since it crosses its
+  whole width, and still slides out in 150ms. With reduced motion it fades in
+  over 200ms, as before. Its body and footer have 26px padding, as a Dialog has.
+  Its header has 16px 26px, with the close button 26px from the title, its
+  description sits 6px under the title (was 4px), as a Dialog's, its aside has 42px, and its actions sit
+  10px apart.
+- Empty State: spacing follows the space scale: 42px above and below and 26px at
+  the sides (small: 26px and 10px), the description 6px under the title (was 4px), the icon
+  16px above it (small: 10px), and the actions 10px apart, 26px under the text
+  (small: 10px).
+- Expand Chevron: it folds back down in 150ms (`--harmo-duration-fast`), so it
+  finishes with the popup, list, or panel closing with it, in Select, Combobox,
+  Accordion, Sidebar, and menu buttons. It still folds up in 200ms.
+- Field: its label, control, and error are 6px apart (was 8px), and so are a
+  label and what sits beside it, such as the Optional marker, and, in a
+  horizontal Field, a checkbox, radio, or switch and its label. A description
+  still sits right under its label, and an error with no text takes no room.
+- Field: an error is a polite live region, so a message set after focus has moved
+  on is announced. React's Field does this for you. In HTML, add
+  `aria-live="polite"` to every `.herror`. An error opens over 200ms, where it
+  took 300ms, as other panels do, and still closes in 150ms.
+- Field: in a horizontal Field, as for a checkbox, radio, or switch, the
+  description sits right under the label, as in a stacked Field, rather than 4px
+  below it.
+- File Input, File List: fades follow `--harmo-ease-out-cubic`, as Popup's and
+  Dialog's do, so a theme's curve reaches them, and so does File List's progress
+  bar as it grows. The check draws itself over 200ms (`--harmo-duration-normal`),
+  where it took 300ms, as other things coming in do.
+- Filter Bar: cards are 10px apart, with 10px by 16px of padding (was 8px, and
+  12px by 16px).
+- Filter Chip: a label too long for its room ends with an ellipsis once the values
+  have given way, instead of running past the chip and scrolling the page
+  sideways. The chip stays 27px tall, and screen readers still hear the whole
+  label. There's 6px between its parts and at its sides, and before and between
+  its values (was 4px, and 8px at its sides).
+- Filters: the filters in the row, and in the More panel, are 10px apart, and the
+  panel has 10px of padding (was 8px apart, with 12px of padding).
+- Filters, Filter Bar: can be named with `aria-labelledby` pointing at a heading,
+  as well as with `aria-label`. One is required.
+- Input: a `type="search"` Input no longer shows the browser's own clear button or
+  decorations, so every browser shows the same field. For a clear button, use
+  Search.
+- Input, TextArea, Search, Password Input, Segmented Control: text sits 10px
+  (`--harmo-space-xs`) from the field's edge, 2px closer than before, as every
+  text field's and select trigger's does. Search's magnifier and clear button, and
+  Password Input's eye, move with it. Search's text starts 6px after the
+  magnifier and stops 6px before the clear button (both were 8px).
 - Listbox: typing to jump leaves out what's `aria-hidden` in an option's label,
-  such as a flag before a name.
+  such as a flag before a name. A Tab that takes focus out of a list's popup,
+  from the list, its search field, or its footer, closes the popup, as a Select's
+  trigger does. In a multi-select, a disabled option's checkbox dims to
+  `--harmo-opacity-disabled`, as a disabled Checkbox does. Options have 10px side
+  padding and 10px between their parts, so lists are 4px narrower, while rows
+  keep their height. A badge sits 16px after its label (was 20px), and the search
+  row's field 6px after its icon (was 8px). A group's divider has 10px on each
+  side, and the no-matches message 10px 16px of padding.
+- Menu Button: its bars turn back in 150ms as the menu closes, and still turn into
+  a cross in 200ms, now on `--harmo-ease-out-cubic`, so they move at once on a
+  press.
+- Meter: segments are 10px apart (were 12px), from `--harmo-space-xs`. In React,
+  `value` is kept between 0 and `max`, and `max` is rounded down to a whole number
+  of at least 1, as a native `<meter>` does: `max={Infinity}` no longer throws,
+  and a value past `max` is shown and announced as `max`. Its page says to show
+  the value as text near the meter where the exact value matters, as Password
+  Input does.
+- Navigation Menu: hover colors fade in 150ms, as every other hover in Harmo does.
+  Moving between panels, the frame resizes on the same ease-in-out curve its rows
+  slide on, so they move as one. In a vertical menu, such as on a phone, choosing
+  a link without a modifier key closes the Popup it's in, so the menu doesn't stay
+  open over the new page. The docs say to keep panels short, since they don't
+  scroll. Links and triggers have 10px either side (was 12px), a trigger's chevron
+  sits 6px after its text (was 4px), a row's icon tile sits 10px before its
+  text (was 12px), and its description 6px under its title (was 8px, and 5px on
+  a phone).
+- Navigation Menu, Tabs: a disabled trigger or tab looks disabled: tertiary text,
+  a not-allowed cursor, and no hover color or background. In Tabs it also gets no
+  pill, and the pill leaves a tab that becomes disabled while the pointer rests
+  on it.
+- Pagination: pages are 6px apart and 10px from Previous and Next (they were 4px
+  and 8px), on the spacing scale, so seven pages are about 12px wider.
+- Password Input: the strength details open 10px under the field, and the hint
+  sits 10px under the bars, where both were 12px.
+- Section: spaced on the space scale: the content 26px below the header's line
+  (was 24px) and 16px apart (was 20px), the line 10px under the header's text (was
+  12px), the description 6px under the title (was 4px), and actions 10px apart
+  (was 8px).
+- Segmented Control: options are 6px apart (was 8px).
+- Select, Combobox, Date Picker, Time Picker, Phone Input: a form reset that
+  changes the value calls `onValueChange` with the restored value, unless you hold
+  the value. File Input calls `onFileChange(null)` when a reset takes away a file.
+  Neither is called once the field has gone, as when your `onReset` closes the
+  form it's in.
+- Select, Phone Input: with a search row, Down and Up on the closed trigger open
+  the list, as on a plain Select, and move focus to the search field.
+- Select, Time Picker: the text starts 10px from the trigger's edge and the
+  chevron sits 16px from its end, as on Phone Input's country button (12px and
+  20px before), so they line up in a form. Combobox's chevron moves with them, and
+  choosing several with no choice made, its text starts where an Input's does.
+- Selection Bar: with `data-new`, it settles in, fading in and moving 4px into
+  place over 200ms, as it takes a toolbar's controls' place, and goes at once; a
+  bar there as the page loads, without it, doesn't. With reduced motion it only
+  fades. `<SelectionBar>` sets it as it mounts in the browser, not when it's
+  rendered on the server and hydrated; in HTML, set it on a bar your script
+  shows. Deselect shows that it's pressed, turning `--harmo-color-text`, on
+  touch screens too. Its parts are 10px apart (was 8px), and Deselect's side
+  padding is 6px, so its text sits 16px from the divider, as the count's does.
+- Settings List: a setting's title is `--harmo-font-size-md`, still 15px, so a
+  theme's type scale reaches it. The description sits 6px under the title (was
+  4px), and a control under the text 16px under the description (was 12px).
+- Sidebar: collapsing and expanding, its width glides over 200ms on
+  `--harmo-ease-in-out-cubic`, with the page beside it. The labels and chevrons
+  fade out quickly as it narrows and back in as it finishes widening, instead of
+  vanishing at once, and still name their links while faded. Group labels fold
+  away and back with the width, so the rows below glide. All of it is CSS, so the
+  HTML example script no longer animates it. Its background is now
+  `--hsidebar-color-background`, which a collapsed count's ring also takes: set
+  it rather than `background-color` so the two match. The toggle's hover moves, its bend and the edge's 8px, use
+  `--harmo-ease-out-cubic`. The toggle is named only by what pressing it does,
+  "Collapse" or "Expand". It no longer has `aria-expanded` or `aria-controls`, so
+  a screen reader hears "Collapse, button" rather than "Collapse, expanded". In
+  HTML, remove both from the toggle's button. The React Sidebar no longer adds an
+  id of its own to `.hsidebar`. A link's icon and label are 10px apart (were
+  12px), a group's label sits 6px above its links (was 8px), groups are 26px
+  apart (were 24px), and a collapsed icon's tooltip and a
+  group's panel sit 10px past their row (were 12px).
+- Spinner: with reduced motion, its pulse uses `--harmo-ease-in-out-cubic`.
+- Status: a bordered Status is as tall as a Tag beside it, 25.5px instead of 23px.
+- Switch: sized in rem, from `--harmo-switch-width`, `--harmo-switch-height`, and
+  `--harmo-switch-thumb-size`, so it grows with the browser's font size as
+  Checkbox and Radio do. It's the same 44×24 at the default size. The thumb slides
+  on `--harmo-ease-out-cubic`, so it moves at once on a press.
+- Table: the footer's text lines up with the cells' text, with 16px at its sides,
+  and its parts are 10px and 42px apart (was 8px and 48px), with "Rows per page"
+  6px from its Select (was 8px). Headers have 10px under them (was 12px).
+- Tabs: the hover pill follows the pointer in 150ms on `--harmo-ease-out-cubic`,
+  so it keeps up with a quick sweep. The underline still slides in 200ms. Each tab
+  has 10px either side (was 8px).
 - Tag List: `.htag-list` has `role="list"`, so Safari keeps it a list and a screen
-  reader says how many tags it shows; add it to your markup.
+  reader says how many tags it shows; add it to your markup. The copies of hidden
+  tags in "+N"'s tooltip have no remove buttons or ids, so "+N"'s description is
+  only the tags' names. In React, give a tag in a Tag List no `id` or `ref`. While
+  "+N" has focus, it stays, even as the list widens, so focus isn't lost; the tags
+  are counted again once focus leaves. Before it's counted, as on a page rendered
+  on the server, the row is cut at its end instead of running into what's beside
+  it, such as a table's next column. Tags are 6px apart (was 4px), in the row and
+  in "+N"'s tooltip.
+- TextArea: it starts one line tall at an Input's height, 34px (was 38px), with
+  6px above and below its text (was 8px). Its height follows
+  `--harmo-control-height`, so a theme that changes Input's height changes it too.
+- Time Picker: the chosen hour, minute, or period moves at once as the arrow keys
+  move it, without a fade, even off an option the pointer rests on; only the
+  pointer's hover fades in, once it moves.
+- Toast: at the top of the window, the newest toast comes first in the page, as on
+  screen, so Tab and screen readers go top to bottom.
+- Toolbar: controls are 10px apart, and at least 42px from the filters (was 8px
+  and 40px).
+- Tooltip: an Escape that hides a tooltip inside a Dialog, Drawer, or Popup now
+  hides only the tooltip, and the next Escape closes the overlay, so a half-filled
+  form isn't lost to it. It does so in a dialog open over another too, such as
+  one that asks before discarding changes, where the next Escape closes only that
+  dialog. With a list or popup open over the tooltip, one Escape
+  still closes that and hides the tooltip together. One that shows with no delay,
+  by keyboard focus or as a neighbor's right after another closed, swaps in and
+  out at once, without its fade and grow, so two never overlap down a row of
+  icons. The first tooltip after a pause keeps its delay and fade. The example
+  script sets `data-instant` on the trigger for this. Its padding is 6px
+  (`--harmo-space-2xs`), so a one-line tooltip is 2px shorter, and a hint's is 8px
+  10px. Popup's and Tooltip's 8px from their trigger stay as they are.
+- Tokens: `--harmo-card-padding` is built from `--harmo-space-sm`, still 16px,
+  so a theme that changes the space scale on `:root` reaches it.
 - CLI: `harmo-ui add` says when your project doesn't list React DOM, which the
   copied components need along with React.
+- CLI: `harmo-ui theme` with a gray lightens its tint until the gray reads on it
+  at 4.5:1, as on Pagination's current page, and darkens the gray only if that
+  isn't enough, saying so in the file.
 
 ### Fixed
 
@@ -102,12 +673,13 @@ minor version may change an API, and says how to upgrade when it does.
 - Checkbox: a CheckboxGroup's `onValueChange` reports every checked box in the
   group, also when a Field with `role="group"` is nested inside it.
 - Checkbox, Radio: in a horizontal Field, a checkbox or radio larger than the
-  default is centered on its label's first line.
+  default is centered on its label's first line. The docs say a toggle from the
+  keyboard changes at once, while one with the pointer fades.
 - Checkbox, Radio, Segmented Control: a disabled CheckboxGroup, RadioGroup, or
   Segmented Control disables every option in it, and a required one requires every
   option, even one whose own `disabled` or `required` is `false` or `undefined`.
-- ChevronToArrow: the docs say it needs `width="24"` and `height="24"`, which give
-  it its size.
+- ChevronToArrow: the docs say it needs a `width` and `height`, which size it, as
+  its CSS doesn't, and that 24 is the size it's drawn for.
 - Combobox: in a disabled `<fieldset>`, a click on the box of several no longer
   opens the list. Made read-only while something is typed, leaving the field picks
   nothing from it. A comma typed while an input method is composing no longer ends
@@ -118,7 +690,7 @@ minor version may change an API, and says how to upgrade when it does.
   does, with no border on hover, and right to left, the trigger's padding mirrors,
   matching a Search field's. The shortcut is left to the page when the menu is
   inside something hidden, or its trigger is disabled, and pressing it while the
-  dialog fades out keeps it open. A field that becomes read-only closes its list,
+  dialog is closing keeps it open. A field that becomes read-only closes its list,
   and nothing can be picked from it.
 - Copy Button: in a Copy Field, the button's focus ring stays inside the field.
   The example script works without Button's script, changing its text at once, and
@@ -129,6 +701,8 @@ minor version may change an API, and says how to upgrade when it does.
   Enter that ends composing doesn't settle the date. Disabled or made read-only
   while the Calendar is open, it closes and no day can be picked. Without a hidden
   input, the example script opens on the date the field shows.
+- Date Picker, Phone Input: the docs say that `required` stops only an empty
+  field, and how to check for a date or number that isn't complete.
 - Date Picker, Time Picker: a press dragged off the button no longer keeps the
   popup open the next time focus leaves for the button.
 - Dialog: the Next.js recipe no longer counts a click that opens the link in a new
@@ -147,7 +721,10 @@ minor version may change an API, and says how to upgrade when it does.
   `aria-describedby`, and `aria-invalid` you pass it; a description you pass is
   combined with the Field's. An error whose closing is cut short, as when its
   field stops showing mid-close, still clears its text, so screen readers don't
-  read a stale message.
+  read a stale message. A label row with the Optional marker is 20px tall, as a
+  label alone is, so Fields side by side keep their controls in line.
+- Field, Password Input: a link's focus ring in an error or a hint is no longer
+  cut at the top and bottom, in browsers that support `overflow-clip-margin`.
 - Field, Segmented Control: an `optional`, `labelAccessory`, or `error` of 0
   shows, and an `error` of 0 marks the control invalid; a Segmented Control's
   `label` of 0 names it.
@@ -158,8 +735,15 @@ minor version may change an API, and says how to upgrade when it does.
   Button does; it still settles in as before. An area's icon tile and icon are
   sized in rem, so they grow with the text. The example script no longer throws on
   an avatar whose heading has only its choose label.
+- File Input, File List: what's on the page as it loads no longer animates in.
+  File Input's file name, remove button, check, and picture, and File List's check
+  on a finished file, settle in only when a change puts them there, marked
+  `data-new`, which the example scripts set.
 - File List: in the Table example, removing a file by keyboard moves focus to the
-  next row's remove button, or to the File Input.
+  next row's remove button, or to the File Input. Each retry button is described
+  by its file's name, through `aria-describedby`, so several "Try again" buttons
+  are told apart; add it to your markup. The docs say to move focus to your File
+  Input once the last file has gone.
 - Filter Chip, Date Filter: disabling one while it's open closes its popup. In
   React, a disabled one renders without it.
 - Filter Chip, Filters: your own class on a chip's value, or on the count, now
@@ -172,6 +756,9 @@ minor version may change an API, and says how to upgrade when it does.
 - Filters, Date Filter, Filter Bar, Selection Bar, Table: text follows
   `--harmo-font-line-height`, as Filter Chip's does.
 - Icons: the docs say `npx harmo-ui add chevron` copies `<Chevron>`.
+- Input, Select, TextArea, Combobox: hovering a Field's label no longer lights its
+  control's border, as browsers count a control as hovered while its label is;
+  only the pointer on the control itself does.
 - Input, TextArea, Search, Password Input: resetting a form the field joined after
   it rendered, through its `form` attribute, now updates the counter, the clear
   button, the strength, and the marked text.
@@ -206,33 +793,40 @@ minor version may change an API, and says how to upgrade when it does.
   trigger.
 - Radio: `--harmo-checkbox-size` resizes the dot too, not only the circle.
 - Search: without React, the example script hides the clear button when the field
-  becomes read-only, and disables it with the field.
+  becomes read-only, and disables it with the field. A disabled field looks
+  disabled, with a lighter placeholder and a dimmed magnifier. A shortcut's Kbd no
+  longer sits under the clear button, and on a touch screen the text no longer
+  runs under the clear button's cross.
 - Search, Password Input: with a larger browser font size, the text no longer runs
   under the magnifier, and the eye fits its button; the room kept for the icons
   grows with them.
+- Segmented Control: a label wider than the whole group wraps on a row of its own
+  instead of spilling past the edge, and labels that fit stay on one line. Hover
+  no longer outweighs the checked state, so your own rule for the checked option,
+  loaded after Harmo, holds on hover.
 - Select: outside its form, joined with `form`, the example script keeps sending
   its value once it's changed.
 - Select, Combobox, Time Picker: a form reset restores the `defaultValue` they
   have at the time, such as one that arrived after loading, and follows a `form`
   prop that changes.
+- Select, Time Picker, Combobox, Date Picker, Phone Input, File Input: each page
+  says where `className`, `hidden`, and `ref` go.
 - Select, Time Picker: a `ref` still reaches the button after `disabled` is turned
   on and off again.
 - Settings List: a Search, a highlighted Input or TextArea, a Combobox, a Phone
   Input, or a Date Picker under a setting's text sits below the description as
   other fields do, and when it's disabled the row's text turns gray.
-- Sidebar: collapsing, each icon and a count's dot keep to the start of their rows
-  as the width narrows, rather than leaping to the middle and back. In forced
-  colors, the edge and a collapsed count's dot are drawn in the system's colors,
-  rather than disappearing. Icons follow the text size, at 1.25rem, as the labels
-  do; Navigation Menu's row icons do too, at 1rem. Collapsed, hovering another
-  icon no longer closes a group while focus is in its links, and picking a link
-  returns focus to its group's icon. `exclusive` keeps the groups of links in the
-  header and footer to one open at a time too.
+- Sidebar: in forced colors, the edge and a collapsed count's dot are drawn in
+  the system's colors, rather than disappearing. Icons follow the text size, at
+  1.25rem, as the labels do; Navigation Menu's row icons do too, at 1rem.
+  Collapsed, hovering another icon no longer closes a group while focus is in its
+  links, and picking a link returns focus to its group's icon. `exclusive` keeps
+  the groups of links in the header and footer to one open at a time too.
 - Sidebar, Navigation Menu: an Escape pressed in a dialog or a popup over them is
   that layer's, and no longer closes a collapsed group or an open panel;
   Navigation Menu also leaves an Escape that something else has already handled.
-- Stat: the docs say the value is 4px under the label's row, and that the hint's
-  focus ring is on its 24px button, with no offset.
+- Stat: the docs say that the hint's focus ring is on its 24px button, with no
+  offset.
 - Stat, Status: a word too long for its line, such as an ID, breaks in a Stat's
   caption and trend and in a Status, rather than spilling out of a narrow space.
 - Table: in a row that links, a press just beside a row's checkbox, in its cell,
@@ -248,9 +842,8 @@ minor version may change an API, and says how to upgrade when it does.
 - Tabs: when the selected tab is hidden or disabled, or none is selected, the
   first tab that's shown and enabled is in the Tab order, so the tabs can still be
   reached. An `aria-disabled` tab is skipped by the arrow keys and can't be
-  selected. `<TabPanel hidden>` stays hidden while its tab is selected. A
-  `<Tab>`'s `onClick` and a `<TabList>`'s `onKeyDown` run before the selection
-  changes, so `preventDefault()` there keeps it.
+  selected. `<TabPanel hidden>` stays hidden while its tab is selected. The hover
+  pill leaves a tab that's hidden while the pointer rests on it.
 - Tag: in forced-colors mode, a tag's dot is drawn in the text color rather than
   disappearing. The docs say where focus goes when the last tag is removed by the
   keyboard: to what the tags belong to, such as the field they filter.
@@ -275,6 +868,17 @@ minor version may change an API, and says how to upgrade when it does.
   can wait (2,147,483,647 ms, about 24.8 days) keeps the toast open instead of
   closing it at once. On a phone in landscape, toasts keep clear of the notch and
   rounded corners at the sides, as they already did at the top and bottom.
+  Clicking a toast, or an action that closes its toast, no longer keeps the stack
+  spread out, and its toasts from leaving, once the pointer has gone; keyboard
+  focus still holds it, and so does F8 pressed after such a click, though focus
+  is on the region already. F8 draws the focus ring on the front toast, so you can
+  see where focus went, even with one toast. Spread out taller than the window,
+  the stack scrolls, with the newest at the edge, instead of older toasts going
+  past the top of the window. A toast that arrives while the stack is spread out
+  comes in from the edge, as it does when collapsed, instead of only fading in.
+  `--harmo-toast-duration: 0ms` now also turns off the fade of a changed toast's
+  old content and the sinking of a toast further back, which kept 250ms and
+  100ms.
 - Toolbar: your own class on what's at the start, such as a fixed width for a
   search field, now wins over the toolbar's. The docs' examples point to Filter
   Chip's page for complete chips, instead of showing chips that can't open.
@@ -293,9 +897,20 @@ minor version may change an API, and says how to upgrade when it does.
   Toast, and Toolbar need loaded with them, lists the attributes the newer
   components use, says what scripts do for Calendar, Date Picker, Time Picker,
   Filter Bar, Tag, and marked text, and shows its attribute table whole.
+- Docs: the components overview gives the spacing scale and the measures kept
+  off it, how a disabled control looks, which rules are heavier than the rest,
+  and that what's frequent, or moved by arrow keys, changes at once. The README
+  lists every token a primary color set by hand needs, and completes its list of
+  built tokens. The philosophy page says which counts and punctuation Harmo
+  writes itself, and how an app writes them its way.
 - llms.txt: names every component that needs a script, every word the React
   components need from you, the components that take `<Option>` children, and
   every component that uses the provider's link component.
+- llms.txt: lists the names TypeScript requires on Avatar, Empty State, Meter,
+  Filters, Filter Bar, TabNav, and TabList, the optional `formatCount` and Date
+  Filter's `labels.afterDate` and `labels.beforeDate`, the controls that render
+  their own Field, `useField`, and every token a primary color set by hand
+  needs.
 - Playground: Phone Input's React code to copy includes its `examples.mobile.json`
   import, so it runs as copied.
 

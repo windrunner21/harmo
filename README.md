@@ -128,8 +128,9 @@ import { Button, Field, Input, Link } from "@harmo-ui/react";
 Set your router's link component and your framework's image component once,
 at the root. Every link a component renders uses the link component: Link,
 Button and Card with `href`, TabLink, FilterBarItem with `href`,
-NavigationMenuLink and NavigationMenuRow, Pagination with `href`, SidebarItem,
-and DataTable's `rowHref`; Avatar uses the image component. In the Next.js App
+NavigationMenuLink and NavigationMenuRow, Pagination with `href`, SidebarItem
+and SidebarSubItem, and DataTable's `rowHref`; Avatar uses the image component.
+In the Next.js App
 Router, do it in a Client Component, because a Server Component can't pass
 functions to one, and wrap your root layout's `{children}` in it:
 
@@ -203,7 +204,9 @@ npx harmo-ui theme "#0f75b6"
 That writes `harmo-theme.css`: your color in every role, in light and dark
 mode, adapted from the nearest accent at the same contrast, so text and buttons
 pass WCAG AA too. A color too light for white text, such as a bright yellow, is
-darkened for text and buttons, and the file says so. It's ordinary CSS: change
+darkened for text and buttons, and the file says so. A gray's tint, behind the
+page you're on in Pagination, is lightened until the gray reads on it, and the
+gray is darkened only if that isn't enough. It's ordinary CSS: change
 any line you like, since your values win over Harmo's wherever the file loads.
 In a project with a `harmo.css` from `npx harmo-ui add`, it's added there.
 
@@ -237,9 +240,25 @@ redeclare those in the same place.
 }
 ```
 
-The built tokens are `--harmo-focus-outline`, the primary fills, the link,
-input, switch, icon, and secondary-button tokens, and the button and chevron
-durations; see `tokens.css`. Each component page lists every token it reads.
+The built tokens are `--harmo-focus-outline`; the primary fills;
+`--harmo-color-on-primary` and `--harmo-color-on-danger`; the link, input,
+switch, icon, status, and secondary-button tokens;
+`--harmo-button-font-weight`; `--harmo-card-padding`; and the button and
+chevron durations; see `tokens.css`. A role is built from its palette color
+too, such as `--harmo-color-text` from `--harmo-black`, so change the role
+itself. Each component page lists every token it reads.
+
+To set your primary color by hand, rather than with `harmo-ui theme`, set its
+whole family, as a theme and every accent do: `--harmo-color-primary`,
+`--harmo-color-primary-hover`, `--harmo-color-primary-active`, and
+`--harmo-color-primary-tint`; the fills behind white text,
+`--harmo-color-primary-fill`, `-fill-hover`, and `-fill-active`, with
+`--harmo-color-on-primary` for that text and
+`--harmo-switch-thumb-color-background`; `--harmo-color-focus`, with
+`--harmo-focus-outline` redeclared beside it; and `--harmo-link-color-text`,
+`--harmo-link-visited-color-text`, and `--harmo-link-hover-text-decoration`.
+Only the light fills follow the primary by themselves: the focus ring and
+links keep Harmo's purple until you set them.
 
 ### Dark mode
 

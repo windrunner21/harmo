@@ -65,7 +65,7 @@ onEachPlayground("input", () => {
   test("the drawn text lines up with the field, and a press reaches the field", async ({ page }) => {
     const { field, text } = await parts(page);
     const [box, drawn] = await boxes(field, text);
-    expect(await firstCharacter(text)).toBeCloseTo(box!.x + 13, 0);
+    expect(await firstCharacter(text)).toBeCloseTo(box!.x + 11, 0);
     expect(drawn!.y + drawn!.height / 2).toBeCloseTo(box!.y + box!.height / 2, 0);
     await text.click({ force: true });
     await expect(field).toBeFocused();
@@ -161,7 +161,7 @@ onEachPlayground("textarea", () => {
     const [box, drawn] = await boxes(field, backdrop);
     expect(drawn!.width).toBeCloseTo(box!.width, 0);
     expect(drawn!.height).toBeCloseTo(box!.height, 0);
-    expect(await firstCharacter(backdrop)).toBeCloseTo(box!.x + 13, 0);
+    expect(await firstCharacter(backdrop)).toBeCloseTo(box!.x + 11, 0);
   });
 
   test("a value that ends in a line break is as tall as the field's", async ({ page }) => {
@@ -192,7 +192,7 @@ onEachPlayground("textarea", () => {
       await expect(marks).toHaveCount(40);
       const bar = await field.evaluate((n: HTMLTextAreaElement) => n.offsetWidth - n.clientWidth - 2);
       expect(bar).toBeGreaterThan(0);
-      expect(await styled(backdrop, "padding-right")).toBe(`${12 + bar}px`);
+      expect(await styled(backdrop, "padding-right")).toBe(`${10 + bar}px`);
       const height = await field.evaluate((n) => n.scrollHeight);
       expect(Math.abs((await backdrop.evaluate((n) => n.scrollHeight)) - height)).toBeLessThanOrEqual(1);
     } finally {

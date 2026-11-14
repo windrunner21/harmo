@@ -63,10 +63,22 @@ const closeAfterExit = (
   });
 };
 
-// The dialog's ref: it opens and closes with `open`, tells onOpenChange each
-// way it opens or closes, and plays its exit before every close it can hold
-// that the app hasn't stopped: Escape, a click outside, command="request-close",
-// and a form sent with method="dialog".
+// Whether an opening may go ahead. With `open` held by the app and false, it's
+// a request: onOpenChange(true) asks, and the dialog opens once `open` is true.
+export const askToOpen = (
+  { open, onOpenChange }: Pick<ModalState, "open" | "onOpenChange">,
+) => {
+  if (open !== false) return true;
+  onOpenChange?.(true);
+  return false;
+};
+
+// The dialog's ref: it opens and closes with `open`, and plays its exit before
+// every close it can hold that the app hasn't stopped: Escape, a click outside,
+// command="request-close", and a form sent with method="dialog". With `open`
+// held by the app, a button that would open it asks instead; a close is the
+// browser's, and onOpenChange(false) tells the app, whose `open` must follow.
+// onOpenChange is called for what the dialog does, not for what `open` did.
 export const useModal = ({
   open,
   onOpenChange,
@@ -78,11 +90,13 @@ export const useModal = ({
 
   const toggled = useEffectEvent((event: Event) => {
     onToggle?.(event as ToggleEvent);
-    onOpenChange?.((event as ToggleEvent).newState === "open");
+    const opened = (event as ToggleEvent).newState === "open";
+    if (opened !== open) onOpenChange?.(opened);
   });
   const toggling = useEffectEvent((event: Event) =>
     onBeforeToggle?.(event as ToggleEvent),
   );
+  const asked = useEffectEvent(() => askToOpen({ open, onOpenChange }));
 
   useEffect(() => {
     const element = dialog.current;
@@ -106,6 +120,11 @@ export const useModal = ({
         command?: string;
         source?: Element | null;
       };
+      // A button that opens it, with `open` held by the app and false, asks.
+      if (command === "show-modal") {
+        if (!element.open && !event.defaultPrevented && !asked()) event.preventDefault();
+        return;
+      }
       if (
         command !== "request-close" ||
         !(source instanceof HTMLButtonElement) ||

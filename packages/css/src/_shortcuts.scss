@@ -14,6 +14,7 @@ $color-text-tertiary: var(--harmo-color-text-tertiary);
 $color-background: var(--harmo-color-background);
 $color-background-secondary: var(--harmo-color-background-secondary);
 $color-background-hover: var(--harmo-color-background-hover);
+$color-background-active: var(--harmo-color-background-active);
 $color-border: var(--harmo-color-border);
 $color-border-control: var(--harmo-color-border-control);
 
@@ -89,6 +90,7 @@ $font-family: var(--harmo-font-family);
 $font-family-mono: var(--harmo-font-family-mono);
 $font-size-lg: var(--harmo-font-size-lg);
 $font-size-base: var(--harmo-font-size-base);
+$font-size-md: var(--harmo-font-size-md);
 $font-size-sm: var(--harmo-font-size-sm);
 $font-size-xs: var(--harmo-font-size-xs);
 $font-size-2xs: var(--harmo-font-size-2xs);
@@ -102,10 +104,13 @@ $button-font-line-height: var(--harmo-button-font-line-height);
 
 // Sizes and spacing.
 $control-height: var(--harmo-control-height);
+$control-height-small: var(--harmo-control-height-small);
 $avatar-size: var(--harmo-avatar-size);
 $card-padding: var(--harmo-card-padding);
 $checkbox-size: var(--harmo-checkbox-size);
+$switch-width: var(--harmo-switch-width);
 $switch-height: var(--harmo-switch-height);
+$switch-thumb-size: var(--harmo-switch-thumb-size);
 $icon-gap: var(--harmo-icon-gap);
 $space-2xs: var(--harmo-space-2xs);
 $space-xs: var(--harmo-space-xs);

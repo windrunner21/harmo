@@ -356,7 +356,7 @@ const theme = async (
   }
   if (generated.darkened)
     console.log(
-      `${colors[0]} is too light for white text, so text and buttons use ${generated.darkened}.`,
+      `${colors[0]} is too light for ${generated.tooLightFor}, so text and buttons use ${generated.darkened}.`,
     );
   if (stylesUpdated)
     console.log(`${options.dryRun ? "Would add" : "Added"} it to ${folder}/harmo.css.`);

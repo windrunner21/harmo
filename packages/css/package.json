@@ -28,6 +28,7 @@
        "exports": {
               ".": "./dist/index.css",
               "./*.css": "./dist/*.css",
+              "./src/*": "./src/*",
               "./package.json": "./package.json"
        },
        "sideEffects": [

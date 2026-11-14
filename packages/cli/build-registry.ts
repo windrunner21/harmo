@@ -87,6 +87,7 @@ const helpers = [
   "icons.ts",
   "milliseconds.ts",
   "modal.tsx",
+  "types.ts",
   "useCurrentValue.ts",
   "useHold.ts",
   "usePinned.ts",

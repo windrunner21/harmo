@@ -148,6 +148,9 @@ version, so the CLI copies the code of the packages with its version.
    one-line summary under its heading, and update the links at the end.
    Packing copies the changelog into each package, for npm and for the
    website's changelog page.
+   `mise.toml` names Bun and Node at exact versions, so CI runs what was
+   tested; to move to newer ones, change them there on purpose, before the
+   checks in step 2.
 2. Run `mise run check:react`, `mise run test:react`, `mise run test:cli`, and
    `mise run test:browser`, in Chromium. CI runs all three browsers on the
    push in step 4.
@@ -266,7 +269,11 @@ example in the [README](README.md#theming).
 
 Shared sizes keep components aligned: buttons, inputs, and select triggers
 are `--harmo-control-height` tall, and `--harmo-icon-gap` separates text
-from icons in buttons, links, and breadcrumbs.
+from icons in buttons, links, and breadcrumbs. Gaps, padding, and margins use
+the `$space-*` shortcuts, a small step between parts of one thing and a big
+one between separate things, except for the measures the
+[Spacing](docs/components/README.md#shared-conventions) convention keeps in
+px, such as padding that sets a row's height.
 
 ### CSS / SCSS property order
 

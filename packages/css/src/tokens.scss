@@ -35,6 +35,8 @@
   --harmo-color-background: light-dark(var(--harmo-white), #14151b);
   --harmo-color-background-secondary: light-dark(var(--harmo-dark-white), #1c1e26);
   --harmo-color-background-hover: light-dark(var(--harmo-dark-white), #242631);
+  // Pressed: a step past hover, for what fills on hover, such as a ghost Card.
+  --harmo-color-background-active: light-dark(#ebeef1, #2c2e3a);
   --harmo-color-border: light-dark(#e3e8ee, #30323e);
   --harmo-color-border-control: light-dark(#858b98, #767c8a);
 
@@ -93,8 +95,10 @@
   --harmo-status-color-error: var(--harmo-red);
 
   // Component roles: input. The light border is 1.23:1 on white, below
-  // WCAG's 3:1 for a field's edge; the faint shadow doesn't make that up.
-  // For 3.42:1, set the border to --harmo-color-border-control.
+  // WCAG's 3:1 for an edge that's a field's only cue; the faint shadow doesn't
+  // make that up. A visible label, or an icon such as Search's, is enough cue.
+  // For a field without one, set the border to --harmo-color-border-control,
+  // 3.42:1.
   --harmo-input-color-background: light-dark(var(--harmo-white), var(--harmo-color-background));
   --harmo-input-color-border: var(--harmo-color-border);
   --harmo-input-box-shadow:
@@ -132,12 +136,14 @@
   --harmo-button-secondary-hover-color-border: var(--harmo-color-text);
   --harmo-button-secondary-box-shadow: 0 1px 2px light-dark(rgb(0 0 0 / 5%), transparent);
 
-  // Typography (sizes in rem: 20, 16, 14, 13, 12, 11px at the default setting).
+  // Typography (sizes in rem: 20, 16, 15, 14, 13, 12, 11px at the default
+  // setting).
   --harmo-font-family: system-ui, sans-serif;
   // For text that's read character by character, such as an ID or a key.
   --harmo-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --harmo-font-size-lg: 1.25rem;
   --harmo-font-size-base: 1rem;
+  --harmo-font-size-md: 0.9375rem;
   --harmo-font-size-sm: 0.875rem;
   --harmo-font-size-xs: 0.8125rem;
   --harmo-font-size-2xs: 0.75rem;
@@ -149,16 +155,21 @@
   --harmo-button-font-weight: var(--harmo-font-weight-medium);
   --harmo-button-font-line-height: 1.25rem;
 
-  // Sizes and spacing (single-line controls share one height).
+  // Sizes and spacing (single-line controls share one height; a small Button
+  // has its own).
   --harmo-control-height: 2.125rem;
+  --harmo-control-height-small: 1.8125rem;
   --harmo-avatar-size: 2.5rem;
-  --harmo-card-padding: 16px;
+  --harmo-card-padding: var(--harmo-space-sm);
   --harmo-checkbox-size: 1.25rem;
-  --harmo-switch-height: 24px;
+  --harmo-switch-width: 2.75rem;
+  --harmo-switch-height: 1.5rem;
+  --harmo-switch-thumb-size: 1.25rem;
   --harmo-icon-gap: 0.375rem;
   // Spacing: each step is the one before it times the golden ratio, 1.618, from
   // body text's 16px. Parts of one thing sit a small step apart, and separate
-  // things a big one, so the eye can tell them apart.
+  // things a big one, so the eye can tell them apart. The offsets of popups,
+  // tooltips, and toasts stay off it.
   --harmo-space-2xs: 0.375rem; // 6px
   --harmo-space-xs: 0.625rem; // 10px
   --harmo-space-sm: 1rem; // 16px

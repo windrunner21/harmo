@@ -61,6 +61,15 @@ require an atoms/molecules/organisms folder hierarchy.
   password toggle's "Show password", comes from the app as a prop or
   children, as it does in the HTML. Props are required wherever text would
   otherwise be missing, so a translated app can't show a stray English word.
+  A number a component counts itself, such as Tag List's "+3", has a default
+  in Western digits, and an optional `formatCount` writes it in the app's
+  digits and words instead; where a component puts the app's words around a
+  value, such as Date Filter's "is after" before a date, an optional function
+  in its labels sets the order. Two marks of punctuation are Harmo's own, as
+  they aren't words: Pagination's "…", which screen readers skip, and the
+  parentheses around a region in Language Picker, which CSS draws and
+  `--hlanguage-picker-open` and `--hlanguage-picker-close` replace for
+  another script.
 - Prefer value/change callbacks over requiring React state setters.
 - Support controlled and uncontrolled usage where the underlying control
   allows it.
@@ -128,6 +137,37 @@ These examples show the React API:
 Authoring details (Sass shortcuts, property order, build commands) live in
 [CONTRIBUTING.md](../CONTRIBUTING.md). Per-component markup, hooks, states,
 and tokens live in [docs/components](components/README.md).
+
+## Spacing on the golden ratio
+
+Harmo spaces things on the golden ratio: each step is about 1.618 times the one
+before, 6, 10, 16, 26, 42, 68, and 110px, as `--harmo-space-2xs` to
+`--harmo-space-2xl`.
+
+- Parts of one thing sit a small step apart: a title and its description, a
+  label and its field, an icon and its text, 6px.
+- Separate things sit a bigger one: buttons in a row, 10px; a dialog's padding
+  and the groups of a sidebar, 26px.
+- Line heights sit on the scale where one fits.
+- A few values stay off it on purpose: padding that sets a row's or a chip's
+  height, hairlines, the room kept for focus rings, and how far a popup, a
+  tooltip, or a toast sits from what opened it.
+- One scale for everything, so a theme that sets `--harmo-space-*` changes the
+  rhythm of every component at once.
+
+Why the golden ratio? Ask Gyro Zeppeli.
+
+<details>
+<summary>JoJo's Bizarre Adventure, Part 7: Steel Ball Run (spoilers)</summary>
+
+The Zeppeli family's steel balls spin, and Gyro teaches Johnny Joestar that a
+perfect Spin follows the Golden Rectangle, the proportion of 1 to 1.618 found
+throughout nature. Spun along it, the rotation becomes the Golden Spin: drawn
+from a galloping horse, it powers Gyro's Ball Breaker, and it's how Johnny's
+Tusk reaches Act 4 and its infinite rotation. Harmo asks for less: only that each
+space follows the last by the same ratio.
+
+</details>
 
 ## Interaction and motion
 

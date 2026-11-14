@@ -18,6 +18,7 @@ import { components } from "./src/examples.ts";
 import { Ready } from "./src/Ready.tsx";
 
 const src = join(import.meta.dir, "src");
+const transpiler = new Bun.Transpiler({ loader: "tsx" });
 
 if (process.argv.includes("--watch")) {
   watchPlayground(import.meta.path, [
@@ -69,31 +70,113 @@ if (process.argv.includes("--watch")) {
 // Each example's code as an app would write it: the JSX it returns, or the
 // whole body of an example that sets something up first. Examples are
 // written as `"Title": () => (…),` or `Title: () => {…},` entries of
-// `export const examples`, two spaces in.
+// `export const examples`, two spaces in. A line ending in `// playground only`
+// is left out, such as one that ties an example to the page around it; and an
+// example that has to run differently on the playground than in an app shows
+// its entry in `export const shownCode`, a template literal per title.
 function codeOf(slug: string) {
+  const file = `src/components/${slug}.tsx`;
   const source = readFileSync(join(src, "components", `${slug}.tsx`), "utf8");
-  const body = source.slice(source.indexOf("export const examples = {"));
+  // The examples object alone, up to its own closing brace, so the last
+  // example ends there rather than taking in what follows, such as shownCode.
+  const opening = source.indexOf("export const examples = {");
+  const closing = source.indexOf("\n};", opening);
+  if (opening < 0 || closing < 0) throw new Error(`${file}: can't find \`export const examples = { … };\``);
+  const body = source.slice(opening, closing);
   const entries = [...body.matchAll(/^  (?:"([^"]+)"|(\w+)): \(\) => (.*)$/gm)];
   const code = new Map<string, string>();
+  entries.forEach((entry, index) => {
+    const title = entry[1] ?? entry[2] ?? "";
+    const first = entry[3] ?? "";
+    const start = (entry.index ?? 0) + entry[0].length;
+    const text = body.slice(start, entries[index + 1]?.index ?? body.length);
+    if (first === "(") code.set(title, dedent(text.replace(/\n  \),\s*$/, "")));
+    else if (first === "{") code.set(title, dedent(text.replace(/\n  \},\s*$/, "")));
+    else code.set(title, first.replace(/,$/, ""));
+  });
+  const shown = source.indexOf("export const shownCode = {");
+  if (shown >= 0) {
+    for (const [, quoted, plain, text] of source.slice(shown).matchAll(/^  (?:"([^"]+)"|(\w+)): `([^`]*)`,$/gm)) {
+      code.set(quoted ?? plain ?? "", dedent(text ?? "").trim());
+    }
+  }
   // What an example needs from outside Harmo and React, so its code says where
   // that comes from: a whole module, or a default export such as a JSON file.
   const imports = [...source.matchAll(/^import (?:\* as )?(\w+) from "[^"]+";$/gm)];
-  entries.forEach((entry, index) => {
-    const title = entry[1] ?? entry[2] ?? "";
-    const opening = entry[3] ?? "";
-    const start = (entry.index ?? 0) + entry[0].length;
-    const end = entries[index + 1]?.index ?? body.lastIndexOf("\n};");
-    const text = body.slice(start, end);
-    if (opening === "(") code.set(title, dedent(text.replace(/\n  \),\s*$/, "")));
-    else if (opening === "{") code.set(title, dedent(text.replace(/\n  \},\s*$/, "")));
-    else code.set(title, opening.replace(/,$/, ""));
-    const needed = imports.filter(([, name]) => new RegExp(`\\b${name}\\b`).test(text));
-    if (needed.length) code.set(title, `${needed.map(([line]) => line).join("\n")}\n\n${code.get(title)}`);
-  });
+  const declarations = declarationsOf(source.slice(0, opening));
   for (const title of Object.keys(components[slug] ?? {})) {
-    if (!code.get(title)) throw new Error(`src/components/${slug}.tsx: can't find the code of "${title}"`);
+    const text = code.get(title)?.replace(/^[^\n]*\/\/ playground only\n/gm, "");
+    if (!text) throw new Error(`${file}: can't find the code of "${title}"`);
+    if (!parses(text)) throw new Error(`${file}: the code shown for "${title}" isn't valid TSX:\n\n${text}`);
+    const own = used(declarations, text);
+    const all = [...own.map((declaration) => declaration.text), text].join("\n");
+    const needed = imports.filter(([, name]) => new RegExp(`\\b${name}\\b`).test(all)).map(([line]) => line);
+    const shown = [needed.join("\n"), own.map((declaration) => declaration.text).join("\n\n"), text].filter(Boolean).join("\n\n");
+    if (own.length && !parses(shown)) throw new Error(`${file}: the code shown for "${title}", with what it uses, isn't valid TSX:\n\n${shown}`);
+    code.set(title, shown);
   }
   return code;
+}
+
+// The file's own declarations above its examples: each constant, function, or
+// type, with the comment above it, by the name it declares. A copied example
+// brings those it uses, so it runs on its own.
+function declarationsOf(source: string) {
+  const found: { name: string; text: string }[] = [];
+  let comment: string[] = [];
+  let current: { name: string; lines: string[] } | undefined;
+  const end = () => {
+    if (current) found.push({ name: current.name, text: current.lines.join("\n").trimEnd() });
+    current = undefined;
+  };
+  for (const line of source.split("\n")) {
+    const declared = /^(?:export\s+)?(?:const|let|function|async function|type|interface|class)\s+([A-Za-z_$][\w$]*)/.exec(line);
+    if (declared) {
+      end();
+      current = { name: declared[1] as string, lines: [...comment, line] };
+      comment = [];
+    } else if (line.startsWith("//")) {
+      end();
+      comment.push(line);
+    } else if (current && (line === "" || /^[\s})\]]/.test(line))) {
+      current.lines.push(line);
+    } else {
+      end();
+      comment = [];
+    }
+  }
+  end();
+  return found;
+}
+
+// The declarations a piece of code uses, and those they use in turn, in the
+// file's order.
+function used(declarations: { name: string; text: string }[], code: string) {
+  // A name not after a dot, nor before "=" or ":", so that a JSX attribute,
+  // an object's key, or a declaration of its own isn't taken for a use.
+  const uses = (text: string, name: string) =>
+    new RegExp(`(?<![\\w$.])${name.replace(/\$/g, "\\$")}\\b(?!\\s*(?:=(?![=>])|:))`).test(text);
+  const taken = new Set<string>();
+  let reach = [code];
+  while (reach.length) {
+    const next = declarations.filter(({ name }) => !taken.has(name) && reach.some((text) => uses(text, name)));
+    for (const declaration of next) taken.add(declaration.name);
+    reach = next.map((declaration) => declaration.text);
+  }
+  return declarations.filter(({ name }) => taken.has(name));
+}
+
+// Whether an example's code parses, as the JSX an example returns or as the
+// body of one that sets something up first, so a copied example works.
+function parses(code: string) {
+  return [`(() => (\n${code}\n));`, `(() => {\n${code}\n});`].some((wrapped) => {
+    try {
+      transpiler.transformSync(wrapped);
+      return true;
+    } catch {
+      return false;
+    }
+  });
 }
 
 // React hoists a preload hint for each image into the document's head.

@@ -422,9 +422,13 @@ body {
     margin: 0;
   }
 
+  /* One column, which doesn't wrap: a column that may wrap measures a child's
+     height before stretching it across, so a grid inside would be as tall as
+     it is at its narrowest. */
   &[data-layout="stack"],
   &[data-layout="wide"] {
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
   }
 
@@ -546,4 +550,30 @@ body {
     max-inline-size: 40rem;
     margin: 0 auto;
   }
+}
+
+/* Event log, with ?events in the address ---------------------------------- */
+
+.play-events {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 30;
+
+  box-sizing: border-box;
+  max-block-size: 40vh;
+  margin: 0;
+  padding: var(--harmo-space-xs) var(--harmo-space-sm);
+  padding-block-end: max(var(--harmo-space-xs), env(safe-area-inset-bottom));
+  overflow-y: auto;
+
+  font-family: var(--play-font-mono);
+  font-size: var(--harmo-font-size-2xs);
+  line-height: 1.5;
+
+  color: var(--harmo-color-text);
+  background-color: var(--harmo-color-background);
+  border-block-start: 1px solid var(--harmo-color-border);
+
+  list-style: none;
 }

@@ -75,12 +75,13 @@ describe("add", () => {
   test("copies a component, its styles, and what it needs, each in its folder", () => {
     const { code, out } = run("add", "tabs");
     expect(code).toBe(0);
-    expect(out).toContain(`Created 10 files in ${harmo}`);
+    expect(out).toContain(`Created 11 files in ${harmo}`);
     expect(out).toContain(`Import ${harmo}/harmo.css once`);
     expect(copied()).toEqual(
       [
         "harmo.css",
         "lib/children.ts",
+        "lib/types.ts",
         "lib/withClass.ts",
         "provider/HarmoProvider.tsx",
         "tabs/TabNav.tsx",
@@ -99,7 +100,7 @@ describe("add", () => {
   });
 
   test("copies the built CSS as it is, and keeps each file's use client or lack of one", () => {
-    run("add", "password", "tag");
+    run("add", "password", "tag", "kbd");
     expect(read(`${harmo}/tag/tag.css`)).toBe(
       readFileSync(join(cssFolder, "tag.css"), "utf8"),
     );
@@ -109,7 +110,7 @@ describe("add", () => {
     expect(
       read(`${harmo}/password/PasswordInput.tsx`).startsWith('"use client"'),
     ).toBe(true);
-    expect(read(`${harmo}/tag/Tag.tsx`).startsWith('"use client"')).toBe(false);
+    expect(read(`${harmo}/kbd/Kbd.tsx`).startsWith('"use client"')).toBe(false);
   });
 
   test("points each import to where the file went, without its ending", () => {

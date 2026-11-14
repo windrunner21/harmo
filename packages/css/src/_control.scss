@@ -5,6 +5,12 @@
 // stay with each control; a growing multi-line box has no fixed height.
 // The mixins are each part on its own, for a box whose field is inside it,
 // such as a Combobox choosing several.
+
+// Where a field's text starts and ends inside its border, shared by every text
+// field and select trigger, their highlight backdrops, and what lines up with
+// their text, so all of them move together.
+$padding-inline: $space-xs;
+
 @mixin type {
   font-family: $font-family;
   font-size: $font-size-sm;
@@ -119,11 +125,16 @@
   }
 }
 
+// A browser counts a field as hovered while its <label> is, so the hover look
+// skips a field whose Field label is under the pointer: only the field itself
+// lights up.
+$label-hovered: ".hfield:has(.hlabel:hover) *";
+
 %control {
   @include box;
 
   @media (hover: hover) and (pointer: fine) {
-    &:hover:where(:not(:disabled, [readonly], [aria-invalid="true"])) {
+    &:hover:where(:not(:disabled, [readonly], [aria-invalid="true"], #{$label-hovered})) {
       @include focused;
     }
   }

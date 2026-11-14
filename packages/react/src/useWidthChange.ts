@@ -39,10 +39,12 @@ export const widthBefore = (node: HTMLElement) =>
 // the inline styles it had before. Measure `from` before stopping a change
 // that's playing, and `to` after, so a new change carries on from where that
 // one had got to, toward the new width. Appearing or disappearing isn't a
-// change of width: it shows or goes at once.
+// change of width: it shows or goes at once. With data-instant, for text that
+// changes often, such as a countdown, it changes at once too.
 export const changeWidth = (node: HTMLElement, from: number, to: number) => {
   stopChange(node);
   if (from < 1 || to < 1 || Math.abs(from - to) < 1) return;
+  if (node.hasAttribute("data-instant")) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const style = getComputedStyle(node);
   const change: Change = {
