@@ -14,7 +14,7 @@ explains something. For content someone opens and interacts with, use a
 | Parts | `.htooltip`, a direct child of `.htooltip-trigger`, after the control |
 | Required | `role="tooltip"` and an `id` on `.htooltip`; `aria-describedby`, or `aria-labelledby` when it names an icon-only control, on the control |
 | Unique | The tooltip's `id` |
-| Script | Required for Escape to hide it (WCAG 1.4.13); optional for showing neighbors at once; see [What a script does](#what-a-script-does) |
+| Script | Required for Escape to hide it (WCAG 1.4.13); optional for showing neighbors at once, and for swapping tooltips without a fade; see [What a script does](#what-a-script-does) |
 
 ## Markup
 
@@ -39,8 +39,10 @@ explains something. For content someone opens and interacts with, use a
 ## Appearance and states
 
 - The default is `--harmo-tooltip-color-background` (rich black) with
-  `--harmo-tooltip-color-text` (white) 14px centered text and
-  `--harmo-tooltip-box-shadow`, up to 240px wide, 8px from the trigger.
+  `--harmo-tooltip-color-text` (white) 14px centered text, 6px padding
+  (`--harmo-space-2xs`), and `--harmo-tooltip-box-shadow`, up to 240px wide,
+  8px from the trigger. A hint has 8px 10px padding (`--harmo-space-xs` at
+  its sides).
 - Shows on hover after `--harmo-tooltip-delay` (300ms; devices that hover) and
   at once on keyboard focus. The pointer can move onto the tooltip without it
   closing.
@@ -52,6 +54,10 @@ explains something. For content someone opens and interacts with, use a
 - Motion: in 150ms (`--harmo-ease-out-cubic`), fading and scaling from 0.95
   toward the trigger side; out in 100ms. Reduced motion: fade only. Firefox
   can't animate `display`, so there a tooltip hides without fading.
+- One shown with no delay swaps in and out at once, without its fade and
+  grow, so two never overlap down a row of controls: by keyboard focus, and,
+  with the script, a neighbor's right after another closed (`data-instant`).
+  The first one after a pause keeps its delay and fade.
 - Its 1px border is transparent; forced colors (Windows contrast themes) draw
   it, giving the tooltip an edge where its shadow is removed.
 
@@ -71,7 +77,9 @@ explains something. For content someone opens and interacts with, use a
 | Change | When |
 | --- | --- |
 | `data-dismissed` on `.htooltip` | Escape hides an open tooltip until the pointer or focus leaves, or `data-open` is added to its trigger again, as a press that pins it open does |
+| `preventDefault()` on that Escape's `keydown` | When it hides a tooltip, so the Dialog, Drawer, or Popup the tooltip is in stays open until the next Escape; not when a popup or dialog that Escape closes opened after the one the tooltip is in, such as a Select's list opened from its control, which the same Escape closes. One that opened before doesn't count, such as the dialog under a second one that asks before it closes, and neither does a manual popover, such as a [Toast](toast.md)'s region. The script notes when each one opens from its `beforetoggle` event, as the browser's Escape closes the one that opened last |
 | `--htooltip-delay: 0ms` on the trigger or any ancestor | Right after another tooltip closed, so neighbors show at once |
+| `data-instant` on `.htooltip-trigger` | On the trigger the pointer enters right after another tooltip closed, and on that other one's, so they change at once; on keyboard focus, so it hides at once as focus moves on; removed when the pointer enters after a pause |
 
 `examples/html/src/scripts/tooltip.js` is an example script.
 
@@ -80,8 +88,9 @@ explains something. For content someone opens and interacts with, use a
 `<Tooltip>` wraps one control, its only child, and renders the tooltip after
 it. Pass `label` to name the control, as for an icon-only button, or
 `description` to describe it; the tooltip is connected through
-`aria-labelledby` or `aria-describedby` to match. It hides on Escape, and
-neighbors show at once. Other props are the trigger `<span>`'s attributes.
+`aria-labelledby` or `aria-describedby` to match. It hides on Escape, which
+then doesn't close the dialog or popup it's in, and neighbors show at once,
+without a fade. Other props are the trigger `<span>`'s attributes.
 
 | Prop | Effect |
 | --- | --- |
@@ -106,6 +115,7 @@ neighbors show at once. Other props are the trigger `<span>`'s attributes.
 `--harmo-border-radius`, `--harmo-color-background`, `--harmo-color-border`,
 `--harmo-color-text-secondary`, `--harmo-duration-fast`,
 `--harmo-duration-faster`, `--harmo-ease-out-cubic`, `--harmo-font-family`,
-`--harmo-font-size-sm`, `--harmo-font-size-xs`, `--harmo-tooltip-box-shadow`,
+`--harmo-font-size-sm`, `--harmo-font-size-xs`, `--harmo-space-2xs`,
+`--harmo-space-xs`, `--harmo-tooltip-box-shadow`,
 `--harmo-tooltip-color-background`, `--harmo-tooltip-color-text`,
 `--harmo-tooltip-delay`, `--harmo-tooltip-hint-box-shadow`.

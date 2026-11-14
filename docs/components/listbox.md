@@ -103,7 +103,7 @@ focus.
 | --- | --- |
 | `data-active` on an option | Highlighted; follows the keyboard and pointer, instantly; never on a disabled option |
 | `aria-selected="true"` on an option | Shows `.hoption-check` (single) or the ticked `.hoption-checkbox` (multiple) |
-| `aria-disabled="true"` on an option | Gray text, not-allowed cursor, no check |
+| `aria-disabled="true"` on an option | Gray text, not-allowed cursor, no check; in a multi-select, its checkbox dims to `--harmo-opacity-disabled`, as a disabled [Checkbox](checkbox.md) does |
 | `aria-multiselectable="true"` on the list | Multi-select: `.hoption-checkbox` and no check mark |
 | `hidden` on an option or group | Hidden, such as by a search; skipped by the keyboard, with the options of a hidden group |
 | `data-value` on an option | No style: the value it stands for, which a script reports or a [Select](select.md) submits |
@@ -113,17 +113,17 @@ focus.
 | Part | Appearance |
 | --- | --- |
 | `.hlistbox` | 4px padding, at most 300px tall and `min(32rem, 100vw - 18px)` wide unless its popup is wider, which it then fills, scrolls with a hidden scrollbar |
-| `.hoption` | 8px 12px padding, 14px `--harmo-color-text-secondary`, one line |
+| `.hoption` | 8px 10px padding (`--harmo-space-xs` at its sides; the 8px sets the row's height), 10px between its parts, 14px `--harmo-color-text-secondary`, one line |
 | `.hoption-label` | The option text; ends with an ellipsis rather than wrapping, so rows keep one height |
 | `.hoption-text` | The label in `--harmo-color-text` over its description, 2px apart |
 | `.hoption-description` | 13px, in the option's color; ends with an ellipsis, as the label does |
 | `.hoption-match` | `--harmo-color-primary-tint` behind the text, with 2px corners; in forced-colors mode, the system's mark colors |
-| `.hoption-badge` | Uppercase 11px pill, 20px after the label |
+| `.hoption-badge` | Uppercase 11px pill, 16px after the label: the option's 10px gap and 6px (`--harmo-space-2xs`) |
 | `.hoption-check` | A check mark at `1em` in `--harmo-color-primary` |
-| `.hoption-checkbox` | A 16px checkbox drawing; its mark uses Checkbox's fractions of the box; fill and border fade in 150ms |
-| `.hoption-group-label` | Uppercase 11px bold `--harmo-color-primary`; a divider above it unless its group is the list's first child |
-| `.hlistbox-search` | Search icon and borderless input above a divider |
-| `.hlistbox-empty` | The status for no matches, `role="status"`, in the page from the start and empty until nothing matches; empty, it takes no room |
+| `.hoption-checkbox` | A 16px checkbox drawing; its mark uses Checkbox's fractions of the box; fill and border fade in 150ms; dimmed in a disabled option |
+| `.hoption-group-label` | Uppercase 11px bold `--harmo-color-primary`; a divider above it, with 10px on each side of its line, unless its group is the list's first child |
+| `.hlistbox-search` | Search icon and borderless input, 6px (`--harmo-space-2xs`) apart, above a divider |
+| `.hlistbox-empty` | The status for no matches, `role="status"`, with 10px 16px padding, in the page from the start and empty until nothing matches; empty, it takes no room |
 | `.hlistbox-footer` | Divider and a full-width button |
 
 - With nothing highlighted, a single-select keeps its selected option
@@ -152,6 +152,11 @@ focus.
   Space types instead in a search field, or partway through typed letters.
   Disabled options are skipped. With nothing to choose, Enter in the search
   field does nothing, so it can't submit the form around it.
+- Tab moves focus on, and a Tab that takes it out of the popup, from the
+  list, its search field, or its footer, closes the popup, as a
+  [Select](select.md)'s trigger does.
+- A Select with a search row opens on Down and Up, as a plain one does, and
+  then moves focus to the search field.
 - The search field needs no focus ring: its caret shows focus.
 
 ## What a script does
@@ -159,9 +164,11 @@ focus.
 | Change | When |
 | --- | --- |
 | Highlight the option a key asked for, else the selected one, else the first enabled one | As the list opens (`beforetoggle`), so a key pressed straight after moves on from it |
-| Move `data-active` and the focused element's `aria-activedescendant` | Arrow keys, Home, End, type-to-jump, and pointer movement; a pointer over no option, such as on a group's label, clears it |
+| Move `data-active` and the focused element's `aria-activedescendant` | Arrow keys, Home, End, type-to-jump, and pointer movement; a pointer over no option, such as on a group's label, clears it. On a select's trigger, not for a key the app's own handler has stopped first with `preventDefault()` |
 | Toggle `aria-selected` and move the check mark | Enter or Space (except where Space types, as in a search field), or a click |
-| Close the popup, which returns focus to what opened it; a multi-select stays open | After a single-select choice, even of the selected option |
+| Close the popup, which returns focus to what opened it; a multi-select stays open | After a single-select choice, even of the selected option, unless the app's own click handler on the option has stopped it with `preventDefault()` |
+| Close the popup | When a Tab takes focus out of it, from the list, its search field, or its footer, once focus has moved |
+| Open the popup, highlighting the selected option or the first on Down, and the first on Up | Down or Up on a closed Select's trigger, a `role="combobox"` button, when the list has a search row, as a plain Select's trigger does; not for a key the app's own handler on the trigger has stopped first with `preventDefault()` |
 | Move focus to the search field, or else to the list | When the list opens, unless a select's trigger or a Combobox's field keeps it |
 | Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup, and only for the list's own popup, not one inside it), so each opening starts from the whole list |
 | Set `hidden` on the options and groups that don't match, by their label, description, or keywords, and put the app's message in `.hlistbox-empty` when none do, emptying it once some do; what the app hid stays hidden | As the search text changes |
@@ -198,6 +205,12 @@ Other props are the `<li>`'s attributes: an `id` replaces the generated one,
 and `hidden` hides the option, or a group with its options, as a search does.
 A group inside another takes its `hidden` and `filter={false}` too.
 
+Your `onClick` on an `<Option>`, your `onKeyDown` on the `<Listbox>`, and
+your `onKeyDown` on the trigger of the [Popup](popup.md#react) it's in, such as
+a [Select](select.md)'s, run before its own handling: `preventDefault()` in
+them keeps the option from being chosen, or the key from moving the
+highlight or opening the list. A disabled option doesn't call `onClick`.
+
 ```tsx
 <Popup
   trigger={
@@ -225,4 +238,6 @@ A group inside another takes its `hidden` and `filter={false}` too.
 `--harmo-duration-fast`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-3xs`, `--harmo-font-size-sm`,
-`--harmo-font-size-xs`, `--harmo-font-weight-bold`.
+`--harmo-font-size-xs`, `--harmo-font-weight-bold`,
+`--harmo-opacity-disabled`, `--harmo-space-2xs`, `--harmo-space-sm`,
+`--harmo-space-xs`.

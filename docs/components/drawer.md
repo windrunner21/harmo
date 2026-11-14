@@ -97,31 +97,40 @@ close it with `close(value)` instead.
   instead, and a long word, such as a key or a link, breaks where it must.
   It's never wider than the window: on a narrow one, it fills the width, and
   a body too wide for it scrolls sideways.
-- The header has 16px 20px padding and a line under it; the title is 20px
-  bold in `--harmo-color-text`, with the description 14px in
-  `--harmo-color-text-secondary` under it, and the close button, a tertiary
-  icon [Button](button.md), at its end. A long word in the title or
-  description breaks where it must, rather than running under the button.
-- The body has 20px padding and scrolls; the footer stays under it, with 20px
-  padding, a line above it, and its actions at its end, 8px apart. The first
-  and last child's own block margins in the body and aside are removed.
-- The aside sits beside the body and footer, below the header: 40px padding
-  on `--harmo-color-background-secondary`, a line on its start side, as wide
+- The header has 16px 26px padding (`--harmo-space-sm` and
+  `--harmo-space-md`) and a line under it; the title is 20px bold in
+  `--harmo-color-text`, with the description 14px in
+  `--harmo-color-text-secondary` 6px (`--harmo-space-2xs`) under it, as a
+  Dialog's, and the
+  close button, a tertiary icon [Button](button.md), 26px after them at its
+  end. A long word in the title or description breaks where it must, rather
+  than running under the button.
+- The body has 26px padding (`--harmo-space-md`), as a Dialog has, and
+  scrolls; the footer stays under it, with 26px padding, a line above it, and
+  its actions at its end, 10px apart (`--harmo-space-xs`). The first and last
+  child's own block margins in the body and aside are removed.
+- The aside sits beside the body and footer, below the header: 42px padding
+  (`--harmo-space-lg`) on `--harmo-color-background-secondary`, a line on its
+  start side, as wide
   as its content up to its cap, scrolling on its own. The drawer widens to fit
   both. Where the window is narrower than 68rem, the aside goes below the body,
   the drawer scrolls as a whole, and its header and footer stay in view.
 - The page behind is dimmed by `--harmo-dialog-backdrop-color`, as a Dialog's
   is, and doesn't scroll while it's open.
-- It slides in from its edge in 200ms, and slides out in 150ms before it
-  closes, as a Dialog fades. With reduced motion, it fades in and out where it
-  is. A closed drawer isn't rendered.
+- It slides in from its edge in 300ms (`--harmo-duration-slow`), since it
+  crosses its whole width, and slides out in 150ms before it closes, both on
+  `--harmo-ease-out-cubic`. With reduced motion, it fades in over 200ms and
+  out over 150ms where it is, as a Dialog does. A closed drawer isn't
+  rendered.
 
 ## Accessibility
 
 As a [Dialog](dialog.md#accessibility): the browser makes it a modal dialog,
-with the page behind inert, focus moved inside and back, and Escape. Its title
-names it and its description describes it; the close button needs
-`aria-label`, in the app's language.
+with the page behind inert, focus moved inside and back, and Escape; an Escape
+that hides a [Tooltip](tooltip.md) shown inside it hides only that, and the
+next one closes it, so a half-filled form isn't lost. Its title names it and
+its description describes it; the close button needs `aria-label`, in the
+app's language.
 
 The aside is for content without controls, such as a preview. It comes after
 the footer in the markup, so Tab reaches it last; on a window narrower than
@@ -130,19 +139,29 @@ the footer in the markup, so Tab reaches it last; on a window narrower than
 
 ## What a script does
 
-None to open, close, or focus it. The example script, the same one Dialog's
-examples use, holds the drawer's close while `data-closing` slides it out, then
-closes it, unless the app has stopped the close, such as to confirm unsaved
-changes; and it opens the drawer that `?dialog=` names, as an app's router
-would. Without it, the drawer still closes, sliding out in Chromium and at once
-in Firefox and Safari.
+None to open, close, or focus it. The example script is the same one
+Dialog's examples use, and does what [Dialog's](dialog.md#what-a-script-does)
+does:
+
+| Change | When |
+| --- | --- |
+| `data-closing` on the drawer, then `close()` once its slide has played | Its `cancel` event, which Escape, a click outside with `closedby="any"`, and `command="request-close"` send first, or a form sent with `method="dialog"`; not when the app has stopped it, such as to confirm unsaved changes |
+| `data-closing` removed, and it stays open | When something wants it open while it slides out |
+| `showModal()`, and Back or `?dialog=` taken off the URL as it closes | When `?dialog=` names it, as an app's router would, for the "Opened from a link" example |
+
+Without it, the drawer still closes, sliding out in Chromium and at once in
+Firefox and Safari.
 
 ## React
 
 `<Drawer>` renders the drawer, with its children in the body, and takes
 [Dialog's props](dialog.md#react): `label` and `closeLabel`, both required,
 `description`, `trigger`, `open` and `onOpenChange`, `onToggle` and
-`onBeforeToggle`, `footer`, `form`, `bodyProps`, `closedby`, and `id`. It adds:
+`onBeforeToggle`, `footer`, `form`, `bodyProps`, `closedby`, and `id`. With
+`open` held by you and `false`, a button that would open it calls
+`onOpenChange(true)` instead, and it opens once `open` is `true`; a close is
+the browser's, and `open` must follow `onOpenChange(false)`, as a Dialog's
+does. It adds:
 
 | Prop | Effect |
 | --- | --- |
@@ -181,6 +200,8 @@ From a URL, use [Dialog's recipe](dialog.md#react), with `<Drawer>` in place of
 `--harmo-color-background-secondary`, `--harmo-color-border`,
 `--harmo-color-text`, `--harmo-color-text-secondary`,
 `--harmo-dialog-backdrop-color`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-focus-outline`,
-`--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-lg`,
-`--harmo-font-size-sm`, `--harmo-font-weight-bold`.
+`--harmo-duration-normal`, `--harmo-duration-slow`, `--harmo-ease-out-cubic`,
+`--harmo-focus-outline`, `--harmo-font-family`, `--harmo-font-line-height`,
+`--harmo-font-size-lg`, `--harmo-font-size-sm`, `--harmo-font-weight-bold`,
+`--harmo-space-lg`, `--harmo-space-md`, `--harmo-space-sm`,
+`--harmo-space-xs`, `--harmo-space-2xs`.

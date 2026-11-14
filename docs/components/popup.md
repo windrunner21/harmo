@@ -25,7 +25,7 @@ such as a filter form. For a short description on hover, use a
 
 <div class="hpopup" id="contains-filter" popover
   style="position-anchor: --contains-filter">
-  <div style="display: grid; gap: 16px; padding: 12px">
+  <div style="display: grid; gap: var(--harmo-space-sm); padding: var(--harmo-space-xs)">
     …
     <button class="hbutton" type="button"
       popovertarget="contains-filter" popovertargetaction="hide">
@@ -74,7 +74,9 @@ panel lays out its own content.
 ## Accessibility
 
 - The browser closes it on outside click and Escape; a popup opened from
-  inside another keeps the outer one open.
+  inside another keeps the outer one open. An Escape that hides a
+  [Tooltip](tooltip.md) shown inside it hides only that, and the next one
+  closes it.
 - Hidden content can't be focused or reached by screen readers.
 - `aria-expanded` on the trigger tells screen readers whether it's open.
 
@@ -108,8 +110,10 @@ first.
 `<Popup>` renders its `trigger`, then the popup holding its children, and
 connects them: the trigger gets `popovertarget`, `aria-expanded`, and an
 anchor name, and the popup's `data-side` follows the side it opens on, so it
-slides away from the trigger. Other props, `ref` included, are the popup
-`<div>`'s.
+slides away from the trigger. A [Listbox](listbox.md) inside takes the keys
+pressed on a `role="combobox"` trigger, as a [Select](select.md)'s does,
+after the trigger's own `onKeyDown`: `preventDefault()` there keeps a key from
+it. Other props, `ref` included, are the popup `<div>`'s.
 
 | Prop | Effect |
 | --- | --- |
@@ -120,7 +124,7 @@ slides away from the trigger. Other props, `ref` included, are the popup
 const id = useId();
 
 <Popup id={id} trigger={<FilterChip label="Name contains" />}>
-  <div style={{ display: "grid", gap: 16, padding: 12 }}>
+  <div style={{ display: "grid", gap: "var(--harmo-space-sm)", padding: "var(--harmo-space-xs)" }}>
     <Field label="Name contains">
       <Input name="contains" type="text" />
     </Field>

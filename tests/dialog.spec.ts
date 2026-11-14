@@ -1,9 +1,11 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, ready, release, settled, slowDown, test } from "./playgrounds.ts";
+import { animations, boxes, example, onEachPlayground, ready, release, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/dialog.md says, on the Dialog page: the browser opens,
 // closes, and focuses it, CSS places and animates it and keeps the page still,
-// and on the "Opened from a link" example, the URL says whether it's open.
+// on the "Opened from a link" example, the URL says whether it's open, and on
+// "Unsaved changes", the app keeps it open to ask first, with onCancel and
+// onBeforeToggle in React and its own listeners in HTML.
 const isOpen = (dialog: Locator) => dialog.evaluate((node) => (node as HTMLDialogElement).open);
 
 const openFrom = async (page: Page, id: string, trigger: string) => {
@@ -14,6 +16,20 @@ const openFrom = async (page: Page, id: string, trigger: string) => {
   await settled(dialog);
   return { container, dialog };
 };
+
+// The "Unsaved changes" example's settings, opened, and the dialog that asks.
+const openSettings = async (page: Page) => {
+  const container = await example(page, "dialog-unsaved-changes");
+  const settings = container.locator("#workspace-dialog");
+  const asking = container.locator("#discard-changes-dialog");
+  const trigger = container.getByRole("button", { name: "Workspace settings" });
+  await trigger.click();
+  await expect.poll(() => isOpen(settings)).toBe(true);
+  await settled(settings);
+  return { settings, asking, trigger, name: settings.getByLabel("Workspace name") };
+};
+
+const hasFocus = (dialog: Locator) => dialog.evaluate((node) => node.contains(document.activeElement));
 
 onEachPlayground("dialog", () => {
   test("its button opens it as a modal, named by its title, with focus on the field with autofocus", async ({ page }) => {
@@ -83,6 +99,98 @@ onEachPlayground("dialog", () => {
     await page.waitForTimeout(400);
     expect(await isOpen(dialog)).toBe(true);
     await expect(dialog).not.toHaveAttribute("data-closing");
+  });
+
+  test("with unsaved changes, Escape, its close button, and a click outside each ask first, and Keep editing goes back to it, with focus inside", async ({ page }) => {
+    const { settings, asking, name } = await openSettings(page);
+    await name.fill("Acme Help");
+    const ways: [string, () => Promise<void>][] = [
+      ["Escape", () => page.keyboard.press("Escape")],
+      ["its close button", () => settings.getByRole("button", { name: "Close" }).click()],
+      ["a click outside", () => page.mouse.click(8, 8)],
+    ];
+    for (const [way, close] of ways) {
+      await close();
+      await expect.poll(() => isOpen(asking), way).toBe(true);
+      await settled(asking);
+      expect(await isOpen(settings), way).toBe(true);
+      await expect(settings, way).not.toHaveAttribute("data-closing");
+      await expect(page.getByRole("dialog", { name: "Discard unsaved changes?" }), way).toHaveAccessibleDescription(
+        "Your changes to the workspace settings haven't been saved.",
+      );
+
+      await asking.getByRole("button", { name: "Keep editing" }).click();
+      await expect.poll(() => isOpen(asking), way).toBe(false);
+      await expect.poll(() => hasFocus(settings), way).toBe(true);
+      expect(await isOpen(settings), way).toBe(true);
+      await expect(settings, way).not.toHaveAttribute("data-closing");
+      await expect(name, way).toHaveValue("Acme Help");
+    }
+  });
+
+  test("Discard fades both out together, closes them, returns focus to the settings' button, and they open again with what was saved", async ({ page }) => {
+    const { settings, asking, trigger, name } = await openSettings(page);
+    await name.fill("Acme Help");
+    await page.keyboard.press("Escape");
+    await expect.poll(() => isOpen(asking)).toBe(true);
+    await settled(asking);
+    await slowDown(settings);
+    await slowDown(asking);
+    await asking.getByRole("button", { name: "Discard" }).click();
+
+    // Both held open, fading, from the same moment.
+    for (const dialog of [settings, asking]) {
+      await expect(dialog).toHaveAttribute("data-closing");
+      await expect.poll(() => animations(dialog)).toBeGreaterThan(0);
+      expect(await isOpen(dialog)).toBe(true);
+    }
+    const started = (dialog: Locator) =>
+      dialog.evaluate(async (node) => {
+        await Promise.all(node.getAnimations().map((animation) => animation.ready));
+        return Math.min(...node.getAnimations().map((animation) => Number(animation.startTime)));
+      });
+    expect(Math.abs((await started(settings)) - (await started(asking)))).toBeLessThan(20);
+
+    // The settings' fade ending first still closes the dialog that asks first,
+    // so focus goes back through the settings to their button.
+    for (const dialog of [settings, asking]) {
+      await dialog.evaluate((node) => (node as HTMLElement).style.removeProperty("transition-duration"));
+    }
+    await release(settings);
+    await release(asking);
+    await expect.poll(() => isOpen(asking)).toBe(false);
+    await expect.poll(() => isOpen(settings)).toBe(false);
+    await expect(trigger).toBeFocused();
+    await settled(settings);
+
+    await trigger.click();
+    await expect.poll(() => isOpen(settings)).toBe(true);
+    await expect(name).toHaveValue("Acme Support");
+  });
+
+  test("without changes, or once they're saved, the settings close without asking", async ({ page }) => {
+    const { settings, asking, trigger, name } = await openSettings(page);
+    await page.keyboard.press("Escape");
+    await expect.poll(() => isOpen(settings)).toBe(false);
+    expect(await isOpen(asking)).toBe(false);
+    await settled(settings);
+
+    await trigger.click();
+    await expect.poll(() => isOpen(settings)).toBe(true);
+    await settled(settings);
+    await name.fill("Acme Help");
+    await settings.getByRole("button", { name: "Save changes" }).click();
+    await expect.poll(() => isOpen(settings)).toBe(false);
+    expect(await isOpen(asking)).toBe(false);
+    await settled(settings);
+
+    await trigger.click();
+    await expect.poll(() => isOpen(settings)).toBe(true);
+    await settled(settings);
+    await expect(name).toHaveValue("Acme Help");
+    await settings.getByRole("button", { name: "Cancel" }).click();
+    await expect.poll(() => isOpen(settings)).toBe(false);
+    expect(await isOpen(asking)).toBe(false);
   });
 
   test("a long word in its description or body breaks, rather than running under the close button or scrolling sideways", async ({ page }) => {
@@ -156,13 +264,38 @@ onEachPlayground("dialog", () => {
     const body = dialog.locator(".hdialog-body");
     expect(await body.evaluate((node) => node.scrollHeight > node.clientHeight)).toBe(true);
     const [box, header, footer] = await boxes(dialog, dialog.locator(".hdialog-header"), dialog.locator(".hdialog-footer"));
-    expect(box.y).toBeCloseTo(24, 0);
-    expect(box.y + box.height).toBeCloseTo(600 - 24, 0);
+    expect(box.y).toBeCloseTo(26, 0);
+    expect(box.y + box.height).toBeCloseTo(600 - 26, 0);
     expect(header.y).toBeGreaterThanOrEqual(box.y);
     expect(footer.y + footer.height).toBeLessThanOrEqual(box.y + box.height);
     await body.focus();
     await page.keyboard.press("End");
     await expect.poll(() => body.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+  });
+
+  test("it has 26px padding, its description sits 6px under its title, and its actions sit 10px apart", async ({ page }) => {
+    const { dialog } = await openFrom(page, "dialog-default", "Invite people");
+    const spacing = await dialog.evaluate((node) => {
+      const style = (part: string) => getComputedStyle(node.querySelector(part)!);
+      return {
+        padding: getComputedStyle(node).padding,
+        description: style(".hdialog-description").marginTop,
+        header: style(".hdialog-header").columnGap,
+        actions: style(".hdialog-footer").columnGap,
+        footer: style(".hdialog-footer").marginTop,
+      };
+    });
+    expect(spacing).toEqual({ padding: "26px", description: "6px", header: "16px", actions: "10px", footer: "16px" });
+  });
+
+  test("on a phone, it has 16px padding and keeps 10px from the window's edges", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 600 });
+    const { dialog } = await openFrom(page, "dialog-long-content", "Read the terms");
+    const [box] = await boxes(dialog);
+    expect(box.x).toBeCloseTo(10, 0);
+    expect(box.x + box.width).toBeCloseTo(390 - 10, 0);
+    expect(box.y).toBeCloseTo(10, 0);
+    expect(await dialog.evaluate((node) => getComputedStyle(node).padding)).toBe("16px");
   });
 
   test("it grows from 95% as it opens in 200ms, and fades out where it is in 150ms before it closes", async ({ page }) => {
@@ -272,6 +405,29 @@ onEachPlayground("dialog", () => {
     expect([params.get("tab"), params.get("dialog")]).toEqual(["members", "shortcuts-dialog"]);
     await page.keyboard.press("Escape");
     await expect.poll(() => new URL(page.url()).search).toBe("?tab=members");
+  });
+
+  test("with open held by the app and false, a button that would open it asks instead, and it opens once open is true", async ({ page }) => {
+    test.skip(!test.info().titlePath.includes("react"), "open is a React prop");
+    const container = await example(page, "dialog-opened-from-a-link");
+    const dialog = container.locator("dialog");
+    // A button of the app's own, outside the example. Its app opens the dialog
+    // from the URL only, so it doesn't take up the request.
+    await page.evaluate(() => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = "Open shortcuts";
+      button.setAttribute("commandfor", "shortcuts-dialog");
+      button.setAttribute("command", "show-modal");
+      document.body.append(button);
+    });
+    await page.getByRole("button", { name: "Open shortcuts" }).click();
+    await page.waitForTimeout(300);
+    expect(await isOpen(dialog)).toBe(false);
+    expect(new URL(page.url()).search).toBe("");
+
+    await container.getByRole("link", { name: "Keyboard shortcuts" }).click();
+    await expect.poll(() => isOpen(dialog)).toBe(true);
   });
 
   test("from a link: the link opens it, Back closes it, a reload with ?dialog opens it, and closing takes it off the URL", async ({ page }) => {

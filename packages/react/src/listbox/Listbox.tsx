@@ -18,7 +18,7 @@ import {
 import { flushSync } from "react-dom";
 import { renders } from "../children.ts";
 import { search as searchPaths } from "../icons.ts";
-import { popupTrigger } from "../Popup.tsx";
+import { popupTrigger, PopupTriggerContext } from "../Popup.tsx";
 import { withClass } from "../withClass.ts";
 
 export type ListboxSelection =
@@ -81,6 +81,9 @@ export interface ComboboxState {
   onChoose: (value: string) => void;
   // Whether the list has anything to show: an option, or a message.
   canOpen: () => boolean;
+  // Where the list puts its handling of the field's keys, for the field's
+  // onKeyDown to call after the app's.
+  keys?: RefObject<((event: globalThis.KeyboardEvent) => void) | null>;
 }
 
 export const ComboboxContext = createContext<ComboboxState | undefined>(
@@ -118,6 +121,7 @@ export const Listbox = ({
   const listId = id ?? (searchable ? generatedId : undefined);
   const select = useContext(SelectContext);
   const combobox = useContext(ComboboxContext);
+  const triggerKeys = useContext(PopupTriggerContext);
   // The Combobox as it is now, for listeners set up once.
   const comboboxNow = useRef(combobox);
   comboboxNow.current = combobox;
@@ -312,8 +316,10 @@ export const Listbox = ({
   useEffect(() => {
     const popup = containerOf();
     if (!popup) return;
-    const opener = popup.matches(".hpopup") ? popupTrigger(popup) : undefined;
-    const owned = !typing && opener?.getAttribute("role") === "combobox";
+    const inPopup = popup.matches(".hpopup");
+    const opener = inPopup ? popupTrigger(popup) : undefined;
+    const selectTrigger = opener?.getAttribute("role") === "combobox";
+    const owned = !typing && selectTrigger;
     trigger.current = combobox
       ? combobox.input.current
       : owned
@@ -322,6 +328,35 @@ export const Listbox = ({
     setTriggerOwned(owned);
 
     const keydown = (event: KeyboardEvent) => keyDown.current(event);
+
+    // A Select with a search row opens on Down and Up too, as a plain one
+    // does: Down at the chosen option or the first, Up at the first. Focus
+    // then moves to the search field, from the whole list.
+    const searchOpener = searchable && !combobox && selectTrigger ? opener : undefined;
+    const opens = (event: KeyboardEvent) => {
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      if (event.defaultPrevented || popup.matches(":popover-open")) return;
+      event.preventDefault();
+      if (search.current?.value) {
+        search.current.value = "";
+        flushSync(() => setQuery(""));
+      }
+      opening.current = event.key === "ArrowUp" ? (enabled()[0] ?? null) : null;
+      popup.showPopover();
+    };
+
+    // Where focus is in the popup, on the list, its search field, or its
+    // footer, a Tab that takes it out closes the popup, as a Select's trigger
+    // does; focus goes on from where Tab took it.
+    const focusInside = inPopup && !owned && !combobox;
+    const tabbed = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || event.defaultPrevented) return;
+      setTimeout(() => {
+        if (popup.matches(":popover-open") && !popup.contains(document.activeElement)) {
+          popup.hidePopover();
+        }
+      });
+    };
     const keyup = (event: KeyboardEvent) => {
       if (event.key !== " " || !swallowSpace.current) return;
       event.preventDefault();
@@ -370,14 +405,29 @@ export const Listbox = ({
     if (list.current) resized.observe(list.current);
 
     const owner = trigger.current;
-    owner?.addEventListener("keydown", keydown);
+    // A Select's keys, on the trigger of the Popup the list is in, and a
+    // Combobox's or Command Menu's, on its field, come through that element's
+    // onKeyDown, after the app's, so preventDefault() there stops them. A
+    // trigger that isn't a Popup's gets a listener here instead.
+    const pressed = owned || combobox ? keydown : opens;
+    const pressedOn = owned || combobox ? owner : searchOpener;
+    const throughTrigger = combobox
+      ? (combobox.keys ?? null)
+      : pressedOn && triggerKeys?.popup === popup.id
+        ? triggerKeys.keys
+        : null;
+    if (throughTrigger) throughTrigger.current = pressed;
+    else pressedOn?.addEventListener("keydown", pressed);
     owner?.addEventListener("keyup", keyup);
+    if (focusInside) popup.addEventListener("keydown", tabbed);
     popup.addEventListener("beforetoggle", beforeToggle, true);
     popup.addEventListener("toggle", toggle);
     return () => {
-      owner?.removeEventListener("keydown", keydown);
+      if (throughTrigger?.current === pressed) throughTrigger.current = null;
+      pressedOn?.removeEventListener("keydown", pressed);
       owner?.removeEventListener("keyup", keyup);
       owner?.removeAttribute("aria-activedescendant");
+      popup.removeEventListener("keydown", tabbed);
       popup.removeEventListener("beforetoggle", beforeToggle, true);
       popup.removeEventListener("toggle", toggle);
       resized.disconnect();
@@ -480,8 +530,8 @@ export const Listbox = ({
         aria-activedescendant={listOwned ? (activeId ?? undefined) : undefined}
         tabIndex={listOwned ? -1 : undefined}
         onKeyDown={(event) => {
-          if (listOwned) handleKeyDown(event.nativeEvent);
           onKeyDown?.(event);
+          if (listOwned && !event.defaultPrevented) handleKeyDown(event.nativeEvent);
         }}
         onPointerMove={(event) => {
           pointing.current = true;

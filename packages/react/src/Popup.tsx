@@ -2,11 +2,16 @@
 
 import {
   cloneElement,
+  createContext,
   useId,
+  useMemo,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type CSSProperties,
+  type KeyboardEventHandler,
   type ReactElement,
+  type RefObject,
 } from "react";
 import { withClass } from "./withClass.ts";
 
@@ -14,7 +19,16 @@ interface PopupTrigger {
   popoverTarget?: string;
   "aria-expanded"?: boolean;
   style?: CSSProperties;
+  onKeyDown?: KeyboardEventHandler<HTMLElement>;
 }
+
+// A key pressed on the trigger, for what's in the popup to handle, such as a
+// Select's Listbox: after the trigger's own onKeyDown, the app's, unless that
+// called preventDefault().
+export const PopupTriggerContext = createContext<
+  | { popup: string; keys: RefObject<((event: KeyboardEvent) => void) | null> }
+  | undefined
+>(undefined);
 
 export interface PopupProps extends ComponentPropsWithRef<"div"> {
   trigger: ReactElement<PopupTrigger>;
@@ -33,6 +47,8 @@ export const Popup = ({
   const popupId = id ?? generatedId;
   const anchor = `--${generatedId}`;
   const [open, setOpen] = useState(false);
+  const keys = useRef<((event: KeyboardEvent) => void) | null>(null);
+  const triggerKeys = useMemo(() => ({ popup: popupId, keys }), [popupId]);
 
   return (
     <>
@@ -40,6 +56,10 @@ export const Popup = ({
         popoverTarget: popupId,
         "aria-expanded": open,
         style: { ...trigger.props.style, anchorName: anchor } as CSSProperties,
+        onKeyDown: (event) => {
+          trigger.props.onKeyDown?.(event);
+          if (!event.defaultPrevented) keys.current?.(event.nativeEvent);
+        },
       })}
       <div
         {...props}
@@ -56,7 +76,9 @@ export const Popup = ({
           placePopup(event.currentTarget, event.newState === "open");
         }}
       >
-        {children}
+        <PopupTriggerContext value={triggerKeys}>
+          {children}
+        </PopupTriggerContext>
       </div>
     </>
   );

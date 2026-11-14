@@ -140,6 +140,90 @@ onEachPlayground("listbox", () => {
     await expect(listbox).toBeFocused();
   });
 
+  test("in a multi-select, a disabled option's checkbox dims, as a disabled Checkbox does", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-multiple", "Status");
+    const option = listbox.getByRole("option", { name: "Pending" });
+    const opacity = () => option.locator(".hoption-checkbox").evaluate((node) => Number(getComputedStyle(node).opacity));
+    expect(await opacity()).toBe(1);
+    await option.evaluate((node) => node.setAttribute("aria-disabled", "true"));
+    const dimmed = await page.evaluate(() => Number(getComputedStyle(document.documentElement).getPropertyValue("--harmo-opacity-disabled")));
+    expect(dimmed).toBeLessThan(1);
+    expect(await opacity()).toBe(dimmed);
+  });
+
+  test("an option has 8px 10px padding and 10px between its parts, and one without the check keeps 10px and 1em more for it", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-single", "Period");
+    const spacing = (name: string) =>
+      listbox.getByRole("option", { name }).evaluate((node) => {
+        const { paddingTop, paddingBottom, paddingLeft, paddingRight, columnGap, fontSize } = getComputedStyle(node);
+        return { paddingTop, paddingBottom, paddingLeft, paddingRight, columnGap, check: `${10 + 10 + parseFloat(fontSize)}px` };
+      });
+    const chosen = await spacing("Last 30 days");
+    expect(chosen).toMatchObject({ paddingTop: "8px", paddingBottom: "8px", paddingLeft: "10px", paddingRight: "10px", columnGap: "10px" });
+    const other = await spacing("Last 7 days");
+    expect(other.paddingRight).toBe(other.check);
+  });
+
+  test("a badge sits 16px after its label, and a search row's field 6px after its icon", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-disabled-options", "Source");
+    const viber = listbox.getByRole("option", { name: /^Viber/ });
+    const [label, badge] = await boxes(viber.locator(".hoption-label"), viber.locator(".hoption-badge"));
+    expect(badge.x - (label.x + label.width)).toBeCloseTo(16, 0);
+    await page.keyboard.press("Escape");
+
+    const { container, search } = await openList(page, "listbox-single-with-search", "Assignee");
+    const [icon, field] = await boxes(container.locator(".hlistbox-search > .hicon"), search);
+    expect(field.x - (icon.x + icon.width)).toBeCloseTo(6, 0);
+  });
+
+  test("a click the app stops, with preventDefault() in its own handler on the option, chooses nothing", async ({ page }) => {
+    const { container, listbox } = await openList(page, "listbox-single", "Period");
+    const option = listbox.getByRole("option", { name: "Last 7 days" });
+    // On the option, so before the list's own handling, as an Option's
+    // onClick is in React.
+    await option.evaluate((node) => node.addEventListener("click", (event) => event.preventDefault(), { once: true }));
+    await clickAt(page, option);
+    await expect(openPopup(container)).toHaveCount(1);
+    await expectChosen(container, ["Last 30 days"]);
+
+    await clickAt(page, option);
+    await expectChosen(container, ["Last 7 days"]);
+  });
+
+  test("a key the app stops, with preventDefault() in the list's onKeyDown, doesn't move the highlight", async ({ page }) => {
+    test.skip(!test.info().titlePath.includes("react"), "onKeyDown is a React prop; in HTML, the app's own listener on the list comes after the example script's");
+    const { listbox } = await openList(page, "listbox-single", "Period");
+    // On the list itself, so before React hands the key to the Listbox.
+    await listbox.evaluate((node) => node.addEventListener("keydown", (event) => event.preventDefault(), { once: true }));
+    await page.keyboard.press("ArrowDown");
+    await expectActive(listbox, listbox.getByRole("option", { name: "Last 30 days" }));
+    await page.keyboard.press("ArrowDown");
+    await expectActive(listbox, listbox.getByRole("option", { name: "Last 90 days" }));
+  });
+
+  test("Tab moves focus on, to its footer, and closes the popup once focus has left it", async ({ page }) => {
+    const { container } = await openList(page, "listbox-multiple-with-a-footer", "Language");
+    const popup = container.locator(".hpopup");
+    await page.keyboard.press("Tab");
+    await expect(container.getByRole("button", { name: "Clear filters" })).toBeFocused();
+    await expect(openPopup(container)).toHaveCount(1);
+    await page.keyboard.press("Tab");
+    await expect(openPopup(container)).toHaveCount(0);
+    expect(await popup.evaluate((node) => node.contains(document.activeElement))).toBe(false);
+  });
+
+  test("Tab and Shift+Tab from the list close its popup", async ({ page }) => {
+    const { container, trigger } = await openList(page, "listbox-single", "Period");
+    await page.keyboard.press("Shift+Tab");
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+
+    await openList(page, "listbox-single", "Period");
+    await page.keyboard.press("Tab");
+    await expect(openPopup(container)).toHaveCount(0);
+    expect(await container.locator(".hpopup").evaluate((node) => node.contains(document.activeElement))).toBe(false);
+  });
+
   test("a multi-select's checkbox fades its fill and border in 150ms", async ({ page }) => {
     const { listbox } = await openList(page, "listbox-multiple", "Status");
     const checkbox = listbox.getByRole("option", { name: "Delivered" }).locator(".hoption-checkbox");
@@ -372,6 +456,80 @@ onEachPlayground("listbox", () => {
     await expect(popup).toHaveAttribute("data-side", "top");
   });
 });
+
+// A Select with a search row, as Phone Input's country is, opens on the keys
+// a plain one does.
+onEachPlayground("phone-input", () => {
+  test("a Select with a search row opens on Down and Up, as a plain one does, then moves focus to its search", async ({ page }) => {
+    const container = await example(page, "phone-input-default");
+    const trigger = container.getByRole("combobox", { name: "Country code" });
+    const search = container.getByRole("combobox", { name: "Search countries", includeHidden: true });
+    const listbox = container.getByRole("listbox", { includeHidden: true });
+    await trigger.focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(openPopup(container)).toHaveCount(1);
+    await expect(search).toBeFocused();
+    await expectActive(search, listbox.locator('.hoption[aria-selected="true"]'));
+
+    await page.keyboard.press("Escape");
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await expect(search).toBeFocused();
+    await expectActive(search, listbox.locator(".hoption").first());
+  });
+
+  test("a Down the app stops on the trigger of a Select with a search row, with preventDefault() in its own handler, doesn't open it", async ({ page }) => {
+    const container = await example(page, "phone-input-default");
+    const trigger = container.getByRole("combobox", { name: "Country code" });
+    await trigger.focus();
+    await stopNextKey(trigger);
+    await page.keyboard.press("ArrowDown");
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+
+    await page.keyboard.press("ArrowDown");
+    await expect(openPopup(container)).toHaveCount(1);
+  });
+});
+
+// The keys on a plain Select's trigger, which keeps focus while its list is
+// open.
+onEachPlayground("select", () => {
+  test("a key the app stops on a Select's trigger, with preventDefault() in its own handler, doesn't open it or move its highlight", async ({ page }) => {
+    const container = await example(page, "select-default");
+    const trigger = container.getByRole("combobox", { name: "Channel" });
+    const listbox = container.getByRole("listbox", { includeHidden: true });
+    await trigger.focus();
+    await stopNextKey(trigger);
+    await page.keyboard.press("ArrowDown");
+    await expect(openPopup(container)).toHaveCount(0);
+
+    await page.keyboard.press("ArrowDown");
+    await expect(openPopup(container)).toHaveCount(1);
+    await expectActive(trigger, listbox.getByRole("option", { name: "WhatsApp" }));
+    await stopNextKey(trigger);
+    await page.keyboard.press("ArrowDown");
+    await expectActive(trigger, listbox.getByRole("option", { name: "WhatsApp" }));
+    await page.keyboard.press("ArrowDown");
+    await expectActive(trigger, listbox.getByRole("option", { name: "Telegram" }));
+  });
+});
+
+// Stands in for the app's own handler on a Select's trigger, stopping the
+// next key with preventDefault() before the Select's own handling. In React,
+// a listener on the trigger itself, which runs before React calls the
+// trigger's onKeyDown, where the app's runs first; in HTML, one on the way
+// down to the trigger, before the example script's on it.
+const stopNextKey = (trigger: Locator) =>
+  trigger.evaluate(
+    (node, react) => {
+      const stop = (event: Event) => event.preventDefault();
+      if (react) node.addEventListener("keydown", stop, { once: true });
+      else node.parentElement?.addEventListener("keydown", stop, { capture: true, once: true });
+    },
+    test.info().titlePath.includes("react"),
+  );
 
 // Opens an example's list with a click, as a person would, and waits until
 // it's ready for keys, as a person sees it: focus in the search field if it

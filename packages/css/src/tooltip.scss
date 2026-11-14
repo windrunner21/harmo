@@ -14,6 +14,8 @@
 }
 
 .htooltip {
+  // An offset from its trigger, not spacing inside a layout, so it stays off
+  // the spacing scale.
   --htooltip-gap: 8px;
 
   position: fixed;
@@ -33,7 +35,7 @@
   inline-size: max-content;
   max-inline-size: 240px;
   margin: var(--htooltip-gap);
-  padding: 7px;
+  padding: $space-2xs;
 
   font-family: $font-family;
   font-size: $font-size-sm;
@@ -87,7 +89,7 @@
 
   &[data-variant="hint"] {
     max-inline-size: 280px;
-    padding: 8px 12px;
+    padding: 8px $space-xs;
 
     font-size: $font-size-xs;
     line-height: 1.45;
@@ -150,6 +152,13 @@
 // nor shows keyboard focus; Escape still hides it, below.
 :where(.htooltip-trigger[data-open]) > .htooltip {
   @include shown(0s);
+}
+
+// Shown with no delay, by keyboard focus or as a neighbor's right after one
+// closed (data-instant, which a script sets), it swaps in and out at once,
+// without its fade and grow, so two never overlap down a row of controls.
+:where(.htooltip-trigger[data-instant], .htooltip-trigger:has(:focus-visible)) > .htooltip {
+  transition: none;
 }
 
 :where(.htooltip-trigger) > .htooltip[data-dismissed] {

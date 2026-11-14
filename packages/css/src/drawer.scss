@@ -63,10 +63,10 @@
   pointer-events: none;
 
   translate: var(--hdrawer-shift);
-  // Slides in in 200ms and out in 150ms, as Dialog fades: with data-closing,
-  // which the example script or the React Drawer sets while it holds the
-  // close. Without either, Chromium still slides it out, and Firefox and
-  // Safari close it at once.
+  // Slides in in 300ms, as it crosses its whole width, and out in 150ms: with
+  // data-closing, which the example script or the React Drawer sets while it
+  // holds the close. Without either, Chromium still slides it out, and Firefox
+  // and Safari close it at once.
   transition:
     translate $duration-fast $ease-out-cubic,
     opacity $duration-fast $ease-out-cubic,
@@ -88,7 +88,10 @@
     // block of what's fixed inside it, such as a tooltip, which its overflow
     // would then clip. It slides from the shift all the same.
     translate: none;
-    transition-duration: $duration-normal;
+    // 300ms for the slide; 200ms for the fade that replaces it with reduced
+    // motion, as a Dialog's.
+    transition-duration: $duration-slow, $duration-normal, $duration-normal,
+      $duration-normal;
 
     @starting-style {
       opacity: var(--hdrawer-closed-opacity);
@@ -201,9 +204,9 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  column-gap: 32px;
+  column-gap: $space-md;
 
-  padding: 16px 20px;
+  padding: $space-sm $space-md;
 
   border-block-end: 1px solid $color-border;
 
@@ -228,7 +231,7 @@
 .hdrawer-description {
   grid-column: 1;
 
-  margin: 4px 0 0;
+  margin: $space-2xs 0 0;
 
   font-size: $font-size-sm;
   line-height: $font-line-height;
@@ -261,13 +264,13 @@
   }
 }
 
-// What scrolls, with 20px of padding, which also keeps the focus rings of
-// what's inside from being clipped at its edges.
+// What scrolls, with padding that also keeps the focus rings of what's inside
+// from being clipped at its edges.
 .hdrawer-body {
   grid-area: body;
 
   min-block-size: 0;
-  padding: 20px;
+  padding: $space-md;
   overflow-y: auto;
 
   overscroll-behavior: contain;
@@ -285,9 +288,9 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: $space-xs;
 
-  padding: 20px;
+  padding: $space-md;
 
   border-block-start: 1px solid $color-border;
 
@@ -302,7 +305,7 @@
   grid-area: aside;
 
   min-block-size: 0;
-  padding: 40px;
+  padding: $space-lg;
   overflow-y: auto;
 
   overscroll-behavior: contain;

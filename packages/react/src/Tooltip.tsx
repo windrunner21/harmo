@@ -34,9 +34,35 @@ export type TooltipProps = TooltipOptions &
   );
 
 let lastHide = -Infinity;
+let lastTrigger: HTMLElement | null = null;
+
+const openedAt = new WeakMap<EventTarget, number>();
+let openings = 0;
+
+if (typeof document !== "undefined") {
+  document.addEventListener(
+    "beforetoggle",
+    (event) => {
+      if ((event as ToggleEvent).newState === "open" && event.target) {
+        openedAt.set(event.target, ++openings);
+      }
+    },
+    true,
+  );
+}
+
+const topmost = (element: HTMLElement) => {
+  const open = Array.from(
+    document.querySelectorAll(':popover-open:not([popover="manual"]), dialog:modal'),
+  );
+  const order = (layer: Element) => openedAt.get(layer) ?? 0;
+  const latest = Math.max(...open.map(order));
+  return open.every((layer) => order(layer) < latest || layer.contains(element));
+};
 
 export const useTooltip = (open = false) => {
   const tooltip = useRef<HTMLSpanElement>(null);
+  const element = useRef<HTMLElement | null>(null);
   const entered = useRef(0);
   const delay = useRef(0);
   const [dismissed, setDismissed] = useState(false);
@@ -48,26 +74,40 @@ export const useTooltip = (open = false) => {
 
   const shown = () =>
     tooltip.current !== null &&
-    getComputedStyle(tooltip.current).visibility === "visible";
+    tooltip.current.checkVisibility({ visibilityProperty: true });
 
   useEffect(() => {
     const dismiss = (event: KeyboardEvent) => {
       if (event.key !== "Escape" || !shown()) return;
       setDismissed(true);
       lastHide = performance.now();
+      if (topmost(tooltip.current as HTMLElement)) event.preventDefault();
+    };
+    const focused = (event: FocusEvent) => {
+      const trigger = tooltip.current?.closest(".htooltip-trigger");
+      if (trigger?.contains(event.target as Node) && trigger.matches(":has(:focus-visible)")) {
+        trigger.setAttribute("data-instant", "");
+      }
     };
     addEventListener("keydown", dismiss);
-    return () => removeEventListener("keydown", dismiss);
+    addEventListener("focusin", focused);
+    return () => {
+      removeEventListener("keydown", dismiss);
+      removeEventListener("focusin", focused);
+    };
   }, []);
 
   return {
     trigger: {
       onPointerEnter: (event: PointerEvent<HTMLElement>) => {
         const recent = performance.now() - lastHide < 400;
-        event.currentTarget.style.setProperty(
-          "--htooltip-delay",
-          recent ? "0ms" : "",
-        );
+        const trigger = event.currentTarget;
+        trigger.style.setProperty("--htooltip-delay", recent ? "0ms" : "");
+        trigger.toggleAttribute("data-instant", recent);
+        if (recent && lastTrigger !== trigger) {
+          lastTrigger?.setAttribute("data-instant", "");
+        }
+        element.current = trigger;
         entered.current = performance.now();
         delay.current = recent
           ? 0
@@ -81,6 +121,7 @@ export const useTooltip = (open = false) => {
       onPointerLeave: () => {
         if (performance.now() - entered.current >= delay.current) {
           lastHide = performance.now();
+          lastTrigger = element.current;
         }
         setDismissed(false);
       },

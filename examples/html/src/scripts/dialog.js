@@ -11,7 +11,8 @@
 // closes, at once in Firefox and Safari.
 //
 // It also opens the dialog that the URL names, as an app's router would
-// (?dialog=its-id), so a link to it, a reload, and Back all work.
+// (?dialog=its-id), so a link to it, a reload, and Back all work, and stands
+// in for the app in the "Unsaved changes" example, which asks before closing.
 {
   // Each dialog's exit that's playing, so one that stops early, because the
   // dialog was closed some other way or is wanted open again, doesn't close it.
@@ -43,6 +44,47 @@
     exits.delete(dialog);
     dialog.removeAttribute("data-closing");
   };
+
+  // The "Unsaved changes" example, as an app would write it: closing the
+  // settings with changes that aren't saved asks first, in the dialog that
+  // data-example-unsaved names. Its cancel listener comes before the fade's
+  // below, as an app's own handler runs first.
+  for (const settings of document.querySelectorAll("dialog[data-example-unsaved]")) {
+    const asking = document.getElementById(settings.dataset.exampleUnsaved);
+    const form = settings.querySelector("form");
+    const fields = [...form.querySelectorAll("input")];
+
+    // What was last saved is what the fields were written with: each opening
+    // starts from it, and sending the form saves what's in them. As they
+    // close, the dialog that asks closes first, so focus goes back through
+    // them to the button that opened them.
+    settings.addEventListener("beforetoggle", (event) => {
+      if (event.newState === "open") form.reset();
+      else asking.close();
+    });
+    form.addEventListener("submit", () => {
+      for (const field of fields) field.defaultValue = field.value;
+    });
+
+    // A close the browser doesn't let the page stop still closes it: after the
+    // page stops one Escape, it may stop another only once the person has
+    // clicked or typed.
+    settings.addEventListener("cancel", (event) => {
+      if (!event.cancelable || fields.every((field) => field.value === field.defaultValue)) return;
+      event.preventDefault();
+      asking.showModal();
+    });
+
+    // Discard fades the settings out with the dialog that asks, which its
+    // command="request-close" fades, so both go in one exit; whichever fade
+    // ends first, the dialog that asks closes first.
+    asking.querySelector("[data-example-discard]").addEventListener("click", () => closeAfterFade(settings));
+    // Otherwise, they stay open, and focus goes back inside, to the first
+    // field if a click outside took it away.
+    asking.addEventListener("close", () => {
+      if (settings.open && !settings.contains(document.activeElement)) fields[0].focus();
+    });
+  }
 
   for (const dialog of document.querySelectorAll(".hdialog, .hdrawer")) {
     // A command="request-close" button's value, kept for the cancel event its

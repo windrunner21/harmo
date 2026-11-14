@@ -14,12 +14,18 @@ onEachPlayground("tooltip", () => {
     await expect(naming.getByRole("button", { name: "Close", exact: true })).toHaveAccessibleDescription("");
   });
 
-  test("keyboard focus shows it at once", async ({ page }) => {
+  test("keyboard focus shows it at once, without its fade, and it hides at once as focus moves on", async ({ page }) => {
     const container = await example(page, "tooltip-describing-a-control");
     const tooltip = tooltipOf(container, "Archive");
+    // A fade that ran would take 100 seconds.
+    await slowDown(tooltip);
     await tabTo(page, container.getByRole("button", { name: "Archive" }));
-    expect(await delayOf(tooltip)).toBe("0s");
-    await expect.poll(() => shown(tooltip)).toBe(true);
+    expect(await shown(tooltip)).toBe(true);
+    expect(await opacityOf(tooltip)).toBe(1);
+    expect(await scaleOf(tooltip)).toBe(1);
+
+    await page.keyboard.press("Shift+Tab");
+    expect(await shown(tooltip)).toBe(false);
   });
 
   test("hovering shows it after the delay", async ({ page }) => {
@@ -38,7 +44,6 @@ onEachPlayground("tooltip", () => {
     await pointAt(page, container.getByRole("button", { name: "Archive" }));
     const next = tooltipOf(container, "Archive");
     await expect(next).toHaveCSS("--htooltip-delay", "0ms");
-    expect(await delayOf(next)).toBe("0s");
     await expect.poll(() => shown(next)).toBe(true);
 
     // Longer than the 400ms that counts as right after, so it can't end early.
@@ -46,6 +51,29 @@ onEachPlayground("tooltip", () => {
     await page.waitForTimeout(500);
     await pointAt(page, container.getByRole("button", { name: "Export" }));
     expect(await delayOf(tooltipOf(container, "Export"))).toBe("0.3s");
+    await expect(triggerOf(container, "Export")).not.toHaveAttribute("data-instant");
+  });
+
+  test("right after one closes, the next swaps in at once, and the one it replaces goes at once, without a fade", async ({ page }) => {
+    const container = await example(page, "tooltip-describing-a-control");
+    const first = tooltipOf(container, "Export");
+    const next = tooltipOf(container, "Archive");
+    await pointAt(page, container.getByRole("button", { name: "Export" }));
+    await expect.poll(() => shown(first)).toBe(true);
+    await settled(first);
+
+    // A fade that ran would take 100 seconds.
+    await slowDown(first);
+    await slowDown(next);
+    await pointAt(page, container.getByRole("button", { name: "Archive" }));
+    await expect.poll(() => shown(next)).toBe(true);
+    await expect(triggerOf(container, "Archive")).toHaveAttribute("data-instant", "");
+    expect(await opacityOf(next)).toBe(1);
+    expect(await scaleOf(next)).toBe(1);
+    expect(await shown(first)).toBe(false);
+
+    await page.mouse.move(0, 0);
+    expect(await shown(next)).toBe(false);
   });
 
   test("the pointer can move onto the tooltip", async ({ page }) => {
@@ -92,6 +120,104 @@ onEachPlayground("tooltip", () => {
     await expect.poll(() => shown(tooltip)).toBe(true);
   });
 
+  // In a dialog or a popup of the test's own, as no Dialog or Popup example
+  // holds a tooltip: the browser closes both on Escape, unless that Escape's
+  // keydown was cancelled. A manual popover open elsewhere, as a Toaster's
+  // region is, stays open on Escape, so it isn't a layer over the tooltip.
+  for (const layer of ["modal dialog", "popup"] as const) {
+    test(`an Escape that hides a tooltip in a ${layer} hides only that, and the next one closes the ${layer}`, async ({ page }) => {
+      const container = await example(page, "tooltip-describing-a-control");
+      const trigger = triggerOf(container, "Archive");
+      const around = await trigger.evaluateHandle((node, layer) => {
+        const manual = document.createElement("div");
+        manual.popover = "manual";
+        manual.style.cssText = "inset: auto 0 0 auto; margin: 0";
+        document.body.append(manual);
+        manual.showPopover();
+        const around = document.createElement(layer === "popup" ? "div" : "dialog");
+        if (layer === "popup") around.popover = "auto";
+        node.before(around);
+        around.append(node);
+        if (around instanceof HTMLDialogElement) around.showModal();
+        else around.showPopover();
+        return around;
+      }, layer);
+      const isOpen = () => around.evaluate((node) => (node instanceof HTMLDialogElement ? node.open : node.matches(":popover-open")));
+      const tooltip = tooltipOf(container, "Archive");
+      await pointAt(page, container.getByRole("button", { name: "Archive" }));
+      await expect.poll(() => shown(tooltip)).toBe(true);
+
+      await page.keyboard.press("Escape");
+      await expect.poll(() => shown(tooltip)).toBe(false);
+      await page.waitForTimeout(200);
+      expect(await isOpen()).toBe(true);
+
+      await page.keyboard.press("Escape");
+      await expect.poll(isOpen).toBe(false);
+    });
+  }
+
+  // Two dialogs side by side, neither inside the other, as when a second one
+  // asks before the first closes, as in Dialog's "Unsaved changes": Escape
+  // closes the one that opened last, so a tooltip in that one takes the first
+  // Escape, though the dialog under it doesn't hold the tooltip. The second
+  // opens from a click, as a person opens it, so the browser lets one Escape
+  // close only it.
+  test("with a dialog open over another, an Escape that hides a tooltip in the upper one hides only that, and the next one closes only that dialog", async ({ page }) => {
+    const container = await example(page, "tooltip-describing-a-control");
+    await triggerOf(container, "Archive").evaluate((node) => {
+      const under = document.createElement("dialog");
+      under.dataset.testLayer = "under";
+      const opener = document.createElement("button");
+      opener.textContent = "Open the other dialog";
+      under.append(opener);
+      document.body.append(under);
+      const over = document.createElement("dialog");
+      over.dataset.testLayer = "over";
+      node.before(over);
+      over.append(node);
+      opener.addEventListener("click", () => over.showModal());
+      under.showModal();
+    });
+    const isOpen = (layer: string) => page.locator(`dialog[data-test-layer="${layer}"]`).evaluate((node) => (node as HTMLDialogElement).open);
+    await page.getByRole("button", { name: "Open the other dialog" }).click();
+    await expect.poll(() => isOpen("over")).toBe(true);
+    const tooltip = tooltipOf(container, "Archive");
+    await pointAt(page, container.getByRole("button", { name: "Archive" }));
+    await expect.poll(() => shown(tooltip)).toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect.poll(() => shown(tooltip)).toBe(false);
+    await page.waitForTimeout(200);
+    expect(await isOpen("over"), "the upper dialog").toBe(true);
+    expect(await isOpen("under"), "the dialog under it").toBe(true);
+
+    await page.keyboard.press("Escape");
+    await expect.poll(() => isOpen("over")).toBe(false);
+    expect(await isOpen("under"), "the dialog under it").toBe(true);
+  });
+
+  test("with a popup open over it, such as a list opened from its control, Escape closes that and hides the tooltip together", async ({ page }) => {
+    const container = await example(page, "tooltip-describing-a-control");
+    const tooltip = tooltipOf(container, "Export");
+    await pointAt(page, container.getByRole("button", { name: "Export" }));
+    await expect.poll(() => shown(tooltip)).toBe(true);
+    // In a corner, away from the pointer, which stays over Export.
+    const popup = await page.evaluateHandle(() => {
+      const popup = document.createElement("div");
+      popup.popover = "auto";
+      popup.textContent = "List";
+      popup.style.cssText = "inset: auto 0 0 auto; margin: 0";
+      document.body.append(popup);
+      popup.showPopover();
+      return popup;
+    });
+
+    await page.keyboard.press("Escape");
+    await expect.poll(() => popup.evaluate((node) => node.matches(":popover-open"))).toBe(false);
+    await expect.poll(() => shown(tooltip)).toBe(false);
+  });
+
   test("data-open on its trigger shows it at once, without hover or focus, and Escape still hides it", async ({ page }) => {
     const container = await example(page, "tooltip-describing-a-control");
     const tooltip = tooltipOf(container, "Export");
@@ -118,11 +244,11 @@ onEachPlayground("tooltip", () => {
     expect(await display(), "pinned").toBe("none");
   });
 
-  test("it fades in and grows from 95% in 150ms, and fades out in 100ms", async ({ page }) => {
+  test("after its delay, it fades in and grows from 95% in 150ms, and fades out in 100ms", async ({ page }) => {
     const container = await example(page, "tooltip-describing-a-control");
     const tooltip = tooltipOf(container, "Archive");
     await slowDown(tooltip);
-    await tabTo(page, container.getByRole("button", { name: "Archive" }));
+    await pointAt(page, container.getByRole("button", { name: "Archive" }));
     await expect.poll(() => shown(tooltip)).toBe(true);
     expect(await scaleOf(tooltip)).toBeCloseTo(0.95, 2);
     expect(await opacityOf(tooltip)).toBeLessThan(0.5);
@@ -131,7 +257,7 @@ onEachPlayground("tooltip", () => {
     expect(await scaleOf(tooltip)).toBe(1);
     expect(await durationOf(tooltip, "opacity")).toBe("0.15s");
 
-    await page.keyboard.press("Shift+Tab");
+    await page.mouse.move(0, 0);
     expect(await durationOf(tooltip, "opacity")).toBe("0.1s");
   });
 
@@ -140,7 +266,7 @@ onEachPlayground("tooltip", () => {
     const container = await example(page, "tooltip-describing-a-control");
     const tooltip = tooltipOf(container, "Archive");
     await slowDown(tooltip);
-    await tabTo(page, container.getByRole("button", { name: "Archive" }));
+    await pointAt(page, container.getByRole("button", { name: "Archive" }));
     await expect.poll(() => shown(tooltip)).toBe(true);
     expect(await tooltip.evaluate((node) => getComputedStyle(node).transform)).toBe("none");
     expect(await opacityOf(tooltip)).toBeLessThan(0.5);
@@ -245,9 +371,10 @@ for (const { slug, where, id, control } of pinnedBy) {
   });
 }
 
-// The tooltip in the same trigger as the button with this name.
-const tooltipOf = (container: Locator, name: string) =>
-  container.locator(".htooltip-trigger").filter({ has: container.page().getByRole("button", { name, exact: true }) }).locator(".htooltip");
+// The trigger around the button with this name, and its tooltip.
+const triggerOf = (container: Locator, name: string) =>
+  container.locator(".htooltip-trigger").filter({ has: container.page().getByRole("button", { name, exact: true }) });
+const tooltipOf = (container: Locator, name: string) => triggerOf(container, name).locator(".htooltip");
 
 // Whether CSS shows a tooltip.
 const shown = (tooltip: Locator) => tooltip.evaluate((element) => getComputedStyle(element).visibility === "visible");

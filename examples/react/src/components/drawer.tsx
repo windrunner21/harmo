@@ -30,7 +30,7 @@ export const examples = {
         </>
       }
     >
-      <div style={{ display: "grid", gap: 24 }}>
+      <div style={{ display: "grid", gap: "var(--harmo-space-md)" }}>
         <Field label="Shortcut">
           <Input id="reply-shortcut" name="shortcut" type="text" autoFocus />
         </Field>
@@ -70,7 +70,7 @@ export const examples = {
         </>
       }
     >
-      <div style={{ display: "grid", gap: 24 }}>
+      <div style={{ display: "grid", gap: "var(--harmo-space-md)" }}>
         <Field label="Name">
           <Input
             id="template-name"
@@ -152,8 +152,8 @@ export const examples = {
             }
           }}
         >
-          <div style={{ display: "grid", gap: 24 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ display: "grid", gap: "var(--harmo-space-md)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--harmo-space-xs)" }}>
               <Avatar alt="Sam Rivera">SR</Avatar>
               <Status status="success">Subscribed</Status>
             </div>

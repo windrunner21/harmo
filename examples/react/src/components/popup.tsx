@@ -29,7 +29,7 @@ export const examples = {
           <FilterChip label="Name contains" values={text ? [text] : undefined} />
         }
       >
-        <div style={{ display: "grid", gap: 16, padding: 12 }}>
+        <div style={{ display: "grid", gap: "var(--harmo-space-sm)", padding: "var(--harmo-space-xs)" }}>
           <Field label="Name contains">
             <Input
               ref={input}

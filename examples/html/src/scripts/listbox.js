@@ -166,10 +166,11 @@
     // list's one check mark, which stays hidden in an unselected option until
     // it's needed, and the popup closes, even when the option was already
     // selected. Closing returns focus to what opened it. Select and filter
-    // chip scripts react to the same click.
+    // chip scripts react to the same click. A click the app has stopped, with
+    // preventDefault() in its own handler on the option, chooses nothing.
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.getAttribute("aria-disabled") === "true" || commands) return;
+      if (!option || option.getAttribute("aria-disabled") === "true" || commands || event.defaultPrevented) return;
 
       if (listbox.getAttribute("aria-multiselectable") === "true") {
         option.setAttribute("aria-selected", String(option.getAttribute("aria-selected") !== "true"));
@@ -226,6 +227,34 @@
       requestAnimationFrame(() => updateTitles(listbox));
     });
 
+    // A select with a search row opens on Down and Up too, as a plain one
+    // does: Down at the selected option or the first, Up at the first. Focus
+    // then moves to the search field, from the whole list.
+    if (search && trigger?.getAttribute("role") === "combobox") {
+      trigger.addEventListener("keydown", (event) => {
+        if ((event.key !== "ArrowDown" && event.key !== "ArrowUp") || event.defaultPrevented || isOpen()) return;
+        event.preventDefault();
+        if (search.value) {
+          search.value = "";
+          search.dispatchEvent(new Event("input"));
+        }
+        opening = event.key === "ArrowUp" ? (enabled()[0] ?? null) : null;
+        popup.showPopover();
+      });
+    }
+
+    // Where focus is in the popup, on the list, its search field, or its
+    // footer, a Tab that takes it out closes the popup, as a select's trigger
+    // does; focus goes on from where Tab took it.
+    if (popup && (owner === listbox || owner === search)) {
+      popup.addEventListener("keydown", (event) => {
+        if (event.key !== "Tab" || event.defaultPrevented) return;
+        setTimeout(() => {
+          if (popup.matches(":popover-open") && !popup.contains(document.activeElement)) popup.hidePopover();
+        });
+      });
+    }
+
     // Space activates a button on release, so a Space that chose an option
     // or was typed must not reopen or close a select.
     let swallowSpace = false;
@@ -239,6 +268,11 @@
     owner.addEventListener("keydown", (event) => {
       // Keys that confirm an input method's text belong to the search field.
       if (event.isComposing || event.keyCode === 229) return;
+      // A key the app's own handler on a select's trigger, or on a Combobox's
+      // or Command Menu's field, has stopped first, with preventDefault(), is
+      // left to the app, as the Down or Up that opens a select with a search
+      // row is.
+      if ((owner === trigger || owner === field) && event.defaultPrevented) return;
       const open = isOpen();
       const typing = owner === search || owner === field;
       // Printable keys type ahead, except in the search field; Space counts

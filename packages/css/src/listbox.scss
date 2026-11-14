@@ -49,9 +49,10 @@
 .hoption {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $space-xs;
 
-  padding: 8px 12px;
+  // The block padding sets every list's row height.
+  padding: 8px $space-xs;
 
   font-size: $font-size-sm;
   line-height: $font-line-height;
@@ -154,8 +155,8 @@
 .hoption-badge {
   flex-shrink: 0;
 
-  margin-inline-start: 8px;
-  padding: 1px 6px;
+  margin-inline-start: $space-2xs;
+  padding: 1px $space-2xs;
 
   font-size: $font-size-3xs;
   line-height: 1.4;
@@ -168,12 +169,13 @@
 }
 
 // In a single-select list, an option without a check keeps the check's room
-// (its gap and 1em), so the list keeps one width whichever option is chosen.
+// (its gap and 1em, past the end padding), so the list keeps one width
+// whichever option is chosen.
 :where(.hlistbox:not([aria-multiselectable="true"]))
   .hoption:where(
     :not([aria-selected="true"]:not([aria-disabled="true"]):has(> .hoption-check))
   ) {
-  padding-inline-end: calc(12px + 12px + 1em);
+  padding-inline-end: calc(#{$space-xs} + #{$space-xs} + 1em);
 }
 
 .hoption-check {
@@ -209,6 +211,11 @@
     background-color $duration-fast ease,
     border-color $duration-fast ease;
 
+  // A box, so it dims, as a disabled Checkbox does.
+  :where(.hoption[aria-disabled="true"]) > & {
+    opacity: $opacity-disabled;
+  }
+
   :where(.hoption[aria-selected="true"]) > & {
     background-color: $color-primary-tint;
     border-color: $color-primary;
@@ -236,7 +243,7 @@
   display: block;
 
   margin-block: 4px 2px;
-  padding: 10px 12px 6px;
+  padding: $space-xs $space-xs $space-2xs;
 
   font-size: $font-size-3xs;
   font-weight: $font-weight-bold;
@@ -254,8 +261,8 @@
 
   // The divider goes above every group but the first one still shown.
   .hoption-group:where(:not(:nth-child(1 of :not([hidden])))) > & {
-    margin-block-start: 8px;
-    padding-block-start: 12px;
+    margin-block-start: $space-xs;
+    padding-block-start: $space-xs;
 
     border-block-start: 1px solid $color-border;
   }
@@ -265,9 +272,10 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 8px;
+  gap: $space-2xs;
 
-  padding: 8px 12px;
+  // Its icon starts where the options' text does.
+  padding: 8px $space-xs;
 
   font-size: $font-size-sm;
 
@@ -308,7 +316,7 @@
 
 .hlistbox-empty {
   margin: 0;
-  padding: 12px 16px;
+  padding: $space-xs $space-sm;
 
   font-family: $font-family;
   font-size: $font-size-sm;

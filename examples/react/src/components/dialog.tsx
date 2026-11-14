@@ -9,7 +9,7 @@ import {
   Option,
   Select,
 } from "@harmo-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const examples = {
   Default: () => (
@@ -29,7 +29,7 @@ export const examples = {
         </>
       }
     >
-      <div style={{ display: "grid", gap: 16 }}>
+      <div style={{ display: "grid", gap: "var(--harmo-space-sm)" }}>
         <Field label="Email">
           <Input name="email" type="email" autoComplete="email" autoFocus />
         </Field>
@@ -71,6 +71,109 @@ export const examples = {
       </p>
     </Dialog>
   ),
+
+  "Unsaved changes": () => {
+    const [saved, setSaved] = useState({
+      name: "Acme Support",
+      replyTo: "support@example.com",
+    });
+    const [draft, setDraft] = useState(saved);
+    const [editing, setEditing] = useState(false);
+    const [asking, setAsking] = useState(false);
+    const editor = useRef<HTMLDialogElement>(null);
+    const asker = useRef<HTMLDialogElement>(null);
+    const changed =
+      draft.name !== saved.name || draft.replyTo !== saved.replyTo;
+
+    return (
+      <>
+        <Dialog
+          ref={editor}
+          id="workspace-dialog"
+          label="Workspace settings"
+          closeLabel="Close"
+          trigger={<Button variant="secondary">Workspace settings</Button>}
+          open={editing}
+          onOpenChange={setEditing}
+          onBeforeToggle={(event) => {
+            if (event.newState === "open") setDraft(saved);
+            else asker.current?.close();
+          }}
+          onCancel={(event) => {
+            if (!changed || !event.cancelable) return;
+            event.preventDefault();
+            setAsking(true);
+          }}
+          form={{ method: "dialog", onSubmit: () => setSaved(draft) }}
+          footer={
+            <>
+              <DialogClose>
+                <Button variant="secondary">Cancel</Button>
+              </DialogClose>
+              <Button type="submit">Save changes</Button>
+            </>
+          }
+        >
+          <div style={{ display: "grid", gap: "var(--harmo-space-sm)" }}>
+            <Field label="Workspace name">
+              <Input
+                name="name"
+                value={draft.name}
+                onChange={(event) =>
+                  setDraft({ ...draft, name: event.target.value })
+                }
+              />
+            </Field>
+            <Field label="Reply-to email">
+              <Input
+                name="reply-to"
+                type="email"
+                value={draft.replyTo}
+                onChange={(event) =>
+                  setDraft({ ...draft, replyTo: event.target.value })
+                }
+              />
+            </Field>
+          </div>
+        </Dialog>
+        <Dialog
+          ref={asker}
+          id="discard-changes-dialog"
+          label="Discard unsaved changes?"
+          closeLabel="Close"
+          aria-describedby="discard-changes-dialog-text"
+          open={asking}
+          onOpenChange={(next) => {
+            setAsking(next);
+            const settings = editor.current;
+            if (
+              !next &&
+              settings?.open &&
+              !settings.contains(document.activeElement)
+            ) {
+              settings.querySelector("input")?.focus();
+            }
+          }}
+          footer={
+            <>
+              <DialogClose>
+                <Button variant="secondary">Keep editing</Button>
+              </DialogClose>
+              <DialogClose>
+                <Button destructive onClick={() => setEditing(false)}>
+                  Discard
+                </Button>
+              </DialogClose>
+            </>
+          }
+        >
+          <p id="discard-changes-dialog-text">
+            Your changes to the workspace settings haven&apos;t been saved.
+          </p>
+        </Dialog>
+      </>
+    );
+  },
 
   "Long content": () => (
     <Dialog

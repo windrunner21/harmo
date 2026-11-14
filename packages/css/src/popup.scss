@@ -22,9 +22,12 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
   box-sizing: border-box;
   min-inline-size: anchor-size(inline);
   max-block-size: 400px;
+  // 8px from its trigger: an offset from what it's anchored to, not spacing
+  // inside a layout, so it stays off the spacing scale.
   margin-block: 8px;
-  // A popup that would end within 8px of the window's edge doesn't fit, so the
-  // browser moves on to the next position. Flipping flips the margin too.
+  // The same offset from the window's edge: a popup that would end within 8px
+  // of it doesn't fit, so the browser moves on to the next position. Flipping
+  // flips the margin too.
   margin-inline: 0 8px;
   padding: 0;
   overflow: auto;

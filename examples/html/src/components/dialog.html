@@ -36,7 +36,7 @@
     </header>
     <form method="dialog">
       <div class="hdialog-body">
-        <div style="display: grid; gap: 16px">
+        <div style="display: grid; gap: var(--harmo-space-sm)">
           <div class="hfield">
             <label class="hlabel" for="invite-email">Email</label>
             <input class="hinput" id="invite-email" name="email" type="email" autocomplete="email" autofocus />
@@ -147,6 +147,111 @@
         </button>
       </footer>
     </form>
+  </dialog>
+</play-example>
+
+<play-example title="Unsaved changes">
+  <play-note>
+    An app keeps a dialog open by stopping its <code>cancel</code> event, which
+    <kbd class="hkbd">Escape</kbd>, a click outside, and
+    <code>command="request-close"</code> send first. Here, closing the settings
+    with changes that aren't saved asks first, in a second dialog: Discard
+    fades both out together, then closes it and the settings, in that order,
+    and Keep editing goes back to them. Each
+    opening starts from what was last saved. The example script stands in for
+    the app; in React, it's <code>onCancel</code> and
+    <code>onBeforeToggle</code>.
+  </play-note>
+  <button class="hbutton" data-variant="secondary" type="button" commandfor="workspace-dialog" command="show-modal">
+    <span class="hbutton-label">Workspace settings</span>
+  </button>
+  <dialog
+    class="hdialog"
+    id="workspace-dialog"
+    closedby="any"
+    aria-labelledby="workspace-dialog-title"
+    data-example-unsaved="discard-changes-dialog"
+  >
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="workspace-dialog-title">Workspace settings</h2>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="workspace-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <form method="dialog">
+      <div class="hdialog-body">
+        <div style="display: grid; gap: var(--harmo-space-sm)">
+          <div class="hfield">
+            <label class="hlabel" for="workspace-name">Workspace name</label>
+            <input class="hinput" id="workspace-name" name="name" value="Acme Support" />
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="workspace-reply-to">Reply-to email</label>
+            <input class="hinput" id="workspace-reply-to" name="reply-to" type="email" value="support@example.com" />
+          </div>
+        </div>
+      </div>
+      <footer class="hdialog-footer">
+        <button class="hbutton" data-variant="secondary" type="button" commandfor="workspace-dialog" command="request-close">
+          <span class="hbutton-label">Cancel</span>
+        </button>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Save changes</span>
+        </button>
+      </footer>
+    </form>
+  </dialog>
+  <dialog
+    class="hdialog"
+    id="discard-changes-dialog"
+    closedby="any"
+    aria-labelledby="discard-changes-dialog-title"
+    aria-describedby="discard-changes-dialog-text"
+  >
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="discard-changes-dialog-title">Discard unsaved changes?</h2>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="discard-changes-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdialog-body">
+      <p id="discard-changes-dialog-text">Your changes to the workspace settings haven't been saved.</p>
+    </div>
+    <footer class="hdialog-footer">
+      <button
+        class="hbutton"
+        data-variant="secondary"
+        type="button"
+        commandfor="discard-changes-dialog"
+        command="request-close"
+      >
+        <span class="hbutton-label">Keep editing</span>
+      </button>
+      <button
+        class="hbutton"
+        data-destructive
+        type="button"
+        commandfor="discard-changes-dialog"
+        command="request-close"
+        data-example-discard
+      >
+        <span class="hbutton-label">Discard</span>
+      </button>
+    </footer>
   </dialog>
 </play-example>
 

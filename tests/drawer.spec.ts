@@ -44,7 +44,7 @@ onEachPlayground("drawer", () => {
     await expect(container.getByRole("button", { name: "New quick reply" })).toBeFocused();
   });
 
-  test("it slides in from the edge in 200ms, and slides out in 150ms, still open, before it closes", async ({ page }) => {
+  test("it slides in from the edge in 300ms, and slides out in 150ms, still open, before it closes", async ({ page }) => {
     const container = await example(page, "drawer-default");
     const drawer = container.locator("dialog");
     await slowDown(drawer);
@@ -55,7 +55,9 @@ onEachPlayground("drawer", () => {
     await drawer.evaluate((node) => (node as HTMLElement).style.removeProperty("transition-duration"));
     await settled(drawer);
     expect(await offset(drawer)).toBeCloseTo(0, 0);
-    expect(await drawer.evaluate((node) => getComputedStyle(node).transitionDuration)).toMatch(/^0\.2s/);
+    // The slide takes 300ms; the fade that replaces it with reduced motion,
+    // 200ms.
+    expect(await drawer.evaluate((node) => getComputedStyle(node).transitionDuration)).toMatch(/^0\.3s, 0\.2s/);
 
     await slowDown(drawer);
     await page.keyboard.press("Escape");
@@ -180,7 +182,7 @@ onEachPlayground("drawer", () => {
     });
     const { drawer } = await openFrom(page, "drawer-default", "New quick reply");
     const [box] = await boxes(drawer);
-    expect(box.width).toBeCloseTo(640 + 40 + 1, 0);
+    expect(box.width).toBeCloseTo(640 + 52 + 1, 0);
     await page.keyboard.press("Escape");
     await expect.poll(() => isOpen(drawer)).toBe(false);
     await settled(drawer);
@@ -250,6 +252,32 @@ onEachPlayground("drawer", () => {
     expect(footer.x + footer.width).toBeCloseTo(aside.x, 0);
     expect(aside.width).toBeLessThanOrEqual(480);
     expect(await drawer.locator(".hdrawer-aside").evaluate((node) => getComputedStyle(node).overflowY)).toBe("auto");
+  });
+
+  test("its body and footer have 26px padding, as a Dialog has, its header 16px 26px, and its aside 42px", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 860 });
+    const { drawer } = await openFrom(page, "drawer-with-an-aside", "Edit template");
+    const spacing = await drawer.evaluate((node) => {
+      const style = (part: string) => getComputedStyle(node.querySelector(part)!);
+      return {
+        header: style(".hdrawer-header").padding,
+        title: style(".hdrawer-header").columnGap,
+        description: style(".hdrawer-description").marginTop,
+        body: style(".hdrawer-body").padding,
+        footer: style(".hdrawer-footer").padding,
+        actions: style(".hdrawer-footer").columnGap,
+        aside: style(".hdrawer-aside").padding,
+      };
+    });
+    expect(spacing).toEqual({
+      header: "16px 26px",
+      title: "26px",
+      description: "6px",
+      body: "26px",
+      footer: "26px",
+      actions: "10px",
+      aside: "42px",
+    });
   });
 
   test("on a narrow window, the aside goes below the body, and the header and footer stay put as it scrolls", async ({ page }) => {

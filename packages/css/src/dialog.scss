@@ -7,7 +7,7 @@
 .hdialog {
   --hdialog-max-inline-size: 600px;
   --hdialog-scale: 0.95;
-  --hdialog-margin: 24px;
+  --hdialog-margin: #{$space-md};
 
   // Placed here rather than by the browser's modal styles, so it keeps its
   // place and size while it fades out, outside them.
@@ -30,7 +30,7 @@
   );
   max-block-size: calc(100% - 2 * var(--hdialog-margin));
   margin: auto;
-  padding: 24px;
+  padding: $space-md;
   overflow: hidden;
 
   font-family: $font-family;
@@ -126,9 +126,9 @@
   }
 
   @media (max-width: 30rem) {
-    --hdialog-margin: 12px;
+    --hdialog-margin: #{$space-xs};
 
-    padding: 20px;
+    padding: $space-sm;
   }
 }
 
@@ -153,7 +153,7 @@
 .hdialog-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: 16px;
+  column-gap: $space-sm;
   flex-shrink: 0;
 
   &[hidden] {
@@ -177,7 +177,7 @@
 .hdialog-description {
   grid-column: 1;
 
-  margin: 8px 0 0;
+  margin: $space-2xs 0 0;
 
   font-size: $font-size-sm;
   line-height: $font-line-height;
@@ -205,7 +205,7 @@
   flex: 1 1 auto;
 
   min-block-size: 0;
-  margin: 16px -4px 0;
+  margin: $space-sm -4px 0;
   padding: 4px;
   overflow-y: auto;
 
@@ -225,10 +225,10 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 8px;
+  gap: $space-xs;
   flex-shrink: 0;
 
-  margin-block-start: 16px;
+  margin-block-start: $space-sm;
 
   &[hidden] {
     display: none;

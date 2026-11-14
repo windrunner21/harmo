@@ -76,8 +76,9 @@ export const Option = ({
         onMouseDown?.(event);
       }}
       onClick={(event) => {
-        if (!disabled) listbox.choose(value);
+        if (disabled) return;
         onClick?.(event);
+        if (!event.defaultPrevented) listbox.choose(value);
       }}
     >
       {listbox.multiple && (

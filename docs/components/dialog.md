@@ -63,6 +63,22 @@ holds the page until it's closed. For a small panel beside its trigger, use a
   button becomes `returnValue` once the exit has played. A value passed to
   `dialog.requestClose(value)` from a script isn't kept while the exit plays:
   close it with `close(value)` instead.
+- **Kept open:** a `cancel` listener of the app's that calls
+  `preventDefault()` keeps it open on Escape, a click outside, and
+  `command="request-close"`, which all send `cancel` first; one on its form's
+  `submit` keeps it open as the form is sent. The script leaves a close the app
+  has stopped alone, when the app's `cancel` listener runs before its own:
+  added before it, or on `document` with `capture: true`. A `submit` listener
+  on the form always does. A close the browser doesn't let the page stop still
+  closes it: after the page stops one Escape, it may stop another only once
+  the person has clicked or typed. The "Unsaved changes" example asks this way
+  before dropping changes, in a second dialog opened above the first: Discard
+  fades both out together, in one 150ms exit, then closes the second and,
+  right after it, the first, so focus goes back through the first to the
+  button that opened them; Keep editing goes back to the first, with focus
+  inside it. The first closes the second as it starts closing, in its
+  `beforetoggle`, so the second always closes first, whichever fade ends
+  first.
 - **From a URL:** a link such as `?dialog=invite-dialog`, a reload, and Back,
   when the app's router decides whether it's open. See
   [React](#react) for the recipe, and the "Opened from a link" example.
@@ -79,18 +95,20 @@ holds the page until it's closed. For a small panel beside its trigger, use a
 
 ## Appearance and states
 
-- 24px padding, 8px radius, and a 1px `--harmo-color-border` border on
-  `--harmo-color-background`, from 400px to 600px wide, at least 24px from the
-  window's edges. On a phone, 20px padding and 12px from the edges.
+- 26px padding (`--harmo-space-md`), 8px radius, and a 1px
+  `--harmo-color-border` border on `--harmo-color-background`, from 400px to
+  600px wide, at least 26px from the window's edges. On a phone, 16px padding
+  (`--harmo-space-sm`) and 10px (`--harmo-space-xs`) from the edges.
 - Taller than the window, its body scrolls, and its header and footer stay in
   view.
 - The title is 20px bold in `--harmo-color-text`; the description is 14px in
-  `--harmo-color-text-secondary`, 8px below it. The close button is a tertiary
-  icon [Button](button.md) at the title's end.
+  `--harmo-color-text-secondary`, 6px (`--harmo-space-2xs`) below it. The
+  close button is a tertiary icon [Button](button.md) at the title's end.
 - A long word in the title, description, or body, such as an email address or
   a key, breaks where it must, rather than running under the close button or
   scrolling sideways.
-- The footer holds its actions at its end, 8px apart, 20px below the body.
+- The footer holds its actions at its end, 10px apart (`--harmo-space-xs`),
+  20px below the body.
 - The page behind is dimmed by `--harmo-dialog-backdrop-color`, and doesn't
   scroll while it's open. A page that scrolls as a whole, where scrollbars take
   room, can set `scrollbar-gutter: stable` on its root, so it doesn't shift as
@@ -108,7 +126,10 @@ holds the page until it's closed. For a small panel beside its trigger, use a
 
 - The browser makes it a modal dialog: the page behind is inert, focus moves
   inside as it opens, to the control with `autofocus` or else the first one,
-  and back to what opened it as it closes. Escape closes it. Tab can step out
+  and back to what opened it as it closes. Escape closes it; an Escape that
+  hides a [Tooltip](tooltip.md) shown inside it hides only that, and the next
+  one closes it, also in a second dialog open over another, as in "Unsaved
+  changes". Tab can step out
   to the browser's own toolbar, as with any native dialog, but not into the
   page.
 - Its title names it, through `aria-labelledby`, and its description describes
@@ -120,16 +141,22 @@ holds the page until it's closed. For a small panel beside its trigger, use a
 
 None to open, close, or focus it. The example script:
 
-| Behavior | What it does |
+| Change | When |
 | --- | --- |
-| Fading out | Holds the dialog's `cancel` event, which Escape, a click outside, and `command="request-close"` send first, and a form sent with `method="dialog"`, its own or its submit button's `formmethod`, unless the app's own handler has stopped it, such as to confirm unsaved changes; sets `data-closing` until the fade has played, then closes it. The browser lets a page hold Escape only after the person has used it, so a dialog that opened by itself closes at once on its first Escape. If `data-closing` is removed meanwhile, as Command Menu's shortcut does, the fade stops and it stays open. |
-| Opening from a link | See below |
+| `data-closing` on the dialog, then `close()` once its fade has played | Its `cancel` event, which Escape, a click outside, and `command="request-close"` send first, or a form sent with `method="dialog"`, its own or its submit button's `formmethod`; not when the app's own handler has stopped it, such as to confirm unsaved changes |
+| `data-closing` removed, and it stays open | When something wants it open while it fades, as Command Menu's shortcut does |
+| `showModal()` | When `?dialog=` names it, on load and on Back |
+| `?dialog=` added to the URL | When its link is followed, without a modifier key, which is left to the browser, so the link can open in a new tab |
+| Back, or `?dialog=` taken off the URL | As it closes: back when its link opened it, otherwise taking the parameter off and leaving the URL's others |
 
-For the "Opened from a link" example, it stands in for an app's router: it opens the dialog that `?dialog=` names on load and
-on Back, adds the parameter when its link is followed, and on closing goes
-back, or takes the parameter off when the dialog was opened straight from a
-link, leaving the URL's other parameters. A click with a modifier key is left
-to the browser, so the link can open in a new tab.
+The browser lets a page hold Escape only after the person has used it, so a
+dialog that opened by itself closes at once on its first Escape. The last
+three rows are for the "Opened from a link" example, where the script stands
+in for an app's router. In the "Unsaved changes" example, it stands in for the
+app: it stops the settings' `cancel` while their fields differ from what was
+saved and opens the dialog that asks, fades the settings out on Discard as
+that one fades, closes that one as the settings close, and resets the form as
+they open.
 
 ## React
 
@@ -143,7 +170,7 @@ description's id, and an `aria-labelledby` replaces the title's.
 | `closeLabel` | Required. The close button's `aria-label`, in your app's language |
 | `description` | The description under the title |
 | `trigger` | A button that opens it, given `commandfor` and `command="show-modal"` |
-| `open`, `onOpenChange` | Its state, held by you, for code or a URL; `onOpenChange` is called each way it opens or closes |
+| `open`, `onOpenChange` | Its state, held by you, for code or a URL. While `open` is `false`, a button that would open it, `trigger` included, calls `onOpenChange(true)` instead, and it opens once `open` is `true`. It closes by itself, as below, and calls `onOpenChange(false)`: `open` must follow. `onOpenChange` isn't called as it follows a change to `open` |
 | `onToggle`, `onBeforeToggle` | The dialog's own `toggle` and `beforetoggle` events, as a native `ToggleEvent`; `onBeforeToggle` can stop it opening |
 | `footer` | What goes in the footer, usually buttons |
 | `form` | Props for a `<form>` around the body and footer, such as `{ method: "dialog" }` or `onSubmit` |
@@ -153,9 +180,13 @@ description's id, and an `aria-labelledby` replaces the title's.
 
 `<DialogClose>` makes the button inside it close the dialog. Every way it
 closes fades it out first, as the example script does, setting `open` to
-`false` included; setting it back to `true` while it fades keeps it open. An
-`onCancel` that calls `preventDefault()`, such as to confirm unsaved changes,
-keeps it open on Escape, a click outside, and `command="request-close"`.
+`false` included; setting it back to `true` while it fades keeps it open. A
+close is the browser's, as some closes, such as the first Escape after it
+opened by itself, can't be stopped, so with `open` held by you, set it to
+`false` on `onOpenChange(false)`. To keep it open, stop the close before it
+happens: an `onCancel` that calls `preventDefault()` keeps it open on Escape,
+a click outside, and `command="request-close"`, and a `form` `onSubmit` that
+does keeps it open as its form is sent. `onBeforeToggle` can't stop a close.
 
 A button opens it, beside it with `trigger` or anywhere else by its `id`:
 
@@ -245,6 +276,59 @@ export function NewTeam() {
 With another router, the same: `open` from its URL, and back or replace on
 closing.
 
+The "Unsaved changes" example asks before dropping changes, in a second Dialog,
+and loads what was saved each time it opens. With `editing`, `asking`, the
+form's `draft` and `saved` values, and an `asker` ref to the second, held by
+you, Discard sets `editing` to `false` as its `DialogClose` closes the second,
+so both fade out together. The first closes the second in its
+`onBeforeToggle`, so the second closes first, and focus goes back through the
+first to the button that opened them:
+
+```tsx
+<Dialog
+  label="Workspace settings"
+  closeLabel="Close"
+  trigger={<Button>Workspace settings</Button>}
+  open={editing}
+  onOpenChange={setEditing}
+  onBeforeToggle={(event) => {
+    if (event.newState === "open") setDraft(saved);
+    else asker.current?.close();
+  }}
+  onCancel={(event) => {
+    if (!changed || !event.cancelable) return;
+    event.preventDefault();
+    setAsking(true);
+  }}
+  form={{ method: "dialog", onSubmit: () => setSaved(draft) }}
+  footer={…}
+>
+  …
+</Dialog>
+
+<Dialog
+  ref={asker}
+  label="Discard unsaved changes?"
+  closeLabel="Close"
+  open={asking}
+  onOpenChange={setAsking}
+  footer={
+    <>
+      <DialogClose>
+        <Button variant="secondary">Keep editing</Button>
+      </DialogClose>
+      <DialogClose>
+        <Button destructive onClick={() => setEditing(false)}>
+          Discard
+        </Button>
+      </DialogClose>
+    </>
+  }
+>
+  <p>Your changes to the workspace settings haven't been saved.</p>
+</Dialog>
+```
+
 ## Tokens
 
 `--harmo-border-radius`, `--harmo-color-background`, `--harmo-color-border`,
@@ -252,4 +336,5 @@ closing.
 `--harmo-dialog-backdrop-color`, `--harmo-duration-fast`,
 `--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-focus-outline`,
 `--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-lg`,
-`--harmo-font-size-sm`, `--harmo-font-weight-bold`.
+`--harmo-font-size-sm`, `--harmo-font-weight-bold`, `--harmo-space-md`,
+`--harmo-space-sm`, `--harmo-space-xs`, `--harmo-space-2xs`.
