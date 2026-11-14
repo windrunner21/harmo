@@ -23,9 +23,10 @@ onEachPlayground("stat", () => {
     expect(trendBox.x + trendBox.width).toBeCloseTo(box.x + box.width, 0);
   });
 
-  test("the hint names its button, shows on hover and keyboard focus, and a press pins it open until a press elsewhere or Escape", async ({ page }) => {
+  test("the hint names its button, shows on hover and keyboard focus, and a press pins it open until a press again, a press elsewhere, or Escape", async ({ page }) => {
     const stat = (await example(page, "stat-with-a-hint-and-an-action")).locator(".hstat");
     const hint = stat.getByRole("button", { name: "Tickets that aren't closed yet, across every channel." });
+    const trigger = stat.locator(".hstat-title > .htooltip-trigger");
     const tooltip = stat.getByRole("tooltip");
     await expect(tooltip).toBeHidden();
 
@@ -50,12 +51,21 @@ onEachPlayground("stat", () => {
     await expect(tooltip).toBeVisible();
     await stat.locator(".hstat-value").click();
     await expect(tooltip).toBeHidden();
+    await expect(trigger).not.toHaveAttribute("data-open");
 
+    await hint.click();
+    await expect(trigger).toHaveAttribute("data-open");
+    await hint.click();
+    await expect(trigger).not.toHaveAttribute("data-open");
+
+    // Escape unpins it, not only hides it, so it doesn't come back as the
+    // pointer leaves.
     await hint.click();
     await page.mouse.move(0, 0);
     await expect(tooltip).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(tooltip).toBeHidden();
+    await expect(trigger).not.toHaveAttribute("data-open");
   });
 
   test("the action goes 16px below the caption", async ({ page }) => {
@@ -127,6 +137,21 @@ onEachPlayground("stat", () => {
     expect(label.width).toBeGreaterThan(40);
     expect(trend.y).toBeGreaterThanOrEqual(label.y + label.height);
     expect(trend.x + trend.width).toBeCloseTo(box.x + box.width, 0);
+  });
+
+  test("in a narrow Stat, a word too long for its line, such as an ID, breaks in the caption and the trend rather than spilling out", async ({ page }) => {
+    const stat = (await example(page, "stat-default")).locator(".hstat");
+    await stat.evaluate((node: HTMLElement) => {
+      node.style.inlineSize = "120px";
+      node.querySelector(".hstat-caption")!.textContent = "workspace-7f3a9c2e41b8d0f5a6c3";
+      node.querySelector(".hstat-trend")!.lastChild!.textContent = "+12%-of-7f3a9c2e41b8d0f5a6c3";
+    });
+    const [box, caption, trend] = await boxes(stat, stat.locator(".hstat-caption"), stat.locator(".hstat-trend"));
+    for (const part of [caption, trend]) {
+      expect(part.x).toBeGreaterThanOrEqual(box.x - 0.5);
+      expect(part.x + part.width).toBeLessThanOrEqual(box.x + box.width + 0.5);
+    }
+    expect(await stat.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
   test("right to left, the trend is at the left end of the row, and the action starts on the right", async ({ page }) => {

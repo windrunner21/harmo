@@ -69,6 +69,10 @@ $actionable: ':where(a[href], button:enabled)';
   color: inherit;
   text-align: start;
   text-decoration: none;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 :where(button.hcard) {
@@ -127,7 +131,7 @@ $actionable: ':where(a[href], button:enabled)';
     object-fit: contain;
   }
 
-  .hcard:not([data-variant]) > & {
+  :where(.hcard:not([data-variant])) > & {
     background-color: $color-background;
   }
 }
@@ -141,7 +145,7 @@ $actionable: ':where(a[href], button:enabled)';
 
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
-  line-height: 1.5;
+  line-height: $font-line-height;
   overflow-wrap: anywhere;
 
   color: $color-text;
@@ -158,7 +162,7 @@ $actionable: ':where(a[href], button:enabled)';
   margin-block-start: 4px;
 
   font-size: $font-size-sm;
-  line-height: 1.5;
+  line-height: $font-line-height;
   overflow-wrap: anywhere;
 
   color: $color-text-secondary;

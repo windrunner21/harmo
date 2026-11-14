@@ -83,12 +83,20 @@
       if (list.parentElement) resized.observe(list.parentElement);
       for (const item of items()) resized.observe(item);
     };
-    // Changes in "+N" are this script's own, so they're left alone.
+    // Changes in "+N" are this script's own, so they're left alone, and so
+    // is `hidden` on a tag's <li>, which it sets. A tag whose color or
+    // variant changes is copied into the tooltip again.
     new MutationObserver((records) => {
       if (records.every((record) => more.contains(record.target))) return;
       watch();
       update();
-    }).observe(list, { childList: true, subtree: true, characterData: true });
+    }).observe(list, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ["style", "class", "data-variant"],
+    });
     field?.addEventListener("focusin", update);
     field?.addEventListener("focusout", update);
     // Focus on a tag's button, in a row that scrolls, brings the whole tag

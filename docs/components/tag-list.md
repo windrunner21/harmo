@@ -10,7 +10,7 @@ many as fit its width, then "+N" for the rest, which shows them in a
 | Item | Requirement |
 | --- | --- |
 | CSS | `tag-list.css`, `tag.css`, `tooltip.css` |
-| Element | `<ul class="htag-list">`, each [Tag](tag.md) in an `<li>` |
+| Element | `<ul class="htag-list" role="list">`, each [Tag](tag.md) in an `<li>` |
 | Parts | `.htag-list-more`, the last `<li>`, holding a [Tooltip](tooltip.md) trigger: a `<button class="htag-list-count" type="button">` for "+N", and a `data-variant="hint"` tooltip holding `.htag-list-rest`, with the hidden tags |
 | Required | `aria-label` on `.htag-list-count`, in the app's language, such as "2 more", and `aria-describedby` naming the tooltip |
 | Unique | The tooltip's `id` |
@@ -19,7 +19,7 @@ many as fit its width, then "+N" for the rest, which shows them in a
 ## Markup
 
 ```html
-<ul class="htag-list">
+<ul class="htag-list" role="list">
   <li>
     <span class="htag" style="--htag-color: var(--harmo-amber)">
       <span class="htag-dot" aria-hidden="true"></span>Billing
@@ -61,13 +61,16 @@ That's the list once counted. As the page loads, every tag shows, and
   its content fits every tag.
 - "+N" looks like a Tag filled in `--harmo-color-background-secondary`, 13px
   `--harmo-color-text-secondary` text, with the standard focus ring.
-- Its tooltip is the white hint card, the hidden tags in a column 4px apart.
-  Remove buttons in them are hidden: a tooltip holds nothing to press.
+- Its tooltip is Tooltip's hint card, on the page's background, the hidden
+  tags in a column 4px apart. Remove buttons in them are hidden: a tooltip
+  holds nothing to press.
 - Where even the first tag doesn't fit beside "+N", only "+N" shows.
 
 ## Accessibility
 
-- It's a list, so a screen reader says how many tags it shows.
+- It's a list, so a screen reader says how many tags it shows. `role="list"`
+  keeps it a list in Safari, which stops treating one without bullets as a
+  list.
 - "+N" is a button, so the keyboard reaches it and its tooltip; its name is
   yours, such as "2 more", and its description is the hidden tags, read after
   it. Pressing it pins the tooltip open (`data-open` on its trigger), for a
@@ -91,7 +94,9 @@ it, with `tooltip.js` for Escape.
 ## React
 
 `<TagList>` renders the list, counts what fits, and keeps counting. Its
-children are [Tag](tag.md#react)s. Other props are the `<ul>`'s attributes.
+children are [Tag](tag.md#react)s, in fragments or not; a hidden one, or an
+empty string, is left out and not counted. Other props are the `<ul>`'s
+attributes.
 
 | Prop | Effect |
 | --- | --- |

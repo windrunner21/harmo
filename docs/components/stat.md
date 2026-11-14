@@ -101,20 +101,22 @@ Several Stats go in a `.hstat-group`, a tray of tiles:
 
 - The label: 14px in `--harmo-color-text-secondary`. The hint: a 14px info
   icon in `--harmo-color-text`, 4px after the label, in a 24px button, the
-  least WCAG asks of a target, that reaches past it without taking room.
+  least WCAG asks of a target, that reaches past it without taking room. Its
+  focus ring is on that button, with no offset.
 - The trend: at the end of the row, 12px text and a 14px arrow in
   `--harmo-color-text`, in a 1px `--harmo-color-border` frame with the 8px
   corners, 8px from the title. Neutral, since whether up is good depends on
   the number: more open tickets is worse.
 - The label wraps first. The trend moves onto a line of its own, still at
   the end, only when even the label's longest word, the hint, and the trend
-  can't share one; text too long for its row wraps, and so does a word too
-  long for the label's.
+  can't share one; text too long for its row wraps. A word too long for its
+  line, such as an ID, breaks, in the label, the trend, the value, and the
+  caption alike.
 - The label's row is as tall as a trend, with one or without, so numbers
   side by side line up.
-- The value: 20px in `--harmo-color-text`, 4px under the label. The caption:
-  12px in `--harmo-color-text-secondary`, 4px under it. The action: 14px,
-  16px under them.
+- The value: 20px in `--harmo-color-text`, 4px under the label's row. The
+  caption: 12px in `--harmo-color-text-secondary`, 4px under it. The action:
+  14px, 16px under them.
 - The hint's and the trend's tooltips are Tooltip's `hint` variant, above
   them.
 - In a group: a `--harmo-color-background-secondary` tray with 24px corners
@@ -188,9 +190,10 @@ its own, since a page's numbers usually compare the same periods.
 
 ## Tokens
 
-`--harmo-font-family`, `--harmo-font-size-lg`, `--harmo-font-size-sm`,
-`--harmo-font-size-2xs`, `--harmo-font-weight-normal`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-color-border`,
+`--harmo-border-radius`, `--harmo-border-radius-sm`,
 `--harmo-color-background`, `--harmo-color-background-secondary`,
-`--harmo-border-radius`, `--harmo-border-radius-sm`, `--harmo-focus-outline`,
-`--harmo-focus-outline-offset`; Tooltip's, for the hints.
+`--harmo-color-border`, `--harmo-color-text`, `--harmo-color-text-secondary`,
+`--harmo-focus-outline`, `--harmo-focus-outline-offset`,
+`--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-2xs`,
+`--harmo-font-size-lg`, `--harmo-font-size-sm`, `--harmo-font-weight-normal`;
+Tooltip's, for the hints.

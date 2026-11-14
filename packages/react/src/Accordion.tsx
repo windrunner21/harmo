@@ -4,6 +4,8 @@ import {
   createContext,
   useContext,
   useId,
+  useLayoutEffect,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
@@ -63,6 +65,10 @@ export const AccordionItem = ({
 }: AccordionItemProps) => {
   const group = useContext(AccordionContext);
   const [initiallyOpen] = useState(defaultOpen);
+  const reported = useRef(open ?? initiallyOpen ?? false);
+  useLayoutEffect(() => {
+    if (open !== undefined) reported.current = open;
+  }, [open]);
 
   return (
     <details
@@ -73,8 +79,10 @@ export const AccordionItem = ({
       open={open ?? initiallyOpen}
       onToggle={(event) => {
         onToggle?.(event);
-        if (event.target === event.currentTarget) {
-          onOpenChange?.(event.currentTarget.open);
+        const now = event.currentTarget.open;
+        if (event.target === event.currentTarget && now !== reported.current) {
+          reported.current = now;
+          onOpenChange?.(now);
         }
       }}
     >

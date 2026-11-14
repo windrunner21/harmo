@@ -12,12 +12,6 @@
   &[hidden] {
     display: none;
   }
-
-  // Between items that are shown: a hidden first item leaves no line above
-  // the next.
-  & > .haccordion-item:not([hidden]) ~ .haccordion-item {
-    border-block-start: 1px solid $color-border;
-  }
 }
 
 .haccordion-item {
@@ -32,6 +26,12 @@
   @include details.grows;
 }
 
+// Between items that are shown: a hidden first item leaves no line above the
+// next.
+:where(.haccordion > .haccordion-item:not([hidden])) ~ .haccordion-item {
+  border-block-start: 1px solid $color-border;
+}
+
 // What's clicked: the label, with an Expand Chevron at its end that folds up
 // while the item is open.
 .haccordion-summary {
@@ -43,7 +43,7 @@
 
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
-  line-height: 1.5;
+  line-height: $font-line-height;
 
   color: $color-text;
 
@@ -114,7 +114,7 @@
 // Small, on an item or on .haccordion for all of its items, such as the
 // panels of a settings page or a code sample under an example: 14px text
 // with 8px above and below it, and 13px content with 8px under it.
-:is(.haccordion[data-size="small"] > .haccordion-item, .haccordion-item[data-size="small"]) {
+:where(.haccordion[data-size="small"] > .haccordion-item, .haccordion-item[data-size="small"]) {
   & > .haccordion-summary {
     gap: 12px;
 

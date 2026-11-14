@@ -42,6 +42,8 @@ There is no custom color: the app maps its own states, such as a campaign run's
   text, so it fits a 15px settings section or a 14px table alike.
 - Bordered: 13px text, 4px 10px padding, a 1px `--harmo-color-border` border,
   fully rounded.
+- Text too long for its line wraps, and a word too long for it, such as an
+  ID, breaks rather than spilling out.
 - The dot colors are brighter than `--harmo-color-success`,
   `--harmo-color-warning`, and `--harmo-color-danger`, which are meant for
   text.

@@ -13,9 +13,20 @@ onEachPlayground("tag", () => {
     expect(cross.width).toBeCloseTo(12, 0);
     expect(tag.x + tag.width - (own.x + own.width)).toBeCloseTo(3, 0);
 
-    // 4px past the button on each side is still the button.
-    const hits = await button.evaluate((_, [x, y]) => {
-      const at = (dx: number, dy: number) => !!document.elementFromPoint(x! + dx, y! + dy)?.closest(".htag-remove");
+    // 2px from the end of the text itself.
+    const textEnd = await container.locator(".htag").first().evaluate((node) => {
+      const text = [...node.childNodes].find((child) => child.nodeType === Node.TEXT_NODE && child.textContent!.includes("Billing"))!;
+      const start = text.textContent!.indexOf("Billing");
+      const range = document.createRange();
+      range.setStart(text, start);
+      range.setEnd(text, start + "Billing".length);
+      return range.getBoundingClientRect().right;
+    });
+    expect(own.x - textEnd).toBeCloseTo(2, 0);
+
+    // 4px past the button on each side is still this button.
+    const hits = await button.evaluate((self, [x, y]) => {
+      const at = (dx: number, dy: number) => document.elementFromPoint(x! + dx, y! + dy)?.closest(".htag-remove") === self;
       return [at(-11.5, 0), at(11.5, 0), at(0, -11.5), at(0, 11.5)];
     }, [own.x + own.width / 2, own.y + own.height / 2]);
     expect(hits).toEqual([true, true, true, true]);
@@ -27,5 +38,16 @@ onEachPlayground("tag", () => {
     await page.keyboard.press("Enter");
     await expect(container.locator(".htag")).toHaveText(["Onboarding", "Partner"]);
     await expect(container.getByRole("button", { name: "Remove Onboarding" })).toBeFocused();
+  });
+
+  test("removing the last tag by the keyboard moves focus to what the tags are in, not to the page", async ({ page }) => {
+    const container = await example(page, "tag-with-a-remove-button");
+    const holder = container.locator(".play-demo");
+    await container.getByRole("button", { name: "Remove Billing" }).focus();
+    for (let left = 2; left >= 0; left--) {
+      await page.keyboard.press("Enter");
+      await expect(container.locator(".htag")).toHaveCount(left);
+    }
+    await expect(holder).toBeFocused();
   });
 });

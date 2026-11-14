@@ -33,7 +33,12 @@ export const examples = {
               const next =
                 own?.nextElementSibling?.querySelector<HTMLElement>(".htag-remove") ??
                 own?.previousElementSibling?.querySelector<HTMLElement>(".htag-remove");
-              next?.focus();
+              const holder = own?.parentElement;
+              if (next) next.focus();
+              else if (holder) {
+                holder.tabIndex = -1;
+                holder.focus();
+              }
             }
             setTags(tags.filter((other) => other !== tag));
           }}

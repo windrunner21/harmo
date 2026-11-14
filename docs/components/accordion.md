@@ -108,7 +108,7 @@ own. Other props are the `<div>`'s, or the `<details>`'s, attributes.
 | `label` on `AccordionItem` | Required: the summary's text |
 | `defaultOpen` | Open from the start; read once, as the item first renders |
 | `open` | Open; a change opens or closes it. The item also opens and closes itself, as `<details>` does, and tells `onOpenChange` |
-| `onOpenChange` | Called with whether it's open, after each opening or closing of this item, not of one inside it |
+| `onOpenChange` | Called with whether it's open, after each opening or closing of this item, not of one inside it; not as it first renders open, nor when your `open` changes |
 | `name` | Groups it with other items by hand, rather than by `exclusive` |
 
 ```tsx

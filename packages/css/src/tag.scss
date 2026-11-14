@@ -48,6 +48,11 @@
 
   background-color: var(--htag-color, #{$color-border});
   border-radius: 50%;
+
+  // Forced colors drop a background, so the dot is drawn in the text color.
+  @media (forced-colors: active) {
+    background-color: CanvasText;
+  }
 }
 
 // A button after the text that removes the tag, such as a choice in a

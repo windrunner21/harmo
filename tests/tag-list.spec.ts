@@ -56,10 +56,11 @@ onEachPlayground("tag-list", () => {
     await expect(shown(list)).toHaveCount(before);
   });
 
-  test("a press pins the tooltip open, as on a touch screen, until a press elsewhere or Escape", async ({ page }) => {
+  test("a press pins the tooltip open, as on a touch screen, until a press again, a press elsewhere, or Escape", async ({ page }) => {
     const container = await example(page, "tag-list-default");
     const list = container.locator(".htag-list");
     const count = list.locator(".htag-list-count");
+    const trigger = list.locator(".htag-list-more > .htooltip-trigger");
     const tooltip = list.getByRole("tooltip");
     // Pinned: shown, though the pointer has left and a press shows no
     // keyboard focus.
@@ -68,21 +69,39 @@ onEachPlayground("tag-list", () => {
     await expect(tooltip).toBeVisible();
     await container.getByRole("heading").first().click();
     await expect(tooltip).toBeHidden();
+    await expect(trigger).not.toHaveAttribute("data-open");
 
+    await count.click();
+    await expect(trigger).toHaveAttribute("data-open");
+    await count.click();
+    await expect(trigger).not.toHaveAttribute("data-open");
+
+    // Escape unpins it, not only hides it, so it doesn't come back as the
+    // pointer leaves.
     await count.click();
     await page.mouse.move(0, 0);
     await expect(tooltip).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(tooltip).toBeHidden();
+    await expect(trigger).not.toHaveAttribute("data-open");
   });
 
-  test("a hidden tag whose text changes shows the new text in the tooltip", async ({ page }, info) => {
+  test("a hidden tag whose text or color changes shows it in the tooltip", async ({ page }, info) => {
     // In React, a tag changes by rendering, which counts again anyway.
     test.skip(!info.titlePath.includes("html"), "HTML only");
     const container = await example(page, "tag-list-default");
     const list = container.locator(".htag-list");
-    await list.locator(":scope > li:not(.htag-list-more)").last().locator(".htag").evaluate((tag) => (tag.lastChild!.textContent = "Escalated"));
-    await expect(list.locator(".htag-list-rest > .htag").last()).toHaveText("Escalated");
+    const hidden = list.locator(":scope > li:not(.htag-list-more)").last().locator(".htag");
+    const copy = list.locator(".htag-list-rest > .htag").last();
+    await hidden.evaluate((tag) => (tag.lastChild!.textContent = "Escalated"));
+    await expect(copy).toHaveText("Escalated");
+    await hidden.evaluate((tag) => (tag as HTMLElement).style.setProperty("--htag-color", "var(--harmo-red)"));
+    await expect(copy).toHaveAttribute("style", /--htag-color: var\(--harmo-red\)/);
+  });
+
+  test("it's a list, which Safari keeps as one though it has no bullets", async ({ page }) => {
+    const container = await example(page, "tag-list-default");
+    await expect(container.locator(".htag-list")).toHaveAttribute("role", "list");
   });
 
   test("where even the first tag doesn't fit beside +N, only +N shows", async ({ page }) => {

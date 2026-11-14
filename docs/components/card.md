@@ -52,13 +52,13 @@ With parts:
 <a class="hcard" data-variant="ghost" href="/contact">
   <p class="hcard-title">Talk to us</p>
   <p class="hcard-description">Questions about plans or setup? We're glad to help.</p>
-    <svg class="hicon hchevron-to-arrow hcard-chevron" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <g class="hchevron-to-arrow-head">
-        <line class="hchevron-to-arrow-upper" x1="12" y1="6" x2="12" y2="12" />
-        <line class="hchevron-to-arrow-lower" x1="12" y1="18" x2="12" y2="12" />
-      </g>
-      <line class="hchevron-to-arrow-shaft" x1="6" y1="12" x2="15" y2="12" />
-    </svg>
+  <svg class="hicon hchevron-to-arrow hcard-chevron" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g class="hchevron-to-arrow-head">
+      <line class="hchevron-to-arrow-upper" x1="12" y1="6" x2="12" y2="12" />
+      <line class="hchevron-to-arrow-lower" x1="12" y1="18" x2="12" y2="12" />
+    </g>
+    <line class="hchevron-to-arrow-shaft" x1="6" y1="12" x2="15" y2="12" />
+  </svg>
 </a>
 ```
 
@@ -129,9 +129,9 @@ attributes.
 | `href` | Renders a link |
 | `label` | The title; with it, the card renders its parts rather than its children. A label that draws nothing, such as `false` or `[]`, isn't one |
 | `labelAs` | The title's element: `"h3"` by default, or `"h2"` to `"h6"`, or `"p"` where it's no heading |
-| `icon` | The icon, such as an `<svg className="hicon">`, in its tile |
-| `description` | The description |
-| `chevron` | A ChevronToArrow at the end |
+| `icon` | The icon, such as an `<svg className="hicon">`, in its tile; needs `label` |
+| `description` | The description; needs `label` |
+| `chevron` | A ChevronToArrow at the end; needs `label` |
 
 ```tsx
 <Card>
@@ -153,7 +153,8 @@ attributes.
 <Card variant="ghost" href="/contact" label="Talk to us" labelAs="p" description="Questions about plans or setup? We're glad to help." chevron />
 ```
 
-For a card that's a button, put `className="hcard"` on a `<button>`.
+For a card that's a button, put `className="hcard"` on a `<button>`; for an
+`<article>` or a `<section>`, put it on that element.
 
 ## Tokens
 
@@ -163,5 +164,6 @@ For a card that's a button, put `className="hcard"` on a `<button>`.
 `--harmo-color-primary`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-duration-fast`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
-`--harmo-font-family`, `--harmo-font-size-base`, `--harmo-font-size-sm`,
-`--harmo-font-weight-medium`; ChevronToArrow's, for the chevron.
+`--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-base`,
+`--harmo-font-size-sm`, `--harmo-font-weight-medium`; ChevronToArrow's, for
+the chevron.

@@ -53,7 +53,7 @@ email address in a list. For the state something is in, use
   padding, 13px `--harmo-color-text-secondary` text that wraps rather than
   overflowing.
 - A tag with its own color shows `.htag-dot` (6px) in `--htag-color`; without
-  one, it has no dot.
+  one, it has no dot. In forced-colors mode the dot uses the text color.
 - Unlike a Status, a tag's color carries no meaning, and it is never a pill.
 - A remove button is 16px, 2px after the text, with a 12px cross in
   `--harmo-icon-color`, darkening to `--harmo-icon-hover-color` on hover;
@@ -72,7 +72,7 @@ as a Combobox does with the arrow keys.
 
 | Change | When |
 | --- | --- |
-| Remove the tag, and move focus to the next tag's remove button, or the one before, so the keyboard keeps its place | On a click of its remove button |
+| Remove the tag, and move focus to the next tag's remove button, or the one before, or, with none left, to what the tags belong to, such as the field they filter, so the keyboard keeps its place | On a click of its remove button |
 
 `examples/html/src/scripts/tag.js` is an example script for it.
 

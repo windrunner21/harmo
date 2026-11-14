@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Children,
   createContext,
   isValidElement,
   useContext,
@@ -13,6 +12,7 @@ import {
   useState,
   type ComponentPropsWithRef,
 } from "react";
+import { shownChildren } from "./children.ts";
 import { useTooltip } from "./Tooltip.tsx";
 import { usePinned } from "./usePinned.ts";
 import { withClass } from "./withClass.ts";
@@ -38,11 +38,10 @@ export const TagList = ({
   const list = useRef<HTMLUListElement>(null);
   useImperativeHandle(ref, () => list.current as HTMLUListElement, []);
   const tipId = useId();
-  const { trigger, tooltip } = useTooltip();
   const field = useContext(TagListContext);
   const counting = !field?.editing;
 
-  const items = Children.toArray(children);
+  const items = shownChildren(children).filter((child) => child !== "");
   const [fitting, setFitting] = useState(items.length);
   const shown = counting ? Math.min(fitting, items.length) : items.length;
   const rest = items.length - shown;
@@ -97,12 +96,14 @@ export const TagList = ({
   // nor shows keyboard focus, until a press again, a press elsewhere,
   // Escape, or focus leaving. In a Combobox, a press goes to its field.
   const [pinned, setPinned, more] = usePinned<HTMLSpanElement>();
+  const { trigger, tooltip } = useTooltip(pinned && rest > 0);
 
   return (
     <ul
       {...props}
       ref={list}
       className={withClass("htag-list", className)}
+      role="list"
       // Focus on a tag's button, in a row that scrolls, brings the whole tag
       // into view, not only the button.
       onFocus={(event) => {
