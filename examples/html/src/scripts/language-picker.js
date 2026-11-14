@@ -1,6 +1,7 @@
-// Example only: once a language is chosen (listbox.js selects it), show it in
-// the button, with its region when it has one, as the React Language Picker
-// does, through button.js's changeButtonWidth, so its width follows. While the
+// Example only: once a language is chosen (listbox.js selects it, unless the
+// app's own handler on the option stopped the click), show it in the button,
+// with its region when it has one, as the React Language Picker does, through
+// button.js's changeButtonWidth, so its width follows. While the
 // button has aria-disabled="true", it doesn't open, and an open one closes. In
 // a panel of regions, Left and Right move between languages as Up and Down do,
 // the other way round right to left.
@@ -30,7 +31,7 @@
 
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.getAttribute("aria-disabled") === "true" || inactive()) return;
+      if (!option || option.getAttribute("aria-disabled") === "true" || inactive() || event.defaultPrevented) return;
       const region = option.closest(".hoption-group")?.querySelector(".hoption-group-label");
       const parts = [option.querySelector(".hoption-label [lang]").cloneNode(true)];
       if (region) parts.unshift(Object.assign(document.createElement("span"), { className: "hlanguage-picker-region", textContent: nameOf(region) }), " ");

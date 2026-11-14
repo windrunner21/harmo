@@ -8,8 +8,8 @@ in view as the page scrolls.
 | Item | Requirement |
 | --- | --- |
 | CSS | `table-of-contents.css` |
-| Element | `<nav class="htoc">` with a name from `aria-label` |
-| Parts | `<span class="htoc-marker" aria-hidden="true">`, then `<ul class="htoc-list" role="list">`, and in each `<li class="htoc-item">` an `<a class="htoc-link">` to a heading's `id` |
+| Element | `<nav class="htable-of-contents">` with a name from `aria-label` |
+| Parts | `<span class="htable-of-contents-marker" aria-hidden="true">`, then `<ul class="htable-of-contents-list" role="list">`, and in each `<li class="htable-of-contents-item">` an `<a class="htable-of-contents-link">` to a heading's `id` |
 | Required | A name for the list, and an `id` on each heading it links to |
 | Unique | Each heading's `id` |
 | Script | To mark the current section. See [What a script does](#what-a-script-does) |
@@ -17,12 +17,12 @@ in view as the page scrolls.
 ## Markup
 
 ```html
-<nav class="htoc" aria-label="On this page">
-  <span class="htoc-marker" aria-hidden="true"></span>
-  <ul class="htoc-list" role="list">
-    <li class="htoc-item"><a class="htoc-link" href="#overview" aria-current="location">Overview</a></li>
-    <li class="htoc-item"><a class="htoc-link" href="#milestones">Milestones</a></li>
-    <li class="htoc-item" data-level="2"><a class="htoc-link" href="#first-release">First release</a></li>
+<nav class="htable-of-contents" aria-label="On this page">
+  <span class="htable-of-contents-marker" aria-hidden="true"></span>
+  <ul class="htable-of-contents-list" role="list">
+    <li class="htable-of-contents-item"><a class="htable-of-contents-link" href="#overview" aria-current="location">Overview</a></li>
+    <li class="htable-of-contents-item"><a class="htable-of-contents-link" href="#milestones">Milestones</a></li>
+    <li class="htable-of-contents-item" data-level="2"><a class="htable-of-contents-link" href="#first-release">First release</a></li>
   </ul>
 </nav>
 ```
@@ -35,12 +35,12 @@ the keyboard reaches it.
 
 | Attribute | On | Effect |
 | --- | --- | --- |
-| `aria-current="location"` | `.htoc-link` | Marks the section you've reached, in `--harmo-color-primary`; `aria-current="false"` marks none |
-| `data-side="end"` | `.htoc` | Puts it after the content in a flex row, with its line on the edge that faces the content. Without it, it comes first |
-| `data-level` | `.htoc-item` | `2` or `3`: indents a heading under another |
-| `--htoc-width` | `.htoc` | Its width; the default is 11rem |
-| `--htoc-max-height` | `.htoc` | The most it can grow to. The default fits the window; in a scrolling box, set it to the box's height |
-| `--htoc-top` | `.htoc` | How far from the top it sticks; the default is `--harmo-space-sm`. Add a sticky header's height |
+| `aria-current="location"` | `.htable-of-contents-link` | Marks the section you've reached, in `--harmo-color-primary`; `aria-current="false"` marks none |
+| `data-side="end"` | `.htable-of-contents` | Puts it after the content in a flex row, with its line on the edge that faces the content. Without it, it comes first |
+| `data-level` | `.htable-of-contents-item` | `2` or `3`: indents a heading under another |
+| `--htable-of-contents-width` | `.htable-of-contents` | Its width; the default is 11rem |
+| `--htable-of-contents-max-height` | `.htable-of-contents` | The most it can grow to. The default fits the window; in a scrolling box, set it to the box's height |
+| `--htable-of-contents-top` | `.htable-of-contents` | How far from the top it sticks; the default is `--harmo-space-sm`. Add a sticky header's height |
 
 ## Appearance and states
 
@@ -76,13 +76,13 @@ the keyboard reaches it.
 | --- | --- |
 | `aria-current="location"` on the link to the last heading above the top of the view | As it scrolls or resizes, or the content's height changes |
 | `aria-current` on the last link | The end of the scrolling is reached, as a short last section can't reach the top |
-| `aria-current` on a link that's followed with a plain click, until you next scroll with a wheel, a touch, or a key that scrolls, such as Page Down, but not while typing | A link is followed |
+| `aria-current` on a link that's followed with a plain click, until you next scroll with a wheel, a touch, or a key that scrolls, such as Page Down, but not while typing, or press a scrollbar, such as to drag it: the window's, outside what the window shows, on whichever side it is, such as on the left right to left; or a box's, inside its border but outside what it shows (`clientWidth` and `clientHeight`). A press in the text keeps it, and so does one on a scrollbar drawn over the content, which takes no room | A link is followed |
 | Scrolling only the box to its heading, in place of the browser's own jump, which would scroll the page too: to the same place, after the heading's `scroll-margin-top` and the box's `scroll-padding-top`; smoothly, or at once when motion is reduced | A link is followed to a heading in a scrolling box |
 | Focus on that heading, without scrolling, so that Tab carries on from it as it would after the browser's jump; a heading that can't take focus gets `tabindex="-1"` until it loses it | The same |
 | Adding the heading to the address, unless it's there already | The same |
 | `aria-current` on the link to the address's `#id` | The page opens with one, or it changes with Back or Forward |
 | The list's `scrollTop`, to keep the current link in view | The current link changes |
-| `--htoc-marker-y` and `--htoc-marker-size` on `.htoc`, from the current link's `offsetTop` and `offsetHeight`, and `data-ready` once it's first placed | The current link changes, or the size of the list or a link does |
+| `--htable-of-contents-marker-y` and `--htable-of-contents-marker-size` on `.htable-of-contents`, from the current link's `offsetTop` and `offsetHeight`, and `data-ready` once it's first placed | The current link changes, or the size of the list or a link does |
 
 `examples/html/src/scripts/table-of-contents.js` is an example script, which reads
 a sticky header's height from `data-example-offset`.

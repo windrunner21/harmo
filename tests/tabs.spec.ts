@@ -61,6 +61,85 @@ onEachPlayground("tabs", () => {
     await expectSelected(container, "Team");
   });
 
+  test("a disabled tab is quiet, with a not-allowed cursor, and no hover color or pill", async ({ page }) => {
+    const container = await example(page, "tabs-switching-panels");
+    const tertiary = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      document.body.append(probe);
+      probe.style.color = "var(--harmo-color-text-tertiary)";
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    });
+    await tab(container, "Private").evaluate((element) => ((element as HTMLButtonElement).disabled = true));
+    await tab(container, "Team").evaluate((element) => element.setAttribute("aria-disabled", "true"));
+    const strip = container.locator(".htabs");
+
+    await pointAt(page, tab(container, "All"));
+    await expect(strip).toHaveCSS("--htabs-highlight-opacity", "1");
+    for (const name of ["Private", "Team"]) {
+      await pointAt(page, tab(container, name));
+      await expect(tab(container, name), `${name}'s color on hover`).toHaveCSS("color", tertiary);
+      await expect(tab(container, name)).toHaveCSS("cursor", "not-allowed");
+    }
+    await expect(strip, "the pill over an aria-disabled tab").toHaveCSS("--htabs-highlight-opacity", "0");
+  });
+
+  test("a tab that becomes disabled under a resting pointer loses its pill", async ({ page }) => {
+    const container = await example(page, "tabs-switching-panels");
+    const strip = container.locator(".htabs");
+    const disabling: [string, (element: HTMLElement) => void][] = [
+      ["Private", (element) => ((element as HTMLButtonElement).disabled = true)],
+      ["Team", (element) => element.setAttribute("aria-disabled", "true")],
+      ["Account", (element) => (element.hidden = true)],
+    ];
+    for (const [name, disable] of disabling) {
+      await pointAt(page, tab(container, name));
+      await expect(strip, `the pill over ${name}`).toHaveCSS("--htabs-highlight-opacity", "1");
+      await tab(container, name).evaluate(disable);
+      await expect(strip, `the pill once ${name} can't be chosen`).toHaveCSS("--htabs-highlight-opacity", "0");
+    }
+  });
+
+  test("each tab has 4px above and below its text and 10px either side, and tabs are 16px apart", async ({ page }) => {
+    const container = await example(page, "tabs-switching-panels");
+    const all = tab(container, "All");
+    await expect(all).toHaveCSS("padding-top", "4px");
+    await expect(all).toHaveCSS("padding-bottom", "4px");
+    await expect(all).toHaveCSS("padding-left", "10px");
+    await expect(all).toHaveCSS("padding-right", "10px");
+    const [first, second] = await Promise.all(
+      ["All", "Private"].map((name) =>
+        tab(container, name).evaluate((node) => {
+          const { left, right } = node.getBoundingClientRect();
+          return { left, right };
+        }),
+      ),
+    );
+    expect(second.left - first.right).toBeCloseTo(16, 0);
+  });
+
+  test("the pill follows the pointer in 150ms, fast from the start; the underline slides in 200ms, easing in and out", async ({ page }) => {
+    const container = await example(page, "tabs-switching-panels");
+    const curve = (variable: string) =>
+      page.evaluate((variable) => {
+        const probe = document.createElement("span");
+        document.body.append(probe);
+        probe.style.transitionTimingFunction = `var(${variable})`;
+        const value = getComputedStyle(probe).transitionTimingFunction;
+        probe.remove();
+        return value;
+      }, variable);
+    const highlight = container.locator(".htabs-highlight");
+    await expect(highlight).toHaveCSS("transition-property", "clip-path, opacity");
+    await expect(highlight).toHaveCSS("transition-duration", "0.15s, 0.15s");
+    await expect(highlight).toHaveCSS("transition-timing-function", `${await curve("--harmo-ease-out-cubic")}, ease`);
+    const indicator = container.locator(".htabs-indicator");
+    await expect(indicator).toHaveCSS("transition-property", "clip-path");
+    await expect(indicator).toHaveCSS("transition-duration", "0.2s");
+    await expect(indicator).toHaveCSS("transition-timing-function", await curve("--harmo-ease-in-out-cubic"));
+  });
+
   test("a click or a key that the app's own handler prevents leaves the selection", async ({ page }) => {
     const container = await example(page, "tabs-switching-panels");
     await tab(container, "All").click();

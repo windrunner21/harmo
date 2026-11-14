@@ -65,27 +65,39 @@ place, so they look like one.
 | --- | --- |
 | `aria-current="page"` on a link or row | The page you're on: a link in `--harmo-color-primary` and medium weight; a row with its title in `--harmo-color-primary`, on `--harmo-color-primary-tint`, with a 1px line just inside its edge |
 | `data-align="start"` | The panel opens at the menu's start rather than its end, for a menu near the start of the window, where the panel would run off the edge |
-| `data-orientation="vertical"` | The triggers stack, and each panel opens in place beneath its trigger, with no hover and no frame, such as in a [Popup](popup.md) on a phone. It's part of the page, as an Accordion is: Escape and a press outside are for whatever it's in |
+| `data-orientation="vertical"` | The triggers stack, and each panel opens in place beneath its trigger, with no hover and no frame, such as in a [Popup](popup.md) on a phone. It's part of the page, as an Accordion is: Escape and a press outside are for whatever it's in. Choosing a link closes the popup it's in |
+| `disabled` or `aria-disabled="true"` on a trigger | A trigger that can't open: `--harmo-color-text-tertiary` text, a not-allowed cursor, and no hover. `aria-disabled` keeps it focusable, so a [Tooltip](tooltip.md) can say why |
 
 ## Appearance and states
 
-- Links and triggers: 14px in `--harmo-color-text-secondary`, in a pill. Hovered,
-  or open, `--harmo-color-text` on `--harmo-color-background-hover`, in 200ms.
+- Links and triggers: 14px in `--harmo-color-text-secondary`, in a pill with
+  8px above and below and `--harmo-space-xs` (10px) either side, the chevron
+  `--harmo-icon-gap` (6px) after the text. Hovered, or open,
+  `--harmo-color-text` on `--harmo-color-background-hover`, in 150ms. A
+  disabled trigger is `--harmo-color-text-tertiary`, with a not-allowed cursor
+  and no hover.
 - The panel: 8px under the menu, at its end, with 8px of padding, a 1px
   `--harmo-color-border` border, the 8px corners, and `--harmo-box-shadow-sm`.
   It stays 8px inside the window, its rows wrapping to fit and the panel moving
   over if it has to. It's sized to its rows, and follows them if they change.
 - Opening: it fades in and grows from `scale(0.98)` in 200ms, and closes in
   150ms. Moving from one trigger to another, the frame resizes while the rows slide
-  sideways, both in 200ms, with no fade. Reduced motion: it only fades.
-- A row: 12px and 16px of padding, a bordered 34px tile with a 16px (1rem) icon, 12px
-  before a 14px medium title with a 12px description in
-  `--harmo-color-text-secondary` 8px under it. Hovered or focused, the tile fills
-  with `--harmo-color-primary-fill`, in 200ms, and the description darkens. On a
-  screen 30rem wide or narrower, where a row may wrap, it has more room between
-  its lines and less around them.
-- Vertical: 16px triggers in a full-width row, and panels that grow in place, in
-  200ms and close in 150ms. Reduced motion: at once.
+  sideways, both in 200ms on `--harmo-ease-in-out-cubic`, so they move as one,
+  with no fade. Reduced motion: it only fades.
+- A panel takes its rows' full height and doesn't scroll, so keep panels
+  short: a few rows each, or more triggers. In a sticky header on a short
+  window, the rows of a long panel can end up below the window, out of reach.
+- A row: 12px above and below and `--harmo-space-sm` (16px) either side, a
+  bordered 34px tile with a 16px (1rem) icon, `--harmo-space-xs` (10px) before
+  a 14px medium title with a 12px description in
+  `--harmo-color-text-secondary` 6px (`--harmo-space-2xs`) under it. Hovered
+  or focused, the tile fills with `--harmo-color-primary-fill`, in 150ms, and
+  the description darkens. On a screen 30rem wide or narrower, where a row may
+  wrap, it has more room between its lines and less around them:
+  `--harmo-space-xs` above and below.
+- Vertical: 16px triggers in a full-width row, with 12px above and below and
+  `--harmo-space-xs` either side, and panels that grow in place, in 200ms and
+  close in 150ms. Reduced motion: at once.
 - Right-to-left, the panel opens at the menu's left end and the rows slide the
   other way.
 
@@ -103,8 +115,11 @@ place, so they look like one.
 - While the keyboard is in the open item, the pointer leaves it alone, so focus
   isn't lost. A closed panel is `inert` at once, while it fades.
 - Choosing a link closes the panel and returns focus to its trigger, so focus
-  isn't lost if the page stays. A click with a modifier key, to open a new tab,
-  leaves it open.
+  isn't lost if the page stays. In a vertical menu, it closes the
+  [Popup](popup.md) the menu is in, which hands focus back to its
+  [Menu Button](menu-button.md), so the menu doesn't stay open over the new
+  page when your router changes it without a reload. A click with a modifier
+  key, to open a new tab, leaves either open.
 - On a touch screen, a tap opens a panel and a second closes it.
 - The current page is marked by more than its color: a link by its weight, and
   a row by the line around it.
@@ -117,6 +132,7 @@ place, so they look like one.
 | --- | --- |
 | `aria-expanded="true"` on the trigger, no `inert` on its panel, and `data-open` on the nav; on close, undo them | Open: the pointer enters a trigger, unless the keyboard is in the open item or the trigger is disabled, or on a click or Enter |
 | Close | The pointer leaves the menu, unless a click opened the panel or the keyboard is in it; a click on a panel's own trigger, once a click has opened it; a press outside; Escape, which is prevented, so what's around the menu stays open, unless it's already prevented or pressed in a dialog or a popup over the menu; focus leaving the panel's item; choosing a link, without a modifier key; the [Popup](popup.md) around it closing. A vertical menu closes only on a click on its trigger, or with its Popup |
+| Close the nearest open popover around a vertical menu (`hidePopover()`) | Choosing a link in it, without a modifier key, even one your router's link has prevented |
 | Keep a panel the pointer opened when its trigger is clicked | On that click |
 | Set `--hnavigation-menu-room` on the nav to the window's width without its scrollbar (`document.documentElement.clientWidth`), in px, which caps the rows; then `--hnavigation-menu-width` and `--hnavigation-menu-height` to the size of the open panel's `.hnavigation-menu-rows`, and `--hnavigation-menu-shift` to how far, in px, the panel has to move to stay 8px inside the window | When a panel opens, and as its rows or the window change size, unless `data-orientation="vertical"` |
 | `data-position="before"` or `"after"` on the other panels, by where their triggers are | When a panel opens, unless `data-orientation="vertical"` |
@@ -163,11 +179,14 @@ the `<a>`'s, or the trigger's. Links go through `HarmoProvider`'s `linkComponent
 `--harmo-font-family`, `--harmo-font-size-base`, `--harmo-font-size-sm`,
 `--harmo-font-size-2xs`, `--harmo-font-weight-normal`,
 `--harmo-font-weight-medium`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-color-primary`,
+`--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
+`--harmo-color-primary`,
 `--harmo-color-primary-tint`, `--harmo-color-primary-fill`,
 `--harmo-color-on-primary`,
 `--harmo-color-background`, `--harmo-color-background-hover`,
 `--harmo-color-border`, `--harmo-border-radius`, `--harmo-border-radius-sm`,
 `--harmo-border-radius-full`, `--harmo-box-shadow-sm`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-ease-in-out-cubic`; Expand Chevron's.
+`--harmo-duration-normal`, `--harmo-ease-out-cubic`, `--harmo-ease-in-out-cubic`,
+`--harmo-icon-gap`, `--harmo-space-2xs`, `--harmo-space-xs`,
+`--harmo-space-sm`; Expand Chevron's.

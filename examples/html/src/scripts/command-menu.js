@@ -178,7 +178,10 @@
       // Clicking in the list keeps focus in the field.
       popup.addEventListener("mousedown", (event) => event.preventDefault());
       input.addEventListener("click", show);
+      // Before Search's own Escape, which empties the field: open, the list
+      // closes first. A key your own handler has stopped is yours.
       input.addEventListener("keydown", (event) => {
+        if (event.defaultPrevented) return;
         if (event.isComposing || event.keyCode === 229 || event.key !== "Escape") return;
         if (isOpen()) {
           event.preventDefault();
@@ -199,22 +202,23 @@
     }
 
     // Enter with nothing highlighted doesn't send a form around it; an
-    // input method's Enter is its own.
-    input.addEventListener("keydown", (event) => {
-      if (event.isComposing || event.keyCode === 229) return;
+    // input method's Enter is its own. On the field's parent, so it comes
+    // after listbox.js, which a key stopped first leaves alone.
+    input.parentElement.addEventListener("keydown", (event) => {
+      if (event.target !== input || event.isComposing || event.keyCode === 229) return;
       if (event.key === "Enter") event.preventDefault();
     });
 
-    // Under a read-only field, nothing is picked.
+    // Under a read-only field, nothing is picked, nor by a click the app has
+    // stopped, with preventDefault() in its own handler on the option.
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
-      if (!option || option.getAttribute("aria-disabled") === "true" || (popup && input.readOnly)) return;
+      if (!option || option.getAttribute("aria-disabled") === "true" || (popup && input.readOnly) || event.defaultPrevented) return;
       if (picked) {
         picked.textContent = picked.dataset.examplePicked.replace("{value}", option.dataset.exampleValue ?? "");
         picked.hidden = false;
       }
-      // The dialog empties as it closes, so the list doesn't change as it
-      // fades.
+      // The dialog empties once it has closed.
       if (dialog) dialog.requestClose ? dialog.requestClose() : dialog.close();
       else {
         clear();
@@ -224,8 +228,8 @@
 
     // The shortcut, with what it's named for this device, while it's on. A
     // hidden or disabled menu, or one inside something hidden, leaves the key
-    // to the page, and the browser. While the dialog fades out, it keeps it
-    // open: dialog.js stops the exit once data-closing is gone.
+    // to the page, and the browser. While the dialog is closing, it keeps it
+    // open: dialog.js stops the close once data-closing is gone.
     const owner = trigger ?? input;
     const shortcut = owner.dataset.exampleShortcut;
     if (shortcut) {

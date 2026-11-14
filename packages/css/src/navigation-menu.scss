@@ -52,11 +52,11 @@
 .hnavigation-menu-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: $icon-gap;
 
   box-sizing: border-box;
   margin: 0;
-  padding: 8px 12px;
+  padding: 8px $space-xs;
 
   font-family: $font-family;
   font-size: $font-size-sm;
@@ -72,15 +72,15 @@
   cursor: pointer;
 
   transition:
-    background-color $duration-normal ease,
-    color $duration-normal ease;
+    background-color $duration-fast ease,
+    color $duration-fast ease;
 
   &[hidden] {
     display: none;
   }
 
   @media (hover: hover) and (pointer: fine) {
-    &:hover {
+    &:hover:where(:not(:disabled, [aria-disabled="true"])) {
       color: $color-text;
       background-color: $color-background-hover;
     }
@@ -89,6 +89,15 @@
   &:focus-visible {
     outline: $focus-outline;
     outline-offset: $focus-outline-offset;
+  }
+
+  // A trigger that can't open: quiet text, as a disabled option's, and no
+  // hover.
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: $color-text-tertiary;
+
+    cursor: not-allowed;
   }
 
   // The page you're on: its weight tells it apart without its color.
@@ -219,24 +228,25 @@
   list-style: none;
 
   .hnavigation-menu-content[data-position="before"] > & {
-    translate: calc((var(--hnavigation-menu-width, 0px) + 16px) * var(--hnavigation-menu-toward-start)) 0;
+    translate: calc((var(--hnavigation-menu-width, 0px) + #{$space-sm}) * var(--hnavigation-menu-toward-start)) 0;
   }
 
   .hnavigation-menu-content[data-position="after"] > & {
-    translate: calc((var(--hnavigation-menu-width, 0px) + 16px) * var(--hnavigation-menu-toward-start) * -1) 0;
+    translate: calc((var(--hnavigation-menu-width, 0px) + #{$space-sm}) * var(--hnavigation-menu-toward-start) * -1) 0;
   }
 }
 
-// Moving from one trigger to another: the frame resizes while the rows slide.
-// Opening from closed, they're already in place, and the panel only fades in.
+// Moving from one trigger to another: the frame resizes while the rows slide,
+// on one curve, so they move as one. Opening from closed, they're already in
+// place, and the panel only fades in.
 @media (prefers-reduced-motion: no-preference) {
   .hnavigation-menu[data-moving] {
     & > .hnavigation-menu-frame,
     & .hnavigation-menu-content {
       transition:
-        inline-size $duration-normal ease,
-        block-size $duration-normal ease,
-        translate $duration-normal ease,
+        inline-size $duration-normal $ease-in-out-cubic,
+        block-size $duration-normal $ease-in-out-cubic,
+        translate $duration-normal $ease-in-out-cubic,
         opacity $duration-fast ease,
         scale $duration-fast $ease-out-cubic,
         visibility 0s linear $duration-normal;
@@ -256,12 +266,13 @@
 
 // A row: an icon in a tile, which fills as it's hovered, a title, and what
 // it's for. The focus ring is inside it, since the panel clips what's beyond.
+// Its 12px above and below set its height.
 .hnavigation-menu-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $space-xs;
 
-  padding: 12px 16px;
+  padding: 12px $space-sm;
 
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
@@ -324,7 +335,7 @@
   // On a phone, where a row may wrap: more room between its lines, and less
   // around them, so a row on one line stays as tall.
   @media (max-width: 30rem) {
-    padding-block: 10px;
+    padding-block: $space-xs;
 
     line-height: 1.25;
   }
@@ -343,9 +354,9 @@
   border-radius: $border-radius-sm;
 
   transition:
-    background-color $duration-normal ease,
-    border-color $duration-normal ease,
-    color $duration-normal ease;
+    background-color $duration-fast ease,
+    border-color $duration-fast ease,
+    color $duration-fast ease;
 
   &[hidden] {
     display: none;
@@ -366,14 +377,10 @@
 .hnavigation-menu-text {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: $space-2xs;
 
   &[hidden] {
     display: none;
-  }
-
-  @media (max-width: 30rem) {
-    gap: 5px;
   }
 }
 
@@ -383,7 +390,7 @@
 
   color: $color-text-secondary;
 
-  transition: color $duration-normal ease;
+  transition: color $duration-fast ease;
 }
 
 // A panel that wants the end of the menu by default; at its start, for a menu
@@ -425,7 +432,7 @@
     justify-content: space-between;
 
     inline-size: 100%;
-    padding: 12px;
+    padding: 12px $space-xs;
 
     font-size: $font-size-base;
 

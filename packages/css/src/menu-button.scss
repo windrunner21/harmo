@@ -12,15 +12,24 @@
     transform-box: fill-box;
     transform-origin: center;
 
+    // Ease-out, so the bars move at once on a press.
     transition:
-      transform $duration-normal $ease-in-out-cubic,
-      opacity $duration-normal $ease-in-out-cubic;
+      transform $duration-fast $ease-out-cubic,
+      opacity $duration-fast $ease-out-cubic;
   }
 
   @media (prefers-reduced-motion: reduce) {
     & > line {
       transition: none;
     }
+  }
+}
+
+// Opening, the bars turn in 200ms; closing, in 150ms, above, as the menu
+// they open closes. A transition takes the duration of the state it goes to.
+@media (prefers-reduced-motion: no-preference) {
+  :where(.hmenu-button[aria-expanded="true"]) > .hmenu-button-bars > line {
+    transition-duration: $duration-normal;
   }
 }
 

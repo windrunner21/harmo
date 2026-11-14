@@ -7,7 +7,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: $space-xs;
 
   &[hidden] {
     display: none;
@@ -17,7 +17,7 @@
 .hpagination-pages {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: $space-2xs;
 
   // In a container too narrow for them, the numbers wrap rather than spill
   // out of it.
@@ -56,6 +56,7 @@
   box-sizing: border-box;
   min-inline-size: $control-height;
   block-size: $control-height;
+  // Inner padding, which with the square's width sets how many digits fit.
   padding: 0 4px;
 
   font-family: $font-family;

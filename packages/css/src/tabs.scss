@@ -68,7 +68,7 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
     z-index: 1;
 
     display: flex;
-    gap: 16px;
+    gap: $space-sm;
 
     inline-size: max-content;
     margin: 0;
@@ -89,7 +89,7 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
     display: block;
 
     margin: 0;
-    padding: 4px 8px;
+    padding: 4px $space-xs;
 
     font-family: inherit;
     font-size: $font-size-sm;
@@ -113,8 +113,17 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
       color: $color-primary;
     }
 
+    // A tab that can't be chosen: quiet text, as a disabled option's, and no
+    // hover.
+    &:disabled,
+    &[aria-disabled="true"] {
+      color: $color-text-tertiary;
+
+      cursor: not-allowed;
+    }
+
     @media (hover: hover) and (pointer: fine) {
-      &:hover {
+      &:hover:where(:not(:disabled, [aria-disabled="true"])) {
         color: $color-text;
       }
     }
@@ -128,11 +137,11 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
   &:not([data-ready]) > ul > li > a,
   &:not([data-ready]) > [role="tablist"] > [role="tab"] {
     @media (hover: hover) and (pointer: fine) {
-      &:hover {
+      &:hover:where(:not(:disabled, [aria-disabled="true"])) {
         background-color: $color-background-hover;
       }
 
-      &#{$current}:hover {
+      &#{$current}:hover:where(:not(:disabled, [aria-disabled="true"])) {
         background-color: $color-primary-tint;
       }
     }
@@ -174,20 +183,13 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
 
   pointer-events: none;
 
-  transition:
-    clip-path $duration-normal $ease-in-out-cubic,
-    opacity $duration-normal $ease-in-out-cubic;
-
   .htabs:not([data-ready]) > & {
     display: none;
   }
-
-  // No sliding; the pill and underline still fade.
-  @media (prefers-reduced-motion: reduce) {
-    transition-property: opacity;
-  }
 }
 
+// The pill follows the pointer, so it keeps up with it: quick, and fast from
+// the start. With reduced motion, it fades without sliding.
 .htabs-highlight {
   inset-block: 0;
 
@@ -198,11 +200,21 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
       var(--htabs-highlight-x) round $border-radius-sm
   );
 
+  transition:
+    clip-path $duration-fast $ease-out-cubic,
+    opacity $duration-fast ease;
+
   &[data-on-current] {
     background-color: $color-primary-tint;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity $duration-fast ease;
+  }
 }
 
+// The underline moves between two places on screen, so it eases in and out.
+// With reduced motion, it jumps.
 .htabs-indicator {
   bottom: -5px;
 
@@ -213,6 +225,12 @@ $current: ':is([aria-current="page"], [aria-selected="true"])';
     0 calc(100% - var(--htabs-indicator-x) - var(--htabs-indicator-width)) 0
       var(--htabs-indicator-x) round 1px
   );
+
+  transition: clip-path $duration-normal $ease-in-out-cubic;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 
   @media (forced-colors: active) {
     bottom: -4px;

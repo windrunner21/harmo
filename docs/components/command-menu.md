@@ -117,14 +117,17 @@ customers".
   10px in from its end. The list opens below it, or above where there's more
   room, as a [Popup](popup.md) does; while it's open, the field has its focus
   ring, as a Combobox's does.
-- Under a field, the list opens and closes at once, without a Popup's fade
-  and slide: it's opened many times a day, often from the keyboard, where any
-  motion makes it feel slow. The dialog, opened less often, fades and grows
-  in as a [Dialog](dialog.md) does.
+- The list opens and closes at once: under a field, without a Popup's fade
+  and slide, and in a dialog, without a [Dialog](dialog.md)'s fade and grow,
+  its backdrop included. It's opened many times a day, often from the
+  keyboard, where any motion makes it feel slow.
 - In a dialog, the trigger looks like a Search field: the secondary
   background, the magnifier, its text in the secondary color, and the
-  shortcut at its end. It shows its border on hover and its ring on keyboard
-  focus. Disabled, its text is in the tertiary color, with a not-allowed
+  shortcut at its end, each where a Search field has it: the magnifier and
+  the shortcut a field's inset (`--harmo-space-xs`, 10px) in from either
+  end, and 6px (`--harmo-space-2xs`) from the magnifier to the text. It shows its border on hover,
+  its own and not a [Field](field.md) label's for it, and its ring on
+  keyboard focus. Disabled, its text is in the tertiary color, with a not-allowed
   cursor and no border on hover, as a disabled Search field's. The dialog has
   no title or padding of its own: the field, at the
   page's text size, is its top row, over a border.
@@ -132,7 +135,13 @@ customers".
   it, smaller, each cut to one line. What's typed is marked in both, in the
   primary tint.
 - The highlighted option is shown as in any [Listbox](listbox.md); options
-  keep no room for a check.
+  keep no room for a check, ending `--harmo-space-xs` (10px) from the list's
+  edge.
+- In a dialog, the field's row has `--harmo-space-xs` (10px) above and below
+  and `--harmo-space-sm` (16px) either side. The status when nothing shows has
+  `--harmo-space-md` (26px) above and below. The footer has 8px above and
+  below and `--harmo-space-xs` either side, its keys `--harmo-space-sm` apart,
+  `--harmo-space-2xs` (6px) between lines and between a key and its words.
 
 ## Accessibility
 
@@ -149,7 +158,7 @@ customers".
   | ↓ / ↑ | Move through the list; under a field, open it at the first option, or the last |
   | Enter | Goes to the highlighted option: the list or the dialog closes, and the field empties. With none, nothing happens, and a form around it isn't sent |
   | Escape | Under a field, closes the list; closed, empties the field. In a dialog, closes it, as Escape does any dialog |
-  | The shortcut | Opens the dialog, or moves focus to the field and opens its list; pressed again, takes focus back to the field, and while the dialog fades out, keeps it open |
+  | The shortcut | Opens the dialog, or moves focus to the field and opens its list; pressed again, takes focus back to the field, and while the dialog is closing, keeps it open |
 
 - A shortcut with ⌘, written `Mod`, is ⌘ on Apple devices and Ctrl elsewhere,
   and works anywhere on the page; a key alone, such as <kbd>/</kbd>, works
@@ -172,10 +181,10 @@ customers".
 | Hide the options whose label, description, and keywords don't hold the text, and the groups left with none; mark the text in each label and description (`<mark class="hoption-match">`); highlight the first match (`data-active`, and `aria-activedescendant` on the field); put the message in the status when nothing shows, and empty it otherwise | On typing |
 | Under a field: show the popup and set `aria-expanded`; with nothing to show and no status, or while the field is read-only, keep it closed, and `aria-expanded="false"` | On typing, a click on the field, ↓ or ↑, and the shortcut |
 | Under a field: close the popup, and empty the field | Escape closes; again, it empties. Leaving the field does both, unless the window lost focus. A read-only field only closes, also as it becomes read-only |
-| In a dialog: open it with `showModal()`, or focus the field when it's open; while it fades out, remove `data-closing`, which keeps it open, and focus the field | On the shortcut; its trigger opens it itself |
-| In a dialog: empty the field, and show the whole list again | Once the dialog has closed, so the list doesn't change as it fades |
+| In a dialog: open it with `showModal()`, or focus the field when it's open; while it's closing, remove `data-closing`, which keeps it open, and focus the field | On the shortcut; its trigger opens it itself |
+| In a dialog: empty the field, and show the whole list again | Once the dialog has closed |
 | Highlight the first option | As the popup or the dialog opens |
-| Close the popup and empty the field, or close the dialog with `requestClose()`, as Escape does; then go where the option leads | On a pick, by Enter or a click, unless the field is read-only under a field |
+| Close the popup and empty the field, or close the dialog with `requestClose()`, as Escape does; then go where the option leads | On a pick, by Enter or a click, unless the field is read-only under a field, or the app's own click handler on the option has stopped it with `preventDefault()` |
 | Keep the pointer from taking focus from the field | On a press in the list |
 | Set `aria-keyshortcuts` for the device, and the `.hkbd`'s text | As the page loads |
 | Leave the key to the page, and the browser | While the shortcut is off, or the menu or something around it is hidden, or the field or the trigger is disabled |
@@ -197,7 +206,7 @@ you send them. Other props are the input's attributes.
 | `label` | Required: the name of the field, its list, and the dialog, such as "Search" |
 | `placeholder` | The field's placeholder, and in a dialog the trigger's text; without it, or empty, the trigger shows the `label` |
 | `modal` | In a dialog, opened by a trigger that looks like a Search field |
-| `open`, `onOpenChange` | With `modal`: whether the dialog is open, held by you, and when it opens or closes |
+| `open`, `onOpenChange` | With `modal`: whether the dialog is open, held by you. While `open` is `false`, the trigger and the shortcut call `onOpenChange(true)` instead, and it opens once `open` is `true`. It closes by itself, on Escape, a click outside, or a pick, and calls `onOpenChange(false)`: `open` must follow. `onOpenChange` isn't called as it follows a change to `open` |
 | `shortcut` | The keys that reach it, as `{ keys, label }`: `keys` as `aria-keyshortcuts` writes them, with `Control`, `Meta`, `Shift`, `Alt`, and `Mod` for ⌘ on Apple devices and Ctrl elsewhere, such as `"Mod+K"`, or a key alone, such as `"/"`; any other modifier is an error. `label` is what its Kbd shows, the same everywhere, or `{ apple, other }`, such as `{ apple: "⌘K", other: "Ctrl K" }`. Leave it out to turn the shortcut off, as a key alone needs a way to be |
 | `onPick` | Called with the picked option's value as the list or the dialog closes: go there, such as with your router |
 | `inputValue`, `onInputChange` | The field's text, held by you, such as to look for results as it changes |
@@ -244,6 +253,14 @@ you send them. Other props are the input's attributes.
 An option goes somewhere by `onPick`, not by a link: ⌘-click and a middle
 click don't open it in a new tab.
 
+Your `onClick` on an `<Option>` runs before its own handling, as in a
+[Listbox](listbox.md#react): `preventDefault()` in it keeps the option from
+being picked, by a click or by Enter. Your `onKeyDown` on the field runs before
+its own keys too: `preventDefault()` in it keeps a key from moving the highlight,
+picking with Enter, or closing or emptying with Escape. In HTML, a keydown
+listener of your own that runs first, and calls `preventDefault()`, leaves the key
+to you.
+
 ## Tokens
 
 `--harmo-border-radius`, `--harmo-color-background-secondary`,
@@ -254,5 +271,6 @@ click don't open it in a new tab.
 `--harmo-font-size-base`, `--harmo-font-size-sm`, `--harmo-font-size-xs`,
 `--harmo-font-weight-normal`, `--harmo-icon-color`,
 `--harmo-input-box-shadow`, `--harmo-input-color-background`,
-`--harmo-input-color-border`; and those of Search, Popup, Dialog, Listbox, and
-Kbd.
+`--harmo-input-color-border`, `--harmo-space-2xs`, `--harmo-space-xs`,
+`--harmo-space-sm`, `--harmo-space-md`; and those of Search, Popup, Dialog,
+Listbox, and Kbd.

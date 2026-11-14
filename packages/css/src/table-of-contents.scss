@@ -3,18 +3,18 @@
 // The headings of a page, beside it, with the one you've reached marked. In a flex
 // row it goes to its side whatever the order in the markup, with its line on the
 // edge that faces the content.
-.htoc {
-  --htoc-gutter: 0px;
+.htable-of-contents {
+  --htable-of-contents-gutter: 0px;
 
   position: sticky;
-  inset-block-start: var(--htoc-top, #{$space-sm});
+  inset-block-start: var(--htable-of-contents-top, #{$space-sm});
   align-self: start;
   flex: none;
   order: -1;
 
-  inline-size: var(--htoc-width, 11rem);
+  inline-size: var(--htable-of-contents-width, 11rem);
   max-inline-size: 100%;
-  max-block-size: var(--htoc-max-height, calc(100dvh - 2 * var(--htoc-top, #{$space-sm})));
+  max-block-size: var(--htable-of-contents-max-height, calc(100dvh - 2 * var(--htable-of-contents-top, #{$space-sm})));
   overflow-y: auto;
 
   font-family: $font-family;
@@ -26,13 +26,13 @@
   }
 
   &[data-side="end"] {
-    --htoc-gutter: #{$space-sm};
+    --htable-of-contents-gutter: #{$space-sm};
 
     order: 1;
   }
 }
 
-.htoc-list {
+.htable-of-contents-list {
   display: flex;
   flex-direction: column;
 
@@ -46,23 +46,23 @@
   }
 }
 
-.htoc-item {
+.htable-of-contents-item {
   &[data-level="2"] {
-    --htoc-indent: #{$space-xs};
+    --htable-of-contents-indent: #{$space-xs};
   }
 
   &[data-level="3"] {
-    --htoc-indent: #{$space-md};
+    --htable-of-contents-indent: #{$space-md};
   }
 }
 
 // Each link draws its piece of the line on the edge that faces the content, so
 // that the current one only has to color its own.
-.htoc-link {
+.htable-of-contents-link {
   display: block;
 
   padding-block: $space-2xs;
-  padding-inline: calc(var(--htoc-gutter) + var(--htoc-indent, 0px)) $space-sm;
+  padding-inline: calc(var(--htable-of-contents-gutter) + var(--htable-of-contents-indent, 0px)) $space-sm;
 
   overflow-wrap: anywhere;
   text-decoration: none;
@@ -89,7 +89,7 @@
   }
 
   // Until a script places the marker, the current link colors its own piece.
-  :where(.htoc:not([data-ready])) &[aria-current]:where(:not([aria-current="false"])) {
+  :where(.htable-of-contents:not([data-ready])) &[aria-current]:where(:not([aria-current="false"])) {
     border-inline-end-color: $color-primary;
 
     @media (forced-colors: active) {
@@ -106,13 +106,13 @@
   }
 }
 
-:where(.htoc[data-side="end"] .htoc-item) > .htoc-link {
+:where(.htable-of-contents[data-side="end"] .htable-of-contents-item) > .htable-of-contents-link {
   padding-inline-end: 0;
 
   border-inline-start: 1px solid $color-border;
   border-inline-end: 0;
 
-  :where(.htoc:not([data-ready])) &[aria-current]:where(:not([aria-current="false"])) {
+  :where(.htable-of-contents:not([data-ready])) &[aria-current]:where(:not([aria-current="false"])) {
     border-inline-start-color: $color-primary;
 
     @media (forced-colors: active) {
@@ -123,7 +123,7 @@
 
 // Slides along the line to the current link, as a Tab's indicator does. It's
 // placed at once as the page loads, and moves at once with reduced motion.
-.htoc-marker {
+.htable-of-contents-marker {
   position: absolute;
   inset-block-start: 0;
   inset-inline-end: 0;
@@ -135,16 +135,16 @@
 
   pointer-events: none;
 
-  transform: translateY(var(--htoc-marker-y, 0px)) scaleY(var(--htoc-marker-size, 0));
+  transform: translateY(var(--htable-of-contents-marker-y, 0px)) scaleY(var(--htable-of-contents-marker-size, 0));
   transform-origin: top;
 
   transition: transform $duration-normal $ease-in-out-cubic;
 
-  :where(.htoc[data-side="end"]) > & {
+  :where(.htable-of-contents[data-side="end"]) > & {
     inset-inline: 0 auto;
   }
 
-  .htoc:not([data-ready]) > & {
+  .htable-of-contents:not([data-ready]) > & {
     visibility: hidden;
 
     transition: none;

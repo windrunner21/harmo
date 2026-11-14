@@ -11,14 +11,14 @@ const items = [
 describe("TableOfContents", () => {
   test("a named navigation of links to each heading, kept a list for Safari", () => {
     const markup = renderToStaticMarkup(<TableOfContents aria-label="On this page" items={items} />);
-    expect(markup).toStartWith('<nav aria-label="On this page" class="htoc">');
-    expect(markup).toContain('<span class="htoc-marker" aria-hidden="true"></span><ul class="htoc-list" role="list">');
-    expect(markup).toContain('<a class="htoc-link" href="#one">One</a>');
+    expect(markup).toStartWith('<nav aria-label="On this page" class="htable-of-contents">');
+    expect(markup).toContain('<span class="htable-of-contents-marker" aria-hidden="true"></span><ul class="htable-of-contents-list" role="list">');
+    expect(markup).toContain('<a class="htable-of-contents-link" href="#one">One</a>');
   });
 
   test("a level goes on its item, and none is marked until it can see the page", () => {
     const markup = renderToStaticMarkup(<TableOfContents aria-label="On this page" items={items} />);
-    expect(markup).toContain('<li class="htoc-item" data-level="2">');
+    expect(markup).toContain('<li class="htable-of-contents-item" data-level="2">');
     expect(markup).not.toContain("aria-current");
   });
 
@@ -33,6 +33,6 @@ describe("TableOfContents", () => {
   });
 
   test("className goes on the nav", () => {
-    expect(renderToStaticMarkup(<TableOfContents aria-label="x" items={[]} className="y" />)).toContain('class="htoc y"');
+    expect(renderToStaticMarkup(<TableOfContents aria-label="x" items={[]} className="y" />)).toContain('class="htable-of-contents y"');
   });
 });

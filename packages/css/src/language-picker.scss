@@ -63,7 +63,7 @@
     block-size: auto;
     max-block-size: 100%;
 
-    border-radius: 3px;
+    border-radius: $border-radius-sm;
     outline: 1px solid color-mix(in srgb, #{$color-text} 12%, transparent);
     outline-offset: -1px;
   }
@@ -194,13 +194,14 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
     visibility: hidden;
   }
 
-  // Its languages, beside one another, lined up under its name.
+  // Its languages, beside one another, lined up under its name: each one's
+  // text, past its padding, starts where the name does.
   & > ul {
     display: flex;
     flex-wrap: wrap;
 
     margin-block-start: 2px;
-    margin-inline-start: -6px;
+    margin-inline-start: calc(-1 * #{$space-2xs});
 
     &[hidden] {
       display: none;
@@ -210,13 +211,7 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
   & .hoption {
     gap: 0;
 
-    padding: 2px 6px;
-
-    &[aria-selected="true"] {
-      font-weight: $font-weight-medium;
-
-      color: $color-text;
-    }
+    padding: 2px $space-2xs;
   }
 
   // The check, in a circle in the picture's place, on the fill that keeps white
@@ -239,4 +234,15 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
       background-color: Highlight;
     }
   }
+}
+
+// The language in use, a step heavier, in the text color. Only the option
+// counts, with its state, as the convention asks, so an app's
+// .hoption[aria-selected="true"] overrides it. The rules above stay heavier
+// than Listbox's: this stylesheet comes before listbox.css, which would
+// otherwise win.
+:where(.hlanguage-picker-regions .hoption-group) .hoption[aria-selected="true"] {
+  font-weight: $font-weight-medium;
+
+  color: $color-text;
 }

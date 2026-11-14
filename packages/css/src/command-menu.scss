@@ -16,11 +16,11 @@
 
   // Nothing is ever chosen, so no option keeps room for a check.
   & .hoption {
-    padding-inline-end: 12px;
+    padding-inline-end: $space-xs;
   }
 
   & > .hlistbox-empty {
-    padding-block: 24px;
+    padding-block: $space-md;
 
     text-align: center;
 
@@ -34,7 +34,7 @@
 // has room, for a label and its description side by side with a badge. It
 // opens and closes at once, without a Popup's fade: it's opened many times a
 // day, often from the keyboard, where any motion makes it feel slow. The
-// dialog, opened less often, keeps a Dialog's.
+// dialog does too, below.
 .hpopup.hcommand-menu {
   min-inline-size: max(anchor-size(inline), min(24rem, 100vw - 16px));
   max-block-size: 480px;
@@ -43,10 +43,19 @@
 }
 
 // Near the top of the window rather than centered, so the field stays put as
-// the list grows and shrinks with what's typed.
+// the list grows and shrinks with what's typed. It opens and closes at once,
+// without a Dialog's fade and grow, for the same reason as the popup: a
+// shortcut opens it many times a day. With no transition, a script holding its
+// close finds nothing to wait for, and closes it on the next frame.
 .hdialog.hcommand-menu {
   --hdialog-max-inline-size: 640px;
   --hcommand-menu-top: min(12vh, 120px);
+
+  transition: none;
+
+  &::backdrop {
+    transition: none;
+  }
 
   inline-size: 100%;
   max-block-size: min(
@@ -59,7 +68,7 @@
   // The field: Listbox's search row, at the size of the page's text, which
   // also keeps a phone from zooming in on it.
   & > .hlistbox-search {
-    padding: 12px 16px;
+    padding: $space-xs $space-sm;
 
     font-size: $font-size-base;
   }
@@ -78,9 +87,9 @@
   flex-wrap: wrap;
   flex-shrink: 0;
   justify-content: flex-end;
-  gap: 4px 16px;
+  gap: $space-2xs $space-sm;
 
-  padding: 8px 12px;
+  padding: 8px $space-xs;
 
   font-family: $font-family;
   font-size: $font-size-xs;
@@ -97,7 +106,7 @@
   & > * {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: $space-2xs;
 
     &[hidden] {
       display: none;
@@ -111,7 +120,10 @@
 
 // What opens the dialog: a button that looks like a Search field, with its
 // placeholder-like text, and the shortcut at its end; disabled, as a disabled
-// Search field looks.
+// Search field looks. Its magnifier, text, and shortcut are where a Search
+// field's are: a field's inset from each end, less this button's own 1px
+// border, which a Search field's magnifier and shortcut sit inside of, and the
+// small step from the magnifier to the text.
 .hcommand-menu-trigger {
   --harmo-input-color-background: #{$color-background-secondary};
   --harmo-input-color-border: transparent;
@@ -121,12 +133,12 @@
 
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: $space-2xs;
 
   inline-size: 100%;
   min-block-size: $control-height;
   padding-block: 0;
-  padding-inline: 12px 10px;
+  padding-inline: calc(#{control.$padding-inline} - 1px);
 
   text-align: start;
 
@@ -151,8 +163,10 @@
     flex-shrink: 0;
   }
 
+  // Only the trigger itself lights up, not while a Field's label for it is
+  // what's under the pointer.
   @media (hover: hover) and (pointer: fine) {
-    &:hover:where(:not(:disabled)) {
+    &:hover:where(:not(:disabled, #{control.$label-hovered})) {
       @include control.focused;
     }
   }

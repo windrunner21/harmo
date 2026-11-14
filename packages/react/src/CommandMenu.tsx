@@ -20,7 +20,7 @@ import {
   optionsOf,
   shownFor,
 } from "./listbox/Listbox.tsx";
-import { useModal } from "./modal.tsx";
+import { askToOpen, useModal } from "./modal.tsx";
 import { placePopup } from "./Popup.tsx";
 import { searchIcon } from "./Search.tsx";
 import { withClass } from "./withClass.ts";
@@ -77,6 +77,7 @@ export const CommandMenu = ({
   const dialogId = useId();
   const anchor = `--${useId()}`;
   const input = useRef<HTMLInputElement>(null);
+  const listKeys = useRef<((event: globalThis.KeyboardEvent) => void) | null>(null);
   useImperativeHandle(ref, () => input.current as HTMLInputElement, []);
   const opener = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
@@ -117,9 +118,8 @@ export const CommandMenu = ({
   };
 
   // A pick closes the list and empties the field, or closes the dialog as
-  // Escape does, which empties it once it's closed, so the list doesn't
-  // change as it fades. Then the app goes where it leads. Under a read-only
-  // field, nothing is picked.
+  // Escape does, which empties it once it's closed. Then the app goes where
+  // it leads. Under a read-only field, nothing is picked.
   const pick = (value: string) => {
     if (!modal && input.current?.readOnly) return;
     if (modal) {
@@ -135,7 +135,8 @@ export const CommandMenu = ({
 
   // The shortcut opens the dialog, or reaches the field and opens its list;
   // pressed again, it takes focus back to the field, and while the dialog
-  // fades out, it keeps it open. A hidden or disabled menu, or one inside
+  // is closing, it keeps it open. With `open` held by the app and false, it
+  // asks instead, as the button does. A hidden or disabled menu, or one inside
   // something hidden, leaves the key to the page, and the browser.
   const keys = shortcut ? parseKeys(shortcut.keys) : null;
   const reach = useEffectEvent((event: KeyboardEvent) => {
@@ -145,6 +146,8 @@ export const CommandMenu = ({
     if (field.disabled || opener.current?.disabled || owner.closest("[hidden]")) return;
     event.preventDefault();
     const element = dialog.current;
+    const shut = !element?.open || element.hasAttribute("data-closing");
+    if (modal && shut && !askToOpen({ open, onOpenChange })) return;
     if (modal && element?.hasAttribute("data-closing")) {
       element.removeAttribute("data-closing");
     } else if (modal && !element?.open) {
@@ -217,8 +220,9 @@ export const CommandMenu = ({
       }}
       onKeyDown={(event) => {
         onKeyDown?.(event);
+        if (event.nativeEvent.defaultPrevented) return;
         if (event.nativeEvent.isComposing || event.keyCode === 229) return;
-        if (event.defaultPrevented) return;
+        listKeys.current?.(event.nativeEvent);
         // In the dialog, Escape closes it, as the browser does. Under a
         // field, it closes the list; closed, it empties the field.
         if (event.key === "Escape" && !modal) {
@@ -254,6 +258,7 @@ export const CommandMenu = ({
         autoHighlight: true,
         onChoose: pick,
         canOpen: () => shows(query),
+        keys: listKeys,
       }}
     >
       <Listbox

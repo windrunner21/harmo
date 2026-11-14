@@ -107,6 +107,12 @@
     list.addEventListener("pointerover", (event) => {
       const item = event.target.closest('a, [role="tab"]');
       if (!item || !canHover()) return;
+      // A tab that can't be chosen has no hover: the pill leaves.
+      if (item.matches(':disabled, [aria-disabled="true"]')) {
+        tabs.style.setProperty("--htabs-highlight-opacity", "0");
+        hovered = null;
+        return;
+      }
       const { x, width } = measure(item);
       // Appear in place rather than sliding in from where it last was.
       if (!hovered) highlight.style.transition = "none";
@@ -124,6 +130,13 @@
       tabs.style.setProperty("--htabs-highlight-opacity", "0");
       hovered = null;
     });
+    // The pill leaves the tab under a resting pointer too, as the tab becomes
+    // disabled, aria-disabled, or hidden.
+    new MutationObserver(() => {
+      if (!hovered || !(hovered.matches(':disabled, [aria-disabled="true"]') || hovered.closest("[hidden]"))) return;
+      tabs.style.setProperty("--htabs-highlight-opacity", "0");
+      hovered = null;
+    }).observe(list, { subtree: true, attributes: true, attributeFilter: ["disabled", "aria-disabled", "hidden"] });
     list.addEventListener("click", (event) => {
       const item = event.target.closest('a, [role="tab"]');
       if (!item || event.defaultPrevented) return;

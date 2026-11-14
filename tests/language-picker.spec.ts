@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import { expectActive } from "./lists.ts";
-import { boxes, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/language-picker.md says a script does, on the Language
 // Picker page.
@@ -20,6 +20,26 @@ onEachPlayground("language-picker", () => {
     await expect(trigger.locator(".hbutton-label > [lang]")).toHaveAttribute("lang", "fr");
     await expect(trigger.locator(".hbutton-label")).toHaveText("Français");
     await expect(listbox.getByRole("option", { name: "Français" })).toHaveAttribute("aria-selected", "true");
+  });
+
+  test("a click the app stops, with preventDefault() in its own handler on the option, chooses nothing", async ({ page }) => {
+    const { container, trigger, listbox } = await picker(page, "language-picker-default", "Language");
+    await trigger.click();
+    await settled(openPopup(container));
+    const french = listbox.getByRole("option", { name: "Français" });
+    // On the option, so before the list's own handling.
+    await french.evaluate((node) => node.addEventListener("click", (event) => event.preventDefault(), { once: true }));
+    await clickAt(page, french);
+    await expect(openPopup(container)).toHaveCount(1);
+    await expect(trigger.locator(".hbutton-label")).toHaveText("English");
+    await expect(trigger.locator(".hbutton-label > [lang]")).toHaveAttribute("lang", "en");
+    await expect(french).toHaveAttribute("aria-selected", "false");
+    await expect(listbox.getByRole("option", { name: "English" })).toHaveAttribute("aria-selected", "true");
+
+    await clickAt(page, french);
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(trigger.locator(".hbutton-label")).toHaveText("Français");
+    await expect(french).toHaveAttribute("aria-selected", "true");
   });
 
   // In React, the example's value is its own state, which only onValueChange sets,
@@ -133,6 +153,47 @@ onEachPlayground("language-picker", () => {
     await expect(flag("Spain")).toHaveCSS("visibility", "hidden");
     await expect(flag("United States")).toHaveCSS("visibility", "visible");
     await expect(region("Spain").locator(".hoption-check:visible")).toHaveCount(1);
+  });
+
+  test("the language in use is medium and in the text color, and an app's own selected option overrides it", async ({ page }) => {
+    const { container, trigger, listbox } = await picker(page, "language-picker-by-region", "Region and language");
+    await trigger.click();
+    await settled(openPopup(container));
+    const selected = listbox.locator('.hoption[aria-selected="true"]');
+    const text = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      document.body.append(probe);
+      probe.style.color = "var(--harmo-color-text)";
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    });
+    await expect(selected).toHaveCSS("font-weight", "500");
+    await expect(selected).toHaveCSS("color", text);
+    // As docs/components/README.md says: a rule of the same weight, after
+    // Harmo's.
+    await page.addStyleTag({ content: '.hoption[aria-selected="true"] { color: rgb(200, 0, 0); font-weight: 700; }' });
+    await expect(selected).toHaveCSS("color", "rgb(200, 0, 0)");
+    await expect(selected).toHaveCSS("font-weight", "700");
+  });
+
+  test("a region's languages line up under its name, each 6px either side", async ({ page }) => {
+    const { container, trigger, listbox } = await picker(page, "language-picker-by-region", "Region and language");
+    await trigger.click();
+    await settled(openPopup(container));
+    const group = listbox.locator(".hoption-group").first();
+    const option = group.getByRole("option").first();
+    await expect(option).toHaveCSS("padding-left", "6px");
+    await expect(option).toHaveCSS("padding-right", "6px");
+    const [name, language] = await Promise.all([
+      group.locator(".hoption-group-label").evaluate((label) => {
+        const range = document.createRange();
+        range.selectNodeContents(label.lastChild as Node);
+        return range.getBoundingClientRect().left;
+      }),
+      option.locator("[lang]").evaluate((words) => words.getBoundingClientRect().left),
+    ]);
+    expect(language).toBeCloseTo(name, 0);
   });
 
   test("Left and Right move between languages in the panel", async ({ page }) => {

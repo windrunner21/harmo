@@ -91,10 +91,22 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
     for (const item of root.querySelectorAll('a, [role="tab"]')) {
       observer.observe(item, { box: "border-box" });
     }
+    const disabling = new MutationObserver(() => {
+      const item = hovered.current;
+      if (item && (item.matches(':disabled, [aria-disabled="true"]') || item.closest("[hidden]"))) {
+        onPointerLeave();
+      }
+    });
+    disabling.observe(root, {
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["disabled", "aria-disabled", "hidden"],
+    });
     root.addEventListener("keydown", keyboard, true);
     root.addEventListener("pointerdown", pointer, true);
     return () => {
       observer.disconnect();
+      disabling.disconnect();
       root.removeEventListener("keydown", keyboard, true);
       root.removeEventListener("pointerdown", pointer, true);
     };
@@ -108,6 +120,10 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
     );
     if (!root || !pill || !item) return;
     if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (item.matches(':disabled, [aria-disabled="true"]')) {
+      onPointerLeave();
+      return;
+    }
 
     const { x, width } = measure(item);
     if (!hovered.current) pill.style.transition = "none";

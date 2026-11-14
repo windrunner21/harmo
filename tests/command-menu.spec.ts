@@ -156,6 +156,24 @@ onEachPlayground("command-menu", () => {
       await expect(input).toHaveValue("");
     });
 
+    test("a click the app stops, with preventDefault() in its own handler on the option, goes nowhere", async ({ page }) => {
+      const { input, popup, listbox, picked } = await parts(page, "command-menu-default");
+      await input.click();
+      await page.keyboard.type("new");
+      const option = listbox.getByRole("option", { name: "New team Settings" });
+      // On the option, so before the list's own handling.
+      await option.evaluate((node) => node.addEventListener("click", (event) => event.preventDefault(), { once: true }));
+      await clickAt(page, option);
+      await expect(picked).toBeHidden();
+      await expect(input).toHaveValue("new");
+      expect(await isOpen(popup)).toBe(true);
+      await expect(input).toBeFocused();
+
+      await clickAt(page, option);
+      await expect(picked).toHaveText("Opened /settings/teams/new");
+      await expect(input).toHaveValue("");
+    });
+
     test("Escape closes the list, then empties the field; leaving it does both", async ({ page }) => {
       const { input, popup } = await parts(page, "command-menu-default");
       await input.click();
@@ -347,11 +365,44 @@ onEachPlayground("command-menu", () => {
       expect(await activeLabel(input)).toBe("Installation");
     });
 
-    test("it keeps a dialog's fade and scale as it opens", async ({ page }) => {
+    test("Enter on an option whose click the app stops goes nowhere, and keeps it open", async ({ page }) => {
+      const { container, input, dialog, shown, picked } = await parts(page, "command-menu-in-a-dialog");
+      await container.locator(".hcommand-menu-trigger").click();
+      await page.keyboard.type("tok");
+      await expect(shown).toHaveText(["Theming"]);
+      // Enter clicks the highlighted option, so the app's handler sees it.
+      await container
+        .getByRole("option", { name: /^Theming/ })
+        .evaluate((node) => node.addEventListener("click", (event) => event.preventDefault(), { once: true }));
+      await page.keyboard.press("Enter");
+      await expect(picked).toBeHidden();
+      await expect(dialog).toHaveJSProperty("open", true);
+      await expect(input).toHaveValue("tok");
+
+      await page.keyboard.press("Enter");
+      await expect(picked).toHaveText("Opened /docs/theming");
+      await expect(dialog).toHaveJSProperty("open", false);
+    });
+
+    test("the dialog opens and closes at once, without a Dialog's fade and grow", async ({ page }) => {
       const { container, dialog } = await parts(page, "command-menu-in-a-dialog");
+      const moving = () =>
+        dialog.evaluate(async (node) => {
+          await new Promise(requestAnimationFrame);
+          return {
+            animations: node.getAnimations({ subtree: true }).length,
+            transitions: [getComputedStyle(node).transitionProperty, getComputedStyle(node, "::backdrop").transitionProperty],
+          };
+        });
       await container.locator(".hcommand-menu-trigger").click();
       await expect(dialog).toHaveJSProperty("open", true);
-      expect(await dialog.evaluate((node) => getComputedStyle(node).transitionDuration)).toContain("0.2s");
+      expect(await moving()).toEqual({ animations: 0, transitions: ["none", "none"] });
+      await expect(dialog).toHaveCSS("opacity", "1");
+      await expect(dialog).toHaveCSS("transform", "none");
+
+      await page.keyboard.press("Escape");
+      expect((await moving()).animations, "closing").toBe(0);
+      await expect(dialog).toHaveJSProperty("open", false);
     });
 
     test("with nothing found, it says so, and the keys go", async ({ page }) => {
@@ -397,13 +448,13 @@ onEachPlayground("command-menu", () => {
       await expect(container.locator(".hcommand-menu-trigger")).not.toBeFocused();
     });
 
-    test("the shortcut pressed while it fades out keeps it open", async ({ page }) => {
+    test("the shortcut pressed while it's closing keeps it open", async ({ page }) => {
       const { input, dialog } = await parts(page, "command-menu-in-a-dialog");
       await page.locator("body").click({ position: { x: 1, y: 1 } });
       await page.keyboard.press("Control+k");
       await expect(dialog).toHaveJSProperty("open", true);
-      // A close it holds, as Escape's is, then the shortcut, before its exit
-      // has played.
+      // A close it holds, as Escape's is, then the shortcut, before the frame
+      // on which it would close.
       const closing = await dialog.evaluate((node) => {
         node.dispatchEvent(new Event("cancel", { cancelable: true }));
         const started = node.hasAttribute("data-closing");
@@ -450,14 +501,70 @@ onEachPlayground("command-menu", () => {
       await expect(dialog).toHaveJSProperty("open", false);
     });
 
+    test("the trigger's magnifier, text, and shortcut are where a Search field's are", async ({ page }) => {
+      // Each one's distance from the start of its box, and the shortcut's from
+      // its end.
+      const lineup = (root: Locator, text: string) =>
+        root.evaluate((node, text) => {
+          const box = node.getBoundingClientRect();
+          const icon = (node.querySelector(":scope > .hicon") as Element).getBoundingClientRect();
+          const kbd = (node.querySelector(":scope > .hkbd") as Element).getBoundingClientRect();
+          const words = node.querySelector(text) as HTMLElement;
+          const start = words.getBoundingClientRect().left + (words.matches("input") ? parseFloat(getComputedStyle(words).paddingLeft) : 0);
+          return { icon: icon.left - box.left, text: start - box.left, kbd: box.right - kbd.right };
+        }, text);
+      const field = (await example(page, "command-menu-default")).locator(".hsearch");
+      const searching = await lineup(field, ":scope > .hinput");
+      const trigger = (await example(page, "command-menu-in-a-dialog")).locator(".hcommand-menu-trigger");
+      const opening = await lineup(trigger, ":scope > .hcommand-menu-trigger-label");
+      expect(opening.icon).toBeCloseTo(searching.icon, 0);
+      expect(opening.text).toBeCloseTo(searching.text, 0);
+      expect(opening.kbd).toBeCloseTo(searching.kbd, 0);
+    });
+
     test("right to left, the trigger's padding mirrors", async ({ page }) => {
       const { container } = await parts(page, "command-menu-in-a-dialog");
       const trigger = container.locator(".hcommand-menu-trigger");
-      await expect(trigger).toHaveCSS("padding-left", "12px");
-      await expect(trigger).toHaveCSS("padding-right", "10px");
+      const [start, end] = await trigger.evaluate((node) => [getComputedStyle(node).paddingLeft, getComputedStyle(node).paddingRight]);
       await container.locator(".play-demo").evaluate((node) => node.setAttribute("dir", "rtl"));
-      await expect(trigger).toHaveCSS("padding-left", "10px");
-      await expect(trigger).toHaveCSS("padding-right", "12px");
+      await expect(trigger).toHaveCSS("padding-right", start);
+      await expect(trigger).toHaveCSS("padding-left", end);
     });
+
+    test("the trigger lights up on its own hover, not on its Field label's", async ({ page }) => {
+      const { container } = await parts(page, "command-menu-in-a-dialog");
+      const trigger = container.locator(".hcommand-menu-trigger");
+      const resting = await trigger.evaluate((node) => getComputedStyle(node).borderTopColor);
+      // A Field's label for it, as an app might put around a trigger. A
+      // browser counts a control as hovered while its label is.
+      await container.locator(".play-demo").evaluate((demo) => {
+        const button = demo.querySelector(".hcommand-menu-trigger") as HTMLElement;
+        button.id ||= "command-menu-trigger";
+        demo.classList.add("hfield");
+        demo.prepend(Object.assign(document.createElement("label"), { className: "hlabel", htmlFor: button.id, textContent: "Docs" }));
+      });
+      await container.locator(".hlabel").hover();
+      await settled(trigger);
+      await expect(trigger).toHaveCSS("border-top-color", resting);
+      await trigger.hover();
+      await settled(trigger);
+      await expect(trigger).not.toHaveCSS("border-top-color", resting);
+    });
+  });
+
+  test("a key your own handler stops first is left to you: Enter picks nothing", async ({ page }) => {
+    const container = await example(page, "command-menu-default");
+    const field = container.getByRole("combobox").first();
+    // As an app's own keydown handler would, before Harmo's.
+    await page.evaluate(() =>
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") event.preventDefault();
+      }, { capture: true }),
+    );
+    await field.click();
+    await field.pressSequentially("a");
+    await expect(container.locator(".hoption[data-active]")).toHaveCount(1);
+    await page.keyboard.press("Enter");
+    await expect(field).toHaveValue("a");
   });
 });

@@ -99,8 +99,8 @@ so a screen reader hears it change.
 
 - Previous and Next: secondary [Buttons](button.md), with a chevron pointing
   toward the start or the end of the line.
-- Pages: 34px squares, as tall as a control, 4px apart, 8px from Previous
-  and Next. 14px numbers in `--harmo-color-text-secondary`, of one width
+- Pages: 34px squares, as tall as a control, `--harmo-space-2xs` (6px)
+  apart, `--harmo-space-xs` (10px) from Previous and Next. 14px numbers in `--harmo-color-text-secondary`, of one width
   each; numbers up to 999 fit the square, so the row doesn't shift, and a
   longer one widens its square. Hovered, `--harmo-color-text` on
   `--harmo-color-background-hover`; pressed, they shrink slightly, as a
@@ -193,4 +193,5 @@ a client component.
 `--harmo-color-primary`, `--harmo-color-primary-tint`,
 `--harmo-border-radius`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-button-duration`,
-`--harmo-ease-out-quad`; Button's, for Previous and Next.
+`--harmo-ease-out-quad`, `--harmo-space-2xs`, `--harmo-space-xs`; Button's,
+for Previous and Next.

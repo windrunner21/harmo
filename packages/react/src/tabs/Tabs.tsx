@@ -12,6 +12,7 @@ import {
   type ReactNode,
 } from "react";
 import { flatChildren, shownChildren } from "../children.ts";
+import type { Naming } from "../types.ts";
 import { withClass } from "../withClass.ts";
 import { useTabsMotion } from "./useTabsMotion.ts";
 
@@ -59,9 +60,13 @@ export const Tabs = ({
   );
 };
 
-export interface TabListProps extends ComponentPropsWithRef<"div"> {
-  alwaysShow?: boolean;
-}
+export type TabListProps = Omit<
+  ComponentPropsWithRef<"div">,
+  "aria-label" | "aria-labelledby"
+> &
+  Naming & {
+    alwaysShow?: boolean;
+  };
 
 export const TabList = ({
   alwaysShow = false,

@@ -10,7 +10,7 @@ A navigation trail ending at the current page. For a single link back, use a
 | CSS | `breadcrumb.css`, `link.css`, `chevron.css` |
 | Element | `<nav class="hbreadcrumb">` around an `<ol>` |
 | Parts | `.hbreadcrumb-separator` (with `.hchevron`) before every item after the first; `.hlink` for links |
-| Required | An `aria-label` on the nav, in the page's language, such as "Breadcrumb"; `aria-current="page"` on the last item; `aria-hidden="true"` and `focusable="false"` on separators |
+| Required | An `aria-label` on the nav, in the page's language, such as "Breadcrumb"; `aria-current="page"` on the last item, the page's name as plain text; `aria-hidden="true"` and `focusable="false"` on separators |
 | Unique | None |
 | Script | None |
 
@@ -38,7 +38,7 @@ A navigation trail ending at the current page. For a single link back, use a
 
 ## Appearance and states
 
-- 14px medium text that wraps onto more lines when space runs out; a long item
+- 14px text that wraps onto more lines when space runs out; a long item
   wraps within itself.
 - A separator in the first item is hidden; with `hidden` on a `<li>`, in the
   first one still shown.
@@ -47,13 +47,16 @@ A navigation trail ending at the current page. For a single link back, use a
   they point left.
 - Links look like [Link](link.md), and on hover take its hover color,
   `--harmo-link-hover-color-text`, which is `--harmo-color-text` unless your
-  theme changes it; the current page is `--harmo-color-text`.
+  theme changes it; the current page is `--harmo-color-text` at
+  `--harmo-font-weight-medium`, so its weight tells it apart without its
+  color.
 
 ## Accessibility
 
 - A `<nav>` with `aria-label="Breadcrumb"` holding an ordered list, so screen
   readers announce the trail and its length.
-- The last item is marked `aria-current="page"`.
+- The last item is marked `aria-current="page"`. It's the page's name as
+  plain text, not a link: you're already on it.
 - Separators are `aria-hidden`, so they aren't read between items.
 
 ## What a script does
@@ -64,9 +67,11 @@ None.
 
 `<Breadcrumb>` renders this markup from its children, one item each, in
 order: it adds the separators and marks the last item as the current page.
-Name it with `aria-label`, which is required, such as "Breadcrumb". Other
-props are the `<nav>`'s attributes. To hide an item, leave it out: `hidden` on
-a child would leave its separator behind.
+Name it with `aria-label`, which is required, such as "Breadcrumb". The last
+child is the current page's name as plain text: a `<Link>` there would be
+wrapped in the current page's `<span>` and keep a link's color. Other props
+are the `<nav>`'s attributes. To hide an item, leave it out: `hidden` on a
+child would leave its separator behind.
 
 ```tsx
 <Breadcrumb aria-label="Breadcrumb">
@@ -80,4 +85,5 @@ a child would leave its separator behind.
 
 `--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-sm`,
-`--harmo-font-weight-medium`, `--harmo-icon-gap`, plus [Link](link.md)'s.
+`--harmo-font-weight-normal`, `--harmo-font-weight-medium`,
+`--harmo-icon-gap`, plus [Link](link.md)'s.

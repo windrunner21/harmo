@@ -234,9 +234,15 @@ export const NavigationMenu = ({
         }}
         onClick={(event: MouseEvent<HTMLElement>) => {
           onClick?.(event);
-          if (vertical || !(event.target as Element).closest("a")) return;
+          if (!(event.target as Element).closest("a")) return;
           // A click with a modifier key opens a new tab, and this one stays.
           if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+          // A vertical menu, such as on a phone, closes the popup it's in, as
+          // the page changes under it.
+          if (vertical) {
+            event.currentTarget.closest<HTMLElement>(":popover-open")?.hidePopover();
+            return;
+          }
           const item = openItem();
           const trigger = item?.querySelector<HTMLElement>(":scope > .hnavigation-menu-trigger");
           const inside = item?.contains(document.activeElement);

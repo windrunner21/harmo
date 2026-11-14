@@ -44,7 +44,9 @@ What it opens has to leave it showing, so its cross can close it. A
 
 - It's an icon-only [Button](button.md), with 16px bars 2px thick, 5px apart.
 - Expanded: the top and bottom bars move to the middle and turn 45 degrees, and
-  the middle one fades, in 200ms. Reduced motion: at once.
+  the middle one fades, in 200ms (`--harmo-duration-normal`), and back in 150ms
+  (`--harmo-duration-fast`) as it closes. They move on `--harmo-ease-out-cubic`,
+  so they respond to a press at once. Reduced motion: at once.
 
 ## Accessibility
 
@@ -83,4 +85,5 @@ The playground's `examples/html/src/scripts/popup.js` does this for a Popup.
 
 ## Tokens
 
-`--harmo-duration-normal`, `--harmo-ease-in-out-cubic`; Button's.
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-out-cubic`;
+Button's.

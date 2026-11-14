@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { Tab, TabList, TabPanel, Tabs } from "@harmo-ui/react";
+import { Tab, TabLink, TabList, TabNav, TabPanel, Tabs } from "@harmo-ui/react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 // What docs/components/tabs.md says about the Tab order and hidden panels.
@@ -47,6 +47,33 @@ describe("Tabs", () => {
     expect(focusable(render("none"))).toEqual(["C"]);
     expect(focusable(render("e"))).toEqual(["E"]);
     expect(render("d")).not.toMatch(/aria-selected="true"[^>]*>C</);
+  });
+
+  test("a strip is named by aria-label or aria-labelledby, and its types require one", () => {
+    const markup = renderToStaticMarkup(
+      <>
+        <TabNav aria-labelledby="pages">
+          <TabLink href="/a">A</TabLink>
+          <TabLink href="/b">B</TabLink>
+        </TabNav>
+        <Tabs value="a">
+          <TabList aria-labelledby="panels">
+            <Tab value="a">A</Tab>
+            <Tab value="b">B</Tab>
+          </TabList>
+        </Tabs>
+      </>,
+    );
+    expect(markup).toContain('<nav aria-labelledby="pages" class="htabs"');
+    expect(markup).toContain('<div aria-labelledby="panels" role="tablist"');
+    // Checked by mise run check:react: without a name, or with both, each is
+    // an error, and an unused directive would be one too.
+    // @ts-expect-error A strip of links needs a name.
+    void (<TabNav />);
+    // @ts-expect-error A tablist needs a name.
+    void (<TabList />);
+    // @ts-expect-error One name, not two.
+    void (<TabList aria-label="Panels" aria-labelledby="panels" />);
   });
 
   test("a panel with hidden stays hidden, even while its tab is selected", () => {

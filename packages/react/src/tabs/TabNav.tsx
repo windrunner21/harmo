@@ -3,12 +3,17 @@
 import { useImperativeHandle, type ComponentPropsWithRef } from "react";
 import { shownChildren } from "../children.ts";
 import { useLinkComponent } from "../HarmoProvider.tsx";
+import type { Naming } from "../types.ts";
 import { withClass } from "../withClass.ts";
 import { useTabsMotion } from "./useTabsMotion.ts";
 
-export interface TabNavProps extends ComponentPropsWithRef<"nav"> {
-  alwaysShow?: boolean;
-}
+export type TabNavProps = Omit<
+  ComponentPropsWithRef<"nav">,
+  "aria-label" | "aria-labelledby"
+> &
+  Naming & {
+    alwaysShow?: boolean;
+  };
 
 export const TabNav = ({
   alwaysShow = false,

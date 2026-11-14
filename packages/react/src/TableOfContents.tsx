@@ -73,6 +73,38 @@ const scrollsByKey = (event: KeyboardEvent) => {
   return !(event.key === " " && target?.closest("button, summary, [role='button']"));
 };
 
+const viewport = () => {
+  const root = document.documentElement;
+  const probe = document.createElement("div");
+  probe.style.cssText = "position: fixed; inset: 0; margin: 0; visibility: hidden; pointer-events: none";
+  root.append(probe);
+  const box = probe.getBoundingClientRect();
+  probe.remove();
+  const fills = Math.abs(box.width - root.clientWidth) < 1 && Math.abs(box.height - root.clientHeight) < 1;
+  return fills ? box : { left: 0, top: 0, right: root.clientWidth, bottom: root.clientHeight };
+};
+
+const onScrollbar = (event: PointerEvent) => {
+  const root = document.documentElement;
+  const { clientX: x, clientY: y } = event;
+  const shown = viewport();
+  if (x < shown.left || y < shown.top || x >= shown.right || y >= shown.bottom) return true;
+  const target = event.target;
+  if (!(target instanceof Element) || target === root) return false;
+  if (target.clientWidth === 0 && target.clientHeight === 0) return false;
+  const box = target.getBoundingClientRect();
+  const style = getComputedStyle(target);
+  const inBorder =
+    x >= box.left + parseFloat(style.borderLeftWidth) &&
+    x < box.right - parseFloat(style.borderRightWidth) &&
+    y >= box.top + parseFloat(style.borderTopWidth) &&
+    y < box.bottom - parseFloat(style.borderBottomWidth);
+  const left = box.left + target.clientLeft;
+  const top = box.top + target.clientTop;
+  const inContent = x >= left && x < left + target.clientWidth && y >= top && y < top + target.clientHeight;
+  return inBorder && !inContent;
+};
+
 const goTo = (heading: HTMLElement, scroller: HTMLElement) => {
   const top = scroller.getBoundingClientRect().top + scroller.clientTop;
   const margin = parseFloat(getComputedStyle(heading).scrollMarginTop) || 0;
@@ -129,6 +161,9 @@ export const TableOfContents = ({
     const releaseByKey = (event: KeyboardEvent) => {
       if (scrollsByKey(event)) release();
     };
+    const releaseOnScrollbar = (event: PointerEvent) => {
+      if (pinned.current && onScrollbar(event)) release();
+    };
     const followHash = () => {
       const id = hashId();
       if (!list.includes(id)) {
@@ -154,6 +189,7 @@ export const TableOfContents = ({
     window.addEventListener("hashchange", followHash);
     for (const type of ["wheel", "touchmove"]) window.addEventListener(type, release, { passive: true });
     window.addEventListener("keydown", releaseByKey);
+    window.addEventListener("pointerdown", releaseOnScrollbar, { capture: true, passive: true });
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
@@ -162,18 +198,19 @@ export const TableOfContents = ({
       window.removeEventListener("hashchange", followHash);
       for (const type of ["wheel", "touchmove"]) window.removeEventListener(type, release);
       window.removeEventListener("keydown", releaseByKey);
+      window.removeEventListener("pointerdown", releaseOnScrollbar, { capture: true });
     };
   }, [ids, offset]);
 
   useLayoutEffect(() => {
     const root = nav.current;
-    const list = root?.querySelector(".htoc-list");
+    const list = root?.querySelector(".htable-of-contents-list");
     if (!root || !list || !marker.current) return;
     const line = marker.current;
     const place = () => {
-      const link = root.querySelector<HTMLElement>('.htoc-link[aria-current]:not([aria-current="false"])');
-      root.style.setProperty("--htoc-marker-y", `${link?.offsetTop ?? 0}px`);
-      root.style.setProperty("--htoc-marker-size", String(link?.offsetHeight ?? 0));
+      const link = root.querySelector<HTMLElement>('.htable-of-contents-link[aria-current]:not([aria-current="false"])');
+      root.style.setProperty("--htable-of-contents-marker-y", `${link?.offsetTop ?? 0}px`);
+      root.style.setProperty("--htable-of-contents-marker-size", String(link?.offsetHeight ?? 0));
       if (!link || root.hasAttribute("data-ready")) return;
       line.getBoundingClientRect();
       root.setAttribute("data-ready", "");
@@ -181,13 +218,13 @@ export const TableOfContents = ({
     place();
     const observer = new ResizeObserver(place);
     observer.observe(list);
-    for (const link of list.querySelectorAll(".htoc-link")) observer.observe(link);
+    for (const link of list.querySelectorAll(".htable-of-contents-link")) observer.observe(link);
     return () => observer.disconnect();
   }, [current, ids]);
 
   useEffect(() => {
     const root = nav.current;
-    const link = root?.querySelector('.htoc-link[aria-current]:not([aria-current="false"])');
+    const link = root?.querySelector('.htable-of-contents-link[aria-current]:not([aria-current="false"])');
     if (!root || !link || root.scrollHeight <= root.clientHeight) return;
     const outer = root.getBoundingClientRect();
     const inner = link.getBoundingClientRect();
@@ -199,15 +236,15 @@ export const TableOfContents = ({
     <nav
       {...props}
       ref={navRef}
-      className={withClass("htoc", className)}
+      className={withClass("htable-of-contents", className)}
       data-side={side === "end" ? "end" : undefined}
     >
-      <span ref={marker} className="htoc-marker" aria-hidden="true" />
-      <ul className="htoc-list" role="list">
+      <span ref={marker} className="htable-of-contents-marker" aria-hidden="true" />
+      <ul className="htable-of-contents-list" role="list">
         {items.map((item) => (
-          <li key={item.id} className="htoc-item" data-level={item.level}>
+          <li key={item.id} className="htable-of-contents-item" data-level={item.level}>
             <a
-              className="htoc-link"
+              className="htable-of-contents-link"
               href={`#${encodeURIComponent(item.id)}`}
               aria-current={current === item.id ? "location" : undefined}
               onClick={(event) => {

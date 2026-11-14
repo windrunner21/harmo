@@ -4,7 +4,7 @@
 // it open. Moving between triggers resizes the frame while the rows slide.
 // Escape, a press outside, focus leaving, and choosing a link close it. A
 // vertical menu is part of the page, as an Accordion is, so those are for
-// whatever it's in.
+// whatever it's in; choosing a link there closes the popup it's in.
 {
   for (const nav of document.querySelectorAll(".hnavigation-menu")) {
     const vertical = () => nav.dataset.orientation === "vertical";
@@ -100,9 +100,15 @@
         else pinned = true;
         return;
       }
-      if (vertical() || !event.target.closest("a")) return;
+      if (!event.target.closest("a")) return;
       // A click with a modifier key opens a new tab, and this one stays.
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      // A vertical menu, such as on a phone, closes the popup it's in, as the
+      // page changes under it.
+      if (vertical()) {
+        nav.closest(":popover-open")?.hidePopover();
+        return;
+      }
       const returning = open;
       const inside = open?.parentElement.contains(document.activeElement);
       hide();

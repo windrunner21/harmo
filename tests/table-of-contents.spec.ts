@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, test } from "./playgrounds.ts";
 
 // What docs/components/table-of-contents.md says: links to each heading that stay in
 // view, with the section you've reached marked, the last one at the end, and a
@@ -10,11 +10,11 @@ const scrollTo = (scroller: Locator, top: number | "end") =>
 onEachPlayground("table-of-contents", () => {
   const parts = async (page: Page, id = "default") => {
     const container = await example(page, `table-of-contents-${id}`);
-    const nav = container.locator(".htoc");
+    const nav = container.locator(".htable-of-contents");
     return {
       container,
       nav,
-      links: nav.locator(".htoc-link"),
+      links: nav.locator(".htable-of-contents-link"),
       scroller: nav.locator("xpath=.."),
       content: nav.locator("xpath=following-sibling::div"),
     };
@@ -75,7 +75,7 @@ onEachPlayground("table-of-contents", () => {
   // Where a heading is in the box, measured in the same frame as the click.
   const followNow = (link: Locator, heading: string) =>
     link.evaluate((node, heading) => {
-      const box = node.closest(".htoc")!.parentElement!;
+      const box = node.closest(".htable-of-contents")!.parentElement!;
       (node as HTMLElement).click();
       return document.getElementById(heading)!.getBoundingClientRect().top - box.getBoundingClientRect().top;
     }, heading);
@@ -247,6 +247,99 @@ onEachPlayground("table-of-contents", () => {
     await expect(links.first()).toHaveAttribute("aria-current", "location");
   });
 
+  test("a press on a scrollbar lets go of a followed link, and a press in the text doesn't", async ({ page }) => {
+    const { links, scroller } = await parts(page);
+    // Where the box's scrollbar is, between what it shows and its border, and
+    // a point in its text.
+    const points = await scroller.evaluate((n) => {
+      const box = n.getBoundingClientRect();
+      const style = getComputedStyle(n);
+      const gutter = (n as HTMLElement).offsetWidth - n.clientWidth - parseFloat(style.borderLeftWidth) - parseFloat(style.borderRightWidth);
+      const end = box.left + n.clientLeft + n.clientWidth;
+      return {
+        gutter,
+        bar: { clientX: end + gutter / 2, clientY: box.top + box.height / 2 },
+        text: { clientX: box.left + n.clientLeft + n.clientWidth / 2, clientY: box.top + box.height / 2 },
+      };
+    });
+    test.skip(points.gutter < 1, "this browser draws its scrollbars over the content, taking no room");
+    const press = (point: { clientX: number; clientY: number }) =>
+      scroller.evaluate((n, point) => n.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point })), point);
+
+    await links.nth(2).click();
+    await expect(links.nth(2)).toHaveAttribute("aria-current", "location");
+    await press(points.text);
+    await scrollTo(scroller, 0);
+    await expect(links.nth(2), "after a press in the text").toHaveAttribute("aria-current", "location");
+
+    await press(points.bar);
+    await scrollTo(scroller, 5);
+    await expect(links.first(), "after a press on the scrollbar").toHaveAttribute("aria-current", "location");
+  });
+
+  test("following the page, a press on the window's scrollbar lets go, on whichever side it is, and a press in the text beside it doesn't", async ({ page, browserName, playwright }) => {
+    test.skip(browserName !== "chromium", "Needs a browser launched to show scrollbars, which headless ones hide");
+    const browser = await playwright.chromium.launch({ ignoreDefaultArgs: ["--hide-scrollbars"] });
+    try {
+      // Right to left, a browser may put the window's scrollbar on the left.
+      for (const dir of ["rtl", "ltr"]) {
+        const shown = await browser.newPage();
+        await shown.goto(page.url());
+        await ready(shown);
+        const { links, scroller, container } = await parts(shown);
+        await shown.addStyleTag({ content: "html { overflow-y: scroll; }" });
+        await shown.evaluate((dir) => (document.documentElement.dir = dir), dir);
+        await scroller.evaluate((n: HTMLElement) => {
+          n.style.blockSize = "auto";
+          n.style.overflowY = "visible";
+        });
+        // What the window shows, as a fixed box filling it measures, with its
+        // scrollbar beside it, and the text at either edge.
+        const points = await shown.evaluate(() => {
+          const probe = document.createElement("div");
+          probe.style.cssText = "position: fixed; inset: 0";
+          document.body.append(probe);
+          const box = probe.getBoundingClientRect();
+          probe.remove();
+          const clientY = box.top + box.height / 2;
+          return {
+            gutter: innerWidth - box.width,
+            bar: { clientX: box.left > 0 ? box.left / 2 : (box.right + innerWidth) / 2, clientY },
+            text: [
+              { clientX: box.left + 1, clientY },
+              { clientX: box.right - 1, clientY },
+            ],
+          };
+        });
+        expect(points.gutter, "the window's scrollbar takes room").toBeGreaterThan(0);
+        const press = (point: { clientX: number; clientY: number }) =>
+          shown.evaluate((point) => document.documentElement.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, ...point })), point);
+        // The playground has a scroll-padding, so this goes to the top by hand.
+        const scrollToMilestones = (by = 0) =>
+          container.locator("#milestones").evaluate(async (n, by) => {
+            window.scrollBy({ top: n.getBoundingClientRect().top - 2 + by, behavior: "instant" });
+            await new Promise(requestAnimationFrame);
+            await new Promise(requestAnimationFrame);
+          }, by);
+
+        // The browser's own jump, as the page scrolls, and its hashchange.
+        await links.nth(2).click();
+        await expect(shown).toHaveURL(/#risks$/);
+        await expect(links.nth(2)).toHaveAttribute("aria-current", "location");
+        for (const point of points.text) await press(point);
+        await scrollToMilestones();
+        await expect(links.nth(2), `${dir}, after a press in the text`).toHaveAttribute("aria-current", "location");
+
+        await press(points.bar);
+        await scrollToMilestones(1);
+        await expect(links.nth(1), `${dir}, after a press on the scrollbar`).toHaveAttribute("aria-current", "location");
+        await shown.close();
+      }
+    } finally {
+      await browser.close();
+    }
+  });
+
   test("it stays in view as the page scrolls", async ({ page }) => {
     const { nav, scroller } = await parts(page);
     const [before] = await boxes(nav);
@@ -255,7 +348,7 @@ onEachPlayground("table-of-contents", () => {
   });
 
   // Where the marker is drawn, once it has stopped moving.
-  const markerOf = (nav: Locator) => nav.locator(".htoc-marker");
+  const markerOf = (nav: Locator) => nav.locator(".htable-of-contents-marker");
   const settledBox = async (nav: Locator) => {
     await expect.poll(() => markerOf(nav).evaluate((n) => n.getAnimations().length)).toBe(0);
     return (await boxes(markerOf(nav)))[0]!;
@@ -295,9 +388,9 @@ onEachPlayground("table-of-contents", () => {
 
     // Partway there, a moment after the next section is reached.
     const [from, to, partway] = await nav.evaluate(async (n) => {
-      const marker = n.querySelector(".htoc-marker")!;
+      const marker = n.querySelector(".htable-of-contents-marker")!;
       const from = marker.getBoundingClientRect().top;
-      const link = n.querySelectorAll<HTMLElement>(".htoc-link")[4]!;
+      const link = n.querySelectorAll<HTMLElement>(".htable-of-contents-link")[4]!;
       link.click();
       await new Promise((done) => setTimeout(done, 70));
       return [from, link.getBoundingClientRect().top, marker.getBoundingClientRect().top];
@@ -313,14 +406,14 @@ onEachPlayground("table-of-contents", () => {
     await links.nth(3).evaluate((n, long) => (n.textContent = long), long);
     await scrollTo(scroller, 450);
     await expect(links.nth(2)).toHaveAttribute("aria-current", "location");
-    const height = await nav.locator(".htoc-list").evaluate((n) => (n as HTMLElement).offsetHeight);
+    const height = await nav.locator(".htable-of-contents-list").evaluate((n) => (n as HTMLElement).offsetHeight);
     // One above the current link gains a line as one below loses its second.
     await nav.evaluate((n, long) => {
-      const all = n.querySelectorAll(".htoc-link");
+      const all = n.querySelectorAll(".htable-of-contents-link");
       all[0]!.textContent = long;
       all[3]!.textContent = "Budget";
     }, long);
-    expect(await nav.locator(".htoc-list").evaluate((n) => (n as HTMLElement).offsetHeight)).toBe(height);
+    expect(await nav.locator(".htable-of-contents-list").evaluate((n) => (n as HTMLElement).offsetHeight)).toBe(height);
     await expect.poll(async () => {
       const [link, marker] = await boxes(links.nth(2), markerOf(nav));
       return Math.round(marker!.y - link!.y);
@@ -375,6 +468,6 @@ onEachPlayground("table-of-contents", () => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const { nav } = await parts(page);
     await page.emulateMedia({ forcedColors: "active" });
-    await expect(nav.locator(".htoc-marker")).toHaveCSS("forced-color-adjust", "none");
+    await expect(nav.locator(".htable-of-contents-marker")).toHaveCSS("forced-color-adjust", "none");
   });
 });

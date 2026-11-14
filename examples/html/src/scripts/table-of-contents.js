@@ -1,11 +1,12 @@
-// Example only: what the React TableOfContents does. Marks the link to the heading
-// you've scrolled to, or the last heading once the end is reached, as a short last
-// section can never reach the top. A link you follow stays marked until you
-// scroll yourself, with a wheel, a touch, or a key that scrolls, as the heading it
-// goes to may not reach the top either. In a scrolling box, following a link
-// scrolls only the box, where the browser's own jump would scroll the page too, and
-// moves focus to the heading, as that jump would move where Tab goes next.
-// data-example-offset is how many pixels a sticky header covers.
+// Example only: what the React TableOfContents does. Marks the link to the
+// heading you've scrolled to, or the last heading once the end is reached, as a
+// short last section can never reach the top. A link you follow stays marked
+// until you scroll yourself, with a wheel, a touch, a key that scrolls, or a
+// press on a scrollbar, as the heading it goes to may not reach the top either.
+// In a scrolling box, following a link scrolls only the box, where the
+// browser's own jump would scroll the page too, and moves focus to the heading,
+// as that jump would move where Tab goes next. data-example-offset is how many
+// pixels a sticky header covers.
 {
   const scrollerOf = (node) => {
     const root = document.documentElement;
@@ -36,6 +37,48 @@
     return !(event.key === " " && target?.closest("button, summary, [role='button']"));
   };
 
+  // What the window shows, inside its scrollbars on whichever side they are,
+  // such as on the left right to left, as a fixed box filling it measures.
+  // Where the root makes fixed boxes fill itself instead, such as with a
+  // filter, the box isn't the window's size, and the scrollbars are taken to
+  // be on the right and at the bottom.
+  const viewport = () => {
+    const root = document.documentElement;
+    const probe = document.createElement("div");
+    probe.style.cssText = "position: fixed; inset: 0; margin: 0; visibility: hidden; pointer-events: none";
+    root.append(probe);
+    const box = probe.getBoundingClientRect();
+    probe.remove();
+    const fills = Math.abs(box.width - root.clientWidth) < 1 && Math.abs(box.height - root.clientHeight) < 1;
+    return fills ? box : { left: 0, top: 0, right: root.clientWidth, bottom: root.clientHeight };
+  };
+
+  // A press on a scrollbar, such as to drag it, which scrolls without a wheel,
+  // a touch, or a key: outside what the window shows, or on a box's, inside
+  // its border but outside what it shows. A scrollbar drawn over the content,
+  // taking no room, can't be told apart from it, so a press there keeps the
+  // link marked.
+  const onScrollbar = (event) => {
+    const root = document.documentElement;
+    const { clientX: x, clientY: y } = event;
+    const shown = viewport();
+    if (x < shown.left || y < shown.top || x >= shown.right || y >= shown.bottom) return true;
+    const target = event.target;
+    if (!(target instanceof Element) || target === root) return false;
+    if (target.clientWidth === 0 && target.clientHeight === 0) return false;
+    const box = target.getBoundingClientRect();
+    const style = getComputedStyle(target);
+    const inBorder =
+      x >= box.left + parseFloat(style.borderLeftWidth) &&
+      x < box.right - parseFloat(style.borderRightWidth) &&
+      y >= box.top + parseFloat(style.borderTopWidth) &&
+      y < box.bottom - parseFloat(style.borderBottomWidth);
+    const left = box.left + target.clientLeft;
+    const top = box.top + target.clientTop;
+    const inContent = x >= left && x < left + target.clientWidth && y >= top && y < top + target.clientHeight;
+    return inBorder && !inContent;
+  };
+
   // Where the browser's own jump would put the heading, with its scroll-margin-top
   // and the box's scroll-padding-top, and focus on it, without scrolling again.
   const goTo = (heading, scroller) => {
@@ -53,18 +96,18 @@
     heading.focus({ preventScroll: true });
   };
 
-  for (const toc of document.querySelectorAll(".htoc")) {
-    const links = [...toc.querySelectorAll(".htoc-link")];
-    const line = toc.querySelector(".htoc-marker");
-    const list = toc.querySelector(".htoc-list");
+  for (const toc of document.querySelectorAll(".htable-of-contents")) {
+    const links = [...toc.querySelectorAll(".htable-of-contents-link")];
+    const line = toc.querySelector(".htable-of-contents-marker");
+    const list = toc.querySelector(".htable-of-contents-list");
 
     // The marker slides to the current link, once it has been placed without
     // sliding as the page loads.
     const place = () => {
       if (!line) return;
-      const link = toc.querySelector('.htoc-link[aria-current]:not([aria-current="false"])');
-      toc.style.setProperty("--htoc-marker-y", `${link?.offsetTop ?? 0}px`);
-      toc.style.setProperty("--htoc-marker-size", String(link?.offsetHeight ?? 0));
+      const link = toc.querySelector('.htable-of-contents-link[aria-current]:not([aria-current="false"])');
+      toc.style.setProperty("--htable-of-contents-marker-y", `${link?.offsetTop ?? 0}px`);
+      toc.style.setProperty("--htable-of-contents-marker-size", String(link?.offsetHeight ?? 0));
       if (!link || toc.hasAttribute("data-ready")) return;
       line.getBoundingClientRect();
       toc.setAttribute("data-ready", "");
@@ -83,7 +126,7 @@
         else link.removeAttribute("aria-current");
       }
       place();
-      const link = toc.querySelector('.htoc-link[aria-current]:not([aria-current="false"])');
+      const link = toc.querySelector('.htable-of-contents-link[aria-current]:not([aria-current="false"])');
       if (!link || toc.scrollHeight <= toc.clientHeight) return;
       const outer = toc.getBoundingClientRect();
       const inner = link.getBoundingClientRect();
@@ -157,6 +200,13 @@
     window.addEventListener("keydown", (event) => {
       if (scrollsByKey(event)) pinned = null;
     });
+    window.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (pinned && onScrollbar(event)) pinned = null;
+      },
+      { capture: true, passive: true },
+    );
 
     if (ids.includes(decoded(location.hash))) followHash();
     else update();

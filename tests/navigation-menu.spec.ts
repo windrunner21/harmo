@@ -441,12 +441,95 @@ onEachPlayground("navigation-menu", () => {
     await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "false");
   });
 
+  test("choosing a link in a vertical menu closes the Popup it's in, unless a modifier key is held", async ({ page }) => {
+    const container = await example(page, "navigation-menu-on-a-phone");
+    const button = container.getByRole("button", { name: "Menu" });
+    const popup = container.locator(".hpopup");
+    await openPopup(button, popup);
+    const { nav, trigger, panel } = await parts(popup);
+    await trigger("Solutions").click();
+    const row = (await panel("Solutions")).getByRole("link", { name: /^Commerce/ });
+    await settled(await panel("Solutions"));
+
+    await row.click({ modifiers: ["Shift"] });
+    expect(await popup.evaluate((element) => element.matches(":popover-open")), "after a click with Shift").toBe(true);
+
+    await row.click();
+    await expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(await popup.evaluate((element) => element.matches(":popover-open")), "after a plain click").toBe(false);
+
+    // A plain link at the top level does it too.
+    await openPopup(button, popup);
+    await nav.getByRole("link", { name: "Product" }).click();
+    await expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
   test("a disabled trigger doesn't open on hover", async ({ page }) => {
     const container = await example(page, "navigation-menu-default");
     const { trigger } = await parts(container);
     await trigger("Solutions").evaluate((button: HTMLButtonElement) => (button.disabled = true));
     await trigger("Solutions").hover({ force: true });
     await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "false");
+  });
+
+  test("a disabled trigger is quiet, with a not-allowed cursor, and no hover", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { trigger } = await parts(container);
+    const tertiary = await page.evaluate(() => {
+      const probe = document.createElement("span");
+      document.body.append(probe);
+      probe.style.color = "var(--harmo-color-text-tertiary)";
+      const value = getComputedStyle(probe).color;
+      probe.remove();
+      return value;
+    });
+    await trigger("Solutions").evaluate((button: HTMLButtonElement) => (button.disabled = true));
+    await trigger("Resources").evaluate((button) => button.setAttribute("aria-disabled", "true"));
+    for (const name of ["Solutions", "Resources"]) {
+      await trigger(name).hover({ force: true });
+      await settled(trigger(name));
+      await expect(trigger(name), `${name}'s color`).toHaveCSS("color", tertiary);
+      await expect(trigger(name), `${name}'s background`).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(trigger(name)).toHaveCSS("cursor", "not-allowed");
+    }
+  });
+
+  test("links and triggers have 8px above and below and 10px either side, the chevron 6px after the text; a row's tile is 10px before its text, and its description 6px under its title", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { nav, trigger, panel, frame } = await parts(container);
+    for (const item of [nav.getByRole("link", { name: "Product" }), trigger("Solutions")]) {
+      await expect(item).toHaveCSS("padding-top", "8px");
+      await expect(item).toHaveCSS("padding-bottom", "8px");
+      await expect(item).toHaveCSS("padding-left", "10px");
+      await expect(item).toHaveCSS("padding-right", "10px");
+    }
+    await expect(trigger("Solutions")).toHaveCSS("column-gap", "6px");
+
+    await trigger("Solutions").hover();
+    await settled(frame);
+    const row = (await panel("Solutions")).locator(".hnavigation-menu-row").first();
+    await expect(row).toHaveCSS("column-gap", "10px");
+    await expect(row).toHaveCSS("padding-top", "12px");
+    await expect(row).toHaveCSS("padding-left", "16px");
+    // The title and its description 6px apart, parts of one thing.
+    await expect(row.locator(".hnavigation-menu-text")).toHaveCSS("row-gap", "6px");
+  });
+
+  test("hover colors fade in 150ms, and moving between panels, the frame and the rows share one curve", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { nav, trigger, panel, frame } = await parts(container);
+    await expect(nav.getByRole("link", { name: "Product" })).toHaveCSS("transition-duration", "0.15s, 0.15s");
+    await expect(nav.locator(".hnavigation-menu-icon").first()).toHaveCSS("transition-duration", "0.15s, 0.15s, 0.15s");
+    await expect(nav.locator(".hnavigation-menu-description").first()).toHaveCSS("transition-duration", "0.15s");
+
+    await trigger("Solutions").hover();
+    await settled(frame);
+    await trigger("Resources").hover();
+    await expect(nav).toHaveAttribute("data-moving");
+    const curves = (element: Locator) => element.evaluate((node) => getComputedStyle(node).transitionTimingFunction.split(/,\s*(?![^()]*\))/));
+    const rows = await curves((await panel("Resources")).locator(".hnavigation-menu-rows"));
+    const [width, height, translate] = await curves(frame);
+    expect([width, height, translate]).toEqual([rows[0], rows[0], rows[0]]);
   });
 
   test("a current row is marked by a line around it as well as its color", async ({ page }) => {
@@ -544,6 +627,17 @@ onEachPlayground("menu-button", () => {
     await expect(button).toHaveAttribute("aria-expanded", "false");
     await settled(top);
     await expect(top).toHaveCSS("transform", "none");
+  });
+
+  test("the bars turn into a cross in 200ms, and back in 150ms as the menu closes", async ({ page }) => {
+    const button = (await example(page, "menu-button-default")).getByRole("button", { name: "Menu" });
+    const top = button.locator(".hmenu-button-top");
+    // Each duration once: a list set to one value may be reported once or per property.
+    const durationOf = () => top.evaluate((node) => [...new Set(getComputedStyle(node).transitionDuration.split(", "))]);
+    expect(await durationOf()).toEqual(["0.15s"]);
+    await button.click();
+    await expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(await durationOf()).toEqual(["0.2s"]);
   });
 
   test("with reduced motion, the bars turn at once", async ({ page }) => {

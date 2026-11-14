@@ -2,7 +2,8 @@ import { expect } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/breadcrumb.md says: links look like Links, with their
-// hover color, and separators keep their size and color.
+// hover color, the current page is set apart by its weight, and separators
+// keep their size and color.
 onEachPlayground("breadcrumb", () => {
   test("a link takes Link's hover color, as a theme sets it", async ({ page }) => {
     const trail = await example(page, "breadcrumb-trail");
@@ -10,6 +11,21 @@ onEachPlayground("breadcrumb", () => {
     const link = trail.getByRole("link", { name: "Settings" });
     await link.hover();
     await expect(link).toHaveCSS("color", "rgb(200, 0, 0)");
+  });
+
+  test("the current page is a step heavier than the links, so its weight tells it apart", async ({ page }) => {
+    const trail = await example(page, "breadcrumb-trail");
+    const weight = (variable: string) =>
+      page.evaluate((variable) => {
+        const probe = document.createElement("span");
+        document.body.append(probe);
+        probe.style.fontWeight = `var(${variable})`;
+        const value = getComputedStyle(probe).fontWeight;
+        probe.remove();
+        return value;
+      }, variable);
+    await expect(trail.getByRole("link", { name: "Settings" })).toHaveCSS("font-weight", await weight("--harmo-font-weight-normal"));
+    await expect(trail.locator('[aria-current="page"]')).toHaveCSS("font-weight", await weight("--harmo-font-weight-medium"));
   });
 
   test("a separator is 1.125em, in the secondary text color, and a class of the app's own restyles it", async ({ page }) => {

@@ -86,8 +86,8 @@ that a description in the page's language isn't marked as the other one.
 - In a right-to-left page, the globe and the chevron swap sides.
 - A picture sits in a 24px by 20px box, 10px (`--harmo-space-xs`) before the
   name: a 3:2 flag is 24px by 16px. An image or SVG in it fills the box's width,
-  with 3px rounded corners and a faint rim, so that a flag with white at its
-  edge keeps its shape on a white panel.
+  with `--harmo-border-radius-sm` (4px) corners and a faint rim, so that a
+  flag with white at its edge keeps its shape on a white panel.
 
 ## Regions
 
@@ -119,12 +119,16 @@ With every language in a region, the popup is a panel:
   a region's languages stay on one line. Only a window too narrow for the panel
   makes them wrap.
 - Each region has its picture and its name, in the text color, and under the
-  name its languages, beside one another, in the secondary color.
+  name its languages, beside one another, in the secondary color, each with
+  `--harmo-space-2xs` (6px) either side, so the first one's text lines up with
+  the name.
 - The region in use has the check, white in a 20px circle of
   `--harmo-color-primary-fill`, in its picture's place (the check is the chosen
   option's `.hoption-check`, placed there, so when a search hides that option, the
   picture is back), and the language in use is in the text color and medium
-  weight. In forced colors, the circle is `Highlight`.
+  weight. That rule weighs as much as Listbox's own selected option, so your
+  app's `.hoption[aria-selected="true"]`, loaded after Harmo, overrides it. In
+  forced colors, the circle is `Highlight`.
 - Flags belong here, beside a country, where a flag is accurate. Before a
   language, a flag is a guess: English could be the United States or the United
   Kingdom. Emoji flags show as two letters on Windows, so use images where that
@@ -156,7 +160,7 @@ With every language in a region, the popup is a panel:
 | `aria-expanded` on the button | On every open and close (see [Popup](popup.md)) |
 | The [Listbox](listbox.md) behavior: highlight, `aria-activedescendant`, selection, and closing after a choice | While open |
 | The highlight moved by Left and Right, as by Up and Down, the other way round right to left | In a panel of regions, while open |
-| The button's label: a copy of the chosen option's `<span lang>`, after a `.hlanguage-picker-region` with its region's name and a space when it's in one; the button's width follows, as for any [Button](button.md#what-a-script-does) whose text changes | When a language is chosen |
+| The button's label: a copy of the chosen option's `<span lang>`, after a `.hlanguage-picker-region` with its region's name and a space when it's in one; the button's width follows, as for any [Button](button.md#what-a-script-does) whose text changes | When a language is chosen, unless the app's own click handler on the option has stopped the click with `preventDefault()`, which chooses nothing |
 | Cancel the popup's opening, and close it if it's open | While the button has `aria-disabled="true"`, and as it gets it |
 | Telling your app, which saves the language, such as in a cookie, or goes to that language's address | When a language other than the one in use is chosen |
 
@@ -169,7 +173,8 @@ With every language in a region, the popup is a panel:
 `disabled`, `aria-disabled`, or `hidden` names no list and doesn't open, so that
 no key can open it, and an open one closes; it keeps its elements as it changes,
 so an `aria-disabled` one keeps focus. Other props are the `<button>`'s
-attributes.
+attributes. Your `onKeyDown` runs before its own keys: `preventDefault()` in it
+keeps a key from opening the list or moving the highlight.
 
 | Prop | Effect |
 | --- | --- |
@@ -208,9 +213,10 @@ Each language is `{ value, label, lang, description, keywords, icon, disabled }`
 
 ## Tokens
 
-`--harmo-color-background-hover`, `--harmo-color-on-primary`,
-`--harmo-color-primary-fill`, `--harmo-color-text`, `--harmo-font-size-sm`,
-`--harmo-font-weight-medium`, `--harmo-font-weight-normal`, `--harmo-space-lg`,
+`--harmo-border-radius-sm`, `--harmo-color-background-hover`,
+`--harmo-color-on-primary`, `--harmo-color-primary-fill`, `--harmo-color-text`,
+`--harmo-font-size-sm`, `--harmo-font-weight-medium`,
+`--harmo-font-weight-normal`, `--harmo-space-2xs`, `--harmo-space-lg`,
 `--harmo-space-md`, `--harmo-space-xs`, and those of
 [Button](button.md#tokens), [Popup](popup.md#tokens), and
 [Listbox](listbox.md#tokens).

@@ -12,7 +12,7 @@ tabs. For one choice among a few options in a form, use a
 | CSS | `tabs.css` |
 | Element | `<nav class="htabs">` around a `<ul>` of links, or `<div class="htabs">` around a `role="tablist"` of buttons |
 | Parts | `.htabs-highlight` and `.htabs-indicator`, after the list |
-| Required | `aria-label` on the nav or tablist; links: `aria-current="page"` on the current one; buttons: `role="tab"`, `aria-selected`, `aria-controls`, and `tabindex="-1"` on every tab but one: the selected tab, or, when it isn't shown and enabled, the first tab that is |
+| Required | `aria-label` or `aria-labelledby` on the nav or tablist; links: `aria-current="page"` on the current one; buttons: `role="tab"`, `aria-selected`, `aria-controls`, and `tabindex="-1"` on every tab but one: the selected tab, or, when it isn't shown and enabled, the first tab that is |
 | Unique | The tabs' and panels' ids |
 | Script | Optional for links (the sliding pill and underline, and keeping the current tab in view); required for panels; see [What a script does](#what-a-script-does) |
 
@@ -56,7 +56,7 @@ The panels are the application's own; Tabs doesn't style them.
 | `aria-current="page"` on a link | The current tab |
 | `aria-selected="true"` on a `role="tab"` button | The selected tab, drawn like the current link |
 | `hidden` on a `<li>` or a `role="tab"` button | Hides that tab, with no gap left |
-| `disabled` or `aria-disabled="true"` on a `role="tab"` button | A tab that can't be chosen: the arrow keys skip it, and the script doesn't select it. `aria-disabled` keeps it focusable, so a [Tooltip](tooltip.md) can say why |
+| `disabled` or `aria-disabled="true"` on a `role="tab"` button | A tab that can't be chosen: `--harmo-color-text-tertiary` text, a not-allowed cursor, and no hover or pill; the arrow keys skip it, and the script doesn't select it. `aria-disabled` keeps it focusable, so a [Tooltip](tooltip.md) can say why |
 | `data-ready` on `.htabs` | Set by the script: the sliding pill and underline take over |
 | `data-on-current` on `.htabs-highlight` | Set by the script: the pill is over the current tab |
 
@@ -68,9 +68,14 @@ The panels are the application's own; Tabs doesn't style them.
 - 14px medium `--harmo-color-text-secondary` text, `--harmo-color-text` on
   hover; the current or selected tab is `--harmo-color-primary` with a 2px
   underline over the divider. Links and buttons look the same.
+- Each tab has 4px above and below its text and `--harmo-space-xs` (10px)
+  either side; tabs are `--harmo-space-sm` (16px) apart.
+- A disabled tab is `--harmo-color-text-tertiary`, with a not-allowed cursor
+  and no hover color, background, or pill.
 - With the script, the pill (`--harmo-color-background-hover`, or
-  `--harmo-color-primary-tint` over the current tab) follows the pointer, and
-  the underline slides to a newly current tab, both in 200ms
+  `--harmo-color-primary-tint` over the current tab) follows the pointer in
+  150ms (`--harmo-ease-out-cubic`, so it keeps up from the start, and fading
+  on `ease`), and the underline slides to a newly current tab in 200ms
   (`--harmo-ease-in-out-cubic`). Each spans the strip and is clipped to its
   tab with `clip-path`, which moves and resizes it without layout work and
   keeps its corners round. The pill appears in place rather than sliding in
@@ -113,7 +118,7 @@ The panels are the application's own; Tabs doesn't style them.
 
 | Change | When |
 | --- | --- |
-| `--htabs-highlight-x`, `--htabs-highlight-width`, `--htabs-highlight-opacity` on `.htabs` | As the pointer moves over the tabs |
+| `--htabs-highlight-x`, `--htabs-highlight-width`, `--htabs-highlight-opacity` on `.htabs` | As the pointer moves over the tabs; over a disabled or `aria-disabled` tab, an opacity of `0`, as also when the tab under the pointer becomes disabled, `aria-disabled`, or hidden |
 | `--htabs-indicator-x`, `--htabs-indicator-width` on `.htabs` | On load, resize, and a change of current tab; at once (no transition) after a key press or a resize, and a width of `0px` while no tab is current |
 | `--htabs-list-width` on `.htabs` | With the underline: the width of the `<ul>` or tablist, so the pill and underline reach every tab |
 | Scroll the strip, and only the strip, to bring the current tab to its middle | On load, on a resize, and on a change of current tab: at once on load, on a resize, after a key press, or with reduced motion; otherwise smoothly |
@@ -147,7 +152,9 @@ connections are built. Both strips run the highlight and underline, and are
 `<TabList>` handles the arrow keys, Home, and End. Other props are each
 element's attributes, except that a `<TabList>`'s `className` and `style` go to
 the `.htabs` wrapper, and its other props and `ref` to the `role="tablist"`
-element. Name a `<TabNav>` or `<TabList>` with `aria-label`. A `<Tab>`'s
+element. Name a `<TabNav>` or `<TabList>` with `aria-label`, or with
+`aria-labelledby` pointing at a visible heading; TypeScript requires one of
+them. A `<Tab>`'s
 `onClick` and a `<TabList>`'s `onKeyDown` run first: `preventDefault()` there
 keeps the selection. `hidden` on a `<TabPanel>` hides it even while its tab is
 selected.
@@ -183,6 +190,8 @@ selected.
 `--harmo-border-radius-sm`, `--harmo-color-background-hover`,
 `--harmo-color-border`, `--harmo-color-primary`, `--harmo-color-primary-tint`,
 `--harmo-color-text`, `--harmo-color-text-secondary`,
+`--harmo-color-text-tertiary`, `--harmo-duration-fast`,
 `--harmo-duration-normal`, `--harmo-ease-in-out-cubic`,
-`--harmo-focus-outline`, `--harmo-font-family`, `--harmo-font-line-height`,
-`--harmo-font-size-sm`, `--harmo-font-weight-medium`.
+`--harmo-ease-out-cubic`, `--harmo-focus-outline`, `--harmo-font-family`,
+`--harmo-font-line-height`, `--harmo-font-size-sm`,
+`--harmo-font-weight-medium`, `--harmo-space-sm`, `--harmo-space-xs`.

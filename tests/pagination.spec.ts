@@ -122,6 +122,20 @@ onEachPlayground("pagination", () => {
     await expect(other).toHaveCSS("outline-style", "none");
   });
 
+  test("pages are 6px apart, and 10px from Previous and Next", async ({ page }) => {
+    const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
+    const [previous, first, second, last, next] = await boxes(
+      nav.getByRole("link", { name: "Previous" }),
+      nav.getByRole("link", { name: "Page 1", exact: true }),
+      nav.locator(".hpagination-pages > li").nth(1),
+      nav.getByRole("link", { name: "Page 12", exact: true }),
+      nav.getByRole("link", { name: "Next" }),
+    );
+    expect(second.x - (first.x + first.width)).toBeCloseTo(6, 0);
+    expect(first.x - (previous.x + previous.width)).toBeCloseTo(10, 0);
+    expect(next.x - (last.x + last.width)).toBeCloseTo(10, 0);
+  });
+
   test("numbers up to 999 fit their square; a longer one widens it, the current page as much as the others", async ({ page }) => {
     const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
     const [three, current, other] = [4, 5, 6].map((number) => nav.getByRole("link", { name: `Page ${number}`, exact: true }));
