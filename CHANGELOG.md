@@ -8,6 +8,12 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-15
+
+Two new components, Table of Contents and Language Picker, and a full audit of
+the library: spacing on the golden ratio, motion that's the same everywhere, and
+fixes across every component. The version to start with.
+
 ### Upgrading
 
 - **With `open` held by you, Dialog, Drawer, and Command Menu ask before they
@@ -1925,7 +1931,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/windrunner21/harmo/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/windrunner21/harmo/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/windrunner21/harmo/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/windrunner21/harmo/compare/v0.4.0...v0.5.0
