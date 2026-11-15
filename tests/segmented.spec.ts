@@ -17,7 +17,7 @@ onEachPlayground("segmented", () => {
     await expect(group.getByRole("radio", { name: "No header" })).not.toBeChecked();
   });
 
-  test("the arrow keys move the choice, skipping a disabled option", async ({ page }) => {
+  test("the arrow keys move the choice, skipping a disabled option", async ({ page, browserName }) => {
     const container = await example(page, "segmented-disabled-option");
     const team = container.getByRole("radio", { name: "Team" });
     const agent = container.getByRole("radio", { name: "Agent", exact: true });
@@ -28,8 +28,10 @@ onEachPlayground("segmented", () => {
     await team.focus();
     await page.keyboard.press("ArrowRight");
     await expect(agent).toBeChecked();
+    // Past the last option it can reach, the browser's own radios decide:
+    // Chromium and Firefox go round to the first, and WebKit stays.
     await page.keyboard.press("ArrowRight");
-    await expect(team).toBeChecked();
+    await expect(browserName === "webkit" ? agent : team).toBeChecked();
     await expect(ai).not.toBeChecked();
   });
 

@@ -13,7 +13,12 @@ onEachPlayground("checkbox", () => {
     const durations = () => checkbox.evaluate((node) => [...new Set(getComputedStyle(node).transitionDuration.split(", "))]);
     await checkbox.click();
     expect(await durations()).toEqual(["0.15s"]);
-    await checkbox.focus();
+    // Back to it with the keyboard, as someone using one reaches it: after a
+    // click, Firefox doesn't count a key pressed on the same box as keyboard
+    // focus, so the change would fade there.
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(checkbox).toBeFocused();
     await page.keyboard.press("Space");
     await expect(checkbox).toBeChecked();
     expect(await checkbox.evaluate((node) => node.matches(":focus-visible"))).toBe(true);

@@ -440,19 +440,25 @@ onEachPlayground("sidebar", () => {
 
   test("changed midway, it turns around from where it had got to, without a jump", async ({ page }) => {
     const { sidebar, toggle } = await parts(page, "sidebar-default");
+    const [expanded] = await boxes(sidebar);
+    // Slowed down and even, so it's well on its way after half a second on
+    // any machine, and barely moves in two frames. Toggled back by the clock,
+    // as a person would: Firefox and WebKit turn a transition around from
+    // where its time says it is, not from where a paused one was held.
+    await sidebar.evaluate((node) =>
+      Object.assign((node as HTMLElement).style, { transitionDuration: "2s", transitionTimingFunction: "linear" }),
+    );
     await toggle.click();
-    const halfway = await holdHalfway(sidebar);
-    expect(halfway).not.toBeNull();
-    // Let go, and toggled back at the same moment, two frames on it's barely
-    // moved from there.
-    const turned = await sidebar.evaluate(async (node) => {
-      for (const animation of node.getAnimations()) animation.play();
+    const [halfway, turned] = await sidebar.evaluate(async (node) => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const halfway = node.getBoundingClientRect().width;
       (node.querySelector(".hsidebar-toggle-button") as HTMLElement).click();
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
-      return node.getBoundingClientRect().width;
+      return [halfway, node.getBoundingClientRect().width];
     });
-    expect(Math.abs(turned - halfway!)).toBeLessThan(20);
+    expect(halfway).toBeLessThan(expanded!.width - 20);
+    expect(Math.abs(turned! - halfway!)).toBeLessThan(20);
   });
 
   test("collapsed, a group's label takes no room but still names its list; its room moves with the width, and its text fades as the links' labels do", async ({ page }) => {

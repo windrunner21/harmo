@@ -122,9 +122,12 @@ export const slowDown = (element: Locator) =>
 // How many animations and transitions an element is running.
 export const animations = (element: Locator) => element.evaluate((node) => node.getAnimations().length);
 
-// Finishes an element's animations and transitions.
+// Finishes an element's animations and transitions. A frame first, as in
+// settled, since WebKit may start a transition only then, and one that starts
+// after this would run its slowed-down 100 seconds.
 export const release = (element: Locator) =>
-  element.evaluate((node) => {
+  element.evaluate(async (node) => {
+    await new Promise(requestAnimationFrame);
     for (const animation of node.getAnimations()) animation.finish();
   });
 

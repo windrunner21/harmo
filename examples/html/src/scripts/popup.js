@@ -87,11 +87,14 @@
       if (popup.dataset.side === side) return;
 
       // Move to the new starting offset without animating, so the opening
-      // slide starts from the right side.
-      popup.style.transition = "none";
+      // slide starts from the right side. Only which properties transition
+      // is changed, and put back, so a transition set on the popup inline
+      // stays as it was.
+      const transitions = popup.style.transitionProperty;
+      popup.style.transitionProperty = "none";
       popup.dataset.side = side;
       popup.getBoundingClientRect();
-      popup.style.transition = "";
+      popup.style.transitionProperty = transitions;
     });
   }
 }

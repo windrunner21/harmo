@@ -152,10 +152,11 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
   }
   if (popup.dataset.side === side) return;
 
-  popup.style.transition = "none";
+  const transitions = popup.style.transitionProperty;
+  popup.style.transitionProperty = "none";
   popup.dataset.side = side;
   popup.getBoundingClientRect();
-  popup.style.transition = "";
+  popup.style.transitionProperty = transitions;
 };
 
 const pinned = ["top", "left", "width", "height"] as const;

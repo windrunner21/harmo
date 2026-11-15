@@ -64,11 +64,19 @@ onEachPlayground("button", () => {
     // examples/react/test/button.test.tsx checks.
     test.skip(!inHtml(), "sets aria-disabled on the example's link, which React's props set");
     const link = (await example(page, "button-links")).getByRole("link", { name: "View reports" });
+    // Whether the example script prevented it, read on the window, after
+    // every other listener. The test then prevents it itself, or WebKit would
+    // follow the link.
     const middleClick = () =>
       link.evaluate((node) => {
-        const event = new MouseEvent("auxclick", { button: 1, bubbles: true, cancelable: true });
-        node.dispatchEvent(event);
-        return event.defaultPrevented;
+        let prevented = false;
+        const read = (event: Event) => {
+          prevented = event.defaultPrevented;
+          event.preventDefault();
+        };
+        window.addEventListener("auxclick", read, { once: true });
+        node.dispatchEvent(new MouseEvent("auxclick", { button: 1, bubbles: true, cancelable: true }));
+        return prevented;
       });
     expect(await middleClick(), "enabled").toBe(false);
     await link.evaluate((node) => node.setAttribute("aria-disabled", "true"));

@@ -790,7 +790,8 @@ minor version may change an API, and says how to upgrade when it does.
 - Popup: closed while it's still sliding open, it fades where it is, rather than
   jumping a few pixels first. Closed and opened again at once, it leaves focus
   where it is, such as in a list's search field, rather than sending it to the
-  trigger.
+  trigger. Placed above or below its trigger, it keeps a transition you set on
+  it inline, rather than clearing it.
 - Radio: `--harmo-checkbox-size` resizes the dot too, not only the circle.
 - Search: without React, the example script hides the clear button when the field
   becomes read-only, and disables it with the field. A disabled field looks

@@ -14,7 +14,12 @@ onEachPlayground("radio", () => {
     const durations = () => radio.evaluate((node) => [...new Set(getComputedStyle(node).transitionDuration.split(", "))]);
     await radio.click();
     expect(await durations()).toEqual(["0.15s"]);
-    await radio.focus();
+    // Out of the group and back with the keyboard, as someone using one
+    // reaches it: after a click, WebKit doesn't count the arrow keys as
+    // keyboard focus, so the change would fade there.
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Shift+Tab");
+    await expect(radio).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowUp");
     await expect(radio).toBeChecked();
