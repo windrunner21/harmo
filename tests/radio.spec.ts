@@ -8,7 +8,7 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 const valueMissing = (radio: Locator) => radio.evaluate((node) => (node as HTMLInputElement).validity.valueMissing);
 
 onEachPlayground("radio", () => {
-  test("chosen with the pointer, it fades in 150ms; with the arrow keys, the one they reach changes at once", async ({ page }) => {
+  test("chosen with the pointer, it fades in 150ms; with the arrow keys, the one they reach changes at once", async ({ page, browserName }) => {
     const container = await example(page, "radio-group");
     const radio = container.getByRole("radio").first();
     const durations = () => radio.evaluate((node) => [...new Set(getComputedStyle(node).transitionDuration.split(", "))]);
@@ -24,6 +24,9 @@ onEachPlayground("radio", () => {
     await page.keyboard.press("ArrowUp");
     await expect(radio).toBeChecked();
     await expect(radio).toBeFocused();
+    // WebKit doesn't count the arrow keys' move as keyboard focus, so there
+    // the radio they reach has no focus ring and fades, as radio.md says.
+    if (browserName === "webkit") return;
     expect(await radio.evaluate((node) => node.matches(":focus-visible"))).toBe(true);
     expect(await durations()).toEqual(["0s"]);
   });

@@ -124,11 +124,21 @@ export const animations = (element: Locator) => element.evaluate((node) => node.
 
 // Finishes an element's animations and transitions. A frame first, as in
 // settled, since WebKit may start a transition only then, and one that starts
-// after this would run its slowed-down 100 seconds.
+// after this would run its slowed-down 100 seconds. WebKit can also start a
+// finished transition again, from where it had got to, at the next style
+// update, so the style is read at once, and whatever runs then is finished
+// too, until nothing does.
 export const release = (element: Locator) =>
   element.evaluate(async (node) => {
     await new Promise(requestAnimationFrame);
-    for (const animation of node.getAnimations()) animation.finish();
+    for (let round = 0; round < 5; round++) {
+      const running = node
+        .getAnimations()
+        .filter((animation) => animation.playState !== "finished" && animation.effect?.getTiming().iterations !== Infinity);
+      if (!running.length) return;
+      for (const animation of running) animation.finish();
+      getComputedStyle(node).opacity;
+    }
   });
 
 // Moves the mouse to the middle of an element, without scrolling, once the

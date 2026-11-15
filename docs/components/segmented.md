@@ -71,7 +71,9 @@ for any control: connect them with `aria-describedby` on the group, and set
   as `.hsegmented-option:has(:checked)`, loaded after Harmo, applies on hover
   too.
 - Checked: border and text in `--harmo-color-primary`.
-- Keyboard focus: the standard ring around the option.
+- Keyboard focus: the standard ring around the option. WebKit, Safari's
+  engine, doesn't count the arrow keys' move as keyboard focus, so there the
+  ring goes once they move the choice, until Tab.
 - Disabled: `--harmo-opacity-disabled` (50%).
 - No animation.
 - Forced colors (Windows contrast themes): the chosen option is filled with
