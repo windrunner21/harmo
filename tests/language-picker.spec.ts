@@ -19,7 +19,8 @@ onEachPlayground("language-picker", () => {
     await expect(openPopup(container)).toHaveCount(0);
     await expect(trigger.locator(".hbutton-label > [lang]")).toHaveAttribute("lang", "fr");
     await expect(trigger.locator(".hbutton-label")).toHaveText("Français");
-    await expect(listbox.getByRole("option", { name: "Français" })).toHaveAttribute("aria-selected", "true");
+    // Hidden too, as the list may have finished fading out by now.
+    await expect(listbox.getByRole("option", { name: "Français", includeHidden: true })).toHaveAttribute("aria-selected", "true");
   });
 
   test("a click the app stops, with preventDefault() in its own handler on the option, chooses nothing", async ({ page }) => {
@@ -39,7 +40,7 @@ onEachPlayground("language-picker", () => {
     await clickAt(page, french);
     await expect(openPopup(container)).toHaveCount(0);
     await expect(trigger.locator(".hbutton-label")).toHaveText("Français");
-    await expect(french).toHaveAttribute("aria-selected", "true");
+    await expect(listbox.getByRole("option", { name: "Français", includeHidden: true })).toHaveAttribute("aria-selected", "true");
   });
 
   // In React, the example's value is its own state, which only onValueChange sets,
