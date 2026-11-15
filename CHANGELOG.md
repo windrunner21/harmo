@@ -8,6 +8,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Changed
+
+- File Input: the avatar variant's empty picture, a person, has an outline head
+  rather than a filled one.
+
 ## [0.6.0] - 2026-11-15
 
 Two new components, Table of Contents and Language Picker, and a full audit of
