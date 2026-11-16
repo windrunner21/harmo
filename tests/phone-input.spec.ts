@@ -192,6 +192,9 @@ onEachPlayground("phone-input", () => {
     const { field, country, list } = await parts(page, "default");
     await field.fill("4155552671");
     await country.click();
+    // Once the list has opened and settled, so the click lands on the option.
+    await expect(list).toBeVisible();
+    await settled(list, ".hpopup");
     const option = list.locator('.hoption:has-text("Azerbaijan")');
     // On the option, so before the list's own handling, as an Option's
     // onClick is in React.

@@ -2,6 +2,20 @@
 // for Harmo's React components live in scripts/.
 // Each script is a block, so its names stay out of the other scripts' way.
 {
+  // An example's code waits in a <template> until its panel opens, so a page
+  // doesn't style and lay out every highlighted token as it loads.
+  const fill = (body) => {
+    const source = body.querySelector(":scope > template.play-code-source");
+    if (!source) return;
+    body.querySelector("code").replaceChildren(source.content.cloneNode(true));
+    source.remove();
+  };
+  for (const panel of document.querySelectorAll(".play-code")) {
+    panel.addEventListener("toggle", () => {
+      if (panel.open) fill(panel.querySelector(".play-code-body"));
+    });
+  }
+
   // Copy an example's markup. Without clipboard access, select it instead so
   // it can be copied by hand.
   for (const button of document.querySelectorAll("[data-play-copy]")) {
@@ -9,6 +23,7 @@
     const label = button.querySelector(".hbutton-label");
     let timer;
     button.addEventListener("click", async () => {
+      fill(button.parentElement);
       try {
         await navigator.clipboard.writeText(code.textContent);
         label.textContent = "Copied";

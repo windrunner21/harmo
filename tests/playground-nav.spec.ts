@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { onEachPlayground, test } from "./playgrounds.ts";
+import { onEachPlayground, playgrounds, test, url } from "./playgrounds.ts";
 
 // The playgrounds' own navigation is Harmo's Sidebar: the overview and every
 // group of the catalog, the page you're on marked; on a narrow screen, the
@@ -28,3 +28,19 @@ onEachPlayground("button", () => {
     await expect(sheet).toBeHidden();
   });
 });
+
+// An example's code waits in a template until its panel opens, so a page
+// doesn't lay out every highlighted token as it loads; then it shows.
+for (const playground of playgrounds) {
+  test.describe(playground, () => {
+    test("an example's code fills its panel once it opens", async ({ page }) => {
+      await page.goto(url(playground, "button"));
+      const panel = page.locator(".play-code").first();
+      const code = panel.locator("code");
+      await expect(code).toBeEmpty();
+      await panel.locator("summary").click();
+      await expect(code).toContainText(playground === "html" ? 'class="hbutton"' : "<Button");
+      await expect(panel.locator("template")).toHaveCount(0);
+    });
+  });
+}

@@ -287,7 +287,9 @@ function renderExample(
     ? [`<div ${direction.map((key) => `${key}="${attributes.get(key)}"`).join(" ")}>`, indent(rendered.code, "  "), `</div>`].join("\n")
     : rendered.code;
   // The code is one line, with newlines as &#10;, so indenting the page
-  // around it can't add spaces inside <pre>.
+  // around it can't add spaces inside <pre>. It waits in a <template> until
+  // its panel opens: highlighted, a page's code is most of its elements, as
+  // many as 14,000 on the Contact Form's, which WebKit was slow to load.
   const code = restoreVerbatim(highlight(copied), escape).replaceAll("\n", "&#10;");
 
   const live = frame
@@ -322,7 +324,8 @@ function renderExample(
     `        <button class="hbutton play-copy" data-variant="tertiary" data-size="small" type="button" data-play-copy>`,
     `          <span class="hbutton-label" aria-live="polite">Copy</span>`,
     `        </button>`,
-    `        <pre><code>${code}</code></pre>`,
+    `        <pre><code></code></pre>`,
+    `        <template class="play-code-source">${code}</template>`,
     `      </div>`,
     `    </details>`,
     `  </div>`,
@@ -645,7 +648,7 @@ function checkPage(file: string, html: string) {
   const leftover = html.match(/<\/?play-[\w-]+/);
   if (leftover) throw new Error(`${file} still contains ${leftover[0]}>; check its spelling and that it's closed`);
 
-  const live = html.replace(/<pre><code>[\s\S]*?<\/code><\/pre>/g, "");
+  const live = html.replace(/<pre><code>[\s\S]*?<\/code><\/pre>|<template class="play-code-source">[\s\S]*?<\/template>/g, "");
   const known = new Set<string>();
   const duplicates = new Set<string>();
   for (const [, id] of live.matchAll(/\sid="([^"]+)"/g)) (known.has(id) ? duplicates : known).add(id);
