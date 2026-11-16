@@ -3,11 +3,37 @@
 // React source and the built CSS; run through mise run build:cli, which builds
 // the CSS first.
 
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, normalize, relative } from "node:path/posix";
+import { sharedClasses } from "./shared-styles.js";
 
 const root = import.meta.dirname;
 const reactSource = join(root, "..", "react", "src");
+// Patterns are written in the React playground, against @harmo-ui/react, each in
+// a folder of its own that holds a component, a .tsx file. A folder without
+// one is a helper some patterns share: a stylesheet, such as auth-form's look,
+// comes with each pattern that uses its classes, and code, such as
+// step-motion's hook, with each pattern that imports it.
+const patternSource = join(root, "..", "..", "examples", "react", "src", "patterns");
+const patternFolders = readdirSync(patternSource, { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .sort();
+const patterns = patternFolders.filter((folder) =>
+  readdirSync(join(patternSource, folder)).some((file) => file.endsWith(".tsx")),
+);
+// Each class a shared stylesheet styles, under its helper's prefix, and that
+// stylesheet's path in the copy. Shorter names first, so where one helper's
+// prefix starts another's, the longest that matches wins, as for components.
+const sharedStyles = new Map<string, string>();
+for (const folder of patternFolders
+  .filter((folder) => !patterns.includes(folder))
+  .sort((a, b) => a.length - b.length)) {
+  for (const file of readdirSync(join(patternSource, folder)).filter((file) => file.endsWith(".css"))) {
+    const css = readFileSync(join(patternSource, folder, file), "utf8");
+    for (const name of sharedClasses(folder, css)) sharedStyles.set(name, `patterns/${folder}/${file}`);
+  }
+}
 const cssSource = join(root, "..", "css", "dist");
 const registry = join(root, "registry");
 
@@ -51,6 +77,7 @@ const components: Record<string, string[]> = {
   "menu-button": ["MenuButton.tsx"],
   meter: ["Meter.tsx"],
   "navigation-menu": ["NavigationMenu.tsx"],
+  "otp-input": ["OtpInput.tsx"],
   pagination: ["pagination/Pagination.tsx", "pagination/PaginationPage.tsx"],
   password: ["PasswordInput.tsx"],
   "phone-input": ["PhoneInput.tsx"],
@@ -120,10 +147,10 @@ for (const line of readFileSync(
   "utf8",
 ).split("\n")) {
   const page =
-    /^- \[[^\]]+\]\(docs\/components\/([a-z-]+)\.md\): (.+)$/.exec(
+    /^- \[[^\]]+\]\(docs\/(?:components|patterns)\/([a-z-]+)\.md\): (.+)$/.exec(
       line,
     );
-  if (page?.[1] && page[2] && page[1] in components)
+  if (page?.[1] && page[2] && (page[1] in components || patterns.includes(page[1])))
     descriptions.set(page[1], page[2]);
 }
 
@@ -176,9 +203,10 @@ const copyOf = (source: string) => {
   return { code, imports };
 };
 
-// A component's files: its own folder, every component it imports, whole, the
-// helpers those use, the tokens, and the accents, as index.css has them.
-const itemFiles = (name: string) => {
+// The files of some components, and of other source files: each component's own
+// folder, every component it imports, whole, the helpers those use, the tokens,
+// and the accents, as index.css has them.
+const itemFiles = (names: string[], sources: string[] = []) => {
   const files = new Map<string, string>([
     ["tokens.css", readFileSync(join(cssSource, "tokens.css"), "utf8")],
     ["accents.css", readFileSync(join(cssSource, "accents.css"), "utf8")],
@@ -210,7 +238,8 @@ const itemFiles = (name: string) => {
     for (const source of components[component] as string[]) addSource(source);
   };
 
-  addComponent(name);
+  for (const name of names) addComponent(name);
+  for (const source of sources) addSource(source);
   return [...files].sort(([a], [b]) => a.localeCompare(b));
 };
 
@@ -224,7 +253,7 @@ for (const name of Object.keys(components)) {
     name,
     type: "registry:item",
     description: descriptions.get(name),
-    files: itemFiles(name).map(([path, content]) => ({
+    files: itemFiles([name]).map(([path, content]) => ({
       path,
       type: "registry:file",
       target: `components/harmo/${path}`,
@@ -232,13 +261,181 @@ for (const name of Object.keys(components)) {
     })),
   });
 }
+// Where @harmo-ui/react exports each name from.
+const exported = new Map<string, string>();
+for (const [, names = "", file = ""] of readFileSync(
+  join(reactSource, "index.ts"),
+  "utf8",
+).matchAll(/export\s+(?:type\s+)?\{([^}]*)\}\s*from\s*"\.\/([^"]+)"/g)) {
+  for (const name of names.split(",")) {
+    const bare = name.trim().replace(/^type\s+/, "");
+    if (bare) exported.set(bare, file);
+  }
+}
+
+// A pattern's source file as it reads in the copy, in patterns/<name>/, or a
+// helper's, in patterns/<helper>/: each import from @harmo-ui/react points to
+// the copied file of what it imports, and the source files it needs are
+// listed, so they come with it. A relative import loses its ending: of
+// another pattern, that pattern comes too, and of a helper's file, that file.
+const patternCopyOf = (folder: string, file: string) => {
+  const needed = new Set<string>();
+  const others = new Set<string>();
+  const helperFiles = new Set<string>();
+  const code = readFileSync(join(patternSource, folder, file), "utf8")
+    .replace(/(from\s*")(\.\.?\/[^"]+)(")/g, (_, before: string, specifier: string, after: string) => {
+      const path = normalize(join(folder, specifier));
+      const owner = path.split("/")[0] ?? "";
+      if (patterns.includes(owner)) {
+        if (owner !== folder) others.add(owner);
+      } else if (!path.startsWith("..") && path.includes("/") && existsSync(join(patternSource, path))) {
+        helperFiles.add(path);
+      } else {
+        throw new Error(`${folder}/${file} imports ${specifier}, which isn't a pattern's or a helper's`);
+      }
+      return `${before}${specifier.replace(/\.tsx?$/, "")}${after}`;
+    })
+    .replace(
+    /import\s+(type\s+)?\{([^}]*)\}\s*from\s*"@harmo-ui\/react";\n/g,
+    (_, typeOnly: string | undefined, names: string) => {
+      const bySource = new Map<string, string[]>();
+      for (const item of names.split(",").map((name) => name.trim()).filter(Boolean)) {
+        const source = exported.get(item.replace(/^type\s+/, ""));
+        if (!source)
+          throw new Error(
+            `${folder}/${file} imports ${item} from @harmo-ui/react, which doesn't export it`,
+          );
+        needed.add(source);
+        bySource.set(source, [...(bySource.get(source) ?? []), item]);
+      }
+      return [...bySource]
+        .map(([source, items]) => {
+          const path = relative(
+            `patterns/${folder}`,
+            targets.get(source) as string,
+          ).replace(/\.tsx?$/, "");
+          return `import ${typeOnly ?? ""}{ ${items.join(", ")} } from "${path}";\n`;
+        })
+        .join("");
+    },
+  );
+  if (/from\s*"@harmo-ui\//.test(code))
+    throw new Error(
+      `${folder}/${file} imports @harmo-ui in a way the copy can't point elsewhere; import names in braces`,
+    );
+  return { code, needed, others, helperFiles };
+};
+
+// The components whose classes some code puts on its own elements, such as
+// hcard on a <form>, so their styles come with it: each class names the
+// component it starts with, the longest that matches.
+const styledBy = (code: string) => {
+  const found = new Set<string>();
+  for (const [, quoted = "", braced = ""] of code.matchAll(
+    /className=(?:"([^"]*)"|\{([^}]*)\})/g,
+  )) {
+    const text = `${quoted} ${[...braced.matchAll(/"([^"]*)"/g)].map(([, value]) => value).join(" ")}`;
+    for (const name of text.split(/\s+/).filter((name) => name.startsWith("h"))) {
+      const owner = Object.keys(components)
+        .filter((component) => name === `h${component}` || name.startsWith(`h${component}-`))
+        .sort((a, b) => b.length - a.length)[0];
+      if (owner) found.add(owner);
+    }
+  }
+  return found;
+};
+
+// A pattern's files: its own, in patterns/<name>/, the helpers' files it
+// imports, in patterns/<helper>/, those of every component they import, as a
+// component's are, and the styles of every component whose class they use.
+const patternFiles = (pattern: string): [string, string][] => {
+  const own: [string, string][] = [];
+  const needed = new Set<string>();
+  const styled = new Set<string>();
+  const others = new Set<string>();
+  const shared = new Set<string>();
+  const copied = new Set<string>();
+  const addCode = (folder: string, file: string) => {
+    const copy = patternCopyOf(folder, file);
+    own.push([`patterns/${folder}/${file}`, copy.code]);
+    for (const source of copy.needed) needed.add(source);
+    for (const component of styledBy(copy.code)) styled.add(component);
+    for (const other of copy.others) if (other !== pattern) others.add(other);
+    for (const [, quoted = "", braced = ""] of copy.code.matchAll(/className=(?:"([^"]*)"|\{([^}]*)\})/g)) {
+      for (const name of `${quoted} ${braced}`.match(/h[a-z][a-z0-9-]*/g) ?? []) {
+        const path = sharedStyles.get(name);
+        if (path) shared.add(path);
+      }
+    }
+    for (const path of copy.helperFiles) {
+      if (copied.has(path)) continue;
+      copied.add(path);
+      addCode(dirname(path), basename(path));
+    }
+  };
+  for (const file of readdirSync(join(patternSource, pattern)).sort()) {
+    if (/\.tsx?$/.test(file)) {
+      addCode(pattern, file);
+    } else if (file.endsWith(".css")) {
+      own.push([
+        `patterns/${pattern}/${file}`,
+        readFileSync(join(patternSource, pattern, file), "utf8"),
+      ]);
+    }
+  }
+  const used = [...needed].flatMap((source) => owners.get(source) ?? []);
+  const helpers = [...needed].filter((source) => !owners.has(source));
+  const files = new Map(itemFiles([...new Set(used)], helpers));
+  for (const component of styled) {
+    if (component !== "provider" && !files.has(`${component}/${component}.css`))
+      files.set(
+        `${component}/${component}.css`,
+        readFileSync(join(cssSource, `${component}.css`), "utf8"),
+      );
+  }
+  for (const path of shared)
+    files.set(path, readFileSync(join(patternSource, path.slice("patterns/".length)), "utf8"));
+  for (const other of others)
+    for (const [path, content] of patternFiles(other)) files.set(path, content);
+  for (const [path, content] of own) files.set(path, content);
+  return [...files].sort(([a], [b]) => a.localeCompare(b));
+};
+
+for (const pattern of patterns) {
+  if (pattern in components)
+    throw new Error(`The pattern ${pattern} has a component's name`);
+  // A universal item, as a component's is, which shadcn's CLI can install too;
+  // its category marks it as a pattern.
+  write(`${pattern}.json`, {
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    name: pattern,
+    type: "registry:item",
+    categories: ["pattern"],
+    description: descriptions.get(pattern),
+    files: patternFiles(pattern).map(([path, content]) => ({
+      path,
+      type: "registry:file",
+      target: `components/harmo/${path}`,
+      content,
+    })),
+  });
+}
+
 write("registry.json", {
   $schema: "https://ui.shadcn.com/schema/registry.json",
   name: "harmo",
   homepage: "https://harmo-ui.com",
-  items: Object.keys(components).map((name) => ({
-    name,
-    type: "registry:item",
-    description: descriptions.get(name),
-  })),
+  items: [
+    ...Object.keys(components).map((name) => ({
+      name,
+      type: "registry:item",
+      description: descriptions.get(name),
+    })),
+    ...patterns.map((name) => ({
+      name,
+      type: "registry:item",
+      categories: ["pattern"],
+      description: descriptions.get(name),
+    })),
+  ],
 });

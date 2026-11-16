@@ -150,6 +150,9 @@
   --harmo-font-size-3xs: 0.6875rem;
   --harmo-font-weight-normal: 400;
   --harmo-font-weight-medium: 500;
+  // Visibly bolder in any font: semibold where it has one, and bold where it
+  // doesn't, where medium would fall back to regular.
+  --harmo-font-weight-semibold: 600;
   --harmo-font-weight-bold: 700;
   --harmo-font-line-height: 1.5;
   --harmo-button-font-weight: var(--harmo-font-weight-medium);

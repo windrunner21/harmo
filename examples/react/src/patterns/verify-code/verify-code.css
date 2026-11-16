@@ -1,0 +1,18 @@
+/* Entering a one-time code, in the account forms' look from auth-form.css,
+   with this part of its own. */
+
+/* "Didn't get a code? Send a new code": a line centered a small step under
+   the button, so it reads as the button's, at a description's size. Its
+   digits are tabular, so the countdown doesn't shift as it ticks. */
+.hverify-code-resend {
+  margin: calc(var(--harmo-space-xs) - var(--harmo-space-md)) 0 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-sm);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25rem;
+  text-align: center;
+  text-wrap: balance;
+
+  color: var(--harmo-color-text-secondary);
+}

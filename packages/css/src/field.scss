@@ -39,6 +39,25 @@
       margin-block: calc((1.25rem - $switch-height) / 2);
     }
 
+    // Small, for a line of fine print, such as agreeing to terms: a 13px
+    // label and a 12px description, with the control scaled to match, still
+    // centered on the label's first line.
+    &[data-size="small"] {
+      --harmo-checkbox-size: 1rem;
+      --harmo-switch-width: 2.25rem;
+      --harmo-switch-height: 1.25rem;
+      --harmo-switch-thumb-size: 1rem;
+
+      & > .hlabel,
+      & > .hfield-content > .hlabel {
+        font-size: $font-size-xs;
+      }
+
+      & > .hfield-content > .hdescription {
+        font-size: $font-size-2xs;
+      }
+    }
+
     // The label and description, close together, as in a stacked Field.
     & > .hfield-content {
       display: flex;
@@ -74,11 +93,16 @@ $horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .
   cursor: not-allowed;
 }
 
+// Its type is the label's, so what inherits it there, such as a link, matches.
 .hfield-label-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: $space-2xs;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.25rem;
 
   &[hidden] {
     display: none;
@@ -211,4 +235,102 @@ $horizontal-control: '.hfield[data-orientation="horizontal"] > :is(.hcheckbox, .
   color: $color-text-secondary;
   border: 1px solid $color-border;
   border-radius: $border-radius-sm;
+}
+
+// What sits at the end of a label row, such as a link to reset a password. A
+// link takes the row's type, the label's, so the row stays a label's height.
+.hfield-label-end {
+  margin-inline-start: auto;
+}
+
+// After a Password Input's strength word, which keeps to the row's end, it
+// follows the word, the row's gap away. While the word is empty or hidden,
+// it's at the row's end itself. Here rather than in Password Input's file,
+// so it comes after the rule above whatever order the files load in.
+:where(.hpassword-strength:not([hidden], :empty)) ~ .hfield-label-end {
+  margin-inline-start: 0;
+}
+
+// A choice card: a horizontal Field as a bordered tile, such as a plan to
+// choose, clicked anywhere. Its label stretches over it, so a click on its
+// padding or its description checks it, as one on the label does. The
+// control sits above the label, so a click on it lands on it. Chosen, it
+// takes the control's colors. From the keyboard, it changes at once, as its
+// control does.
+$card: '.hfield[data-orientation="horizontal"][data-variant="card"]';
+$chosen: ":is(.hcheckbox:is(:checked, :indeterminate), .hradio:checked)";
+
+#{$card} {
+  position: relative;
+  // Its own stacking context, so the control rises above the label only.
+  isolation: isolate;
+
+  box-sizing: border-box;
+  padding: $space-sm;
+
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+
+  transition:
+    background-color $duration-fast ease,
+    border-color $duration-fast ease;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:where(:not(:has(> :disabled))) {
+      border-color: $color-border-control;
+    }
+  }
+
+  &:has(> #{$chosen}) {
+    background-color: $color-primary-tint;
+    border-color: $color-primary;
+  }
+
+  &:has(> :focus-visible) {
+    transition: none;
+  }
+
+  @media (forced-colors: active) {
+    &:has(> #{$chosen}) {
+      border-color: Highlight;
+    }
+  }
+}
+
+:where(#{$card}) > :is(.hcheckbox, .hradio) {
+  position: relative;
+  z-index: 1;
+}
+
+:where(#{$card}) > .hlabel,
+:where(#{$card} > .hfield-content) > .hlabel {
+  font-weight: $font-weight-medium;
+
+  &::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+  }
+}
+
+// The card's border shows the hover, so its label keeps its color.
+@media (hover: hover) and (pointer: fine) {
+  :where(#{$card} > :enabled) + .hlabel:hover,
+  :where(#{$card} > :enabled + .hfield-content) > .hlabel:hover {
+    color: $color-text;
+  }
+}
+
+// On the tint, the description's tertiary is under 4.5:1, so a chosen card's
+// is secondary.
+:where(#{$card}:has(> #{$chosen}:enabled) > .hfield-content) > .hdescription {
+  color: $color-text-secondary;
+}
+
+// Anything interactive in the description, such as a link or a button, sits
+// above the stretched label, so a click on it lands on it rather than
+// checking the card.
+:where(#{$card} > .hfield-content > .hdescription) :is(a, button, input, select, textarea, [tabindex]) {
+  position: relative;
 }

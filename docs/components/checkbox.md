@@ -32,6 +32,8 @@ A native checkbox with Harmo's appearance. Pair it with a label in a horizontal
 | `indeterminate` (DOM property) | Mixed, shown as a dash; wins over checked |
 | `disabled` | Dimmed, not-allowed cursor; its Field label turns gray |
 | `--harmo-checkbox-size` on the element | Size (default 20px); the marks scale with it |
+| `data-size="small"` on its horizontal [Field](field.md) | A 16px box and a 13px label, for fine print, such as agreeing to terms |
+| `data-variant="card"` on its horizontal [Field](field.md#choice-cards) | A choice card: the checkbox and its label as a bordered tile, checked by a click anywhere on it, with the checkbox's colors once checked |
 
 ## Appearance and states
 
@@ -52,8 +54,12 @@ A native checkbox with Harmo's appearance. Pair it with a label in a horizontal
 
 ## Accessibility
 
-A native checkbox: Space toggles it, and its `<label>` names it. A group of
-checkboxes goes in a Field with `role="group"` labelled by its `.hlabel`.
+- A native checkbox: Space toggles it, and its `<label>` names it. A group of
+  checkboxes goes in a Field with `role="group"` labelled by its `.hlabel`.
+- In a choice card, the label still names the checkbox, and the description is
+  tied to it by `aria-describedby`, so a screen reader reads both as the
+  checkbox takes focus. The label only stretches over the card for the
+  pointer; the checkbox, its focus ring, and Space work as they do outside one.
 
 ## What a script does
 

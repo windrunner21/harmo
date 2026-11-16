@@ -1,0 +1,52 @@
+/* "By creating an account, you agree to our Terms of Service and Privacy
+   Policy.": a line of fine print, centered a small step under the button, so
+   it reads as the button's rather than the form's next part. Its lines are
+   balanced, so they're of a length, rather than a link breaking across
+   them. */
+.hsign-up-form-agreement {
+  margin: calc(var(--harmo-space-xs) - var(--harmo-space-md)) 0 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-xs);
+  line-height: var(--harmo-font-line-height);
+  text-align: center;
+  text-wrap: balance;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+/* The consent checkboxes, for the terms and for marketing emails: small
+   Fields, as fine print, their labels in quieter secondary text. It ranks
+   below a label's hover and disabled colors, so both still show. */
+:where(.hsign-up-form-consent) > .hlabel {
+  color: var(--harmo-color-text-secondary);
+}
+
+/* The links in the line and in a consent label are semibold rather than
+   underlined, quieter in fine print, and still told from the text around them
+   by more than their color. Semibold, as medium falls back to regular in a
+   font without a medium face. */
+.hsign-up-form-agreement .hlink,
+.hsign-up-form-consent .hlink {
+  font-weight: var(--harmo-font-weight-semibold);
+}
+
+/* The terms checkbox, with its error under it, 6px apart as a Field's parts
+   are. An empty error takes the gap back, as in a Field's column, so the
+   checkbox takes no more room than its row. The error starts where the label
+   does, as a description sits under a checkbox's label: past the small
+   Field's 16px checkbox, which it sets on itself rather than here, and the
+   6px between them. */
+.hsign-up-form-terms {
+  display: flex;
+  flex-direction: column;
+  gap: var(--harmo-space-2xs);
+}
+
+.hsign-up-form-terms[hidden] {
+  display: none;
+}
+
+.hsign-up-form-terms > .herror {
+  margin-inline-start: calc(1rem + var(--harmo-space-2xs));
+}

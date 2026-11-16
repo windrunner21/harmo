@@ -24,9 +24,15 @@
 //
 // Attribute values are double-quoted and can't contain ">". Text inside
 // <textarea> and <pre> is kept exactly as written.
+//
+// A pattern's page also shows, under its header, the "Try the demo" and
+// "What you need" sections of its docs page, docs/patterns/<slug>.md, so the
+// two never differ; and the patterns get a page of their own, patterns.html,
+// from html/src/patterns.html, with their cards, and sections of
+// docs/patterns/README.md.
 
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, watch, writeFileSync } from "node:fs";
-import { basename, join, relative } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import { catalog, type CatalogEntry, type CatalogGroup } from "./catalog.ts";
 
 const src = join(import.meta.dir, "html", "src");
@@ -89,6 +95,19 @@ export function buildPlayground(playground: Playground) {
   const href = (path: string) => relative(out, path);
   const icons = loadIcons();
   const layout = readFileSync(join(src, "layout.html"), "utf8");
+  // Each pattern's own stylesheet, beside its React source: every page loads
+  // them, as it does Harmo's. A folder without a component, a .tsx file, is a
+  // helper the patterns share, such as auth-form's look, so its styles come
+  // before the patterns' that build on them, as the CLI orders harmo.css.
+  const patternFolder = join(repo, "examples/react/src/patterns");
+  const shared = (file: string) =>
+    !readdirSync(join(patternFolder, dirname(file))).some((other) => other.endsWith(".tsx"));
+  const patternFiles = readdirSync(patternFolder, { recursive: true, encoding: "utf8" })
+    .filter((file) => file.endsWith(".css"))
+    .sort();
+  const patternStyles = [...patternFiles.filter(shared), ...patternFiles.filter((file) => !shared(file))].map((file) =>
+    join(patternFolder, file),
+  );
   const version = JSON.parse(readFileSync(join(repo, "packages/css/package.json"), "utf8")).version;
   for (const slug of playground.components) {
     if (!readdirSync(join(src, "components")).includes(`${slug}.html`)) {
@@ -106,6 +125,7 @@ export function buildPlayground(playground: Playground) {
         title,
         version: `v${version}`,
         harmo: href(join(repo, "packages/css/dist/index.css")),
+        patterns: patternStyles.map((file) => `<link rel="stylesheet" href="${href(file)}" />`).join("\n"),
         docs: href(join(repo, "docs/components/README.md")),
         scripts: playground.scripts.map((script) => `<script src="${script}" defer></script>`).join("\n"),
         about: playground.about,
@@ -128,6 +148,7 @@ export function buildPlayground(playground: Playground) {
     }
   }
   page("index.html", playground.title, "index", readFileSync(playground.overview, "utf8").trim());
+  page("patterns.html", "Patterns — Harmo", "patterns", renderPatterns(playground.components, href));
 
   rmSync(out, { recursive: true, force: true });
   mkdirSync(out);
@@ -189,7 +210,7 @@ function renderComponent(
   const rest = source.replace(pattern, "").trim();
   if (rest) throw new Error(`components/${entry.slug}.html has content outside an example: "${rest.slice(0, 60)}"`);
 
-  const docs = href(join(repo, "docs", `components/${entry.slug}.md`));
+  const docs = href(join(repo, "docs", group.patterns ? "patterns" : "components", `${entry.slug}.md`));
   return [
     `<article class="play-component" id="${entry.slug}" aria-labelledby="${entry.slug}-title">`,
     `  <header class="play-component-header">`,
@@ -201,6 +222,7 @@ function renderComponent(
     `      <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>`,
     `    </a>`,
     `  </header>`,
+    ...(group.patterns ? [indent(renderGuide(entry.slug, playground.components, href), "  ")] : []),
     ...examples
       .map(([, attributes, content]) => renderExample(entry.slug, attributes, content, icons, playground, leaveOut))
       .filter((example) => example !== undefined)
@@ -310,6 +332,161 @@ function renderExample(
     .join("\n");
 }
 
+// A pattern's "Try the demo", what to type in its examples to see each
+// answer, and its "What you need", in an Accordion, both from its docs page.
+function renderGuide(slug: string, components: Set<string>, href: (path: string) => string) {
+  const file = join(repo, "docs", "patterns", `${slug}.md`);
+  const demo = `${slug}-try-the-demo-title`;
+  const needs = `${slug}-what-you-need-title`;
+  return [
+    `<div class="play-guide">`,
+    `  <section class="play-guide-section" aria-labelledby="${demo}">`,
+    `    <h2 class="play-example-title" id="${demo}">Try the demo</h2>`,
+    indent(docsHtml(file, "Try the demo", demo, components, href), "    "),
+    `  </section>`,
+    `  <details class="haccordion-item play-needs" data-size="small">`,
+    `    <summary class="haccordion-summary">`,
+    `      <span class="haccordion-label" id="${needs}">What you need</span>`,
+    `      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>`,
+    `    </summary>`,
+    `    <div class="haccordion-content">`,
+    indent(docsHtml(file, "What you need", needs, components, href, true), "      "),
+    `    </div>`,
+    `  </details>`,
+    `</div>`,
+  ].join("\n");
+}
+
+// The patterns' own page: html/src/patterns.html, with a card for each
+// pattern, and what every pattern needs and how their forms answer, from
+// docs/patterns/README.md.
+function renderPatterns(components: Set<string>, href: (path: string) => string) {
+  const readme = join(repo, "docs", "patterns", "README.md");
+  const group = catalog.find((candidate) => candidate.patterns);
+  if (!group) throw new Error("catalog.ts has no group of patterns");
+  const cards = group.entries.map((entry) =>
+    [
+      `<li>`,
+      `  <a class="hcard" href="${entry.slug}.html">`,
+      `    <h3 class="hcard-title">${entry.title}</h3>`,
+      `    <p class="hcard-description">${entry.purpose}</p>`,
+      `    <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>`,
+      `  </a>`,
+      `</li>`,
+    ].join("\n"),
+  );
+  return fill(readFileSync(join(src, "patterns.html"), "utf8").trim(), {
+    docs: href(readme),
+    patterns: [`<ul class="play-pattern-list" role="list">`, indent(cards.join("\n"), "  "), `</ul>`].join("\n"),
+    needs: docsHtml(readme, "What you need", "patterns-needs-title", components, href, true),
+    answers: docsHtml(readme, "Answers", "patterns-actions-title", components, href),
+  });
+}
+
+// Docs ------------------------------------------------------------------------
+
+// A section of a docs page as HTML: its paragraphs and tables, which is all a
+// section shown in the playground may hold. Each table is named by `label`,
+// the id of the section's title; with `rowHeaders`, each row by its first
+// cell.
+function docsHtml(
+  file: string,
+  heading: string,
+  label: string,
+  components: Set<string>,
+  href: (path: string) => string,
+  rowHeaders = false,
+) {
+  const where = `${relative(repo, file)}'s "${heading}"`;
+  const lines = readFileSync(file, "utf8").split("\n");
+  let fenced = false;
+  const headings = lines.map((line) => {
+    if (line.startsWith("```")) fenced = !fenced;
+    return fenced ? 0 : (line.match(/^(#{1,6})\s/)?.[1].length ?? 0);
+  });
+  const start = lines.findIndex((line, index) => headings[index] > 0 && line.replace(/^#+\s+/, "") === heading);
+  if (start === -1) throw new Error(`${relative(repo, file)} has no "${heading}" section`);
+  const end = headings.findIndex((level, index) => index > start && level > 0 && level <= headings[start]);
+  const body = lines.slice(start + 1, end === -1 ? undefined : end);
+
+  // A link to a component's or pattern's docs goes to its page here, unless
+  // it's to a part of it; any other, to the docs.
+  const link = (target: string) => {
+    if (/^[a-z]+:/i.test(target)) return target;
+    const [path, anchor] = target.split("#");
+    const resolved = path ? join(dirname(file), path) : file;
+    const slug = basename(resolved, ".md");
+    if (!anchor && /docs\/(components|patterns)$/.test(dirname(resolved)) && components.has(slug)) return `${slug}.html`;
+    return href(resolved) + (anchor ? `#${anchor}` : "");
+  };
+  // Code first, set aside, so nothing in it reads as a link or bold.
+  const inline = (text: string) => {
+    const code: string[] = [];
+    return escape(text.replace(/`([^`]+)`/g, (_, inner: string) => `\u0001${code.push(inner) - 1}\u0001`))
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, target: string) => `<a class="hlink" href="${link(target)}">${text}</a>`)
+      .replace(/\u0001(\d+)\u0001/g, (_, index: string) => `<code>${escape(code[Number(index)])}</code>`);
+  };
+  // A table row's cells, split at each | outside code.
+  const cells = (row: string) => {
+    const found: string[] = [];
+    let cell = "";
+    let inCode = false;
+    for (const character of row.trim().slice(1, -1)) {
+      if (character === "`") inCode = !inCode;
+      if (character === "|" && !inCode) {
+        found.push(cell.trim());
+        cell = "";
+      } else cell += character;
+    }
+    return [...found, cell.trim()];
+  };
+
+  const blocks: string[] = [];
+  for (let index = 0; index < body.length; ) {
+    const line = body[index];
+    if (!line.trim()) {
+      index += 1;
+    } else if (line.startsWith("|")) {
+      const rows: string[] = [];
+      while (index < body.length && body[index].startsWith("|")) rows.push(body[index++]);
+      const [head, , ...rest] = rows.map(cells);
+      if (!head || head.some((cell) => !cell)) throw new Error(`${where} has a table without a name for each column`);
+      blocks.push(
+        [
+          `<div class="htable-container play-guide-table">`,
+          `  <div class="htable-scroll">`,
+          `    <table class="htable" aria-labelledby="${label}">`,
+          `      <thead>`,
+          `        <tr>`,
+          ...head.map((cell) => `          <th scope="col">${inline(cell)}</th>`),
+          `        </tr>`,
+          `      </thead>`,
+          `      <tbody>`,
+          ...rest.flatMap((row) => [
+            `        <tr>`,
+            ...row.map((cell, column) =>
+              rowHeaders && column === 0 ? `          <th scope="row">${inline(cell)}</th>` : `          <td>${inline(cell)}</td>`,
+            ),
+            `        </tr>`,
+          ]),
+          `      </tbody>`,
+          `    </table>`,
+          `  </div>`,
+          `</div>`,
+        ].join("\n"),
+      );
+    } else if (/^(```|[-*] |\d+\. |#|>)/.test(line)) {
+      throw new Error(`${where} has a list, code, a heading, or a quote, which the playground doesn't show; keep it to paragraphs and tables`);
+    } else {
+      const paragraph: string[] = [];
+      while (index < body.length && body[index].trim() && !body[index].startsWith("|")) paragraph.push(body[index++].trim());
+      blocks.push(`<p class="play-note">${inline(paragraph.join(" "))}</p>`);
+    }
+  }
+  return blocks.join("\n");
+}
+
 // The playground's own Sidebar: the overview, then every group of the
 // catalog, linking to each component's page. Components without a page yet
 // are listed but not linked.
@@ -323,6 +500,7 @@ function renderNav(components: Set<string>, current: string) {
         ? `    ${link(`${entry.slug}.html`, entry.title, entry.slug === current)}`
         : `    <li><span class="hsidebar-item play-nav-pending"><span class="hsidebar-label">${entry.title}</span></span></li>`,
     );
+    if (group.patterns) items.unshift(`    ${link("patterns.html", "All patterns", current === "patterns")}`);
     return [
       `<div class="hsidebar-group">`,
       `  <p class="hsidebar-group-label" id="${id}">${group.title}</p>`,

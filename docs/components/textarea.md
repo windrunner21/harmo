@@ -34,6 +34,7 @@ React TextArea writes it by default, or "500 characters left".
 | --- | --- |
 | `aria-invalid="true"`, `readonly`, `disabled`, `placeholder` | As for [Input](input.md) |
 | `.htextarea-counter` | A character count under the box, in the app's words |
+| `--htextarea-min-height` | How tall it starts, before it grows with its text; default one line, as tall as an Input (`--harmo-control-height`) |
 | `--htextarea-max-height` | How tall dragging can make it; default `min(400px, 50dvh)` |
 | `.htextarea-highlight` | Marks parts of the text, drawn over the field, as for an [Input](input.md) |
 
@@ -45,6 +46,10 @@ React TextArea writes it by default, or "500 characters left".
   sides, so its text lines up with an Input's. It starts one line tall, as
   tall as an Input (`--harmo-control-height`, 34px), and grows with its text up to 150px, or to `--htextarea-max-height`
   if that's smaller, then scrolls (`field-sizing: content`).
+- To start it taller, set `--htextarea-min-height`, such as
+  `calc(var(--harmo-control-height) + 3 * 1.25rem)` for four lines, 94px; it
+  grows with its text from there. `rows` does nothing, since the box sizes
+  itself to its text.
 - The bottom end corner is squared off (2px), so the native resize handle sits
   inside the border instead of spilling past a rounded corner.
 - Dragging the handle can make it taller, up to `--htextarea-max-height`:

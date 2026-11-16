@@ -53,6 +53,12 @@ export const examples = {
       <Tooltip description="To the right" side="right">
         <Button variant="secondary">Right</Button>
       </Tooltip>
+      <Tooltip description="Before the button, in the text's direction" side="inline-start">
+        <Button variant="secondary">Start</Button>
+      </Tooltip>
+      <Tooltip description="After the button, in the text's direction" side="inline-end">
+        <Button variant="secondary">End</Button>
+      </Tooltip>
     </>
   ),
 

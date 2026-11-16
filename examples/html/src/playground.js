@@ -20,6 +20,29 @@
     });
   }
 
+  // A pattern's tables of text scroll where they're too wide for the page;
+  // while one does, its scroll area is a named region that takes focus, so a
+  // keyboard can scroll it, as Table asks.
+  for (const scroll of document.querySelectorAll(".play-guide-table > .htable-scroll")) {
+    const table = scroll.querySelector(":scope > .htable");
+    const label = table.getAttribute("aria-labelledby");
+    const update = () => {
+      if (scroll.scrollWidth > scroll.clientWidth + 1) {
+        scroll.tabIndex = 0;
+        scroll.setAttribute("role", "region");
+        scroll.setAttribute("aria-labelledby", label);
+      } else {
+        scroll.removeAttribute("tabindex");
+        scroll.removeAttribute("role");
+        scroll.removeAttribute("aria-labelledby");
+      }
+    };
+    // The table too, which grows inside the scroll area without resizing it.
+    const observer = new ResizeObserver(update);
+    observer.observe(scroll);
+    observer.observe(table);
+  }
+
   // Replay an example by putting fresh copies of its elements in place, which
   // restarts their animations. Copies lose listeners that example scripts
   // added, so replay suits examples that only CSS animates.

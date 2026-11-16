@@ -1,0 +1,277 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    One Input holds the whole code, with a slot drawn for each digit over it,
+    so typing, pasting, undoing, and a phone filling the code in from a
+    message all work as in any field. Press a slot to type over its digit.
+    Without its script, it's a plain Input, which a form still sends.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="otp-default">Verification code</label>
+    <div class="hotp-input" dir="ltr" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-default"
+        name="code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        value=""
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Four digits" layout="stack">
+  <play-note>
+    Four slots, with <code>maxlength</code> and <code>pattern</code> to match.
+    In React, it's <code>length={4}</code>, from 4 to 12.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="otp-four">Confirmation code</label>
+    <div class="hotp-input" dir="ltr" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-four"
+        name="confirmation-code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="4"
+        pattern="[0-9]{4}"
+        value=""
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Grouped" layout="stack">
+  <play-note>
+    A dash between the slots splits the code in groups, here 3 and 3, as its
+    message might write it. The value has no dash, and a pasted
+    <code>123-456</code> loses it. In React, it's <code>groups</code>.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="otp-grouped">Sign-in code</label>
+    <div class="hotp-input" dir="ltr" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-grouped"
+        name="sign-in-code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        value=""
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-separator"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Letters and digits" layout="stack">
+  <play-note>
+    <code>data-characters="alphanumeric"</code>, in React
+    <code>characters="alphanumeric"</code>, takes letters too, shown and sent
+    in capitals, in the monospaced font, whose 0 and O differ. Here 8 of them,
+    in groups of 4.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="otp-letters">Recovery code</label>
+    <div class="hotp-input" dir="ltr" data-characters="alphanumeric" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-letters"
+        name="recovery-code"
+        type="text"
+        inputmode="text"
+        autocapitalize="characters"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="8"
+        pattern="[A-Za-z0-9]{8}"
+        value=""
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-separator"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With a description and an error" layout="stack">
+  <play-note>
+    The Field's description can say how many digits to type, and its error
+    turns every slot red, as <code>aria-invalid</code> does an Input's border.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="otp-checked">Verification code</label>
+    <p class="hdescription" id="otp-checked-description">Enter the 6-digit code we sent to your phone.</p>
+    <div class="hotp-input" dir="ltr" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-checked"
+        name="checked-code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        value="482913"
+        aria-describedby="otp-checked-description otp-checked-error"
+        aria-invalid="true"
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot" data-filled>4</span>
+        <span class="hotp-input-slot" data-filled>8</span>
+        <span class="hotp-input-slot" data-filled>2</span>
+        <span class="hotp-input-slot" data-filled>9</span>
+        <span class="hotp-input-slot" data-filled>1</span>
+        <span class="hotp-input-slot" data-filled>3</span>
+      </div>
+    </div>
+    <p class="herror" id="otp-checked-error" aria-live="polite">That code has expired. Send a new one.</p>
+  </div>
+</play-example>
+
+<play-example title="Read-only and disabled" layout="stack">
+  <play-note>
+    As for an Input: both get a gray background, and only the read-only one
+    can be focused and copied from, such as a code to type on another device.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="otp-pairing">Pairing code</label>
+    <div class="hotp-input" dir="ltr" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-pairing"
+        name="pairing-code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        value="731904"
+        readonly
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot" data-filled>7</span>
+        <span class="hotp-input-slot" data-filled>3</span>
+        <span class="hotp-input-slot" data-filled>1</span>
+        <span class="hotp-input-slot" data-filled>9</span>
+        <span class="hotp-input-slot" data-filled>0</span>
+        <span class="hotp-input-slot" data-filled>4</span>
+      </div>
+    </div>
+  </div>
+  <div class="hfield">
+    <label class="hlabel" for="otp-disabled">Verification code</label>
+    <div class="hotp-input" dir="ltr" data-example-otp-input>
+      <input
+        class="hinput"
+        id="otp-disabled"
+        name="disabled-code"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        autocorrect="off"
+        spellcheck="false"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        value="482913"
+        disabled
+      />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot" data-filled>4</span>
+        <span class="hotp-input-slot" data-filled>8</span>
+        <span class="hotp-input-slot" data-filled>2</span>
+        <span class="hotp-input-slot" data-filled>9</span>
+        <span class="hotp-input-slot" data-filled>1</span>
+        <span class="hotp-input-slot" data-filled>3</span>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a form" layout="stack">
+  <play-note>
+    Once the last digit arrives, typed, pasted, or filled in, the form is
+    sent: in React, <code>onComplete</code> calls
+    <code>requestSubmit()</code>. A reset empties the slots.
+  </play-note>
+  <form method="post" style="display: flex; flex-direction: column; gap: 16px" data-example-otp-form>
+    <div class="hfield">
+      <label class="hlabel" for="otp-form">Verification code</label>
+      <div class="hotp-input" dir="ltr" data-example-otp-input>
+        <input
+          class="hinput"
+          id="otp-form"
+          name="code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="6"
+          pattern="[0-9]{6}"
+          value=""
+        />
+        <div class="hotp-input-slots" aria-hidden="true">
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+        </div>
+      </div>
+    </div>
+    <span class="hstatus" data-example-otp-status>Not sent yet</span>
+    <button class="hbutton" data-variant="secondary" type="reset" style="align-self: flex-start">
+      <span class="hbutton-label">Reset</span>
+    </button>
+  </form>
+</play-example>

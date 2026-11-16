@@ -20,6 +20,7 @@
   "include": [
     "src",
     "test",
-    "build-registry.ts"
+    "build-registry.ts",
+    "shared-styles.ts"
   ]
 }

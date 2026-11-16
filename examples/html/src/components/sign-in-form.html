@@ -1,0 +1,383 @@
+<play-example title="Default">
+  <play-note>
+    A raised <a class="hlink" data-underlined href="card.html">Card</a> with
+    the email and password, and "Forgot your password?" beside the password's
+    label. A wrong password's error shows under the password, which takes
+    focus, and the form shakes once, unless you've asked for reduced motion. A
+    message the server gives for the email, such as one that isn't confirmed
+    yet, shows under the email instead.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+    <h1 class="hauth-form-title">Sign in</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-in-email">Email</label>
+        <input class="hinput" id="sign-in-email" name="email" type="email" autocomplete="username" aria-describedby="sign-in-email-error" />
+        <p class="herror" id="sign-in-email-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-in-password">Password</label>
+          <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-in-password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            aria-describedby="sign-in-password-error"
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-in-password"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <p class="herror" id="sign-in-password-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Sign in</span>
+    </button>
+  </form>
+</play-example>
+
+<play-example title="Link below the field">
+  <play-note>
+    The link under the password field instead, at its end, a small step under
+    it.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+    <h1 class="hauth-form-title">Sign in</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-in-email-below">Email</label>
+        <input class="hinput" id="sign-in-email-below" name="email" type="email" autocomplete="username" aria-describedby="sign-in-email-below-error" />
+        <p class="herror" id="sign-in-email-below-error" aria-live="polite"></p>
+      </div>
+      <div class="hauth-form-password">
+        <div class="hfield">
+          <label class="hlabel" for="sign-in-password-below">Password</label>
+          <div class="hpassword">
+            <input
+              class="hinput"
+              id="sign-in-password-below"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              aria-describedby="sign-in-password-below-error"
+            />
+            <span class="htooltip-trigger">
+              <button
+                class="hpassword-toggle"
+                type="button"
+                aria-label="Show password"
+                aria-pressed="false"
+                aria-controls="sign-in-password-below"
+                hidden
+              >
+                <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+            </span>
+          </div>
+          <p class="herror" id="sign-in-password-below-error" aria-live="polite"></p>
+        </div>
+        <a class="hlink hauth-form-forgot" href="/reset-password">Forgot your password?</a>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Sign in</span>
+    </button>
+  </form>
+</play-example>
+
+<play-example title="With other accounts">
+  <play-note>
+    Under the button, "or", then a secondary
+    <a class="hlink" data-underlined href="button.html">Button</a> for each
+    other account to sign in with, as wide as the form, its logo before its
+    name. Each leads to your app's page that starts signing in there.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+    <h1 class="hauth-form-title">Sign in</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-in-email-accounts">Email</label>
+        <input class="hinput" id="sign-in-email-accounts" name="email" type="email" autocomplete="username" aria-describedby="sign-in-email-accounts-error" />
+        <p class="herror" id="sign-in-email-accounts-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-in-password-accounts">Password</label>
+          <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-in-password-accounts"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            aria-describedby="sign-in-password-accounts-error"
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-in-password-accounts"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <p class="herror" id="sign-in-password-accounts-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Sign in</span>
+    </button>
+    <p class="hauth-form-divider">or</p>
+    <div class="hauth-form-providers">
+      <a class="hbutton" data-variant="secondary" href="/auth/google">
+        <play-icon name="google" class="hicon"></play-icon>
+        <span class="hbutton-label">Continue with Google</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/github">
+        <play-icon name="github" class="hicon"></play-icon>
+        <span class="hbutton-label">Continue with GitHub</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/apple">
+        <play-icon name="apple" class="hicon"></play-icon>
+        <span class="hbutton-label">Continue with Apple</span>
+      </a>
+    </div>
+  </form>
+</play-example>
+
+<play-example title="With many other accounts">
+  <play-note>
+    Four or more go two to a row, each with its logo and the account's name.
+    Each is still named "Continue with" the account, so a screen reader says
+    what it does.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+    <h1 class="hauth-form-title">Sign in</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-in-email-many">Email</label>
+        <input class="hinput" id="sign-in-email-many" name="email" type="email" autocomplete="username" aria-describedby="sign-in-email-many-error" />
+        <p class="herror" id="sign-in-email-many-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-in-password-many">Password</label>
+          <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-in-password-many"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            aria-describedby="sign-in-password-many-error"
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-in-password-many"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <p class="herror" id="sign-in-password-many-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Sign in</span>
+    </button>
+    <p class="hauth-form-divider">or</p>
+    <div class="hauth-form-providers">
+      <a class="hbutton" data-variant="secondary" href="/auth/google" aria-label="Continue with Google">
+        <play-icon name="google" class="hicon"></play-icon>
+        <span class="hbutton-label">Google</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/apple" aria-label="Continue with Apple">
+        <play-icon name="apple" class="hicon"></play-icon>
+        <span class="hbutton-label">Apple</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/microsoft" aria-label="Continue with Microsoft">
+        <play-icon name="microsoft" class="hicon"></play-icon>
+        <span class="hbutton-label">Microsoft</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/github" aria-label="Continue with GitHub">
+        <play-icon name="github" class="hicon"></play-icon>
+        <span class="hbutton-label">GitHub</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/x" aria-label="Continue with X">
+        <play-icon name="x" class="hicon"></play-icon>
+        <span class="hbutton-label">X</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/openai" aria-label="Continue with OpenAI">
+        <play-icon name="openai" class="hicon"></play-icon>
+        <span class="hbutton-label">OpenAI</span>
+      </a>
+    </div>
+  </form>
+</play-example>
+
+<play-example title="With a two-factor code">
+  <play-note>
+    With a second step: the right password asks for a code, and <a
+    class="hlink" data-underlined href="verify-code.html">Verify Code</a>
+    takes the form's place, the card growing or shrinking to it as it fades
+    in, its title focused. "Back to sign in" brings the form back with what
+    was typed.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in data-example-sign-in-two-factor>
+    <h1 class="hauth-form-title">Sign in</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-in-email-code">Email</label>
+        <input class="hinput" id="sign-in-email-code" name="email" type="email" autocomplete="username" aria-describedby="sign-in-email-code-error" />
+        <p class="herror" id="sign-in-email-code-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-in-password-code">Password</label>
+          <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-in-password-code"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            aria-describedby="sign-in-password-code-error"
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-in-password-code"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <p class="herror" id="sign-in-password-code-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Sign in</span>
+    </button>
+  </form>
+</play-example>
+
+<play-example title="With help links" layout="wide">
+  <play-note>
+    Beside the links a sign-in page often has, as ghost
+    <a class="hlink" data-underlined href="card.html">Cards</a> with a
+    chevron.
+  </play-note>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--harmo-space-lg); align-items: center">
+    <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+      <h1 class="hauth-form-title">Sign in</h1>
+      <div class="hauth-form-fields">
+        <div class="hfield">
+          <label class="hlabel" for="sign-in-email-help">Email</label>
+          <input class="hinput" id="sign-in-email-help" name="email" type="email" autocomplete="username" aria-describedby="sign-in-email-help-error" />
+          <p class="herror" id="sign-in-email-help-error" aria-live="polite"></p>
+        </div>
+        <div class="hfield">
+          <div class="hfield-label-row">
+            <label class="hlabel" for="sign-in-password-help">Password</label>
+            <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+          </div>
+          <div class="hpassword">
+            <input
+              class="hinput"
+              id="sign-in-password-help"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              aria-describedby="sign-in-password-help-error"
+            />
+            <span class="htooltip-trigger">
+              <button
+                class="hpassword-toggle"
+                type="button"
+                aria-label="Show password"
+                aria-pressed="false"
+                aria-controls="sign-in-password-help"
+                hidden
+              >
+                <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+            </span>
+          </div>
+          <p class="herror" id="sign-in-password-help-error" aria-live="polite"></p>
+        </div>
+      </div>
+      <button class="hbutton" type="submit">
+        <span class="hbutton-label">Sign in</span>
+      </button>
+    </form>
+    <ul style="--harmo-card-padding: var(--harmo-space-xs); margin: 0; padding: 0; list-style: none">
+      <li>
+        <a class="hcard" data-variant="ghost" href="/activate">
+          <p class="hcard-title">Activate your account</p>
+          <p class="hcard-description">Got an invitation? Set a password to start.</p>
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+        </a>
+      </li>
+      <li>
+        <a class="hcard" data-variant="ghost" href="/sign-up">
+          <p class="hcard-title">New here?</p>
+          <p class="hcard-description">Create an account for your team in a few minutes.</p>
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+        </a>
+      </li>
+      <li>
+        <a class="hcard" data-variant="ghost" href="/contact">
+          <p class="hcard-title">Talk to us</p>
+          <p class="hcard-description">Questions about plans or setup? We're glad to help.</p>
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+        </a>
+      </li>
+    </ul>
+  </div>
+</play-example>

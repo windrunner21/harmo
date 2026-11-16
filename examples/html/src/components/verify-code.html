@@ -1,0 +1,161 @@
+<play-example title="Default">
+  <play-note>
+    A raised <a class="hlink" data-underlined href="card.html">Card</a> with
+    the code, in an <a class="hlink" data-underlined href="otp-input.html">OTP
+    Input</a>, under where it went. The form sends itself as the last digit
+    arrives, typed, pasted, or filled in from a message. "Send a new code"
+    waits 30 seconds, counting down, and waits again after each code it sends.
+    A code that's turned down gets its error under the field, which takes
+    focus with its code selected, and the form shakes.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code>
+    <div class="hauth-form-header">
+      <h1 class="hauth-form-title" tabindex="-1">Enter the code</h1>
+      <p class="hauth-form-description" id="code-sent-description" aria-live="polite">
+        We sent a 6-digit code to <strong class="hauth-form-email">sam@example.com</strong>.
+      </p>
+    </div>
+    <div class="hfield">
+      <label class="hlabel" for="code-sent-code">Code</label>
+      <div class="hotp-input" dir="ltr" data-example-otp-input>
+        <input
+          class="hinput"
+          id="code-sent-code"
+          name="code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="6"
+          pattern="[0-9]{6}"
+          value=""
+          aria-describedby="code-sent-code-error code-sent-description"
+        />
+        <div class="hotp-input-slots" aria-hidden="true">
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+        </div>
+      </div>
+      <p class="herror" id="code-sent-code-error" aria-live="polite"></p>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Verify</span>
+    </button>
+    <p class="hverify-code-resend">
+      Didn't get a code?
+      <button class="hlink hauth-form-action" type="submit" data-underlined formaction="/sign-in/code/resend">Send a new code</button>
+    </p>
+    <p class="hauth-form-footer">
+      <a class="hlink" href="/sign-in">Back to sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="From an authenticator app">
+  <play-note>
+    Without an address, the code comes from an authenticator app, which makes
+    a new one every 30 seconds, so there's nothing to send again.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code>
+    <div class="hauth-form-header">
+      <h1 class="hauth-form-title" tabindex="-1">Enter the code</h1>
+      <p class="hauth-form-description" id="code-app-description" aria-live="polite">
+        Enter the 6-digit code from your authenticator app.
+      </p>
+    </div>
+    <div class="hfield">
+      <label class="hlabel" for="code-app-code">Code</label>
+      <div class="hotp-input" dir="ltr" data-example-otp-input>
+        <input
+          class="hinput"
+          id="code-app-code"
+          name="code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="6"
+          pattern="[0-9]{6}"
+          value=""
+          aria-describedby="code-app-code-error code-app-description"
+        />
+        <div class="hotp-input-slots" aria-hidden="true">
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+        </div>
+      </div>
+      <p class="herror" id="code-app-code-error" aria-live="polite"></p>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Verify</span>
+    </button>
+    <p class="hauth-form-footer">
+      <a class="hlink" href="/sign-in">Back to sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="Confirming a phone number">
+  <play-note>
+    On a page of its own, such as one that confirms a phone number: a title of
+    your own, the code in two groups as the message writes it, a minute
+    between new codes, and a way back of your own.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code data-example-verify-code-resend-after="60">
+    <div class="hauth-form-header">
+      <h1 class="hauth-form-title" tabindex="-1">Confirm your phone number</h1>
+      <p class="hauth-form-description" id="code-phone-description" aria-live="polite">
+        We sent a 6-digit code to <strong class="hauth-form-email">+1 (555) 010-4821</strong>.
+      </p>
+    </div>
+    <div class="hfield">
+      <label class="hlabel" for="code-phone-code">Code</label>
+      <div class="hotp-input" dir="ltr" data-example-otp-input>
+        <input
+          class="hinput"
+          id="code-phone-code"
+          name="code"
+          type="text"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="6"
+          pattern="[0-9]{6}"
+          value=""
+          aria-describedby="code-phone-code-error code-phone-description"
+        />
+        <div class="hotp-input-slots" aria-hidden="true">
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-separator"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+          <span class="hotp-input-slot"></span>
+        </div>
+      </div>
+      <p class="herror" id="code-phone-code-error" aria-live="polite"></p>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Verify</span>
+    </button>
+    <p class="hverify-code-resend">
+      Didn't get a code?
+      <button class="hlink hauth-form-action" type="submit" data-underlined formaction="/settings/phone/resend">Send a new code</button>
+    </p>
+    <p class="hauth-form-footer">
+      <a class="hlink" href="/settings/phone">Use another number</a>
+    </p>
+  </form>
+</play-example>

@@ -8,6 +8,9 @@ export interface CatalogEntry {
 
 export interface CatalogGroup {
   title: string;
+  // A group of patterns, whose docs are in docs/patterns rather than
+  // docs/components.
+  patterns?: true;
   entries: CatalogEntry[];
 }
 
@@ -212,6 +215,11 @@ const groups: CatalogGroup[] = [
           "Single-line native inputs: text, email, search, tel, url, and similar.",
       },
       {
+        slug: "otp-input",
+        title: "OTP Input",
+        purpose: "A one-time code from a message, such as a sign-in's second step, with a slot for each character.",
+      },
+      {
         slug: "password",
         title: "Password Input",
         purpose:
@@ -374,6 +382,48 @@ const groups: CatalogGroup[] = [
         slug: "tooltip",
         title: "Tooltip",
         purpose: "A short description shown on hover and keyboard focus.",
+      },
+    ],
+  },
+  {
+    title: "Patterns",
+    patterns: true,
+    entries: [
+      {
+        slug: "sign-in-form",
+        title: "Sign-in Form",
+        purpose:
+          "Signs someone in with their email and password, with a link to reset the password.",
+      },
+      {
+        slug: "sign-up-form",
+        title: "Sign-up Form",
+        purpose:
+          "Creates an account with a name, an email, and a password, or with another account, such as Google.",
+      },
+      {
+        slug: "reset-password",
+        title: "Reset Password",
+        purpose:
+          "Sends a link to reset a forgotten password, then sets a new one.",
+      },
+      {
+        slug: "account-forms",
+        title: "Account Forms",
+        purpose:
+          "Signs someone in, creates an account, or sends a link to reset a password, switching between the three forms in place, such as in a Dialog.",
+      },
+      {
+        slug: "verify-code",
+        title: "Verify Code",
+        purpose:
+          "Asks for a one-time code, such as a sign-in's second step or one that confirms an email, with a new code a moment later.",
+      },
+      {
+        slug: "contact-form",
+        title: "Contact Form",
+        purpose:
+          "Lets people reach your team: a message, a sales inquiry, a support request, and more.",
       },
     ],
   },

@@ -87,6 +87,29 @@
     transform-origin: left center;
   }
 
+  // At the start or end of the trigger's line, which swap in right-to-left
+  // text. Physical sides chosen by the tooltip's direction, as position-area's
+  // inline-start and inline-end follow the page's, not a right-to-left part
+  // of it.
+  &[data-side="inline-start"] {
+    position-area: left;
+
+    transform-origin: right center;
+  }
+
+  &[data-side="inline-end"],
+  &[data-side="inline-start"]:dir(rtl) {
+    position-area: right;
+
+    transform-origin: left center;
+  }
+
+  &[data-side="inline-end"]:dir(rtl) {
+    position-area: left;
+
+    transform-origin: right center;
+  }
+
   &[data-variant="hint"] {
     max-inline-size: 280px;
     padding: 8px $space-xs;

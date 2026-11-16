@@ -34,6 +34,43 @@ export const examples = {
     </RadioGroup>
   ),
 
+  Cards: () => (
+    <RadioGroup label="Plan" name="plan" defaultValue="team">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(13rem, 100%), 1fr))",
+          gap: "var(--harmo-space-xs)",
+        }}
+      >
+        <Field
+          orientation="horizontal"
+          variant="card"
+          label="Starter"
+          description="For one person, with up to 3 projects."
+        >
+          <Radio value="starter" />
+        </Field>
+        <Field
+          orientation="horizontal"
+          variant="card"
+          label="Team"
+          description="For up to 20 people, with shared projects."
+        >
+          <Radio value="team" />
+        </Field>
+        <Field
+          orientation="horizontal"
+          variant="card"
+          label="Business"
+          description="For a whole company, with single sign-on."
+        >
+          <Radio value="business" />
+        </Field>
+      </div>
+    </RadioGroup>
+  ),
+
   Disabled: () => (
     <>
       <RadioGroup

@@ -1,12 +1,48 @@
 import { expect } from "@playwright/test";
-import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
+import { boxes, clickAt, colorOf, example, onEachPlayground, settled, test } from "./playgrounds.ts";
 
 // docs/components/checkbox.md: the mixed state is the indeterminate property,
 // which a script sets; checking the box clears it, as the browser does. A
 // group's checkboxes share its name; a disabled box can't be changed; a
 // larger box stays centered on its label's first line; and a toggle from the
-// keyboard changes at once, while one with the pointer fades.
+// keyboard changes at once, while one with the pointer fades. As a choice
+// card, per docs/components/field.md, a checkbox and its label are a bordered
+// tile, checked by a click anywhere on it, with the checkbox's colors once
+// checked.
 onEachPlayground("checkbox", () => {
+  test("as cards: a bordered tile with a medium label, and checked, the primary border on the tint", async ({ page }) => {
+    const container = await example(page, "checkbox-cards");
+    const cards = container.locator('.hfield[data-variant="card"]');
+    await expect(cards).toHaveCount(3);
+    const support = cards.first();
+    const storage = cards.nth(1);
+    await expect(support).toHaveCSS("border-top-width", "1px");
+    await expect(support).toHaveCSS("border-top-color", await colorOf(page, "var(--harmo-color-border)"));
+    await expect(support).toHaveCSS("border-top-left-radius", "8px");
+    await expect(support).toHaveCSS("padding-top", "16px");
+    await expect(support.locator(".hlabel")).toHaveCSS("font-weight", "500");
+    await expect(support.getByRole("checkbox", { name: "Priority support" })).toHaveAccessibleDescription(
+      "Answers within an hour, at any time of day.",
+    );
+    await expect(storage.getByRole("checkbox")).toBeChecked();
+    await settled(storage);
+    await expect(storage).toHaveCSS("border-top-color", await colorOf(page, "var(--harmo-color-primary)"));
+    await expect(storage).toHaveCSS("background-color", await colorOf(page, "var(--harmo-color-primary-tint)"));
+  });
+
+  test("as cards, a click on a card's padding or its description toggles it", async ({ page }) => {
+    const container = await example(page, "checkbox-cards");
+    const cards = container.locator('.hfield[data-variant="card"]');
+    const support = cards.first();
+    const storage = cards.nth(1);
+    const [card] = await boxes(support);
+    await support.click({ position: { x: card!.width - 6, y: card!.height / 2 } });
+    await expect(support.getByRole("checkbox")).toBeChecked();
+    await clickAt(page, storage.locator(".hdescription"));
+    await expect(storage.getByRole("checkbox")).not.toBeChecked();
+    await expect(support.getByRole("checkbox")).toBeChecked();
+  });
+
   test("toggled with the pointer, it fades in 150ms; from the keyboard, it changes at once", async ({ page }) => {
     const container = await example(page, "checkbox-group");
     const checkbox = container.getByRole("checkbox").first();
@@ -72,5 +108,19 @@ onEachPlayground("checkbox", () => {
     expect(checkbox.height).toBeCloseTo(24, 0);
     // The label's line is 20px tall.
     expect(checkbox.y + checkbox.height / 2).toBeCloseTo(label.y + 10, 0);
+  });
+
+  test("small, for fine print: a 13px label and a 16px box, beside the label's first line", async ({ page }) => {
+    const container = await example(page, "checkbox-small");
+    const fields = container.locator(".hfield");
+    for (const field of await fields.all()) {
+      const box = field.locator(".hcheckbox");
+      const label = field.locator(".hlabel");
+      await expect(label).toHaveCSS("font-size", "13px");
+      const [check, text] = await boxes(box, label);
+      expect(check!.width).toBeCloseTo(16, 0);
+      // Centered on the label's first 20px line, however many lines it takes.
+      expect(check!.y + check!.height / 2).toBeCloseTo(text!.y + 10, 0);
+    }
   });
 });

@@ -122,6 +122,60 @@ export const slowDown = (element: Locator) =>
 // How many animations and transitions an element is running.
 export const animations = (element: Locator) => element.evaluate((node) => node.getAnimations().length);
 
+// Makes the motion that scripts time by --harmo-duration-normal, such as a
+// pattern's step change, last 100 seconds or more inside an element, so a
+// test sees it running; release then ends it, element by element.
+export const slowDownSteps = (element: Locator) =>
+  element.evaluate((node) => (node as HTMLElement).style.setProperty("--harmo-duration-normal", "100s"));
+
+// The size animation a pattern's step change runs on its card, if it runs
+// one: the heights it goes from and to, its easing, and the card's height now.
+export const resizing = (card: Locator) =>
+  card.evaluate((node) => {
+    const effect = node.getAnimations().find((animation) => animation.id === "harmo-step-resize")?.effect;
+    if (!(effect instanceof KeyframeEffect)) return undefined;
+    const [from = NaN, to = NaN] = effect.getKeyframes().map((frame) => parseFloat(String(frame.height)));
+    return { from, to, easing: effect.getTiming().easing, height: parseFloat(getComputedStyle(node).height) };
+  });
+
+// Where a step change moves something that stays in the card from, such as
+// the band along its bottom, as "x y", if it moves it.
+export const movedFrom = (element: Locator) =>
+  element.evaluate((node) => {
+    const effect = node.getAnimations().find((animation) => animation.id === "harmo-step-move")?.effect;
+    return effect instanceof KeyframeEffect ? String(effect.getKeyframes()[0]?.translate) : undefined;
+  });
+
+// Checks that a form's shake, which `start` sets off, ends only with its own
+// animation: with the shake made to last 100 seconds, an animation inside the
+// form ending, as a loading Button's spinner's does as it appears, leaves it
+// shaking, and finishing the shake ends it.
+export const expectShakeToEndOnItsOwn = async (form: Locator, start: () => Promise<unknown>) => {
+  await form.evaluate((node) => (node as HTMLElement).style.setProperty("--harmo-duration-slow", "100s"));
+  await start();
+  await expect(form).toHaveAttribute("data-shake", "");
+  const shaking = await form.evaluate(async (node) => {
+    node.firstElementChild?.dispatchEvent(new AnimationEvent("animationend", { bubbles: true, animationName: "hspinner-in" }));
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    return node.hasAttribute("data-shake");
+  });
+  expect(shaking, "still shaking once an animation inside it ended").toBe(true);
+  await release(form);
+  await expect(form).not.toHaveAttribute("data-shake");
+};
+
+// Whether an element is fading in from nothing, as a step's new content does.
+export const fadingIn = (element: Locator) =>
+  element.evaluate((node) =>
+    node
+      .getAnimations()
+      .some(
+        (animation) =>
+          animation.effect instanceof KeyframeEffect && String(animation.effect.getKeyframes()[0]?.opacity) === "0",
+      ),
+  );
+
 // Finishes an element's animations and transitions. A frame first, as in
 // settled, since WebKit may start a transition only then, and one that starts
 // after this would run its slowed-down 100 seconds. WebKit can also start a
@@ -163,6 +217,18 @@ export const clickAt = async (page: Page, element: Locator) => {
   await page.mouse.up();
 };
 
+// The color a value, such as a token's var(), resolves to on the page, as a
+// computed color, to compare with an element's.
+export const colorOf = (page: Page, value: string) =>
+  page.evaluate((value) => {
+    const probe = document.createElement("i");
+    probe.style.color = value;
+    document.body.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  }, value);
+
 // Elements' boxes on the page, as Playwright measures them.
 export const boxes = (...elements: Locator[]) =>
   Promise.all(
@@ -194,4 +260,37 @@ export const watchTransitions = async (element: Locator, property: string) => {
     await rendered(element.page());
     return counter.evaluate((started) => started.count);
   };
+};
+
+// What a form sends before its script runs, and what it holds to send. In
+// HTML, it posts, so what was typed stays out of the page's address and the
+// server's logs. In React, whose action is a function, React's own action
+// holds a form sent before the page hydrates, so the browser never sends it
+// anywhere, and sends it once it has; a server action renders as a post, as
+// examples/react/test/auth-actions.test.tsx checks. Either way, the form's
+// data holds these named fields, in order, as the page shows them.
+export const expectPosts = async (form: Locator, names?: string[]) => {
+  const sent = await form.evaluate((node: HTMLFormElement) => ({
+    method: node.getAttribute("method"),
+    action: node.getAttribute("action"),
+    names: [...new FormData(node).keys()],
+  }));
+  if (form.page().url().includes("/examples/react/")) {
+    expect(sent.action).toMatch(/^javascript:throw new Error\('(A )?React form (was )?unexpectedly submitted\./);
+    expect(sent.method).toBeNull();
+  } else {
+    expect(sent.method).toBe("post");
+  }
+  if (names) expect(sent.names).toEqual(names);
+};
+
+// A submit button that posts its form to an action of its own, such as Verify
+// Code's resend, before a script runs too: in HTML, to its formaction, the
+// server's endpoint for it; in React, to the one React writes for a function
+// action, as a server action's hidden fields would name it.
+export const expectPostsElsewhere = async (button: Locator) => {
+  const own = await button.getAttribute("formaction");
+  if (button.page().url().includes("/examples/react/"))
+    expect(own).toMatch(/^javascript:throw new Error\('(A )?React form (was )?unexpectedly submitted\./);
+  else expect(own).toMatch(/^\/\S+$/);
 };

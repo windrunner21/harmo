@@ -61,8 +61,10 @@
 <play-example title="Sides">
   <play-note>
     Below by default; <code>data-side</code> prefers another side, and the
-    tooltip flips when there isn't room. Sides are physical: left stays left
-    in right-to-left text.
+    tooltip flips when there isn't room. Left and right are physical: left
+    stays left in right-to-left text. <code>inline-start</code> and
+    <code>inline-end</code> follow the text: end is the right in
+    left-to-right text, the left in right-to-left.
   </play-note>
   <span class="htooltip-trigger">
     <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-top-tip">
@@ -87,6 +89,18 @@
       <span class="hbutton-label">Right</span>
     </button>
     <span class="htooltip" role="tooltip" id="side-right-tip" data-side="right">To the right</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-start-tip">
+      <span class="hbutton-label">Start</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="side-start-tip" data-side="inline-start">Before the button, in the text's direction</span>
+  </span>
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="side-end-tip">
+      <span class="hbutton-label">End</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="side-end-tip" data-side="inline-end">After the button, in the text's direction</span>
   </span>
 </play-example>
 

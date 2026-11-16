@@ -1,0 +1,185 @@
+@use "shortcuts" as *;
+@use "control";
+
+// A one-time code: one Input that holds the whole code, under a row of slots
+// that show it a character each. Until its script sets data-ready, the Input
+// shows as itself, as wide and tall as the slots, which wait unseen; then its
+// text and box turn see-through, and the slots show its value instead, so
+// nothing moves as the script arrives.
+
+// A slot is a little wider than a control is tall, and taller: 40px by 44px,
+// a finger's size.
+$slot-inline-size: calc(#{$control-height} + #{$space-2xs});
+$slot-block-size: calc(#{$control-height} + #{$space-xs});
+
+.hotp-input {
+  position: relative;
+  isolation: isolate;
+
+  display: flex;
+
+  inline-size: fit-content;
+  max-inline-size: 100%;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Over the slots, so it's what a press reaches. At least 16px, so iOS
+  // Safari doesn't zoom in when it's focused.
+  & > .hinput {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    block-size: 100%;
+
+    font-size: max(16px, #{$font-size-base});
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// Letters are read in capitals, in the monospaced font, whose 0 and O, and 1
+// and I, differ.
+:where(.hotp-input[data-characters="alphanumeric"]) > .hinput {
+  font-family: $font-family-mono;
+  text-transform: uppercase;
+}
+
+// With its script: the field's text, caret, selection, and box are
+// see-through, and stay so in forced colors, where the slots are drawn in
+// the system's colors. More specific than Input's states, which it replaces.
+.hotp-input[data-ready] > .hinput {
+  forced-color-adjust: none;
+
+  color: transparent;
+  caret-color: transparent;
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+
+  &::selection {
+    color: transparent;
+    background-color: transparent;
+  }
+
+  &::placeholder {
+    color: transparent;
+  }
+}
+
+.hotp-input-slots {
+  display: flex;
+  gap: $space-2xs;
+
+  min-inline-size: 0;
+
+  // Unseen until the script is ready, still taking their room.
+  visibility: hidden;
+
+  &[hidden] {
+    display: none;
+  }
+
+  :where(.hotp-input[data-ready]) > & {
+    visibility: visible;
+  }
+}
+
+.hotp-input-slot {
+  @include control.box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // Narrower when there isn't room for the whole code, as on a phone.
+  inline-size: $slot-inline-size;
+  min-inline-size: 0;
+  block-size: $slot-block-size;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Where typing goes: the caret's slot, or each slot of a selection.
+  &[data-active] {
+    @include control.focused;
+    @include control.ring;
+  }
+
+  :where(.hotp-input[data-characters="alphanumeric"] > .hotp-input-slots) > & {
+    font-family: $font-family-mono;
+  }
+}
+
+// The caret moves as you type, so the slots change at once while the field
+// is focused; on hover, they fade as an Input's border does.
+:where(.hotp-input > .hinput:focus ~ .hotp-input-slots) > .hotp-input-slot {
+  transition: none;
+}
+
+// The whole code lights up on hover, as an Input's border does, but not while
+// it's focused, when only the caret's slot does.
+@media (hover: hover) and (pointer: fine) {
+  :where(
+      .hotp-input
+        > .hinput:hover:not(:focus, :disabled, [readonly], [aria-invalid="true"], #{control.$label-hovered})
+        ~ .hotp-input-slots
+    )
+    > .hotp-input-slot {
+    @include control.focused;
+  }
+}
+
+:where(.hotp-input > .hinput[aria-invalid="true"] ~ .hotp-input-slots) > .hotp-input-slot {
+  @include control.invalid;
+}
+
+:where(.hotp-input > .hinput[readonly] ~ .hotp-input-slots) > .hotp-input-slot {
+  background-color: $color-background-secondary;
+}
+
+:where(.hotp-input > .hinput:disabled ~ .hotp-input-slots) > .hotp-input-slot {
+  @include control.disabled;
+}
+
+// The caret, in an empty slot where typing goes, blinking as a field's does,
+// and steady under reduced motion. A border, so forced colors draw it too.
+:where(.hotp-input > .hinput:not([readonly]) ~ .hotp-input-slots)
+  > .hotp-input-slot[data-active]:not([data-filled])::after {
+  content: "";
+
+  block-size: 1em;
+
+  border-inline-start: 2px solid $color-text;
+
+  animation: hotp-input-caret 1s step-end infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes hotp-input-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+// A dash between groups, such as 123–456, the slots' gap on each side.
+.hotp-input-separator {
+  flex: none;
+  align-self: center;
+
+  inline-size: $space-xs;
+
+  border-block-start: 2px solid $color-text-tertiary;
+  border-radius: 1px;
+}

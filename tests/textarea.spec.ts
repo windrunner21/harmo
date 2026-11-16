@@ -89,6 +89,17 @@ onEachPlayground("textarea", () => {
     await expect(counter).toHaveText("0/500");
   });
 
+  test("--htextarea-min-height starts it taller, four lines here, and it grows with its text from there", async ({ page }) => {
+    const textarea = (await example(page, "textarea-taller-to-start")).getByLabel("Feedback");
+    const height = async () => (await textarea.boundingBox())!.height;
+    await expect(textarea).toHaveCSS("min-height", "94px");
+    expect(await height()).toBeCloseTo(94, 0);
+    if (await textarea.evaluate(() => CSS.supports("field-sizing", "content"))) {
+      await textarea.fill(Array(6).fill("A line").join("\n"));
+      expect(await height()).toBeCloseTo(134, 0);
+    }
+  });
+
   test("it grows up to 150px; a height in its style, as dragging the corner sets, lifts that, and a line-height doesn't", async ({ page }) => {
     const container = await example(page, "textarea-with-a-counter");
     const textarea = container.getByLabel("Message");

@@ -21,6 +21,8 @@ interface FieldParts extends ComponentPropsWithRef<"div"> {
 
 export interface StackedFieldProps extends FieldParts {
   orientation?: undefined;
+  size?: never;
+  variant?: never;
   control?: "button" | "combobox";
   optional?: ReactNode;
   labelAccessory?: ReactNode;
@@ -29,6 +31,8 @@ export interface StackedFieldProps extends FieldParts {
 
 interface HorizontalFieldProps extends FieldParts {
   orientation: "horizontal";
+  size?: "small";
+  variant?: "card";
   control?: never;
   optional?: never;
   labelAccessory?: never;
@@ -80,6 +84,8 @@ export const useField = (
 export const Field = (fieldProps: FieldProps) => {
   const {
     orientation,
+    size,
+    variant,
     control: controlKind,
     label,
     optional,
@@ -202,6 +208,8 @@ export const Field = (fieldProps: FieldProps) => {
         {...groupName}
         className={withClass("hfield", className)}
         data-orientation={orientation}
+        data-size={size}
+        data-variant={variant}
       >
         {content}
       </div>

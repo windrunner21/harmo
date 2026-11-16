@@ -9,6 +9,7 @@ $padding-block: calc((#{$control-height} - 1.25rem - 2px) / 2);
 .htextarea {
   @extend %control;
 
+  --htextarea-min-height: #{$control-height};
   --htextarea-max-height: min(400px, 50dvh);
 
   display: block;
@@ -16,7 +17,7 @@ $padding-block: calc((#{$control-height} - 1.25rem - 2px) / 2);
   field-sizing: content;
   inline-size: 100%;
   min-inline-size: 0;
-  min-block-size: $control-height;
+  min-block-size: var(--htextarea-min-height);
   max-block-size: var(--htextarea-max-height);
   padding: $padding-block control.$padding-inline;
 

@@ -22,7 +22,7 @@ interface TooltipControl {
 
 interface TooltipOptions
   extends Omit<ComponentPropsWithRef<"span">, "children"> {
-  side?: "top" | "left" | "right";
+  side?: "top" | "left" | "right" | "inline-start" | "inline-end";
   variant?: "hint";
   children: ReactElement<TooltipControl>;
 }

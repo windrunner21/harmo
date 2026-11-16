@@ -1,14 +1,17 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import {
+  cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
   readdirSync,
   readFileSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { dirname, join, normalize } from "node:path";
+import { sharedClasses } from "../shared-styles.js";
 
 // Runs the built CLI in Node, as npx would, in a throwaway project. Those projects
 // sit inside this package, so their copies find its React and TypeScript.
@@ -28,15 +31,44 @@ beforeEach(() => {
   );
 });
 
-afterEach(() => rmSync(project, { recursive: true, force: true }));
+let copies: string[] = [];
 
-const run = (...args: string[]) => {
-  const result = Bun.spawnSync(["node", cli, ...args], { cwd: project });
+afterEach(() => {
+  rmSync(project, { recursive: true, force: true });
+  for (const copy of copies) rmSync(copy, { recursive: true, force: true });
+  copies = [];
+});
+
+const runWith = (tool: string, ...args: string[]) => {
+  const result = Bun.spawnSync(["node", tool, ...args], { cwd: project });
   return {
     code: result.exitCode,
     out: result.stdout.toString(),
     err: result.stderr.toString(),
   };
+};
+const run = (...args: string[]) => runWith(cli, ...args);
+
+// A copy of the built CLI with a registry of its own, for what Harmo's doesn't
+// hold, such as a pattern with two stylesheets.
+interface Item {
+  name: string;
+  categories?: string[];
+  files: { path: string; content: string }[];
+}
+const cliWith = (items: Item[]) => {
+  const copy = mkdtempSync(join(output, "cli-"));
+  copies.push(copy);
+  cpSync(join(root, "dist"), join(copy, "dist"), { recursive: true });
+  cpSync(join(root, "package.json"), join(copy, "package.json"));
+  mkdirSync(join(copy, "registry"));
+  writeFileSync(
+    join(copy, "registry", "registry.json"),
+    JSON.stringify({ items: items.map(({ name, categories }) => ({ name, categories })) }),
+  );
+  for (const item of items)
+    writeFileSync(join(copy, "registry", `${item.name}.json`), JSON.stringify(item));
+  return join(copy, "dist", "harmo.js");
 };
 const read = (path: string) => readFileSync(join(project, path), "utf8");
 const write = (path: string, text: string) =>
@@ -166,8 +198,156 @@ describe("add", () => {
     });
   }
 
+  test("a pattern goes in patterns/<name>, with what it uses, its imports pointing to the copies, and its styles after the components'", () => {
+    expect(run("add", "sign-in-form").code).toBe(0);
+    const files = copied();
+    expect(files).toContain("patterns/sign-in-form/SignInForm.tsx");
+    expect(files).toContain("patterns/auth-form/auth-form.css");
+    // Its frame is a class on its <form>, not Card's code, and still comes.
+    expect(files).toContain("card/card.css");
+    const code = read(`${harmo}/patterns/sign-in-form/SignInForm.tsx`);
+    expect(code).not.toContain("@harmo-ui/");
+    expect(code).toContain('import { PasswordInput } from "../../password/PasswordInput";');
+    // Its code step is Verify Code, another pattern, which comes whole, and
+    // the helpers they share, with their imports pointing to the copies: the
+    // account forms' own, and the one every form's action runs through,
+    // which the account forms' imports too.
+    expect(files).toContain("patterns/verify-code/VerifyCodeForm.tsx");
+    expect(files).toContain("patterns/auth-form/authForm.ts");
+    expect(files).toContain("patterns/form-action/formAction.ts");
+    expect(code).toContain('from "../verify-code/VerifyCodeForm";');
+    expect(code).toContain('from "../auth-form/authForm";');
+    expect(code).toContain('from "../form-action/formAction";');
+    expect(read(`${harmo}/patterns/auth-form/authForm.ts`)).toContain('from "../form-action/formAction";');
+
+    run("add", "tag");
+    const imports = importsIn(read(`${harmo}/harmo.css`));
+    expect(imports.slice(-2)).toEqual(["patterns/auth-form/auth-form.css", "patterns/verify-code/verify-code.css"]);
+    expect(imports).toContain("tag/tag.css");
+  });
+
+  test("a pattern's import from a helper's folder copies that file into patterns/<folder>/, and the helper isn't a pattern", () => {
+    expect(run("add", "contact-form").code).toBe(0);
+    const files = copied();
+    expect(files).toContain("patterns/step-motion/useStepMotion.ts");
+    expect(files).toContain("patterns/form-action/formAction.ts");
+    expect(files).not.toContain("patterns/auth-form/authForm.ts");
+    const hook = read(`${harmo}/patterns/contact-form/useContactForm.ts`);
+    expect(hook).toContain('from "../step-motion/useStepMotion";');
+    expect(hook).toContain('from "../form-action/formAction";');
+    expect(read(`${harmo}/patterns/contact-form/ContactForm.tsx`)).toContain('from "../form-action/formAction";');
+    expect(read(`${harmo}/patterns/step-motion/useStepMotion.ts`)).not.toContain("@harmo-ui/");
+    expect(read(`${harmo}/patterns/form-action/formAction.ts`)).not.toContain("@harmo-ui/");
+    expect(names).not.toContain("step-motion");
+    expect(names).not.toContain("form-action");
+    // The type-check below adds every pattern, so each one that uses it
+    // type-checks with it as copied.
+  });
+
+  test("every pattern brings form-action, which its forms' actions run through, and only the account forms bring auth-form's code", () => {
+    const paths = (name: string) => registry(name).files.map(({ path }: { path: string }) => path);
+    for (const name of ["sign-in-form", "sign-up-form", "reset-password", "account-forms", "verify-code", "contact-form"]) {
+      expect(paths(name), name).toContain("patterns/form-action/formAction.ts");
+    }
+    for (const name of ["sign-in-form", "sign-up-form", "reset-password", "account-forms", "verify-code"]) {
+      expect(paths(name), name).toContain("patterns/auth-form/authForm.ts");
+    }
+    expect(paths("contact-form")).not.toContain("patterns/auth-form/authForm.ts");
+  });
+
+  test("a stylesheet in a pattern's folder, whatever its name, is imported once, however often it's added", () => {
+    const file = (path: string) => ({ path, content: `/* ${path} */\n` });
+    const tool = cliWith([
+      {
+        name: "plans",
+        categories: ["pattern"],
+        files: ["tokens.css", "accents.css", "patterns/plans/plans.css", "patterns/plans/plan-card.css"].map(file),
+      },
+    ]);
+    expect(runWith(tool, "add", "plans").code).toBe(0);
+    expect(runWith(tool, "add", "plans").out).toContain("Already up to date.");
+    expect(importsIn(read(`${harmo}/harmo.css`))).toEqual([
+      "tokens.css",
+      "accents.css",
+      "patterns/plans/plan-card.css",
+      "patterns/plans/plans.css",
+    ]);
+  });
+
+  test("a shared stylesheet comes only with the patterns that use a class under its own prefix", () => {
+    const authForm = readFileSync(
+      join(root, "..", "..", "examples", "react", "src", "patterns", "auth-form", "auth-form.css"),
+      "utf8",
+    );
+    // It places .hbutton, Button's, and a comment names .hlink, Link's: a
+    // pattern with a Button or a Link but none of its classes gets none of it.
+    expect(authForm).toContain(".hbutton");
+    expect(authForm).toContain(".hlink");
+    const claimed = sharedClasses("auth-form", authForm);
+    expect(claimed).toContain("hauth-form");
+    expect(claimed).toContain("hauth-form-title");
+    expect(claimed).not.toContain("hbutton");
+    expect(claimed).not.toContain("hlink");
+    expect(sharedClasses("auth-form", ".hbutton, .hauth-formal { color: red; }")).toEqual([]);
+
+    const paths = (name: string) => registry(name).files.map(({ path }: { path: string }) => path);
+    for (const name of ["sign-in-form", "sign-up-form", "reset-password", "account-forms", "verify-code"])
+      expect(paths(name), name).toContain("patterns/auth-form/auth-form.css");
+    expect(paths("contact-form")).not.toContain("patterns/auth-form/auth-form.css");
+
+    // And each shared stylesheet a pattern brings styles a class its code uses.
+    const patterns = new Set(
+      registry("registry").items
+        .filter((item: { categories?: string[] }) => item.categories?.includes("pattern"))
+        .map((item: { name: string }) => item.name),
+    );
+    for (const name of patterns) {
+      const { files } = registry(name as string) as Item;
+      const code = files.filter(({ path }) => /\.tsx?$/.test(path)).map(({ content }) => content).join("\n");
+      for (const { path, content } of files) {
+        const [, helper = ""] = /^patterns\/([^/]+)\/[^/]+\.css$/.exec(path) ?? [];
+        if (!helper || patterns.has(helper)) continue;
+        expect(
+          sharedClasses(helper, content).some((own) => new RegExp(`["'\`\\s]${own}["'\`\\s]`).test(code)),
+          `${name} brings ${path}`,
+        ).toBe(true);
+      }
+    }
+  });
+
+  test("in harmo.css, the stylesheets patterns share come after the components' and before each pattern's own", () => {
+    run("add", "sign-up-form");
+    run("add", "account-forms");
+    const imports = importsIn(read(`${harmo}/harmo.css`));
+    const patterns = [
+      "patterns/auth-form/auth-form.css",
+      "patterns/account-forms/account-forms.css",
+      "patterns/sign-up-form/sign-up-form.css",
+      "patterns/verify-code/verify-code.css",
+    ];
+    expect(imports.filter((path) => path?.startsWith("patterns/"))).toEqual(patterns);
+    expect(imports.slice(-patterns.length)).toEqual(patterns);
+  });
+
+  test("--all copies every component, and no pattern", () => {
+    expect(run("add", "--all").code).toBe(0);
+    expect(existsSync(join(project, harmo, "patterns"))).toBe(false);
+  });
+
+  test("list shows the patterns after the components, under their own heading", () => {
+    const { out } = run("list");
+    const heading = out.indexOf("Patterns");
+    expect(heading).toBeGreaterThan(out.indexOf("tooltip"));
+    expect(out.indexOf("sign-in-form")).toBeGreaterThan(heading);
+  });
+
   test("everything copied type-checks under a default Next.js setup", () => {
     expect(run("add", "--all").code).toBe(0);
+    const patterns = registry("registry").items
+      .filter((item: { categories?: string[] }) => item.categories?.includes("pattern"))
+      .map((item: { name: string }) => item.name);
+    expect(patterns.length).toBeGreaterThan(1);
+    expect(run("add", ...patterns).code).toBe(0);
     write(
       "tsconfig.json",
       JSON.stringify({
@@ -396,9 +576,51 @@ describe("add", () => {
   test("refuses an unknown component, or no component, and writes nothing", () => {
     const unknown = run("add", "tag", "nope");
     expect(unknown.code).toBe(1);
-    expect(unknown.err).toContain("There's no component called nope.");
+    expect(unknown.err).toContain("There's no component or pattern called nope.");
     expect(run("add").code).toBe(1);
     expect(existsSync(join(project, harmo))).toBe(false);
+  });
+
+  test("refuses a registry file that would land outside the folder, through ../, an absolute path, or a link, and writes nothing", () => {
+    const outside = mkdtempSync(join(output, "outside-"));
+    copies.push(outside);
+    const tool = cliWith([
+      { name: "climb", files: [{ path: "tag/Tag.tsx", content: "" }, { path: "../../escaped.ts", content: "// escaped\n" }] },
+      { name: "absolute", files: [{ path: join(outside, "absolute.ts"), content: "// escaped\n" }] },
+      { name: "linked", files: [{ path: "lib/linked.ts", content: "// escaped\n" }] },
+      { name: "file-link", files: [{ path: "tag/tag.css", content: "/* escaped */\n" }] },
+    ]);
+
+    for (const name of ["climb", "absolute"]) {
+      const { code, err } = runWith(tool, "add", name);
+      expect(code, name).toBe(1);
+      expect(err).toContain(`would be written outside ${harmo}`);
+    }
+    expect(existsSync(join(project, "escaped.ts"))).toBe(false);
+    expect(existsSync(join(project, harmo))).toBe(false);
+    expect(readdirSync(outside)).toEqual([]);
+
+    // A folder on the way that's a link out of it, and a file that's one, even
+    // to a file that isn't there yet.
+    mkdirSync(join(project, harmo, "tag"), { recursive: true });
+    symlinkSync(outside, join(project, harmo, "lib"));
+    symlinkSync(join(outside, "tag.css"), join(project, harmo, "tag", "tag.css"));
+    for (const name of ["linked", "file-link"]) {
+      const { code, err } = runWith(tool, "add", name, "--overwrite");
+      expect(code, name).toBe(1);
+      expect(err).toContain("or through a link that leads out of it");
+    }
+    expect(readdirSync(outside)).toEqual([]);
+    expect(existsSync(join(project, harmo, "harmo.css"))).toBe(false);
+  });
+
+  test("follows a folder it's given that's a link, as the project chose it", () => {
+    const elsewhere = mkdtempSync(join(output, "elsewhere-"));
+    copies.push(elsewhere);
+    mkdirSync(join(project, "components"));
+    symlinkSync(elsewhere, join(project, harmo));
+    expect(run("add", "tag").code).toBe(0);
+    expect(existsSync(join(elsewhere, "tag/Tag.tsx"))).toBe(true);
   });
 
   test("refuses to run outside a project", () => {

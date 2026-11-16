@@ -9,7 +9,7 @@ message. The application owns validation and values.
 | --- | --- |
 | CSS | `field.css`, plus the control's CSS, such as `input.css` or `checkbox.css` |
 | Element | `<div class="hfield">`; with `data-orientation="horizontal"` for a checkbox, radio, or switch |
-| Parts | `.hlabel`, `.hfield-label-row`, `.hfield-optional`, `.hdescription`, `.herror`, `.hfield-content` |
+| Parts | `.hlabel`, `.hfield-label-row`, `.hfield-optional`, `.hfield-label-end`, `.hdescription`, `.herror`, `.hfield-content` |
 | Required | A name for the control: a `<label for>` matching its `id`, or, for a group or a button-based control, `aria-labelledby` pointing to the label's `id`; the control's `aria-describedby` lists the description, Optional marker, and error ids; `aria-live="polite"` on the `.herror` |
 | Unique | Every id |
 | Script | Only for validation: set `aria-invalid`, the error's text, and `hidden` to close it; see [What a script does](#what-a-script-does) |
@@ -64,21 +64,38 @@ The same layout holds a [Radio](radio.md) or a [Switch](switch.md). For a
 group, nest one horizontal Field per option in a Field with `role="radiogroup"`
 (or `role="group"` for checkboxes) and a label; see [Radio](radio.md).
 
+A choice card is a horizontal Field with `data-variant="card"`, for a checkbox
+or radio:
+
+```html
+<div class="hfield" data-orientation="horizontal" data-variant="card">
+  <input class="hradio" type="radio" name="plan" id="plan-team" value="team"
+    aria-describedby="plan-team-description" />
+  <div class="hfield-content">
+    <label class="hlabel" for="plan-team">Team</label>
+    <p class="hdescription" id="plan-team-description">For up to 20 people, with shared projects.</p>
+  </div>
+</div>
+```
+
 ## Options
 
 | Hook | Effect |
 | --- | --- |
 | (default) | Stacked: a column with 6px gaps |
 | `data-orientation="horizontal"` | The control first, then the label, or `.hfield-content` with the label and description |
+| `data-size="small"` on a horizontal Field | For a line of fine print, such as agreeing to terms: a 13px label and 12px description, a 16px checkbox or radio, or a switch 36px by 20px, still beside the label's first line. It sets `--harmo-checkbox-size`, `--harmo-switch-width`, `--harmo-switch-height`, and `--harmo-switch-thumb-size` on the Field |
+| `data-variant="card"` on a horizontal Field | A choice card, for a checkbox or radio, such as a plan to choose: the Field as a bordered tile, clicked anywhere, its padding and description too. See [Choice cards](#choice-cards) |
 
 ## Appearance and states
 
 | Part | Appearance |
 | --- | --- |
 | `.hfield` | Column with 6px (`--harmo-space-2xs`) gaps; a description sits right under the label, and an error with no text takes no room. Horizontal, the control and its label are 6px apart |
-| `.hfield-label-row` | Row for the label and whatever sits beside it, 6px (`--harmo-space-2xs`) apart; wraps |
+| `.hfield-label-row` | Row for the label and whatever sits beside it, 6px (`--harmo-space-2xs`) apart; wraps. Its type is the label's, so a link in it, which takes the type around it, matches the label |
 | `.hlabel` | 14px on a 20px line, `--harmo-color-text` |
 | `.hfield-optional` | 12px tag with a border and tinted background, as tall as the label's line, so a label row with it is 20px, as a label alone is; the app supplies the wording |
+| `.hfield-label-end` | At the end of the label row, for something such as a "Forgot your password?" link. After a [Password Input](password.md)'s strength word, it follows the word, which keeps to the row's end |
 | `.hdescription` | 13px, `--harmo-color-text-tertiary` |
 | `.herror` | 12px, `--harmo-color-danger` |
 | `.hfield-content` | Column for a horizontal label and description, the description right under the label, as in a stacked Field |
@@ -101,6 +118,34 @@ group, nest one horizontal Field per option in a Field with `role="radiogroup"`
 - The error clips what it holds, for the collapse, but leaves 4px past its
   edges, so the focus ring of a link in it shows whole. In a browser without
   `overflow-clip-margin`, the ring is cut at the error's top and bottom.
+
+### Choice cards
+
+- A 1px `--harmo-color-border` border, the 8px radius (`--harmo-border-radius`),
+  and 16px (`--harmo-space-sm`) of padding around the control and its label,
+  the control first, as in any horizontal Field. The label is medium
+  (`--harmo-font-weight-medium`); a description is optional.
+- The label stretches over the whole card, with an `::after` laid over it, so
+  a click on the card's padding or its description checks it, as a click on
+  the label does. The control sits above it, so a click on the control lands
+  on the control, and so does anything interactive in the description, such
+  as a link or a button, so a click on it lands on it rather than checking
+  the card. The card is its own stacking context (`isolation: isolate`),
+  so nothing in it rises above the page around it.
+- Hover, on hover devices: the border turns `--harmo-color-border-control`.
+  The label keeps its color, as the border shows the hover.
+- Checked, or a checkbox's mixed state: a `--harmo-color-primary` border on a
+  `--harmo-color-primary-tint` background, and the description turns
+  `--harmo-color-text-secondary`, as the tertiary is under 4.5:1 on the tint.
+  In forced-colors mode, the border turns `Highlight`.
+- The border and background fade over 150ms (`--harmo-duration-fast`), as the
+  control's do. From the keyboard, with the control's focus ring showing, the
+  card changes at once, as its control does.
+- Disabled: its label turns gray, as any disabled control's label does, with
+  the not-allowed cursor, and the border doesn't change on hover.
+- The control keeps its own focus ring.
+- Its width is its container's: lay several out with your own grid, or in a
+  group, one over the other.
 
 ## Accessibility
 
@@ -147,8 +192,10 @@ id as `htmlFor`. Other props are the wrapper `<div>`'s attributes.
 | `optional` | The Optional marker, in your wording, such as "Optional" |
 | `description` | The `.hdescription` under the label |
 | `error` | The `.herror`. Pass it to every field you validate, even while it's `undefined`, so the element is in place when the first error appears; a field without `error` has none. A message sets `aria-invalid` |
-| `labelAccessory` | Placed in the label row after the Optional marker, such as a [Password Input](password.md)'s strength |
+| `labelAccessory` | Placed in the label row after the Optional marker, such as a [Password Input](password.md)'s strength. Give it `className="hfield-label-end"` to put it at the row's end, at the label's size |
 | `orientation` | `horizontal`, for a checkbox, radio, or switch: the control comes first, and only `label` and `description` apply |
+| `size` | `small`, with `orientation="horizontal"`: the fine-print size, as `data-size="small"` |
+| `variant` | `card`, with `orientation="horizontal"`: a [choice card](#choice-cards), as `data-variant="card"` |
 | `control` | `button`, for a control that's a button rather than a form field, such as a `<Button>`: the label is a `<span>` that names it through `aria-labelledby`. `combobox`, for a [Combobox](combobox.md): the label stays a `<label for>` and gets an `id` too, which names the field and its list |
 | `role` | `group` or `radiogroup` makes the Field the group, named by its label, for controls that each have their own; see [RadioGroup](radio.md#react) and [CheckboxGroup](checkbox.md#react). The group is then the control: its own `aria-label` or `aria-labelledby` wins over the label, its `aria-invalid` over the error's, and its `aria-describedby` is combined with the Field's |
 
@@ -201,12 +248,15 @@ give the Field `control="button"`: its label is then a `<span>`, and
 
 ## Tokens
 
-`--harmo-border-radius-sm`, `--harmo-checkbox-size`,
+`--harmo-border-radius`, `--harmo-border-radius-sm`, `--harmo-checkbox-size`,
 `--harmo-color-background-hover`, `--harmo-color-border`,
-`--harmo-color-danger`, `--harmo-color-primary-hover`, `--harmo-color-text`, `--harmo-color-text-secondary`,
-`--harmo-color-text-tertiary`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`,
+`--harmo-color-border-control`, `--harmo-color-danger`,
+`--harmo-color-primary`, `--harmo-color-primary-hover`,
+`--harmo-color-primary-tint`, `--harmo-color-text`,
+`--harmo-color-text-secondary`, `--harmo-color-text-tertiary`,
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-out-cubic`,
 `--harmo-focus-outline-offset`, `--harmo-font-family`,
 `--harmo-font-line-height`, `--harmo-font-size-2xs`, `--harmo-font-size-sm`,
-`--harmo-font-size-xs`, `--harmo-font-weight-normal`, `--harmo-space-2xs`,
+`--harmo-font-size-xs`, `--harmo-font-weight-medium`,
+`--harmo-font-weight-normal`, `--harmo-space-2xs`, `--harmo-space-sm`,
 `--harmo-switch-height`.

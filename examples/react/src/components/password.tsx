@@ -1,4 +1,4 @@
-import { Button, Checkbox, Field, PasswordInput, type PasswordStrength } from "@harmo-ui/react";
+import { Button, Checkbox, Field, Link, PasswordInput, type PasswordStrength } from "@harmo-ui/react";
 import { useState } from "react";
 
 const strength = (password: string): PasswordStrength => {
@@ -30,6 +30,20 @@ export const examples = {
     />
   ),
 
+  "With a link beside the label": () => (
+    <PasswordInput
+      label="Password"
+      showPasswordLabel="Show password"
+      hidePasswordLabel="Hide password"
+      autoComplete="current-password"
+      labelAccessory={
+        <Link href="/reset-password" className="hfield-label-end">
+          Forgot your password?
+        </Link>
+      }
+    />
+  ),
+
   "New password": () => (
     <PasswordInput
       label="New password"
@@ -38,6 +52,34 @@ export const examples = {
       autoComplete="new-password"
       strength={strength}
       strengthLabel="Password strength"
+    />
+  ),
+
+  "With its strength and a link": () => (
+    <PasswordInput
+      label="New password"
+      showPasswordLabel="Show password"
+      hidePasswordLabel="Hide password"
+      autoComplete="new-password"
+      strength={strength}
+      strengthLabel="Password strength"
+      labelAccessory={
+        <Link href="/password-rules" className="hfield-label-end">
+          Password rules
+        </Link>
+      }
+    />
+  ),
+
+  "With an error": () => (
+    <PasswordInput
+      label="New password"
+      showPasswordLabel="Show password"
+      hidePasswordLabel="Hide password"
+      autoComplete="new-password"
+      strength={strength}
+      strengthLabel="Password strength"
+      error="This password has appeared in a data breach. Choose another."
     />
   ),
 

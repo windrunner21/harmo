@@ -8,6 +8,8 @@ import {
   type ComponentPropsWithRef,
   type ReactNode,
 } from "react";
+import { flushSync } from "react-dom";
+import { renders } from "./children.ts";
 import { Field, useField, type StackedFieldProps } from "./field/Field.tsx";
 import { eyeOff as eyeOffPaths, eye as eyePaths } from "./icons.ts";
 import { Input } from "./Input.tsx";
@@ -27,6 +29,7 @@ interface PasswordInputOptions
     Pick<StackedFieldProps, "label" | "optional" | "description" | "error"> {
   showPasswordLabel: string;
   hidePasswordLabel: string;
+  labelAccessory?: ReactNode;
 }
 
 export type PasswordInputProps = PasswordInputOptions &
@@ -48,6 +51,7 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
     hidePasswordLabel,
     strength,
     strengthLabel,
+    labelAccessory,
     ref,
     value,
     defaultValue,
@@ -65,16 +69,27 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
   const lastRating = useRef(rating);
   if (rating) lastRating.current = rating;
   const shown = rating ?? lastRating.current;
+  const erred = renders(error);
+  const rated = Boolean(strength) && !erred;
 
   useEffect(() => {
     const form = current.element.current?.form;
-    if (!form) return;
+    const sent = () => flushSync(() => setRevealed(false));
     const reset = (event: Event) =>
       setTimeout(() => {
         if (!event.defaultPrevented) setRevealed(false);
       });
-    form.addEventListener("reset", reset);
-    return () => form.removeEventListener("reset", reset);
+    const restored = (event: PageTransitionEvent) => {
+      if (event.persisted) setRevealed(false);
+    };
+    form?.addEventListener("submit", sent, true);
+    form?.addEventListener("reset", reset);
+    window.addEventListener("pageshow", restored);
+    return () => {
+      form?.removeEventListener("submit", sent, true);
+      form?.removeEventListener("reset", reset);
+      window.removeEventListener("pageshow", restored);
+    };
   }, []);
 
   const word = strength && (
@@ -83,6 +98,7 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
       id={strengthId}
       aria-live="polite"
       data-status={rating?.status}
+      hidden={erred || undefined}
     >
       {rating?.word}
     </span>
@@ -93,7 +109,14 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
       label={label}
       htmlFor={props.id}
       optional={optional}
-      labelAccessory={word}
+      labelAccessory={
+        word || labelAccessory ? (
+          <>
+            {word}
+            {labelAccessory}
+          </>
+        ) : undefined
+      }
       description={description}
       hidden={hidden}
       {...("error" in passwordProps && { error })}
@@ -107,7 +130,7 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
           onChange={current.onChange}
           type={revealed ? "text" : "password"}
           aria-describedby={
-            strength
+            rated
               ? [props["aria-describedby"], strengthId, hintId]
                   .filter(Boolean)
                   .join(" ")
@@ -128,7 +151,7 @@ export const PasswordInput = (passwordProps: PasswordInputProps) => {
         />
       </div>
       {strength && (
-        <div className="hpassword-details" hidden={!rating}>
+        <div className="hpassword-details" hidden={!rating || erred}>
           <div>
             <Meter
               value={shown?.level ?? 0}
@@ -188,7 +211,7 @@ const PasswordToggle = ({
         {eye}
         {eyeOff}
       </button>
-      <span {...tooltip} className="htooltip" role="tooltip" aria-hidden="true">
+      <span {...tooltip} className="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">
         {pressed ? hidePasswordLabel : showPasswordLabel}
       </span>
     </span>

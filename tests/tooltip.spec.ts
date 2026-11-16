@@ -301,7 +301,7 @@ onEachPlayground("tooltip", () => {
 
   test("it shows 8px from the side it asks for", async ({ page }) => {
     const container = await example(page, "tooltip-sides");
-    for (const name of ["Top", "Bottom", "Left", "Right"]) {
+    for (const name of ["Top", "Bottom", "Left", "Right", "Start", "End"]) {
       const button = container.getByRole("button", { name, exact: true });
       const tooltip = tooltipOf(container, name);
       await tabTo(page, button);
@@ -313,9 +313,31 @@ onEachPlayground("tooltip", () => {
         Bottom: t.y - (b.y + b.height),
         Left: b.x - (t.x + t.width),
         Right: t.x - (b.x + b.width),
+        Start: b.x - (t.x + t.width),
+        End: t.x - (b.x + b.width),
       }[name];
       expect(gap, `${name}'s gap`).toBeCloseTo(8, 0);
     }
+  });
+
+  test("inline-start and inline-end follow the text: in right-to-left text, the end is the left, and the tooltip grows from its side", async ({ page }) => {
+    const container = await example(page, "tooltip-sides");
+    await container.locator(".play-demo").evaluate((demo) => demo.setAttribute("dir", "rtl"));
+    const sideOf = async (name: string) => {
+      const button = container.getByRole("button", { name, exact: true });
+      const tooltip = tooltipOf(container, name);
+      await tabTo(page, button);
+      await expect.poll(() => shown(tooltip)).toBe(true);
+      await settled(tooltip);
+      const [b, t] = await boxes(button, tooltip);
+      const origin = parseFloat(await tooltip.evaluate((element) => getComputedStyle(element).transformOrigin));
+      const side = t.x + t.width <= b.x ? "left" : t.x >= b.x + b.width ? "right" : "neither";
+      return { side, origin: origin < 1 ? "left" : Math.abs(origin - t.width) < 1 ? "right" : `${origin}px` };
+    };
+    expect(await sideOf("End")).toEqual({ side: "left", origin: "right" });
+    expect(await sideOf("Start")).toEqual({ side: "right", origin: "left" });
+    // Physical sides stay.
+    expect((await sideOf("Right")).side).toBe("right");
   });
 
   test("it shows outside a clipping container, above everything", async ({ page }) => {

@@ -1,0 +1,51 @@
+<article class="play-component" id="patterns" aria-labelledby="patterns-title">
+  <header class="play-component-header">
+    <p class="play-eyebrow">Patterns</p>
+    <h1 class="play-component-title" id="patterns-title">Patterns</h1>
+    <p class="play-purpose">
+      Whole tasks, such as signing in, built from Harmo's components. Copy one
+      into your app, then make it yours: its words, its fields, and what it does.
+    </p>
+    <a class="hlink play-docs-link" href="{{docs}}">
+      Documentation
+      <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+    </a>
+  </header>
+  <section class="play-guide-section" aria-labelledby="patterns-list-title">
+    <h2 class="play-example-title" id="patterns-list-title">The patterns</h2>
+    <p class="play-note">
+      Each one comes in React and in HTML. Its page starts with what to type
+      in its examples to see each answer, and what your app and server need.
+    </p>
+    {{patterns}}
+  </section>
+  <section class="play-guide-section" aria-labelledby="patterns-install-title">
+    <h2 class="play-example-title" id="patterns-install-title">Install</h2>
+    <p class="play-note">
+      Copy a pattern into your app, with the components and helpers it uses.
+      Its stylesheet goes into <code>harmo.css</code>, which you import once.
+    </p>
+    <div class="play-command">
+      <button class="hbutton play-copy" data-variant="tertiary" data-size="small" type="button" data-play-copy>
+        <span class="hbutton-label" aria-live="polite">Copy</span>
+      </button>
+      <pre><code>npx harmo-ui add sign-in-form</code></pre>
+    </div>
+  </section>
+  <section class="play-guide-section" aria-labelledby="patterns-needs-title">
+    <h2 class="play-example-title" id="patterns-needs-title">What you need</h2>
+    {{needs}}
+  </section>
+  <section class="play-guide-section" aria-labelledby="patterns-actions-title">
+    <h2 class="play-example-title" id="patterns-actions-title">How the forms answer</h2>
+    <p class="play-note">
+      Each React form takes <code>action</code>, as React 19's
+      <code>&lt;form&gt;</code> does: a function that gets the form's
+      <code>FormData</code> and returns an answer. Give it a server action, such
+      as Next.js's with <code>"use server"</code>, and the form works without
+      JavaScript too. In HTML, your own script sends the form, and shows the
+      answer the same way.
+    </p>
+    {{answers}}
+  </section>
+</article>

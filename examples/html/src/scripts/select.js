@@ -1,8 +1,21 @@
-// Example only: once an option is chosen (listbox.js selects it), show the
-// chosen labels in the trigger, or the placeholder when nothing is chosen,
-// and keep the hidden inputs a form submits in step, as the React Select
-// does. listbox.js closes a single select.
+// Example only: what a script does for a Select, as the React Select does.
+// A select with a name starts as its fallback, a native <select> that a form
+// sends, in the trigger's place; this script takes over, hiding the fallback,
+// so the trigger shows instead. The <select> stays what the form sends: once
+// an option is chosen (listbox.js selects it), this shows the chosen labels in
+// the trigger, or the placeholder when nothing is chosen, and selects the same
+// options in the <select>. listbox.js closes a single select.
 {
+  const checkMark = document.createElement("template");
+  checkMark.innerHTML = `<svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor" /></svg>`;
+
+  // Every fallback steps aside, a disabled select's too. Hidden, its <select>
+  // can't show the browser's message, so it's no longer required.
+  for (const fallback of document.querySelectorAll(".hselect-fallback")) {
+    fallback.hidden = true;
+    fallback.querySelector(":scope > select").required = false;
+  }
+
   // A Phone Input shows the flag and code in its button; phone-input.js does that.
   for (const trigger of document.querySelectorAll(".hselect[popovertarget]:not(.hphone-input-country)")) {
     const popup = document.getElementById(trigger.getAttribute("popovertarget"));
@@ -10,43 +23,55 @@
     const value = trigger.querySelector(".hselect-value");
     const multiple = listbox.getAttribute("aria-multiselectable") === "true";
     const placeholder = value.dataset.examplePlaceholder ?? (value.hasAttribute("data-placeholder") ? value.textContent : "");
-    const name = trigger.dataset.name;
-    const chosen = () => [...listbox.querySelectorAll('.hoption[aria-selected="true"]')];
+    const fallback = trigger.previousElementSibling?.matches(".hselect-fallback")
+      ? trigger.previousElementSibling.querySelector(":scope > select")
+      : null;
+    const options = () => [...listbox.querySelectorAll(".hoption")];
+    const chosen = () => options().filter((option) => option.getAttribute("aria-selected") === "true");
+    const valuesOf = (list) => list.map((option) => option.dataset.value ?? "").join("\n");
     const initial = chosen();
-    const valuesOf = (options) => options.map((option) => option.dataset.value ?? "").join("\n");
-    let held = valuesOf(initial);
-    // This select's hidden inputs are the ones right after its popup.
-    let inputs = [];
-    for (let next = popup.nextElementSibling; next?.matches('input[type="hidden"]') && next.name === name; next = next.nextElementSibling) {
-      inputs.push(next);
-    }
 
-    // Show the chosen labels, and replace its hidden inputs with one per
-    // chosen data-value; a single select always keeps one, as a native select
-    // always sends a value. They're disabled with the trigger, and belong to
-    // the form it names, if it names one.
-    const hiddenInput = (value) => {
-      const input = Object.assign(document.createElement("input"), { type: "hidden", name, value, disabled: trigger.disabled });
-      if (trigger.hasAttribute("form")) input.setAttribute("form", trigger.getAttribute("form"));
-      return input;
+    // Chooses these options in the list, a single select's check mark moving
+    // with its choice.
+    const choose = (picked) => {
+      for (const option of options()) option.setAttribute("aria-selected", String(picked.includes(option)));
+      if (multiple || !picked[0]) return;
+      picked[0].append(listbox.querySelector(".hoption-check") ?? checkMark.content.firstElementChild.cloneNode(true));
     };
+
+    // The options its <select> holds, but its placeholder: a choice made
+    // before this script ran, or the one the browser put back as the page
+    // loaded, and after a reset, the ones the page loaded with.
+    const sent = () => {
+      const values = [...fallback.selectedOptions]
+        .filter((option) => !(option.disabled && option.value === ""))
+        .map((option) => option.value);
+      return options().filter((option) => values.includes(option.dataset.value));
+    };
+    const adopting = fallback && valuesOf(sent()) !== valuesOf(initial);
+    if (adopting) choose(sent());
+    let held = valuesOf(chosen());
+
+    // Show the chosen labels, and select each chosen data-value in the
+    // <select>; with none, a single select's empty option. It's disabled
+    // with the trigger.
     const sync = () => {
-      const options = chosen();
-      const labels = options.map((option) => option.querySelector(".hoption-label").textContent.trim());
+      const picked = chosen();
+      const labels = picked.map((option) => option.querySelector(".hoption-label").textContent.trim());
       value.textContent = labels.length ? labels.join(", ") : placeholder;
       value.toggleAttribute("data-placeholder", labels.length === 0);
       // What an app hears as onValueChange in React: the choice changed, by a
       // pick or a reset.
-      if (valuesOf(options) !== held) trigger.dispatchEvent(new CustomEvent("example-select-change", { bubbles: true }));
-      held = valuesOf(options);
+      if (valuesOf(picked) !== held) trigger.dispatchEvent(new CustomEvent("example-select-change", { bubbles: true }));
+      held = valuesOf(picked);
 
-      if (!name) return;
-      const values = options.map((option) => option.dataset.value ?? "");
-      if (!multiple && !values.length) values.push("");
-      for (const input of inputs) input.remove();
-      inputs = values.map(hiddenInput);
-      popup.after(...inputs);
+      if (!fallback) return;
+      const values = picked.map((option) => option.dataset.value ?? "");
+      if (multiple) for (const option of fallback.options) option.selected = values.includes(option.value);
+      else fallback.value = values[0] ?? "";
+      fallback.disabled = trigger.disabled;
     };
+    if (adopting) sync();
 
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
@@ -54,23 +79,19 @@
       sync();
     });
 
-    // A form reset restores the options chosen when the page loaded; a single
-    // select's check mark moves back with its selection. It waits for the
-    // reset to happen, since another listener may cancel it.
+    // A form reset puts the <select> back as the page loaded it, and the
+    // list follows it; without one, the list goes back to its first choices.
+    // It waits for the reset to happen, since another listener may cancel it.
     trigger.form?.addEventListener("reset", (event) => {
       setTimeout(() => {
         if (event.defaultPrevented) return;
-        for (const option of listbox.querySelectorAll(".hoption")) {
-          option.setAttribute("aria-selected", String(initial.includes(option)));
-        }
-        const check = listbox.querySelector(".hoption-check");
-        if (check && !multiple && initial[0]) initial[0].append(check);
+        choose(fallback ? sent() : initial);
         sync();
       });
     });
 
-    // Disabling the trigger later disables its inputs as well.
-    if (name) new MutationObserver(sync).observe(trigger, { attributeFilter: ["disabled"] });
+    // Disabling the trigger later disables its <select> as well.
+    if (fallback) new MutationObserver(sync).observe(trigger, { attributeFilter: ["disabled"] });
   }
 
   // The form example shows what it would send instead of leaving the page,

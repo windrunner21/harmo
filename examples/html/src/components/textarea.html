@@ -50,6 +50,25 @@
   </div>
 </play-example>
 
+<play-example title="Taller to start" layout="stack">
+  <play-note>
+    <code>--htextarea-min-height</code> sets how tall it starts, here four
+    lines rather than one, for a longer message; it grows with its text from
+    there. <code>rows</code> does nothing, since the box sizes itself to its
+    text.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="feedback-text">Feedback</label>
+    <textarea
+      class="htextarea"
+      id="feedback-text"
+      name="feedback"
+      placeholder="What could we do better?"
+      style="--htextarea-min-height: calc(var(--harmo-control-height) + 3 * 1.25rem)"
+    ></textarea>
+  </div>
+</play-example>
+
 <play-example title="Custom maximum height" layout="stack">
   <play-note>
     <code>--htextarea-max-height</code> sets how tall dragging the corner can

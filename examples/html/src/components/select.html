@@ -3,9 +3,20 @@
     A trigger that looks like an Input, a Popup, and a Listbox. The popup opens
     and closes without a script. Focus stays on the trigger: the <kbd class="hkbd">Arrow</kbd> keys
     open the list and move the highlight, and <kbd class="hkbd">Enter</kbd> or <kbd class="hkbd">Space</kbd> chooses.
+    With a name, a native select in <code>.hselect-fallback</code> sends the
+    value, and stands in for the trigger until the script hides it, looking
+    just as it does, so a form works without a script.
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="channel-label">Channel</span>
+    <span class="hselect-fallback">
+      <select name="channel" aria-labelledby="channel-label">
+        <option value="whatsapp" selected>WhatsApp</option>
+        <option value="telegram">Telegram</option>
+        <option value="viber">Viber</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="channel"
@@ -36,7 +47,6 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="channel" value="whatsapp" />
   </div>
 </play-example>
 
@@ -52,6 +62,14 @@
       <span class="hfield-optional" id="fallback-optional">Optional</span>
     </div>
     <p class="hdescription" id="fallback-description">Used when a message can't be delivered on the main channel.</p>
+    <span class="hselect-fallback">
+      <select name="fallback" aria-labelledby="fallback-label" aria-describedby="fallback-optional fallback-description">
+        <option value="" disabled selected>Select a channel</option>
+        <option value="email">Email</option>
+        <option value="sms">SMS</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="fallback"
@@ -79,7 +97,6 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="fallback" value="" />
   </div>
 </play-example>
 
@@ -91,6 +108,14 @@
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="statuses-label">Message statuses</span>
+    <span class="hselect-fallback">
+      <select name="statuses" aria-labelledby="statuses-label" multiple>
+        <option value="delivered" selected>Delivered</option>
+        <option value="read" selected>Read</option>
+        <option value="failed">Failed</option>
+        <option value="pending">Pending</option>
+      </select>
+    </span>
     <button
       class="hselect"
       id="statuses"
@@ -133,8 +158,6 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="statuses" value="delivered" />
-    <input type="hidden" name="statuses" value="read" />
   </div>
 </play-example>
 
@@ -145,6 +168,13 @@
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="sender-label">Sender number</span>
+    <span class="hselect-fallback">
+      <select name="sender" aria-labelledby="sender-label">
+        <option value="support" selected>+41 44 7654321 · Customer support for Switzerland</option>
+        <option value="sales">+44 20 7946 0000 · Sales</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="sender"
@@ -172,7 +202,6 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="sender" value="support" />
   </div>
 </play-example>
 
@@ -182,6 +211,15 @@
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="language-label">Template language</span>
+    <span class="hselect-fallback">
+      <select name="language" aria-labelledby="language-label" aria-describedby="language-error" aria-invalid="true">
+        <option value="" disabled selected>Select a language</option>
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="ar">Arabic</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="language"
@@ -213,7 +251,6 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="language" value="" />
     <p class="herror" id="language-error" aria-live="polite">Choose a language for the template.</p>
   </div>
 </play-example>
@@ -221,11 +258,16 @@
 <play-example title="Disabled" layout="stack">
   <play-note>
     <code>disabled</code> grays the trigger and its chevron, as for an Input.
-    Disable its hidden input too, so the form doesn't send it, as with a
-    disabled native select.
+    Disable its <code>&lt;select&gt;</code> too, so the form doesn't send it.
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="region-label">Region</span>
+    <span class="hselect-fallback">
+      <select name="region" aria-labelledby="region-label" disabled>
+        <option value="europe" selected>Europe</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="region"
@@ -240,15 +282,14 @@
       <span class="hselect-value">Europe</span>
       <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
     </button>
-    <input type="hidden" name="region" value="europe" disabled />
   </div>
 </play-example>
 
 <play-example title="Disabling" layout="stack">
   <play-note>
-    Disabling the trigger disables its hidden inputs too, so a form leaves
-    the value out, as it would a native select's. Here a checkbox turns the
-    select off and on, as an app's settings might.
+    Disabling the trigger disables its <code>&lt;select&gt;</code> too, so a
+    form leaves the value out. Here a checkbox turns the select off and on, as
+    an app's settings might.
   </play-note>
   <div class="hfield" data-orientation="horizontal">
     <input class="hcheckbox" type="checkbox" id="reminder" name="reminder" checked data-example-enables="reminder-channel" />
@@ -256,6 +297,13 @@
   </div>
   <div class="hfield">
     <span class="hlabel" id="reminder-channel-label">Reminder channel</span>
+    <span class="hselect-fallback">
+      <select name="reminder-channel" aria-labelledby="reminder-channel-label">
+        <option value="sms" selected>SMS</option>
+        <option value="email">Email</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="reminder-channel"
@@ -283,20 +331,28 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="reminder-channel" value="sms" />
   </div>
 </play-example>
 
 <play-example title="In a form" layout="stack">
   <play-note>
-    The trigger is a button, so it submits nothing itself. Its
-    <code>data-name</code> names a hidden input for each chosen option's
-    <code>data-value</code>, which the script keeps in step. Reset restores
-    the first choices. Here, Save shows what the form would send.
+    The trigger is a button, so it sends nothing itself: the
+    <code>&lt;select&gt;</code> in its fallback does, named as the trigger's
+    <code>data-name</code> says, with each chosen option's
+    <code>data-value</code> selected, which the script keeps in step. Reset
+    restores the first choices. Here, Save shows what the form would send.
   </play-note>
   <form data-example-form style="display: flex; flex-direction: column; gap: 16px">
     <div class="hfield">
       <span class="hlabel" id="form-channel-label">Channel</span>
+      <span class="hselect-fallback">
+        <select name="channel" aria-labelledby="form-channel-label">
+          <option value="whatsapp" selected>WhatsApp</option>
+          <option value="telegram">Telegram</option>
+          <option value="viber">Viber</option>
+        </select>
+        <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+      </span>
       <button
         class="hselect"
         id="form-channel"
@@ -327,10 +383,16 @@
           </li>
         </ul>
       </div>
-      <input type="hidden" name="channel" value="whatsapp" />
     </div>
     <div class="hfield">
       <span class="hlabel" id="form-statuses-label">Notify me about</span>
+      <span class="hselect-fallback">
+        <select name="statuses" aria-labelledby="form-statuses-label" multiple>
+          <option value="delivered">Delivered</option>
+          <option value="read">Read</option>
+          <option value="failed" selected>Failed</option>
+        </select>
+      </span>
       <button
         class="hselect"
         id="form-statuses"
@@ -369,7 +431,6 @@
           </li>
         </ul>
       </div>
-      <input type="hidden" name="statuses" value="failed" />
     </div>
     <div style="display: flex; gap: 8px">
       <button class="hbutton" type="submit">
@@ -386,11 +447,18 @@
 <play-example title="Outside its form" layout="stack">
   <play-note>
     A select outside its form joins it by the form's id, as a native control
-    does: <code>form</code> on the trigger and on each hidden input. The
-    script gives every hidden input it makes the same <code>form</code>.
+    does: <code>form</code> on the trigger and on its
+    <code>&lt;select&gt;</code>.
   </play-note>
   <div class="hfield">
     <span class="hlabel" id="outside-channel-label">Channel</span>
+    <span class="hselect-fallback">
+      <select name="outside-channel" aria-labelledby="outside-channel-label" form="outside-form">
+        <option value="whatsapp" selected>WhatsApp</option>
+        <option value="telegram">Telegram</option>
+      </select>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </span>
     <button
       class="hselect"
       id="outside-channel"
@@ -419,7 +487,6 @@
         </li>
       </ul>
     </div>
-    <input type="hidden" name="outside-channel" value="whatsapp" form="outside-form" />
   </div>
   <form id="outside-form" data-example-form style="display: flex; align-items: center; gap: 16px">
     <button class="hbutton" type="submit">
@@ -432,7 +499,8 @@
 <play-example title="Next to an input" layout="stack">
   <play-note>
     A select and an input share the same box, so they line up in a row. The
-    row here is a plain flex container of your own.
+    row here is a plain flex container of your own. This select filters
+    rather than sending a value, so it has no name and no fallback.
   </play-note>
   <div style="display: flex; gap: 8px">
     <input class="hinput" type="search" aria-label="Search messages" placeholder="Search messages" />

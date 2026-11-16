@@ -31,6 +31,16 @@ export const examples = {
     </Field>
   ),
 
+  "Taller to start": () => (
+    <Field label="Feedback">
+      <TextArea
+        name="feedback"
+        placeholder="What could we do better?"
+        style={{ "--htextarea-min-height": "calc(var(--harmo-control-height) + 3 * 1.25rem)" } as CSSProperties}
+      />
+    </Field>
+  ),
+
   "Custom maximum height": () => (
     <Field label="Email footer">
       <TextArea

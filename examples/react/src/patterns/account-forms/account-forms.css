@@ -1,0 +1,13 @@
+/* Signing in, signing up, and resetting a password in one place: the three
+   account forms, each in a view of its own, one shown at a time. Neither the
+   wrapper nor a view takes a box, so the form shown lays out as it would on
+   its own. */
+.haccount-forms,
+.haccount-forms-view {
+  display: contents;
+}
+
+.haccount-forms[hidden],
+.haccount-forms-view[hidden] {
+  display: none;
+}

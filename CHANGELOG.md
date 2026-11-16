@@ -8,10 +8,195 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Field: `.hfield-label-end` puts something at the end of the label row, such as a
+  "Forgot your password?" link, and a link in the row takes the label's size.
+- Tokens: `--harmo-font-weight-semibold`, 600, for text that has to look bolder
+  in any font: medium, 500, draws as regular in a font without a medium face,
+  such as Windows' Segoe UI, where semibold draws as semibold or bold.
+- Field: `data-size="small"`, or `size="small"` in React, on a horizontal Field,
+  for a line of fine print, such as agreeing to terms: a 13px label, and a 16px
+  checkbox or radio, or a smaller switch, still beside the label's first line.
+- Field: `data-variant="card"`, or `variant="card"` in React, on a horizontal
+  Field, for a choice card: a checkbox or radio and its label as a bordered
+  tile, such as a plan to choose, checked by a click anywhere on it, its
+  description included, and taking the control's colors once checked.
+- TextArea: `--htextarea-min-height`, how tall it starts before it grows with
+  its text, such as four lines for a longer message; one line, as tall as an
+  Input, by default, as before.
+- Tooltip: `data-side="inline-start"` and `"inline-end"`, or `side` in React,
+  at the start or end of the trigger's line, following its direction:
+  `inline-end` is the right in left-to-right text and the left in
+  right-to-left text, a part of a page with `dir="rtl"` included.
+- OTP Input: a one-time code, such as a sign-in's second step, in one field
+  with a slot drawn over it for each character, so pasting, a phone filling the
+  code in from a message, undo, and screen readers work as in any field. 4 to 12
+  characters, digits, or letters and digits in capitals, optionally in groups
+  split by a dash; typing goes over what's after the caret, a press on a slot
+  selects its character, and a paste loses spaces and dashes. Without a script,
+  it's a plain Input that a form still sends, with `maxlength` and `pattern`. In
+  React, `<OtpInput>`, with `length`, `characters`, `groups`, and `onComplete`,
+  which can send its form once the code is whole.
+- Password Input: `labelAccessory` puts your own content in its label row, after
+  the strength word, such as that link. With both, the word keeps to the row's
+  end and a `.hfield-label-end` follows it.
+- Patterns: arrangements of components for a whole task, which you copy into
+  your app and change as your own code, in React and HTML. See `docs/patterns`.
+  - Sign-in Form: the email and password in a raised Card, "Forgot your
+    password?" beside the password's label or under the field, errors under the
+    fields, and a shake when signing in fails. It can offer other accounts to
+    sign in with, such as Google, under the button, as the Sign-up Form does:
+    one to a row, or two with four or more. With `twoFactor`, the right
+    password can ask for a code: Verify Code takes the form's place, and
+    "Back to sign in" brings the form back as it was typed.
+  - Sign-up Form: a name, an email, and a new password with its strength, a
+    line of fine print under the button saying that creating an account agrees
+    to the terms, and a band along the card's bottom to sign in instead. Its
+    email has `autocomplete="email"`, as web.dev's sign-up form best practices
+    ask, and the Sign-in Form's `"username"`, as their sign-in ones do. It can
+    ask for a checkbox to agree to the terms in the line's place, leave out the
+    name or the terms, ask for marketing emails with an unchecked box, and
+    offer other accounts to sign up with, such as Google, under the button: one
+    to a row, or two with four or more. With `confirmEmail`, it confirms the
+    email once the account is made: by link, "Check your email", as Reset
+    Password's sent step reads, with a resend; or by code, Verify Code. Either
+    way, "use another email" brings the form back as it was typed.
+  - Reset Password, in two forms. One sends a link, then says "Check your email"
+    without saying whether an account uses the address, with resend, a submit
+    button that posts the address again from a hidden input, try another
+    email, a link to the page, and a button that opens Gmail, Outlook, or
+    Yahoo. The other sets the new password, with its strength and a
+    confirmation. At each step, the card grows or shrinks to the new step's
+    height, easing out over 200ms to 350ms, the further the longer, as the new
+    step fades in and the link back to sign in moves with its bottom edge;
+    under reduced motion, it changes size at once and still fades.
+  - Account Forms: the Sign-in Form, the Sign-up Form, and Reset Password's
+    request in one place, one shown at a time. Their links stay real links to
+    each form's page; a click on one shows that form in place, fading in, with
+    its title focused and the email typed so far filled in. The Sign-in Form
+    takes `signUpHref` for it: "Don't have an account? Sign up" in a band along
+    its bottom. The form that shows starts at the size of the one leaving and
+    grows or shrinks to its own, easing out, as its content fades in; under
+    reduced motion, it takes its size at once and still fades. `providers`
+    puts the same other accounts under both the Sign-in and the Sign-up Forms'
+    buttons, and `twoFactor`, `confirmEmail`, and `titleAs` go to them as
+    theirs. In a Dialog, which is their card, the forms take off their own
+    frame, and their titles step down under the Dialog's `<h2>`, to `<h3>`s
+    with `titleAs="h3"`, for a "Sign in to continue" that doesn't leave the
+    page.
+  - Verify Code: a one-time code in the account forms' look, such as a
+    sign-in's second step or one that confirms an email or a phone number: a
+    title, where the code went or that it's from an authenticator app, an OTP
+    Input that sends the form once the code is whole, Verify, "Send a new code"
+    after a wait shown as a countdown, "Send a new code in 0:24", 30 seconds by
+    default and again after each, and a way back. Its error goes under the
+    code, which takes focus selected, so typing replaces it.
+  - Contact Form: forms for a message, a sales inquiry, a support request with
+    attachments, and help with a shop's order, each with a thank-you that takes
+    its place once sent; and contact options, cards that lead to sales, support,
+    and the help center, the support address a semibold link in its sentence.
+    Each text field's placeholder is an example of what to type, and a strip to
+    drop files on is as wide as the fields. The sales form's website, typed
+    with `https://` or without, must be an `http` or `https` address to a host
+    with a dot in it, so `javascript:alert(document.domain).com` is turned
+    down. In React, each form's action gets
+    the form's `FormData`, files included, and answers `{ step: "sent", … }`
+    for the thank-you; a message for a field with no error under it goes above
+    the button. Given `upload`, the support and order forms upload each file
+    straight to your storage as it's added, with its progress, a check once
+    it's stored, and "Try again" if it fails, and send the keys they're stored
+    under in their place, so a request stays small on any host; sending waits
+    for an upload still running. `putFile` puts a file at a signed URL, such
+    as S3's or R2's, reporting its progress. Without `upload`, the files go
+    with the form. Once sent, the card shrinks to the thank-you's height, easing
+    out, as the thank-you fades in; under reduced motion, it changes size at
+    once and still fades.
+  - In React, every pattern's form takes `action`, a React form action, such as
+    a Next.js server action, or a plain async function: `(previous, data) =>
+    result`, with `data` the form's `FormData`. Given a server action, it works
+    without JavaScript: it posts to the action, nothing going in the page's
+    address, and the page the server renders after the post shows the answer.
+    The answer, typed for each form, as `SignUpFormResult`: nothing, when
+    nothing changes, as after `redirect()`; a message, in the form's main spot;
+    messages by field, such as `{ password: "…" }`, each under its field, the
+    first taking focus as the form shakes, and `form`, or one for a field the
+    form doesn't show, in the main spot; or a step, such as
+    `{ step: "sent", email }`, which the form moves to. `initialResult` starts
+    a form at a result, such as the step your server says someone is at.
+    `twoFactor.backHref` and `confirmEmail.backHref` say where "Back to sign
+    in" and "use another email" lead without JavaScript, such as a route that
+    ends the pending sign-in or sign-up, so the page doesn't show the step
+    again.
+  - Messages can carry `values`, what was typed, such as
+    `{ form: "The email or password is incorrect.", values: { email } }`:
+    without JavaScript, the page after a post starts each field it names with
+    its value, as its `defaultValue`, keyed, so a later post fills it in again.
+    Each form's type names the fields it fills in, never a password, a
+    confirmation, or a code, so TypeScript turns a secret down in `values`
+    written out in the answer, or given the form's type, though not in an
+    object built before it, such as `Object.fromEntries(data)`, as the docs
+    say; files are chosen again. The Sign-up Form's checkboxes come back
+    checked with `"on"`, and a resend that fails brings the form back with
+    the address it was confirming. With JavaScript, the fields keep what was
+    typed. `previous` always comes from the browser, which sends a result
+    back with each call, or posts it back from the page without JavaScript,
+    so `values` is never trusted, and the Security sections say so.
+  - `titleAs`, on every pattern's form, sets its title's tag, and its steps':
+    `"h1"` by default for the account forms and Verify Code, `"h2"` for the
+    contact forms, whose thank-you follows it. The Sign-in and Sign-up Forms
+    pass theirs to Verify Code.
+  - With JavaScript, a form checks its fields first, then calls your action
+    itself, in a transition, with the button working meanwhile, so what was
+    typed stays after a message. An action that throws, or whose promise
+    rejects, says "Something went wrong. Try again." in the main spot, and the
+    form shakes; Next.js's `redirect()` and `notFound()` go on to Next.js. All
+    of it is one helper every form shares, `patterns/form-action/formAction.ts`.
+  - In HTML, every form posts, `method="post"`, so one sent before its script
+    runs keeps what was typed, a password included, out of the page's address,
+    and the example scripts answer as the React forms do, giving a step's title
+    its form's title's tag. Each pattern's page says, in a Security section,
+    what the form does and what your server must do.
+- CLI: `npx harmo-ui add` copies patterns too, into `patterns/<name>/`, with the
+  components they use and the helpers they import, each in its own folder,
+  such as `patterns/form-action/`, and their stylesheets go last in
+  `harmo.css`: first those patterns share, such as `patterns/auth-form/`'s,
+  then each pattern's own. `npx harmo-ui list` shows them under their own
+  heading, and `--all` still copies only the components.
+
 ### Changed
 
+- Password Input: while its Field shows an error, such as "This password has
+  appeared in a data breach", the strength word and meter step aside, with
+  `hidden`, and the input is described by the error alone, so a green
+  "Strong" never sits beside a red error. They come back as the error goes;
+  the example script does the same, watching the Field's `.herror`.
+- Select: a Select with a name works without JavaScript. Its value is now sent
+  by a native `<select>` in a `.hselect-fallback` just before the trigger,
+  rather than by hidden inputs. Until a script runs, or if none does, the
+  fallback shows in the trigger's place, looking like the closed trigger and
+  the same size, so a form can be filled in and sent. The script hides it with
+  `hidden` and keeps its options selected to match the list. In React, the
+  server render shows the fallback, and the Select hides it once mounted,
+  keeping any choice made in it meanwhile. With a placeholder and nothing
+  chosen, a form now leaves the name out rather than sending it empty. In HTML,
+  replace the hidden inputs with the fallback, as select.md's "In a form" shows.
+- Password Input: the toggle's tooltip opens at the field's end rather than
+  below, `data-side="inline-end"`, so it no longer covers what's under the
+  field, such as a form's next field or its button: to its right in a
+  left-to-right page, to its left in a right-to-left one, 8px past the field's
+  border.
 - File Input: the avatar variant's empty picture, a person, has an outline head
   rather than a filled one.
+- Password Input: a password that shows is hidden again as its form is sent,
+  before the browser reads the form, whether or not a listener cancels the
+  send, so the browser never keeps it as a text field's entry; and as the page
+  comes back from the back-forward cache, so it isn't showing to whoever
+  comes back to it. As before, a reset hides it too. The example script does
+  the same.
+- CLI: `add` and `theme` refuse to write a file that would land outside the
+  folder they write to, as a registry path with `../` or an absolute one
+  would, or through a link that leads out of it, and write nothing then.
 
 ## [0.6.0] - 2026-11-15
 

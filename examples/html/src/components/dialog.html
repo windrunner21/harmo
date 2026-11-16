@@ -43,6 +43,13 @@
           </div>
           <div class="hfield">
             <span class="hlabel" id="invite-role-label">Role</span>
+            <span class="hselect-fallback">
+              <select name="role" aria-labelledby="invite-role-label">
+                <option value="member" selected>Member</option>
+                <option value="admin">Admin</option>
+              </select>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </span>
             <button
               class="hselect"
               id="invite-role"
@@ -70,7 +77,6 @@
                 </li>
               </ul>
             </div>
-            <input type="hidden" name="role" value="member" />
           </div>
         </div>
       </div>

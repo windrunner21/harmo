@@ -48,9 +48,9 @@ They need both at 19.3 or later, and TypeScript.
 
 | Command | Effect |
 | --- | --- |
-| `npx harmo-ui add <component...>` | Copies components, with their styles and what they need |
+| `npx harmo-ui add <name...>` | Copies components or patterns, with their styles and what they need |
 | `npx harmo-ui add --all` | Copies every component |
-| `npx harmo-ui list` | Lists the components |
+| `npx harmo-ui list` | Lists the components and patterns |
 | `npx harmo-ui theme <color>` | Writes `harmo-theme.css`: your brand color, as a hex code, in every role, in light and dark mode |
 
 | Option for `add` and `theme` | Effect |
@@ -58,6 +58,20 @@ They need both at 19.3 or later, and TypeScript.
 | `-p`, `--path <folder>` | Where to write. By default `components/harmo`, or `src/components/harmo` if the project has a `src` folder. Pass it each time you use another folder |
 | `-o`, `--overwrite` | Replaces files that differ from Harmo's, without asking |
 | `--dry-run` | Shows what would change, and changes nothing |
+
+## Patterns
+
+A pattern is an arrangement of components for a whole task, such as signing in:
+
+```sh
+npx harmo-ui add sign-in-form
+```
+
+That copies it into `patterns/sign-in-form/`, with the components it uses, and adds
+its styles to `harmo.css`, after the components': first those it shares with
+other patterns, such as `patterns/auth-form/`'s look, then its own. It's yours to change from
+there: its words, its fields, and what it does. `npx harmo-ui list` shows the
+patterns after the components.
 
 ## Your brand color
 

@@ -1,0 +1,787 @@
+<play-example title="Default">
+  <play-note>
+    A raised <a class="hlink" data-underlined href="card.html">Card</a> with
+    the name, the email, and a new password with its strength; under the
+    button, a line of fine print that creating an account agrees to the terms;
+    and a band along its bottom to sign in instead. Each error shows under its
+    field, the form's own or the server's, such as a password that has
+    appeared in a data breach. The first field with one takes focus, and the
+    form shakes once, unless you've asked for reduced motion.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name">Name</label>
+        <input class="hinput" id="sign-up-name" name="name" autocomplete="name" aria-describedby="sign-up-name-error" />
+        <p class="herror" id="sign-up-name-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email">Email</label>
+        <input class="hinput" id="sign-up-email" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-error" />
+        <p class="herror" id="sign-up-email-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-error sign-up-password-strength sign-up-password-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="Without the name">
+  <play-note>
+    Only the email, the password, and the terms, for an app that asks for a
+    name later, once someone has signed up.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-only">Email</label>
+        <input class="hinput" id="sign-up-email-only" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-only-error" />
+        <p class="herror" id="sign-up-email-only-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-only">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-only-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-only"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-only-error sign-up-password-only-strength sign-up-password-only-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-only"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-only-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-only-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement-only">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement-only">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="Without the terms">
+  <play-note>
+    Without a link to the terms, there's no line about them, for an app that
+    has none, or asks for them another way.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-no-terms">Name</label>
+        <input class="hinput" id="sign-up-name-no-terms" name="name" autocomplete="name" aria-describedby="sign-up-name-no-terms-error" />
+        <p class="herror" id="sign-up-name-no-terms-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-no-terms">Email</label>
+        <input class="hinput" id="sign-up-email-no-terms" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-no-terms-error" />
+        <p class="herror" id="sign-up-email-no-terms-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-no-terms">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-no-terms-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-no-terms"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-no-terms-error sign-up-password-no-terms-strength sign-up-password-no-terms-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-no-terms"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-no-terms-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-no-terms-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="With a terms checkbox">
+  <play-note>
+    A checkbox to agree to the terms in place of the line, for an app whose
+    law or legal team asks for it. Signing up needs it checked, and its error
+    starts where its label does. It's a small horizontal <a class="hlink"
+    data-underlined href="field.html">Field</a>, fine print with its label in
+    secondary text.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-checkbox">Name</label>
+        <input class="hinput" id="sign-up-name-checkbox" name="name" autocomplete="name" aria-describedby="sign-up-name-checkbox-error" />
+        <p class="herror" id="sign-up-name-checkbox-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-checkbox">Email</label>
+        <input class="hinput" id="sign-up-email-checkbox" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-checkbox-error" />
+        <p class="herror" id="sign-up-email-checkbox-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-checkbox">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-checkbox-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-checkbox"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-checkbox-error sign-up-password-checkbox-strength sign-up-password-checkbox-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-checkbox"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-checkbox-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-checkbox-error" aria-live="polite"></p>
+      </div>
+      <div class="hsign-up-form-terms">
+        <div class="hfield hsign-up-form-consent" data-orientation="horizontal" data-size="small">
+          <input class="hcheckbox" type="checkbox" id="sign-up-terms-checkbox" name="terms" aria-describedby="sign-up-terms-checkbox-error" />
+          <label class="hlabel" for="sign-up-terms-checkbox">
+            I agree to the <a class="hlink" href="/terms">Terms of Service</a> and
+            <a class="hlink" href="/privacy">Privacy Policy</a>
+          </label>
+        </div>
+        <p class="herror" id="sign-up-terms-checkbox-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="With marketing emails">
+  <play-note>
+    A checkbox to get product news by email, after the password, a small Field
+    as the terms' checkbox is. It starts unchecked, so getting them is a
+    choice someone makes, and signing up doesn't need it.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-marketing">Name</label>
+        <input class="hinput" id="sign-up-name-marketing" name="name" autocomplete="name" aria-describedby="sign-up-name-marketing-error" />
+        <p class="herror" id="sign-up-name-marketing-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-marketing">Email</label>
+        <input class="hinput" id="sign-up-email-marketing" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-marketing-error" />
+        <p class="herror" id="sign-up-email-marketing-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-marketing">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-marketing-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-marketing"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-marketing-error sign-up-password-marketing-strength sign-up-password-marketing-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-marketing"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-marketing-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-marketing-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield hsign-up-form-consent" data-orientation="horizontal" data-size="small">
+        <input class="hcheckbox" type="checkbox" id="sign-up-marketing-marketing" name="marketing" />
+        <label class="hlabel" for="sign-up-marketing-marketing">Email me product news and tips</label>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement-marketing">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement-marketing">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="With other accounts">
+  <play-note>
+    Under the terms' line, "or", then a secondary <a class="hlink"
+    data-underlined href="button.html">Button</a> for each other account to
+    sign up with, as wide as the form, its logo before its name. Each leads to
+    your app's page that starts signing in there.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-accounts">Name</label>
+        <input class="hinput" id="sign-up-name-accounts" name="name" autocomplete="name" aria-describedby="sign-up-name-accounts-error" />
+        <p class="herror" id="sign-up-name-accounts-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-accounts">Email</label>
+        <input class="hinput" id="sign-up-email-accounts" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-accounts-error" />
+        <p class="herror" id="sign-up-email-accounts-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-accounts">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-accounts-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-accounts"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-accounts-error sign-up-password-accounts-strength sign-up-password-accounts-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-accounts"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-accounts-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-accounts-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement-accounts">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement-accounts">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-divider">or</p>
+    <div class="hauth-form-providers">
+      <a class="hbutton" data-variant="secondary" href="/auth/google">
+        <play-icon name="google" class="hicon"></play-icon>
+        <span class="hbutton-label">Continue with Google</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/github">
+        <play-icon name="github" class="hicon"></play-icon>
+        <span class="hbutton-label">Continue with GitHub</span>
+      </a>
+    </div>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="With many other accounts">
+  <play-note>
+    Four or more go two to a row, each with its logo and the account's name.
+    Each is still named "Continue with" the account, so a screen reader says
+    what it does.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-many">Name</label>
+        <input class="hinput" id="sign-up-name-many" name="name" autocomplete="name" aria-describedby="sign-up-name-many-error" />
+        <p class="herror" id="sign-up-name-many-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-many">Email</label>
+        <input class="hinput" id="sign-up-email-many" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-many-error" />
+        <p class="herror" id="sign-up-email-many-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-many">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-many-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-many"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-many-error sign-up-password-many-strength sign-up-password-many-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-many"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-many-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-many-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement-many">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement-many">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-divider">or</p>
+    <div class="hauth-form-providers">
+      <a class="hbutton" data-variant="secondary" href="/auth/google" aria-label="Continue with Google">
+        <play-icon name="google" class="hicon"></play-icon>
+        <span class="hbutton-label">Google</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/apple" aria-label="Continue with Apple">
+        <play-icon name="apple" class="hicon"></play-icon>
+        <span class="hbutton-label">Apple</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/microsoft" aria-label="Continue with Microsoft">
+        <play-icon name="microsoft" class="hicon"></play-icon>
+        <span class="hbutton-label">Microsoft</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/github" aria-label="Continue with GitHub">
+        <play-icon name="github" class="hicon"></play-icon>
+        <span class="hbutton-label">GitHub</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/x" aria-label="Continue with X">
+        <play-icon name="x" class="hicon"></play-icon>
+        <span class="hbutton-label">X</span>
+      </a>
+      <a class="hbutton" data-variant="secondary" href="/auth/openai" aria-label="Continue with OpenAI">
+        <play-icon name="openai" class="hicon"></play-icon>
+        <span class="hbutton-label">OpenAI</span>
+      </a>
+    </div>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="Confirm by link">
+  <play-note>
+    Asking to confirm the email: once the form is sent, "Check your email"
+    takes the form's place, as in <a class="hlink" data-underlined
+    href="reset-password.html">Reset Password</a>, with the address, a resend,
+    and "use another email", which brings the form back with what was typed.
+    Every address gets this step, one that already has an account too, whose
+    owner your server emails instead, so the form never says who has an
+    account. An address at Gmail, Outlook, or Yahoo gets a button that opens
+    its inbox.
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up data-example-sign-up-confirm="link">
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-link">Name</label>
+        <input class="hinput" id="sign-up-name-link" name="name" autocomplete="name" aria-describedby="sign-up-name-link-error" />
+        <p class="herror" id="sign-up-name-link-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-link">Email</label>
+        <input class="hinput" id="sign-up-email-link" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-link-error" />
+        <p class="herror" id="sign-up-email-link-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-link">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-link-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-link"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-link-error sign-up-password-link-strength sign-up-password-link-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-link"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-link-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-link-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement-link">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement-link">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>
+
+<play-example title="Confirm by code">
+  <play-note>
+    Or by a code, sent to the email: once the form is sent, <a class="hlink"
+    data-underlined href="verify-code.html">Verify Code</a> takes the form's
+    place, sending itself as the last digit arrives, with a new code after a
+    wait and "Use another email".
+  </play-note>
+  <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up data-example-sign-up-confirm="code">
+    <h1 class="hauth-form-title">Create your account</h1>
+    <div class="hauth-form-fields">
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-name-code">Name</label>
+        <input class="hinput" id="sign-up-name-code" name="name" autocomplete="name" aria-describedby="sign-up-name-code-error" />
+        <p class="herror" id="sign-up-name-code-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <label class="hlabel" for="sign-up-email-code">Email</label>
+        <input class="hinput" id="sign-up-email-code" name="email" type="email" autocomplete="email" aria-describedby="sign-up-email-code-error" />
+        <p class="herror" id="sign-up-email-code-error" aria-live="polite"></p>
+      </div>
+      <div class="hfield">
+        <div class="hfield-label-row">
+          <label class="hlabel" for="sign-up-password-code">Password</label>
+          <span class="hpassword-strength" id="sign-up-password-code-strength" aria-live="polite"></span>
+        </div>
+        <div class="hpassword">
+          <input
+            class="hinput"
+            id="sign-up-password-code"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            aria-describedby="sign-up-password-code-error sign-up-password-code-strength sign-up-password-code-hint"
+            data-example-password-strength
+          />
+          <span class="htooltip-trigger">
+            <button
+              class="hpassword-toggle"
+              type="button"
+              aria-label="Show password"
+              aria-pressed="false"
+              aria-controls="sign-up-password-code"
+              hidden
+            >
+              <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+              <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+          </span>
+        </div>
+        <div class="hpassword-details" hidden>
+          <div>
+            <div
+              class="hmeter"
+              role="meter"
+              aria-label="Password strength"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+              <span class="hmeter-segment"></span>
+            </div>
+            <p class="hpassword-hint" id="sign-up-password-code-hint"></p>
+          </div>
+        </div>
+        <p class="herror" id="sign-up-password-code-error" aria-live="polite"></p>
+      </div>
+    </div>
+    <button class="hbutton" type="submit" aria-describedby="sign-up-agreement-code">
+      <span class="hbutton-label">Create account</span>
+    </button>
+    <p class="hsign-up-form-agreement" id="sign-up-agreement-code">
+      By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+      <a class="hlink" href="/privacy">Privacy Policy</a>.
+    </p>
+    <p class="hauth-form-footer">
+      Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+    </p>
+  </form>
+</play-example>

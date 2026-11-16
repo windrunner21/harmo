@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { basename, dirname, join, resolve, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -9,9 +9,10 @@ import { theme as themeFor } from "./palettes/palette.js";
 const usage = `Copy Harmo's components and styles into your project, and make them yours.
 
 Usage:
-  npx harmo-ui add <component...>   Copy components, with their styles and what they need
+  npx harmo-ui add <name...>        Copy components or patterns, with their styles and
+                                    what they need
   npx harmo-ui add --all            Copy every component
-  npx harmo-ui list                 List the components
+  npx harmo-ui list                 List the components and patterns
   npx harmo-ui theme <color>        Write harmo-theme.css: your brand color, as a hex
                                     code, in every role, in light and dark mode
 
@@ -26,8 +27,12 @@ Options for add and theme:
 
 interface Listing {
   name: string;
+  categories?: string[];
   description?: string;
 }
+
+const isPattern = ({ categories }: Listing) =>
+  categories?.includes("pattern") ?? false;
 
 interface Item extends Listing {
   files: { path: string; content: string }[];
@@ -47,21 +52,65 @@ const fail = (message: string): never => {
 const plural = (count: number, noun: string) =>
   `${count} ${noun}${count === 1 ? "" : "s"}`;
 
-// harmo.css, which a project imports once: the tokens first, then the accents, then
-// each component, in the order of the full bundle. Only adds imports, so anything
-// else in it stays.
-const stylesHeader = `/* Harmo's styles. Import this file once. harmo-ui add keeps this list up to date. */`;
-const styleOrder = (path: string) => {
-  const folder = path.split("/")[0] as string;
-  return [
-    path === "tokens.css" ? 0 : path === "accents.css" ? 1 : 2,
-    folder,
-  ] as const;
+// Where a path really is, through any links on the way to it, whether or not
+// it's there yet; undefined for a link that leads nowhere.
+const realPathOf = (path: string): string | undefined => {
+  if (lstatSync(path, { throwIfNoEntry: false })) {
+    try {
+      return realpathSync(path);
+    } catch {
+      return undefined;
+    }
+  }
+  const parent = dirname(path);
+  if (parent === path) return path;
+  const real = realPathOf(parent);
+  return real && join(real, basename(path));
 };
-const isBefore = (a: string, b: string) => {
-  const [rankA, folderA] = styleOrder(a);
-  const [rankB, folderB] = styleOrder(b);
-  return rankA === rankB ? folderA < folderB : rankA < rankB;
+
+// The paths, each relative to the folder, that would be written outside it:
+// one that leads out, as ../ or an absolute path does, or one reached through a
+// link, of a file or of a folder on the way, that leads out of it. The folder
+// itself may be a link, as the project chose it.
+const outsideOf = (base: string, paths: string[]) => {
+  const real = realPathOf(base);
+  return paths.filter((path) => {
+    const target = resolve(base, path);
+    if (!target.startsWith(base + sep)) return true;
+    const reached = realPathOf(target);
+    return !real || !reached || !reached.startsWith(real + sep);
+  });
+};
+
+const refuseOutside = (base: string, folder: string, paths: string[]) => {
+  const outside = outsideOf(base, paths);
+  if (outside.length > 0)
+    fail(
+      `Nothing was written: ${outside.join(", ")} would be written outside ${folder}, or through a link that leads out of it.`,
+    );
+};
+
+// harmo.css, which a project imports once: the tokens first, then the accents, then
+// each component, in the order of the full bundle, then the stylesheets patterns
+// share, from a folder in patterns/ that isn't a pattern, such as auth-form's,
+// then each pattern's own; each builds on what comes before it. Only adds
+// imports, so anything else in it stays.
+const stylesHeader = `/* Harmo's styles. Import this file once. harmo-ui add keeps this list up to date. */`;
+const styleOrder = (
+  path: string,
+  patterns: Set<string>,
+): [rank: number, folder: string, file: string] => {
+  const [folder = "", name = "", file = ""] = path.split("/");
+  if (path === "tokens.css") return [0, "", ""];
+  if (path === "accents.css") return [1, "", ""];
+  if (folder !== "patterns") return [2, folder, ""];
+  return [patterns.has(name) ? 4 : 3, name, file];
+};
+const isBefore = (a: string, b: string, patterns: Set<string>) => {
+  const [rankA, folderA, fileA] = styleOrder(a, patterns);
+  const [rankB, folderB, fileB] = styleOrder(b, patterns);
+  if (rankA !== rankB) return rankA < rankB;
+  return folderA === folderB ? fileA < fileB : folderA < folderB;
 };
 
 // Every @import in a stylesheet, with where it starts and ends. Comments, quoted
@@ -93,15 +142,22 @@ const cssImports = (css: string) => {
   return found;
 };
 
-// The imports of Harmo's own stylesheets, however a formatter or a person wrote them.
+// The imports of Harmo's own stylesheets, however a formatter or a person wrote
+// them: a component's, named after its folder, and any in a folder in patterns/,
+// as a pattern or a helper can hold more than one, named as it likes.
 const harmoImports = (css: string) =>
   cssImports(css).flatMap(({ text, start, end }) => {
     const path =
-      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|accents\.css|([a-z-]+)\/\2\.css)/.exec(text)?.[1];
+      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|accents\.css|patterns\/[\w-]+\/[\w.-]+\.css|([a-z-]+)\/\2\.css)/.exec(text)?.[1];
     return path ? [{ path, start, end }] : [];
   });
 
-const withStyles = (existing: string | undefined, paths: string[]) => {
+const withStyles = (
+  existing: string | undefined,
+  paths: string[],
+  patterns: Set<string>,
+) => {
+  const isBeforeIn = (a: string, b: string) => isBefore(a, b, patterns);
   let css = existing ?? `${stylesHeader}\n`;
   const lineEnding = css.includes("\r\n") ? "\r\n" : "\n";
   const insert = (at: number, text: string) => {
@@ -110,10 +166,10 @@ const withStyles = (existing: string | undefined, paths: string[]) => {
 
   const listed = harmoImports(css).map(({ path }) => path);
   const missing = paths.filter((path) => !listed.includes(path));
-  for (const path of missing.sort((a, b) => (isBefore(a, b) ? -1 : 1))) {
+  for (const path of missing.sort((a, b) => (isBeforeIn(a, b) ? -1 : 1))) {
     const line = `@import "./${path}";`;
     const imports = harmoImports(css);
-    const next = imports.find((other) => isBefore(path, other.path));
+    const next = imports.find((other) => isBeforeIn(path, other.path));
     const last = imports.at(-1);
     if (next) insert(next.start, `${line}${lineEnding}`);
     else if (last) insert(last.end, `${lineEnding}${line}`);
@@ -144,16 +200,20 @@ const add = async (
       "There's no package.json here. Run this from your project's root.",
     );
 
-  const available = listings().map(({ name }) => name);
-  const requested = options.all ? available : [...new Set(names)];
+  const available = listings();
+  const requested = options.all
+    ? available.filter((listing) => !isPattern(listing)).map(({ name }) => name)
+    : [...new Set(names)];
   if (requested.length === 0)
     fail(
-      "Name a component to add, such as npx harmo-ui add button. npx harmo-ui list shows them all.",
+      "Name a component or pattern to add, such as npx harmo-ui add button. npx harmo-ui list shows them all.",
     );
-  const unknown = requested.filter((name) => !available.includes(name));
+  const unknown = requested.filter(
+    (name) => !available.some((listing) => listing.name === name),
+  );
   if (unknown.length > 0)
     fail(
-      `There's no component called ${unknown.join(", ")}. npx harmo-ui list shows them all.`,
+      `There's no component or pattern called ${unknown.join(", ")}. npx harmo-ui list shows them all.`,
     );
 
   const folder =
@@ -170,6 +230,7 @@ const add = async (
       .files)
       files.set(path, content);
   }
+  refuseOutside(base, folder, [...files.keys(), "harmo.css"]);
 
   const differing: string[] = [];
   for (const [path, content] of files) {
@@ -215,6 +276,7 @@ const add = async (
   const stylesAfter = withStyles(
     stylesBefore,
     [...files.keys()].filter((path) => path.endsWith(".css")),
+    new Set(available.filter(isPattern).map(({ name }) => name)),
   );
   const stylesUpdated = stylesExisted && stylesAfter !== stylesBefore;
 
@@ -309,6 +371,7 @@ const theme = async (
       ? "src/components/harmo"
       : "components/harmo");
   const base = resolve(project, folder);
+  refuseOutside(base, folder, [themeFile, "harmo.css"]);
   const target = join(base, themeFile);
   const existed = existsSync(target);
   const same = existed && sameText(readFileSync(target, "utf8"), generated.css);
@@ -369,8 +432,14 @@ const theme = async (
 const list = () => {
   const items = listings();
   const width = Math.max(...items.map(({ name }) => name.length));
-  for (const { name, description } of items)
+  const show = ({ name, description }: Listing) =>
     console.log(`${name.padEnd(width)}  ${description ?? ""}`.trimEnd());
+  items.filter((item) => !isPattern(item)).forEach(show);
+  const patterns = items.filter(isPattern);
+  if (patterns.length > 0) {
+    console.log("\nPatterns, to copy and change as your own code:");
+    patterns.forEach(show);
+  }
 };
 
 const main = async () => {

@@ -1,12 +1,10 @@
 @use "shortcuts" as *;
 @use "control";
 
-.hselect {
+// The closed box a select shows, the trigger's and its fallback's alike, so
+// one takes the other's place without moving.
+%select-box {
   @extend %control;
-
-  display: flex;
-  align-items: center;
-  gap: $space-sm;
 
   min-block-size: $control-height;
   padding: 0 control.$padding-inline;
@@ -18,8 +16,21 @@
   text-align: start;
 
   cursor: pointer;
+}
+
+.hselect {
+  @extend %select-box;
+
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
 
   &[hidden] {
+    display: none;
+  }
+
+  // A select with a fallback shows the fallback until its script hides it.
+  :where(.hselect-fallback:not([hidden])) + & {
     display: none;
   }
 
@@ -42,6 +53,89 @@
   white-space: nowrap;
 
   &[data-placeholder] {
+    color: $color-text-tertiary;
+  }
+}
+
+// Without a script, a native select in the trigger's place, with the chevron
+// drawn over its end, so a form can be filled in and sent before the script
+// runs, or if it never does.
+.hselect-fallback {
+  display: grid;
+  align-items: center;
+
+  inline-size: 100%;
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > select {
+    @extend %select-box;
+
+    grid-area: 1 / 1;
+
+    appearance: none;
+
+    // Its text stops where the trigger's does, before the chevron.
+    padding-inline-end: calc(#{$space-sm} + 1em + #{$space-sm});
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    // Several are chosen in a list of options as tall as the trigger, with no
+    // chevron: one row in view, its text where the trigger's is, and the rows
+    // as wide as the list. Chosen rows are tinted, as a chosen option's
+    // checkbox is, in a gradient too, as Chrome paints its own color over an
+    // option's.
+    &[multiple] {
+      block-size: $control-height;
+      padding-block: calc((#{$control-height} - 2px - 1.25rem) / 2);
+      padding-inline: 0;
+
+      & option {
+        padding-block: 0;
+        padding-inline: control.$padding-inline;
+      }
+
+      & option:checked {
+        color: $color-text;
+        background: linear-gradient($color-primary-tint, $color-primary-tint);
+      }
+    }
+
+    // Grayed while its placeholder is chosen, as the trigger's value is; the
+    // options in the browser's own list keep their colors.
+    &:has(> option[value=""]:disabled:checked) {
+      color: $color-text-tertiary;
+    }
+
+    & option {
+      color: $color-text;
+    }
+
+    & option:disabled {
+      color: $color-text-tertiary;
+    }
+  }
+
+  // The trigger's size, which follows the control's text.
+  & > .hexpand-chevron {
+    grid-area: 1 / 1;
+    justify-self: end;
+
+    font-size: $font-size-sm;
+
+    // Inside the select's 1px border.
+    margin-inline-end: calc(#{$space-sm} + 1px);
+
+    color: $color-text-secondary;
+
+    pointer-events: none;
+  }
+
+  &:has(> select:disabled) > .hexpand-chevron {
     color: $color-text-tertiary;
   }
 }

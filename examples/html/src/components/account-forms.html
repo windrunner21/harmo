@@ -1,0 +1,718 @@
+<play-example title="Default">
+  <play-note>
+    The <a class="hlink" data-underlined href="sign-in-form.html">Sign-in Form</a>,
+    the <a class="hlink" data-underlined href="sign-up-form.html">Sign-up Form</a>,
+    and <a class="hlink" data-underlined href="reset-password.html">Reset Password</a>'s
+    request, all in the page, one shown at a time. Their links are real links
+    to each form's own page, but a click on one shows that form in place: the
+    card grows or shrinks from the last form's size to its own as its content
+    fades in, its title takes focus, and the email typed so far comes with it.
+    Each form works as it does on its own page.
+  </play-note>
+  <div class="haccount-forms" data-example-account-forms>
+    <div class="haccount-forms-view" data-example-account-forms-page="/sign-in">
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+        <h1 class="hauth-form-title">Sign in</h1>
+        <div class="hauth-form-fields">
+          <div class="hfield">
+            <label class="hlabel" for="account-sign-in-email">Email</label>
+            <input class="hinput" id="account-sign-in-email" name="email" type="email" autocomplete="username" aria-describedby="account-sign-in-email-error" />
+            <p class="herror" id="account-sign-in-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="account-sign-in-password">Password</label>
+              <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+            </div>
+            <div class="hpassword">
+              <input
+                class="hinput"
+                id="account-sign-in-password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                aria-describedby="account-sign-in-password-error"
+              />
+              <span class="htooltip-trigger">
+                <button
+                  class="hpassword-toggle"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  aria-controls="account-sign-in-password"
+                  hidden
+                >
+                  <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                  <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+              </span>
+            </div>
+            <p class="herror" id="account-sign-in-password-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Sign in</span>
+        </button>
+        <p class="hauth-form-footer">
+          Don't have an account? <a class="hlink" data-underlined href="/sign-up">Sign up</a>
+        </p>
+      </form>
+    </div>
+    <div class="haccount-forms-view" hidden data-example-account-forms-page="/sign-up">
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+        <h1 class="hauth-form-title">Create your account</h1>
+        <div class="hauth-form-fields">
+          <div class="hfield">
+            <label class="hlabel" for="account-sign-up-name">Name</label>
+            <input class="hinput" id="account-sign-up-name" name="name" autocomplete="name" aria-describedby="account-sign-up-name-error" />
+            <p class="herror" id="account-sign-up-name-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="account-sign-up-email">Email</label>
+            <input class="hinput" id="account-sign-up-email" name="email" type="email" autocomplete="email" aria-describedby="account-sign-up-email-error" />
+            <p class="herror" id="account-sign-up-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="account-sign-up-password">Password</label>
+              <span class="hpassword-strength" id="account-sign-up-password-strength" aria-live="polite"></span>
+            </div>
+            <div class="hpassword">
+              <input
+                class="hinput"
+                id="account-sign-up-password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                aria-describedby="account-sign-up-password-error account-sign-up-password-strength account-sign-up-password-hint"
+                data-example-password-strength
+              />
+              <span class="htooltip-trigger">
+                <button
+                  class="hpassword-toggle"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  aria-controls="account-sign-up-password"
+                  hidden
+                >
+                  <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                  <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+              </span>
+            </div>
+            <div class="hpassword-details" hidden>
+              <div>
+                <div
+                  class="hmeter"
+                  role="meter"
+                  aria-label="Password strength"
+                  aria-valuemin="0"
+                  aria-valuemax="3"
+                  aria-valuenow="0"
+                >
+                  <span class="hmeter-segment"></span>
+                  <span class="hmeter-segment"></span>
+                  <span class="hmeter-segment"></span>
+                </div>
+                <p class="hpassword-hint" id="account-sign-up-password-hint"></p>
+              </div>
+            </div>
+            <p class="herror" id="account-sign-up-password-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="hbutton" type="submit" aria-describedby="account-sign-up-agreement">
+          <span class="hbutton-label">Create account</span>
+        </button>
+        <p class="hsign-up-form-agreement" id="account-sign-up-agreement">
+          By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+          <a class="hlink" href="/privacy">Privacy Policy</a>.
+        </p>
+        <p class="hauth-form-footer">
+          Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+        </p>
+      </form>
+    </div>
+    <div class="haccount-forms-view" hidden data-example-account-forms-page="/reset-password">
+      <form
+        class="hcard hauth-form"
+        data-variant="raised"
+        method="post"
+        novalidate
+        data-example-reset-request
+        data-example-reset-support="/contact"
+      >
+        <div class="hauth-form-header">
+          <h1 class="hauth-form-title" tabindex="-1">Reset your password</h1>
+          <p class="hauth-form-description">
+            Enter the email address of your account, and we'll send you a link to reset your password.
+          </p>
+        </div>
+        <div class="hfield">
+          <label class="hlabel" for="account-reset-email">Email</label>
+          <input class="hinput" id="account-reset-email" name="email" type="email" autocomplete="email" aria-describedby="account-reset-email-error" />
+          <p class="herror" id="account-reset-email-error" aria-live="polite"></p>
+        </div>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Continue</span>
+        </button>
+        <p class="hauth-form-footer">
+          <a class="hlink" href="/sign-in">Return to sign in</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Starting at sign-up">
+  <play-note>
+    The same, with the Sign-up Form shown first, for a page most people reach
+    without an account yet, such as one an invitation links to:
+    <code>initial="sign-up"</code> in React.
+  </play-note>
+  <div class="haccount-forms" data-example-account-forms>
+    <div class="haccount-forms-view" hidden data-example-account-forms-page="/sign-in">
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+        <h1 class="hauth-form-title">Sign in</h1>
+        <div class="hauth-form-fields">
+          <div class="hfield">
+            <label class="hlabel" for="account-new-sign-in-email">Email</label>
+            <input class="hinput" id="account-new-sign-in-email" name="email" type="email" autocomplete="username" aria-describedby="account-new-sign-in-email-error" />
+            <p class="herror" id="account-new-sign-in-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="account-new-sign-in-password">Password</label>
+              <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+            </div>
+            <div class="hpassword">
+              <input
+                class="hinput"
+                id="account-new-sign-in-password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                aria-describedby="account-new-sign-in-password-error"
+              />
+              <span class="htooltip-trigger">
+                <button
+                  class="hpassword-toggle"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  aria-controls="account-new-sign-in-password"
+                  hidden
+                >
+                  <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                  <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+              </span>
+            </div>
+            <p class="herror" id="account-new-sign-in-password-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Sign in</span>
+        </button>
+        <p class="hauth-form-footer">
+          Don't have an account? <a class="hlink" data-underlined href="/sign-up">Sign up</a>
+        </p>
+      </form>
+    </div>
+    <div class="haccount-forms-view" data-example-account-forms-page="/sign-up">
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+        <h1 class="hauth-form-title">Create your account</h1>
+        <div class="hauth-form-fields">
+          <div class="hfield">
+            <label class="hlabel" for="account-new-sign-up-name">Name</label>
+            <input class="hinput" id="account-new-sign-up-name" name="name" autocomplete="name" aria-describedby="account-new-sign-up-name-error" />
+            <p class="herror" id="account-new-sign-up-name-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="account-new-sign-up-email">Email</label>
+            <input class="hinput" id="account-new-sign-up-email" name="email" type="email" autocomplete="email" aria-describedby="account-new-sign-up-email-error" />
+            <p class="herror" id="account-new-sign-up-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="account-new-sign-up-password">Password</label>
+              <span class="hpassword-strength" id="account-new-sign-up-password-strength" aria-live="polite"></span>
+            </div>
+            <div class="hpassword">
+              <input
+                class="hinput"
+                id="account-new-sign-up-password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                aria-describedby="account-new-sign-up-password-error account-new-sign-up-password-strength account-new-sign-up-password-hint"
+                data-example-password-strength
+              />
+              <span class="htooltip-trigger">
+                <button
+                  class="hpassword-toggle"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  aria-controls="account-new-sign-up-password"
+                  hidden
+                >
+                  <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                  <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+              </span>
+            </div>
+            <div class="hpassword-details" hidden>
+              <div>
+                <div
+                  class="hmeter"
+                  role="meter"
+                  aria-label="Password strength"
+                  aria-valuemin="0"
+                  aria-valuemax="3"
+                  aria-valuenow="0"
+                >
+                  <span class="hmeter-segment"></span>
+                  <span class="hmeter-segment"></span>
+                  <span class="hmeter-segment"></span>
+                </div>
+                <p class="hpassword-hint" id="account-new-sign-up-password-hint"></p>
+              </div>
+            </div>
+            <p class="herror" id="account-new-sign-up-password-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="hbutton" type="submit" aria-describedby="account-new-sign-up-agreement">
+          <span class="hbutton-label">Create account</span>
+        </button>
+        <p class="hsign-up-form-agreement" id="account-new-sign-up-agreement">
+          By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+          <a class="hlink" href="/privacy">Privacy Policy</a>.
+        </p>
+        <p class="hauth-form-footer">
+          Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+        </p>
+      </form>
+    </div>
+    <div class="haccount-forms-view" hidden data-example-account-forms-page="/reset-password">
+      <form
+        class="hcard hauth-form"
+        data-variant="raised"
+        method="post"
+        novalidate
+        data-example-reset-request
+        data-example-reset-support="/contact"
+      >
+        <div class="hauth-form-header">
+          <h1 class="hauth-form-title" tabindex="-1">Reset your password</h1>
+          <p class="hauth-form-description">
+            Enter the email address of your account, and we'll send you a link to reset your password.
+          </p>
+        </div>
+        <div class="hfield">
+          <label class="hlabel" for="account-new-reset-email">Email</label>
+          <input class="hinput" id="account-new-reset-email" name="email" type="email" autocomplete="email" aria-describedby="account-new-reset-email-error" />
+          <p class="herror" id="account-new-reset-email-error" aria-live="polite"></p>
+        </div>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Continue</span>
+        </button>
+        <p class="hauth-form-footer">
+          <a class="hlink" href="/sign-in">Return to sign in</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With other accounts">
+  <play-note>
+    The same, with other accounts under the Sign-in and the Sign-up Forms'
+    buttons, so an account someone signed up with is there to sign in with
+    too: <code>providers</code> in React, which goes to both.
+  </play-note>
+  <div class="haccount-forms" data-example-account-forms>
+    <div class="haccount-forms-view" data-example-account-forms-page="/sign-in">
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+        <h1 class="hauth-form-title">Sign in</h1>
+        <div class="hauth-form-fields">
+          <div class="hfield">
+            <label class="hlabel" for="account-others-sign-in-email">Email</label>
+            <input class="hinput" id="account-others-sign-in-email" name="email" type="email" autocomplete="username" aria-describedby="account-others-sign-in-email-error" />
+            <p class="herror" id="account-others-sign-in-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="account-others-sign-in-password">Password</label>
+              <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+            </div>
+            <div class="hpassword">
+              <input
+                class="hinput"
+                id="account-others-sign-in-password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                aria-describedby="account-others-sign-in-password-error"
+              />
+              <span class="htooltip-trigger">
+                <button
+                  class="hpassword-toggle"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  aria-controls="account-others-sign-in-password"
+                  hidden
+                >
+                  <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                  <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+              </span>
+            </div>
+            <p class="herror" id="account-others-sign-in-password-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Sign in</span>
+        </button>
+        <p class="hauth-form-divider">or</p>
+        <div class="hauth-form-providers">
+          <a class="hbutton" data-variant="secondary" href="/auth/google">
+            <play-icon name="google" class="hicon"></play-icon>
+            <span class="hbutton-label">Continue with Google</span>
+          </a>
+          <a class="hbutton" data-variant="secondary" href="/auth/github">
+            <play-icon name="github" class="hicon"></play-icon>
+            <span class="hbutton-label">Continue with GitHub</span>
+          </a>
+          <a class="hbutton" data-variant="secondary" href="/auth/apple">
+            <play-icon name="apple" class="hicon"></play-icon>
+            <span class="hbutton-label">Continue with Apple</span>
+          </a>
+        </div>
+        <p class="hauth-form-footer">
+          Don't have an account? <a class="hlink" data-underlined href="/sign-up">Sign up</a>
+        </p>
+      </form>
+    </div>
+    <div class="haccount-forms-view" hidden data-example-account-forms-page="/sign-up">
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+        <h1 class="hauth-form-title">Create your account</h1>
+        <div class="hauth-form-fields">
+          <div class="hfield">
+            <label class="hlabel" for="account-others-sign-up-name">Name</label>
+            <input class="hinput" id="account-others-sign-up-name" name="name" autocomplete="name" aria-describedby="account-others-sign-up-name-error" />
+            <p class="herror" id="account-others-sign-up-name-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="account-others-sign-up-email">Email</label>
+            <input class="hinput" id="account-others-sign-up-email" name="email" type="email" autocomplete="email" aria-describedby="account-others-sign-up-email-error" />
+            <p class="herror" id="account-others-sign-up-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="account-others-sign-up-password">Password</label>
+              <span class="hpassword-strength" id="account-others-sign-up-password-strength" aria-live="polite"></span>
+            </div>
+            <div class="hpassword">
+              <input
+                class="hinput"
+                id="account-others-sign-up-password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                aria-describedby="account-others-sign-up-password-error account-others-sign-up-password-strength account-others-sign-up-password-hint"
+                data-example-password-strength
+              />
+              <span class="htooltip-trigger">
+                <button
+                  class="hpassword-toggle"
+                  type="button"
+                  aria-label="Show password"
+                  aria-pressed="false"
+                  aria-controls="account-others-sign-up-password"
+                  hidden
+                >
+                  <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                  <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+              </span>
+            </div>
+            <div class="hpassword-details" hidden>
+              <div>
+                <div
+                  class="hmeter"
+                  role="meter"
+                  aria-label="Password strength"
+                  aria-valuemin="0"
+                  aria-valuemax="3"
+                  aria-valuenow="0"
+                >
+                  <span class="hmeter-segment"></span>
+                  <span class="hmeter-segment"></span>
+                  <span class="hmeter-segment"></span>
+                </div>
+                <p class="hpassword-hint" id="account-others-sign-up-password-hint"></p>
+              </div>
+            </div>
+            <p class="herror" id="account-others-sign-up-password-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <button class="hbutton" type="submit" aria-describedby="account-others-sign-up-agreement">
+          <span class="hbutton-label">Create account</span>
+        </button>
+        <p class="hsign-up-form-agreement" id="account-others-sign-up-agreement">
+          By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+          <a class="hlink" href="/privacy">Privacy Policy</a>.
+        </p>
+        <p class="hauth-form-divider">or</p>
+        <div class="hauth-form-providers">
+          <a class="hbutton" data-variant="secondary" href="/auth/google">
+            <play-icon name="google" class="hicon"></play-icon>
+            <span class="hbutton-label">Continue with Google</span>
+          </a>
+          <a class="hbutton" data-variant="secondary" href="/auth/github">
+            <play-icon name="github" class="hicon"></play-icon>
+            <span class="hbutton-label">Continue with GitHub</span>
+          </a>
+          <a class="hbutton" data-variant="secondary" href="/auth/apple">
+            <play-icon name="apple" class="hicon"></play-icon>
+            <span class="hbutton-label">Continue with Apple</span>
+          </a>
+        </div>
+        <p class="hauth-form-footer">
+          Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+        </p>
+      </form>
+    </div>
+    <div class="haccount-forms-view" hidden data-example-account-forms-page="/reset-password">
+      <form
+        class="hcard hauth-form"
+        data-variant="raised"
+        method="post"
+        novalidate
+        data-example-reset-request
+        data-example-reset-support="/contact"
+      >
+        <div class="hauth-form-header">
+          <h1 class="hauth-form-title" tabindex="-1">Reset your password</h1>
+          <p class="hauth-form-description">
+            Enter the email address of your account, and we'll send you a link to reset your password.
+          </p>
+        </div>
+        <div class="hfield">
+          <label class="hlabel" for="account-others-reset-email">Email</label>
+          <input class="hinput" id="account-others-reset-email" name="email" type="email" autocomplete="email" aria-describedby="account-others-reset-email-error" />
+          <p class="herror" id="account-others-reset-email-error" aria-live="polite"></p>
+        </div>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Continue</span>
+        </button>
+        <p class="hauth-form-footer">
+          <a class="hlink" href="/sign-in">Return to sign in</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="In a Dialog">
+  <play-note>
+    In a <a class="hlink" data-underlined href="dialog.html">Dialog</a>, for
+    when signing in mustn't leave the page, such as saving changes made
+    before it: the Dialog is the card, so the forms take off their own frame,
+    and their titles step down to <code>&lt;h3&gt;</code>s under the Dialog's
+    <code>&lt;h2&gt;</code>. They switch in place, as
+    above, and the Dialog grows or shrinks with them.
+    <code>closedby="closerequest"</code> keeps a stray click outside from
+    closing it on a half-typed password.
+  </play-note>
+  <button class="hbutton" type="button" commandfor="account-dialog" command="show-modal">
+    <span class="hbutton-label">Save changes</span>
+  </button>
+  <dialog
+    class="hdialog"
+    id="account-dialog"
+    closedby="closerequest"
+    aria-labelledby="account-dialog-title"
+    aria-describedby="account-dialog-description"
+  >
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="account-dialog-title">Sign in to continue</h2>
+      <p class="hdialog-description" id="account-dialog-description">Your changes stay here while you sign in.</p>
+      <button
+        class="hbutton hdialog-close"
+        data-variant="tertiary"
+        type="button"
+        commandfor="account-dialog"
+        command="request-close"
+        aria-label="Close"
+      >
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdialog-body">
+      <div class="haccount-forms" data-example-account-forms>
+        <div class="haccount-forms-view" data-example-account-forms-page="/sign-in">
+          <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
+            <h3 class="hauth-form-title">Sign in</h3>
+            <div class="hauth-form-fields">
+              <div class="hfield">
+                <label class="hlabel" for="account-dialog-sign-in-email">Email</label>
+                <input class="hinput" id="account-dialog-sign-in-email" name="email" type="email" autocomplete="username" aria-describedby="account-dialog-sign-in-email-error" />
+                <p class="herror" id="account-dialog-sign-in-email-error" aria-live="polite"></p>
+              </div>
+              <div class="hfield">
+                <div class="hfield-label-row">
+                  <label class="hlabel" for="account-dialog-sign-in-password">Password</label>
+                  <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+                </div>
+                <div class="hpassword">
+                  <input
+                    class="hinput"
+                    id="account-dialog-sign-in-password"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    aria-describedby="account-dialog-sign-in-password-error"
+                  />
+                  <span class="htooltip-trigger">
+                    <button
+                      class="hpassword-toggle"
+                      type="button"
+                      aria-label="Show password"
+                      aria-pressed="false"
+                      aria-controls="account-dialog-sign-in-password"
+                      hidden
+                    >
+                      <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                      <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                    </button>
+                    <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+                  </span>
+                </div>
+                <p class="herror" id="account-dialog-sign-in-password-error" aria-live="polite"></p>
+              </div>
+            </div>
+            <button class="hbutton" type="submit">
+              <span class="hbutton-label">Sign in</span>
+            </button>
+            <p class="hauth-form-footer">
+              Don't have an account? <a class="hlink" data-underlined href="/sign-up">Sign up</a>
+            </p>
+          </form>
+        </div>
+        <div class="haccount-forms-view" hidden data-example-account-forms-page="/sign-up">
+          <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
+            <h3 class="hauth-form-title">Create your account</h3>
+            <div class="hauth-form-fields">
+              <div class="hfield">
+                <label class="hlabel" for="account-dialog-sign-up-name">Name</label>
+                <input class="hinput" id="account-dialog-sign-up-name" name="name" autocomplete="name" aria-describedby="account-dialog-sign-up-name-error" />
+                <p class="herror" id="account-dialog-sign-up-name-error" aria-live="polite"></p>
+              </div>
+              <div class="hfield">
+                <label class="hlabel" for="account-dialog-sign-up-email">Email</label>
+                <input class="hinput" id="account-dialog-sign-up-email" name="email" type="email" autocomplete="email" aria-describedby="account-dialog-sign-up-email-error" />
+                <p class="herror" id="account-dialog-sign-up-email-error" aria-live="polite"></p>
+              </div>
+              <div class="hfield">
+                <div class="hfield-label-row">
+                  <label class="hlabel" for="account-dialog-sign-up-password">Password</label>
+                  <span class="hpassword-strength" id="account-dialog-sign-up-password-strength" aria-live="polite"></span>
+                </div>
+                <div class="hpassword">
+                  <input
+                    class="hinput"
+                    id="account-dialog-sign-up-password"
+                    name="password"
+                    type="password"
+                    autocomplete="new-password"
+                    aria-describedby="account-dialog-sign-up-password-error account-dialog-sign-up-password-strength account-dialog-sign-up-password-hint"
+                    data-example-password-strength
+                  />
+                  <span class="htooltip-trigger">
+                    <button
+                      class="hpassword-toggle"
+                      type="button"
+                      aria-label="Show password"
+                      aria-pressed="false"
+                      aria-controls="account-dialog-sign-up-password"
+                      hidden
+                    >
+                      <play-icon name="eye" class="hpassword-icon-show"></play-icon>
+                      <play-icon name="eye-off" class="hpassword-icon-hide"></play-icon>
+                    </button>
+                    <span class="htooltip" role="tooltip" aria-hidden="true" data-side="inline-end">Show password</span>
+                  </span>
+                </div>
+                <div class="hpassword-details" hidden>
+                  <div>
+                    <div
+                      class="hmeter"
+                      role="meter"
+                      aria-label="Password strength"
+                      aria-valuemin="0"
+                      aria-valuemax="3"
+                      aria-valuenow="0"
+                    >
+                      <span class="hmeter-segment"></span>
+                      <span class="hmeter-segment"></span>
+                      <span class="hmeter-segment"></span>
+                    </div>
+                    <p class="hpassword-hint" id="account-dialog-sign-up-password-hint"></p>
+                  </div>
+                </div>
+                <p class="herror" id="account-dialog-sign-up-password-error" aria-live="polite"></p>
+              </div>
+            </div>
+            <button class="hbutton" type="submit" aria-describedby="account-dialog-sign-up-agreement">
+              <span class="hbutton-label">Create account</span>
+            </button>
+            <p class="hsign-up-form-agreement" id="account-dialog-sign-up-agreement">
+              By creating an account, you agree to our <a class="hlink" href="/terms">Terms of Service</a> and
+              <a class="hlink" href="/privacy">Privacy Policy</a>.
+            </p>
+            <p class="hauth-form-footer">
+              Already have an account? <a class="hlink" data-underlined href="/sign-in">Sign in</a>
+            </p>
+          </form>
+        </div>
+        <div class="haccount-forms-view" hidden data-example-account-forms-page="/reset-password">
+          <form
+            class="hcard hauth-form"
+            data-variant="raised"
+            method="post"
+            novalidate
+            data-example-reset-request
+            data-example-reset-support="/contact"
+          >
+            <div class="hauth-form-header">
+              <h3 class="hauth-form-title" tabindex="-1">Reset your password</h3>
+              <p class="hauth-form-description">
+                Enter the email address of your account, and we'll send you a link to reset your password.
+              </p>
+            </div>
+            <div class="hfield">
+              <label class="hlabel" for="account-dialog-reset-email">Email</label>
+              <input class="hinput" id="account-dialog-reset-email" name="email" type="email" autocomplete="email" aria-describedby="account-dialog-reset-email-error" />
+              <p class="herror" id="account-dialog-reset-email-error" aria-live="polite"></p>
+            </div>
+            <button class="hbutton" type="submit">
+              <span class="hbutton-label">Continue</span>
+            </button>
+            <p class="hauth-form-footer">
+              <a class="hlink" href="/sign-in">Return to sign in</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</play-example>

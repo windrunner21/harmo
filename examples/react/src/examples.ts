@@ -35,6 +35,7 @@ import { examples as listbox } from "./components/listbox.tsx";
 import { examples as menuButton } from "./components/menu-button.tsx";
 import { examples as meter } from "./components/meter.tsx";
 import { examples as navigationMenu } from "./components/navigation-menu.tsx";
+import { examples as otpInput } from "./components/otp-input.tsx";
 import { examples as pagination } from "./components/pagination.tsx";
 import { examples as password } from "./components/password.tsx";
 import { examples as phoneInput } from "./components/phone-input.tsx";
@@ -52,6 +53,11 @@ import { examples as stat } from "./components/stat.tsx";
 import { examples as status } from "./components/status.tsx";
 import { examples as switchExamples } from "./components/switch.tsx";
 import { examples as table } from "./components/table.tsx";
+import { examples as signInForm } from "./components/sign-in-form.tsx";
+import { examples as signUpForm } from "./components/sign-up-form.tsx";
+import { examples as resetPassword } from "./components/reset-password.tsx";
+import { examples as contactForm } from "./components/contact-form.tsx";
+import { examples as accountForms } from "./components/account-forms.tsx";
 import { examples as tableOfContents } from "./components/table-of-contents.tsx";
 import { examples as tabs } from "./components/tabs.tsx";
 import { examples as tag } from "./components/tag.tsx";
@@ -61,6 +67,7 @@ import { examples as timePicker } from "./components/time-picker.tsx";
 import { examples as toast } from "./components/toast.tsx";
 import { examples as toolbar } from "./components/toolbar.tsx";
 import { examples as tooltip } from "./components/tooltip.tsx";
+import { examples as verifyCode } from "./components/verify-code.tsx";
 
 export const components: Record<string, Record<string, ComponentType>> = {
   accordion,
@@ -96,6 +103,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "menu-button": menuButton,
   meter,
   "navigation-menu": navigationMenu,
+  "otp-input": otpInput,
   pagination,
   password,
   "phone-input": phoneInput,
@@ -113,6 +121,11 @@ export const components: Record<string, Record<string, ComponentType>> = {
   status,
   switch: switchExamples,
   table,
+  "sign-in-form": signInForm,
+  "sign-up-form": signUpForm,
+  "reset-password": resetPassword,
+  "contact-form": contactForm,
+  "account-forms": accountForms,
   "table-of-contents": tableOfContents,
   tabs,
   tag,
@@ -122,4 +135,5 @@ export const components: Record<string, Record<string, ComponentType>> = {
   toast,
   toolbar,
   tooltip,
+  "verify-code": verifyCode,
 };

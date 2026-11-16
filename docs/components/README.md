@@ -40,6 +40,7 @@ the same markup and does what the script would.
 | Menu Button | [menu-button.md](menu-button.md) |
 | Meter | [meter.md](meter.md) |
 | Navigation Menu | [navigation-menu.md](navigation-menu.md) |
+| OTP Input | [otp-input.md](otp-input.md) |
 | Pagination | [pagination.md](pagination.md) |
 | Password Input | [password.md](password.md) |
 | Phone Input | [phone-input.md](phone-input.md) |
@@ -137,6 +138,7 @@ Some components are built from others, so their files need company:
 | `listbox.css` | `popup.css`; `button.css` for a footer or a button that opens it |
 | `menu-button.css` | `button.css`; `popup.css` to open a Popup |
 | `navigation-menu.css` | `expand-chevron.css` |
+| `otp-input.css` | `input.css`; `field.css` for a label |
 | `pagination.css` | `button.css`, `chevron.css` |
 | `password.css` | `input.css`, `field.css`, `tooltip.css`; `meter.css` for the strength |
 | `phone-input.css` | `select.css`, `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label |
@@ -173,7 +175,8 @@ Some components are built from others, so their files need company:
   without `!important`. A few rules are heavier, and a matching selector
   overrides them: a Field's description under its label, and the control in a
   horizontal Field; a Setting's control; the room Search and Password Input
-  keep for their buttons; the field under a highlight in Input and TextArea;
+  keep for their buttons; the field under a highlight in Input and TextArea,
+  and over OTP Input's slots;
   and a Banner's or Toast's action on hover and press.
 - **Token names** are inspired by Stripe's Elements Appearance API: what is colored,
   then the variant, then the state (`--harmo-color-text-secondary`,
@@ -210,11 +213,11 @@ Some components are built from others, so their files need company:
   | `data-position` | Where the region is: `top-start`, `top-center`, `top-end`, `bottom-start`, `bottom-end`; or, on a panel waiting beside the open one, `before` or `after` (script) | Toast, Navigation Menu |
   | `data-delay` | Wait 300ms before showing | Spinner |
   | `data-placeholder` | No value chosen | Select, Time Picker |
-  | `data-filled` | A filled segment | Meter |
-  | `data-active` | Highlighted option (script) | Listbox |
+  | `data-filled` | A filled segment; a slot with a character (script) | Meter, OTP Input |
+  | `data-active` | Highlighted option; the slot typing goes to (script) | Listbox, OTP Input |
   | `data-value` | An option's value | Listbox, and what's built on it: Select, Combobox, Filter Chip, Language Picker |
-  | `data-name` | The name a form sends the chosen values under | Select, Combobox |
-  | `data-ready` | Measured and placed (script) | Tabs, Table of Contents |
+  | `data-name` | The name a form sends the chosen values under: a Select's `<select>` has it as `name` | Select, Combobox |
+  | `data-ready` | Measured and placed; the slots shown (script) | Tabs, Table of Contents, OTP Input |
   | `data-on-current` | The pill is over the current tab (script) | Tabs |
   | `data-level` | `2` or `3`: a heading under another | Table of Contents |
   | `data-dismissed` | Hidden by Escape (script) | Tooltip |
@@ -228,6 +231,7 @@ Some components are built from others, so their files need company:
   | `data-copied` | Just copied (script) | Copy Button |
   | `data-collapsed` | Down to its icons | Sidebar |
   | `data-multiple` | Choosing several | Combobox |
+| `data-characters` | `alphanumeric`: letters too | OTP Input |
   | `data-free-text` | What's typed is the value | Combobox |
   | `data-closing` | Closing, while its exit plays (script) | Dialog, Drawer |
   | `data-dragging` | `page` or `over`: a file is being dragged (script) | File Input |
@@ -345,11 +349,12 @@ the React components, set:
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
 | `aria-selected` | Listbox option | Selection |
 | `aria-activedescendant` | Select trigger, search field, or the list | Announces the highlighted option |
-| Hidden inputs | Select in a form | The chosen values, kept in step, restored on reset, disabled with the trigger |
+| `hidden` on `.hselect-fallback`; the `<select>`'s chosen options and `disabled` | Select in a form | Show the trigger in place of the native select it starts as; keep that select, which the form sends, on the chosen values, restored on reset, disabled with the trigger |
 | Error text, `hidden` | Field | Shows a validation error; `hidden` closes it, then the text is cleared |
 | Counter text | TextArea | Characters used |
 | The backdrop's text and `<mark>`s, its size and scrolling | Input, TextArea | Mark parts of the text |
 | `aria-pressed`, input `type`, `hidden`, `data-status`, `aria-invalid` | Password Input | Show/hide, reveal the strength, color it |
+| `data-ready`, the slots' characters, `data-filled`, `data-active`, the field's value and caret | OTP Input | Show the slots, keep the field to what a code holds, type over, and follow the caret |
 | `aria-valuenow`, `aria-valuetext`, `data-filled`, `data-status` | Meter | The value |
 | `role="status"` or `role="alert"` | Banner | Announce a banner that appears after load |
 | `data-closing` | Dialog, Drawer | Hold the close while the exit plays |

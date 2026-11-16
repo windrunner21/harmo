@@ -33,6 +33,7 @@ explains something. For content someone opens and interacts with, use a
 | --- | --- |
 | (default) | Below the trigger |
 | `data-side="top"`, `"left"`, or `"right"` | Preferred side; it flips when there isn't room. Sides are physical, as in Radix and Floating UI: `left` stays left in right-to-left text |
+| `data-side="inline-start"` or `"inline-end"` | Preferred side at the start or end of the trigger's line, following its direction (`dir`): `inline-end` is the right in left-to-right text and the left in right-to-left text; it flips when there isn't room. For a tooltip at a field's end, such as [Password Input](password.md)'s toggle |
 | `data-variant="hint"` | Explains something, such as a KPI: a card in the page's background color with 13px `--harmo-color-text-secondary` text, a border, and a soft shadow, up to 280px wide, start-aligned |
 | `data-open` on `.htooltip-trigger` | Shows it at once, until removed: for a tooltip a press pins open, as on a touch screen, which neither hovers nor shows keyboard focus, such as a [Tag List](tag-list.md)'s "+N". Escape still hides it, until `data-open` is added again, as the next press does |
 
@@ -96,7 +97,7 @@ without a fade. Other props are the trigger `<span>`'s attributes.
 | --- | --- |
 | `label` | The control's name |
 | `description` | The control's description |
-| `side` | `top`, `left`, or `right`; below when left out |
+| `side` | `top`, `left`, `right`, `inline-start`, or `inline-end`; below when left out |
 | `variant` | `hint`, a card that explains something |
 
 ```tsx

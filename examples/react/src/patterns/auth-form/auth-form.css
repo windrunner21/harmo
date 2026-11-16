@@ -1,0 +1,244 @@
+/* The account forms, signing in, signing up, and resetting a password, share
+   this look: a raised Card holding the title, the fields, and the button,
+   which fills the form's width, with a band along its bottom for the line
+   under them. */
+.hauth-form {
+  --harmo-card-padding: var(--harmo-space-lg);
+
+  display: grid;
+  gap: var(--harmo-space-md);
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 25rem;
+  margin: 0;
+}
+
+.hauth-form[hidden] {
+  display: none;
+}
+
+/* Its line is trimmed to the top of its capitals, so the padding above it
+   reads as the padding below the button does, rather than larger. */
+.hauth-form-title {
+  margin: 0;
+  text-box: trim-start cap alphabetic;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-lg);
+  font-weight: var(--harmo-font-weight-bold);
+  line-height: 1.4;
+
+  color: var(--harmo-color-text);
+}
+
+/* A title that takes focus as the form moves to another step, so a screen
+   reader reads it first. It isn't a control, so it shows no ring. */
+.hauth-form-title:focus {
+  outline: none;
+}
+
+/* A title with a description under it, a small step apart. */
+.hauth-form-header {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+}
+
+.hauth-form-header[hidden] {
+  display: none;
+}
+
+.hauth-form-description {
+  margin: 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+.hauth-form-fields {
+  display: grid;
+  gap: var(--harmo-space-sm);
+}
+
+.hauth-form-fields[hidden] {
+  display: none;
+}
+
+:where(.hauth-form) > .hbutton {
+  inline-size: 100%;
+}
+
+/* "or", between the form and the other accounts to sign in or sign up with:
+   a word a screen reader reads, between two lines. */
+.hauth-form-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--harmo-space-xs);
+  margin: 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-xs);
+  line-height: var(--harmo-font-line-height);
+
+  color: var(--harmo-color-text-tertiary);
+}
+
+.hauth-form-divider[hidden] {
+  display: none;
+}
+
+.hauth-form-divider::before,
+.hauth-form-divider::after {
+  content: "";
+  flex: 1;
+
+  border-block-start: 1px solid var(--harmo-color-border);
+}
+
+/* The other accounts, secondary Buttons that lead to each one's sign-in, one
+   to a row, as wide as the form. Four or more go two to a row. */
+.hauth-form-providers {
+  display: grid;
+  gap: var(--harmo-space-xs);
+}
+
+.hauth-form-providers[hidden] {
+  display: none;
+}
+
+.hauth-form-providers:has(> :nth-child(4 of :not([hidden]))) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* A tinted band at the card's bottom, such as "Already have an account?
+   Sign in", inset a small step from the card's sides and bottom, so the card
+   frames it on all four sides. The space above it adds to the form's gap, so
+   the content ends as far above it as the title starts under the top edge. */
+.hauth-form-footer {
+  margin-block: calc(var(--harmo-space-lg) - var(--harmo-space-md))
+    calc(var(--harmo-space-2xs) - var(--harmo-card-padding));
+  margin-inline: calc(var(--harmo-space-2xs) - var(--harmo-card-padding));
+  padding: var(--harmo-space-sm) calc(var(--harmo-card-padding) - var(--harmo-space-2xs));
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+  text-align: center;
+
+  color: var(--harmo-color-text-secondary);
+  background-color: var(--harmo-color-background-secondary);
+  border-radius: var(--harmo-border-radius-sm);
+}
+
+/* The paragraphs under a step's title, such as "Check your email"'s: a larger
+   step apart than the title is from the first, so each reads as its own. */
+.hauth-form-message {
+  display: grid;
+  gap: var(--harmo-space-sm);
+}
+
+.hauth-form-message[hidden] {
+  display: none;
+}
+
+/* An address the form sent something to, in medium weight. A long one breaks
+   rather than overflowing the form. */
+.hauth-form-email {
+  font-weight: var(--harmo-font-weight-medium);
+  overflow-wrap: anywhere;
+
+  color: var(--harmo-color-text);
+}
+
+/* An action inside a sentence, such as "resend": a button, since it does
+   something rather than going somewhere, with .hlink for the look of the
+   Link beside it, its underline, and its focus ring. */
+.hauth-form-action {
+  margin: 0;
+  padding: 0;
+
+  cursor: pointer;
+
+  background: none;
+  border: 0;
+}
+
+/* Not yet, such as "Send a new code in 0:24": tertiary text, without the
+   underline or the hover of an action it can't take. */
+.hauth-form-action[aria-disabled="true"] {
+  text-decoration: none;
+
+  cursor: default;
+
+  color: var(--harmo-color-text-tertiary);
+}
+
+/* With the link under the password field rather than beside its label: at
+   its end, a small step under it, at the label's size. */
+.hauth-form-password {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+}
+
+.hauth-form-password[hidden] {
+  display: none;
+}
+
+.hauth-form-forgot {
+  justify-self: end;
+}
+
+/* A failed submit shakes the form once. Under reduced motion it stays still,
+   and the error under the field says what went wrong. */
+@media (prefers-reduced-motion: no-preference) {
+  .hauth-form[data-shake] {
+    animation: hauth-form-shake var(--harmo-duration-slow) ease-out;
+  }
+}
+
+@keyframes hauth-form-shake {
+  25% {
+    translate: -12px;
+  }
+
+  50% {
+    translate: 12px;
+  }
+
+  75% {
+    translate: -12px;
+  }
+}
+
+/* In a Dialog, which is its card: the form takes off its own frame and
+   padding, its title steps down to a heading under the Dialog's, and the band
+   along its bottom spans the form rather than the card it no longer has. The
+   padding is 0px, with its unit, for the band's calc(). Every form is as
+   wide as it can be, so the Dialog keeps its width as they switch. */
+:where(.hdialog-body) .hauth-form[data-variant] {
+  --harmo-card-padding: 0px;
+
+  inline-size: 25rem;
+  max-inline-size: 100%;
+
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+:where(.hdialog-body .hauth-form) .hauth-form-title {
+  font-size: var(--harmo-font-size-base);
+  font-weight: var(--harmo-font-weight-semibold);
+}
+
+:where(.hdialog-body .hauth-form) > .hauth-form-footer {
+  margin-block-end: 0;
+  margin-inline: 0;
+  padding-inline: var(--harmo-space-sm);
+}

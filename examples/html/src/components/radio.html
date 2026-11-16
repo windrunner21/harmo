@@ -63,6 +63,64 @@
   </div>
 </play-example>
 
+<play-example title="Cards" layout="wide">
+  <play-note>
+    <code>data-variant="card"</code> on each option's horizontal Field makes it
+    a choice card: a bordered tile that a click anywhere on chooses, its
+    padding and its description too, and that takes the radio's colors once
+    it's chosen. The grid that sets them two or three across, and one over the
+    other on a narrow screen, is this example's own layout.
+  </play-note>
+  <div class="hfield" role="radiogroup" aria-labelledby="plan-label">
+    <span class="hlabel" id="plan-label">Plan</span>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: var(--harmo-space-xs)">
+      <div class="hfield" data-orientation="horizontal" data-variant="card">
+        <input
+          class="hradio"
+          type="radio"
+          name="plan"
+          id="plan-starter"
+          value="starter"
+          aria-describedby="plan-starter-description"
+        />
+        <div class="hfield-content">
+          <label class="hlabel" for="plan-starter">Starter</label>
+          <p class="hdescription" id="plan-starter-description">For one person, with up to 3 projects.</p>
+        </div>
+      </div>
+      <div class="hfield" data-orientation="horizontal" data-variant="card">
+        <input
+          class="hradio"
+          type="radio"
+          name="plan"
+          id="plan-team"
+          value="team"
+          aria-describedby="plan-team-description"
+          checked
+        />
+        <div class="hfield-content">
+          <label class="hlabel" for="plan-team">Team</label>
+          <p class="hdescription" id="plan-team-description">For up to 20 people, with shared projects.</p>
+        </div>
+      </div>
+      <div class="hfield" data-orientation="horizontal" data-variant="card">
+        <input
+          class="hradio"
+          type="radio"
+          name="plan"
+          id="plan-business"
+          value="business"
+          aria-describedby="plan-business-description"
+        />
+        <div class="hfield-content">
+          <label class="hlabel" for="plan-business">Business</label>
+          <p class="hdescription" id="plan-business-description">For a whole company, with single sign-on.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</play-example>
+
 <play-example title="Disabled" layout="stack">
   <play-note>
     <code>disabled</code> dims an option, and its label turns gray, whether or

@@ -1,0 +1,1107 @@
+<play-example title="Default">
+  <play-note>
+    A raised <a class="hlink" data-underlined href="card.html">Card</a> with
+    the name and email side by side, and a <a class="hlink" data-underlined
+    href="textarea.html">TextArea</a> with its counter. Each placeholder is an
+    example of what to type, under a label that stays. Sending checks the
+    fields first: each error shows under its field, the first field in error
+    takes focus, and the card shakes once, unless you've asked for reduced
+    motion. Then the button works for a moment, and a thank-you takes the
+    form's place and focus, the card shrinking to it as it fades in. A message
+    the server gives for the whole form shows above the button; one for a
+    field shows under it, as the form's own errors do.
+  </play-note>
+  <div class="hcard hcontact-form" data-variant="raised" data-example-contact="message">
+    <form class="hcontact-form-form" method="post" novalidate>
+      <div class="hcontact-form-header">
+        <h2 class="hcontact-form-title">Send us a message</h2>
+        <p class="hcontact-form-description">We read every message, and reply within a day.</p>
+      </div>
+      <div class="hcontact-form-fields">
+        <div class="hcontact-form-row">
+          <div class="hfield">
+            <label class="hlabel" for="contact-name">Name</label>
+            <input class="hinput" id="contact-name" name="name" autocomplete="name" placeholder="Sam Lee" aria-describedby="contact-name-error" />
+            <p class="herror" id="contact-name-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="contact-email">Email</label>
+            <input
+              class="hinput"
+              id="contact-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="name@example.com"
+              aria-describedby="contact-email-error"
+            />
+            <p class="herror" id="contact-email-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="hfield">
+          <label class="hlabel" for="contact-message">Message</label>
+          <textarea
+            class="htextarea hcontact-form-message"
+            id="contact-message"
+            name="message"
+            maxlength="1000"
+            placeholder="Tell us what you need, and anything that would help us answer."
+            aria-describedby="contact-message-error contact-message-counter"
+            data-example-counter
+          ></textarea>
+          <p class="htextarea-counter" id="contact-message-counter">0/1000</p>
+          <p class="herror" id="contact-message-error" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="hcontact-form-submit">
+        <p class="herror" aria-live="polite"></p>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Send message</span>
+        </button>
+      </div>
+    </form>
+    <div class="hempty-state" hidden>
+      <div class="hempty-state-icon" aria-hidden="true">
+        <play-icon name="success" class="hicon"></play-icon>
+      </div>
+      <h2 class="hempty-state-title" tabindex="-1">Message sent</h2>
+      <p class="hempty-state-description">
+        Thanks for writing. We'll reply to <strong data-example-contact-value="email"></strong> within a day.
+      </p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Sales inquiry" layout="wide">
+  <play-note>
+    For a sales page, beside its pitch: a <a class="hlink" data-underlined
+    href="section.html">Section</a> with a heading, a description, and a few
+    points as ghost <a class="hlink" data-underlined
+    href="card.html">Cards</a>. The form takes a company email and a full
+    name, then an optional phone number, country, website, and a message of up
+    to 300 characters. The country is a <a class="hlink" data-underlined
+    href="select.html">Select</a> with a search, whose options React names
+    from region codes. A phone number or a website that's typed is checked
+    too. The server's message about what was written, such as one about links
+    in it, shows above the button, since the message has no error of its own.
+  </play-note>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--harmo-space-lg); align-items: start">
+    <section class="hsection" aria-labelledby="sales-pitch-title">
+      <header class="hsection-header">
+        <div class="hsection-text">
+          <h2 class="hsection-title" id="sales-pitch-title">Let's find the right plan for your team</h2>
+          <p class="hsection-description">Get a demo tailored to you, and see how it fits the way your team works.</p>
+        </div>
+      </header>
+      <div class="hsection-body">
+        <ul style="--harmo-card-padding: 0; display: grid; gap: var(--harmo-space-sm); margin: 0; padding: 0; list-style: none">
+          <li>
+            <div class="hcard" data-variant="ghost">
+              <span class="hcard-icon" aria-hidden="true"><play-icon name="user" class="hicon"></play-icon></span>
+              <p class="hcard-title">A demo built around you</p>
+              <p class="hcard-description">We'll show you what matters to your team, not a slide deck.</p>
+            </div>
+          </li>
+          <li>
+            <div class="hcard" data-variant="ghost">
+              <span class="hcard-icon" aria-hidden="true"><play-icon name="analytics" class="hicon"></play-icon></span>
+              <p class="hcard-title">Pricing for your volume</p>
+              <p class="hcard-description">A plan sized to your team and how you'll use it, with no surprises.</p>
+            </div>
+          </li>
+          <li>
+            <div class="hcard" data-variant="ghost">
+              <span class="hcard-icon" aria-hidden="true"><play-icon name="settings" class="hicon"></play-icon></span>
+              <p class="hcard-title">Help getting set up</p>
+              <p class="hcard-description">We'll help you start, and bring over what you already have.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+    <div class="hcard hcontact-form" data-variant="raised" data-example-contact="sales">
+      <form class="hcontact-form-form" method="post" novalidate>
+        <h2 class="hcontact-form-title">Contact sales</h2>
+        <div class="hcontact-form-fields">
+          <div class="hcontact-form-row">
+            <div class="hfield">
+              <label class="hlabel" for="sales-email">Company email</label>
+              <input
+                class="hinput"
+                id="sales-email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="name@company.com"
+                aria-describedby="sales-email-error"
+              />
+              <p class="herror" id="sales-email-error" aria-live="polite"></p>
+            </div>
+            <div class="hfield">
+              <label class="hlabel" for="sales-name">Full name</label>
+              <input class="hinput" id="sales-name" name="name" autocomplete="name" placeholder="Sam Lee" aria-describedby="sales-name-error" />
+              <p class="herror" id="sales-name-error" aria-live="polite"></p>
+            </div>
+          </div>
+          <div class="hcontact-form-row">
+            <div class="hfield">
+              <div class="hfield-label-row">
+                <label class="hlabel" for="sales-phone">Phone number</label>
+                <span class="hfield-optional" id="sales-phone-optional">Optional</span>
+              </div>
+              <input
+                class="hinput"
+                id="sales-phone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="+1 415 555 2671"
+                aria-describedby="sales-phone-optional sales-phone-error"
+              />
+              <p class="herror" id="sales-phone-error" aria-live="polite"></p>
+            </div>
+            <div class="hfield">
+              <div class="hfield-label-row">
+                <span class="hlabel" id="sales-country-label">Country</span>
+                <span class="hfield-optional" id="sales-country-optional">Optional</span>
+              </div>
+              <span class="hselect-fallback">
+                <select name="country" aria-labelledby="sales-country-label" aria-describedby="sales-country-optional">
+                  <option value="" disabled selected>Choose a country</option>
+                  <option value="AF">Afghanistan</option>
+                  <option value="AX">Åland Islands</option>
+                  <option value="AL">Albania</option>
+                  <option value="DZ">Algeria</option>
+                  <option value="AS">American Samoa</option>
+                  <option value="AD">Andorra</option>
+                  <option value="AO">Angola</option>
+                  <option value="AI">Anguilla</option>
+                  <option value="AG">Antigua &amp; Barbuda</option>
+                  <option value="AR">Argentina</option>
+                  <option value="AM">Armenia</option>
+                  <option value="AW">Aruba</option>
+                  <option value="AU">Australia</option>
+                  <option value="AT">Austria</option>
+                  <option value="AZ">Azerbaijan</option>
+                  <option value="BS">Bahamas</option>
+                  <option value="BH">Bahrain</option>
+                  <option value="BD">Bangladesh</option>
+                  <option value="BB">Barbados</option>
+                  <option value="BY">Belarus</option>
+                  <option value="BE">Belgium</option>
+                  <option value="BZ">Belize</option>
+                  <option value="BJ">Benin</option>
+                  <option value="BM">Bermuda</option>
+                  <option value="BT">Bhutan</option>
+                  <option value="BO">Bolivia</option>
+                  <option value="BA">Bosnia &amp; Herzegovina</option>
+                  <option value="BW">Botswana</option>
+                  <option value="BR">Brazil</option>
+                  <option value="IO">British Indian Ocean Territory</option>
+                  <option value="VG">British Virgin Islands</option>
+                  <option value="BN">Brunei</option>
+                  <option value="BG">Bulgaria</option>
+                  <option value="BF">Burkina Faso</option>
+                  <option value="BI">Burundi</option>
+                  <option value="KH">Cambodia</option>
+                  <option value="CM">Cameroon</option>
+                  <option value="CA">Canada</option>
+                  <option value="CV">Cape Verde</option>
+                  <option value="BQ">Caribbean Netherlands</option>
+                  <option value="KY">Cayman Islands</option>
+                  <option value="CF">Central African Republic</option>
+                  <option value="TD">Chad</option>
+                  <option value="CL">Chile</option>
+                  <option value="CN">China</option>
+                  <option value="CX">Christmas Island</option>
+                  <option value="CC">Cocos (Keeling) Islands</option>
+                  <option value="CO">Colombia</option>
+                  <option value="KM">Comoros</option>
+                  <option value="CG">Congo - Brazzaville</option>
+                  <option value="CD">Congo - Kinshasa</option>
+                  <option value="CK">Cook Islands</option>
+                  <option value="CR">Costa Rica</option>
+                  <option value="CI">Côte d’Ivoire</option>
+                  <option value="HR">Croatia</option>
+                  <option value="CU">Cuba</option>
+                  <option value="CW">Curaçao</option>
+                  <option value="CY">Cyprus</option>
+                  <option value="CZ">Czechia</option>
+                  <option value="DK">Denmark</option>
+                  <option value="DJ">Djibouti</option>
+                  <option value="DM">Dominica</option>
+                  <option value="DO">Dominican Republic</option>
+                  <option value="EC">Ecuador</option>
+                  <option value="EG">Egypt</option>
+                  <option value="SV">El Salvador</option>
+                  <option value="GQ">Equatorial Guinea</option>
+                  <option value="ER">Eritrea</option>
+                  <option value="EE">Estonia</option>
+                  <option value="SZ">Eswatini</option>
+                  <option value="ET">Ethiopia</option>
+                  <option value="FK">Falkland Islands</option>
+                  <option value="FO">Faroe Islands</option>
+                  <option value="FJ">Fiji</option>
+                  <option value="FI">Finland</option>
+                  <option value="FR">France</option>
+                  <option value="GF">French Guiana</option>
+                  <option value="PF">French Polynesia</option>
+                  <option value="GA">Gabon</option>
+                  <option value="GM">Gambia</option>
+                  <option value="GE">Georgia</option>
+                  <option value="DE">Germany</option>
+                  <option value="GH">Ghana</option>
+                  <option value="GI">Gibraltar</option>
+                  <option value="GR">Greece</option>
+                  <option value="GL">Greenland</option>
+                  <option value="GD">Grenada</option>
+                  <option value="GP">Guadeloupe</option>
+                  <option value="GU">Guam</option>
+                  <option value="GT">Guatemala</option>
+                  <option value="GG">Guernsey</option>
+                  <option value="GN">Guinea</option>
+                  <option value="GW">Guinea-Bissau</option>
+                  <option value="GY">Guyana</option>
+                  <option value="HT">Haiti</option>
+                  <option value="HN">Honduras</option>
+                  <option value="HK">Hong Kong SAR China</option>
+                  <option value="HU">Hungary</option>
+                  <option value="IS">Iceland</option>
+                  <option value="IN">India</option>
+                  <option value="ID">Indonesia</option>
+                  <option value="IR">Iran</option>
+                  <option value="IQ">Iraq</option>
+                  <option value="IE">Ireland</option>
+                  <option value="IM">Isle of Man</option>
+                  <option value="IL">Israel</option>
+                  <option value="IT">Italy</option>
+                  <option value="JM">Jamaica</option>
+                  <option value="JP">Japan</option>
+                  <option value="JE">Jersey</option>
+                  <option value="JO">Jordan</option>
+                  <option value="KZ">Kazakhstan</option>
+                  <option value="KE">Kenya</option>
+                  <option value="KI">Kiribati</option>
+                  <option value="KW">Kuwait</option>
+                  <option value="KG">Kyrgyzstan</option>
+                  <option value="LA">Laos</option>
+                  <option value="LV">Latvia</option>
+                  <option value="LB">Lebanon</option>
+                  <option value="LS">Lesotho</option>
+                  <option value="LR">Liberia</option>
+                  <option value="LY">Libya</option>
+                  <option value="LI">Liechtenstein</option>
+                  <option value="LT">Lithuania</option>
+                  <option value="LU">Luxembourg</option>
+                  <option value="MO">Macao SAR China</option>
+                  <option value="MG">Madagascar</option>
+                  <option value="MW">Malawi</option>
+                  <option value="MY">Malaysia</option>
+                  <option value="MV">Maldives</option>
+                  <option value="ML">Mali</option>
+                  <option value="MT">Malta</option>
+                  <option value="MH">Marshall Islands</option>
+                  <option value="MQ">Martinique</option>
+                  <option value="MR">Mauritania</option>
+                  <option value="MU">Mauritius</option>
+                  <option value="YT">Mayotte</option>
+                  <option value="MX">Mexico</option>
+                  <option value="FM">Micronesia</option>
+                  <option value="MD">Moldova</option>
+                  <option value="MC">Monaco</option>
+                  <option value="MN">Mongolia</option>
+                  <option value="ME">Montenegro</option>
+                  <option value="MS">Montserrat</option>
+                  <option value="MA">Morocco</option>
+                  <option value="MZ">Mozambique</option>
+                  <option value="MM">Myanmar (Burma)</option>
+                  <option value="NA">Namibia</option>
+                  <option value="NR">Nauru</option>
+                  <option value="NP">Nepal</option>
+                  <option value="NL">Netherlands</option>
+                  <option value="NC">New Caledonia</option>
+                  <option value="NZ">New Zealand</option>
+                  <option value="NI">Nicaragua</option>
+                  <option value="NE">Niger</option>
+                  <option value="NG">Nigeria</option>
+                  <option value="NU">Niue</option>
+                  <option value="NF">Norfolk Island</option>
+                  <option value="KP">North Korea</option>
+                  <option value="MK">North Macedonia</option>
+                  <option value="MP">Northern Mariana Islands</option>
+                  <option value="NO">Norway</option>
+                  <option value="OM">Oman</option>
+                  <option value="PK">Pakistan</option>
+                  <option value="PW">Palau</option>
+                  <option value="PS">Palestinian Territories</option>
+                  <option value="PA">Panama</option>
+                  <option value="PG">Papua New Guinea</option>
+                  <option value="PY">Paraguay</option>
+                  <option value="PE">Peru</option>
+                  <option value="PH">Philippines</option>
+                  <option value="PN">Pitcairn Islands</option>
+                  <option value="PL">Poland</option>
+                  <option value="PT">Portugal</option>
+                  <option value="PR">Puerto Rico</option>
+                  <option value="QA">Qatar</option>
+                  <option value="RE">Réunion</option>
+                  <option value="RO">Romania</option>
+                  <option value="RU">Russia</option>
+                  <option value="RW">Rwanda</option>
+                  <option value="WS">Samoa</option>
+                  <option value="SM">San Marino</option>
+                  <option value="ST">São Tomé &amp; Príncipe</option>
+                  <option value="SA">Saudi Arabia</option>
+                  <option value="SN">Senegal</option>
+                  <option value="RS">Serbia</option>
+                  <option value="SC">Seychelles</option>
+                  <option value="SL">Sierra Leone</option>
+                  <option value="SG">Singapore</option>
+                  <option value="SX">Sint Maarten</option>
+                  <option value="SK">Slovakia</option>
+                  <option value="SI">Slovenia</option>
+                  <option value="SB">Solomon Islands</option>
+                  <option value="SO">Somalia</option>
+                  <option value="ZA">South Africa</option>
+                  <option value="KR">South Korea</option>
+                  <option value="SS">South Sudan</option>
+                  <option value="ES">Spain</option>
+                  <option value="LK">Sri Lanka</option>
+                  <option value="BL">St. Barthélemy</option>
+                  <option value="SH">St. Helena</option>
+                  <option value="KN">St. Kitts &amp; Nevis</option>
+                  <option value="LC">St. Lucia</option>
+                  <option value="MF">St. Martin</option>
+                  <option value="PM">St. Pierre &amp; Miquelon</option>
+                  <option value="VC">St. Vincent &amp; Grenadines</option>
+                  <option value="SD">Sudan</option>
+                  <option value="SR">Suriname</option>
+                  <option value="SJ">Svalbard &amp; Jan Mayen</option>
+                  <option value="SE">Sweden</option>
+                  <option value="CH">Switzerland</option>
+                  <option value="SY">Syria</option>
+                  <option value="TW">Taiwan</option>
+                  <option value="TJ">Tajikistan</option>
+                  <option value="TZ">Tanzania</option>
+                  <option value="TH">Thailand</option>
+                  <option value="TL">Timor-Leste</option>
+                  <option value="TG">Togo</option>
+                  <option value="TK">Tokelau</option>
+                  <option value="TO">Tonga</option>
+                  <option value="TT">Trinidad &amp; Tobago</option>
+                  <option value="TN">Tunisia</option>
+                  <option value="TR">Türkiye</option>
+                  <option value="TM">Turkmenistan</option>
+                  <option value="TC">Turks &amp; Caicos Islands</option>
+                  <option value="TV">Tuvalu</option>
+                  <option value="VI">U.S. Virgin Islands</option>
+                  <option value="UG">Uganda</option>
+                  <option value="UA">Ukraine</option>
+                  <option value="AE">United Arab Emirates</option>
+                  <option value="GB">United Kingdom</option>
+                  <option value="US">United States</option>
+                  <option value="UY">Uruguay</option>
+                  <option value="UZ">Uzbekistan</option>
+                  <option value="VU">Vanuatu</option>
+                  <option value="VA">Vatican City</option>
+                  <option value="VE">Venezuela</option>
+                  <option value="VN">Vietnam</option>
+                  <option value="WF">Wallis &amp; Futuna</option>
+                  <option value="EH">Western Sahara</option>
+                  <option value="YE">Yemen</option>
+                  <option value="ZM">Zambia</option>
+                  <option value="ZW">Zimbabwe</option>
+                </select>
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </span>
+              <button
+                class="hselect"
+                id="sales-country"
+                type="button"
+                data-name="country"
+                role="combobox"
+                aria-labelledby="sales-country-label"
+                aria-describedby="sales-country-optional"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="sales-country-listbox"
+                popovertarget="sales-country-popup"
+                style="anchor-name: --sales-country"
+              >
+                <span class="hselect-value" data-placeholder>Choose a country</span>
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </button>
+              <div class="hpopup" id="sales-country-popup" popover style="position-anchor: --sales-country">
+                <div class="hlistbox-search">
+                  <play-icon name="search" class="hicon"></play-icon>
+                  <input
+                    class="hlistbox-search-input"
+                    type="text"
+                    role="combobox"
+                    placeholder="Search countries"
+                    aria-label="Search countries"
+                    data-example-empty="No countries found"
+                    aria-expanded="true"
+                    aria-controls="sales-country-listbox"
+                    aria-autocomplete="list"
+                  />
+                </div>
+                <ul class="hlistbox" id="sales-country-listbox" role="listbox" aria-labelledby="sales-country-label">
+                  <li class="hoption" id="sales-country-af" role="option" data-value="AF" aria-selected="false"><span class="hoption-label">Afghanistan</span></li>
+                  <li class="hoption" id="sales-country-ax" role="option" data-value="AX" aria-selected="false"><span class="hoption-label">Åland Islands</span></li>
+                  <li class="hoption" id="sales-country-al" role="option" data-value="AL" aria-selected="false"><span class="hoption-label">Albania</span></li>
+                  <li class="hoption" id="sales-country-dz" role="option" data-value="DZ" aria-selected="false"><span class="hoption-label">Algeria</span></li>
+                  <li class="hoption" id="sales-country-as" role="option" data-value="AS" aria-selected="false"><span class="hoption-label">American Samoa</span></li>
+                  <li class="hoption" id="sales-country-ad" role="option" data-value="AD" aria-selected="false"><span class="hoption-label">Andorra</span></li>
+                  <li class="hoption" id="sales-country-ao" role="option" data-value="AO" aria-selected="false"><span class="hoption-label">Angola</span></li>
+                  <li class="hoption" id="sales-country-ai" role="option" data-value="AI" aria-selected="false"><span class="hoption-label">Anguilla</span></li>
+                  <li class="hoption" id="sales-country-ag" role="option" data-value="AG" aria-selected="false"><span class="hoption-label">Antigua &amp; Barbuda</span></li>
+                  <li class="hoption" id="sales-country-ar" role="option" data-value="AR" aria-selected="false"><span class="hoption-label">Argentina</span></li>
+                  <li class="hoption" id="sales-country-am" role="option" data-value="AM" aria-selected="false"><span class="hoption-label">Armenia</span></li>
+                  <li class="hoption" id="sales-country-aw" role="option" data-value="AW" aria-selected="false"><span class="hoption-label">Aruba</span></li>
+                  <li class="hoption" id="sales-country-au" role="option" data-value="AU" aria-selected="false"><span class="hoption-label">Australia</span></li>
+                  <li class="hoption" id="sales-country-at" role="option" data-value="AT" aria-selected="false"><span class="hoption-label">Austria</span></li>
+                  <li class="hoption" id="sales-country-az" role="option" data-value="AZ" aria-selected="false"><span class="hoption-label">Azerbaijan</span></li>
+                  <li class="hoption" id="sales-country-bs" role="option" data-value="BS" aria-selected="false"><span class="hoption-label">Bahamas</span></li>
+                  <li class="hoption" id="sales-country-bh" role="option" data-value="BH" aria-selected="false"><span class="hoption-label">Bahrain</span></li>
+                  <li class="hoption" id="sales-country-bd" role="option" data-value="BD" aria-selected="false"><span class="hoption-label">Bangladesh</span></li>
+                  <li class="hoption" id="sales-country-bb" role="option" data-value="BB" aria-selected="false"><span class="hoption-label">Barbados</span></li>
+                  <li class="hoption" id="sales-country-by" role="option" data-value="BY" aria-selected="false"><span class="hoption-label">Belarus</span></li>
+                  <li class="hoption" id="sales-country-be" role="option" data-value="BE" aria-selected="false"><span class="hoption-label">Belgium</span></li>
+                  <li class="hoption" id="sales-country-bz" role="option" data-value="BZ" aria-selected="false"><span class="hoption-label">Belize</span></li>
+                  <li class="hoption" id="sales-country-bj" role="option" data-value="BJ" aria-selected="false"><span class="hoption-label">Benin</span></li>
+                  <li class="hoption" id="sales-country-bm" role="option" data-value="BM" aria-selected="false"><span class="hoption-label">Bermuda</span></li>
+                  <li class="hoption" id="sales-country-bt" role="option" data-value="BT" aria-selected="false"><span class="hoption-label">Bhutan</span></li>
+                  <li class="hoption" id="sales-country-bo" role="option" data-value="BO" aria-selected="false"><span class="hoption-label">Bolivia</span></li>
+                  <li class="hoption" id="sales-country-ba" role="option" data-value="BA" aria-selected="false"><span class="hoption-label">Bosnia &amp; Herzegovina</span></li>
+                  <li class="hoption" id="sales-country-bw" role="option" data-value="BW" aria-selected="false"><span class="hoption-label">Botswana</span></li>
+                  <li class="hoption" id="sales-country-br" role="option" data-value="BR" aria-selected="false"><span class="hoption-label">Brazil</span></li>
+                  <li class="hoption" id="sales-country-io" role="option" data-value="IO" aria-selected="false"><span class="hoption-label">British Indian Ocean Territory</span></li>
+                  <li class="hoption" id="sales-country-vg" role="option" data-value="VG" aria-selected="false"><span class="hoption-label">British Virgin Islands</span></li>
+                  <li class="hoption" id="sales-country-bn" role="option" data-value="BN" aria-selected="false"><span class="hoption-label">Brunei</span></li>
+                  <li class="hoption" id="sales-country-bg" role="option" data-value="BG" aria-selected="false"><span class="hoption-label">Bulgaria</span></li>
+                  <li class="hoption" id="sales-country-bf" role="option" data-value="BF" aria-selected="false"><span class="hoption-label">Burkina Faso</span></li>
+                  <li class="hoption" id="sales-country-bi" role="option" data-value="BI" aria-selected="false"><span class="hoption-label">Burundi</span></li>
+                  <li class="hoption" id="sales-country-kh" role="option" data-value="KH" aria-selected="false"><span class="hoption-label">Cambodia</span></li>
+                  <li class="hoption" id="sales-country-cm" role="option" data-value="CM" aria-selected="false"><span class="hoption-label">Cameroon</span></li>
+                  <li class="hoption" id="sales-country-ca" role="option" data-value="CA" aria-selected="false"><span class="hoption-label">Canada</span></li>
+                  <li class="hoption" id="sales-country-cv" role="option" data-value="CV" aria-selected="false"><span class="hoption-label">Cape Verde</span></li>
+                  <li class="hoption" id="sales-country-bq" role="option" data-value="BQ" aria-selected="false"><span class="hoption-label">Caribbean Netherlands</span></li>
+                  <li class="hoption" id="sales-country-ky" role="option" data-value="KY" aria-selected="false"><span class="hoption-label">Cayman Islands</span></li>
+                  <li class="hoption" id="sales-country-cf" role="option" data-value="CF" aria-selected="false"><span class="hoption-label">Central African Republic</span></li>
+                  <li class="hoption" id="sales-country-td" role="option" data-value="TD" aria-selected="false"><span class="hoption-label">Chad</span></li>
+                  <li class="hoption" id="sales-country-cl" role="option" data-value="CL" aria-selected="false"><span class="hoption-label">Chile</span></li>
+                  <li class="hoption" id="sales-country-cn" role="option" data-value="CN" aria-selected="false"><span class="hoption-label">China</span></li>
+                  <li class="hoption" id="sales-country-cx" role="option" data-value="CX" aria-selected="false"><span class="hoption-label">Christmas Island</span></li>
+                  <li class="hoption" id="sales-country-cc" role="option" data-value="CC" aria-selected="false"><span class="hoption-label">Cocos (Keeling) Islands</span></li>
+                  <li class="hoption" id="sales-country-co" role="option" data-value="CO" aria-selected="false"><span class="hoption-label">Colombia</span></li>
+                  <li class="hoption" id="sales-country-km" role="option" data-value="KM" aria-selected="false"><span class="hoption-label">Comoros</span></li>
+                  <li class="hoption" id="sales-country-cg" role="option" data-value="CG" aria-selected="false"><span class="hoption-label">Congo - Brazzaville</span></li>
+                  <li class="hoption" id="sales-country-cd" role="option" data-value="CD" aria-selected="false"><span class="hoption-label">Congo - Kinshasa</span></li>
+                  <li class="hoption" id="sales-country-ck" role="option" data-value="CK" aria-selected="false"><span class="hoption-label">Cook Islands</span></li>
+                  <li class="hoption" id="sales-country-cr" role="option" data-value="CR" aria-selected="false"><span class="hoption-label">Costa Rica</span></li>
+                  <li class="hoption" id="sales-country-ci" role="option" data-value="CI" aria-selected="false"><span class="hoption-label">Côte d’Ivoire</span></li>
+                  <li class="hoption" id="sales-country-hr" role="option" data-value="HR" aria-selected="false"><span class="hoption-label">Croatia</span></li>
+                  <li class="hoption" id="sales-country-cu" role="option" data-value="CU" aria-selected="false"><span class="hoption-label">Cuba</span></li>
+                  <li class="hoption" id="sales-country-cw" role="option" data-value="CW" aria-selected="false"><span class="hoption-label">Curaçao</span></li>
+                  <li class="hoption" id="sales-country-cy" role="option" data-value="CY" aria-selected="false"><span class="hoption-label">Cyprus</span></li>
+                  <li class="hoption" id="sales-country-cz" role="option" data-value="CZ" aria-selected="false"><span class="hoption-label">Czechia</span></li>
+                  <li class="hoption" id="sales-country-dk" role="option" data-value="DK" aria-selected="false"><span class="hoption-label">Denmark</span></li>
+                  <li class="hoption" id="sales-country-dj" role="option" data-value="DJ" aria-selected="false"><span class="hoption-label">Djibouti</span></li>
+                  <li class="hoption" id="sales-country-dm" role="option" data-value="DM" aria-selected="false"><span class="hoption-label">Dominica</span></li>
+                  <li class="hoption" id="sales-country-do" role="option" data-value="DO" aria-selected="false"><span class="hoption-label">Dominican Republic</span></li>
+                  <li class="hoption" id="sales-country-ec" role="option" data-value="EC" aria-selected="false"><span class="hoption-label">Ecuador</span></li>
+                  <li class="hoption" id="sales-country-eg" role="option" data-value="EG" aria-selected="false"><span class="hoption-label">Egypt</span></li>
+                  <li class="hoption" id="sales-country-sv" role="option" data-value="SV" aria-selected="false"><span class="hoption-label">El Salvador</span></li>
+                  <li class="hoption" id="sales-country-gq" role="option" data-value="GQ" aria-selected="false"><span class="hoption-label">Equatorial Guinea</span></li>
+                  <li class="hoption" id="sales-country-er" role="option" data-value="ER" aria-selected="false"><span class="hoption-label">Eritrea</span></li>
+                  <li class="hoption" id="sales-country-ee" role="option" data-value="EE" aria-selected="false"><span class="hoption-label">Estonia</span></li>
+                  <li class="hoption" id="sales-country-sz" role="option" data-value="SZ" aria-selected="false"><span class="hoption-label">Eswatini</span></li>
+                  <li class="hoption" id="sales-country-et" role="option" data-value="ET" aria-selected="false"><span class="hoption-label">Ethiopia</span></li>
+                  <li class="hoption" id="sales-country-fk" role="option" data-value="FK" aria-selected="false"><span class="hoption-label">Falkland Islands</span></li>
+                  <li class="hoption" id="sales-country-fo" role="option" data-value="FO" aria-selected="false"><span class="hoption-label">Faroe Islands</span></li>
+                  <li class="hoption" id="sales-country-fj" role="option" data-value="FJ" aria-selected="false"><span class="hoption-label">Fiji</span></li>
+                  <li class="hoption" id="sales-country-fi" role="option" data-value="FI" aria-selected="false"><span class="hoption-label">Finland</span></li>
+                  <li class="hoption" id="sales-country-fr" role="option" data-value="FR" aria-selected="false"><span class="hoption-label">France</span></li>
+                  <li class="hoption" id="sales-country-gf" role="option" data-value="GF" aria-selected="false"><span class="hoption-label">French Guiana</span></li>
+                  <li class="hoption" id="sales-country-pf" role="option" data-value="PF" aria-selected="false"><span class="hoption-label">French Polynesia</span></li>
+                  <li class="hoption" id="sales-country-ga" role="option" data-value="GA" aria-selected="false"><span class="hoption-label">Gabon</span></li>
+                  <li class="hoption" id="sales-country-gm" role="option" data-value="GM" aria-selected="false"><span class="hoption-label">Gambia</span></li>
+                  <li class="hoption" id="sales-country-ge" role="option" data-value="GE" aria-selected="false"><span class="hoption-label">Georgia</span></li>
+                  <li class="hoption" id="sales-country-de" role="option" data-value="DE" aria-selected="false"><span class="hoption-label">Germany</span></li>
+                  <li class="hoption" id="sales-country-gh" role="option" data-value="GH" aria-selected="false"><span class="hoption-label">Ghana</span></li>
+                  <li class="hoption" id="sales-country-gi" role="option" data-value="GI" aria-selected="false"><span class="hoption-label">Gibraltar</span></li>
+                  <li class="hoption" id="sales-country-gr" role="option" data-value="GR" aria-selected="false"><span class="hoption-label">Greece</span></li>
+                  <li class="hoption" id="sales-country-gl" role="option" data-value="GL" aria-selected="false"><span class="hoption-label">Greenland</span></li>
+                  <li class="hoption" id="sales-country-gd" role="option" data-value="GD" aria-selected="false"><span class="hoption-label">Grenada</span></li>
+                  <li class="hoption" id="sales-country-gp" role="option" data-value="GP" aria-selected="false"><span class="hoption-label">Guadeloupe</span></li>
+                  <li class="hoption" id="sales-country-gu" role="option" data-value="GU" aria-selected="false"><span class="hoption-label">Guam</span></li>
+                  <li class="hoption" id="sales-country-gt" role="option" data-value="GT" aria-selected="false"><span class="hoption-label">Guatemala</span></li>
+                  <li class="hoption" id="sales-country-gg" role="option" data-value="GG" aria-selected="false"><span class="hoption-label">Guernsey</span></li>
+                  <li class="hoption" id="sales-country-gn" role="option" data-value="GN" aria-selected="false"><span class="hoption-label">Guinea</span></li>
+                  <li class="hoption" id="sales-country-gw" role="option" data-value="GW" aria-selected="false"><span class="hoption-label">Guinea-Bissau</span></li>
+                  <li class="hoption" id="sales-country-gy" role="option" data-value="GY" aria-selected="false"><span class="hoption-label">Guyana</span></li>
+                  <li class="hoption" id="sales-country-ht" role="option" data-value="HT" aria-selected="false"><span class="hoption-label">Haiti</span></li>
+                  <li class="hoption" id="sales-country-hn" role="option" data-value="HN" aria-selected="false"><span class="hoption-label">Honduras</span></li>
+                  <li class="hoption" id="sales-country-hk" role="option" data-value="HK" aria-selected="false"><span class="hoption-label">Hong Kong SAR China</span></li>
+                  <li class="hoption" id="sales-country-hu" role="option" data-value="HU" aria-selected="false"><span class="hoption-label">Hungary</span></li>
+                  <li class="hoption" id="sales-country-is" role="option" data-value="IS" aria-selected="false"><span class="hoption-label">Iceland</span></li>
+                  <li class="hoption" id="sales-country-in" role="option" data-value="IN" aria-selected="false"><span class="hoption-label">India</span></li>
+                  <li class="hoption" id="sales-country-id" role="option" data-value="ID" aria-selected="false"><span class="hoption-label">Indonesia</span></li>
+                  <li class="hoption" id="sales-country-ir" role="option" data-value="IR" aria-selected="false"><span class="hoption-label">Iran</span></li>
+                  <li class="hoption" id="sales-country-iq" role="option" data-value="IQ" aria-selected="false"><span class="hoption-label">Iraq</span></li>
+                  <li class="hoption" id="sales-country-ie" role="option" data-value="IE" aria-selected="false"><span class="hoption-label">Ireland</span></li>
+                  <li class="hoption" id="sales-country-im" role="option" data-value="IM" aria-selected="false"><span class="hoption-label">Isle of Man</span></li>
+                  <li class="hoption" id="sales-country-il" role="option" data-value="IL" aria-selected="false"><span class="hoption-label">Israel</span></li>
+                  <li class="hoption" id="sales-country-it" role="option" data-value="IT" aria-selected="false"><span class="hoption-label">Italy</span></li>
+                  <li class="hoption" id="sales-country-jm" role="option" data-value="JM" aria-selected="false"><span class="hoption-label">Jamaica</span></li>
+                  <li class="hoption" id="sales-country-jp" role="option" data-value="JP" aria-selected="false"><span class="hoption-label">Japan</span></li>
+                  <li class="hoption" id="sales-country-je" role="option" data-value="JE" aria-selected="false"><span class="hoption-label">Jersey</span></li>
+                  <li class="hoption" id="sales-country-jo" role="option" data-value="JO" aria-selected="false"><span class="hoption-label">Jordan</span></li>
+                  <li class="hoption" id="sales-country-kz" role="option" data-value="KZ" aria-selected="false"><span class="hoption-label">Kazakhstan</span></li>
+                  <li class="hoption" id="sales-country-ke" role="option" data-value="KE" aria-selected="false"><span class="hoption-label">Kenya</span></li>
+                  <li class="hoption" id="sales-country-ki" role="option" data-value="KI" aria-selected="false"><span class="hoption-label">Kiribati</span></li>
+                  <li class="hoption" id="sales-country-kw" role="option" data-value="KW" aria-selected="false"><span class="hoption-label">Kuwait</span></li>
+                  <li class="hoption" id="sales-country-kg" role="option" data-value="KG" aria-selected="false"><span class="hoption-label">Kyrgyzstan</span></li>
+                  <li class="hoption" id="sales-country-la" role="option" data-value="LA" aria-selected="false"><span class="hoption-label">Laos</span></li>
+                  <li class="hoption" id="sales-country-lv" role="option" data-value="LV" aria-selected="false"><span class="hoption-label">Latvia</span></li>
+                  <li class="hoption" id="sales-country-lb" role="option" data-value="LB" aria-selected="false"><span class="hoption-label">Lebanon</span></li>
+                  <li class="hoption" id="sales-country-ls" role="option" data-value="LS" aria-selected="false"><span class="hoption-label">Lesotho</span></li>
+                  <li class="hoption" id="sales-country-lr" role="option" data-value="LR" aria-selected="false"><span class="hoption-label">Liberia</span></li>
+                  <li class="hoption" id="sales-country-ly" role="option" data-value="LY" aria-selected="false"><span class="hoption-label">Libya</span></li>
+                  <li class="hoption" id="sales-country-li" role="option" data-value="LI" aria-selected="false"><span class="hoption-label">Liechtenstein</span></li>
+                  <li class="hoption" id="sales-country-lt" role="option" data-value="LT" aria-selected="false"><span class="hoption-label">Lithuania</span></li>
+                  <li class="hoption" id="sales-country-lu" role="option" data-value="LU" aria-selected="false"><span class="hoption-label">Luxembourg</span></li>
+                  <li class="hoption" id="sales-country-mo" role="option" data-value="MO" aria-selected="false"><span class="hoption-label">Macao SAR China</span></li>
+                  <li class="hoption" id="sales-country-mg" role="option" data-value="MG" aria-selected="false"><span class="hoption-label">Madagascar</span></li>
+                  <li class="hoption" id="sales-country-mw" role="option" data-value="MW" aria-selected="false"><span class="hoption-label">Malawi</span></li>
+                  <li class="hoption" id="sales-country-my" role="option" data-value="MY" aria-selected="false"><span class="hoption-label">Malaysia</span></li>
+                  <li class="hoption" id="sales-country-mv" role="option" data-value="MV" aria-selected="false"><span class="hoption-label">Maldives</span></li>
+                  <li class="hoption" id="sales-country-ml" role="option" data-value="ML" aria-selected="false"><span class="hoption-label">Mali</span></li>
+                  <li class="hoption" id="sales-country-mt" role="option" data-value="MT" aria-selected="false"><span class="hoption-label">Malta</span></li>
+                  <li class="hoption" id="sales-country-mh" role="option" data-value="MH" aria-selected="false"><span class="hoption-label">Marshall Islands</span></li>
+                  <li class="hoption" id="sales-country-mq" role="option" data-value="MQ" aria-selected="false"><span class="hoption-label">Martinique</span></li>
+                  <li class="hoption" id="sales-country-mr" role="option" data-value="MR" aria-selected="false"><span class="hoption-label">Mauritania</span></li>
+                  <li class="hoption" id="sales-country-mu" role="option" data-value="MU" aria-selected="false"><span class="hoption-label">Mauritius</span></li>
+                  <li class="hoption" id="sales-country-yt" role="option" data-value="YT" aria-selected="false"><span class="hoption-label">Mayotte</span></li>
+                  <li class="hoption" id="sales-country-mx" role="option" data-value="MX" aria-selected="false"><span class="hoption-label">Mexico</span></li>
+                  <li class="hoption" id="sales-country-fm" role="option" data-value="FM" aria-selected="false"><span class="hoption-label">Micronesia</span></li>
+                  <li class="hoption" id="sales-country-md" role="option" data-value="MD" aria-selected="false"><span class="hoption-label">Moldova</span></li>
+                  <li class="hoption" id="sales-country-mc" role="option" data-value="MC" aria-selected="false"><span class="hoption-label">Monaco</span></li>
+                  <li class="hoption" id="sales-country-mn" role="option" data-value="MN" aria-selected="false"><span class="hoption-label">Mongolia</span></li>
+                  <li class="hoption" id="sales-country-me" role="option" data-value="ME" aria-selected="false"><span class="hoption-label">Montenegro</span></li>
+                  <li class="hoption" id="sales-country-ms" role="option" data-value="MS" aria-selected="false"><span class="hoption-label">Montserrat</span></li>
+                  <li class="hoption" id="sales-country-ma" role="option" data-value="MA" aria-selected="false"><span class="hoption-label">Morocco</span></li>
+                  <li class="hoption" id="sales-country-mz" role="option" data-value="MZ" aria-selected="false"><span class="hoption-label">Mozambique</span></li>
+                  <li class="hoption" id="sales-country-mm" role="option" data-value="MM" aria-selected="false"><span class="hoption-label">Myanmar (Burma)</span></li>
+                  <li class="hoption" id="sales-country-na" role="option" data-value="NA" aria-selected="false"><span class="hoption-label">Namibia</span></li>
+                  <li class="hoption" id="sales-country-nr" role="option" data-value="NR" aria-selected="false"><span class="hoption-label">Nauru</span></li>
+                  <li class="hoption" id="sales-country-np" role="option" data-value="NP" aria-selected="false"><span class="hoption-label">Nepal</span></li>
+                  <li class="hoption" id="sales-country-nl" role="option" data-value="NL" aria-selected="false"><span class="hoption-label">Netherlands</span></li>
+                  <li class="hoption" id="sales-country-nc" role="option" data-value="NC" aria-selected="false"><span class="hoption-label">New Caledonia</span></li>
+                  <li class="hoption" id="sales-country-nz" role="option" data-value="NZ" aria-selected="false"><span class="hoption-label">New Zealand</span></li>
+                  <li class="hoption" id="sales-country-ni" role="option" data-value="NI" aria-selected="false"><span class="hoption-label">Nicaragua</span></li>
+                  <li class="hoption" id="sales-country-ne" role="option" data-value="NE" aria-selected="false"><span class="hoption-label">Niger</span></li>
+                  <li class="hoption" id="sales-country-ng" role="option" data-value="NG" aria-selected="false"><span class="hoption-label">Nigeria</span></li>
+                  <li class="hoption" id="sales-country-nu" role="option" data-value="NU" aria-selected="false"><span class="hoption-label">Niue</span></li>
+                  <li class="hoption" id="sales-country-nf" role="option" data-value="NF" aria-selected="false"><span class="hoption-label">Norfolk Island</span></li>
+                  <li class="hoption" id="sales-country-kp" role="option" data-value="KP" aria-selected="false"><span class="hoption-label">North Korea</span></li>
+                  <li class="hoption" id="sales-country-mk" role="option" data-value="MK" aria-selected="false"><span class="hoption-label">North Macedonia</span></li>
+                  <li class="hoption" id="sales-country-mp" role="option" data-value="MP" aria-selected="false"><span class="hoption-label">Northern Mariana Islands</span></li>
+                  <li class="hoption" id="sales-country-no" role="option" data-value="NO" aria-selected="false"><span class="hoption-label">Norway</span></li>
+                  <li class="hoption" id="sales-country-om" role="option" data-value="OM" aria-selected="false"><span class="hoption-label">Oman</span></li>
+                  <li class="hoption" id="sales-country-pk" role="option" data-value="PK" aria-selected="false"><span class="hoption-label">Pakistan</span></li>
+                  <li class="hoption" id="sales-country-pw" role="option" data-value="PW" aria-selected="false"><span class="hoption-label">Palau</span></li>
+                  <li class="hoption" id="sales-country-ps" role="option" data-value="PS" aria-selected="false"><span class="hoption-label">Palestinian Territories</span></li>
+                  <li class="hoption" id="sales-country-pa" role="option" data-value="PA" aria-selected="false"><span class="hoption-label">Panama</span></li>
+                  <li class="hoption" id="sales-country-pg" role="option" data-value="PG" aria-selected="false"><span class="hoption-label">Papua New Guinea</span></li>
+                  <li class="hoption" id="sales-country-py" role="option" data-value="PY" aria-selected="false"><span class="hoption-label">Paraguay</span></li>
+                  <li class="hoption" id="sales-country-pe" role="option" data-value="PE" aria-selected="false"><span class="hoption-label">Peru</span></li>
+                  <li class="hoption" id="sales-country-ph" role="option" data-value="PH" aria-selected="false"><span class="hoption-label">Philippines</span></li>
+                  <li class="hoption" id="sales-country-pn" role="option" data-value="PN" aria-selected="false"><span class="hoption-label">Pitcairn Islands</span></li>
+                  <li class="hoption" id="sales-country-pl" role="option" data-value="PL" aria-selected="false"><span class="hoption-label">Poland</span></li>
+                  <li class="hoption" id="sales-country-pt" role="option" data-value="PT" aria-selected="false"><span class="hoption-label">Portugal</span></li>
+                  <li class="hoption" id="sales-country-pr" role="option" data-value="PR" aria-selected="false"><span class="hoption-label">Puerto Rico</span></li>
+                  <li class="hoption" id="sales-country-qa" role="option" data-value="QA" aria-selected="false"><span class="hoption-label">Qatar</span></li>
+                  <li class="hoption" id="sales-country-re" role="option" data-value="RE" aria-selected="false"><span class="hoption-label">Réunion</span></li>
+                  <li class="hoption" id="sales-country-ro" role="option" data-value="RO" aria-selected="false"><span class="hoption-label">Romania</span></li>
+                  <li class="hoption" id="sales-country-ru" role="option" data-value="RU" aria-selected="false"><span class="hoption-label">Russia</span></li>
+                  <li class="hoption" id="sales-country-rw" role="option" data-value="RW" aria-selected="false"><span class="hoption-label">Rwanda</span></li>
+                  <li class="hoption" id="sales-country-ws" role="option" data-value="WS" aria-selected="false"><span class="hoption-label">Samoa</span></li>
+                  <li class="hoption" id="sales-country-sm" role="option" data-value="SM" aria-selected="false"><span class="hoption-label">San Marino</span></li>
+                  <li class="hoption" id="sales-country-st" role="option" data-value="ST" aria-selected="false"><span class="hoption-label">São Tomé &amp; Príncipe</span></li>
+                  <li class="hoption" id="sales-country-sa" role="option" data-value="SA" aria-selected="false"><span class="hoption-label">Saudi Arabia</span></li>
+                  <li class="hoption" id="sales-country-sn" role="option" data-value="SN" aria-selected="false"><span class="hoption-label">Senegal</span></li>
+                  <li class="hoption" id="sales-country-rs" role="option" data-value="RS" aria-selected="false"><span class="hoption-label">Serbia</span></li>
+                  <li class="hoption" id="sales-country-sc" role="option" data-value="SC" aria-selected="false"><span class="hoption-label">Seychelles</span></li>
+                  <li class="hoption" id="sales-country-sl" role="option" data-value="SL" aria-selected="false"><span class="hoption-label">Sierra Leone</span></li>
+                  <li class="hoption" id="sales-country-sg" role="option" data-value="SG" aria-selected="false"><span class="hoption-label">Singapore</span></li>
+                  <li class="hoption" id="sales-country-sx" role="option" data-value="SX" aria-selected="false"><span class="hoption-label">Sint Maarten</span></li>
+                  <li class="hoption" id="sales-country-sk" role="option" data-value="SK" aria-selected="false"><span class="hoption-label">Slovakia</span></li>
+                  <li class="hoption" id="sales-country-si" role="option" data-value="SI" aria-selected="false"><span class="hoption-label">Slovenia</span></li>
+                  <li class="hoption" id="sales-country-sb" role="option" data-value="SB" aria-selected="false"><span class="hoption-label">Solomon Islands</span></li>
+                  <li class="hoption" id="sales-country-so" role="option" data-value="SO" aria-selected="false"><span class="hoption-label">Somalia</span></li>
+                  <li class="hoption" id="sales-country-za" role="option" data-value="ZA" aria-selected="false"><span class="hoption-label">South Africa</span></li>
+                  <li class="hoption" id="sales-country-kr" role="option" data-value="KR" aria-selected="false"><span class="hoption-label">South Korea</span></li>
+                  <li class="hoption" id="sales-country-ss" role="option" data-value="SS" aria-selected="false"><span class="hoption-label">South Sudan</span></li>
+                  <li class="hoption" id="sales-country-es" role="option" data-value="ES" aria-selected="false"><span class="hoption-label">Spain</span></li>
+                  <li class="hoption" id="sales-country-lk" role="option" data-value="LK" aria-selected="false"><span class="hoption-label">Sri Lanka</span></li>
+                  <li class="hoption" id="sales-country-bl" role="option" data-value="BL" aria-selected="false"><span class="hoption-label">St. Barthélemy</span></li>
+                  <li class="hoption" id="sales-country-sh" role="option" data-value="SH" aria-selected="false"><span class="hoption-label">St. Helena</span></li>
+                  <li class="hoption" id="sales-country-kn" role="option" data-value="KN" aria-selected="false"><span class="hoption-label">St. Kitts &amp; Nevis</span></li>
+                  <li class="hoption" id="sales-country-lc" role="option" data-value="LC" aria-selected="false"><span class="hoption-label">St. Lucia</span></li>
+                  <li class="hoption" id="sales-country-mf" role="option" data-value="MF" aria-selected="false"><span class="hoption-label">St. Martin</span></li>
+                  <li class="hoption" id="sales-country-pm" role="option" data-value="PM" aria-selected="false"><span class="hoption-label">St. Pierre &amp; Miquelon</span></li>
+                  <li class="hoption" id="sales-country-vc" role="option" data-value="VC" aria-selected="false"><span class="hoption-label">St. Vincent &amp; Grenadines</span></li>
+                  <li class="hoption" id="sales-country-sd" role="option" data-value="SD" aria-selected="false"><span class="hoption-label">Sudan</span></li>
+                  <li class="hoption" id="sales-country-sr" role="option" data-value="SR" aria-selected="false"><span class="hoption-label">Suriname</span></li>
+                  <li class="hoption" id="sales-country-sj" role="option" data-value="SJ" aria-selected="false"><span class="hoption-label">Svalbard &amp; Jan Mayen</span></li>
+                  <li class="hoption" id="sales-country-se" role="option" data-value="SE" aria-selected="false"><span class="hoption-label">Sweden</span></li>
+                  <li class="hoption" id="sales-country-ch" role="option" data-value="CH" aria-selected="false"><span class="hoption-label">Switzerland</span></li>
+                  <li class="hoption" id="sales-country-sy" role="option" data-value="SY" aria-selected="false"><span class="hoption-label">Syria</span></li>
+                  <li class="hoption" id="sales-country-tw" role="option" data-value="TW" aria-selected="false"><span class="hoption-label">Taiwan</span></li>
+                  <li class="hoption" id="sales-country-tj" role="option" data-value="TJ" aria-selected="false"><span class="hoption-label">Tajikistan</span></li>
+                  <li class="hoption" id="sales-country-tz" role="option" data-value="TZ" aria-selected="false"><span class="hoption-label">Tanzania</span></li>
+                  <li class="hoption" id="sales-country-th" role="option" data-value="TH" aria-selected="false"><span class="hoption-label">Thailand</span></li>
+                  <li class="hoption" id="sales-country-tl" role="option" data-value="TL" aria-selected="false"><span class="hoption-label">Timor-Leste</span></li>
+                  <li class="hoption" id="sales-country-tg" role="option" data-value="TG" aria-selected="false"><span class="hoption-label">Togo</span></li>
+                  <li class="hoption" id="sales-country-tk" role="option" data-value="TK" aria-selected="false"><span class="hoption-label">Tokelau</span></li>
+                  <li class="hoption" id="sales-country-to" role="option" data-value="TO" aria-selected="false"><span class="hoption-label">Tonga</span></li>
+                  <li class="hoption" id="sales-country-tt" role="option" data-value="TT" aria-selected="false"><span class="hoption-label">Trinidad &amp; Tobago</span></li>
+                  <li class="hoption" id="sales-country-tn" role="option" data-value="TN" aria-selected="false"><span class="hoption-label">Tunisia</span></li>
+                  <li class="hoption" id="sales-country-tr" role="option" data-value="TR" aria-selected="false"><span class="hoption-label">Türkiye</span></li>
+                  <li class="hoption" id="sales-country-tm" role="option" data-value="TM" aria-selected="false"><span class="hoption-label">Turkmenistan</span></li>
+                  <li class="hoption" id="sales-country-tc" role="option" data-value="TC" aria-selected="false"><span class="hoption-label">Turks &amp; Caicos Islands</span></li>
+                  <li class="hoption" id="sales-country-tv" role="option" data-value="TV" aria-selected="false"><span class="hoption-label">Tuvalu</span></li>
+                  <li class="hoption" id="sales-country-vi" role="option" data-value="VI" aria-selected="false"><span class="hoption-label">U.S. Virgin Islands</span></li>
+                  <li class="hoption" id="sales-country-ug" role="option" data-value="UG" aria-selected="false"><span class="hoption-label">Uganda</span></li>
+                  <li class="hoption" id="sales-country-ua" role="option" data-value="UA" aria-selected="false"><span class="hoption-label">Ukraine</span></li>
+                  <li class="hoption" id="sales-country-ae" role="option" data-value="AE" aria-selected="false"><span class="hoption-label">United Arab Emirates</span></li>
+                  <li class="hoption" id="sales-country-gb" role="option" data-value="GB" aria-selected="false"><span class="hoption-label">United Kingdom</span></li>
+                  <li class="hoption" id="sales-country-us" role="option" data-value="US" aria-selected="false"><span class="hoption-label">United States</span></li>
+                  <li class="hoption" id="sales-country-uy" role="option" data-value="UY" aria-selected="false"><span class="hoption-label">Uruguay</span></li>
+                  <li class="hoption" id="sales-country-uz" role="option" data-value="UZ" aria-selected="false"><span class="hoption-label">Uzbekistan</span></li>
+                  <li class="hoption" id="sales-country-vu" role="option" data-value="VU" aria-selected="false"><span class="hoption-label">Vanuatu</span></li>
+                  <li class="hoption" id="sales-country-va" role="option" data-value="VA" aria-selected="false"><span class="hoption-label">Vatican City</span></li>
+                  <li class="hoption" id="sales-country-ve" role="option" data-value="VE" aria-selected="false"><span class="hoption-label">Venezuela</span></li>
+                  <li class="hoption" id="sales-country-vn" role="option" data-value="VN" aria-selected="false"><span class="hoption-label">Vietnam</span></li>
+                  <li class="hoption" id="sales-country-wf" role="option" data-value="WF" aria-selected="false"><span class="hoption-label">Wallis &amp; Futuna</span></li>
+                  <li class="hoption" id="sales-country-eh" role="option" data-value="EH" aria-selected="false"><span class="hoption-label">Western Sahara</span></li>
+                  <li class="hoption" id="sales-country-ye" role="option" data-value="YE" aria-selected="false"><span class="hoption-label">Yemen</span></li>
+                  <li class="hoption" id="sales-country-zm" role="option" data-value="ZM" aria-selected="false"><span class="hoption-label">Zambia</span></li>
+                  <li class="hoption" id="sales-country-zw" role="option" data-value="ZW" aria-selected="false"><span class="hoption-label">Zimbabwe</span></li>
+                </ul>
+                <p class="hlistbox-empty" role="status"></p>
+              </div>
+            </div>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="sales-website">Company website</label>
+              <span class="hfield-optional" id="sales-website-optional">Optional</span>
+            </div>
+            <input
+              class="hinput"
+              id="sales-website"
+              name="website"
+              type="url"
+              autocomplete="url"
+              placeholder="https://example.com"
+              aria-describedby="sales-website-optional sales-website-error"
+            />
+            <p class="herror" id="sales-website-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <div class="hfield-label-row">
+              <label class="hlabel" for="sales-message">Message</label>
+              <span class="hfield-optional" id="sales-message-optional">Optional</span>
+            </div>
+            <textarea
+              class="htextarea hcontact-form-message"
+              id="sales-message"
+              name="message"
+              maxlength="300"
+              placeholder="Tell us about your team, and what you're looking for."
+              aria-describedby="sales-message-optional sales-message-counter"
+              data-example-counter
+            ></textarea>
+            <p class="htextarea-counter" id="sales-message-counter">0/300</p>
+          </div>
+        </div>
+        <div class="hcontact-form-submit">
+          <p class="herror" aria-live="polite"></p>
+          <button class="hbutton" type="submit">
+            <span class="hbutton-label">Send inquiry</span>
+          </button>
+        </div>
+        <p class="hcontact-form-footer">
+          We use your details only to answer your inquiry. Read our
+          <a class="hlink" data-underlined href="/privacy">privacy policy</a>.
+        </p>
+      </form>
+      <div class="hempty-state" hidden>
+        <div class="hempty-state-icon" aria-hidden="true">
+          <play-icon name="success" class="hicon"></play-icon>
+        </div>
+        <h2 class="hempty-state-title" tabindex="-1">Inquiry received</h2>
+        <p class="hempty-state-description">
+          We've received your inquiry and will get back to you within one business day.
+        </p>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Support request">
+  <play-note>
+    The email and a topic, from a <a class="hlink" data-underlined
+    href="select.html">Select</a>, side by side, then a subject, the message,
+    and attachments: a <a class="hlink" data-underlined
+    href="file-input.html">File Input</a> that takes up to five files of 10 MB
+    each, which show in a <a class="hlink" data-underlined
+    href="file-list.html">File List</a> under it. Removing the last one moves
+    focus back to the File Input. Each file uploads as it's added, with its
+    progress, and the form sends the keys they're stored under; sending waits
+    for an upload still running. The attachments show once the script runs,
+    since uploading needs it.
+  </play-note>
+  <div class="hcard hcontact-form" data-variant="raised" data-example-contact="support">
+    <form class="hcontact-form-form" method="post" enctype="multipart/form-data" novalidate>
+      <div class="hcontact-form-header">
+        <h2 class="hcontact-form-title">Contact support</h2>
+        <p class="hcontact-form-description">Tell us what's happening, and we'll reply by email, usually within a day.</p>
+      </div>
+      <div class="hcontact-form-fields" data-example-files data-example-remove-label="Remove {name}">
+        <div class="hcontact-form-row">
+          <div class="hfield">
+            <label class="hlabel" for="support-email">Email</label>
+            <input
+              class="hinput"
+              id="support-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="name@example.com"
+              aria-describedby="support-email-error"
+            />
+            <p class="herror" id="support-email-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <span class="hlabel" id="support-topic-label">Topic</span>
+            <span class="hselect-fallback">
+              <select name="topic" aria-labelledby="support-topic-label" aria-describedby="support-topic-error">
+                <option value="" disabled selected>Choose a topic</option>
+                <option value="account">Account</option>
+                <option value="billing">Billing</option>
+                <option value="technical">A technical problem</option>
+                <option value="other">Something else</option>
+              </select>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </span>
+            <button
+              class="hselect"
+              id="support-topic"
+              type="button"
+              data-name="topic"
+              role="combobox"
+              aria-labelledby="support-topic-label"
+              aria-describedby="support-topic-error"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="support-topic-listbox"
+              popovertarget="support-topic-popup"
+              style="anchor-name: --support-topic"
+            >
+              <span class="hselect-value" data-placeholder>Choose a topic</span>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </button>
+            <div class="hpopup" id="support-topic-popup" popover style="position-anchor: --support-topic">
+              <ul class="hlistbox" id="support-topic-listbox" role="listbox" aria-labelledby="support-topic-label">
+                <li class="hoption" id="support-topic-account" role="option" data-value="account" aria-selected="false">
+                  <span class="hoption-label">Account</span>
+                </li>
+                <li class="hoption" id="support-topic-billing" role="option" data-value="billing" aria-selected="false">
+                  <span class="hoption-label">Billing</span>
+                </li>
+                <li class="hoption" id="support-topic-technical" role="option" data-value="technical" aria-selected="false">
+                  <span class="hoption-label">A technical problem</span>
+                </li>
+                <li class="hoption" id="support-topic-other" role="option" data-value="other" aria-selected="false">
+                  <span class="hoption-label">Something else</span>
+                </li>
+              </ul>
+            </div>
+            <p class="herror" id="support-topic-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="hfield">
+          <label class="hlabel" for="support-subject">Subject</label>
+          <input
+            class="hinput"
+            id="support-subject"
+            name="subject"
+            placeholder="I can't sign in on my phone"
+            aria-describedby="support-subject-error"
+          />
+          <p class="herror" id="support-subject-error" aria-live="polite"></p>
+        </div>
+        <div class="hfield">
+          <label class="hlabel" for="support-message">Message</label>
+          <textarea
+            class="htextarea hcontact-form-message"
+            id="support-message"
+            name="message"
+            maxlength="2000"
+            placeholder="Tell us what happened, what you expected, and the steps that led to it."
+            aria-describedby="support-message-error support-message-counter"
+            data-example-counter
+          ></textarea>
+          <p class="htextarea-counter" id="support-message-counter">0/2000</p>
+          <p class="herror" id="support-message-error" aria-live="polite"></p>
+        </div>
+        <div class="hfield" hidden data-example-upload>
+          <div class="hfield-label-row">
+            <label class="hlabel" for="support-attachments">Attachments</label>
+            <span class="hfield-optional" id="support-attachments-optional">Optional</span>
+          </div>
+          <p class="hdescription" id="support-attachments-description">Up to 5 screenshots or files that show the problem, 10 MB each.</p>
+          <div
+            class="hfile-input"
+            data-variant="strip"
+            data-example-choose="Add files"
+            data-example-max-files="5"
+            data-example-too-many="Add up to 5 files."
+            data-example-max-bytes="10000000"
+            data-example-too-large="{name} is over 10 MB."
+          >
+            <span class="hfile-input-drop">or drop them here</span>
+            <label class="hbutton" data-variant="secondary">
+              <input
+                class="hfile-input-control"
+                id="support-attachments"
+                name="attachments"
+                type="file"
+                multiple
+                aria-describedby="support-attachments-optional support-attachments-description support-attachments-error"
+              />
+              <play-icon name="upload" class="hicon"></play-icon>
+              <span class="hbutton-label">Add files</span>
+            </label>
+          </div>
+          <p class="herror" id="support-attachments-error" aria-live="polite"></p>
+        </div>
+        <ul class="hfile-list" role="list" aria-label="Attachments" tabindex="-1"></ul>
+      </div>
+      <div class="hcontact-form-submit">
+        <p class="herror" aria-live="polite"></p>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Send request</span>
+        </button>
+      </div>
+    </form>
+    <div class="hempty-state" hidden>
+      <div class="hempty-state-icon" aria-hidden="true">
+        <play-icon name="success" class="hicon"></play-icon>
+      </div>
+      <h2 class="hempty-state-title" tabindex="-1">Request sent</h2>
+      <p class="hempty-state-description">
+        We'll reply to <strong data-example-contact-value="email"></strong>, usually within a day.
+      </p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Order help">
+  <play-note>
+    For a shop: the order number and email, then what's wrong, as a <a
+    class="hlink" data-underlined href="select.html">Select</a>. Then photos,
+    which show as a grid of thumbnails, and an optional message, which starts
+    four lines tall. The photos' File Input takes only pictures, up to five.
+    The photos go with the form when it's sent.
+  </play-note>
+  <div class="hcard hcontact-form" data-variant="raised" data-example-contact="order">
+    <form class="hcontact-form-form" method="post" enctype="multipart/form-data" novalidate>
+      <div class="hcontact-form-header">
+        <h2 class="hcontact-form-title">Get help with an order</h2>
+        <p class="hcontact-form-description">Something wrong with what arrived? Tell us, and we'll put it right.</p>
+      </div>
+      <div class="hcontact-form-fields" data-example-files data-example-preview data-example-remove-label="Remove {name}">
+        <div class="hcontact-form-row">
+          <div class="hfield">
+            <label class="hlabel" for="order-number">Order number</label>
+            <input class="hinput" id="order-number" name="order" placeholder="1042" aria-describedby="order-number-error" />
+            <p class="herror" id="order-number-error" aria-live="polite"></p>
+          </div>
+          <div class="hfield">
+            <label class="hlabel" for="order-email">Email</label>
+            <input
+              class="hinput"
+              id="order-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="name@example.com"
+              aria-describedby="order-email-error"
+            />
+            <p class="herror" id="order-email-error" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="hfield">
+          <span class="hlabel" id="order-problem-label">What's wrong?</span>
+          <span class="hselect-fallback">
+            <select name="problem" aria-labelledby="order-problem-label" aria-describedby="order-problem-error">
+              <option value="" disabled selected>Choose what's wrong</option>
+              <option value="damaged">It arrived damaged</option>
+              <option value="missing">An item is missing</option>
+              <option value="wrong-item">I got the wrong item</option>
+              <option value="return">I'd like to return it</option>
+            </select>
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </span>
+          <button
+            class="hselect"
+            id="order-problem"
+            type="button"
+            data-name="problem"
+            role="combobox"
+            aria-labelledby="order-problem-label"
+            aria-describedby="order-problem-error"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="order-problem-listbox"
+            popovertarget="order-problem-popup"
+            style="anchor-name: --order-problem"
+          >
+            <span class="hselect-value" data-placeholder>Choose what's wrong</span>
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hpopup" id="order-problem-popup" popover style="position-anchor: --order-problem">
+            <ul class="hlistbox" id="order-problem-listbox" role="listbox" aria-labelledby="order-problem-label">
+                <li class="hoption" id="order-problem-damaged" role="option" data-value="damaged" aria-selected="false">
+                  <span class="hoption-label">It arrived damaged</span>
+                </li>
+                <li class="hoption" id="order-problem-missing" role="option" data-value="missing" aria-selected="false">
+                  <span class="hoption-label">An item is missing</span>
+                </li>
+                <li class="hoption" id="order-problem-wrong-item" role="option" data-value="wrong-item" aria-selected="false">
+                  <span class="hoption-label">I got the wrong item</span>
+                </li>
+                <li class="hoption" id="order-problem-return" role="option" data-value="return" aria-selected="false">
+                  <span class="hoption-label">I'd like to return it</span>
+                </li>
+            </ul>
+          </div>
+          <p class="herror" id="order-problem-error" aria-live="polite"></p>
+        </div>
+        <div class="hfield">
+          <div class="hfield-label-row">
+            <label class="hlabel" for="order-photos">Photos</label>
+            <span class="hfield-optional" id="order-photos-optional">Optional</span>
+          </div>
+          <p class="hdescription" id="order-photos-description">Up to 5 photos of the damage, or of what arrived, 10 MB each.</p>
+          <div
+            class="hfile-input"
+            data-variant="strip"
+            data-example-choose="Add photos"
+            data-example-max-files="5"
+            data-example-too-many="Add up to 5 photos."
+            data-example-image
+            data-example-wrong-type="{name} isn't a picture."
+            data-example-max-bytes="10000000"
+            data-example-too-large="{name} is over 10 MB."
+          >
+            <span class="hfile-input-drop">or drop them here</span>
+            <label class="hbutton" data-variant="secondary">
+              <input
+                class="hfile-input-control"
+                id="order-photos"
+                name="photos"
+                type="file"
+                multiple
+                accept="image/*"
+                aria-describedby="order-photos-optional order-photos-description order-photos-error"
+              />
+              <play-icon name="upload" class="hicon"></play-icon>
+              <span class="hbutton-label">Add photos</span>
+            </label>
+          </div>
+          <p class="herror" id="order-photos-error" aria-live="polite"></p>
+        </div>
+        <ul class="hfile-list" data-layout="grid" role="list" aria-label="Photos" tabindex="-1"></ul>
+        <div class="hfield">
+          <div class="hfield-label-row">
+            <label class="hlabel" for="order-message">Message</label>
+            <span class="hfield-optional" id="order-message-optional">Optional</span>
+          </div>
+          <textarea
+            class="htextarea hcontact-form-message"
+            id="order-message"
+            name="message"
+            maxlength="1000"
+            placeholder="Tell us anything else that would help us put it right."
+            aria-describedby="order-message-optional order-message-counter"
+            data-example-counter
+          ></textarea>
+          <p class="htextarea-counter" id="order-message-counter">0/1000</p>
+        </div>
+      </div>
+      <div class="hcontact-form-submit">
+        <p class="herror" aria-live="polite"></p>
+        <button class="hbutton" type="submit">
+          <span class="hbutton-label">Send request</span>
+        </button>
+      </div>
+    </form>
+    <div class="hempty-state" hidden>
+      <div class="hempty-state-icon" aria-hidden="true">
+        <play-icon name="success" class="hicon"></play-icon>
+      </div>
+      <h2 class="hempty-state-title" tabindex="-1">Request sent</h2>
+      <p class="hempty-state-description">
+        We'll look into order <strong data-example-contact-value="order"></strong> and reply to
+        <strong data-example-contact-value="email"></strong> within a day.
+      </p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Contact options" layout="wide">
+  <play-note>
+    The ways to reach you, for a contact page, as raised <a class="hlink"
+    data-underlined href="card.html">Cards</a> side by side: each with an
+    icon, a title, a description, and a secondary <a class="hlink"
+    data-underlined href="button.html">Button</a> that's a link, to the sales
+    page, an email to support, or the help center. The buttons line up at the
+    cards' bottom. The support address in its sentence is a link too,
+    semibold, so more than its color tells it from the text.
+  </play-note>
+  <ul class="hcontact-options" role="list">
+    <li class="hcard hcontact-options-item" data-variant="raised">
+      <span class="hcard-icon" aria-hidden="true"><play-icon name="user" class="hicon"></play-icon></span>
+      <h2 class="hcard-title">Sales</h2>
+      <p class="hcard-description">We'd love to talk about how we can work together, and find the plan that fits your team.</p>
+      <a class="hbutton hcontact-options-link" data-variant="secondary" href="/contact/sales">
+        <span class="hbutton-label">Contact sales</span>
+      </a>
+    </li>
+    <li class="hcard hcontact-options-item" data-variant="raised">
+      <span class="hcard-icon" aria-hidden="true"><play-icon name="messages" class="hicon"></play-icon></span>
+      <h2 class="hcard-title">Support</h2>
+      <p class="hcard-description">
+        For help with your account, billing, or anything else, write to
+        <a class="hlink" href="mailto:support@example.com">support@example.com</a>.
+      </p>
+      <a class="hbutton hcontact-options-link" data-variant="secondary" href="mailto:support@example.com">
+        <span class="hbutton-label">Email support</span>
+      </a>
+    </li>
+    <li class="hcard hcontact-options-item" data-variant="raised">
+      <span class="hcard-icon" aria-hidden="true"><play-icon name="info" class="hicon"></play-icon></span>
+      <h2 class="hcard-title">Help center</h2>
+      <p class="hcard-description">Guides and answers to common questions, whenever you need them.</p>
+      <a class="hbutton hcontact-options-link" data-variant="secondary" href="/help">
+        <span class="hbutton-label">Visit the help center</span>
+      </a>
+    </li>
+  </ul>
+</play-example>

@@ -1,6 +1,19 @@
-import { expect, type Locator, type Page } from "@playwright/test";
+import { expect, type Browser, type Locator, type Page } from "@playwright/test";
 import { expectActive, expectChosen } from "./lists.ts";
-import { boxes, clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
+import {
+  boxes,
+  clickAt,
+  example,
+  onEachPlayground,
+  open,
+  openPopup,
+  playgrounds,
+  ready,
+  settled,
+  test,
+  url,
+  type Playground,
+} from "./playgrounds.ts";
 
 // What docs/components/select.md says a script does, on the Select page.
 onEachPlayground("select", () => {
@@ -38,7 +51,7 @@ onEachPlayground("select", () => {
     }
   });
 
-  test("Enter chooses, updates the value and the hidden input, and closes", async ({ page }) => {
+  test("Enter chooses, updates the value and the select the form sends, and closes", async ({ page }) => {
     const { container, trigger, listbox } = await select(page, "select-default", "Channel");
     await trigger.focus();
     await page.keyboard.press("ArrowDown");
@@ -100,7 +113,8 @@ onEachPlayground("select", () => {
     const { container, trigger, listbox } = await select(page, "select-placeholder", "Fallback channel");
     const value = trigger.locator(".hselect-value");
     await expect(value).toHaveAttribute("data-placeholder");
-    await expectSubmitted(container, "fallback", [""]);
+    // Its placeholder is chosen, which is disabled, so the form leaves it out.
+    await expectSubmitted(container, "fallback", []);
 
     await trigger.click();
     await clickAt(page, listbox.getByRole("option", { name: "Email" }));
@@ -127,10 +141,10 @@ onEachPlayground("select", () => {
     await expectSubmitted(container, "statuses", []);
   });
 
-  test("disabling it disables its hidden input, and enabling it brings it back", async ({ page }) => {
+  test("disabling it disables its select, and enabling it brings it back", async ({ page }) => {
     const { container, trigger, listbox } = await select(page, "select-disabling", "Reminder channel");
     const reminding = container.getByLabel("Send a reminder");
-    const input = hiddenInputs(container, "reminder-channel");
+    const input = fallbackOf(container, "reminder-channel");
     await trigger.click();
     await clickAt(page, listbox.getByRole("option", { name: "Email" }));
 
@@ -174,11 +188,12 @@ onEachPlayground("select", () => {
     await expect(sent).toHaveText("Save to see what the form sends.");
     await save.click();
     await expect(sent).toHaveText("Sends channel=whatsapp&statuses=failed");
-    // The lists are back to their first choices too, check mark included.
-    const fieldOf = (name: string) =>
-      container.locator(".hfield").filter({ has: page.getByRole("combobox", { name, exact: true }) });
-    await expectChosen(fieldOf("Channel"), ["WhatsApp"]);
-    await expectChosen(fieldOf("Notify me about"), ["Failed"]);
+    // The lists are back to their first choices too, check mark included. In
+    // the popup, as the field also holds the fallback, a list of its own.
+    const popupOf = (name: string) =>
+      container.locator(".hfield").filter({ has: page.getByRole("combobox", { name, exact: true }) }).locator(".hpopup");
+    await expectChosen(popupOf("Channel"), ["WhatsApp"]);
+    await expectChosen(popupOf("Notify me about"), ["Failed"]);
   });
 
   test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", async ({ page }) => {
@@ -209,11 +224,163 @@ onEachPlayground("select", () => {
 
     await trigger.click();
     await clickAt(page, listbox.getByRole("option", { name: "Telegram" }));
-    await expect(hiddenInputs(container, "outside-channel")).toHaveAttribute("form", "outside-form");
+    await expect(fallbackOf(container, "outside-channel")).toHaveAttribute("form", "outside-form");
     await save.click();
     await expect(sent).toHaveText("Sends outside-channel=telegram");
   });
+
+  test("with its script, the fallback is out of sight and out of the accessibility tree, and still what the form sends, once", async ({ page }) => {
+    const container = await example(page, "select-in-a-form");
+    const fallbacks = container.locator(".hselect-fallback");
+    await expect(fallbacks).toHaveCount(2);
+    for (const fallback of await fallbacks.all()) {
+      await expect(fallback).toBeHidden();
+      await expect(fallback).toHaveAttribute("hidden", "");
+    }
+    // The trigger is the only control the label names, and no hidden input
+    // sends the value beside the <select>.
+    const channel = container.getByRole("combobox", { name: "Channel" });
+    await expect(channel).toHaveCount(1);
+    await expect(channel).toHaveJSProperty("tagName", "BUTTON");
+    await expect(container.getByRole("listbox", { name: "Notify me about" })).toHaveCount(0);
+    for (const name of ["channel", "statuses"]) {
+      await expect(container.locator(`[name="${name}"]`)).toHaveCount(1);
+      await expect(container.locator(`[name="${name}"]`)).toHaveJSProperty("tagName", "SELECT");
+    }
+    await expect(container.locator('input[type="hidden"]')).toHaveCount(0);
+    expect(await sentBy(container.locator("form"))).toEqual([
+      ["channel", "whatsapp"],
+      ["statuses", "failed"],
+    ]);
+  });
+
+  test("a choice made in the fallback before the script runs, or put back by the browser, carries over to the trigger and the list", async ({ page }) => {
+    // Once the page is parsed, before deferred scripts and React run.
+    await page.addInitScript(() =>
+      document.addEventListener("readystatechange", () => {
+        if (document.readyState !== "interactive") return;
+        const fallback = document.querySelector<HTMLSelectElement>('[id="select-default"] select[name="channel"]');
+        if (fallback) fallback.value = "viber";
+      }),
+    );
+    await page.reload();
+    await ready(page);
+    const { container, trigger } = await select(page, "select-default", "Channel");
+    await expect(trigger.locator(".hselect-value")).toHaveText("Viber");
+    await expectChosen(container.locator(".hpopup"), ["Viber"]);
+    await expectSubmitted(container, "channel", ["viber"]);
+    await expect(container.locator(".hselect-fallback")).toBeHidden();
+  });
+
+  test("a select without a name has no fallback, and no other control", async ({ page }) => {
+    const { container, trigger } = await select(page, "select-next-to-an-input", "Status");
+    await expect(trigger).toBeVisible();
+    await expect(container.locator(".hselect-fallback, select, input[type=hidden]")).toHaveCount(0);
+  });
 });
+
+// Without JavaScript, or before it runs: a select with a name shows its
+// fallback, the native <select> that docs/components/select.md describes, in
+// the trigger's place, and a form sends it.
+for (const playground of playgrounds) {
+  test.describe(`${playground} without JavaScript`, () => {
+    test.use({ javaScriptEnabled: false });
+
+    test("a named select is a native select, in the trigger's place and as big, with its chevron where the trigger's is", async ({ page, browser }) => {
+      await page.goto(url(playground, "select"));
+      const enhanced = await withScript(browser, page, playground);
+      for (const [id, label] of [
+        ["select-default", "Channel"],
+        ["select-placeholder", "Fallback channel"],
+        ["select-long-value", "Sender number"],
+      ]) {
+        const container = await example(page, id);
+        const field = container.locator(".play-demo .hfield");
+        const native = container.getByRole("combobox", { name: label });
+        await expect(native).toHaveJSProperty("tagName", "SELECT");
+        await expect(container.locator("button.hselect")).toBeHidden();
+
+        const shown = await example(enhanced, id);
+        const trigger = shown.getByRole("combobox", { name: label });
+        expect(await placesIn(field, native, container.locator(".hselect-fallback > .hexpand-chevron")), id).toEqual(
+          await placesIn(shown.locator(".play-demo .hfield"), trigger, trigger.locator(".hexpand-chevron")),
+        );
+      }
+
+      // Several: a list of options, one row of it in view, as tall as the
+      // trigger.
+      const container = await example(page, "select-multiple");
+      const list = container.getByRole("listbox", { name: "Message statuses" });
+      await expect(list).toHaveJSProperty("multiple", true);
+      const trigger = (await example(enhanced, "select-multiple")).getByRole("combobox", { name: "Message statuses" });
+      const [native, shown] = await boxes(list, trigger);
+      expect([native.width, native.height]).toEqual([shown.width, shown.height]);
+      await enhanced.close();
+    });
+
+    test("it looks as the trigger does: its text, the placeholder's gray, an error's border, and disabled", async ({ page, browser }) => {
+      await page.goto(url(playground, "select"));
+      const enhanced = await withScript(browser, page, playground);
+      for (const [id, label] of [
+        ["select-default", "Channel"],
+        ["select-placeholder", "Fallback channel"],
+        ["select-invalid", "Template language"],
+        ["select-disabled", "Region"],
+      ]) {
+        const native = (await example(page, id)).getByRole("combobox", { name: label });
+        const trigger = (await example(enhanced, id)).getByRole("combobox", { name: label });
+        const value = trigger.locator(".hselect-value");
+        const [box, text] = await boxes(trigger, value);
+        expect(await looksOf(native), id).toEqual({
+          ...(await looksOf(trigger)),
+          // The trigger's text is its value's, which ends where the chevron's
+          // room starts, inside its 1px border.
+          color: await value.evaluate((element) => getComputedStyle(element).color),
+          paddingInlineEnd: `${box.x + box.width - 1 - (text.x + text.width)}px`,
+        });
+      }
+      await enhanced.close();
+    });
+
+    test("it's named by the Field's label, described by its description and error, and marked invalid", async ({ page }) => {
+      await page.goto(url(playground, "select"));
+      const placeholder = (await example(page, "select-placeholder")).getByRole("combobox", { name: "Fallback channel" });
+      await expect(placeholder).toHaveAccessibleDescription("Optional Used when a message can't be delivered on the main channel.");
+      const invalid = (await example(page, "select-invalid")).getByRole("combobox", { name: "Template language" });
+      await expect(invalid).toHaveAccessibleDescription("Choose a language for the template.");
+      await expect(invalid).toHaveAttribute("aria-invalid", "true");
+      await expect((await example(page, "select-disabled")).getByRole("combobox", { name: "Region" })).toBeDisabled();
+    });
+
+    test("it's chosen as a native select is, a form sends each name once, and a reset puts the first choices back", async ({ page }) => {
+      await page.goto(url(playground, "select"));
+      const container = await example(page, "select-in-a-form");
+      const channel = container.getByRole("combobox", { name: "Channel" });
+      const statuses = container.getByRole("listbox", { name: "Notify me about" });
+      await channel.selectOption("telegram");
+      await expect(channel).toHaveValue("telegram");
+      await container.getByRole("button", { name: "Reset" }).click();
+      await expect(channel).toHaveValue("whatsapp");
+
+      await channel.selectOption("viber");
+      await statuses.selectOption(["read", "failed"]);
+      await container.getByRole("button", { name: "Save" }).click();
+      await page.waitForURL(/\?/);
+      expect([...new URL(page.url()).searchParams]).toEqual([
+        ["channel", "viber"],
+        ["statuses", "read"],
+        ["statuses", "failed"],
+      ]);
+    });
+
+    test("a select without a name has no fallback: its trigger shows, as it always has", async ({ page }) => {
+      await page.goto(url(playground, "select"));
+      const container = await example(page, "select-next-to-an-input");
+      await expect(container.getByRole("combobox", { name: "Status" })).toHaveJSProperty("tagName", "BUTTON");
+      await expect(container.locator(".hselect-fallback, select")).toHaveCount(0);
+    });
+  });
+}
 
 // An example's select, found by its label, and its list.
 const select = async (page: Page, id: string, label: string) => {
@@ -223,11 +390,52 @@ const select = async (page: Page, id: string, label: string) => {
   return { container, trigger, listbox };
 };
 
-// The hidden inputs a select adds for a form.
-const hiddenInputs = (container: Locator, name: string) => container.locator(`input[type="hidden"][name="${name}"]`);
+// The native <select> a select with a name keeps for its form.
+const fallbackOf = (container: Locator, name: string) => container.locator(`.hselect-fallback > select[name="${name}"]`);
 
-// The values of those inputs, in order.
+// What it sends, in order: its enabled options that are selected, none while
+// it's disabled.
 const expectSubmitted = (container: Locator, name: string, values: string[]) =>
   expect
-    .poll(() => hiddenInputs(container, name).evaluateAll((inputs) => inputs.map((input) => (input as HTMLInputElement).value)))
+    .poll(() =>
+      fallbackOf(container, name).evaluate((select: HTMLSelectElement) =>
+        select.disabled ? [] : [...select.selectedOptions].filter((option) => !option.disabled).map((option) => option.value),
+      ),
+    )
     .toEqual(values);
+
+// What a form sends, name and value.
+const sentBy = (form: Locator) =>
+  form.evaluate((form: HTMLFormElement) => [...new FormData(form)].map(([name, value]) => [name, String(value)]));
+
+// The same page in a new one with JavaScript, ready, at the same size. A new
+// page takes the describe's options, so JavaScript is turned back on.
+const withScript = async (browser: Browser, page: Page, playground: Playground) => {
+  const enhanced = await browser.newPage({ viewport: page.viewportSize(), javaScriptEnabled: true });
+  await open(enhanced, playground, "select");
+  return enhanced;
+};
+
+// Where each part is in its field, and its size, to a tenth of a pixel.
+const placesIn = async (field: Locator, ...parts: Locator[]) => {
+  const [box, ...inner] = await boxes(field, ...parts);
+  const tenth = (value: number) => Math.round(value * 10) / 10;
+  return inner.map((part) => [part.x - box!.x, part.y - box!.y, part.width, part.height].map(tenth));
+};
+
+// What a closed select looks like: its box, colors, and type.
+const looksOf = (control: Locator) =>
+  control.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      color: style.color,
+      backgroundColor: style.backgroundColor,
+      borderColor: style.borderTopColor,
+      borderRadius: style.borderTopLeftRadius,
+      boxShadow: style.boxShadow,
+      font: `${style.fontWeight} ${style.fontSize}/${style.lineHeight} ${style.fontFamily}`,
+      paddingInlineStart: style.paddingInlineStart,
+      paddingInlineEnd: style.paddingInlineEnd,
+      cursor: style.cursor,
+    };
+  });

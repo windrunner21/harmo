@@ -1,0 +1,213 @@
+/* The contact forms share this look with the account forms: a raised Card
+   holding the title, the fields, and a button as wide as the form, at most
+   576px wide. The card holds the form, then the thank-you that takes its
+   place once it's sent. */
+.hcontact-form {
+  --harmo-card-padding: var(--harmo-space-lg);
+
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 36rem;
+}
+
+.hcontact-form-form {
+  display: grid;
+  gap: var(--harmo-space-md);
+
+  margin: 0;
+}
+
+.hcontact-form-form[hidden] {
+  display: none;
+}
+
+/* A title with a description under it, a small step apart. */
+.hcontact-form-header {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+}
+
+.hcontact-form-header[hidden] {
+  display: none;
+}
+
+/* Its line is trimmed to the top of its capitals, so the padding above it
+   reads as the padding below the form's last line does, rather than
+   larger. */
+.hcontact-form-title {
+  margin: 0;
+  text-box: trim-start cap alphabetic;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-lg);
+  font-weight: var(--harmo-font-weight-bold);
+  line-height: 1.4;
+
+  color: var(--harmo-color-text);
+}
+
+.hcontact-form-description {
+  margin: 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+.hcontact-form-fields {
+  display: grid;
+  gap: var(--harmo-space-sm);
+}
+
+.hcontact-form-fields[hidden] {
+  display: none;
+}
+
+/* Short fields side by side, each at least 208px wide, and one over the
+   other where there isn't room for two. */
+.hcontact-form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  gap: var(--harmo-space-sm);
+}
+
+.hcontact-form-row[hidden] {
+  display: none;
+}
+
+/* A strip to drop files on is as wide as the fields around it, rather than
+   as wide as what's in it. */
+:where(.hcontact-form-fields) .hfile-input[data-variant="strip"] {
+  inline-size: 100%;
+}
+
+/* A message that starts four lines tall rather than one, then grows with its
+   text as any TextArea does: one line's height, as tall as an Input, and
+   three more of 20px. */
+.hcontact-form-message {
+  --htextarea-min-height: calc(var(--harmo-control-height) + 3 * 1.25rem);
+}
+
+/* A File List with no files takes no room, so the fields around it keep
+   their spacing until one is added. */
+:where(.hcontact-form-fields) > .hfile-list:empty {
+  display: none;
+}
+
+/* The button, and above it the error a failed send gives, a small step
+   apart. Empty, the error takes that step back, as it does in a Field, which
+   is a flex column too: a grid's row can't be less than nothing. */
+.hcontact-form-submit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--harmo-space-2xs);
+}
+
+.hcontact-form-submit[hidden] {
+  display: none;
+}
+
+:where(.hcontact-form-submit) > .hbutton {
+  inline-size: 100%;
+}
+
+/* A line under the button, such as a link to the privacy policy. */
+.hcontact-form-footer {
+  margin: 0;
+
+  font-family: var(--harmo-font-family);
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+  text-align: center;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+/* The thank-you is an Empty State, with the card's padding around it rather
+   than its own as well. Its title takes focus once the form is sent, only so
+   that a screen reader reads it, so it shows no ring. */
+:where(.hcontact-form) > .hempty-state {
+  padding: 0;
+}
+
+:where(.hcontact-form) > .hempty-state > .hempty-state-title:focus {
+  outline: none;
+}
+
+/* A send that fails, or that finds fields to fix, shakes the card once, as
+   the account forms do. Under reduced motion it stays still, and the error
+   says what went wrong. */
+@media (prefers-reduced-motion: no-preference) {
+  .hcontact-form[data-shake] {
+    animation: hcontact-form-shake var(--harmo-duration-slow) var(--harmo-ease-out-cubic);
+  }
+}
+
+@keyframes hcontact-form-shake {
+  25% {
+    translate: -12px;
+  }
+
+  50% {
+    translate: 12px;
+  }
+
+  75% {
+    translate: -12px;
+  }
+}
+
+/* The ways to reach you, as raised Cards side by side, each at least 224px
+   wide, and one over the other where there isn't room. */
+.hcontact-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr));
+  gap: var(--harmo-space-sm);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.hcontact-options[hidden] {
+  display: none;
+}
+
+/* Each card has a Card's parts one over the other, so a narrow card keeps its
+   width for the text: the icon's tile, a step above the title, the title and
+   its description, and the link at the bottom, so the links of cards side by
+   side line up whatever their descriptions' lengths. */
+.hcontact-options-item {
+  --harmo-card-padding: var(--harmo-space-md);
+
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto 1fr;
+  grid-template-areas:
+    "icon"
+    "title"
+    "description"
+    "link";
+}
+
+.hcontact-options-item > .hcard-icon {
+  margin-inline-end: 0;
+  margin-block-end: var(--harmo-space-sm);
+}
+
+.hcontact-options-link {
+  grid-area: link;
+  align-self: end;
+  justify-self: start;
+
+  margin-block-start: var(--harmo-space-sm);
+}
+
+/* A link in a card's description, such as the support address, is semibold
+   as well as the link's color, so more than its color tells it from the text
+   around it. */
+:where(.hcontact-options-item > .hcard-description) .hlink {
+  font-weight: var(--harmo-font-weight-semibold);
+}

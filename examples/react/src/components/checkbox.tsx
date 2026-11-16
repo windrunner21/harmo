@@ -47,6 +47,21 @@ export const examples = {
     </>
   ),
 
+  Small: () => (
+    <>
+      <Field orientation="horizontal" size="small" label="Email me product news and tips">
+        <Checkbox name="product-news" />
+      </Field>
+      <Field
+        orientation="horizontal"
+        size="small"
+        label="Send me the emails my account needs, such as receipts and changes to my plan"
+      >
+        <Checkbox name="account-emails" />
+      </Field>
+    </>
+  ),
+
   "With a description": () => (
     <Field
       orientation="horizontal"
@@ -71,6 +86,35 @@ export const examples = {
       </Field>
       <Field orientation="horizontal" label="Failed campaigns">
         <Checkbox value="failures" />
+      </Field>
+    </CheckboxGroup>
+  ),
+
+  Cards: () => (
+    <CheckboxGroup label="Add-ons" name="add-ons" defaultValue={["storage"]}>
+      <Field
+        orientation="horizontal"
+        variant="card"
+        label="Priority support"
+        description="Answers within an hour, at any time of day."
+      >
+        <Checkbox value="support" />
+      </Field>
+      <Field
+        orientation="horizontal"
+        variant="card"
+        label="Extra storage"
+        description="Another 100 GB for your team's files."
+      >
+        <Checkbox value="storage" />
+      </Field>
+      <Field
+        orientation="horizontal"
+        variant="card"
+        label="Audit log"
+        description="Every change, who made it, and when, kept for a year."
+      >
+        <Checkbox value="audit" />
       </Field>
     </CheckboxGroup>
   ),

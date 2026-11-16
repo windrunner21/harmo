@@ -1,7 +1,7 @@
 @use "shortcuts" as *;
 
 // Controls that wrap their field, which is one level inside them.
-$wrapped: ".hsearch, .hinput-highlight, .htextarea-highlight, .hcombobox, .hphone-input, .hdate-picker";
+$wrapped: ".hsearch, .hinput-highlight, .htextarea-highlight, .hcombobox, .hphone-input, .hdate-picker, .hselect-fallback";
 
 .hsettings {
   display: flex;

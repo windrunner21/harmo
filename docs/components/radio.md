@@ -42,6 +42,7 @@ A group is a [Field](field.md) with `role="radiogroup"`, labelled by its
 | `disabled` | Dimmed, not-allowed cursor; its Field label turns gray |
 | `required` | On the radios, when an answer is required |
 | `--harmo-checkbox-size` on the element | Size (default 20px), shared with [Checkbox](checkbox.md); the dot scales with it |
+| `data-variant="card"` on its horizontal [Field](field.md#choice-cards) | A choice card: the option as a bordered tile, chosen by a click anywhere on it, with the radio's colors once chosen. Lay several out with your own grid |
 
 ## Appearance and states
 
@@ -65,8 +66,12 @@ A group is a [Field](field.md) with `role="radiogroup"`, labelled by its
 
 ## Accessibility
 
-Radios that share a `name` form one group: Tab reaches the chosen one, and the
-arrow keys move the choice. The `role="radiogroup"` Field names the group.
+- Radios that share a `name` form one group: Tab reaches the chosen one, and
+  the arrow keys move the choice. The `role="radiogroup"` Field names the group.
+- In a choice card, the label still names the radio, and the description is
+  tied to it by `aria-describedby`, so a screen reader reads both as the radio
+  takes focus. The label only stretches over the card for the pointer; the
+  radio, its focus ring, and the arrow keys work as they do outside one.
 
 ## What a script does
 

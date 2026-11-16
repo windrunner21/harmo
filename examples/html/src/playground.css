@@ -356,6 +356,112 @@ body {
   font-weight: var(--harmo-font-weight-medium);
 }
 
+/* Patterns ----------------------------------------------------------------- */
+
+/* A pattern's Try the demo, then its What you need, from its docs page. */
+.play-guide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.play-guide-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+
+  & > .play-note {
+    margin: 0;
+  }
+}
+
+/* Tables of text, whose cells wrap, where a table of data keeps each to one
+   line, so every column fits a phone; in a narrow place, with less space
+   between them. Too narrow even so, the table scrolls. */
+.play-guide-table {
+  container-type: inline-size;
+}
+
+.play-guide-table .htable {
+  & :is(th, td) {
+    white-space: normal;
+    vertical-align: top;
+  }
+
+  @container (max-width: 36rem) {
+    & :is(th, td) {
+      padding-inline: 0.375rem;
+    }
+  }
+
+  & code {
+    padding: 0.1em 0.35em;
+
+    font-family: var(--play-font-mono);
+    font-size: 0.875em;
+    overflow-wrap: anywhere;
+
+    color: var(--harmo-color-text);
+    background-color: var(--harmo-color-background-secondary);
+    border-radius: var(--harmo-border-radius-sm);
+  }
+}
+
+/* What you need, closed until it's asked for, between a line above and
+   below. */
+.play-needs {
+  border-block: 1px solid var(--harmo-color-border);
+
+  & > .haccordion-content > .play-note {
+    margin-block: 0.75rem 0;
+  }
+}
+
+/* The patterns' cards, side by side where there's room. */
+.play-pattern-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
+  gap: 1rem;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  & > li {
+    display: grid;
+  }
+}
+
+/* A command to copy, as an example's code is. */
+.play-command {
+  position: relative;
+
+  border: 1px solid var(--harmo-color-border);
+  border-radius: var(--play-radius);
+
+  /* Physical, like the code, which is always left to right. */
+  & > .play-copy {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+
+    translate: 0 -50%;
+  }
+
+  & > pre {
+    margin: 0;
+    padding: 1rem 5rem 1rem 1rem;
+    overflow-x: auto;
+
+    font-family: var(--play-font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+
+    color: var(--harmo-color-text);
+  }
+}
+
 .play-example {
   display: grid;
   grid-template-columns: minmax(0, 1fr);

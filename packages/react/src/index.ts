@@ -70,6 +70,7 @@ export {
   type NavigationMenuProps,
   type NavigationMenuRowProps,
 } from "./NavigationMenu.tsx";
+export { OtpInput, type OtpInputProps } from "./OtpInput.tsx";
 export { Pagination, type PaginationProps } from "./pagination/Pagination.tsx";
 export { Option, type OptionProps } from "./listbox/Option.tsx";
 export { OptionGroup, type OptionGroupProps } from "./listbox/OptionGroup.tsx";

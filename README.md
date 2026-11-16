@@ -159,7 +159,7 @@ section lists its props.
 | Group | Components |
 | --- | --- |
 | Actions | [Button](docs/components/button.md), [Copy Button](docs/components/copy.md), [Link](docs/components/link.md) |
-| Forms | [Calendar](docs/components/calendar.md), [Checkbox](docs/components/checkbox.md), [Combobox](docs/components/combobox.md), [Date Picker](docs/components/date-picker.md), [Field](docs/components/field.md), [File Input](docs/components/file-input.md), [File List](docs/components/file-list.md), [Input](docs/components/input.md), [Password Input](docs/components/password.md), [Phone Input](docs/components/phone-input.md), [Radio](docs/components/radio.md), [Search](docs/components/search.md), [Segmented Control](docs/components/segmented.md), [Select](docs/components/select.md), [Settings List](docs/components/settings.md), [Switch](docs/components/switch.md), [TextArea](docs/components/textarea.md), [Time Picker](docs/components/time-picker.md) |
+| Forms | [Calendar](docs/components/calendar.md), [Checkbox](docs/components/checkbox.md), [Combobox](docs/components/combobox.md), [Date Picker](docs/components/date-picker.md), [Field](docs/components/field.md), [File Input](docs/components/file-input.md), [File List](docs/components/file-list.md), [Input](docs/components/input.md), [OTP Input](docs/components/otp-input.md), [Password Input](docs/components/password.md), [Phone Input](docs/components/phone-input.md), [Radio](docs/components/radio.md), [Search](docs/components/search.md), [Segmented Control](docs/components/segmented.md), [Select](docs/components/select.md), [Settings List](docs/components/settings.md), [Switch](docs/components/switch.md), [TextArea](docs/components/textarea.md), [Time Picker](docs/components/time-picker.md) |
 | Overlays | [Dialog](docs/components/dialog.md), [Drawer](docs/components/drawer.md), [Listbox](docs/components/listbox.md), [Popup](docs/components/popup.md), [Tooltip](docs/components/tooltip.md) |
 | Navigation | [Breadcrumb](docs/components/breadcrumb.md), [Command Menu](docs/components/command-menu.md), [Language Picker](docs/components/language-picker.md), [Menu Button](docs/components/menu-button.md), [Navigation Menu](docs/components/navigation-menu.md), [Pagination](docs/components/pagination.md), [Sidebar](docs/components/sidebar.md), [Table of Contents](docs/components/table-of-contents.md), [Tabs](docs/components/tabs.md) |
 | Data | [Date Filter](docs/components/date-filter.md), [Filter Bar](docs/components/filter-bar.md), [Filter Chip](docs/components/filter-chip.md), [Filters](docs/components/filters.md), [Selection Bar](docs/components/selection-bar.md), [Table](docs/components/table.md), [Toolbar](docs/components/toolbar.md) |
@@ -170,6 +170,22 @@ section lists its props.
 Every page has the same sections: a Contract table, copyable markup, the
 options, appearance and states, accessibility, what a script does, the React
 component, and the tokens it reads.
+
+## Patterns
+
+A pattern is an arrangement of components for a whole task, such as signing in.
+Copy one into your app with `npx harmo-ui add <pattern>`, then change it as your
+own code; each comes in React and in HTML. In React, a form takes `action`, a
+form action such as a Next.js server action, and works without JavaScript.
+
+| Pattern | Does |
+| --- | --- |
+| [Sign-in Form](docs/patterns/sign-in-form.md) | Signs someone in with their email and password, or with another account, such as Google, with a link to reset the password and, if you like, a code as a second step |
+| [Sign-up Form](docs/patterns/sign-up-form.md) | Creates an account with a name, an email, and a password, or with another account, such as Google, and, if you like, confirms the email by a link or a code |
+| [Reset Password](docs/patterns/reset-password.md) | Sends a link to reset a forgotten password, then sets a new one |
+| [Account Forms](docs/patterns/account-forms.md) | Signs someone in, creates an account, or sends a link to reset a password, switching between them in place, such as in a Dialog |
+| [Verify Code](docs/patterns/verify-code.md) | Asks for a one-time code, such as a sign-in's second step or one that confirms an email, with a new code after a wait |
+| [Contact Form](docs/patterns/contact-form.md) | Lets people reach your team: a message, a sales inquiry, a support request, and help with an order |
 
 ## Theming
 

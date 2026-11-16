@@ -66,6 +66,24 @@
   </div>
 </play-example>
 
+<play-example title="Small" layout="stack">
+  <play-note>
+    <code>data-size="small"</code> on a horizontal Field, for a line of fine
+    print, such as a sign-up form's: a 13px label and a 16px checkbox, still
+    beside the label's first line. It sizes a Radio or a Switch the same way.
+  </play-note>
+  <div class="hfield" data-orientation="horizontal" data-size="small">
+    <input class="hcheckbox" type="checkbox" id="product-news" name="product-news" />
+    <label class="hlabel" for="product-news">Email me product news and tips</label>
+  </div>
+  <div class="hfield" data-orientation="horizontal" data-size="small">
+    <input class="hcheckbox" type="checkbox" id="account-emails" name="account-emails" />
+    <label class="hlabel" for="account-emails">
+      Send me the emails my account needs, such as receipts and changes to my plan
+    </label>
+  </div>
+</play-example>
+
 <play-example title="With a description" layout="stack">
   <play-note>
     <code>.hfield-content</code> holds the label and a description, connected
@@ -106,6 +124,60 @@
     <div class="hfield" data-orientation="horizontal">
       <input class="hcheckbox" type="checkbox" id="notify-failures" name="notify" value="failures" />
       <label class="hlabel" for="notify-failures">Failed campaigns</label>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Cards" layout="stack">
+  <play-note>
+    <code>data-variant="card"</code> on a horizontal Field makes it a choice
+    card: a bordered tile that a click anywhere on checks, its padding and its
+    description too, and that takes the checkbox's colors once it's checked.
+  </play-note>
+  <div class="hfield" role="group" aria-labelledby="add-ons-label">
+    <span class="hlabel" id="add-ons-label">Add-ons</span>
+    <div class="hfield" data-orientation="horizontal" data-variant="card">
+      <input
+        class="hcheckbox"
+        type="checkbox"
+        id="add-ons-support"
+        name="add-ons"
+        value="support"
+        aria-describedby="add-ons-support-description"
+      />
+      <div class="hfield-content">
+        <label class="hlabel" for="add-ons-support">Priority support</label>
+        <p class="hdescription" id="add-ons-support-description">Answers within an hour, at any time of day.</p>
+      </div>
+    </div>
+    <div class="hfield" data-orientation="horizontal" data-variant="card">
+      <input
+        class="hcheckbox"
+        type="checkbox"
+        id="add-ons-storage"
+        name="add-ons"
+        value="storage"
+        aria-describedby="add-ons-storage-description"
+        checked
+      />
+      <div class="hfield-content">
+        <label class="hlabel" for="add-ons-storage">Extra storage</label>
+        <p class="hdescription" id="add-ons-storage-description">Another 100 GB for your team's files.</p>
+      </div>
+    </div>
+    <div class="hfield" data-orientation="horizontal" data-variant="card">
+      <input
+        class="hcheckbox"
+        type="checkbox"
+        id="add-ons-audit"
+        name="add-ons"
+        value="audit"
+        aria-describedby="add-ons-audit-description"
+      />
+      <div class="hfield-content">
+        <label class="hlabel" for="add-ons-audit">Audit log</label>
+        <p class="hdescription" id="add-ons-audit-description">Every change, who made it, and when, kept for a year.</p>
+      </div>
     </div>
   </div>
 </play-example>

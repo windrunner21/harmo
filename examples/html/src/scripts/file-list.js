@@ -215,10 +215,15 @@
         remove(row);
         return;
       }
+      // A retry here is pretended; one the page's own script handles, such as
+      // the Contact Form's, has no retry detail.
       const retry = event.target.closest(".hfile-list-actions .hbutton");
-      if (!retry) return;
+      if (!retry || exampleRetryDetail === undefined) return;
       const focused = document.activeElement === retry;
-      row.querySelector(".hfile-list-error").outerHTML = `<span class="hfile-list-detail">${exampleRetryDetail}</span>`;
+      const detail = document.createElement("span");
+      detail.className = "hfile-list-detail";
+      detail.textContent = exampleRetryDetail;
+      row.querySelector(".hfile-list-error").replaceWith(detail);
       retry.remove();
       progressBar(row);
       setProgress(row, 100);
