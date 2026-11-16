@@ -10,6 +10,7 @@ import {
   release,
   resizing,
   settled,
+  shakesOf,
   slowDownSteps,
   test,
 } from "./playgrounds.ts";
@@ -230,7 +231,7 @@ onEachPlayground("account-forms", () => {
     await signIn.password.fill("harmo");
     await signIn.button.click();
     await expect.poll(() => errorOf(signIn.email)).toBe("Confirm your email address first. We've sent you a new link.");
-    await expect(signIn.form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(signIn.form)).toBeGreaterThan(0);
     await expect(signIn.email).toHaveAttribute("aria-invalid", "true");
     await expect(signIn.email).toBeFocused();
     expect(await errorOf(signIn.password)).toBe("");

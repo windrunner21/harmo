@@ -543,9 +543,11 @@
 }
 
 // The tooltips open toward the page, which is on the left on a
-// right-to-left page; their data-side="right" is physical.
+// right-to-left page; their data-side="right" is physical, so they're put
+// by the trigger's left edge instead, as Tooltip puts a left one.
 .hsidebar:dir(rtl) :is(.htooltip.hsidebar-tooltip, .hsidebar-toggle > .htooltip) {
-  position-area: left;
+  left: auto;
+  right: anchor(left);
 
   transform-origin: right center;
 }

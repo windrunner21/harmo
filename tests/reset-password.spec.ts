@@ -11,6 +11,7 @@ import {
   release,
   resizing,
   settled,
+  shakesOf,
   slowDownSteps,
   test,
 } from "./playgrounds.ts";
@@ -125,7 +126,7 @@ onEachPlayground("reset-password", () => {
     await expect.poll(() => errorOf(email)).toBe("We couldn't send the email. Try again in a moment.");
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(email).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
   });
 
   test("a message the app gives for the email goes under it, which takes focus, and the form shakes", async ({ page }) => {
@@ -133,7 +134,7 @@ onEachPlayground("reset-password", () => {
     await email.fill("sam@gmial.com");
     await button.click();
     await expect.poll(() => errorOf(email)).toBe("We can't deliver email to gmial.com. Did you mean gmail.com?");
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     await expect(email).toHaveAttribute("aria-invalid", "true");
     await expect(email).toBeFocused();
     await expect(form.getByRole("heading", { name: "Check your email" })).toHaveCount(0);
@@ -157,7 +158,7 @@ onEachPlayground("reset-password", () => {
     await button.click();
     await expect.poll(() => errorOf(email)).toBe("Something went wrong. Try again.");
     await expect(email).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
   });
 
   test("a sent link: \"Check your email\" takes the form's place, its title takes focus, and it never says whether an account uses the address", async ({ page }) => {
@@ -388,7 +389,7 @@ onEachPlayground("reset-password", () => {
     await expect.poll(() => errorOf(password)).toBe("This password is too common. Choose another.");
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(password).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
   });
 
   test("a message the app gives for a field, here the new password, goes under it, which takes focus, and the form shakes", async ({ page }) => {
@@ -397,7 +398,7 @@ onEachPlayground("reset-password", () => {
     await confirmation.fill("MyOldPassword1!");
     await button.click();
     await expect.poll(() => errorOf(password)).toBe("You've used this password before. Choose a new one.");
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     await expect(password).toHaveAttribute("aria-invalid", "true");
     await expect(password).toBeFocused();
     expect(await errorOf(confirmation)).toBe("");

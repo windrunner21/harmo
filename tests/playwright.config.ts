@@ -3,7 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 // Every test runs in the three browser engines Harmo supports. Locally, the
 // mise tasks run them in Playwright's Docker image: `mise run test:browser`
 // Chromium, `mise run test:browser:all` all three. On CI, each job runs a
-// third of a browser's tests and writes a blob report, which the report job
+// quarter of a browser's tests and writes a blob report, which the report job
 // merges into one, with each failure shown on the pull request and its trace
 // kept. Ten failures end a job, so a broken run doesn't wait out every
 // test's timeouts.

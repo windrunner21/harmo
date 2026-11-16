@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, expectPosts, expectPostsElsewhere, expectShakeToEndOnItsOwn, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, example, expectPosts, expectPostsElsewhere, expectShakeToEndOnItsOwn, onEachPlayground, settled, shakesOf, test } from "./playgrounds.ts";
 
 // What docs/patterns/sign-up-form.md says, on the Sign-up Form page: a raised
 // Card with the name, the email, a new password with its strength, a line of
@@ -240,7 +240,7 @@ onEachPlayground("sign-up-form", () => {
     await expect.poll(() => errorOf(email)).toBe("An account already uses that email.");
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(email).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     expect(await errorOf(password)).toBe("");
   });
 
@@ -252,7 +252,7 @@ onEachPlayground("sign-up-form", () => {
     await expect(form.locator(".hpassword-strength")).toHaveText("Strong");
     await button.click();
     await expect.poll(() => errorOf(password)).toBe("This password has appeared in a data breach. Choose another.");
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     await expect(password).toHaveAttribute("aria-invalid", "true");
     await expect(password).toBeFocused();
     for (const input of [name, email]) {
@@ -297,7 +297,7 @@ onEachPlayground("sign-up-form", () => {
     await button.click();
     await expect.poll(() => errorOf(email)).toBe("Something went wrong. Try again.");
     await expect(email).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
   });
 
   test("while the password shows a message, its strength steps aside, and comes back once typing takes the message away", async ({ page }) => {

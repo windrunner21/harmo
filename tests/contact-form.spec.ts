@@ -6,9 +6,11 @@ import {
   example,
   fadingIn,
   onEachPlayground,
+  openPopup,
   release,
   resizing,
   settled,
+  shakesOf,
   slowDownSteps,
   test,
 } from "./playgrounds.ts";
@@ -54,8 +56,6 @@ const errorOf = (control: Locator) =>
       document.getElementById(`${node.getAttribute("aria-describedby")?.split(" ").find((id) => id.endsWith("-error"))}`)
         ?.textContent ?? "",
   );
-const shakes = (card: Locator) => card.evaluate((node) => node.getAnimations().length);
-
 // Sends a form, then expects the message the app gave for a field under it:
 // the field invalid and focused, the card shaking, nothing above the button,
 // and the form still there.
@@ -67,7 +67,7 @@ const expectFieldMessage = async (
   await button.click();
   await expect(button).toHaveAttribute("aria-busy", "true");
   await expect.poll(() => errorOf(control)).toBe(message);
-  await expect(card).toHaveAttribute("data-shake", "");
+  await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
   await expect(control).toHaveAttribute("aria-invalid", "true");
   await expect(control).toBeFocused();
   await expect(failure).toBeEmpty();
@@ -85,10 +85,19 @@ const text = (name: string) => ({ name, mimeType: "text/plain", buffer: Buffer.f
 const inReact = (page: Page) => page.url().includes("/examples/react/");
 
 // Fills a support request in, with a topic, ready to send.
+// Chooses an option once its list has opened and settled, so the click
+// doesn't land where the opening list hasn't reached yet.
+const choose = async (container: Locator, select: string, option: string) => {
+  await container.getByRole("combobox", { name: select }).click();
+  const popup = openPopup(container);
+  await expect(popup).toBeVisible();
+  await settled(popup);
+  await popup.locator(`.hoption:has-text("${option}")`).click();
+};
+
 const fillSupportRequest = async ({ container, form }: Awaited<ReturnType<typeof parts>>, email = "sam@example.com") => {
   await form.getByLabel("Email").fill(email);
-  await container.getByRole("combobox", { name: "Topic" }).click();
-  await container.locator('.hoption:has-text("Billing")').click();
+  await choose(container, "Topic", "Billing");
   await form.getByLabel("Subject").fill("A refund");
   await form.getByLabel("Message").fill("Hello");
 };
@@ -97,8 +106,7 @@ const fillSupportRequest = async ({ container, form }: Awaited<ReturnType<typeof
 const fillOrderHelp = async ({ container, form }: Awaited<ReturnType<typeof parts>>, order = "1042") => {
   await form.getByLabel("Order number").fill(order);
   await form.getByLabel("Email").fill("sam@example.com");
-  await container.getByRole("combobox", { name: "What's wrong?" }).click();
-  await container.locator('.hoption:has-text("An item is missing")').click();
+  await choose(container, "What's wrong?", "An item is missing");
 };
 
 onEachPlayground("contact-form", () => {
@@ -123,7 +131,7 @@ onEachPlayground("contact-form", () => {
     expect(await errorOf(message)).toBe("Enter your message.");
     for (const field of [name, email, message]) await expect(field).toHaveAttribute("aria-invalid", "true");
     await expect(name).toBeFocused();
-    expect(await shakes(card)).toBe(1);
+    await expect.poll(() => shakesOf(card)).toBe(1);
   });
 
   test("an email that isn't an address says so, and typing in the field takes its error away", async ({ page }) => {
@@ -207,7 +215,7 @@ onEachPlayground("contact-form", () => {
     await expect(failure).toHaveText("Your message didn't send. Try again in a moment.");
     await expect(failure).toHaveAttribute("aria-live", "polite");
     await expect(button).not.toHaveAttribute("aria-busy");
-    await expect(card).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
     await expect(form).toBeVisible();
     await expect(thanks).toBeHidden();
     await settled(failure);
@@ -224,7 +232,7 @@ onEachPlayground("contact-form", () => {
     await expect(button).toHaveAttribute("aria-busy", "true");
     await expect(failure).toHaveText("Something went wrong. Try again.");
     await expect(button).not.toHaveAttribute("aria-busy");
-    await expect(card).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
     await expect(form).toBeVisible();
     await expect(thanks).toBeHidden();
   });
@@ -257,7 +265,7 @@ onEachPlayground("contact-form", () => {
     await button.click();
     await expect(button).toHaveAttribute("aria-busy", "true");
     await expect(failure).toHaveText("Your message can't have links in it. Take them out, and send it again.");
-    await expect(card).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
     await expect(form.locator('[aria-invalid="true"]')).toHaveCount(0);
     await expect(form).toBeVisible();
     await expect(thanks).toBeHidden();
@@ -284,7 +292,7 @@ onEachPlayground("contact-form", () => {
     await expect(error).toHaveText("setup.exe isn't a file we can open. Send screenshots, PDFs, or text files.");
     await expect(input).toHaveAttribute("aria-invalid", "true");
     await expect(input).toBeFocused();
-    await expect(card).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
     await expect(failure).toBeEmpty();
     await expect(thanks).toBeHidden();
     await input.setInputFiles(text("notes.txt"));
@@ -342,7 +350,7 @@ onEachPlayground("contact-form", () => {
     await expect(form.locator(".hfile-input + .herror")).toHaveText("Some files didn't upload. Try them again, or remove them.");
     await expect(input).toHaveAttribute("aria-invalid", "true");
     await expect(input).toBeFocused();
-    await expect(card).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
     const retry = row.getByRole("button", { name: "Try again" });
     await expect(retry).toHaveAccessibleDescription("fail-log.txt");
     await retry.click();
@@ -437,7 +445,7 @@ onEachPlayground("contact-form", () => {
     const { card, form, button } = await parts(page);
     await button.click();
     await expect.poll(() => errorOf(form.getByLabel("Name"))).toBe("Enter your name.");
-    expect(await shakes(card)).toBe(0);
+    expect(await shakesOf(card)).toBe(0);
   });
 
   test("the sales form's country is a Select with a search, of countries by name, sent by their code", async ({ page }) => {

@@ -8,6 +8,7 @@ import {
   fadingIn,
   onEachPlayground,
   resizing,
+  shakesOf,
   slowDownSteps,
   test,
 } from "./playgrounds.ts";
@@ -101,7 +102,7 @@ onEachPlayground("sign-in-form", () => {
     await expect.poll(() => errorOf(password)).toBe("The email or password is incorrect.");
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(password).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     // The link never carries what was typed.
     await expect(link).toHaveAttribute("href", "/reset-password");
   });
@@ -112,7 +113,7 @@ onEachPlayground("sign-in-form", () => {
     await password.fill("harmo");
     await button.click();
     await expect.poll(() => errorOf(email)).toBe("Confirm your email address first. We've sent you a new link.");
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     await expect(email).toHaveAttribute("aria-invalid", "true");
     await expect(email).toBeFocused();
     expect(await errorOf(password)).toBe("");
@@ -148,7 +149,7 @@ onEachPlayground("sign-in-form", () => {
     await expect.poll(() => errorOf(password)).toBe("Something went wrong. Try again.");
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(password).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     // Still the form, with what was typed.
     await expect(email).toHaveValue("error@example.com");
   });
@@ -272,7 +273,7 @@ onEachPlayground("sign-in-form", () => {
     await code.pressSequentially("654321");
     await expect.poll(() => errorOf(code)).toBe("That code isn't right. Check it, or send a new one.");
     await expect(code).toBeFocused();
-    await expect(card).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(card)).toBeGreaterThan(0);
     await code.pressSequentially("123456");
     await expect(card.getByRole("button", { name: "Verify" })).not.toHaveAttribute("aria-busy");
     await expect.poll(() => errorOf(code)).toBe("");

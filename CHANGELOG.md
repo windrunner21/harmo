@@ -198,6 +198,16 @@ minor version may change an API, and says how to upgrade when it does.
   folder they write to, as a registry path with `../` or an absolute one
   would, or through a link that leads out of it, and write nothing then.
 
+### Fixed
+
+- Tooltip: one at the left or the right of its trigger, `data-side="left"` or
+  `"right"`, and the new inline sides, is placed by the trigger's edges with
+  `anchor()` rather than by `position-area`, which Firefox put in the wrong
+  place for a trigger in right-to-left text, as far as the window's edge. It
+  stays centered on the trigger, 8px from it, and flips only across, to the
+  trigger's other side, where there isn't room. The Sidebar's tooltips, on
+  the left on a right-to-left page, are placed the same way.
+
 ## [0.6.0] - 2026-11-15
 
 Two new components, Table of Contents and Language Picker, and a full audit of

@@ -42,13 +42,32 @@ export const pages = (playground: Playground) => {
   return built;
 };
 
+// How many times a form's shake has started on an element since the page
+// loaded. A shake lasts 300ms, so a check after an answer that takes a
+// moment can miss the data-shake that starts it; the count stays. None under
+// reduced motion, where nothing shakes.
+export const shakesOf = (element: Locator) =>
+  element.evaluate((node) => (window as unknown as { harmoShakes: WeakMap<Element, number> }).harmoShakes.get(node) ?? 0);
+
 export const url = (playground: Playground, slug: string) =>
   pathToFileURL(join(dist(playground), `${slug}.html`)).href;
 
 // Playwright's test, failing any test during which the page logs a console
-// error or throws.
+// error or throws. Each page counts the shakes a pattern's form starts, as
+// shakesOf reads them.
 export const test = base.extend({
   page: async ({ page }, use) => {
+    await page.addInitScript(() => {
+      const started = new WeakMap<EventTarget, number>();
+      Object.assign(window, { harmoShakes: started });
+      addEventListener(
+        "animationstart",
+        (event) => {
+          if (event.target && /-shake$/.test(event.animationName)) started.set(event.target, (started.get(event.target) ?? 0) + 1);
+        },
+        true,
+      );
+    });
     const errors: string[] = [];
     page.on("console", (message) => {
       if (message.type() === "error") errors.push(message.text());

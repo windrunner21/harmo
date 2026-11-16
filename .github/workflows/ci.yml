@@ -1,6 +1,6 @@
 # Checks every push to master and every pull request: the types and the
-# markup test in one job, and the browser tests in three jobs per browser,
-# each running a third of them, all side by side, as Playwright's CI and
+# markup test in one job, and the browser tests in four jobs per browser,
+# each running a quarter of them, all side by side, as Playwright's CI and
 # sharding guides set them up (playwright.dev/docs/ci,
 # playwright.dev/docs/test-sharding). A last job merges their reports into
 # one, with each failure's trace.
@@ -55,11 +55,12 @@ jobs:
       fail-fast: false
       matrix:
         browser: [chromium, firefox, webkit]
-        # A third of the browser's tests each, at the same time, none left
-        # out. By the tests' times the thirds come out even; halves didn't,
-        # in WebKit.
-        shardIndex: [1, 2, 3]
-        shardTotal: [3]
+        # A quarter of the browser's tests each, at the same time, none left
+        # out. By the tests' times the quarters come out even; halves didn't,
+        # in WebKit, and once the patterns came, a third of WebKit's ran past
+        # the tests' 15 minutes.
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     steps:
       - uses: actions/checkout@v7
 
@@ -72,8 +73,8 @@ jobs:
       - working-directory: tests
         run: bunx playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-      # This third's report, for the report job, whether its tests passed or
-      # failed. Blob files are named by browser and third, so none overwrite
+      # This quarter's report, for the report job, whether its tests passed or
+      # failed. Blob files are named by browser and quarter, so none overwrite
       # another when they're merged.
       - if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7

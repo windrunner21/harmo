@@ -127,6 +127,15 @@ const OtpInputControl = ({
       event.preventDefault();
       if (entry.text) insert(field, entry.text, entry.start, entry.end);
     };
+    // A full code's maxlength keeps Safari from saying a key is about to
+    // type, so a key that types over a character is typed here.
+    const keyDown = (event: KeyboardEvent) => {
+      if (field.readOnly || event.isComposing || event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (field.value.length < length || field.selectionStart !== field.selectionEnd) return;
+      event.preventDefault();
+      const entry = entryOf(field, event.key, length, alphanumeric);
+      if (entry.text) insert(field, entry.text, entry.start, entry.end);
+    };
     const paste = (event: ClipboardEvent) => {
       const pasted = event.clipboardData?.getData("text");
       if (pasted === undefined || field.readOnly) return;
@@ -135,10 +144,12 @@ const OtpInputControl = ({
       if (entry.text) insert(field, entry.text, entry.start, entry.end);
     };
     field.addEventListener("beforeinput", beforeInput);
+    field.addEventListener("keydown", keyDown);
     field.addEventListener("paste", paste);
     field.addEventListener("select", follow);
     return () => {
       field.removeEventListener("beforeinput", beforeInput);
+      field.removeEventListener("keydown", keyDown);
       field.removeEventListener("paste", paste);
       field.removeEventListener("select", follow);
     };

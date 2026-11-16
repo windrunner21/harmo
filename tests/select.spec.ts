@@ -296,8 +296,10 @@ for (const playground of playgrounds) {
       ]) {
         const container = await example(page, id);
         const field = container.locator(".play-demo .hfield");
-        const native = container.getByRole("combobox", { name: label });
-        await expect(native).toHaveJSProperty("tagName", "SELECT");
+        // By selectors, as Firefox reads no property of an element in a page
+        // without JavaScript.
+        const native = container.locator("select").and(container.getByRole("combobox", { name: label }));
+        await expect(native).toBeVisible();
         await expect(container.locator("button.hselect")).toBeHidden();
 
         const shown = await example(enhanced, id);
@@ -311,7 +313,7 @@ for (const playground of playgrounds) {
       // trigger.
       const container = await example(page, "select-multiple");
       const list = container.getByRole("listbox", { name: "Message statuses" });
-      await expect(list).toHaveJSProperty("multiple", true);
+      await expect(list).toHaveAttribute("multiple");
       const trigger = (await example(enhanced, "select-multiple")).getByRole("combobox", { name: "Message statuses" });
       const [native, shown] = await boxes(list, trigger);
       expect([native.width, native.height]).toEqual([shown.width, shown.height]);
@@ -376,7 +378,7 @@ for (const playground of playgrounds) {
     test("a select without a name has no fallback: its trigger shows, as it always has", async ({ page }) => {
       await page.goto(url(playground, "select"));
       const container = await example(page, "select-next-to-an-input");
-      await expect(container.getByRole("combobox", { name: "Status" })).toHaveJSProperty("tagName", "BUTTON");
+      await expect(container.locator("button").and(container.getByRole("combobox", { name: "Status" }))).toBeVisible();
       await expect(container.locator(".hselect-fallback, select")).toHaveCount(0);
     });
   });

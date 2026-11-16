@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, expectPosts, expectPostsElsewhere, expectShakeToEndOnItsOwn, onEachPlayground, ready, test } from "./playgrounds.ts";
+import { boxes, example, expectPosts, expectPostsElsewhere, expectShakeToEndOnItsOwn, onEachPlayground, ready, shakesOf, test } from "./playgrounds.ts";
 
 // What docs/patterns/verify-code.md says, on the Verify Code page: a raised
 // Card with a title, where the code went, or that it comes from an
@@ -75,7 +75,7 @@ onEachPlayground("verify-code", () => {
     await expect.poll(() => errorOf(code)).toBe("Enter the code.");
     await expect(code).toHaveAttribute("aria-invalid", "true");
     await expect(code).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     await code.pressSequentially("482");
     await expect.poll(() => errorOf(code)).toBe("");
     await button.click();
@@ -95,7 +95,7 @@ onEachPlayground("verify-code", () => {
     await expect.poll(() => errorOf(code)).toBe("That code isn't right. Check it, or send a new one.");
     await expect(button).not.toHaveAttribute("aria-busy");
     await expect(code).toBeFocused();
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
     expect(await code.evaluate((node: HTMLInputElement) => [node.selectionStart, node.selectionEnd])).toEqual([0, 6]);
     await expect(form.locator(".hotp-input-slot[data-active]")).toHaveCount(6);
     // Typing replaces it, and takes the message away.
@@ -117,7 +117,7 @@ onEachPlayground("verify-code", () => {
     const { form, code } = await parts(page);
     await code.pressSequentially("000000");
     await expect.poll(() => errorOf(code)).toBe("Something went wrong. Try again.");
-    await expect(form).toHaveAttribute("data-shake", "");
+    await expect.poll(() => shakesOf(form)).toBeGreaterThan(0);
   });
 
   test("a new code waits 30 seconds, counting down, then sends one, says so, and waits again", async ({ page }) => {

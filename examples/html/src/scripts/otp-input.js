@@ -84,6 +84,16 @@
       if (entry.text) insert(field, entry.text, entry.start, entry.end);
     });
 
+    // A full code's maxlength keeps Safari from saying a key is about to
+    // type, so a key that types over a character is typed here.
+    field.addEventListener("keydown", (event) => {
+      if (field.readOnly || event.isComposing || event.key.length !== 1 || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (field.value.length < length || field.selectionStart !== field.selectionEnd) return;
+      event.preventDefault();
+      const entry = entryOf(field, event.key, length, alphanumeric);
+      if (entry.text) insert(field, entry.text, entry.start, entry.end);
+    });
+
     field.addEventListener("paste", (event) => {
       const pasted = event.clipboardData?.getData("text");
       if (pasted === undefined || field.readOnly) return;

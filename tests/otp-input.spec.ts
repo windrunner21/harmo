@@ -291,11 +291,15 @@ const parts = async (page: Page, id: string) => {
 };
 
 // A paste of text, as the browser sends it.
+// A paste of text, as the browser sends one. Firefox's ClipboardEvent takes
+// no clipboardData of its own, so it's given one.
 const paste = (input: Locator, text: string) =>
   input.evaluate((node, text) => {
     const clipboardData = new DataTransfer();
     clipboardData.setData("text/plain", text);
-    node.dispatchEvent(new ClipboardEvent("paste", { clipboardData, bubbles: true, cancelable: true }));
+    const event = new ClipboardEvent("paste", { clipboardData, bubbles: true, cancelable: true });
+    if (event.clipboardData?.getData("text/plain") !== text) Object.defineProperty(event, "clipboardData", { value: clipboardData });
+    node.dispatchEvent(event);
   }, text);
 
 // What a slot's caret shows: its ::after's content, "none" without one.

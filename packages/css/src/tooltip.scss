@@ -75,39 +75,40 @@
     transform-origin: bottom center;
   }
 
-  &[data-side="left"] {
-    position-area: left;
+  // Beside the trigger, centered on it, its edge the gap from the trigger's:
+  // placed by the trigger's edges with anchor(), as Firefox puts
+  // position-area's left and right in the wrong place for a trigger in
+  // right-to-left text. Without room, it flips across only, to the trigger's
+  // other side. inline-start and inline-end are at the start or end of the
+  // trigger's line, which swap in right-to-left text: physical sides chosen
+  // by the tooltip's direction, as position-area's inline-start and
+  // inline-end follow the page's, not a right-to-left part of it.
+  &[data-side="left"],
+  &[data-side="inline-start"],
+  &[data-side="inline-end"]:dir(rtl) {
+    position-area: none;
+    inset: auto;
+    top: anchor(center);
+    right: anchor(left);
+    position-try-fallbacks: flip-inline;
+    margin-block: 0;
 
+    translate: 0 -50%;
     transform-origin: right center;
   }
 
-  &[data-side="right"] {
-    position-area: right;
-
-    transform-origin: left center;
-  }
-
-  // At the start or end of the trigger's line, which swap in right-to-left
-  // text. Physical sides chosen by the tooltip's direction, as position-area's
-  // inline-start and inline-end follow the page's, not a right-to-left part
-  // of it.
-  &[data-side="inline-start"] {
-    position-area: left;
-
-    transform-origin: right center;
-  }
-
+  &[data-side="right"],
   &[data-side="inline-end"],
   &[data-side="inline-start"]:dir(rtl) {
-    position-area: right;
+    position-area: none;
+    inset: auto;
+    top: anchor(center);
+    left: anchor(right);
+    position-try-fallbacks: flip-inline;
+    margin-block: 0;
 
+    translate: 0 -50%;
     transform-origin: left center;
-  }
-
-  &[data-side="inline-end"]:dir(rtl) {
-    position-area: left;
-
-    transform-origin: right center;
   }
 
   &[data-variant="hint"] {

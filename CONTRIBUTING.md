@@ -236,8 +236,8 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   Playwright's browsers. A failed test runs once more, recording a trace,
   kept in `tests/test-results` to open with `bunx playwright show-trace`.
 - GitHub Actions (`.github/workflows/ci.yml`) runs all of these on every push
-  to `master` and every pull request, the browser tests in three jobs per
-  browser, each running a third of them, all side by side, in Playwright's
+  to `master` and every pull request, the browser tests in four jobs per
+  browser, each running a quarter of them, all side by side, in Playwright's
   Docker image. A failure shows on the pull request, and one report, merged
   from every job, keeps each failed test's trace.
 
