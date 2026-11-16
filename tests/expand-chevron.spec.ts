@@ -3,7 +3,10 @@ import { example, onEachPlayground, settled, test, watchTransitions } from "./pl
 
 // docs/components/expand-chevron.md: the chevron follows its control's
 // aria-expanded, folding its two strokes through flat, up over 200ms and back
-// down over 150ms, so it points the other way.
+// down over 150ms, so it points the other way. It points up after a control
+// that's expanded, and in an open <details> element's summary, and an app's
+// own rule overrides it; only CSS decides those, so they're tested on the
+// HTML playground.
 onEachPlayground("expand-chevron", () => {
   test("the chevron folds with aria-expanded, and back", async ({ page }) => {
     const container = await example(page, "expand-chevron-toggling");
@@ -51,7 +54,7 @@ onEachPlayground("expand-chevron", () => {
     for (const part of parts) expect(await durationOf(part)).toBe("0s");
   });
 
-  test("it points up after the control it follows, as beside a Combobox's field, and in an open <details> element's summary", async ({ page }) => {
+  test("it points up after the control it follows, as beside a Combobox's field, and in an open <details> element's summary", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "expand-chevron-toggling");
     // The example's chevron, in each place, with its control open and closed.
     const angles = await container.locator(".play-demo .hexpand-chevron").evaluate((chevron) => {
@@ -74,7 +77,7 @@ onEachPlayground("expand-chevron", () => {
     expect(angles).toEqual([-40, 40, -40, 40]);
   });
 
-  test("an app's rule of the same weight, loaded after Harmo's, overrides an expanded one", async ({ page }) => {
+  test("an app's rule of the same weight, loaded after Harmo's, overrides an expanded one", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "expand-chevron-collapsed-and-expanded");
     await page.addStyleTag({ content: ".hexpand-chevron .hexpand-chevron-left { transform: rotate(10deg); transition: none; }" });
     const expanded = container.locator('.play-demo [aria-expanded="true"] .hexpand-chevron-left');

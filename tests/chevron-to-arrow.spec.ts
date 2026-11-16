@@ -6,6 +6,8 @@ import { example, onEachPlayground, ready, test } from "./playgrounds.ts";
 // and shows the shaft; keyboard focus shows the arrow at once; on a touch
 // screen, with reduced motion, and in a disabled control, it's the finished
 // arrow, not moving. Back mirrors it, and right-to-left text mirrors both.
+// Only CSS decides it, so it's tested on the HTML playground, all but
+// keyboard focus, which takes a key press.
 const resting = "matrix(1, 0, 0, 1, -4, 0)";
 const finished = "matrix(1, 0, 0, 1, 4, 0)";
 
@@ -31,7 +33,7 @@ const continueButton = async (page: Page) =>
   (await example(page, "chevron-to-arrow-forward-and-back")).getByRole("button", { name: "Continue" });
 
 onEachPlayground("chevron-to-arrow", () => {
-  test("at rest it's a chevron; hovered, its head slides 8px outward and the shaft shows, in 150ms", async ({ page }) => {
+  test("at rest it's a chevron; hovered, its head slides 8px outward and the shaft shows, in 150ms", { tag: "@css" }, async ({ page }) => {
     const button = await continueButton(page);
     const { head, shaft } = partsOf(button);
     await page.mouse.move(0, 0);
@@ -58,7 +60,7 @@ onEachPlayground("chevron-to-arrow", () => {
     expect(await opacityOf(shaft)).toBe("1");
   });
 
-  test("in a disabled control, it's the finished arrow, and hovering moves nothing", async ({ page }) => {
+  test("in a disabled control, it's the finished arrow, and hovering moves nothing", { tag: "@css" }, async ({ page }) => {
     const button = (await example(page, "chevron-to-arrow-without-animation")).getByRole("button", { name: "Continue" });
     const { head, shaft } = partsOf(button);
     await page.mouse.move(0, 0);
@@ -69,7 +71,7 @@ onEachPlayground("chevron-to-arrow", () => {
     expect(await transformOf(head)).toBe(finished);
   });
 
-  test("with reduced motion, it's the finished arrow", async ({ page }) => {
+  test("with reduced motion, it's the finished arrow", { tag: "@css" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const { head, shaft } = partsOf(await continueButton(page));
     await page.mouse.move(0, 0);
@@ -77,7 +79,7 @@ onEachPlayground("chevron-to-arrow", () => {
     expect(await opacityOf(shaft)).toBe("1");
   });
 
-  test("on a touch screen, it's the finished arrow", async ({ page, browserName, browser }) => {
+  test("on a touch screen, it's the finished arrow", { tag: "@css" }, async ({ page, browserName, browser }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates a touch screen");
     const context = await browser.newContext({ hasTouch: true, isMobile: true });
     try {
@@ -92,7 +94,7 @@ onEachPlayground("chevron-to-arrow", () => {
     }
   });
 
-  test("forward points toward the end of the line and back toward its start, in left-to-right and right-to-left text", async ({ page }) => {
+  test("forward points toward the end of the line and back toward its start, in left-to-right and right-to-left text", { tag: "@css" }, async ({ page }) => {
     // The finished arrow, so where the head is shows which way it points.
     await page.emulateMedia({ reducedMotion: "reduce" });
     const ltr = await example(page, "chevron-to-arrow-forward-and-back");
@@ -104,7 +106,7 @@ onEachPlayground("chevron-to-arrow", () => {
     expect(await pointsRight(rtl.getByRole("button", { name: "رجوع" })), "back, right to left").toBe(true);
   });
 
-  test("an app's rule of the same weight, loaded after Harmo's, overrides the resting chevron", async ({ page }) => {
+  test("an app's rule of the same weight, loaded after Harmo's, overrides the resting chevron", { tag: "@css" }, async ({ page }) => {
     const { shaft } = partsOf(await continueButton(page));
     await page.mouse.move(0, 0);
     await page.addStyleTag({ content: ".hchevron-to-arrow .hchevron-to-arrow-shaft { opacity: 0.5; }" });

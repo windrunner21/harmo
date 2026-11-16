@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { axe, checkAccessibility } from "./axe.ts";
-import { example, onEachPlayground, pointAt, ready, test } from "./playgrounds.ts";
+import { clickAt, example, onEachPlayground, pointAt, ready, settled, test } from "./playgrounds.ts";
 
 const accents = ["purple", "blue", "green", "red", "amber", "teal", "pink", "mono"] as const;
 
@@ -86,10 +86,11 @@ const contrast = (element: Locator) =>
   });
 
 // What docs/components/README.md promises for every accent, in both modes.
+// Only CSS decides them, so they're tested on the HTML playground.
 onEachPlayground("button", () => {
   for (const accent of accents) {
     for (const scheme of ["light", "dark"] as const) {
-      test(`${accent}, ${scheme}: every role reaches WCAG AA`, async ({ page }) => {
+      test(`${accent}, ${scheme}: every role reaches WCAG AA`, { tag: "@css" }, async ({ page }) => {
         await use(page, accent, scheme);
         const r = await roles(page);
         expect(r.text, "primary text on the page").toBeGreaterThanOrEqual(4.5);
@@ -108,7 +109,7 @@ onEachPlayground("button", () => {
     }
   }
 
-  test("an accent on a section recolors only that section", async ({ page }) => {
+  test("an accent on a section recolors only that section", { tag: "@css" }, async ({ page }) => {
     const section = await example(page, "button-variants");
     const inside = section.locator(".hbutton").first();
     const outside = (await example(page, "button-small")).locator(".hbutton").first();
@@ -119,14 +120,14 @@ onEachPlayground("button", () => {
     await expect(outside).toHaveCSS("background-color", "rgb(94, 61, 232)");
   });
 
-  test("an app's own value beats the accent", async ({ page }) => {
+  test("an app's own value beats the accent", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { --harmo-color-primary-fill: rgb(1, 2, 3); }" });
     await use(page, "blue", "light");
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     await expect(button).toHaveCSS("background-color", "rgb(1, 2, 3)");
   });
 
-  test("an app's value on :root doesn't reach inside a section with its own accent, and one on the section does", async ({ page }) => {
+  test("an app's value on :root doesn't reach inside a section with its own accent, and one on the section does", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({
       content: ":root { --harmo-color-primary-fill: rgb(1, 2, 3); } .own-fill { --harmo-color-primary-fill: rgb(4, 5, 6); }",
     });
@@ -142,7 +143,7 @@ onEachPlayground("button", () => {
 
   // Mono alone has dark text on its dark-mode buttons, a dark Switch thumb,
   // and underlined links; an accent inside it has none of them.
-  test("an accent inside mono has its own button text, thumb, and links, in dark mode", async ({ page }) => {
+  test("an accent inside mono has its own button text, thumb, and links, in dark mode", { tag: "@css" }, async ({ page }) => {
     await use(page, "mono", "dark");
     const section = await example(page, "button-variants");
     const button = section.locator(".hbutton").first();
@@ -162,7 +163,7 @@ onEachPlayground("button", () => {
     }
   });
 
-  test("a button gets one step darker on hover in light, and lighter in dark, mono too", async ({ page }) => {
+  test("a button gets one step darker on hover in light, and lighter in dark, mono too", { tag: "@css" }, async ({ page }) => {
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     const lightness = () =>
       button.evaluate((element) => {
@@ -177,10 +178,10 @@ onEachPlayground("button", () => {
     for (const [accent, scheme] of [["teal", "light"], ["teal", "dark"], ["mono", "light"], ["mono", "dark"]] as const) {
       await use(page, accent, scheme);
       await page.mouse.move(0, 0);
-      await page.waitForTimeout(250);
+      await settled(button);
       const rest = await lightness();
       await pointAt(page, button);
-      await page.waitForTimeout(250);
+      await settled(button);
       const hover = await lightness();
       if (scheme === "light") expect(hover).toBeLessThan(rest);
       else expect(hover).toBeGreaterThan(rest);
@@ -189,13 +190,14 @@ onEachPlayground("button", () => {
 });
 
 // Mono's links are already the heading color, so they're underlined on hover;
-// other accents' aren't, and an underlined link keeps its underline.
+// other accents' aren't, and an underlined link keeps its underline. Only CSS
+// decides it, so it's tested on the HTML playground.
 onEachPlayground("link", () => {
   const decoration = (page: Page, id: string) =>
     page.locator(`[id="${id}"] .hlink`).first().evaluate((link) => getComputedStyle(link).textDecorationLine);
 
   for (const scheme of ["light", "dark"] as const) {
-    test(`mono, ${scheme}: a link is underlined on hover`, async ({ page }) => {
+    test(`mono, ${scheme}: a link is underlined on hover`, { tag: "@css" }, async ({ page }) => {
       await use(page, "mono", scheme);
       const link = (await example(page, "link-standalone")).locator(".hlink").first();
       expect(await decoration(page, "link-standalone")).toBe("none");
@@ -204,14 +206,14 @@ onEachPlayground("link", () => {
     });
   }
 
-  test("purple's links change color on hover, without an underline", async ({ page }) => {
+  test("purple's links change color on hover, without an underline", { tag: "@css" }, async ({ page }) => {
     const link = (await example(page, "link-standalone")).locator(".hlink").first();
     await pointAt(page, link);
     await expect(link).toHaveCSS("color", "rgb(48, 49, 61)");
     expect(await decoration(page, "link-standalone")).toBe("none");
   });
 
-  test("a link in running text keeps its underline on hover, mono or not", async ({ page }) => {
+  test("a link in running text keeps its underline on hover, mono or not", { tag: "@css" }, async ({ page }) => {
     const link = (await example(page, "link-in-running-text")).locator(".hlink").first();
     for (const accent of ["purple", "mono"]) {
       await use(page, accent, "light");
@@ -223,9 +225,11 @@ onEachPlayground("link", () => {
   });
 });
 
-// The playgrounds' own Accent picker, at the top of the sidebar.
+// The playgrounds' own Accent picker, at the top of the sidebar, and their
+// skip link, whose look only CSS decides, so it's tested on the HTML
+// playground.
 onEachPlayground("index", () => {
-  test("the skip link reads in every accent, in both modes", async ({ page }) => {
+  test("the skip link reads in every accent, in both modes", { tag: "@css" }, async ({ page }) => {
     const skip = page.locator(".play-skip");
     await skip.focus();
     for (const accent of accents) {
@@ -242,7 +246,7 @@ onEachPlayground("index", () => {
     await expect(picker).toHaveText(/Purple/);
 
     await picker.click();
-    await page.getByRole("option", { name: "Teal" }).click();
+    await clickAt(page, page.getByRole("option", { name: "Teal" }));
     await expect(root).toHaveAttribute("data-harmo-accent", "teal");
 
     await page.reload();
@@ -251,24 +255,42 @@ onEachPlayground("index", () => {
     await expect(picker).toHaveText(/Teal/);
 
     await picker.click();
-    await page.getByRole("option", { name: "Purple" }).click();
+    await clickAt(page, page.getByRole("option", { name: "Purple" }));
     await expect(root).not.toHaveAttribute("data-harmo-accent");
   });
 });
 
+// Waits for the color transitions a change of accent or mode starts on the
+// page to finish, so axe sees the colors they end on, as pages.spec.ts does
+// for dark mode: a frame first, since WebKit may start a transition only
+// then; transitions only, as other animations, such as a paused spinner's,
+// may never finish; and a second at most.
+const transitioned = (page: Page) =>
+  page.evaluate(async () => {
+    await new Promise(requestAnimationFrame);
+    const fading = document.getAnimations().filter((animation) => animation instanceof CSSTransition);
+    await Promise.race([
+      Promise.all(fading.map((animation) => animation.finished.catch(() => {}))),
+      new Promise((resolve) => setTimeout(resolve, 1000)),
+    ]);
+  });
+
 // axe's contrast check on pages full of accented components, for every accent
 // in both modes, as the page loads and with each example's popup open. One
-// playground is enough: both use the same CSS. A test per accent, as opening
-// every popup of the Listbox page sixteen times took over a minute.
+// playground is enough: both use the same CSS. One browser too, Chromium, as
+// in pages.spec.ts: contrast is the colors, which the engines agree on. A
+// test per accent, as opening every popup of the Listbox page sixteen times
+// took over a minute.
 for (const slug of ["button", "checkbox", "kbd", "tabs", "listbox"]) {
   for (const accent of accents) {
-    test(`axe finds no contrast problems on ${slug} in ${accent}, popups open too`, async ({ page }) => {
+    test(`axe finds no contrast problems on ${slug} in ${accent}, popups open too`, async ({ page, browserName }) => {
+      test.skip(browserName !== "chromium", "Contrast is the same in every engine: checked in Chromium");
       await page.goto(`file://${import.meta.dirname}/../examples/html/dist/${slug}.html`);
       await page.addScriptTag({ path: axe });
       const failures: string[] = [];
       for (const scheme of ["light", "dark"] as const) {
         await use(page, accent, scheme);
-        await page.waitForTimeout(260);
+        await transitioned(page);
         const { loaded, popups } = await checkAccessibility(page, ["color-contrast"]);
         failures.push(...loaded.flatMap(({ elements }) => elements.map((element) => `${scheme}: ${element}`)));
         for (const { trigger, violations } of popups)

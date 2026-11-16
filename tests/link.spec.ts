@@ -4,12 +4,14 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/link.md says: no underline by default, and one with
 // data-underlined; data-visited changes color without a transition; the
 // standard focus ring; and with an icon, the link is no wider than its
-// container, its words breaking if they must, the icon beside them.
+// container, its words breaking if they must, the icon beside them. The
+// underline and how it fits only CSS decides, so those tests run on the HTML
+// playground.
 const styleOf = (element: Locator, property: string) =>
   element.evaluate((node, property) => getComputedStyle(node).getPropertyValue(property), property);
 
 onEachPlayground("link", () => {
-  test("not underlined, unless it has data-underlined, as in running text", async ({ page }) => {
+  test("not underlined, unless it has data-underlined, as in running text", { tag: "@css" }, async ({ page }) => {
     const standalone = (await example(page, "link-standalone")).getByRole("link", { name: "Settings" });
     expect(await styleOf(standalone, "text-decoration-line")).toBe("none");
     const inText = (await example(page, "link-in-running-text")).getByRole("link", { name: "unsubscribe policy" });
@@ -40,7 +42,7 @@ onEachPlayground("link", () => {
     await expect(link).toHaveCSS("outline-offset", "2px");
   });
 
-  test("with an icon, a word too long for the line breaks, and the icon stays beside it, inside the container", async ({ page }) => {
+  test("with an icon, a word too long for the line breaks, and the icon stays beside it, inside the container", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "link-long-text");
     const link = container.getByRole("link", { name: "help.example.com/automations/first-campaign" });
     const frame = container.locator(".play-frame");

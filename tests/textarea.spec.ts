@@ -2,7 +2,9 @@ import { expect } from "@playwright/test";
 import { example, onEachPlayground, settled, test } from "./playgrounds.ts";
 
 // What docs/components/textarea.md says, on the TextArea page: what a script
-// does, the counter's text, and how tall it grows.
+// does, the counter's text, and how tall it grows. What only CSS decides, such
+// as its hover and its height before anything's typed, is tested on the HTML
+// playground.
 onEachPlayground("textarea", () => {
   test("the counter counts toward maxlength as the text changes, and describes the field", async ({ page }) => {
     const container = await example(page, "textarea-with-a-counter");
@@ -30,7 +32,7 @@ onEachPlayground("textarea", () => {
     await expect(textarea).toHaveAccessibleDescription("155 characters left");
   });
 
-  test("only the pointer on the field lights its border, not the pointer on its label", async ({ page }) => {
+  test("only the pointer on the field lights its border, not the pointer on its label", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "textarea-long-text");
     const textarea = container.getByLabel("Saved reply");
     const border = () => textarea.evaluate((node) => getComputedStyle(node).borderTopColor);
@@ -43,7 +45,7 @@ onEachPlayground("textarea", () => {
     expect(await border()).not.toBe(rest);
   });
 
-  test("it starts one line tall, as tall as an Input, with its text as far in as an Input's", async ({ page }) => {
+  test("it starts one line tall, as tall as an Input, with its text as far in as an Input's", { tag: "@css" }, async ({ page }) => {
     const textarea = (await example(page, "textarea-with-a-counter")).getByLabel("Message");
     expect((await textarea.boundingBox())!.height).toBeCloseTo(34, 0);
     const padding = await textarea.evaluate((node) => {

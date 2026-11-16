@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, rendered, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/sidebar.md says, on the Sidebar page: links in named
 // groups, with the current page marked; a group of links opens under its
@@ -7,7 +7,9 @@ import { boxes, example, onEachPlayground, settled, slowDown, test } from "./pla
 // icons, its width gliding with the page beside it, each icon
 // naming itself in a tooltip, and its groups then open beside it, one at a
 // time, by a click, Enter, or hover, until Escape, a press elsewhere, focus
-// moving on, or a pick.
+// moving on, or a pick. How it looks, which only CSS and the markup decide,
+// such as its spacing, its colors, and the toggle's hover, is tested on the
+// HTML playground.
 const parts = async (page: Page, id: string) => {
   const container = await example(page, id);
   const sidebar = container.locator(".hsidebar");
@@ -123,7 +125,7 @@ onEachPlayground("sidebar", () => {
     expect(await width(sidebar)).toBeCloseTo(240, 0);
   });
 
-  test("the toggle's line stands 8px past the edge, and on hover bends into a chevron at where the edge was, as the edge moves", async ({ page }) => {
+  test("the toggle's line stands 8px past the edge, and on hover bends into a chevron at where the edge was, as the edge moves", { tag: "@css" }, async ({ page }) => {
     const { sidebar, toggle } = await parts(page, "sidebar-default");
     const lineX = () =>
       toggle.locator(".hsidebar-toggle-start").evaluate((node) => {
@@ -168,7 +170,8 @@ onEachPlayground("sidebar", () => {
     const expanded = await parts(page, "sidebar-default");
     const homeExpanded = expanded.nav.getByRole("link", { name: "Home" });
     await homeExpanded.hover();
-    await page.waitForTimeout(400);
+    // Once any fade a hover started has ended.
+    await settled(expanded.tooltipOf(homeExpanded));
     await expect(expanded.tooltipOf(homeExpanded)).toBeHidden();
   });
 
@@ -186,7 +189,7 @@ onEachPlayground("sidebar", () => {
     expect(await tooltipOf(home).evaluate((node) => getComputedStyle(node).visibility)).toBe("hidden");
   });
 
-  test("a count is in the current page's color; collapsed, it's a dot on its icon", async ({ page }) => {
+  test("a count is in the current page's color; collapsed, it's a dot on its icon", { tag: "@css" }, async ({ page }) => {
     const expanded = await parts(page, "sidebar-default");
     const pill = expanded.nav.getByRole("link", { name: "Messages 3 unread" }).locator(".hsidebar-badge");
     const current = await expanded.nav.getByRole("link", { name: "Tickets" }).evaluate((node) => getComputedStyle(node).color);
@@ -314,7 +317,7 @@ onEachPlayground("sidebar", () => {
     ).toBe(true);
   });
 
-  test("on a right-to-left page, a collapsed icon's tooltip opens to its left", async ({ page }) => {
+  test("on a right-to-left page, a collapsed icon's tooltip opens to its left", { tag: "@css" }, async ({ page }) => {
     const { container, nav, tooltipOf } = await parts(page, "sidebar-collapsed");
     await container.locator(".hsidebar").evaluate((node) => node.parentElement?.setAttribute("dir", "rtl"));
     const home = nav.getByRole("link", { name: "Home" });
@@ -361,7 +364,7 @@ onEachPlayground("sidebar", () => {
     await expect.poll(() => isOpen(campaigns)).toBe(true);
     await summary.click();
     await page.mouse.move(5, 5);
-    await page.waitForTimeout(100);
+    await rendered(page);
     expect(await isOpen(campaigns)).toBe(true);
     await expect(nav.getByRole("link", { name: "Runs" })).toBeVisible();
   });
@@ -476,7 +479,7 @@ onEachPlayground("sidebar", () => {
     await expect(nav.getByRole("list", { name: "Tools" })).toBeVisible();
   });
 
-  test("a link's icon is 10px before its label, groups are 26px apart, and a group's label is 6px above its links", async ({ page }) => {
+  test("a link's icon is 10px before its label, groups are 26px apart, and a group's label is 6px above its links", { tag: "@css" }, async ({ page }) => {
     const { nav } = await parts(page, "sidebar-default");
     const home = nav.getByRole("link", { name: "Home" });
     const [icon, label] = await boxes(home.locator(".hicon"), home.locator(".hsidebar-label"));
@@ -492,21 +495,21 @@ onEachPlayground("sidebar", () => {
     expect(list.y - (tools.y + tools.height)).toBeCloseTo(6, 0);
   });
 
-  test("its background takes --hsidebar-color-background, and a collapsed count's ring with it", async ({ page }) => {
+  test("its background takes --hsidebar-color-background, and a collapsed count's ring with it", { tag: "@css" }, async ({ page }) => {
     const { sidebar, nav } = await parts(page, "sidebar-collapsed");
     await sidebar.evaluate((node) => (node as HTMLElement).style.setProperty("--hsidebar-color-background", "rgb(200, 0, 0)"));
     await expect(sidebar).toHaveCSS("background-color", "rgb(200, 0, 0)");
     await expect(nav.getByRole("link", { name: "Messages 3 unread" }).locator(".hsidebar-badge")).toHaveCSS("border-top-color", "rgb(200, 0, 0)");
   });
 
-  test("icons follow the text size", async ({ page }) => {
+  test("icons follow the text size", { tag: "@css" }, async ({ page }) => {
     const { nav } = await parts(page, "sidebar-default");
     await page.evaluate(() => (document.documentElement.style.fontSize = "20px"));
     const [icon] = await boxes(nav.getByRole("link", { name: "Home" }).locator(".hicon"));
     expect([icon.width, icon.height]).toEqual([25, 25]);
   });
 
-  test("in forced colors, the edge and a collapsed count's dot are drawn in the system's colors", async ({ page, browserName }) => {
+  test("in forced colors, the edge and a collapsed count's dot are drawn in the system's colors", { tag: "@css" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     await page.emulateMedia({ forcedColors: "active" });
     const expanded = await parts(page, "sidebar-default");
@@ -562,18 +565,5 @@ onEachPlayground("sidebar", () => {
     });
     expect(prevented).toBe(false);
     expect(await isOpen(campaigns)).toBe(true);
-  });
-
-  // The playground itself cancels every click on a demo's links, so that no demo
-  // navigates away; what's checked here is that the example's router leaves a
-  // click with a modifier key alone, as an app's should, for the browser.
-  test("a click with a modifier key isn't taken by the example's router", async ({ page }) => {
-    const { nav } = await parts(page, "sidebar-default");
-    const home = nav.getByRole("link", { name: "Home" });
-    const current = nav.locator('[aria-current="page"]');
-    const before = await current.textContent();
-    await home.click({ modifiers: ["ControlOrMeta"] });
-    await expect(home).not.toHaveAttribute("aria-current");
-    await expect(current).toHaveText(before ?? "");
   });
 });

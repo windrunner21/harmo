@@ -6,11 +6,12 @@ import { boxes, clickAt, colorOf, example, onEachPlayground, settled, test } fro
 // required are on the radios themselves; a larger radio stays centered on
 // its label's first line. As choice cards, per docs/components/field.md, each
 // option is a bordered tile, chosen by a click anywhere on it, with the
-// radio's colors once chosen.
+// radio's colors once chosen. Tests of how they look, and of what the markup
+// alone says, run on the HTML playground.
 const valueMissing = (radio: Locator) => radio.evaluate((node) => (node as HTMLInputElement).validity.valueMissing);
 
 onEachPlayground("radio", () => {
-  test("as cards: a bordered tile, the radio first, with a medium label and its description", async ({ page }) => {
+  test("as cards: a bordered tile, the radio first, with a medium label and its description", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "radio-cards");
     const cards = container.locator('.hfield[data-variant="card"]');
     await expect(cards).toHaveCount(3);
@@ -28,7 +29,7 @@ onEachPlayground("radio", () => {
     expect(label!.x).toBeGreaterThan(control!.x + control!.width);
   });
 
-  test("as cards, the chosen one has the primary border on the tint, and its description reads on it", async ({ page }) => {
+  test("as cards, the chosen one has the primary border on the tint, and its description reads on it", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "radio-cards");
     const team = container.locator('.hfield[data-variant="card"]').nth(1);
     await expect(team.getByRole("radio", { name: "Team" })).toBeChecked();
@@ -38,7 +39,7 @@ onEachPlayground("radio", () => {
     await expect(team.locator(".hdescription")).toHaveCSS("color", await colorOf(page, "var(--harmo-color-text-secondary)"));
   });
 
-  test("as cards, hovered, the border turns the control's border color, and the label keeps its color", async ({ page }) => {
+  test("as cards, hovered, the border turns the control's border color, and the label keeps its color", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "radio-cards");
     const starter = container.locator('.hfield[data-variant="card"]').first();
     await starter.hover();
@@ -116,7 +117,7 @@ onEachPlayground("radio", () => {
     await expect(pdf).not.toBeChecked();
   });
 
-  test("a disabled radio is disabled alone, and a disabled group disables every radio in it", async ({ page }) => {
+  test("a disabled radio is disabled alone, and a disabled group disables every radio in it", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "radio-disabled");
     const category = container.getByRole("radiogroup", { name: "Template category" });
     await expect(category.getByRole("radio", { name: "Authentication" })).toBeDisabled();
@@ -140,7 +141,7 @@ onEachPlayground("radio", () => {
     for (const radio of radios) expect(await valueMissing(radio)).toBe(false);
   });
 
-  test("a larger radio is centered on its label's first line", async ({ page }) => {
+  test("a larger radio is centered on its label's first line", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "radio-group");
     const csv = container.getByRole("radio", { name: "CSV" });
     await csv.evaluate((node) => (node as HTMLElement).style.setProperty("--harmo-checkbox-size", "24px"));

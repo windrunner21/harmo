@@ -4,7 +4,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/section.md says, on the Section page: a region named by
 // its title, a line under its header, actions at its end that wrap under the
 // text in a narrow space, and its content stacked, styled by nothing of its
-// own, all spaced on the golden-ratio scale.
+// own, all spaced on the golden-ratio scale. Only CSS and the markup decide
+// them, so they're tested on the HTML playground.
 const styleOf = (element: Locator, property: string) =>
   element.evaluate((node, property) => getComputedStyle(node).getPropertyValue(property), property);
 
@@ -20,7 +21,7 @@ const color = (page: Page, token: string) =>
   }, token);
 
 onEachPlayground("section", () => {
-  test("it's a region named by its title, with its description under it and a line under its header", async ({ page }) => {
+  test("it's a region named by its title, with its description under it and a line under its header", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "section-default");
     const section = container.getByRole("region", { name: "Notifications" });
     await expect(section).toBeVisible();
@@ -39,7 +40,7 @@ onEachPlayground("section", () => {
     expect(line.y + line.height - (text.y + text.height)).toBeCloseTo(10 + 1, 0);
   });
 
-  test("its content starts 26px below the line, stacked 16px apart, and its actions are 10px apart", async ({ page }) => {
+  test("its content starts 26px below the line, stacked 16px apart, and its actions are 10px apart", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "section-with-actions");
     const section = container.locator(".hsection");
     const [header, first, second] = await boxes(
@@ -53,7 +54,7 @@ onEachPlayground("section", () => {
     expect(two.x - (one.x + one.width)).toBeCloseTo(10, 0);
   });
 
-  test("its actions sit at the header's end, after the text and centered on it; in a narrow space they wrap under it", async ({ page }) => {
+  test("its actions sit at the header's end, after the text and centered on it; in a narrow space they wrap under it", { tag: "@css" }, async ({ page }) => {
     const wide = (await example(page, "section-with-actions")).locator(".hsection");
     const [header, text, actions] = await boxes(
       wide.locator(".hsection-header"),
@@ -69,7 +70,7 @@ onEachPlayground("section", () => {
     expect(narrowActions.y).toBeGreaterThanOrEqual(narrowText.y + narrowText.height);
   });
 
-  test("on a right-to-left page, its actions sit at the left end", async ({ page }) => {
+  test("on a right-to-left page, its actions sit at the left end", { tag: "@css" }, async ({ page }) => {
     const section = (await example(page, "section-with-actions")).locator(".hsection");
     await page.evaluate(() => (document.documentElement.dir = "rtl"));
     const [header, text, actions] = await boxes(
@@ -81,7 +82,7 @@ onEachPlayground("section", () => {
     expect(actions.x + actions.width).toBeLessThanOrEqual(text.x);
   });
 
-  test("a long unbroken title wraps rather than overflowing", async ({ page }) => {
+  test("a long unbroken title wraps rather than overflowing", { tag: "@css" }, async ({ page }) => {
     const section = (await example(page, "section-in-a-narrow-space")).locator(".hsection");
     const title = section.locator(".hsection-title");
     await title.evaluate((node) => (node.textContent = "Teammembersandinvitations".repeat(4)));
@@ -89,7 +90,7 @@ onEachPlayground("section", () => {
     expect(await section.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
-  test("it styles nothing inside it: a Settings List in it looks as one outside it does", async ({ page }) => {
+  test("it styles nothing inside it: a Settings List in it looks as one outside it does", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "section-default");
     // The same list, outside the section, beside it: each element's look
     // should match, apart from where it lands.

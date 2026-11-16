@@ -1,7 +1,9 @@
-# Checks every push to master and every pull request: the types and the
-# markup test in one job, and the browser tests in four jobs per browser,
-# each running a quarter of them, all side by side, as Playwright's CI and
-# sharding guides set them up (playwright.dev/docs/ci,
+# Checks every push to master and every pull request: the types, the unit
+# tests, and the markup test in one job; and the browser tests that the
+# change touches, as tests/affected.ts chooses them, in every browser. Every
+# browser test runs each night, on a release's tag, and when run by hand.
+# A browser's tests split into up to four jobs, side by side, as Playwright's
+# CI and sharding guides set them up (playwright.dev/docs/ci,
 # playwright.dev/docs/test-sharding). A last job merges their reports into
 # one, with each failure's trace.
 name: CI
@@ -9,14 +11,20 @@ name: CI
 on:
   push:
     branches: [master]
+    tags: ["v*"]
   pull_request:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+# A pull request's newer push cancels its older run. A push to master
+# doesn't: each one's run tests only what that push changed.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.ref }}-${{ github.event_name == 'push' && github.sha || 'run' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   checks:
@@ -34,8 +42,38 @@ jobs:
       - run: mise run test:react
       - run: mise run test:cli
 
+  # Which browser tests to run: on a push, those the commits since the last
+  # push touch; on a pull request, those it touches; otherwise all of them.
+  select:
+    name: Choose the browser tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      run: ${{ steps.choose.outputs.run }}
+      specs: ${{ steps.choose.outputs.specs }}
+      pages: ${{ steps.choose.outputs.pages }}
+      shards: ${{ steps.choose.outputs.shards }}
+      total: ${{ steps.choose.outputs.total }}
+    steps:
+      # The whole history, so the commit before the push is there to compare.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: jdx/mise-action@82a612c5ab8bcda7cc5db6b7e81a8e7584c3dc6e # v5.2.3
+
+      - id: choose
+        env:
+          CHOICE: >-
+            ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && format('--base {0}', github.event.before)
+            || github.event_name == 'pull_request' && format('--base {0}', github.event.pull_request.base.sha)
+            || '--all' }}
+        run: bun tests/affected.ts $CHOICE --github
+
   browser:
     name: Browser tests (${{ matrix.browser }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    needs: [select]
+    if: ${{ needs.select.outputs.run == 'true' }}
     runs-on: ubuntu-24.04
     # Past the tests' own 15 minutes, in tests/playwright.config.ts, which
     # stop with their report written.
@@ -56,11 +94,12 @@ jobs:
       matrix:
         browser: [chromium, firefox, webkit]
         # A quarter of the browser's tests each, at the same time, none left
-        # out. By the tests' times the quarters come out even; halves didn't,
-        # in WebKit, and once the patterns came, a third of WebKit's ran past
-        # the tests' 15 minutes.
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        # out, for all of them: by the tests' times the quarters come out
+        # even; halves didn't, in WebKit, and once the patterns came, a third
+        # of WebKit's ran past the tests' 15 minutes. Fewer jobs for fewer
+        # tests.
+        shardIndex: ${{ fromJSON(needs.select.outputs.shards) }}
+        shardTotal: ${{ fromJSON(needs.select.outputs.total) }}
     steps:
       - uses: actions/checkout@v7
 
@@ -70,8 +109,15 @@ jobs:
       - run: mise run build:playground
       - run: mise run build:react-playground
 
+      # The chosen specs, none for all of them; HARMO_PAGES narrows
+      # pages.spec.ts to the chosen pages. A job whose share is empty passes.
       - working-directory: tests
-        run: bunx playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        env:
+          HARMO_PAGES: ${{ needs.select.outputs.pages }}
+        run: >-
+          bunx playwright test --project=${{ matrix.browser }}
+          --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --pass-with-no-tests
+          ${{ needs.select.outputs.specs }}
 
       # This quarter's report, for the report job, whether its tests passed or
       # failed. Blob files are named by browser and quarter, so none overwrite
@@ -85,9 +131,9 @@ jobs:
 
   report:
     name: Report
-    # After the browser jobs, also when some failed.
-    if: ${{ !cancelled() }}
-    needs: [browser]
+    # After the browser jobs, also when some failed, if any ran.
+    if: ${{ !cancelled() && needs.select.outputs.run == 'true' }}
+    needs: [select, browser]
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     # The same image and user as the browser jobs, so the reports' paths are

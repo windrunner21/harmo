@@ -119,14 +119,47 @@ the markup the playground shows.
 ## 2. Behavior in a browser
 
 `tests/` holds browser tests, run with [Playwright](https://playwright.dev)
-against the built playgrounds, opened from disk as people open them. Each
-test runs on both playgrounds, so the React components are checked against
-what the HTML examples' scripts do, as the markup test checks them against
-the HTML.
+against the built playgrounds, opened from disk as people open them. A test
+of what something does runs on both playgrounds, so the React components are
+checked against what the HTML examples' scripts do. A test of how something
+looks, which only CSS and the markup decide, such as a size, a color, or a
+hover's, is tagged `@css` and runs on the HTML playground only: the markup
+test shows React renders the same markup, which the same CSS styles.
 
 ```sh
-mise run test:browser    # builds both playgrounds, then tests them in Chromium
+mise run test:changed        # tests in Chromium what the changes touch
+mise run test:changed:all    # the same in Chromium, Firefox, and WebKit
+mise run test:browser        # every test, in Chromium
+mise run test:browser:all    # every test, in all three
 ```
+
+### What to run
+
+Run what a change touches, not everything. `tests/affected.ts` chooses it
+from the files that changed since `origin/master`, committed or not:
+
+- **A component's files**, its stylesheet, its React files and what imports
+  them, and its example script, touch every page that has the component:
+  whose markup uses its classes, such as `hselect` and `hselect-fallback`,
+  whose script makes markup with them, such as the Sign-in Form's code step
+  with OTP Input's, or whose React example or pattern imports it.
+- **A pattern's folder** touches its page and those of the patterns that
+  import it; a helper folder, such as `form-action/`, every pattern that
+  uses it. A pattern's docs page touches its playground page, which shows its
+  Try the demo and What you need.
+- **A page's own files**, its HTML example and React example, touch that
+  page.
+- **What every page shares**, the tokens, `_shortcuts.scss`, the playground's
+  build and layout, the tests' helpers, the config, touches everything.
+- **Docs, the CLI, and the unit tests** run no browser test.
+
+Then each spec that opens a touched page runs, a changed spec runs, and
+`pages.spec.ts` runs for the touched pages only, through `HARMO_PAGES`.
+`bun tests/affected.ts --list` shows what a change would run, and
+`--files a,b` what a change to those files would.
+
+Run every test before a release, or after changing what every page shares,
+which `test:changed` does by itself then. CI runs every test each night too.
 
 `tests/pages.spec.ts` opens every page of both playgrounds and checks that:
 
@@ -138,8 +171,8 @@ mise run test:browser    # builds both playgrounds, then tests them in Chromium
   callback runs, is cleaned up, and runs again. `examples/react/src/Ready.tsx`
   wraps each example, on the server too, so the markup and ids stay the same,
   and marks its root `data-play-ready` once every effect inside has run;
-- [axe](https://github.com/dequelabs/axe-core) finds no WCAG 2.2 A or AA
-  violation, as the page loads and with each example's popup open, its
+- in Chromium, [axe](https://github.com/dequelabs/axe-core) finds no WCAG
+  2.2 A or AA violation, as the page loads and with each example's popup open, its
   trigger included: each popup opened by its `popovertarget` button, one that
   doesn't open failing; each popup a button inside an open one opens, with
   both open; and each list a script opens from its field, such as a
@@ -148,7 +181,9 @@ mise run test:browser    # builds both playgrounds, then tests them in Chromium
   opened from a link, and every `commandfor` must reach a dialog, so a button
   that misses its dialog fails. axe is loaded into the page once, and the
   whole check, each popup opened and checked once it's fully open, runs in
-  one call to the page;
+  one call to the page. axe reads the markup, its roles, names, and colors,
+  which the engines agree on, so it runs in Chromium only: in all three, it
+  took a tenth of the suite's time;
 - `hidden` hides every part of every example, except Field's error and the
   password details, which stay rendered to animate closed.
 
@@ -177,6 +212,16 @@ Filter Chip.
 - Wrap a component's tests in `onEachPlayground("<slug>", () => …)`, so each
   runs on both playgrounds, and find elements by role and name inside the
   example, never by id: React generates its own.
+- Tag a test of how something looks `@css`, as
+  `test("…", { tag: "@css" }, async ({ page }) => …)`: one that reads sizes,
+  positions, colors, or styles, after a hover, a viewport size, or an
+  attribute it sets itself at most. It runs on the HTML playground only. One
+  that clicks, types, presses keys, or waits on something a script or React
+  does isn't `@css`.
+- Check where something ends up, never a state that lasts a moment. A shake,
+  for one, lasts 300ms, and on a busy runner a check after an answer that
+  takes a moment can miss it: count it as it starts, as `shakesOf` does, or
+  wait with `settled` for what animates to finish.
 - Test what the docs promise, and only what Harmo does: not what the
   browser does anyway, such as a disabled button not opening a popup, and
   not the playground's own glue, such as a link that stays on the page.
@@ -186,6 +231,9 @@ Filter Chip.
   Playwright's `hover` and `click`. Playwright scrolls the page first, even
   for an element already in view, and the popup follows its trigger a frame
   later, away from the pointer; a click that lands outside closes the popup.
+  `clickAt` also waits for the popup to finish opening, so the click lands
+  where the option ends up rather than where the opening list hasn't
+  reached.
 - After opening a list with a click, wait for focus to land before pressing
   keys, as a person sees it: focus can move into a popup only once it shows,
   in its `toggle` event, a moment after the click. A select's trigger keeps
@@ -206,6 +254,12 @@ Filter Chip.
   `page.evaluate`.
 - Make sure a new test can fail: break what it tests, in the built
   playground or the source, and watch it fail.
+- Run a new test in all three browsers once before pushing it, with
+  `mise run test:changed:all`: engines differ most in what's new, and a test
+  that passes only in Chromium fails on CI.
+- Keep a test that earns its time: what the docs promise, or a bug it
+  caught. Not the example's own content, and not another component's look,
+  which that component's spec tests.
 
 One axe rule is left out for open listboxes: `scrollable-region-focusable`
 asks that a list that scrolls be in the Tab order. A listbox, or its
@@ -229,7 +283,7 @@ What they can't see:
   Chrome still shows it when the pointer leaves, so reading its style works
   there too. Firefox has hidden it already, and the "right after one closes"
   test fails there with that reading.
-- Firefox and WebKit, until CI runs them.
+- Firefox and WebKit, until `test:changed:all` or CI runs them.
 
 ### Why Playwright
 
@@ -260,15 +314,22 @@ engine only on macOS.
   Playwright supports Ubuntu, Debian, and macOS officially; elsewhere, such
   as on Arch, its browsers may not install.
 - **On CI,** `.github/workflows/ci.yml` follows Playwright's CI and sharding
-  guides. Each browser runs in three jobs, each with a third of its tests
-  (`--shard`), all side by side, in the same Playwright image as local runs,
+  guides. A first job chooses the tests with `tests/affected.ts`: on a push
+  to `master`, what the push changed; on a pull request, what it changes;
+  each night, on a release's tag, and when run by hand, every test. Each
+  browser runs its share in up to four jobs, a quarter of its tests each
+  for all of them, fewer for fewer (`--shard`), all side by side, in the
+  same Playwright image as local runs,
   with the browsers and their system libraries already in it; installing
   those with apt on each run took from 11 seconds to 13 minutes. Each job
   writes a blob report, and a last job merges them into one HTML report,
   `html-report--attempt-<n>`, kept as an artifact for 14 days, and notes
   each failure once on the pull request. A failure's trace is in the report;
   it opens with `bunx playwright show-trace`. A job's tests stop after 15
-  minutes, so a stuck run still writes its report.
+  minutes, so a stuck run still writes its report. A failed test runs twice
+  more, as Playwright's own config has it, so one that fails only now and
+  then, on a busy runner, shows as flaky in the report rather than failing
+  the run.
 
 Local runs use a quarter of the CPU's cores for workers, so the computer stays
 usable during a run. Each worker runs a whole browser, so Playwright's default

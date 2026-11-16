@@ -4,6 +4,7 @@ import { example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/meter.md says, on the Meter page: one segment per step
 // of the scale, 10px apart, the filled ones first, in the status's color, or
 // gray without one; the others in the control border color at half strength.
+// Only CSS and the markup decide it, so it's tested on the HTML playground.
 
 // Each of a meter's segments' colors.
 const colors = (meter: Locator) =>
@@ -23,7 +24,7 @@ const computed = (page: Page, color: string) =>
 const unfilled = (page: Page) => computed(page, "color-mix(in srgb, var(--harmo-color-border-control) 50%, transparent)");
 
 onEachPlayground("meter", () => {
-  test("password strength: a segment per step, the filled ones in the status's color, or gray without one", async ({ page }) => {
+  test("password strength: a segment per step, the filled ones in the status's color, or gray without one", { tag: "@css" }, async ({ page }) => {
     const meters = (await example(page, "meter-password-strength")).getByRole("meter", { name: "Password strength" });
     await expect(meters).toHaveCount(3);
     const [weak, medium, strong] = await meters.all();
@@ -39,7 +40,7 @@ onEachPlayground("meter", () => {
     expect(await colors(strong)).toEqual([success, success, success]);
   });
 
-  test("other scales: as many segments as the scale has steps, in info's and warning's colors", async ({ page }) => {
+  test("other scales: as many segments as the scale has steps, in info's and warning's colors", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "meter-other-scales");
     const completeness = container.getByRole("meter", { name: "Profile completeness" });
     const quality = container.getByRole("meter", { name: "Message quality" });
@@ -52,7 +53,7 @@ onEachPlayground("meter", () => {
     expect(await colors(quality)).toEqual([warning, empty, empty, empty]);
   });
 
-  test("its segments are 10px apart", async ({ page }) => {
+  test("its segments are 10px apart", { tag: "@css" }, async ({ page }) => {
     const meter = (await example(page, "meter-other-scales")).getByRole("meter", { name: "Profile completeness" });
     await expect(meter).toHaveCSS("column-gap", "10px");
     const [first, second] = await meter.locator(".hmeter-segment").evaluateAll((segments) =>

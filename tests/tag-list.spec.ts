@@ -6,7 +6,8 @@ import { boxes, example, onEachPlayground, open, test } from "./playgrounds.ts";
 // apart, then "+N", written and named by the app and measured as it writes
 // each count, whose tooltip shows copies of the rest, with nothing to press
 // in them, on hover and keyboard focus; counted again as the width changes,
-// but kept while "+N" has focus.
+// but kept while "+N" has focus. That it's a list, which only the markup
+// decides, is tested on the HTML playground.
 const shown = (list: Locator) => list.locator(":scope > li:not(.htag-list-more):visible");
 
 const resizer = (list: Locator) => (width: string) =>
@@ -241,7 +242,7 @@ onEachPlayground("tag-list", () => {
     await expect(list.locator(".htag-list-count")).toHaveAccessibleDescription(/Escalated$/);
   });
 
-  test("it's a list, which Safari keeps as one though it has no bullets", async ({ page }) => {
+  test("it's a list, which Safari keeps as one though it has no bullets", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "tag-list-default");
     await expect(container.locator(".htag-list")).toHaveAttribute("role", "list");
   });

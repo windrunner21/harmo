@@ -1,10 +1,11 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, openPopup, rendered, settled, test } from "./playgrounds.ts";
 
 // What docs/components/combobox.md says, on the Combobox page: typing in the
 // field filters the list, the arrow keys move through it with focus staying
 // in the field, Enter picks, leaving the field settles it, and with free text
-// what's typed is the value.
+// what's typed is the value. Where the chevron sits and what a hover lights,
+// which only CSS and the markup decide, are tested on the HTML playground.
 const isOpen = (popup: Locator) => popup.evaluate((node) => node.matches(":popover-open"));
 
 const parts = async (page: Page, id: string) => {
@@ -118,7 +119,7 @@ onEachPlayground("combobox", () => {
     await input.click();
     expect(await isOpen(popup)).toBe(true);
     await expect(shown).toHaveText(["Sam Rivera", "Ana Lopez", "Lee Chen", "Priya Shah"]);
-    await listbox.getByRole("option", { name: "Lee Chen" }).click();
+    await clickAt(page, listbox.getByRole("option", { name: "Lee Chen" }));
     await expect(input).toHaveValue("Lee Chen");
     await expect(input).toBeFocused();
     await expect.poll(() => isOpen(popup)).toBe(false);
@@ -191,7 +192,7 @@ onEachPlayground("combobox", () => {
     await expect.poll(() => isOpen(popup)).toBe(false);
     await input.click();
     await page.keyboard.press("ArrowDown");
-    await page.waitForTimeout(100);
+    await rendered(page);
     expect(await isOpen(popup)).toBe(false);
     await input.blur();
     await expect(input).toHaveValue("someone@elsewhere.org");
@@ -223,7 +224,7 @@ onEachPlayground("combobox", () => {
     await page.keyboard.press("Escape");
     expect(await isOpen(popup)).toBe(false);
     await expect(listbox.locator(".hoption")).toHaveCount(1);
-    await page.waitForTimeout(100);
+    await rendered(page);
     expect(await isOpen(popup)).toBe(false);
     await page.keyboard.type("a");
     await expect.poll(() => isOpen(popup)).toBe(true);
@@ -309,7 +310,7 @@ onEachPlayground("combobox", () => {
     await expect.poll(() => isOpen(other.popup)).toBe(false);
     await page.keyboard.press("Enter");
     await expect(other.input).toHaveValue("Sam Rivera");
-    await page.waitForTimeout(100);
+    await rendered(page);
     expect(await isOpen(other.popup)).toBe(false);
   });
 
@@ -323,7 +324,7 @@ onEachPlayground("combobox", () => {
     await input.click();
     const lee = listbox.getByRole("option", { name: "Lee Chen" });
     await stop(lee);
-    await lee.click();
+    await clickAt(page, lee);
     await expect(input).toHaveValue("");
     await expect(hidden).toHaveValue("");
     await expect(lee).toHaveAttribute("aria-selected", "false");
@@ -335,7 +336,7 @@ onEachPlayground("combobox", () => {
     await page.keyboard.type("lee");
     const chosen = several.listbox.getByRole("option", { name: "Lee Chen" });
     await stop(chosen);
-    await chosen.click();
+    await clickAt(page, chosen);
     await expect(chips(several.container)).toHaveText(["Ana Lopez"]);
     await expect(several.input).toHaveValue("lee");
     await expect(chosen).toHaveAttribute("aria-selected", "false");
@@ -346,7 +347,7 @@ onEachPlayground("combobox", () => {
     ["combobox-default", ".hinput"],
     ["combobox-several", ".hcombobox"],
   ] as const) {
-    test(`${id === "combobox-default" ? "picking one" : "choosing several"}: only the pointer on the field lights its border, not the pointer on its label`, async ({ page }) => {
+    test(`${id === "combobox-default" ? "picking one" : "choosing several"}: only the pointer on the field lights its border, not the pointer on its label`, { tag: "@css" }, async ({ page }) => {
       const demo = (await example(page, id)).locator(".play-demo");
       const box = demo.locator(field).first();
       const border = () => box.evaluate((node) => getComputedStyle(node).borderTopColor);
@@ -360,28 +361,23 @@ onEachPlayground("combobox", () => {
     });
   }
 
-  test("the chevron sits where a Select's does, 16px inside the border, with the text stopping 10px before it", async ({ page }) => {
+  test("the chevron is Select's size, and sits where a Select's does, 16px inside the border, with the text stopping 10px before it", { tag: "@css" }, async ({ page }) => {
     for (const id of ["combobox-default", "combobox-several"]) {
       const container = await example(page, id);
+      // The demo's: the code panel under it has one too.
       const field = container.locator(".play-demo .hcombobox");
       const box = id === "combobox-default" ? field.locator(".hinput") : field;
       const [outer, chevron] = await boxes(box, field.locator(".hexpand-chevron"));
       expect(outer.x + outer.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
       if (id !== "combobox-default") continue;
+      expect(chevron.width).toBeCloseTo(14, 0);
+      expect(chevron.height).toBeCloseTo(10.5, 0);
       const textEnd = await box.evaluate((node) => {
         const style = getComputedStyle(node);
         return node.getBoundingClientRect().right - parseFloat(style.borderRightWidth) - parseFloat(style.paddingRight);
       });
       expect(chevron.x - textEnd).toBeCloseTo(10, 0);
     }
-  });
-
-  test("the chevron is Select's size, whatever the text around it", async ({ page }) => {
-    const container = await example(page, "combobox-default");
-    // The demo's: the code panel under it has one too.
-    const [chevron] = await boxes(container.locator(".play-demo .hexpand-chevron"));
-    expect(chevron.width).toBeCloseTo(14, 0);
-    expect(chevron.height).toBeCloseTo(10.5, 0);
   });
 
   test("several: each choice is a tag in the field, named to remove it, and a form sends each", async ({ page }) => {
@@ -405,7 +401,7 @@ onEachPlayground("combobox", () => {
     expect(await sent(container)).toEqual(["ana", "lee"]);
 
     // A click on a chosen option takes it away; focus stays in the field.
-    await listbox.getByRole("option", { name: "Ana Lopez" }).click();
+    await clickAt(page, listbox.getByRole("option", { name: "Ana Lopez" }));
     await expect(chips(container)).toHaveText(["Lee Chen"]);
     await expect(input).toBeFocused();
     expect(await isOpen(popup)).toBe(true);
@@ -474,7 +470,7 @@ onEachPlayground("combobox", () => {
     const { container, input, popup } = await parts(page, "combobox-several");
     await container.getByRole("button", { name: "Remove Ana Lopez" }).click();
     await expect(chips(container)).toHaveCount(0);
-    await page.waitForTimeout(100);
+    await rendered(page);
     expect(await isOpen(popup)).toBe(false);
     await expect(input).not.toBeFocused();
     expect(await sent(container)).toEqual([]);
@@ -621,7 +617,7 @@ onEachPlayground("combobox", () => {
       await input.evaluate((node) => ((node as HTMLInputElement).readOnly = true));
       await input.click();
       await page.keyboard.press("ArrowDown");
-      await page.waitForTimeout(100);
+      await rendered(page);
       expect(await isOpen(popup)).toBe(false);
     });
   }
@@ -644,7 +640,7 @@ onEachPlayground("combobox", () => {
       demo.append(fieldset);
     });
     await container.locator(".hcombobox").click({ position: { x: 3, y: 3 } });
-    await page.waitForTimeout(100);
+    await rendered(page);
     expect(await isOpen(popup)).toBe(false);
     await expect(chips(container)).toHaveText(["Ana Lopez"]);
   });

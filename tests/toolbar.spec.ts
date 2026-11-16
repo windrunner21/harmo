@@ -3,9 +3,11 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 
 // What docs/components/toolbar.md says: filters at the start and controls at the
 // end, in one row; filters that don't fit wrap on their own side; on a narrow
-// screen the controls go below them; and right to left, mirrored.
+// screen the controls go below them; a popup in it keeps its trigger's width;
+// and right to left, mirrored. What only CSS and the markup decide is tested
+// on the HTML playground.
 onEachPlayground("toolbar", () => {
-  test("filters at the start and controls at the end, in one row, with no toolbar role", async ({ page }) => {
+  test("filters at the start and controls at the end, in one row, with no toolbar role", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "toolbar-default");
     const toolbar = container.locator(".htoolbar");
     const controls = toolbar.locator(".htoolbar-controls");
@@ -20,7 +22,7 @@ onEachPlayground("toolbar", () => {
     expect(second!.x - (first!.x + first!.width)).toBeCloseTo(10, 0);
   });
 
-  test("filters that don't fit wrap on their own side, and the controls stay at the end", async ({ page }) => {
+  test("filters that don't fit wrap on their own side, and the controls stay at the end", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "toolbar-default");
     const toolbar = container.locator(".htoolbar");
     const filters = toolbar.locator(".hfilters");
@@ -34,7 +36,7 @@ onEachPlayground("toolbar", () => {
     expect(end!.x).toBeGreaterThanOrEqual(start!.x + start!.width + 41);
   });
 
-  test("short filters leave the controls beside them, in a row with room for both", async ({ page }) => {
+  test("short filters leave the controls beside them, in a row with room for both", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "toolbar-default");
     const toolbar = container.locator(".htoolbar");
     await toolbar.evaluate((node: HTMLElement) => (node.style.inlineSize = "450px"));
@@ -42,7 +44,7 @@ onEachPlayground("toolbar", () => {
     expect(start!.y + start!.height / 2).toBeCloseTo(end!.y + end!.height / 2, 0);
   });
 
-  test("on a narrow screen the controls go below the filters, with nothing overflowing", async ({ page }) => {
+  test("on a narrow screen the controls go below the filters, with nothing overflowing", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
     const container = await example(page, "toolbar-default");
     const toolbar = container.locator(".htoolbar");
@@ -51,7 +53,7 @@ onEachPlayground("toolbar", () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
   });
 
-  test("an app's own class on what's at the start wins over the toolbar's", async ({ page }) => {
+  test("an app's own class on what's at the start wins over the toolbar's", { tag: "@css" }, async ({ page }) => {
     const filters = (await example(page, "toolbar-default")).locator(".htoolbar > .hfilters");
     await filters.evaluate((node) => node.classList.add("test-start"));
     await page.addStyleTag({ content: ".test-start { flex: 0 0 160px; }" });
@@ -59,7 +61,7 @@ onEachPlayground("toolbar", () => {
     await expect(filters).toHaveCSS("flex-grow", "0");
   });
 
-  test("controls alone stay at the end", async ({ page }) => {
+  test("controls alone stay at the end", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "toolbar-controls-only");
     const toolbar = container.locator(".htoolbar");
     const [bar, end] = await boxes(toolbar, toolbar.locator(".htoolbar-controls"));
@@ -85,7 +87,7 @@ onEachPlayground("toolbar", () => {
     expect(box!.width).toBeCloseTo(button!.width, 0);
   });
 
-  test("right to left, the filters start on the right and the controls end on the left", async ({ page }) => {
+  test("right to left, the filters start on the right and the controls end on the left", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "toolbar-right-to-left");
     const toolbar = container.locator(".htoolbar");
     const [bar, start, end] = await boxes(toolbar, toolbar.locator(".hfilters"), toolbar.locator(".htoolbar-controls"));

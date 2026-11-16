@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import { example, onEachPlayground, pointAt, test } from "./playgrounds.ts";
+import { example, onEachPlayground, pointAt, settled, test } from "./playgrounds.ts";
 
 const LIGHT = "rgb(48, 49, 61)";
 const DARK = "rgb(241, 242, 246)";
@@ -26,21 +26,23 @@ const textColor = (page: Page, parentStyle?: string) => resolved(page, "--harmo-
 const withoutPlaygroundScheme = (page: Page) =>
   page.evaluate(() => document.documentElement.style.removeProperty("color-scheme"));
 
-// Dark mode is the browser's: color-scheme picks a side of each token's light-dark().
+// Dark mode is the browser's: color-scheme picks a side of each token's
+// light-dark(). Only CSS decides it, so it's tested on the HTML playground;
+// the tests of the playground's own Dark switch, at the end, run on both.
 onEachPlayground("button", () => {
   test.beforeEach(({ page }) => withoutPlaygroundScheme(page));
 
-  test("without color-scheme, it stays light, even on a dark system", async ({ page }) => {
+  test("without color-scheme, it stays light, even on a dark system", { tag: "@css" }, async ({ page }) => {
     await page.emulateMedia({ colorScheme: "dark" });
     expect(await textColor(page)).toBe(LIGHT);
   });
 
-  test("color-scheme: dark turns dark on", async ({ page }) => {
+  test("color-scheme: dark turns dark on", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
     expect(await textColor(page)).toBe(DARK);
   });
 
-  test("color-scheme: light dark follows the system", async ({ page }) => {
+  test("color-scheme: light dark follows the system", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { color-scheme: light dark; }" });
     await page.emulateMedia({ colorScheme: "dark" });
     expect(await textColor(page)).toBe(DARK);
@@ -48,40 +50,42 @@ onEachPlayground("button", () => {
     expect(await textColor(page)).toBe(LIGHT);
   });
 
-  test("one section can differ from the page", async ({ page }) => {
+  test("one section can differ from the page", { tag: "@css" }, async ({ page }) => {
     expect(await textColor(page, "color-scheme: dark")).toBe(DARK);
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
     expect(await textColor(page, "color-scheme: light")).toBe(LIGHT);
   });
 
-  test("a token built from another follows it", async ({ page }) => {
+  test("a token built from another follows it", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
     expect(await resolved(page, "--harmo-link-hover-color-text")).toBe(DARK);
   });
 
-  test("a color inside a shadow changes too", async ({ page }) => {
+  test("a color inside a shadow changes too", { tag: "@css" }, async ({ page }) => {
     const light = await resolved(page, "--harmo-box-shadow-sm", "boxShadow");
     expect(light).toContain("0.08");
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
     expect(await resolved(page, "--harmo-box-shadow-sm", "boxShadow")).toContain("0.4");
   });
 
-  test("an app's own value applies in both", async ({ page }) => {
+  test("an app's own value applies in both", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { --harmo-color-text: rgb(1, 2, 3); }" });
     expect(await textColor(page)).toBe("rgb(1, 2, 3)");
     expect(await textColor(page, "color-scheme: dark")).toBe("rgb(1, 2, 3)");
   });
 
-  test("a filled button is one step darker on hover in light, not the text hover", async ({ page }) => {
+  test("a filled button is one step darker on hover in light, not the text hover", { tag: "@css" }, async ({ page }) => {
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     await expect(button).toHaveCSS("background-color", "rgb(94, 61, 232)");
     await pointAt(page, button);
+    // Once the hover's fade has settled: as it starts, it's the resting color.
+    await settled(button);
     const hover = await button.evaluate((element) => getComputedStyle(element).backgroundColor);
     expect(hover).not.toBe("rgb(94, 61, 232)");
     expect(hover).not.toBe("rgb(46, 26, 143)");
   });
 
-  test("in dark, a filled button rests deeper and lightens on hover, with white still readable", async ({ page }) => {
+  test("in dark, a filled button rests deeper and lightens on hover, with white still readable", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     await expect(button).toHaveCSS("background-color", "rgb(107, 77, 230)");
@@ -92,7 +96,7 @@ onEachPlayground("button", () => {
     await expect(button).toHaveCSS("background-color", "rgb(122, 92, 240)");
   });
 
-  test("a light theme's primary still reaches a filled button, and its hover", async ({ page }) => {
+  test("a light theme's primary still reaches a filled button, and its hover", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({ content: ":root { --harmo-color-primary: rgb(200, 0, 0); }" });
     const button = (await example(page, "button-variants")).locator(".hbutton").first();
     await expect(button).toHaveCSS("background-color", "rgb(200, 0, 0)");
@@ -108,7 +112,7 @@ onEachPlayground("button", () => {
     await expect(button).toHaveCSS("background-color", expected);
   });
 
-  test("a theme sets the fill for dark itself", async ({ page }) => {
+  test("a theme sets the fill for dark itself", { tag: "@css" }, async ({ page }) => {
     await page.addStyleTag({
       content: ":root { color-scheme: dark; --harmo-color-primary-fill: light-dark(rgb(1, 2, 3), rgb(4, 5, 6)); }",
     });
@@ -120,7 +124,7 @@ onEachPlayground("button", () => {
 onEachPlayground("switch", () => {
   test.beforeEach(({ page }) => withoutPlaygroundScheme(page));
 
-  test("a switch that's on uses the same fill", async ({ page }) => {
+  test("a switch that's on uses the same fill", { tag: "@css" }, async ({ page }) => {
     const on = (await example(page, "switch-off-and-on")).locator(".hswitch:checked").first();
     await expect(on).toHaveCSS("background-color", "rgb(94, 61, 232)");
     await page.addStyleTag({ content: ":root { color-scheme: dark; }" });

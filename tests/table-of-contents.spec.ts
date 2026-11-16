@@ -1,9 +1,11 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, ready, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, rendered, test } from "./playgrounds.ts";
 
 // What docs/components/table-of-contents.md says: links to each heading that stay in
 // view, with the section you've reached marked, the last one at the end, and a
-// followed link kept until you scroll yourself.
+// followed link kept until you scroll yourself. Its name, its place and
+// indents, and its marker under reduced motion and forced colors only the
+// markup and CSS decide, so those tests run on the HTML playground.
 const scrollTo = (scroller: Locator, top: number | "end") =>
   scroller.evaluate((n, top) => (n.scrollTop = top === "end" ? n.scrollHeight : (top as number)), top);
 
@@ -22,7 +24,7 @@ onEachPlayground("table-of-contents", () => {
 
   const marked = (links: Locator) => links.locator('xpath=self::*[@aria-current="location"]');
 
-  test("a named navigation of links to each heading", async ({ page }) => {
+  test("a named navigation of links to each heading", { tag: "@css" }, async ({ page }) => {
     const { nav, links } = await parts(page);
     await expect(nav).toHaveAccessibleName("On this page");
     await expect(links).toHaveCount(5);
@@ -121,7 +123,7 @@ onEachPlayground("table-of-contents", () => {
   });
 
   test("a key that doesn't scroll leaves a followed link marked as the box glides", async ({ page }) => {
-    const { links, nav } = await parts(page);
+    const { links, nav, scroller } = await parts(page);
     await nav.evaluate((n) => {
       const seen: string[] = [];
       (window as unknown as { seen: string[] }).seen = seen;
@@ -132,7 +134,18 @@ onEachPlayground("table-of-contents", () => {
     });
     await links.nth(4).click();
     await page.keyboard.press("Shift");
-    await page.waitForTimeout(800);
+    // Once the box has stopped gliding, and what that last scroll marks is
+    // marked.
+    await expect
+      .poll(() =>
+        scroller.evaluate(async (n) => {
+          const top = n.scrollTop;
+          await new Promise(requestAnimationFrame);
+          await new Promise(requestAnimationFrame);
+          return top > 0 && n.scrollTop === top;
+        }),
+      )
+      .toBe(true);
     expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual(["Contacts"]);
   });
 
@@ -195,7 +208,8 @@ onEachPlayground("table-of-contents", () => {
       n.scrollTop = 80;
     });
     await scrollTo(scroller, 3);
-    await page.waitForTimeout(100);
+    // Once the scroll has been handled.
+    await rendered(page);
     expect(await nav.evaluate((n) => n.scrollTop)).toBeGreaterThan(40);
   });
 
@@ -214,7 +228,7 @@ onEachPlayground("table-of-contents", () => {
     await expect(links.nth(1)).toHaveAttribute("aria-current", "location");
   });
 
-  test("it's at the start by default, with its line facing the content", async ({ page }) => {
+  test("it's at the start by default, with its line facing the content", { tag: "@css" }, async ({ page }) => {
     const { nav, content, links } = await parts(page);
     const [list, words] = await boxes(nav, content);
     expect(list!.x + list!.width).toBeLessThanOrEqual(words!.x);
@@ -222,7 +236,7 @@ onEachPlayground("table-of-contents", () => {
     await expect(links.first()).toHaveCSS("border-left-width", "0px");
   });
 
-  test("at the end, it's after the content with its line facing it", async ({ page }) => {
+  test("at the end, it's after the content with its line facing it", { tag: "@css" }, async ({ page }) => {
     const { nav, content, links } = await parts(page, "at-the-end");
     const [list, words] = await boxes(nav, content);
     expect(words!.x + words!.width).toBeLessThanOrEqual(list!.x);
@@ -386,17 +400,19 @@ onEachPlayground("table-of-contents", () => {
     const marker = await settledBox(nav);
     expect(marker.y).toBeCloseTo(link!.y, 0);
 
-    // Partway there, a moment after the next section is reached.
-    const [from, to, partway] = await nav.evaluate(async (n) => {
+    // Partway there, a moment after the next section is reached: the slide
+    // made to last 4 seconds, so a check sees it partway on any machine.
+    const top = () => markerOf(nav).evaluate((n) => n.getBoundingClientRect().top);
+    await markerOf(nav).evaluate((n) => ((n as HTMLElement).style.transitionDuration = "4s"));
+    const [from, to] = await nav.evaluate((n) => {
       const marker = n.querySelector(".htable-of-contents-marker")!;
       const from = marker.getBoundingClientRect().top;
       const link = n.querySelectorAll<HTMLElement>(".htable-of-contents-link")[4]!;
       link.click();
-      await new Promise((done) => setTimeout(done, 70));
-      return [from, link.getBoundingClientRect().top, marker.getBoundingClientRect().top];
+      return [from, link.getBoundingClientRect().top];
     });
-    expect(partway).toBeGreaterThan(from + 1);
-    expect(partway).toBeLessThan(to - 1);
+    await expect.poll(top).toBeGreaterThan(from + 1);
+    expect(await top()).toBeLessThan(to - 1);
   });
 
   test("the marker follows a link that changes height while the list doesn't", async ({ page }) => {
@@ -420,13 +436,13 @@ onEachPlayground("table-of-contents", () => {
     }).toBe(0);
   });
 
-  test("with reduced motion, the marker moves at once", async ({ page }) => {
+  test("with reduced motion, the marker moves at once", { tag: "@css" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const { nav } = await parts(page);
     await expect(markerOf(nav)).toHaveCSS("transition-property", "none");
   });
 
-  test("a level indents a heading under another", async ({ page }) => {
+  test("a level indents a heading under another", { tag: "@css" }, async ({ page }) => {
     const { links } = await parts(page, "with-sub-sections");
     const padding = (link: Locator) => link.evaluate((n) => parseFloat(getComputedStyle(n).paddingInlineStart));
     expect(await padding(links.nth(1))).toBeGreaterThan(await padding(links.nth(0)));
@@ -464,7 +480,7 @@ onEachPlayground("table-of-contents", () => {
     await expect(links.nth(2)).toHaveCSS("color", secondary);
   });
 
-  test("in forced colors, the marker is drawn in the system's colors", async ({ page, browserName }) => {
+  test("in forced colors, the marker is drawn in the system's colors", { tag: "@css" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const { nav } = await parts(page);
     await page.emulateMedia({ forcedColors: "active" });

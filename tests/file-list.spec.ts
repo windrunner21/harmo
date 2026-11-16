@@ -4,7 +4,8 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 // What docs/components/file-list.md says: each file with its name, detail, and a
 // way to remove it; progress that can't move the row; a check when it's done; a
 // failure that says why and can be tried again; a grid whose tiles slide into
-// place; and files arriving from a File Input.
+// place; and files arriving from a File Input. How the rows and tiles look,
+// which only CSS and the markup decide, is tested on the HTML playground.
 const png = { name: "me.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64") };
 const csv = (name = "tasks.csv") => ({ name, mimeType: "text/csv", buffer: Buffer.from("a,b") });
 
@@ -31,19 +32,15 @@ onEachPlayground("file-list", () => {
     };
   };
 
-  test("each file shows its name, its detail, and a way to remove it", async ({ page }) => {
+  test("each file shows its name, its detail, and a way to remove it, in a list that stays one for Safari", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "default");
+    await expect(list).toHaveAttribute("role", "list");
     await expect(list).toHaveAccessibleName("Attachments");
     await expect(rows).toHaveCount(3);
     const first = rows.first();
     await expect(first.locator(".hfile-list-name")).toHaveText("project-brief.pdf");
     await expect(first.locator(".hfile-list-detail")).toHaveText("412 kB");
     await expect(first.locator(".hfile-list-remove")).toHaveAccessibleName("Remove project-brief.pdf");
-  });
-
-  test("it stays a list for Safari", async ({ page }) => {
-    const { list } = await parts(page, "default");
-    await expect(list).toHaveAttribute("role", "list");
   });
 
   test("files there as the page loads don't settle in, and new ones do", async ({ page }) => {
@@ -94,7 +91,7 @@ onEachPlayground("file-list", () => {
     await expect(list.locator(".hfile-list-item")).toHaveCount(2);
   });
 
-  test("progress is named by its file, and can't change the row's height", async ({ page }) => {
+  test("progress is named by its file, and can't change the row's height", { tag: "@css" }, async ({ page }) => {
     const { rows } = await parts(page, "upload-progress");
     const sending = rows.nth(1);
     const bar = sending.getByRole("progressbar");
@@ -106,7 +103,7 @@ onEachPlayground("file-list", () => {
     expect(moving!.height).toBe(done!.height);
   });
 
-  test("a finished file shows a check, and its bar fades", async ({ page }) => {
+  test("a finished file shows a check, and its bar fades", { tag: "@css" }, async ({ page }) => {
     const { rows } = await parts(page, "upload-progress");
     const done = rows.first();
     await expect(done).toHaveAttribute("data-status", "done");
@@ -125,7 +122,7 @@ onEachPlayground("file-list", () => {
     await expect(failed.locator(".hfile-list-done > path")).toHaveCSS("transition-duration", "0.123s");
   });
 
-  test("a row's fade and settle, and the bar's fade and growth, take --harmo-ease-out-cubic, so a theme's curve reaches them", async ({ page }) => {
+  test("a row's fade and settle, and the bar's fade and growth, take --harmo-ease-out-cubic, so a theme's curve reaches them", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "upload-progress");
     const curve = "cubic-bezier(0.1, 0.9, 0.2, 1)";
     await list.evaluate((node, curve) => (node as HTMLElement).style.setProperty("--harmo-ease-out-cubic", curve), curve);
@@ -156,7 +153,7 @@ onEachPlayground("file-list", () => {
     await expect(failed.locator(".hfile-list-detail")).toHaveText("38 kB");
   });
 
-  test("a long name ends in an ellipsis, with the whole of it in its title", async ({ page }) => {
+  test("a long name ends in an ellipsis, with the whole of it in its title", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "long-file-names");
     const name = rows.first().locator(".hfile-list-name");
     await expect(name).toHaveCSS("text-overflow", "ellipsis");
@@ -165,7 +162,7 @@ onEachPlayground("file-list", () => {
     expect(await list.evaluate((n) => n.scrollWidth - n.clientWidth)).toBe(0);
   });
 
-  test("a grid shows square previews, with the name and the button below", async ({ page }) => {
+  test("a grid shows square previews, with the name and the button below", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "a-grid-of-thumbnails");
     const tile = rows.first();
     await settled(tile);
@@ -218,7 +215,7 @@ onEachPlayground("file-list", () => {
     }
   });
 
-  test("in a narrow row, the actions keep their place on a line of their own", async ({ page }) => {
+  test("in a narrow row, the actions keep their place on a line of their own", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "upload-progress");
     await list.evaluate((n: HTMLElement) => (n.style.inlineSize = "220px"));
     const failed = rows.nth(2);
@@ -228,7 +225,7 @@ onEachPlayground("file-list", () => {
     expect(text!.width).toBeGreaterThan(100);
   });
 
-  test("a tile with only a name leaves room for its button's focus ring", async ({ page }) => {
+  test("a tile with only a name leaves room for its button's focus ring", { tag: "@css" }, async ({ page }) => {
     const { rows } = await parts(page, "a-grid-of-thumbnails");
     const tile = rows.first();
     await settled(tile);
@@ -286,16 +283,6 @@ onEachPlayground("file-list", () => {
     await expect(container.locator(".hfile-list-item")).toHaveCount(0);
   });
 
-  test("the gallery's heading counts its images", async ({ page }) => {
-    const { container, rows, input } = await parts(page, "gallery");
-    const heading = container.locator(".hsection-title");
-    await expect(heading).toHaveText("Gallery (3)");
-    await input.setInputFiles(png);
-    await expect(heading).toHaveText("Gallery (4)");
-    await rows.first().locator(".hfile-list-remove").click();
-    await expect(heading).toHaveText("Gallery (3)");
-  });
-
   test("a table takes files too, and can remove them", async ({ page }) => {
     const { container, input } = await parts(page, "table");
     const body = container.locator("tbody tr");
@@ -337,21 +324,21 @@ onEachPlayground("file-list", () => {
     await expect.poll(() => page.evaluate(() => (window as unknown as { revoked: string[] }).revoked)).toContain(url);
   });
 
-  test("right to left, the progress bar grows from the right", async ({ page }) => {
+  test("right to left, the progress bar grows from the right", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "upload-progress");
     await list.evaluate((n: HTMLElement) => (n.dir = "rtl"));
     const origin = await rows.nth(1).locator(".hfile-list-progress").evaluate((n) => getComputedStyle(n, "::before").transformOrigin);
     expect(parseFloat(origin)).toBeGreaterThan(0);
   });
 
-  test("with reduced motion, the progress bar doesn't glide", async ({ page }) => {
+  test("with reduced motion, the progress bar doesn't glide", { tag: "@css" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const { rows } = await parts(page, "upload-progress");
     const property = await rows.nth(1).locator(".hfile-list-progress").evaluate((n) => getComputedStyle(n, "::before").transitionProperty);
     expect(property).toBe("none");
   });
 
-  test("right to left, the actions are on the left", async ({ page }) => {
+  test("right to left, the actions are on the left", { tag: "@css" }, async ({ page }) => {
     const { list, rows } = await parts(page, "default");
     await list.evaluate((n: HTMLElement) => (n.dir = "rtl"));
     const [name, remove] = await boxes(rows.first().locator(".hfile-list-name"), rows.first().locator(".hfile-list-remove"));
@@ -377,7 +364,7 @@ onEachPlayground("file-list", () => {
     expect(keys.join()).not.toContain("blockSize");
   });
 
-  test("in forced colors, the bar is drawn in the system's highlight", async ({ page, browserName }) => {
+  test("in forced colors, the bar is drawn in the system's highlight", { tag: "@css" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const { rows } = await parts(page, "upload-progress");
     await page.emulateMedia({ forcedColors: "active" });

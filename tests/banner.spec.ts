@@ -7,7 +7,8 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 // on the scale, with a 20px icon, as in a Toast. Hovered, its action's
 // background fills, and pressed, a step more, while its border stays put; in
 // a narrow container, the action moves under the message rather than
-// squeezing it.
+// squeezing it. Its look, which only CSS decides, is tested on the HTML
+// playground.
 
 // A color as the page computes it, such as a token's.
 const computed = (page: Page, color: string) =>
@@ -33,7 +34,7 @@ onEachPlayground("banner", () => {
     );
   });
 
-  test("10px 16px of padding, 10px gaps, and a 20px icon", async ({ page }) => {
+  test("10px 16px of padding, 10px gaps, and a 20px icon", { tag: "@css" }, async ({ page }) => {
     const banner = (await example(page, "banner-statuses")).locator(".hbanner").first();
     await expect(banner).toHaveCSS("padding-top", "10px");
     await expect(banner).toHaveCSS("padding-left", "16px");
@@ -42,7 +43,7 @@ onEachPlayground("banner", () => {
     await expect(banner.locator(".hbanner-icon")).toHaveCSS("height", "20px");
   });
 
-  test("hovered, its action's background fills, pressed a step more, and its border stays as it was", async ({ page }) => {
+  test("hovered, its action's background fills, pressed a step more, and its border stays as it was", { tag: "@css" }, async ({ page }) => {
     const action = (await example(page, "banner-with-an-action")).getByRole("button", { name: "Send template" });
     const border = await computed(page, "var(--harmo-button-secondary-color-border)");
     await expect(action).toHaveCSS("border-top-color", border);
@@ -57,7 +58,7 @@ onEachPlayground("banner", () => {
     await page.mouse.up();
   });
 
-  test("with room, the action sits beside the message; in a narrow container, it moves under it, at the end, and nothing overflows", async ({ page }) => {
+  test("with room, the action sits beside the message; in a narrow container, it moves under it, at the end, and nothing overflows", { tag: "@css" }, async ({ page }) => {
     const wide = (await example(page, "banner-with-an-action")).locator(".hbanner");
     const [wideMessage, wideAction] = await boxes(wide.locator(".hbanner-message"), wide.getByRole("button"));
     expect(wideAction.y).toBeLessThan(wideMessage.y + wideMessage.height);

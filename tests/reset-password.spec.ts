@@ -36,7 +36,9 @@ import {
 // hidden input, which resend, a submit button, posts again, and "try another
 // email" is a link to the page. The examples' stand-ins fail to send to an
 // address at example.org, say one at gmial.com can't receive email, fail for
-// error@example.com, and turn down "Password123!" and "MyOldPassword1!".
+// error@example.com, and turn down "Password123!" and "MyOldPassword1!". How
+// the card and the expired link's Banner look, which only CSS and the markup
+// decide, is tested on the HTML playground.
 const requestParts = async (page: Page, id = "reset-password-default") => {
   const container = await example(page, id);
   const form = container.locator(".hauth-form");
@@ -72,7 +74,7 @@ const sendTo = async (page: Page, address: string, id?: string) => {
 };
 
 onEachPlayground("reset-password", () => {
-  test("a raised Card: the title and its description, the email, a button the form's width, and the link back in a band under it", async ({ page }) => {
+  test("a raised Card: the title and its description, the email, a button the form's width, and the link back in a band under it", { tag: "@css" }, async ({ page }) => {
     const { form, email, button, title, signIn } = await requestParts(page);
     await expect(form).toHaveAttribute("data-variant", "raised");
     await expect(form).toHaveCSS("padding-top", "42px");
@@ -97,7 +99,7 @@ onEachPlayground("reset-password", () => {
     await expect.poll(() => errorOf(email)).toBe("Enter your email address.");
     await expect(email).toHaveAttribute("aria-invalid", "true");
     await expect(email).toBeFocused();
-    expect(await animations(form)).toBe(1);
+    await expect.poll(() => shakesOf(form)).toBe(1);
   });
 
   test("the shake ends with its own animation, not with one inside the form, such as the loading button's spinner appearing", async ({ page }) => {
@@ -330,7 +332,7 @@ onEachPlayground("reset-password", () => {
     const { form, email, button } = await requestParts(page);
     await button.click();
     await expect.poll(() => errorOf(email)).toBe("Enter your email address.");
-    expect(await animations(form)).toBe(0);
+    expect(await shakesOf(form)).toBe(0);
   });
 
   test("a new password with nothing typed: each field says what's missing, the new password takes focus, and the form shakes", async ({ page }) => {
@@ -341,7 +343,7 @@ onEachPlayground("reset-password", () => {
     await expect(password).toHaveAttribute("aria-invalid", "true");
     await expect(confirmation).toHaveAttribute("aria-invalid", "true");
     await expect(password).toBeFocused();
-    expect(await animations(form)).toBe(1);
+    await expect.poll(() => shakesOf(form)).toBe(1);
   });
 
   test("a password the meter rates too weak says so, and stays invalid, without the error, until it's long enough", async ({ page }) => {
@@ -443,7 +445,7 @@ onEachPlayground("reset-password", () => {
     expect(after!.height).toBeCloseTo(resize!.to, 0);
   });
 
-  test("an expired link: a warning Banner, with an underlined link to request a new one, centered at the forms' width", async ({ page }) => {
+  test("an expired link: a warning Banner, with an underlined link to request a new one, centered at the forms' width", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "reset-password-expired-link");
     const banner = container.locator(".hbanner");
     const [demo, box] = await boxes(container.locator(".play-demo"), banner);

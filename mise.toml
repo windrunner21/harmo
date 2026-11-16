@@ -21,8 +21,9 @@ linux-arm64 = { asset_pattern = "dart-sass-*-linux-arm64.tar.gz" }
 # Chromium is Playwright's headless build, lighter than a system's full
 # Chromium. Its version must match @playwright/test in tests/package.json,
 # and the one CI runs in, in .github/workflows/ci.yml.
-# Each run's container is removed when it ends.
-playwright = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp -v "{{config_root}}:{{config_root}}" -w "{{config_root}}/tests" mcr.microsoft.com/playwright:v1.64.1-noble npx playwright test'
+# Each run's container is removed when it ends. HARMO_PAGES, which
+# tests/affected.ts sets, passes through to it.
+playwright = 'docker run --rm --init --ipc=host --user "$(id -u):$(id -g)" -e HOME=/tmp -e HARMO_PAGES -v "{{config_root}}:{{config_root}}" -w "{{config_root}}/tests" mcr.microsoft.com/playwright:v1.64.1-noble npx playwright test'
 
 [tasks."build:accents"]
 description = "Regenerate packages/css/src/accents.scss from packages/cli/src/palettes/palettes.ts"
@@ -95,6 +96,16 @@ description = "Test the CLI: what it copies, and that the copies type-check"
 depends = ["build:cli"]
 dir = "{{config_root}}/packages/cli"
 run = "bun test"
+
+[tasks."test:changed"]
+description = "Build both playgrounds, then test in Chromium what the changes since origin/master touch, as tests/affected.ts chooses"
+depends = ["build:playground", "build:react-playground"]
+run = "bun tests/affected.ts --list -- {{vars.playwright}} --project=chromium"
+
+[tasks."test:changed:all"]
+description = "Build both playgrounds, then test in Chromium, Firefox, and WebKit what the changes since origin/master touch"
+depends = ["build:playground", "build:react-playground"]
+run = "bun tests/affected.ts --list -- {{vars.playwright}}"
 
 [tasks."test:browser"]
 description = "Build both playgrounds, then test them in Chromium, in Docker"

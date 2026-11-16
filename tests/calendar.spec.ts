@@ -4,7 +4,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/calendar.md says: a month's name with its year, always
 // six rows, today and the chosen date marked; one day in the Tab order, moved
 // by the WAI-ARIA date grid's keys; min and max; the week and the language from
-// the locale; and right to left, mirrored.
+// the locale; and right to left, mirrored. What only CSS and the markup
+// decide, such as how a month looks, is tested on the HTML playground.
 const day = (calendar: Locator, date: string) => calendar.locator(`[data-date="${date}"]`);
 const title = (calendar: Locator) => calendar.locator(".hcalendar-title");
 const chosen = (calendar: Locator) => calendar.locator('[aria-selected="true"] > .hcalendar-day');
@@ -23,7 +24,7 @@ const color = (page: Page, name: string) =>
   }, name);
 
 onEachPlayground("calendar", () => {
-  test("a month: its name and year, the weekdays, six rows of seven, with today and the chosen date marked", async ({ page }) => {
+  test("a month: its name and year, the weekdays, six rows of seven, with today and the chosen date marked", { tag: "@css" }, async ({ page }) => {
     const calendar = (await example(page, "calendar-default")).locator(".hcalendar");
     await expect(calendar.getByRole("grid", { name: "November 2026" })).toBeVisible();
     await expect(title(calendar)).toHaveAttribute("aria-live", "polite");
@@ -220,7 +221,7 @@ onEachPlayground("calendar", () => {
     await expect(day(calendar, "2026-12-15")).toBeFocused();
   });
 
-  test("in forced colors, the chosen date is in the system's highlight, hovered too", async ({ page, browserName }) => {
+  test("in forced colors, the chosen date is in the system's highlight, hovered too", { tag: "@css" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const calendar = (await example(page, "calendar-default")).locator(".hcalendar");
     await page.emulateMedia({ forcedColors: "active" });
@@ -252,7 +253,7 @@ onEachPlayground("calendar", () => {
     await expect(chosen(calendar)).toHaveAttribute("data-date", "2027-01-20");
   });
 
-  test("a narrower container can set a smaller day", async ({ page }) => {
+  test("a narrower container can set a smaller day", { tag: "@css" }, async ({ page }) => {
     const calendar = (await example(page, "calendar-default")).locator(".hcalendar");
     await calendar.evaluate((node) => node.style.setProperty("--hcalendar-day-size", "2rem"));
     const [box, cell] = await boxes(calendar, day(calendar, "2026-11-18"));
@@ -260,7 +261,7 @@ onEachPlayground("calendar", () => {
     expect(cell.width).toBeCloseTo(32, 0);
   });
 
-  test("the week starts where the locale says", async ({ page }) => {
+  test("the week starts where the locale says", { tag: "@css" }, async ({ page }) => {
     const calendar = (await example(page, "calendar-a-week-starting-on-monday")).locator(".hcalendar");
     await expect(calendar.getByRole("columnheader").first()).toHaveAttribute("abbr", "Monday");
     await expect(title(calendar)).toHaveText("February 2026");
@@ -285,7 +286,7 @@ onEachPlayground("calendar", () => {
     await expect(day(calendar, "2026-11-18")).toBeFocused();
   });
 
-  test("it fits a 320px screen", async ({ page }) => {
+  test("it fits a 320px screen", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 800 });
     const container = await example(page, "calendar-default");
     const [calendar] = await boxes(container.locator(".hcalendar"));

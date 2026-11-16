@@ -2,7 +2,9 @@ import { expect, type Page } from "@playwright/test";
 import { boxes, clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/filter-chip.md says a script does, on the Filter Chip
-// page.
+// page, and how a chip looks. Its name, how it fits, and a disabled chip's
+// look only the markup and CSS decide, so those tests run on the HTML
+// playground.
 const color = (page: Page, name: string) =>
   page.evaluate((name) => {
     const probe = document.createElement("span");
@@ -14,7 +16,7 @@ const color = (page: Page, name: string) =>
   }, name);
 
 onEachPlayground("filter-chip", () => {
-  test("a value keeps its background on a chip that's open, in the border color", async ({ page }) => {
+  test("a value keeps its background on a chip that's open, in the border color, and an app's own class on it wins there too", async ({ page }) => {
     const { chip } = await openChip(page, "filter-chip-one-value");
     const value = chip.locator(".hfilter-chip-value");
     await settled(chip);
@@ -22,11 +24,7 @@ onEachPlayground("filter-chip", () => {
     const border = await color(page, "--harmo-color-border");
     await expect(value).toHaveCSS("background-color", border);
     await expect(chip).toHaveCSS("background-color", await color(page, "--harmo-color-background-hover"));
-  });
 
-  test("an app's own class on a value wins, on a chip that's open too", async ({ page }) => {
-    const { chip } = await openChip(page, "filter-chip-one-value");
-    const value = chip.locator(".hfilter-chip-value");
     await value.evaluate((node) => node.classList.add("test-value"));
     await page.addStyleTag({ content: ".test-value { background-color: rgb(0, 0, 200); }" });
     await expect(value).toHaveCSS("background-color", "rgb(0, 0, 200)");
@@ -49,7 +47,7 @@ onEachPlayground("filter-chip", () => {
     await expect(openPopup(container)).toHaveCount(1);
   });
 
-  test("the values are part of the chip's name", async ({ page }) => {
+  test("the values are part of the chip's name", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "filter-chip-two-values");
     await expect(container.locator(".hfilter-chip")).toHaveAccessibleName("Priority High Urgent");
   });
@@ -93,7 +91,7 @@ onEachPlayground("filter-chip", () => {
     await expect(clear).toBeVisible();
   });
 
-  test("where it doesn't fit, the values give way first, then the label ends with an ellipsis", async ({ page }) => {
+  test("where it doesn't fit, the values give way first, then the label ends with an ellipsis", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
     const container = await example(page, "filter-chip-two-values");
     const chip = container.locator(".hfilter-chip");
@@ -191,7 +189,7 @@ onEachPlayground("filter-chip", () => {
     await expect(search).toBeFocused();
   });
 
-  test("a disabled chip is dimmed and can't be pressed", async ({ page }) => {
+  test("a disabled chip is dimmed and can't be pressed", { tag: "@css" }, async ({ page }) => {
     const chip = (await example(page, "filter-chip-disabled")).locator(".hfilter-chip");
     await expect(chip).toBeDisabled();
     await expect(chip).toHaveCSS("opacity", "0.5");

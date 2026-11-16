@@ -4,7 +4,8 @@ import { boxes, example, onEachPlayground, ready, settled, test } from "./playgr
 // What docs/components/table.md says: named rows and columns, in Harmo's sizes;
 // a row that's a link or a button all the way across; selecting rows, with focus
 // looked after; choosing columns, remembered; pages, with a footer that stays in
-// view; what shows with no rows; long text; and right to left.
+// view; what shows with no rows; long text; and right to left. What only CSS
+// and the markup decide is tested on the HTML playground.
 
 // Marks a row's link once it's pressed, as it would be followed.
 const watchPress = (link: Locator) =>
@@ -21,7 +22,7 @@ const color = (page: Page, name: string) =>
   }, name);
 
 onEachPlayground("table", () => {
-  test("named rows and columns, in the sizes and colors", async ({ page }) => {
+  test("named rows and columns, in the sizes and colors", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "table-default");
     const table = container.getByRole("table", { name: "Tasks" });
     await expect(table.getByRole("columnheader")).toHaveText(["Task", "Status", "Due"]);
@@ -42,7 +43,7 @@ onEachPlayground("table", () => {
     await expect(name).toHaveCSS("text-align", "start");
   });
 
-  test("an app's own class on a cell wins over the table's", async ({ page }) => {
+  test("an app's own class on a cell wins over the table's", { tag: "@css" }, async ({ page }) => {
     const table = (await example(page, "table-default")).getByRole("table", { name: "Tasks" });
     const cell = table.getByRole("cell", { name: "Blocked" });
     const name = table.getByRole("rowheader", { name: "Write the brief" });
@@ -55,7 +56,7 @@ onEachPlayground("table", () => {
     }
   });
 
-  test("a column marked to stand out is heavier and darker than the rest", async ({ page }) => {
+  test("a column marked to stand out is heavier and darker than the rest", { tag: "@css" }, async ({ page }) => {
     const table = (await example(page, "table-a-column-that-stands-out")).getByRole("table");
     const task = table.getByRole("rowheader", { name: "Write the brief" });
     const owner = table.getByRole("cell", { name: "Ana" });
@@ -220,7 +221,7 @@ onEachPlayground("table", () => {
     await expect(container.getByRole("rowheader")).toHaveCount(20);
   });
 
-  test("the footer stays at the bottom of the window while the table runs past it", async ({ page }) => {
+  test("the footer stays at the bottom of the window while the table runs past it", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 400 });
     const container = await example(page, "table-in-pages");
     const footer = container.locator(".htable-footer");
@@ -231,7 +232,7 @@ onEachPlayground("table", () => {
     await expect(footer).toHaveCSS("border-top-width", "1px");
   });
 
-  test("the footer's text lines up with the cells' text", async ({ page }) => {
+  test("the footer's text lines up with the cells' text", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "table-in-pages");
     const footer = container.locator(".htable-footer");
     await expect(footer).toHaveCSS("padding", "10px 16px");
@@ -241,7 +242,7 @@ onEachPlayground("table", () => {
     await expect(container.locator(".htable-footer-rows")).toHaveCSS("column-gap", "6px");
   });
 
-  test("in a Card, the headers and footer paint the card's background, and an app's own value wins", async ({ page }) => {
+  test("in a Card, the headers and footer paint the card's background, and an app's own value wins", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "table-in-pages");
     const header = container.getByRole("columnheader").first();
     const footer = container.locator(".htable-footer");
@@ -280,13 +281,13 @@ onEachPlayground("table", () => {
     expect(header!.y).toBeCloseTo(area!.y, 0);
   });
 
-  test("with nothing to show, what it's given stands in for the table", async ({ page }) => {
+  test("with nothing to show, what it's given stands in for the table", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "table-with-nothing-to-show");
     await expect(container.getByRole("table")).toHaveCount(0);
     await expect(container.getByRole("heading", { name: "No tasks yet" })).toBeVisible();
   });
 
-  test("a column marked to truncate ends with an ellipsis, with the whole text in its title", async ({ page }) => {
+  test("a column marked to truncate ends with an ellipsis, with the whole text in its title", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "table-long-text");
     const text = container.locator(".htable-truncate");
     await expect(text).toHaveCSS("text-overflow", "ellipsis");
@@ -295,7 +296,7 @@ onEachPlayground("table", () => {
     expect(await text.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
   });
 
-  test("right to left, the first column is on the right", async ({ page }) => {
+  test("right to left, the first column is on the right", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "table-right-to-left");
     const headers = container.getByRole("columnheader");
     const [first, second] = await boxes(headers.first(), headers.last());

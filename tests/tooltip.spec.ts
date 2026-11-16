@@ -1,11 +1,13 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, pointAt, release, settled, slowDown, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, pointAt, release, rendered, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/tooltip.md says, on the Tooltip page: CSS shows a
 // tooltip on hover after a delay and at once on keyboard focus, and a script
-// hides it on Escape and skips the delay right after another closes.
+// hides it on Escape and skips the delay right after another closes. What it
+// names or describes, which only the markup decides, is tested on the HTML
+// playground.
 onEachPlayground("tooltip", () => {
-  test("it names or describes its control", async ({ page }) => {
+  test("it names or describes its control", { tag: "@css" }, async ({ page }) => {
     const describing = await example(page, "tooltip-describing-a-control");
     await expect(describing.getByRole("button", { name: "Export" })).toHaveAccessibleDescription(
       "Download the current view as a CSV file",
@@ -149,7 +151,9 @@ onEachPlayground("tooltip", () => {
 
       await page.keyboard.press("Escape");
       await expect.poll(() => shown(tooltip)).toBe(false);
-      await page.waitForTimeout(200);
+      // Once the page has rendered what the Escape did, which would have
+      // closed it by then.
+      await rendered(page);
       expect(await isOpen()).toBe(true);
 
       await page.keyboard.press("Escape");
@@ -188,7 +192,7 @@ onEachPlayground("tooltip", () => {
 
     await page.keyboard.press("Escape");
     await expect.poll(() => shown(tooltip)).toBe(false);
-    await page.waitForTimeout(200);
+    await rendered(page);
     expect(await isOpen("over"), "the upper dialog").toBe(true);
     expect(await isOpen("under"), "the dialog under it").toBe(true);
 

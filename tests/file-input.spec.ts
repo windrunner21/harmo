@@ -5,6 +5,8 @@ import { boxes, example, onEachPlayground, ready, settled, test } from "./playgr
 // What docs/components/file-input.md says: a button that opens the picker, then
 // shows the file with a way to remove it; a real input the keyboard reaches;
 // refusing a file and saying why; a file already attached; and a form's reset.
+// How it looks and is named before anything's chosen, which only CSS and the
+// markup decide, is tested on the HTML playground.
 const png = { name: "me.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64") };
 const csv = (name = "tasks.csv", size = 10) => ({ name, mimeType: "text/csv", buffer: Buffer.alloc(size, "a") });
 
@@ -100,7 +102,7 @@ onEachPlayground("file-input", () => {
     await expect(input).toHaveAccessibleName("Attachment tasks.csv");
   });
 
-  test("a large area's hint describes its input, so it's read with the button", async ({ page }) => {
+  test("a large area's hint describes its input, so it's read with the button", { tag: "@css" }, async ({ page }) => {
     const { input } = await parts(page, "file-input-large-drop-area");
     await expect(input).toHaveAccessibleName("Task list Choose file");
     await expect(input).toHaveAccessibleDescription("A CSV file, up to 1 MB.");
@@ -124,7 +126,7 @@ onEachPlayground("file-input", () => {
     expect(errors).toEqual([]);
   });
 
-  test("the button hovers as a Button does", async ({ page }) => {
+  test("the button hovers as a Button does", { tag: "@css" }, async ({ page }) => {
     const { button } = await parts(page, "file-input-default");
     const rest = await button.evaluate((n) => getComputedStyle(n).borderTopColor);
     await button.hover();
@@ -209,7 +211,7 @@ onEachPlayground("file-input", () => {
     await expect(picture).toHaveAttribute("data-new", "");
   });
 
-  test("the name's fade, the remove button's, and the picture's take --harmo-ease-out-cubic, so a theme's curve reaches them", async ({ page }) => {
+  test("the name's fade, the remove button's, and the picture's take --harmo-ease-out-cubic, so a theme's curve reaches them", { tag: "@css" }, async ({ page }) => {
     const curve = "cubic-bezier(0.1, 0.9, 0.2, 1)";
     // Each property's curve, as the browser pairs the two lists.
     const curves = (element: Locator) =>
@@ -227,7 +229,7 @@ onEachPlayground("file-input", () => {
     expect([picture.opacity, picture.transform]).toEqual([curve, curve]);
   });
 
-  test("a long name ends in an ellipsis, with the whole of it in its title and the remove button beside it", async ({ page }) => {
+  test("a long name ends in an ellipsis, with the whole of it in its title and the remove button beside it", { tag: "@css" }, async ({ page }) => {
     const { root, button, text, remove } = await parts(page, "file-input-long-file-name");
     const whole = await text.textContent();
     await expect(text).toHaveAttribute("title", whole!);
@@ -240,7 +242,7 @@ onEachPlayground("file-input", () => {
     expect(await root.evaluate((n) => n.scrollWidth - n.clientWidth)).toBe(0);
   });
 
-  test("the button's own text wraps instead of ending in an ellipsis", async ({ page }) => {
+  test("the button's own text wraps instead of ending in an ellipsis", { tag: "@css" }, async ({ page }) => {
     const { root, button, text } = await parts(page, "file-input-default");
     await root.evaluate((n: HTMLElement) => (n.style.inlineSize = "140px"));
     await text.evaluate((n) => (n.textContent = "Choose a file from anywhere on this computer"));
@@ -258,7 +260,7 @@ onEachPlayground("file-input", () => {
     await expect(text).not.toHaveAttribute("title");
   });
 
-  test("disabled, nothing can be chosen or removed", async ({ page }) => {
+  test("disabled, nothing can be chosen or removed", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "file-input-disabled");
     const inputs = container.locator(".hfile-input-control");
     await expect(inputs.nth(0)).toBeDisabled();
@@ -411,7 +413,7 @@ onEachPlayground("file-input", () => {
     }
   });
 
-  test("a compact area is only as wide as what's in it", async ({ page }) => {
+  test("a compact area is only as wide as what's in it", { tag: "@css" }, async ({ page }) => {
     const { container, root, button, drop } = await parts(page, "file-input-compact-drop-area");
     const [area, picked, words, column] = await boxes(root, button, drop, container.locator(".hfield"));
     expect(area!.width).toBeLessThan(column!.width);
@@ -429,7 +431,7 @@ onEachPlayground("file-input", () => {
     expect(area!.width).toBeLessThanOrEqual(column!.width + 0.5);
   });
 
-  test("a large area's parts sit on the spacing scale", async ({ page }) => {
+  test("a large area's parts sit on the spacing scale", { tag: "@css" }, async ({ page }) => {
     const { root, button } = await parts(page, "file-input-large-drop-area");
     const [area, icon, heading, drop, hint, picked] = await boxes(
       root,
@@ -495,7 +497,7 @@ onEachPlayground("file-input", () => {
     await expect(root).not.toHaveAttribute("data-dragging");
   });
 
-  test("a strip's text follows the button, and its own text isn't part of its name", async ({ page }) => {
+  test("a strip's text follows the button, and its own text isn't part of its name", { tag: "@css" }, async ({ page }) => {
     const { input, button, drop } = await parts(page, "file-input-compact-drop-area");
     const [picked, words] = await boxes(button, drop);
     expect(words!.x).toBeGreaterThan(picked!.x + picked!.width);
@@ -581,7 +583,7 @@ onEachPlayground("file-input", () => {
     await expect.poll(() => page.evaluate(() => (window as unknown as { revoked: string[] }).revoked)).toContain(first);
   });
 
-  test("stretched by what's around it, an avatar keeps its remove button beside it", async ({ page }) => {
+  test("stretched by what's around it, an avatar keeps its remove button beside it", { tag: "@css" }, async ({ page }) => {
     const { root, remove } = await parts(page, "file-input-avatar-with-a-picture");
     await root.evaluate((n: HTMLElement) => (n.style.inlineSize = "100%"));
     await settled(remove);
@@ -599,13 +601,13 @@ onEachPlayground("file-input", () => {
     expect(picked!.width).toBeCloseTo(empty!.width, 0);
   });
 
-  test("an avatar keeps room for its remove button in its own width", async ({ page }) => {
+  test("an avatar keeps room for its remove button in its own width", { tag: "@css" }, async ({ page }) => {
     const { root, remove } = await parts(page, "file-input-avatar-with-a-picture");
     const [around, removing] = await boxes(root, remove);
     expect(removing!.x + removing!.width).toBeLessThanOrEqual(around!.x + around!.width + 0.5);
   });
 
-  test("spans in a heading are only text, unless they're an avatar's two states", async ({ page }) => {
+  test("spans in a heading are only text, unless they're an avatar's two states", { tag: "@css" }, async ({ page }) => {
     const { root } = await parts(page, "file-input-large-drop-area");
     const heading = root.locator(".hfile-input-heading");
     await heading.evaluate((n) => (n.innerHTML = "<span>One</span> <span>Two</span>"));
@@ -663,7 +665,7 @@ onEachPlayground("file-input", () => {
     expect(await fileCount(input)).toBe(0);
   });
 
-  test("an avatar shows its focus on the circle", async ({ page }) => {
+  test("an avatar shows its focus on the circle", { tag: "@css" }, async ({ page }) => {
     const { root, input } = await parts(page, "file-input-avatar");
     await page.keyboard.press("Shift");
     await input.focus();
@@ -693,7 +695,7 @@ onEachPlayground("file-input", () => {
     await expect(root).toHaveCSS("border-top-style", "solid");
   });
 
-  test("on a touch screen, it's only the button", async ({ page, browserName, browser }) => {
+  test("on a touch screen, it's only the button", { tag: "@css" }, async ({ page, browserName, browser }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates a touch screen");
     const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 400, height: 800 } });
     try {
@@ -708,7 +710,7 @@ onEachPlayground("file-input", () => {
     }
   });
 
-  test("right to left, the remove button is on the left", async ({ page }) => {
+  test("right to left, the remove button is on the left", { tag: "@css" }, async ({ page }) => {
     const { root, button, remove } = await parts(page, "file-input-with-a-file-already-attached");
     await root.evaluate((n: HTMLElement) => (n.dir = "rtl"));
     const [drawn, removing] = await boxes(button, remove);

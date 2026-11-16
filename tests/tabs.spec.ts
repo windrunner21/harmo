@@ -1,7 +1,9 @@
 import { expect, type Locator } from "@playwright/test";
 import { example, onEachPlayground, pointAt, rendered, settled, test, watchTransitions } from "./playgrounds.ts";
 
-// What docs/components/tabs.md says a script does, on the Tabs page.
+// What docs/components/tabs.md says, on the Tabs page: what a script does, and
+// the sizes, motion, and scrolling strip CSS gives it. Those only CSS decides
+// are tested on the HTML playground.
 onEachPlayground("tabs", () => {
   test("a click selects a tab and shows its panel", async ({ page }) => {
     const container = await example(page, "tabs-switching-panels");
@@ -101,7 +103,7 @@ onEachPlayground("tabs", () => {
     }
   });
 
-  test("each tab has 4px above and below its text and 10px either side, and tabs are 16px apart", async ({ page }) => {
+  test("each tab has 4px above and below its text and 10px either side, and tabs are 16px apart", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "tabs-switching-panels");
     const all = tab(container, "All");
     await expect(all).toHaveCSS("padding-top", "4px");
@@ -119,7 +121,7 @@ onEachPlayground("tabs", () => {
     expect(second.left - first.right).toBeCloseTo(16, 0);
   });
 
-  test("the pill follows the pointer in 150ms, fast from the start; the underline slides in 200ms, easing in and out", async ({ page }) => {
+  test("the pill follows the pointer in 150ms, fast from the start; the underline slides in 200ms, easing in and out", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "tabs-switching-panels");
     const curve = (variable: string) =>
       page.evaluate((variable) => {
@@ -235,7 +237,7 @@ onEachPlayground("tabs", () => {
     await expect(tabs).toHaveCSS("--htabs-highlight-opacity", "0");
   });
 
-  test("tabs that don't fit stay on one line, and only the strip scrolls", async ({ page }) => {
+  test("tabs that don't fit stay on one line, and only the strip scrolls", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     const container = await example(page, "tabs-many-tabs");
     const tabs = container.locator(".htabs");
@@ -338,7 +340,7 @@ onEachPlayground("tabs", () => {
     await expectUnderline(container, "Team members");
   });
 
-  test("when the tabs fit, the strip doesn't scroll, and lines up with what's around it", async ({ page }) => {
+  test("when the tabs fit, the strip doesn't scroll, and lines up with what's around it", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "tabs-tabs");
     const tabs = container.locator(".htabs");
     const lines = await tabs.evaluate((strip) => {

@@ -8,9 +8,10 @@ import { boxes, clickAt, colorOf, example, onEachPlayground, settled, test } fro
 // keyboard changes at once, while one with the pointer fades. As a choice
 // card, per docs/components/field.md, a checkbox and its label are a bordered
 // tile, checked by a click anywhere on it, with the checkbox's colors once
-// checked.
+// checked. How they look, which only CSS and the markup decide, is tested on
+// the HTML playground.
 onEachPlayground("checkbox", () => {
-  test("as cards: a bordered tile with a medium label, and checked, the primary border on the tint", async ({ page }) => {
+  test("as cards: a bordered tile with a medium label, and checked, the primary border on the tint", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "checkbox-cards");
     const cards = container.locator('.hfield[data-variant="card"]');
     await expect(cards).toHaveCount(3);
@@ -99,7 +100,7 @@ onEachPlayground("checkbox", () => {
     await expect(mixed).toBeChecked({ indeterminate: true });
   });
 
-  test("a larger checkbox is centered on its label's first line", async ({ page }) => {
+  test("a larger checkbox is centered on its label's first line", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "checkbox-custom-size");
     const [checkbox, label] = await boxes(
       container.getByRole("checkbox", { name: "Send a weekly summary" }),
@@ -110,7 +111,7 @@ onEachPlayground("checkbox", () => {
     expect(checkbox.y + checkbox.height / 2).toBeCloseTo(label.y + 10, 0);
   });
 
-  test("small, for fine print: a 13px label and a 16px box, beside the label's first line", async ({ page }) => {
+  test("small, for fine print: a 13px label and a 16px box, beside the label's first line", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "checkbox-small");
     const fields = container.locator(".hfield");
     for (const field of await fields.all()) {

@@ -183,9 +183,10 @@ const catchWidthChanges = (button: Locator) =>
   });
 
 // What docs/components/button.md says about destructive buttons, holding to
-// confirm, and its icons.
+// confirm, and its icons. Those that only CSS decides, such as its colors,
+// its timings, and where its icons sit, are tested on the HTML playground.
 onEachPlayground("button", () => {
-  test("destructive: filled red with white text, outlined with red text, or red text alone", async ({ page }) => {
+  test("destructive: filled red with white text, outlined with red text, or red text alone", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "button-destructive");
     const [filled, outlined, text] = ["Delete workspace", "Remove members", "Clear history"].map((name) =>
       container.getByRole("button", { name }),
@@ -428,7 +429,7 @@ onEachPlayground("button", () => {
     await expect.poll(() => styleOf(button, "border-top-color")).toBe(red);
   });
 
-  test("the fill's snap-back and the spinner's fade take --harmo-duration-normal and --harmo-ease-out-cubic, so a theme's reach them, with reduced motion too", async ({ page }) => {
+  test("the fill's snap-back and the spinner's fade take --harmo-duration-normal and --harmo-ease-out-cubic, so a theme's reach them, with reduced motion too", { tag: "@css" }, async ({ page }) => {
     const theme = (node: Element) => {
       const parent = node.parentElement!;
       parent.style.setProperty("--harmo-duration-normal", "300ms");
@@ -444,7 +445,7 @@ onEachPlayground("button", () => {
     expect(await fill.evaluate(theme)).toEqual(themed);
   });
 
-  test("--hbutton-press-duration sets how long a hold button takes to shrink as it's pressed: 160ms by default", async ({ page }) => {
+  test("--hbutton-press-duration sets how long a hold button takes to shrink as it's pressed: 160ms by default", { tag: "@css" }, async ({ page }) => {
     const { button } = await holdButton(page, "send");
     const pressOf = () =>
       button.evaluate((node) => {
@@ -466,7 +467,7 @@ onEachPlayground("button", () => {
     await page.mouse.up();
   });
 
-  test("on a right-to-left page, the fill comes in from the right", async ({ page }) => {
+  test("on a right-to-left page, the fill comes in from the right", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "button-hold-to-confirm");
     const fill = container.locator(".hbutton-hold").first();
     await page.evaluate(() => (document.documentElement.dir = "rtl"));
@@ -541,7 +542,7 @@ onEachPlayground("button", () => {
     expect(ends.whiteSpace).toBe("pre");
   });
 
-  test("its fill places its content as the button does: beside a ChevronToArrow, and icon only", async ({ page }) => {
+  test("its fill places its content as the button does: beside a ChevronToArrow, and icon only", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "button-hold-to-confirm");
     const offsets = await container.locator(".play-demo").evaluate((demo) => {
       const arrow = '<svg class="hicon hchevron-to-arrow" data-direction="back" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6L9 12L15 18" /></svg>';
@@ -567,7 +568,7 @@ onEachPlayground("button", () => {
     for (const offset of offsets) expect(offset).toBeLessThan(0.5);
   });
 
-  test("a ChevronToArrow keeps its 24px beside a label, and alone in an icon-only button is drawn at 20px, as every icon there", async ({ page }) => {
+  test("a ChevronToArrow keeps its 24px beside a label, and alone in an icon-only button is drawn at 20px, as every icon there", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "button-with-an-arrow");
     const sizes = await container.locator(".play-demo").evaluate((demo) => {
       const labelled = demo.querySelector(".hbutton:has(> .hchevron-to-arrow)")!;
@@ -589,7 +590,7 @@ onEachPlayground("button", () => {
     expect(sizes.alone.height).toBeCloseTo(20, 1);
   });
 
-  test("an app's rule of the same weight, loaded after Harmo's, sizes and spaces an icon beside the label", async ({ page }) => {
+  test("an app's rule of the same weight, loaded after Harmo's, sizes and spaces an icon beside the label", { tag: "@css" }, async ({ page }) => {
     const icon = (await example(page, "button-hold-to-confirm")).locator(".hbutton[data-hold] > .hicon").first();
     await page.addStyleTag({ content: ".hbutton > .hicon { inline-size: 16px; block-size: 16px; margin-inline-start: 0; }" });
     const [box] = await boxes(icon);
@@ -597,7 +598,7 @@ onEachPlayground("button", () => {
     expect(await styleOf(icon, "margin-inline-start")).toBe("0px");
   });
 
-  test("an icon beside the label looks as far from the border as the label's text", async ({ page }) => {
+  test("an icon beside the label looks as far from the border as the label's text", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "button-hold-to-confirm");
     const button = container.locator(".hbutton[data-hold]").first();
     const [icon, label, box] = await Promise.all([

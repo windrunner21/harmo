@@ -4,6 +4,8 @@ import { boxes, example, onEachPlayground, ready, release, test } from "./playgr
 // What docs/components/selection-bar.md says: a count that's read out, a way to
 // deselect, and the actions after; taking the place of a toolbar's controls; an
 // action that's blocked, with a reason the keyboard can reach; and right to left.
+// How the bar looks and wraps, which only CSS and the markup decide, is tested
+// on the HTML playground.
 const color = (page: Page, name: string) =>
   page.evaluate((name) => {
     const probe = document.createElement("span");
@@ -15,7 +17,7 @@ const color = (page: Page, name: string) =>
   }, name);
 
 onEachPlayground("selection-bar", () => {
-  test("a count that's a status, a divider, an underlined Deselect, and the actions", async ({ page }) => {
+  test("a count that's a status, a divider, an underlined Deselect, and the actions", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "selection-bar-default");
     const count = container.getByRole("status");
     const deselect = container.getByRole("button", { name: "Deselect" });
@@ -165,7 +167,7 @@ onEachPlayground("selection-bar", () => {
     await expect(container.getByRole("tooltip")).toBeVisible();
   });
 
-  test("right to left, the count starts on the right, with its divider on its left", async ({ page }) => {
+  test("right to left, the count starts on the right, with its divider on its left", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "selection-bar-right-to-left");
     const count = container.getByRole("status");
     const [first, second] = await boxes(count, container.locator(".hselection-bar-deselect"));
@@ -173,7 +175,7 @@ onEachPlayground("selection-bar", () => {
     await expect(count).toHaveCSS("border-left-width", "1px");
   });
 
-  test("a long count wraps inside a narrow container", async ({ page }) => {
+  test("a long count wraps inside a narrow container", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "selection-bar-default");
     const bar = container.locator(".hselection-bar");
     await bar.evaluate((node: HTMLElement) => (node.style.inlineSize = "160px"));
@@ -184,7 +186,7 @@ onEachPlayground("selection-bar", () => {
     expect(await bar.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
-  test("on a narrow screen it wraps, and long words stay inside", async ({ page }) => {
+  test("on a narrow screen it wraps, and long words stay inside", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 });
     const container = await example(page, "selection-bar-default");
     await container.locator(".hselection-bar-deselect").evaluate((node) => {

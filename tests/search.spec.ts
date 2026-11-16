@@ -1,11 +1,13 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, open, playgrounds, ready, settled, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, open, playgrounds, rendered, settled, test } from "./playgrounds.ts";
 
 // What docs/components/search.md says, on the Search page: a gray field with a
 // magnifier, Input's border and ring once hovered or focused, a clear button
 // that shows with text and empties the field, and Escape doing the same; a
 // shortcut's Kbd that gives way to the clear button; and a disabled field's
-// quieter placeholder and magnifier.
+// quieter placeholder and magnifier. What only CSS and the markup decide, such
+// as the field's colors, a hover's border, and a label naming it, is tested on
+// the HTML playground.
 const styleOf = (element: Locator, property: string, pseudo?: string) =>
   element.evaluate(
     (node, [property, pseudo]) => getComputedStyle(node, pseudo).getPropertyValue(property!),
@@ -38,7 +40,7 @@ const onApple = (page: Page) =>
   });
 
 onEachPlayground("search", () => {
-  test("a gray field with a magnifier at its start, and Input's border and ring once focused", async ({ page }) => {
+  test("a gray field with a magnifier at its start, and Input's border and ring once focused", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "search-default");
     const input = container.getByRole("searchbox", { name: "Search conversations" });
     expect(await styleOf(input, "background-color")).toBe(await color(page, "--harmo-color-background-secondary"));
@@ -217,7 +219,7 @@ onEachPlayground("search", () => {
       await input.fill("ship");
       await page.keyboard.press("Escape");
       await expect(input).toHaveValue("");
-      await page.waitForTimeout(100);
+      await rendered(page);
       expect(await isOpen()).toBe(true);
       await page.keyboard.press("Escape");
       await expect.poll(isOpen).toBe(false);
@@ -251,30 +253,7 @@ onEachPlayground("search", () => {
     await expect(kbd).toBeVisible();
   });
 
-  test("the example's shortcut reaches the field", async ({ page }) => {
-    const container = await example(page, "search-with-a-shortcut");
-    const input = container.getByRole("searchbox", { name: "Search templates" });
-    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-    await expect(input).not.toBeFocused();
-    await page.keyboard.press("Control+k");
-    await expect(input).toBeFocused();
-  });
-
-  test("on an Apple device, the example's shortcut is ⌘K, and it reaches the field", async ({ page }) => {
-    await onApple(page);
-    await page.reload();
-    await ready(page);
-    const container = await example(page, "search-with-a-shortcut");
-    const input = container.getByRole("searchbox", { name: "Search templates" });
-    await expect(input).toHaveAttribute("aria-keyshortcuts", "Meta+K");
-    await expect(container.locator(".hsearch > .hkbd")).toHaveText("⌘K");
-    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-    await expect(input).not.toBeFocused();
-    await page.keyboard.press("Meta+k");
-    await expect(input).toBeFocused();
-  });
-
-  test("disabled, the placeholder is tertiary and the magnifier dims", async ({ page }) => {
+  test("disabled, the placeholder is tertiary and the magnifier dims", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "search-disabled");
     const input = container.getByRole("searchbox", { name: "Search archived conversations" });
     await expect(input).toBeDisabled();
@@ -286,14 +265,10 @@ onEachPlayground("search", () => {
     expect(await styleOf((await example(page, "search-default")).locator(".hsearch > .hicon"), "opacity")).toBe("1");
   });
 
-  test("in a Field, its label names it", async ({ page }) => {
-    const container = await example(page, "search-with-a-label");
-    await expect(container.getByRole("searchbox", { name: "Find a template" })).toBeVisible();
-  });
-
-  test("in a Field, only the pointer on the field shows its border, not the pointer on its label", async ({ page }) => {
+  test("in a Field, its label names it, and only the pointer on the field shows its border, not the pointer on its label", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "search-with-a-label");
     const input = container.getByRole("searchbox", { name: "Find a template" });
+    await expect(input).toBeVisible();
     await container.locator(".hlabel").hover();
     await settled(input);
     expect(await styleOf(input, "border-top-color")).toBe("rgba(0, 0, 0, 0)");

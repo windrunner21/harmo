@@ -3,47 +3,56 @@ import { axe, checkAccessibility } from "./axe.ts";
 import { open, pages, playgrounds, test } from "./playgrounds.ts";
 
 // Every page of both playgrounds loads without an error, gets ready (React),
+// and hides any part of a component that gets hidden; and in Chromium, it
 // passes axe's automated WCAG 2.2 A and AA checks, as it loads and with each
-// example's popup open, and hides any part of a component that gets hidden.
+// example's popup open. axe reads the markup, its roles, names, and colors,
+// which the engines agree on, so it runs in one: in all three, it took a
+// tenth of the suite's time.
 for (const playground of playgrounds) {
   test.describe(playground, () => {
     for (const slug of pages(playground)) {
-      test(slug, async ({ page }) => {
+      test(slug, async ({ page, browserName }) => {
         await open(page, playground, slug);
-        // axe opens each popup twice, which on a page of many takes Firefox and
-        // WebKit over the usual 30 seconds.
-        test.slow((await page.locator(".play-demo .hpopup").count()) >= 5, "A page of many popups");
-        await page.addScriptTag({ path: axe });
-        const { loaded, popups } = await checkAccessibility(page);
-
-        expect.soft(loaded, "accessibility violations").toEqual([]);
-        for (const { trigger, violations } of popups) {
-          expect.soft(violations, `accessibility violations with ${trigger} open`).toEqual([]);
-        }
-
-        // Dark mode changes only colors, so only contrast is checked again.
-        // Waits for the color transitions it starts; other animations, such as
-        // a paused spinner's, may never finish.
-        await page.evaluate(async () => {
-          document.documentElement.style.colorScheme = "dark";
-          await new Promise(requestAnimationFrame);
-          const fading = document.getAnimations().filter((animation) => animation instanceof CSSTransition);
-          await Promise.race([
-            Promise.all(fading.map((animation) => animation.finished.catch(() => {}))),
-            new Promise((resolve) => setTimeout(resolve, 1000)),
-          ]);
-        });
-        const dark = await checkAccessibility(page, ["color-contrast"]);
-        expect.soft(dark.loaded, "contrast in dark mode").toEqual([]);
-        for (const { trigger, violations } of dark.popups) {
-          expect.soft(violations, `contrast in dark mode with ${trigger} open`).toEqual([]);
-        }
+        if (browserName === "chromium") await checkAll(page);
         // Last, as this restarts what's animating on the page.
         expect.soft(await stillShownWhenHidden(page), "elements that stay rendered with hidden").toEqual([]);
       });
     }
   });
 }
+
+// axe's checks, as the page loads and with each popup open, then contrast
+// in dark mode.
+const checkAll = async (page: Page) => {
+  // axe opens each popup twice, which on a page of many takes over the usual
+  // 30 seconds.
+  test.slow((await page.locator(".play-demo .hpopup").count()) >= 5, "A page of many popups");
+  await page.addScriptTag({ path: axe });
+  const { loaded, popups } = await checkAccessibility(page);
+
+  expect.soft(loaded, "accessibility violations").toEqual([]);
+  for (const { trigger, violations } of popups) {
+    expect.soft(violations, `accessibility violations with ${trigger} open`).toEqual([]);
+  }
+
+  // Dark mode changes only colors, so only contrast is checked again.
+  // Waits for the color transitions it starts; other animations, such as
+  // a paused spinner's, may never finish.
+  await page.evaluate(async () => {
+    document.documentElement.style.colorScheme = "dark";
+    await new Promise(requestAnimationFrame);
+    const fading = document.getAnimations().filter((animation) => animation instanceof CSSTransition);
+    await Promise.race([
+      Promise.all(fading.map((animation) => animation.finished.catch(() => {}))),
+      new Promise((resolve) => setTimeout(resolve, 1000)),
+    ]);
+  });
+  const dark = await checkAccessibility(page, ["color-contrast"]);
+  expect.soft(dark.loaded, "contrast in dark mode").toEqual([]);
+  for (const { trigger, violations } of dark.popups) {
+    expect.soft(violations, `contrast in dark mode with ${trigger} open`).toEqual([]);
+  }
+};
 
 // docs/components/README.md: hidden hides any part of any component, at once.
 // Field's error and the password details are the exceptions: they stay rendered

@@ -3,7 +3,8 @@ import { example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/kbd.md says, on the Kbd page: on a filled button, the
 // key is an outline in the label's color, on the button's own fill; on any
-// other button, it keeps its own background.
+// other button, it keeps its own background. Only CSS decides it, so it's
+// tested on the HTML playground.
 const background = (page: Page, token: string) =>
   page.evaluate((token) => {
     const probe = document.createElement("i");
@@ -15,7 +16,7 @@ const background = (page: Page, token: string) =>
   }, token);
 
 onEachPlayground("kbd", () => {
-  test("on a filled button, the key is an outline in the label's color; on a secondary one, it keeps its background", async ({ page }) => {
+  test("on a filled button, the key is an outline in the label's color; on a secondary one, it keeps its background", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "kbd-on-a-button");
     const create = container.getByRole("button", { name: "Create" });
     const filled = create.locator(".hkbd");

@@ -11,7 +11,8 @@ import { boxes, example, expectPosts, expectPostsElsewhere, expectShakeToEndOnIt
 // code" waits 30 seconds, or the example's own, counting down, then sends one
 // and waits again. The form posts the code, so it works before its script
 // runs. The examples' stand-in accepts 123456, fails as a request that can't
-// reach the server does for 000000, and always sends a new code.
+// reach the server does for 000000, and always sends a new code. What the
+// authenticator app's markup alone says is tested on the HTML playground.
 const parts = async (page: Page, id = "verify-code-default") => {
   const container = await example(page, id);
   const form = container.locator(".hauth-form");
@@ -144,7 +145,7 @@ onEachPlayground("verify-code", () => {
     await expect(again).not.toHaveAttribute("aria-busy");
   });
 
-  test("from an authenticator app, it says so, and there's no new code to send", async ({ page }) => {
+  test("from an authenticator app, it says so, and there's no new code to send", { tag: "@css" }, async ({ page }) => {
     const { description, again, back } = await parts(page, "verify-code-from-an-authenticator-app");
     await expect(description).toHaveText("Enter the 6-digit code from your authenticator app.");
     await expect(again).toHaveCount(0);

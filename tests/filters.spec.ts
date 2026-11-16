@@ -3,7 +3,8 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 
 // What docs/components/filters.md says: the first filters in a named row and
 // the rest behind a chip; a count of those in force behind it; Reset, while
-// anything is in force, emptying them all; and right to left, from the right.
+// anything is in force, emptying them all; and right to left, from the right,
+// which only CSS decides, so it's tested on the HTML playground.
 const parts = (container: Locator) => {
   const row = container.getByRole("group", { name: "Filter tasks" });
   const moreChip = row.locator(":scope > .hfilter-chip", { hasText: "More filters" });
@@ -274,7 +275,7 @@ onEachPlayground("filters", () => {
     await expect(all.count).toHaveCSS("background-color", "rgb(0, 0, 200)");
   });
 
-  test("right to left, the first filter is on the right", async ({ page }) => {
+  test("right to left, the first filter is on the right", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "filters-right-to-left");
     const row = container.getByRole("group", { name: "تصفية المهام" });
     const [first, second] = await boxes(row.locator(":scope > .hfilter-chip").first(), row.locator(":scope > .hfilter-chip").last());

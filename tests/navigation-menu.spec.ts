@@ -5,7 +5,9 @@ import { animations, boxes, example, onEachPlayground, settled, slowDown, test }
 // a click, or Enter; one frame resizes as you move between them; Tab goes from
 // a trigger into its links, and closed panels are out of the Tab order; Escape,
 // a press outside, focus leaving, and choosing a link close it; and vertically
-// each panel opens in place.
+// each panel opens in place. Then the Menu Button that opens it on a phone.
+// What only CSS and the markup decide, such as how the current page is marked,
+// is tested on the HTML playground.
 const parts = async (container: Locator) => {
   const nav = container.getByRole("navigation").first();
   const trigger = (name: string) => nav.getByRole("button", { name, exact: true });
@@ -136,7 +138,7 @@ onEachPlayground("navigation-menu", () => {
 
   test("a click keeps a panel the pointer opened, another closes it, and a press outside or a link closes it too", async ({ page }) => {
     const container = await example(page, "navigation-menu-default");
-    const { trigger, panel } = await parts(container);
+    const { trigger, panel, frame } = await parts(container);
     await trigger("Solutions").hover();
     await trigger("Solutions").click();
     await page.mouse.move(0, 0);
@@ -153,6 +155,7 @@ onEachPlayground("navigation-menu", () => {
     await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "false");
 
     await trigger("Solutions").click();
+    await settled(frame);
     await (await panel("Solutions")).getByRole("link", { name: /^Commerce/ }).click();
     await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "false");
   });
@@ -206,7 +209,7 @@ onEachPlayground("navigation-menu", () => {
     expect(frameBox.x).toBeCloseTo(navBox.x, 0);
   });
 
-  test("the current page is marked by its color and weight", async ({ page }) => {
+  test("the current page is marked by its color and weight", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "navigation-menu-current-page");
     const link = container.getByRole("link", { name: "Pricing" });
     await expect(link).toHaveAttribute("aria-current", "page");
@@ -340,8 +343,9 @@ onEachPlayground("navigation-menu", () => {
 
   test("a click with a modifier key leaves it open; choosing a link closes it and returns focus to its trigger", async ({ page }) => {
     const container = await example(page, "navigation-menu-default");
-    const { trigger, panel } = await parts(container);
+    const { trigger, panel, frame } = await parts(container);
     await trigger("Solutions").click();
+    await settled(frame);
     const row = (await panel("Solutions")).getByRole("link", { name: /^Commerce/ });
     await row.click({ modifiers: ["ControlOrMeta"] });
     await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "true");
@@ -650,7 +654,7 @@ onEachPlayground("menu-button", () => {
     await expect(top).not.toHaveCSS("transform", "none");
   });
 
-  test("it's at least the 24px WCAG asks of a target, its bars hidden from screen readers", async ({ page }) => {
+  test("it's at least the 24px WCAG asks of a target, its bars hidden from screen readers", { tag: "@css" }, async ({ page }) => {
     const button = (await example(page, "menu-button-default")).getByRole("button", { name: "Menu" });
     const [box] = await boxes(button);
     expect(box.width).toBeGreaterThanOrEqual(24);

@@ -203,9 +203,12 @@ onEachPlayground("toast", () => {
 
   test("with toasts showing, one with an action and one changed in place, axe finds nothing wrong in the region", async ({ page }) => {
     await page.addScriptTag({ path: axe });
+    // What it showed fades out for 100 seconds, so it's still there to check.
+    await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation-duration: 100s !important; }" });
     await send(page, "toast-with-an-action", "Archive conversation");
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(300);
+    await expect(live(page)).toHaveCount(2);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(1);
     const violations = await page.evaluate(async () => {
@@ -288,7 +291,7 @@ onEachPlayground("toast", () => {
     await watchExits(page);
     await send(page, "toast-a-stack", "Send three");
     await expect(live(page)).toHaveCount(3);
-    await page.waitForTimeout(900);
+    for (const index of [0, 1, 2]) await settled(live(page).nth(index));
     await expect(front(page).locator(".htoast-title")).toHaveText("Chat assigned to you");
     const [frontBox, middle, back] = await boxes(
       front(page),
@@ -333,12 +336,15 @@ onEachPlayground("toast", () => {
           requestAnimationFrame(frame);
         }),
     );
+    // Each once the one before has come in and changed the stack's shape.
     await send(page, "toast-each-status", "Info");
     await page.mouse.move(5, 5);
-    await page.waitForTimeout(500);
+    await expect(live(page)).toHaveCount(1);
+    await settled(front(page));
     await send(page, "toast-each-status", "Warning");
     await page.mouse.move(5, 5);
-    await page.waitForTimeout(500);
+    await expect(live(page)).toHaveCount(2);
+    await settled(front(page));
     await send(page, "toast-each-status", "Success");
     await page.mouse.move(5, 5);
     expect(await drift).toBeLessThan(0.5);
@@ -349,7 +355,7 @@ onEachPlayground("toast", () => {
     await fakeClock(page);
     await send(page, "toast-a-stack", "Send three");
     await expect(live(page)).toHaveCount(3);
-    await page.waitForTimeout(900);
+    for (const index of [0, 1, 2]) await settled(live(page).nth(index));
     const [box] = await boxes(front(page));
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     await expect(region(page)).toHaveAttribute("data-expanded");
@@ -512,7 +518,7 @@ onEachPlayground("toast", () => {
       const container = await example(page, "toast-a-stack");
       await container.getByRole("button", { name: "Send three" }).click();
       await expect(live(page)).toHaveCount(3);
-      await page.waitForTimeout(900);
+      for (const index of [0, 1, 2]) await settled(live(page).nth(index));
       await front(page).tap();
       await expect(region(page)).toHaveAttribute("data-expanded");
       // Longer than a toast lasts.
@@ -625,7 +631,9 @@ onEachPlayground("toast", () => {
     expect(wideAction.y).toBeLessThan(wideContent.y + wideContent.height);
 
     await page.setViewportSize({ width: 300, height: 700 });
-    await page.waitForTimeout(700);
+    // Once it's measured again, and has changed to that size.
+    await expect.poll(async () => (await boxes(front(page)))[0].width).toBeLessThanOrEqual(300 - 32 + 1);
+    await settled(front(page));
     expect(await overflowing(page)).toEqual([]);
     const [box] = await boxes(front(page));
     expect(box.width).toBeLessThanOrEqual(300 - 32 + 1);
@@ -642,7 +650,7 @@ onEachPlayground("toast", () => {
     await page.evaluate(() => (document.documentElement.dir = "rtl"));
     await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation-duration: 100s !important; }" });
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(500);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     const old = page.locator(".htoast-body[data-leaving]");
     await expect(old).toHaveCount(1);
@@ -668,10 +676,22 @@ onEachPlayground("toast", () => {
   test("its exit lasts as long as the tokens say, before it goes", async ({ page }) => {
     await page.addStyleTag({ content: ":root { --harmo-toast-duration: 1s; }" });
     await send(page, "toast-with-an-action", "Archive conversation");
+    await settled(front(page));
+    // How long a toast stays once one starts to leave, as the page times it,
+    // so a busy machine can't make a late check miss it.
+    await page.evaluate(() => {
+      const exit: { start?: number; stayed?: number } = {};
+      (window as unknown as { exit: typeof exit }).exit = exit;
+      new MutationObserver(() => {
+        if (exit.start === undefined && document.querySelector(".htoast[data-removed]")) exit.start = performance.now();
+        if (exit.start !== undefined && exit.stayed === undefined && !document.querySelector(".htoast")) {
+          exit.stayed = performance.now() - exit.start;
+        }
+      }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-removed"] });
+    });
     await live(page).getByRole("button", { name: "Undo" }).click();
-    await page.waitForTimeout(800);
-    await expect(page.locator(".htoast[data-removed]")).toHaveCount(1);
-    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 2000 });
+    await expect(page.locator(".htoast")).toHaveCount(0, { timeout: 2800 });
+    expect(await page.evaluate(() => (window as unknown as { exit: { stayed?: number } }).exit.stayed)).toBeGreaterThan(800);
   });
 
   test("what a changed toast showed fades out in --htoast-leave-duration, and one further back sinks in 1.25 times the toast's duration, so --harmo-toast-duration: 0ms turns both off", async ({ page }) => {
@@ -699,7 +719,7 @@ onEachPlayground("toast", () => {
     // Held, as while the page is hidden, so none leaves meanwhile.
     await setHidden(page, true);
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(300);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     await expect.poll(leaving).toEqual(["0.25s"]);
     await send(page, "toast-default", "Save quick reply");
@@ -767,21 +787,24 @@ onEachPlayground("toast", () => {
   test("moved into a drawer partway through changing, its old content's fade carries on rather than starting again", async ({ page }) => {
     await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation-duration: 100s !important; }" });
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(400);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     const old = page.locator(".htoast-body[data-leaving]");
     await expect(old).toHaveCount(1);
-    await page.waitForTimeout(600);
+    const fadeOf = (body: Locator) =>
+      body.evaluate((node) => {
+        const animations = node.getAnimations();
+        const fade = animations.find((animation) => (animation as CSSAnimation).animationName === "htoast-leave");
+        return [(fade?.effect?.getComputedTiming().progress ?? 0) * 100_000, animations.length - 1];
+      });
+    // Once its fade has played 0.6 seconds.
+    await expect.poll(async () => (await fadeOf(old))[0]).toBeGreaterThan(600);
     const container = await example(page, "toast-over-a-drawer");
     await container.getByRole("button", { name: "New quick reply" }).click();
     await expect.poll(() => region(page).evaluate((node) => !!node.closest("dialog"))).toBe(true);
     // How far through its 100 seconds the fade is: begun again, it would be
     // a few frames in; carried on, past the 0.6 seconds it had played.
-    const [played, others] = await old.evaluate((node) => {
-      const animations = node.getAnimations();
-      const fade = animations.find((animation) => (animation as CSSAnimation).animationName === "htoast-leave");
-      return [(fade?.effect?.getComputedTiming().progress ?? 0) * 100_000, animations.length - 1];
-    });
+    const [played, others] = await fadeOf(old);
     expect(played).toBeGreaterThan(500);
     // And nothing else, such as the content's way in, plays over it.
     expect(others).toBe(0);
@@ -789,13 +812,14 @@ onEachPlayground("toast", () => {
 
   test("a changed toast's old content, once gone, doesn't come back when the toasts move into a drawer", async ({ page }) => {
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(500);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(0);
     const container = await example(page, "toast-over-a-drawer");
     await container.getByRole("button", { name: "New quick reply" }).click();
     await expect.poll(() => region(page).evaluate((node) => !!node.closest("dialog"))).toBe(true);
-    await page.waitForTimeout(100);
+    // Once what the move starts has happened.
+    await rendered(page);
     await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(0);
     await expect(live(page)).toHaveCount(1);
   });
@@ -803,7 +827,7 @@ onEachPlayground("toast", () => {
   test("with its fade turned off by a stylesheet, a changed toast's old content still goes", async ({ page }) => {
     await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation: none !important; }" });
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(300);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     await expect(live(page).locator(".htoast-body:not([data-leaving]) .htoast-title")).toHaveText("Back online");
     await expect(page.locator(".htoast-body[data-leaving]")).toHaveCount(0);
@@ -812,7 +836,7 @@ onEachPlayground("toast", () => {
   test("changed twice in a moment, what it showed each time fades out on its own, at the width it had", async ({ page }) => {
     await page.addStyleTag({ content: ".htoast-body[data-leaving] { animation-duration: 100s !important; }" });
     await send(page, "toast-kept-open-then-changed", "Go offline");
-    await page.waitForTimeout(300);
+    await settled(front(page));
     await send(page, "toast-kept-open-then-changed", "Reconnect");
     await send(page, "toast-kept-open-then-changed", "Go offline");
     const old = page.locator(".htoast-body[data-leaving]");
@@ -1030,11 +1054,12 @@ onEachPlayground("toast", () => {
     test("no toast's text wraps more than its box was measured for", async ({ page }) => {
       for (const name of ["Success", "Error", "Warning", "Info"]) {
         await send(page, "toast-each-status", name);
-        await page.waitForTimeout(100);
+        await rendered(page);
       }
       await send(page, "toast-default", "Save quick reply");
       await send(page, "toast-with-an-action", "Archive conversation");
-      await page.waitForTimeout(600);
+      // Once each has changed to the size it was measured for.
+      for (const toast of await live(page).all()) await settled(toast);
       expect(await overflowing(page)).toEqual([]);
     });
   });

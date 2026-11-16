@@ -1,11 +1,13 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, clickAt, example, onEachPlayground, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, rendered, settled, test } from "./playgrounds.ts";
 
 // What docs/components/command-menu.md says, on the Command Menu page: under
 // a Search field, a click, typing, or the shortcut opens the list; in a
 // dialog, its trigger or the shortcut opens it, with the field and the list.
 // Typing filters by label, description, and keywords and marks what matched;
 // the arrow keys move with focus in the field; Enter goes, and empties it.
+// How the dialog's trigger lines up, mirrors, and lights up only CSS decides,
+// so those tests run on the HTML playground.
 const isOpen = (popup: Locator) => popup.evaluate((node) => node.matches(":popover-open"));
 
 const parts = async (page: Page, id: string) => {
@@ -462,7 +464,8 @@ onEachPlayground("command-menu", () => {
         return { started, after: node.hasAttribute("data-closing") };
       });
       expect(closing).toEqual({ started: true, after: false });
-      await page.waitForTimeout(400);
+      // Past the frame on which it would have closed.
+      await rendered(page);
       await expect(dialog).toHaveJSProperty("open", true);
       await expect(input).toBeFocused();
     });
@@ -483,12 +486,12 @@ onEachPlayground("command-menu", () => {
       await expect(trigger).toHaveCSS("color", tertiary);
       const border = await trigger.evaluate((node) => getComputedStyle(node).borderTopColor);
       await trigger.hover({ force: true });
-      await page.waitForTimeout(200);
+      await settled(trigger);
       await expect(trigger).toHaveCSS("border-top-color", border);
 
       await page.locator("body").click({ position: { x: 1, y: 1 } });
       await page.keyboard.press("Control+k");
-      await page.waitForTimeout(100);
+      await rendered(page);
       await expect(dialog).toHaveJSProperty("open", false);
     });
 
@@ -497,11 +500,11 @@ onEachPlayground("command-menu", () => {
       await page.locator("body").click({ position: { x: 1, y: 1 } });
       await container.locator(".play-demo").evaluate((node) => node.setAttribute("hidden", ""));
       await page.keyboard.press("Control+k");
-      await page.waitForTimeout(100);
+      await rendered(page);
       await expect(dialog).toHaveJSProperty("open", false);
     });
 
-    test("the trigger's magnifier, text, and shortcut are where a Search field's are", async ({ page }) => {
+    test("the trigger's magnifier, text, and shortcut are where a Search field's are", { tag: "@css" }, async ({ page }) => {
       // Each one's distance from the start of its box, and the shortcut's from
       // its end.
       const lineup = (root: Locator, text: string) =>
@@ -522,7 +525,7 @@ onEachPlayground("command-menu", () => {
       expect(opening.kbd).toBeCloseTo(searching.kbd, 0);
     });
 
-    test("right to left, the trigger's padding mirrors", async ({ page }) => {
+    test("right to left, the trigger's padding mirrors", { tag: "@css" }, async ({ page }) => {
       const { container } = await parts(page, "command-menu-in-a-dialog");
       const trigger = container.locator(".hcommand-menu-trigger");
       const [start, end] = await trigger.evaluate((node) => [getComputedStyle(node).paddingLeft, getComputedStyle(node).paddingRight]);
@@ -531,7 +534,7 @@ onEachPlayground("command-menu", () => {
       await expect(trigger).toHaveCSS("padding-left", end);
     });
 
-    test("the trigger lights up on its own hover, not on its Field label's", async ({ page }) => {
+    test("the trigger lights up on its own hover, not on its Field label's", { tag: "@css" }, async ({ page }) => {
       const { container } = await parts(page, "command-menu-in-a-dialog");
       const trigger = container.locator(".hcommand-menu-trigger");
       const resting = await trigger.evaluate((node) => getComputedStyle(node).borderTopColor);

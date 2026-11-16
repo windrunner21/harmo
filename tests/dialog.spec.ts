@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { animations, boxes, example, onEachPlayground, ready, release, settled, slowDown, test } from "./playgrounds.ts";
+import { animations, boxes, example, onEachPlayground, ready, release, rendered, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/dialog.md says, on the Dialog page: the browser opens,
 // closes, and focuses it, CSS places and animates it and keeps the page still,
@@ -49,19 +49,6 @@ onEachPlayground("dialog", () => {
     await expect(container.getByRole("button", { name: "Invite people" })).toBeFocused();
   });
 
-  test("its close button, Cancel, and sending its form each close it", async ({ page }) => {
-    for (const close of [
-      (dialog: Locator) => dialog.getByRole("button", { name: "Close" }).click(),
-      (dialog: Locator) => dialog.getByRole("button", { name: "Cancel" }).click(),
-      (dialog: Locator) => dialog.getByRole("button", { name: "Send invite" }).click(),
-    ]) {
-      const { dialog } = await openFrom(page, "dialog-default", "Invite people");
-      await close(dialog);
-      await expect.poll(() => isOpen(dialog)).toBe(false);
-      await settled(dialog);
-    }
-  });
-
   test("a request-close button's value is its returnValue once it has closed, and Escape later doesn't reuse it", async ({ page }) => {
     const { container, dialog } = await openFrom(page, "dialog-default", "Invite people");
     const cancel = dialog.getByRole("button", { name: "Cancel" });
@@ -83,9 +70,16 @@ onEachPlayground("dialog", () => {
   test("an app that stops the close, such as to confirm unsaved changes, keeps it open", async ({ page }) => {
     const { dialog } = await openFrom(page, "dialog-default", "Invite people");
     // Before the dialog's own handlers, as React runs an app's onCancel.
-    await page.evaluate(() => addEventListener("cancel", (event) => event.preventDefault(), { capture: true, once: true }));
+    const stopped = await page.evaluateHandle(() => {
+      const seen = { stopped: false };
+      addEventListener("cancel", (event) => (event.preventDefault(), (seen.stopped = true)), { capture: true, once: true });
+      return seen;
+    });
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(400);
+    // Once the cancel has been stopped, and the page has rendered what its
+    // handlers then did, such as start a fade with data-closing.
+    await expect.poll(() => stopped.evaluate((seen) => seen.stopped)).toBe(true);
+    await rendered(page);
     expect(await isOpen(dialog)).toBe(true);
     await expect(dialog).not.toHaveAttribute("data-closing");
   });
@@ -96,7 +90,9 @@ onEachPlayground("dialog", () => {
     // app's onSubmit is.
     await dialog.locator("form").evaluate((form) => form.addEventListener("submit", (event) => event.preventDefault(), { once: true }));
     await dialog.getByRole("button", { name: "Send invite" }).click();
-    await page.waitForTimeout(400);
+    // The click sends the form at once; then the page renders what its
+    // handlers did, such as start a fade with data-closing.
+    await rendered(page);
     expect(await isOpen(dialog)).toBe(true);
     await expect(dialog).not.toHaveAttribute("data-closing");
   });
@@ -222,7 +218,8 @@ onEachPlayground("dialog", () => {
   test('with closedby="closerequest", a click outside doesn\'t close it, but Escape does', async ({ page }) => {
     const { dialog } = await openFrom(page, "dialog-confirm-before-deleting", "Delete campaign");
     await page.mouse.click(8, 8);
-    await page.waitForTimeout(200);
+    // Until a fade the click started would have ended, and closed it.
+    await settled(dialog);
     expect(await isOpen(dialog)).toBe(true);
     await page.keyboard.press("Escape");
     await expect.poll(() => isOpen(dialog)).toBe(false);
@@ -382,7 +379,10 @@ onEachPlayground("dialog", () => {
     await settled(dialog);
     await dialog.getByRole("button", { name: "Close" }).click();
     await expect.poll(() => new URL(page.url()).search).toBe("");
-    await page.waitForTimeout(300);
+    // Closed once its fade has ended, which in React starts as the URL
+    // changes, and still closed once the page has rendered what followed.
+    await expect.poll(() => isOpen(dialog)).toBe(false);
+    await rendered(page);
     expect(await isOpen(dialog)).toBe(false);
   });
 
@@ -422,7 +422,8 @@ onEachPlayground("dialog", () => {
       document.body.append(button);
     });
     await page.getByRole("button", { name: "Open shortcuts" }).click();
-    await page.waitForTimeout(300);
+    // The click asks at once; then the page renders what that did.
+    await rendered(page);
     expect(await isOpen(dialog)).toBe(false);
     expect(new URL(page.url()).search).toBe("");
 

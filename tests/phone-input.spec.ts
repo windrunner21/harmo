@@ -1,10 +1,12 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, openPopup, ready, settled, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, openPopup, ready, settled, test } from "./playgrounds.ts";
 
 // What docs/components/phone-input.md says: a searchable country code, a number
 // formatted as it's typed with the caret kept among the digits, a full number
 // that's pasted setting the country, the digits going when the country changes,
-// and the number in E.164 for your app and a form.
+// and the number in E.164 for your app and a form. What the markup and CSS
+// alone decide, such as its names, a number it starts with, and where its parts
+// sit, is tested on the HTML playground.
 onEachPlayground("phone-input", () => {
   const parts = async (page: Page, id: string) => {
     const container = await example(page, `phone-input-${id}`);
@@ -20,7 +22,7 @@ onEachPlayground("phone-input", () => {
   const caret = (page: Page) =>
     page.evaluate(() => (document.activeElement as HTMLInputElement).selectionStart);
 
-  test("the field is named by the Field's label, and the Select by its own", async ({ page }) => {
+  test("the field is named by the Field's label, and the Select by its own", { tag: "@css" }, async ({ page }) => {
     const { field, country } = await parts(page, "default");
     await expect(field).toHaveAccessibleName("Phone");
     await expect(country).toHaveAccessibleName("Country code");
@@ -40,7 +42,7 @@ onEachPlayground("phone-input", () => {
       [value, caretAt, init] as const,
     );
 
-  test("the closed button names its country for a screen reader", async ({ page }) => {
+  test("the closed button names its country for a screen reader", { tag: "@css" }, async ({ page }) => {
     const { country } = await parts(page, "with-a-number-already");
     const name = country.locator(".hphone-input-name");
     await expect(name).toHaveText("Azerbaijan");
@@ -149,19 +151,14 @@ onEachPlayground("phone-input", () => {
     await expect(hidden).toHaveValue("");
   });
 
-  test("the check mark follows the country", async ({ page }) => {
-    const { field, list } = await parts(page, "default");
-    await field.fill("+994501234567");
-    await expect(list.locator(".hoption-check")).toHaveCount(1);
-    await expect(list.locator('.hoption[aria-selected="true"] .hoption-check')).toHaveCount(1);
-    await expect(list.locator('.hoption[aria-selected="true"]')).toContainText("Azerbaijan");
-  });
-
-  test("a full number that's pasted sets the country and shows nationally", async ({ page }) => {
-    const { field, country } = await parts(page, "default");
+  test("a full number that's pasted sets the country, with the check mark following it, and shows nationally", async ({ page }) => {
+    const { field, country, list } = await parts(page, "default");
     await field.fill("+994501234567");
     await expect(country).toContainText("+994");
     await expect(field).toHaveValue("050 123 45 67");
+    await expect(list.locator(".hoption-check")).toHaveCount(1);
+    await expect(list.locator('.hoption[aria-selected="true"] .hoption-check')).toHaveCount(1);
+    await expect(list.locator('.hoption[aria-selected="true"]')).toContainText("Azerbaijan");
   });
 
   test("the list can be searched by name and by code", async ({ page }) => {
@@ -182,7 +179,8 @@ onEachPlayground("phone-input", () => {
     const { field, country, list } = await parts(page, "default");
     await field.fill("4155552671");
     await country.click();
-    await list.locator('.hoption:has-text("Azerbaijan")').click();
+    // Once the list has opened and settled, so the click lands on the option.
+    await clickAt(page, list.locator('.hoption:has-text("Azerbaijan")'));
     await expect(country).toContainText("+994");
     await expect(field).toHaveValue("");
     await expect(field).toBeFocused();
@@ -205,7 +203,7 @@ onEachPlayground("phone-input", () => {
     await expect(field).toHaveValue("(415) 555-2671");
   });
 
-  test("a number to start with sets the country", async ({ page }) => {
+  test("a number to start with sets the country", { tag: "@css" }, async ({ page }) => {
     const { field, country } = await parts(page, "with-a-number-already");
     await expect(field).toHaveValue("050 123 45 67");
     await expect(country).toContainText("+994");
@@ -228,14 +226,14 @@ onEachPlayground("phone-input", () => {
     await expect(status).toHaveText("Not a complete number yet");
   });
 
-  test("the country's button has a Select's insets, so it lines up with one", async ({ page }) => {
+  test("the country's button has a Select's insets, so it lines up with one", { tag: "@css" }, async ({ page }) => {
     const { country } = await parts(page, "default");
     const [box, value, chevron] = await boxes(country, country.locator(".hselect-value"), country.locator(".hexpand-chevron"));
     expect(value.x - box.x).toBeCloseTo(11, 0);
     expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
   });
 
-  test("only the pointer on the field lights its border, not the pointer on its label", async ({ page }) => {
+  test("only the pointer on the field lights its border, not the pointer on its label", { tag: "@css" }, async ({ page }) => {
     const { container, field } = await parts(page, "default");
     const border = () => field.evaluate((node) => getComputedStyle(node).borderTopColor);
     const rest = await border();
@@ -247,17 +245,17 @@ onEachPlayground("phone-input", () => {
     expect(await border()).not.toBe(rest);
   });
 
-  test("an example number can be the placeholder", async ({ page }) => {
+  test("an example number can be the placeholder", { tag: "@css" }, async ({ page }) => {
     const { field } = await parts(page, "an-example-as-the-placeholder");
     await expect(field).toHaveAttribute("placeholder", /\(\d{3}\) \d{3}-\d{4}/);
   });
 
-  test("your own flags replace the emoji", async ({ page }) => {
+  test("your own flags replace the emoji", { tag: "@css" }, async ({ page }) => {
     const { country } = await parts(page, "your-own-flags");
     await expect(country.locator(".hphone-input-flag")).toHaveText("US");
   });
 
-  test("right to left, the number still reads left to right, at the end", async ({ page }) => {
+  test("right to left, the number still reads left to right, at the end", { tag: "@css" }, async ({ page }) => {
     const { field, country } = await parts(page, "right-to-left");
     await expect(field).toHaveCSS("direction", "ltr");
     await expect(field).toHaveCSS("text-align", "end");
@@ -265,7 +263,7 @@ onEachPlayground("phone-input", () => {
     expect(control!.x).toBeGreaterThan(phone!.x);
   });
 
-  test("disabled, nothing can be chosen or typed", async ({ page }) => {
+  test("disabled, nothing can be chosen or typed", { tag: "@css" }, async ({ page }) => {
     const { field, country } = await parts(page, "disabled");
     await expect(field).toBeDisabled();
     await expect(country).toBeDisabled();
@@ -289,7 +287,7 @@ onEachPlayground("phone-input", () => {
     const { container, field, hidden, country, list } = await parts(page, "in-a-form");
     await expect(hidden).toHaveValue("+14155552671");
     await country.click();
-    await list.locator('.hoption:has-text("Azerbaijan")').click();
+    await clickAt(page, list.locator('.hoption:has-text("Azerbaijan")'));
     await expect(hidden).toHaveValue("");
     await field.fill("0501234567");
     await expect(hidden).toHaveValue("+994501234567");

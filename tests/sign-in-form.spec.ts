@@ -27,7 +27,9 @@ import {
 // staying hidden with what was typed until "Back to sign in". The examples'
 // stand-in signs in with the password "harmo" only, and not as
 // new@example.com, whose email it says hasn't been confirmed; it fails for
-// error@example.com, and with a second step, 123456 is the code.
+// error@example.com, and with a second step, 123456 is the code. How the
+// form looks, which only CSS and the markup decide, is tested on the HTML
+// playground.
 const parts = async (page: Page, id = "sign-in-form-default") => {
   const container = await example(page, id);
   const form = container.locator(".hauth-form").first();
@@ -53,7 +55,7 @@ const color = (page: Page, name: string) =>
   }, name);
 
 onEachPlayground("sign-in-form", () => {
-  test("a raised Card: the link at the end of the password's label row, and the button the form's width", async ({ page }) => {
+  test("a raised Card: the link at the end of the password's label row, and the button the form's width", { tag: "@css" }, async ({ page }) => {
     const { form, button, link } = await parts(page);
     await expect(form).toHaveAttribute("data-variant", "raised");
     await expect(form).toHaveCSS("padding-top", "42px");
@@ -72,7 +74,7 @@ onEachPlayground("sign-in-form", () => {
     await expect(email).toHaveAttribute("aria-invalid", "true");
     await expect(password).toHaveAttribute("aria-invalid", "true");
     await expect(email).toBeFocused();
-    expect(await form.evaluate((node) => node.getAnimations().length)).toBe(1);
+    await expect.poll(() => shakesOf(form)).toBe(1);
   });
 
   test("the shake ends with its own animation, not with one inside the form, such as the loading button's spinner appearing", async ({ page }) => {
@@ -159,10 +161,10 @@ onEachPlayground("sign-in-form", () => {
     const { form, email, button } = await parts(page);
     await button.click();
     await expect.poll(() => errorOf(email)).toBe("Enter your email address.");
-    expect(await form.evaluate((node) => node.getAnimations().length)).toBe(0);
+    expect(await shakesOf(form)).toBe(0);
   });
 
-  test("with the link below the field, it sits at the field's end, a small step under it, at the label's size", async ({ page }) => {
+  test("with the link below the field, it sits at the field's end, a small step under it, at the label's size", { tag: "@css" }, async ({ page }) => {
     const { form, link } = await parts(page, "sign-in-form-link-below-the-field");
     const field = form.locator(".hauth-form-password > .hfield");
     const [box, end] = await boxes(field, link);
@@ -171,7 +173,7 @@ onEachPlayground("sign-in-form", () => {
     await expect(link).toHaveCSS("font-size", "14px");
   });
 
-  test("with other accounts, \"or\" follows the button, then a secondary link to each, as wide as the form, its logo first", async ({ page }) => {
+  test("with other accounts, \"or\" follows the button, then a secondary link to each, as wide as the form, its logo first", { tag: "@css" }, async ({ page }) => {
     await expect((await parts(page)).form.locator(".hauth-form-divider, .hauth-form-providers")).toHaveCount(0);
     const { form, button } = await parts(page, "sign-in-form-with-other-accounts");
     const divider = form.locator(".hauth-form-divider");
@@ -217,7 +219,7 @@ onEachPlayground("sign-in-form", () => {
     expect(logo!.x + logo!.width).toBeLessThanOrEqual(label!.x + 0.5);
   });
 
-  test("with many other accounts, they go two to a row, each showing its name and named \"Continue with\" it", async ({ page }) => {
+  test("with many other accounts, they go two to a row, each showing its name and named \"Continue with\" it", { tag: "@css" }, async ({ page }) => {
     const { form, button } = await parts(page, "sign-in-form-with-many-other-accounts");
     const names = ["Google", "Apple", "Microsoft", "GitHub", "X", "OpenAI"];
     const links = names.map((name) => form.getByRole("link", { name: `Continue with ${name}`, exact: true }));

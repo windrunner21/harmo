@@ -3,24 +3,30 @@ import { expectActive } from "./lists.ts";
 import { boxes, clickAt, example, onEachPlayground, openPopup, settled, test } from "./playgrounds.ts";
 
 // What docs/components/language-picker.md says a script does, on the Language
-// Picker page.
+// Picker page, and how the button looks; what only CSS and the markup decide,
+// as the closed button does, is tested on the HTML playground.
 onEachPlayground("language-picker", () => {
-  test("a button named by its label, showing the language in use in its own", async ({ page }) => {
+  test("a button named by its label, showing the language in use in its own", { tag: "@css" }, async ({ page }) => {
     const { trigger } = await picker(page, "language-picker-default", "Language");
     await expect(trigger).toHaveAttribute("data-variant", "tertiary");
     await expect(trigger).toHaveAttribute("aria-haspopup", "listbox");
     await expect(trigger.locator('.hbutton-label > [lang="en"]')).toHaveText("English");
   });
 
-  test("choosing a language shows it in the button, in its own language, and closes", async ({ page }) => {
+  // In React, the example's value is its own state, which only onValueChange sets,
+  // so the button shows a choice only if your app was told of it.
+  test("choosing a language shows it in the button, in its own language, and closes; your app is told of it, and the button follows its value", async ({ page }) => {
     const { container, trigger, listbox } = await picker(page, "language-picker-default", "Language");
     await trigger.click();
-    await listbox.getByRole("option", { name: "Français" }).click();
+    await clickAt(page, listbox.getByRole("option", { name: "Français" }));
     await expect(openPopup(container)).toHaveCount(0);
     await expect(trigger.locator(".hbutton-label > [lang]")).toHaveAttribute("lang", "fr");
     await expect(trigger.locator(".hbutton-label")).toHaveText("Français");
     // Hidden too, as the list may have finished fading out by now.
     await expect(listbox.getByRole("option", { name: "Français", includeHidden: true })).toHaveAttribute("aria-selected", "true");
+    await trigger.click();
+    await expect(listbox.getByRole("option", { name: "Français" })).toHaveAttribute("aria-selected", "true");
+    await expect(listbox.getByRole("option", { name: "English" })).toHaveAttribute("aria-selected", "false");
   });
 
   test("a click the app stops, with preventDefault() in its own handler on the option, chooses nothing", async ({ page }) => {
@@ -43,20 +49,7 @@ onEachPlayground("language-picker", () => {
     await expect(listbox.getByRole("option", { name: "Français", includeHidden: true })).toHaveAttribute("aria-selected", "true");
   });
 
-  // In React, the example's value is its own state, which only onValueChange sets,
-  // so the button shows a choice only if your app was told of it.
-  test("your app is told of the language chosen, and the button follows its value", async ({ page }) => {
-    const { container, trigger, listbox } = await picker(page, "language-picker-default", "Language");
-    await trigger.click();
-    await settled(openPopup(container));
-    await listbox.getByRole("option", { name: "Español" }).click();
-    await expect(trigger.locator('.hbutton-label > [lang="es"]')).toHaveText("Español");
-    await trigger.click();
-    await expect(listbox.getByRole("option", { name: "Español" })).toHaveAttribute("aria-selected", "true");
-    await expect(listbox.getByRole("option", { name: "English" })).toHaveAttribute("aria-selected", "false");
-  });
-
-  test("names too long for the button end with an ellipsis, inside it", async ({ page }) => {
+  test("names too long for the button end with an ellipsis, inside it", { tag: "@css" }, async ({ page }) => {
     const { trigger } = await picker(page, "language-picker-by-region", "Region and language");
     await trigger.evaluate((n) => ((n as HTMLElement).style.maxInlineSize = "8rem"));
     const [button, chevron] = await boxes(trigger, trigger.locator(".hexpand-chevron"));
@@ -96,6 +89,7 @@ onEachPlayground("language-picker", () => {
     await expect(trigger).toMatchAriaSnapshot('- combobox "Region and language": United States (English)');
 
     await trigger.click();
+    await settled(openPopup(container));
     await listbox.getByRole("group", { name: "Spain" }).getByRole("option", { name: "English" }).click();
     await expect(openPopup(container)).toHaveCount(0);
     await expect(region).toHaveText("Spain");
@@ -360,7 +354,7 @@ onEachPlayground("language-picker", () => {
     await expect(trigger).toHaveCSS("background-color", hover);
   });
 
-  test("right to left, the globe and the chevron swap sides", async ({ page }) => {
+  test("right to left, the globe and the chevron swap sides", { tag: "@css" }, async ({ page }) => {
     const { trigger } = await picker(page, "language-picker-right-to-left", "اللغة");
     const [globe, label, chevron] = await boxes(trigger.locator(".hicon"), trigger.locator(".hbutton-label"), trigger.locator(".hexpand-chevron"));
     expect(globe!.x).toBeGreaterThan(label!.x);

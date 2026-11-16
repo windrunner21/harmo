@@ -3,9 +3,11 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/input.md says, on the Input page: the text starts 10px
 // in, as every text field's does, and a search field has none of the
-// browsers' own clear button or decorations.
+// browsers' own clear button or decorations. Where the text and a button
+// beside it sit, which only CSS and the markup decide, is tested on the HTML
+// playground.
 onEachPlayground("input", () => {
-  test("its text starts and ends 10px in from the border", async ({ page }) => {
+  test("its text starts and ends 10px in from the border", { tag: "@css" }, async ({ page }) => {
     const input = (await example(page, "input-default")).getByLabel("Company");
     expect(await input.evaluate((node) => getComputedStyle(node).paddingLeft)).toBe("10px");
     expect(await input.evaluate((node) => getComputedStyle(node).paddingRight)).toBe("10px");
@@ -25,7 +27,7 @@ onEachPlayground("input", () => {
     await expect(input).toHaveValue("Sam");
   });
 
-  test("next to a button, the input takes the room the button leaves, 10px from it", async ({ page }) => {
+  test("next to a button, the input takes the room the button leaves, 10px from it", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "input-next-to-a-button");
     const [input, button] = await boxes(container.getByRole("searchbox"), container.getByRole("button", { name: "Search" }));
     expect(button.x - (input.x + input.width)).toBeCloseTo(10, 0);

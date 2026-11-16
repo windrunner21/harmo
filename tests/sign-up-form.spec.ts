@@ -22,7 +22,9 @@ import { boxes, example, expectPosts, expectPostsElsewhere, expectShakeToEndOnIt
 // what was typed until "use another email". The examples' stand-in finds an
 // account already using sam@example.com, but for those that confirm the
 // email, says "Password123!" has appeared in a data breach, fails for
-// error@example.com, and signs up anything else; 123456 is the code.
+// error@example.com, and signs up anything else; 123456 is the code. How the
+// card and its parts look, which only CSS and the markup decide, is tested on
+// the HTML playground.
 const parts = async (page: Page, id = "sign-up-form-default") => {
   const container = await example(page, id);
   const form = container.locator(".hauth-form").first();
@@ -80,7 +82,7 @@ const expectSmall = async (checkbox: Locator) => {
 };
 
 onEachPlayground("sign-up-form", () => {
-  test("a raised Card: the terms' line and the band link out, and the button is the form's width", async ({ page }) => {
+  test("a raised Card: the terms' line and the band link out, and the button is the form's width", { tag: "@css" }, async ({ page }) => {
     const { form, button, signIn } = await parts(page);
     await expect(form.getByRole("checkbox")).toHaveCount(0);
     await expect(form).toHaveAttribute("data-variant", "raised");
@@ -93,7 +95,7 @@ onEachPlayground("sign-up-form", () => {
     await expect(form.locator(".hauth-form-footer")).toHaveText("Already have an account? Sign in");
   });
 
-  test("the terms' line is 13px secondary text, centered 10px under the button, which it describes", async ({ page }) => {
+  test("the terms' line is 13px secondary text, centered 10px under the button, which it describes", { tag: "@css" }, async ({ page }) => {
     const { form, button, agreement } = await parts(page);
     const words = "By creating an account, you agree to our Terms of Service and Privacy Policy.";
     await expect(agreement).toHaveText(words);
@@ -113,7 +115,7 @@ onEachPlayground("sign-up-form", () => {
     }
   });
 
-  test("the line to sign in is a tinted band inset a small step from the card's sides and bottom, 42px under the terms' line", async ({ page }) => {
+  test("the line to sign in is a tinted band inset a small step from the card's sides and bottom, 42px under the terms' line", { tag: "@css" }, async ({ page }) => {
     const { form, agreement, signIn } = await parts(page);
     const footer = form.locator(".hauth-form-footer");
     const [box, line, band] = await boxes(form, agreement, footer);
@@ -143,7 +145,7 @@ onEachPlayground("sign-up-form", () => {
     expect(await errorOf(password)).toBe("Enter a password.");
     for (const input of [name, email, password]) await expect(input).toHaveAttribute("aria-invalid", "true");
     await expect(name).toBeFocused();
-    expect(await form.evaluate((node) => node.getAnimations().length)).toBe(1);
+    await expect.poll(() => shakesOf(form)).toBe(1);
   });
 
   test("the shake ends with its own animation, not with one inside the form, such as the loading button's spinner appearing", async ({ page }) => {
@@ -151,7 +153,7 @@ onEachPlayground("sign-up-form", () => {
     await expectShakeToEndOnItsOwn(form, () => button.click());
   });
 
-  test("with a terms checkbox, there's no line, and the box is small, its label secondary text, its links medium", async ({ page }) => {
+  test("with a terms checkbox, there's no line, and the box is small, its label secondary text, its links medium", { tag: "@css" }, async ({ page }) => {
     const { form, terms, button, agreement } = await parts(page, "sign-up-form-with-a-terms-checkbox");
     await expect(agreement).toHaveCount(0);
     await expect(button).not.toHaveAttribute("aria-describedby");
@@ -327,7 +329,7 @@ onEachPlayground("sign-up-form", () => {
     const { form, name, button } = await parts(page);
     await button.click();
     await expect.poll(() => errorOf(name)).toBe("Enter your name.");
-    expect(await form.evaluate((node) => node.getAnimations().length)).toBe(0);
+    expect(await shakesOf(form)).toBe(0);
   });
 
   test("without the name, there's no name field, and the email is the first to take focus", async ({ page }) => {
@@ -380,7 +382,7 @@ onEachPlayground("sign-up-form", () => {
     await expect(marketing).toBeChecked();
   });
 
-  test("with other accounts, \"or\" follows the terms' line, then a secondary link to each, as wide as the form, its logo first", async ({ page }) => {
+  test("with other accounts, \"or\" follows the terms' line, then a secondary link to each, as wide as the form, its logo first", { tag: "@css" }, async ({ page }) => {
     const { form, button, agreement } = await parts(page, "sign-up-form-with-other-accounts");
     const divider = form.locator(".hauth-form-divider");
     const footer = form.locator(".hauth-form-footer");
@@ -427,7 +429,7 @@ onEachPlayground("sign-up-form", () => {
     expect(logo!.x + logo!.width).toBeLessThanOrEqual(label!.x + 0.5);
   });
 
-  test("with many other accounts, they go two to a row, each showing its name and named \"Continue with\" it", async ({ page }) => {
+  test("with many other accounts, they go two to a row, each showing its name and named \"Continue with\" it", { tag: "@css" }, async ({ page }) => {
     const { form, button } = await parts(page, "sign-up-form-with-many-other-accounts");
     const names = ["Google", "Apple", "Microsoft", "GitHub", "X", "OpenAI"];
     const links = names.map((name) => form.getByRole("link", { name: `Continue with ${name}`, exact: true }));

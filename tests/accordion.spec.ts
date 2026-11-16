@@ -6,6 +6,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // open one at a time; the content grows as it opens and shrinks as it closes,
 // with the chevron folding; and a closed item is only its summary.
 // In the demo: each example's code panel below it is an Accordion item too.
+// The summary's spacing on the scale, and a hidden first item's line, only
+// CSS decides, so those tests run on the HTML playground.
 const items = async (page: Page, id: string) => (await example(page, id)).locator(".play-demo .haccordion-item");
 const isOpen = (item: Locator) => item.evaluate((node) => (node as HTMLDetailsElement).open);
 const height = (element: Locator) => element.evaluate((node) => node.getBoundingClientRect().height);
@@ -81,19 +83,16 @@ onEachPlayground("accordion", () => {
     const closed = await height(summary);
     await expect.poll(() => height(item)).toBeCloseTo(closed, 0);
 
+    // Partway, once it has started: grown, and not yet all the way.
     await slowDown(page);
     await summary.click();
-    await page.waitForTimeout(600);
-    const opening = await height(item);
-    expect(opening).toBeGreaterThan(closed + 1);
-    expect(opening).toBeLessThan(full - 1);
+    await expect.poll(() => height(item)).toBeGreaterThan(closed + 1);
+    expect(await height(item)).toBeLessThan(full - 1);
 
     await expect.poll(() => height(item), { timeout: 8000 }).toBeCloseTo(full, 0);
     await summary.click();
-    await page.waitForTimeout(600);
-    const closing = await height(item);
-    expect(closing).toBeLessThan(full - 1);
-    if (browserName !== "webkit") expect(closing).toBeGreaterThan(closed + 1);
+    await expect.poll(() => height(item)).toBeLessThan(full - 1);
+    if (browserName !== "webkit") expect(await height(item)).toBeGreaterThan(closed + 1);
   });
 
   test("with reduced motion, it opens and closes at once", async ({ page }) => {
@@ -106,7 +105,7 @@ onEachPlayground("accordion", () => {
     expect(await height(item)).toBeCloseTo(await height(summary), 0);
   });
 
-  test("the summary's 16px above and below, and before the chevron, is --harmo-space-sm, so a theme that changes the scale changes it", async ({ page }) => {
+  test("the summary's 16px above and below, and before the chevron, is --harmo-space-sm, so a theme that changes the scale changes it", { tag: "@css" }, async ({ page }) => {
     const [item] = await (await items(page, "accordion-default")).all();
     const summary = item.locator("summary");
     await expect(summary).toHaveCSS("padding-top", "16px");
@@ -192,7 +191,7 @@ onEachPlayground("accordion", () => {
     await expect.poll(() => isOpen(item)).toBe(false);
   });
 
-  test("a hidden first item leaves no line above the next", async ({ page }) => {
+  test("a hidden first item leaves no line above the next", { tag: "@css" }, async ({ page }) => {
     const [first, second, third] = await (await items(page, "accordion-default")).all();
     await expect(second).toHaveCSS("border-top-width", "1px");
     await first.evaluate((node) => ((node as HTMLElement).hidden = true));

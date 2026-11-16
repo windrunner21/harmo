@@ -34,7 +34,9 @@ import {
 // error@example.com, and turns down an address at gmial.com in a message or
 // a support request, a personal address or a link in the message in a sales
 // inquiry, a file that isn't a picture, a PDF, or text in a support request,
-// a photo that isn't a JPEG, PNG, or WebP, and order 9999.
+// a photo that isn't a JPEG, PNG, or WebP, and order 9999. What only CSS and
+// the markup decide, such as the layout, the names, and the placeholders, is
+// tested on the HTML playground.
 const parts = async (page: Page, id = "contact-form-default") => {
   const container = await example(page, id);
   const card = container.locator(".hcontact-form");
@@ -84,7 +86,6 @@ const text = (name: string) => ({ name, mimeType: "text/plain", buffer: Buffer.f
 
 const inReact = (page: Page) => page.url().includes("/examples/react/");
 
-// Fills a support request in, with a topic, ready to send.
 // Chooses an option once its list has opened and settled, so the click
 // doesn't land where the opening list hasn't reached yet.
 const choose = async (container: Locator, select: string, option: string) => {
@@ -95,6 +96,7 @@ const choose = async (container: Locator, select: string, option: string) => {
   await popup.locator(`.hoption:has-text("${option}")`).click();
 };
 
+// Fills a support request in, with a topic, ready to send.
 const fillSupportRequest = async ({ container, form }: Awaited<ReturnType<typeof parts>>, email = "sam@example.com") => {
   await form.getByLabel("Email").fill(email);
   await choose(container, "Topic", "Billing");
@@ -110,7 +112,7 @@ const fillOrderHelp = async ({ container, form }: Awaited<ReturnType<typeof part
 };
 
 onEachPlayground("contact-form", () => {
-  test("a raised Card, with the name and email side by side, and the button the form's width", async ({ page }) => {
+  test("a raised Card, with the name and email side by side, and the button the form's width", { tag: "@css" }, async ({ page }) => {
     const { card, form, button } = await parts(page);
     await expect(card).toHaveAttribute("data-variant", "raised");
     await expect(card).toHaveCSS("padding-top", "42px");
@@ -398,7 +400,7 @@ onEachPlayground("contact-form", () => {
     await expect(thanks).toBeHidden();
   });
 
-  test("each form's controls are named, so it can be sent without its script", async ({ page }) => {
+  test("each form's controls are named, so it can be sent without its script", { tag: "@css" }, async ({ page }) => {
     const named = {
       "contact-form-default": ["name", "email", "message"],
       "contact-form-sales-inquiry": ["email", "name", "phone", "country", "website", "message"],
@@ -433,7 +435,7 @@ onEachPlayground("contact-form", () => {
     if (!inReact(page)) for (const form of await withFiles.all()) await expect(form).toHaveAttribute("enctype", "multipart/form-data");
   });
 
-  test("with nothing to say, the error above the button takes no room", async ({ page }) => {
+  test("with nothing to say, the error above the button takes no room", { tag: "@css" }, async ({ page }) => {
     const { form, failure, button } = await parts(page);
     const [fields, submit] = await boxes(form.locator(".hcontact-form-fields"), button);
     expect(submit!.y - (fields!.y + fields!.height)).toBeCloseTo(26, 0);
@@ -459,6 +461,8 @@ onEachPlayground("contact-form", () => {
     await expect(shown.first()).toHaveText("Afghanistan");
     await container.locator(".hlistbox-search-input").fill("germ");
     await expect(shown).toHaveCount(1);
+    // Once the list has opened and settled, so the click lands on the option.
+    await settled(openPopup(container));
     await shown.first().click();
     await expect(country).toHaveText("Germany");
     await expect(form.locator('select[name="country"]')).toHaveValue("DE");
@@ -520,7 +524,7 @@ onEachPlayground("contact-form", () => {
     }
   });
 
-  test("the sales form marks what's optional, counts its message to 300, and links to the privacy policy", async ({ page }) => {
+  test("the sales form marks what's optional, counts its message to 300, and links to the privacy policy", { tag: "@css" }, async ({ page }) => {
     const { form } = await parts(page, "contact-form-sales-inquiry");
     await expect(form.locator(".hfield-optional")).toHaveCount(4);
     await expect(form.locator(".htextarea-counter")).toHaveText("0/300");
@@ -537,8 +541,7 @@ onEachPlayground("contact-form", () => {
     expect(await errorOf(form.getByLabel("Subject"))).toBe("Enter a subject.");
     await expect(topic).toHaveAttribute("aria-invalid", "true");
     await expect(topic).toBeFocused();
-    await topic.click();
-    await container.locator('.hoption:has-text("Billing")').click();
+    await choose(container, "Topic", "Billing");
     await expect(topic).toHaveText("Billing");
     await expect.poll(() => errorOf(topic)).toBe("");
     await expect(topic).not.toHaveAttribute("aria-invalid");
@@ -579,8 +582,7 @@ onEachPlayground("contact-form", () => {
     await expect.poll(() => errorOf(problem)).toBe("Choose what's wrong with your order.");
     await expect(problem).toHaveAttribute("aria-invalid", "true");
     await expect(problem).toBeFocused();
-    await problem.click();
-    await container.locator('.hoption:has-text("An item is missing")').click();
+    await choose(container, "What's wrong?", "An item is missing");
     await expect(problem).toHaveText("An item is missing");
     await expect.poll(() => errorOf(problem)).toBe("");
     await expect(problem).not.toHaveAttribute("aria-invalid");
@@ -595,7 +597,7 @@ onEachPlayground("contact-form", () => {
     }
   });
 
-  test("every form's message starts four lines tall", async ({ page }) => {
+  test("every form's message starts four lines tall", { tag: "@css" }, async ({ page }) => {
     for (const id of ["contact-form-default", "contact-form-sales-inquiry", "contact-form-support-request", "contact-form-order-help"]) {
       const { form } = await parts(page, id);
       const message = form.getByLabel("Message");
@@ -605,7 +607,7 @@ onEachPlayground("contact-form", () => {
     }
   });
 
-  test("each text field's placeholder is an example of what to type, not its label", async ({ page }) => {
+  test("each text field's placeholder is an example of what to type, not its label", { tag: "@css" }, async ({ page }) => {
     const placeholders = {
       "contact-form-default": {
         Name: "Sam Lee",
@@ -661,7 +663,7 @@ onEachPlayground("contact-form", () => {
     await expect(thanks.locator("strong")).toHaveText(["1042", "sam@example.com"]);
   });
 
-  test("the contact options are raised Cards side by side, their links lined up at the bottom", async ({ page }) => {
+  test("the contact options are raised Cards side by side, their links lined up at the bottom", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "contact-form-contact-options");
     const cards = container.locator(".hcontact-options-item");
     await expect(cards).toHaveCount(3);
@@ -680,7 +682,7 @@ onEachPlayground("contact-form", () => {
     expect(first!.y + first!.height - (a!.y + a!.height)).toBeCloseTo(27, 0);
   });
 
-  test("the support address is a link in its sentence, not underlined, in the link's color and semibold", async ({ page }) => {
+  test("the support address is a link in its sentence, not underlined, in the link's color and semibold", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "contact-form-contact-options");
     const description = container.locator(".hcontact-options-item").nth(1).locator(".hcard-description");
     const address = description.getByRole("link", { name: "support@example.com" });

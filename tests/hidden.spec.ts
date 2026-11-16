@@ -3,6 +3,8 @@ import { animations, example, onEachPlayground, release, settled, slowDown, test
 
 // What hidden does beyond hiding an element, which pages.spec.ts checks on every
 // page. The closes that stay animated, whichever way hidden is handled elsewhere.
+// What only CSS decides, the look of the rows and items still shown, is tested
+// on the HTML playground.
 onEachPlayground("password", () => {
   test("the strength details animate closed, then take no space", async ({ page }) => {
     const container = await example(page, "password-new-password");
@@ -16,7 +18,8 @@ onEachPlayground("password", () => {
     await input.fill("");
     await expect(details).toHaveAttribute("hidden");
     expect(await details.evaluate((element) => getComputedStyle(element).display), "kept rendered").toBe("grid");
-    expect(await animations(details), "closing animations").toBeGreaterThan(0);
+    // Polled, as WebKit may start a transition only at the next frame.
+    await expect.poll(() => animations(details), "closing animations").toBeGreaterThan(0);
 
     await release(details);
     await expect(details).toBeHidden();
@@ -24,7 +27,7 @@ onEachPlayground("password", () => {
 });
 
 onEachPlayground("settings", () => {
-  test("the rows still shown take the first and last row's look", async ({ page }) => {
+  test("the rows still shown take the first and last row's look", { tag: "@css" }, async ({ page }) => {
     const rows = (await example(page, "settings-switches")).locator(".hsetting");
     const first = rows.first();
     const second = rows.nth(1);
@@ -41,7 +44,7 @@ onEachPlayground("settings", () => {
 });
 
 onEachPlayground("breadcrumb", () => {
-  test("the first item still shown has no separator before it", async ({ page }) => {
+  test("the first item still shown has no separator before it", { tag: "@css" }, async ({ page }) => {
     const items = (await example(page, "breadcrumb-trail")).locator("ol > li");
     const separator = items.nth(1).locator(".hbreadcrumb-separator");
     await expect(separator).toBeVisible();

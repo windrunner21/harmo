@@ -1,10 +1,11 @@
 import { expect, type Locator } from "@playwright/test";
-import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/pagination.md says, on the Pagination page: Previous
 // and Next, disabled in place at either end; the numbers, seven at most, the
 // current one marked; buttons where the app holds the page; and on a phone,
-// Previous and Next only.
+// Previous and Next only. How the row looks, which only CSS and the markup
+// decide, is tested on the HTML playground.
 const numbers = (nav: Locator) => nav.locator(".hpagination-pages > li");
 
 onEachPlayground("pagination", () => {
@@ -89,7 +90,7 @@ onEachPlayground("pagination", () => {
     expect(after.width).toBeCloseTo(before.width, 0);
   });
 
-  test("the current page is in the accent on its tint, with a line around it that stays in forced colors", async ({ page, browserName }) => {
+  test("the current page is in the accent on its tint, with a line around it that stays in forced colors", { tag: "@css" }, async ({ page, browserName }) => {
     const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
     const current = nav.getByRole("link", { name: "Page 5", exact: true });
     const other = nav.getByRole("link", { name: "Page 4", exact: true });
@@ -122,7 +123,7 @@ onEachPlayground("pagination", () => {
     await expect(other).toHaveCSS("outline-style", "none");
   });
 
-  test("pages are 6px apart, and 10px from Previous and Next", async ({ page }) => {
+  test("pages are 6px apart, and 10px from Previous and Next", { tag: "@css" }, async ({ page }) => {
     const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
     const [previous, first, second, last, next] = await boxes(
       nav.getByRole("link", { name: "Previous" }),
@@ -136,7 +137,7 @@ onEachPlayground("pagination", () => {
     expect(next.x - (last.x + last.width)).toBeCloseTo(10, 0);
   });
 
-  test("numbers up to 999 fit their square; a longer one widens it, the current page as much as the others", async ({ page }) => {
+  test("numbers up to 999 fit their square; a longer one widens it, the current page as much as the others", { tag: "@css" }, async ({ page }) => {
     const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
     const [three, current, other] = [4, 5, 6].map((number) => nav.getByRole("link", { name: `Page ${number}`, exact: true }));
     await three.evaluate((link) => (link.textContent = "999"));
@@ -148,7 +149,7 @@ onEachPlayground("pagination", () => {
     expect(currentBox.width).toBeCloseTo(otherBox.width, 1);
   });
 
-  test("in a container too narrow for them, the numbers wrap rather than spill out of it", async ({ page }) => {
+  test("in a container too narrow for them, the numbers wrap rather than spill out of it", { tag: "@css" }, async ({ page }) => {
     const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
     await nav.evaluate((element) => {
       const box = document.createElement("div");
@@ -163,7 +164,7 @@ onEachPlayground("pagination", () => {
     await expect(nav.locator(".hpagination-page").first()).toBeVisible();
   });
 
-  test("on a phone, only Previous and Next show", async ({ page }) => {
+  test("on a phone, only Previous and Next show", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
     const nav = (await example(page, "pagination-numbered")).getByRole("navigation", { name: "Pages" });
     await expect(nav.locator(".hpagination-pages")).toBeHidden();
@@ -171,7 +172,7 @@ onEachPlayground("pagination", () => {
     await expect(nav.getByRole("link", { name: "Next" })).toBeVisible();
   });
 
-  test("right to left, the first page is on the right, and Previous is at the start", async ({ page }) => {
+  test("right to left, the first page is on the right, and Previous is at the start", { tag: "@css" }, async ({ page }) => {
     const nav = (await example(page, "pagination-right-to-left")).getByRole("navigation", { name: "الصفحات" });
     const [previous, first, last, next] = await boxes(
       nav.getByRole("link", { name: "السابق" }),
@@ -205,7 +206,7 @@ onEachPlayground("pagination", () => {
     await expect(range).toHaveText("21–30 of 115 results");
 
     await container.getByRole("combobox", { name: "Rows per page" }).click();
-    await container.getByRole("option", { name: "50" }).click();
+    await clickAt(page, container.getByRole("option", { name: "50" }));
     await expect(status).toHaveText("Page 1 of 3");
     await expect(range).toHaveText("1–50 of 115 results");
     await expect(previous).toHaveAttribute("aria-disabled", "true");

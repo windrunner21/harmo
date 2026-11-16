@@ -73,7 +73,9 @@ mise run watch:react-playground   # rebuild the React playground on change (run 
 mise run check:react              # type-check the React package, the React playground, the CLI, and the tests
 mise run test:react               # compare the React examples' markup with the HTML examples, and check the compiled package
 mise run test:cli                 # test what the CLI copies, and that the copies type-check
-mise run test:browser             # build both playgrounds, then test them in Chromium, in Docker
+mise run test:changed             # build both playgrounds, then test in Chromium what the changes touch, in Docker
+mise run test:changed:all         # the same in Chromium, Firefox, and WebKit
+mise run test:browser             # build both playgrounds, then run every browser test in Chromium, in Docker
 mise run test:browser:all         # the same in Chromium, Firefox, and WebKit
 ```
 
@@ -152,8 +154,8 @@ version, so the CLI copies the code of the packages with its version.
    tested; to move to newer ones, change them there on purpose, before the
    checks in step 2.
 2. Run `mise run check:react`, `mise run test:react`, `mise run test:cli`, and
-   `mise run test:browser`, in Chromium. CI runs all three browsers on the
-   push in step 4.
+   `mise run test:browser`, every browser test, in Chromium. CI runs every
+   browser test in all three browsers on the release's tag, and each night.
 3. Check what would be published: `bunx publint packages/css`,
    `bunx publint packages/react`, `bunx publint packages/cli`, and
    `bunx @arethetypeswrong/cli --pack packages/react`. `publint`'s suggestion
@@ -223,23 +225,30 @@ edited by hand. Open `dist/index.html` straight from disk; no server is needed.
   brings every file it imports and the styles of every class it uses, everything
   copied type-checks under a default Next.js setup, and a file you've changed is
   never replaced without asking.
-- `mise run test:browser` opens every page of both playgrounds in Chromium:
-  one for each component in the catalog, no console errors, every React
-  example gets ready, and axe finds no WCAG 2.2 A or AA violation, as the
-  page loads and with each popup and dialog open, a popup inside another and
-  a list a script opens included; one that doesn't open fails. Then it
-  tests what each component's scripts do, such as Listbox's keys and Tabs'
-  underline. Each test in `tests/` runs on both playgrounds, and the
-  config lists Chromium, Firefox, and WebKit; `mise run test:browser:all`
-  runs all three. Both tasks run in Playwright's Docker image (see Setup);
+- `mise run test:changed` runs the browser tests that what you changed
+  touches, as `tests/affected.ts` chooses them, in Chromium:
+  `mise run test:changed:all` in all three browsers, which a new test runs
+  once before it's pushed. `mise run test:browser` runs every one: it opens
+  every page of both playgrounds in Chromium: one for each component in the
+  catalog, no console errors, every React example gets ready, and axe finds
+  no WCAG 2.2 A or AA violation, as the page loads and with each popup and
+  dialog open, a popup inside another and a list a script opens included;
+  one that doesn't open fails. Then it tests what each component's scripts
+  do, such as Listbox's keys and Tabs' underline. A test of what something
+  does runs on both playgrounds; one of how it looks, tagged `@css`, on the
+  HTML playground only. The config lists Chromium, Firefox, and WebKit;
+  `mise run test:browser:all` runs all three. Both tasks run in Playwright's Docker image (see Setup);
   `bunx playwright test`, in `tests/`, runs without it, if you've installed
   Playwright's browsers. A failed test runs once more, recording a trace,
   kept in `tests/test-results` to open with `bunx playwright show-trace`.
-- GitHub Actions (`.github/workflows/ci.yml`) runs all of these on every push
-  to `master` and every pull request, the browser tests in four jobs per
-  browser, each running a quarter of them, all side by side, in Playwright's
-  Docker image. A failure shows on the pull request, and one report, merged
-  from every job, keeps each failed test's trace.
+- GitHub Actions (`.github/workflows/ci.yml`) runs these on every push to
+  `master` and every pull request: the checks and unit tests in full, and
+  the browser tests that the change touches, in all three browsers, in up
+  to four jobs per browser, side by side, in Playwright's Docker image.
+  Every browser test runs each night, on a release's tag, and when run by
+  hand. A failed test runs twice more, and one that then passes shows as
+  flaky. A failure shows on the pull request, and one report, merged from
+  every job, keeps each failed test's trace.
 
 [docs/internal/testing.md](docs/internal/testing.md) explains the approach
 and why.

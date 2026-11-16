@@ -3,7 +3,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/switch.md says, on the Switch page: a 44×24 track sized
 // in rem, from tokens every switch reads, and a thumb that slides over 200ms
-// on ease-out, or jumps under reduced motion.
+// on ease-out, or jumps under reduced motion. Only CSS decides them, so
+// they're tested on the HTML playground.
 const thumb = (element: Locator, property: string) =>
   element.evaluate((node, property) => getComputedStyle(node, "::before").getPropertyValue(property), property);
 
@@ -21,7 +22,7 @@ const curve = (page: Page, name: string) =>
 onEachPlayground("switch", () => {
   const firstSwitch = async (page: Page) => (await example(page, "switch-off-and-on")).getByRole("switch").first();
 
-  test("44 by 24 with a 20px thumb, growing with the browser's font size", async ({ page }) => {
+  test("44 by 24 with a 20px thumb, growing with the browser's font size", { tag: "@css" }, async ({ page }) => {
     const toggle = await firstSwitch(page);
     const [track] = await boxes(toggle);
     expect(track.width).toBeCloseTo(44, 0);
@@ -35,7 +36,7 @@ onEachPlayground("switch", () => {
     expect(await thumb(toggle, "width")).toBe("25px");
   });
 
-  test("--harmo-switch-width and --harmo-switch-thumb-size size every switch", async ({ page }) => {
+  test("--harmo-switch-width and --harmo-switch-thumb-size size every switch", { tag: "@css" }, async ({ page }) => {
     const toggle = await firstSwitch(page);
     await page.evaluate(() => {
       document.documentElement.style.setProperty("--harmo-switch-width", "3rem");
@@ -46,14 +47,14 @@ onEachPlayground("switch", () => {
     expect(await thumb(toggle, "width")).toBe("16px");
   });
 
-  test("the thumb slides over 200ms on ease-out, so it moves at once on a press", async ({ page }) => {
+  test("the thumb slides over 200ms on ease-out, so it moves at once on a press", { tag: "@css" }, async ({ page }) => {
     const toggle = await firstSwitch(page);
     expect(await thumb(toggle, "transition-property")).toBe("transform");
     expect(await thumb(toggle, "transition-duration")).toBe("0.2s");
     expect(await thumb(toggle, "transition-timing-function")).toBe(await curve(page, "--harmo-ease-out-cubic"));
   });
 
-  test("under reduced motion, the thumb jumps", async ({ page }) => {
+  test("under reduced motion, the thumb jumps", { tag: "@css" }, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     const toggle = await firstSwitch(page);
     expect(await thumb(toggle, "transition-duration")).toBe("0s");

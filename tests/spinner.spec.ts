@@ -5,14 +5,14 @@ import { example, onEachPlayground, test } from "./playgrounds.ts";
 // data-delay it's hidden for its first 300ms; with reduced motion it fades
 // where it is instead of turning, on the in-out curve; its turn and its delay
 // are properties of its own; and in forced colors its track and arc are the
-// system's colors.
+// system's colors. Only CSS decides it, so it's tested on the HTML playground.
 
 // What moves it: the first of its animations, the second being its delay.
 const motion = (spinner: Locator) =>
   spinner.evaluate((node) => getComputedStyle(node).animationName.split(",")[0]!.trim());
 
 onEachPlayground("spinner", () => {
-  test("it turns; with reduced motion, it fades toward 40% opacity and back, each way in --hspinner-duration, without turning", async ({ page }) => {
+  test("it turns; with reduced motion, it fades toward 40% opacity and back, each way in --hspinner-duration, without turning", { tag: "@css" }, async ({ page }) => {
     const spinner = (await example(page, "spinner-sizes")).locator(".hspinner").nth(1);
     expect(await motion(spinner)).toBe("hspinner-rotate");
 
@@ -48,7 +48,7 @@ onEachPlayground("spinner", () => {
     expect(timingFunctions.startsWith(`${curve},`)).toBe(true);
   });
 
-  test("its turn takes --hspinner-duration, 1s, and data-delay waits --hspinner-delay, 300ms", async ({ page }) => {
+  test("its turn takes --hspinner-duration, 1s, and data-delay waits --hspinner-delay, 300ms", { tag: "@css" }, async ({ page }) => {
     const spinner = (await example(page, "spinner-sizes")).locator(".hspinner").nth(1);
     const delayed = (await example(page, "spinner-delayed")).locator(".hspinner");
     const timing = (node: Element) => {
@@ -64,7 +64,7 @@ onEachPlayground("spinner", () => {
     expect((await delayed.evaluate(timing))[1]).toBe("1s");
   });
 
-  test("with data-delay, it's hidden for its first 300ms, then shows", async ({ page }) => {
+  test("with data-delay, it's hidden for its first 300ms, then shows", { tag: "@css" }, async ({ page }) => {
     const spinner = (await example(page, "spinner-delayed")).locator(".hspinner");
     // Its delay held at moments of it, so it doesn't depend on when the
     // page got here.
@@ -79,7 +79,7 @@ onEachPlayground("spinner", () => {
     expect(seen).toEqual(["hidden", "hidden", "visible"]);
   });
 
-  test("in forced colors, its track is the system's gray and its arc the text color", async ({ page, browserName }) => {
+  test("in forced colors, its track is the system's gray and its arc the text color", { tag: "@css" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const spinner = (await example(page, "spinner-sizes")).locator(".hspinner").nth(1);
     await page.emulateMedia({ forcedColors: "active" });

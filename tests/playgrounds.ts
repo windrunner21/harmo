@@ -4,8 +4,10 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
 // The tests open the built playgrounds straight from disk, as people do.
-// Each test runs on both: the React components must behave like the HTML
-// examples' scripts.
+// A test of what something does runs on both: the React components must
+// behave like the HTML examples' scripts. A test of how it looks, tagged
+// @css, runs on the HTML playground only: the markup test shows React
+// renders the same markup, which the same CSS styles.
 export const playgrounds = ["html", "react"] as const;
 export type Playground = (typeof playgrounds)[number];
 
@@ -28,8 +30,14 @@ const catalogued = () =>
 
 // The slug of every page: "index", "patterns", "avatar", "banner", and so on.
 // A component in the catalog without a page, or a page the catalog doesn't
-// list, fails, rather than going untested.
+// list, fails, rather than going untested. HARMO_PAGES, which
+// tests/affected.ts sets, narrows them to the pages a change touches.
 export const pages = (playground: Playground) => {
+  const only = process.env.HARMO_PAGES ? process.env.HARMO_PAGES.split(",") : undefined;
+  return only ? everyPage(playground).filter((slug) => only.includes(slug)) : everyPage(playground);
+};
+
+const everyPage = (playground: Playground) => {
   const built = readdirSync(dist(playground))
     .filter((file) => file.endsWith(".html"))
     .map((file) => file.slice(0, -".html".length))
@@ -97,10 +105,16 @@ export const open = async (page: Page, playground: Playground, slug: string) => 
 export const ready = (page: Page) =>
   expect(page.locator("[data-play-root]:not([data-play-ready])"), "examples not ready").toHaveCount(0);
 
-// Runs the tests that `tests` declares on one page of each playground.
+// Runs the tests that `tests` declares on one page of each playground; one
+// tagged @css, which only CSS and the markup decide, such as a size, a
+// color, or a hover's, on the HTML playground only. One that clicks, types,
+// or waits on a script or React isn't @css.
 export const onEachPlayground = (slug: string, tests: () => void) => {
   for (const playground of playgrounds) {
     test.describe(playground, () => {
+      if (playground === "react") {
+        test.beforeEach(({}, testInfo) => test.skip(testInfo.tags.includes("@css"), "@css: tested on the HTML playground"));
+      }
       test.beforeEach(({ page }) => open(page, playground, slug));
       tests();
     });
@@ -232,6 +246,8 @@ export const pointAt = async (page: Page, element: Locator) => {
 // that on pointer down, before any script can stop it.
 export const clickAt = async (page: Page, element: Locator) => {
   await expect(element).toBeVisible();
+  // Once a popup it's in has opened, so the click lands where it ends up.
+  await settled(element, ".hpopup");
   await pointAt(page, element);
   await page.mouse.down();
   await page.mouse.up();

@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, ready, release, settled, slowDown, test } from "./playgrounds.ts";
+import { boxes, example, onEachPlayground, ready, release, rendered, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/drawer.md says, on the Drawer page: it opens and closes
 // as a Dialog does, sits at the window's end edge, slides in and out, and lays
@@ -72,9 +72,16 @@ onEachPlayground("drawer", () => {
   test("an app that stops the close, such as to confirm unsaved changes, keeps it open", async ({ page }) => {
     const { drawer } = await openFrom(page, "drawer-default", "New quick reply");
     // Before the drawer's own handlers, as React runs an app's onCancel.
-    await page.evaluate(() => addEventListener("cancel", (event) => event.preventDefault(), { capture: true, once: true }));
+    const stopped = await page.evaluateHandle(() => {
+      const seen = { stopped: false };
+      addEventListener("cancel", (event) => (event.preventDefault(), (seen.stopped = true)), { capture: true, once: true });
+      return seen;
+    });
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(400);
+    // Once the cancel has been stopped, and the page has rendered what its
+    // handlers then did, such as start a slide with data-closing.
+    await expect.poll(() => stopped.evaluate((seen) => seen.stopped)).toBe(true);
+    await rendered(page);
     expect(await isOpen(drawer)).toBe(true);
     await expect(drawer).not.toHaveAttribute("data-closing");
   });
@@ -85,7 +92,9 @@ onEachPlayground("drawer", () => {
     // app's onSubmit is.
     await drawer.locator("form").evaluate((form) => form.addEventListener("submit", (event) => event.preventDefault(), { once: true }));
     await drawer.getByRole("button", { name: "Save", exact: true }).click();
-    await page.waitForTimeout(400);
+    // The click sends the form at once; then the page renders what its
+    // handlers did, such as start a slide with data-closing.
+    await rendered(page);
     expect(await isOpen(drawer)).toBe(true);
     await expect(drawer).not.toHaveAttribute("data-closing");
   });
@@ -116,7 +125,9 @@ onEachPlayground("drawer", () => {
     });
     await expect(drawer).not.toHaveAttribute("data-closing");
     await drawer.evaluate((node) => (node as HTMLElement).style.removeProperty("transition-duration"));
-    await page.waitForTimeout(400);
+    // The slide it stopped ends once the page renders, when an exit still
+    // waiting on it would close it.
+    await rendered(page);
     expect(await isOpen(drawer)).toBe(true);
   });
 
@@ -151,7 +162,8 @@ onEachPlayground("drawer", () => {
   test('with closedby="closerequest", a click outside doesn\'t close it; with "any", it does', async ({ page }) => {
     const { drawer } = await openFrom(page, "drawer-default", "New quick reply");
     await page.mouse.click(8, 400);
-    await page.waitForTimeout(200);
+    // Until a slide the click started would have ended, and closed it.
+    await settled(drawer);
     expect(await isOpen(drawer)).toBe(true);
     await page.keyboard.press("Escape");
     await expect.poll(() => isOpen(drawer)).toBe(false);
@@ -340,7 +352,10 @@ onEachPlayground("drawer", () => {
     await settled(drawer);
     await drawer.getByRole("button", { name: "Close" }).click();
     await expect.poll(() => new URL(page.url()).search).toBe("");
-    await page.waitForTimeout(300);
+    // Closed once its slide has ended, which in React starts as the URL
+    // changes, and still closed once the page has rendered what followed.
+    await expect.poll(() => isOpen(drawer)).toBe(false);
+    await rendered(page);
     expect(await isOpen(drawer)).toBe(false);
 
     // Back, then Forward, while it slides out: it stays open.
@@ -354,7 +369,9 @@ onEachPlayground("drawer", () => {
     await page.evaluate(() => history.forward());
     await expect(drawer).not.toHaveAttribute("data-closing");
     await drawer.evaluate((node) => (node as HTMLElement).style.removeProperty("transition-duration"));
-    await page.waitForTimeout(400);
+    // The slide Forward stopped ends once the page renders, when an exit
+    // still waiting on it would close it.
+    await rendered(page);
     expect(await isOpen(drawer)).toBe(true);
     expect(page.url()).toBe(linked);
     await page.keyboard.press("Escape");

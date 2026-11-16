@@ -290,7 +290,6 @@ const parts = async (page: Page, id: string) => {
   return { container, root, input: root.locator(".hinput"), slots: root.locator(".hotp-input-slot") };
 };
 
-// A paste of text, as the browser sends it.
 // A paste of text, as the browser sends one. Firefox's ClipboardEvent takes
 // no clipboardData of its own, so it's given one.
 const paste = (input: Locator, text: string) =>

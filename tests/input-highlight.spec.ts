@@ -3,7 +3,9 @@ import { boxes, example, onEachPlayground, ready, test } from "./playgrounds.ts"
 
 // What docs/components/input.md and textarea.md say: what matches is marked as
 // you type, drawn over a field whose own text is see-through and lined up with
-// it, following its scrolling; and it's still a plain field.
+// it, following its scrolling; and it's still a plain field. What only CSS and
+// the markup decide, such as its colors and what hides it, is tested on the
+// HTML playground; how it lines up, which a script keeps, on both.
 const color = (page: Page, name: string) =>
   page.evaluate((name) => {
     const probe = document.createElement("span");
@@ -43,7 +45,7 @@ onEachPlayground("input", () => {
     };
   };
 
-  test("what matches is marked, in the accent, and the field's own text is see-through", async ({ page }) => {
+  test("what matches is marked, in the accent, and the field's own text is see-through", { tag: "@css" }, async ({ page }) => {
     const { field, backdrop, marks } = await parts(page);
     await expect(marks).toHaveText(["{{1}}", "{{2}}"]);
     await expect(backdrop).toHaveAttribute("aria-hidden", "true");
@@ -71,7 +73,7 @@ onEachPlayground("input", () => {
     await expect(field).toBeFocused();
   });
 
-  test("the wrapper is as wide as an input would be", async ({ page }) => {
+  test("the wrapper is as wide as an input would be", { tag: "@css" }, async ({ page }) => {
     const { field, wrapper, column } = await parts(page);
     const [box, around, width] = await boxes(field, wrapper, column);
     expect(around!.width).toBeCloseTo(width!.width, 0);
@@ -100,7 +102,7 @@ onEachPlayground("input", () => {
     expect(await styled(backdrop, "direction")).toBe("rtl");
   });
 
-  test("a selection shows through the marks", async ({ page }) => {
+  test("a selection shows through the marks", { tag: "@css" }, async ({ page }) => {
     const { field, marks } = await parts(page);
     const selection = await field.evaluate((n) => getComputedStyle(n, "::selection").backgroundColor);
     expect(alpha(selection)).toBeGreaterThan(0);
@@ -108,7 +110,7 @@ onEachPlayground("input", () => {
     expect(alpha(await styled(marks.first(), "background-color"))).toBeLessThan(1);
   });
 
-  test("disabled, the drawn text and marks are dimmed, and the field's text stays see-through", async ({ page }) => {
+  test("disabled, the drawn text and marks are dimmed, and the field's text stays see-through", { tag: "@css" }, async ({ page }) => {
     const { field, backdrop, marks } = await parts(page);
     await field.evaluate((n: HTMLInputElement) => (n.disabled = true));
     const tertiary = await color(page, "--harmo-color-text-tertiary");
@@ -117,7 +119,7 @@ onEachPlayground("input", () => {
     await expect(marks.first()).toHaveCSS("color", tertiary);
   });
 
-  test("a hidden field takes what's drawn over it along", async ({ page }) => {
+  test("a hidden field takes what's drawn over it along", { tag: "@css" }, async ({ page }) => {
     const { field, backdrop } = await parts(page);
     await field.evaluate((n: HTMLInputElement) => (n.hidden = true));
     await expect(backdrop).toBeHidden();
@@ -135,7 +137,7 @@ onEachPlayground("input", () => {
     await expect.poll(() => text.evaluate((n) => n.scrollLeft)).toBe(0);
   });
 
-  test("in forced colors, a mark is the system's highlight", async ({ page, browserName }) => {
+  test("in forced colors, a mark is the system's highlight", { tag: "@css" }, async ({ page, browserName }) => {
     test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
     const { backdrop, marks } = await parts(page);
     await page.emulateMedia({ forcedColors: "active" });
@@ -207,7 +209,7 @@ onEachPlayground("textarea", () => {
     await expect(backdrop).toHaveCSS("white-space", "pre");
   });
 
-  test("a hidden textarea takes what's drawn over it along", async ({ page }) => {
+  test("a hidden textarea takes what's drawn over it along", { tag: "@css" }, async ({ page }) => {
     const { field, backdrop } = await parts(page);
     await field.evaluate((n: HTMLTextAreaElement) => (n.hidden = true));
     await expect(backdrop).toBeHidden();

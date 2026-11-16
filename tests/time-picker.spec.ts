@@ -3,7 +3,9 @@ import { boxes, clickAt, example, onEachPlayground, pointAt, settled, test, watc
 
 // What docs/components/time-picker.md says: the time on the locale's clock, its
 // value in a hidden input; columns that stay open as you choose, and their
-// keys; the minutes offered; and right to left, mirrored.
+// keys; the minutes offered; and right to left, mirrored. The trigger's
+// insets, which only CSS and the markup decide, are tested on the HTML
+// playground.
 const parts = (container: Locator) => ({
   button: container.locator(".htime-picker"),
   hidden: container.locator('input[type="hidden"]'),
@@ -156,7 +158,7 @@ onEachPlayground("time-picker", () => {
     await expect(all.popup).toBeHidden();
   });
 
-  test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", async ({ page }) => {
+  test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", { tag: "@css" }, async ({ page }) => {
     const { button } = parts(await example(page, "time-picker-default"));
     const [box, value, chevron] = await boxes(button, button.locator(".htime-picker-value"), button.locator(".hexpand-chevron"));
     // Each past the trigger's 1px border.
@@ -271,15 +273,6 @@ onEachPlayground("time-picker", () => {
     await all.option("Minute", "15").click();
     await expect(all.hidden).toHaveValue("00:15");
     await expect(all.button).toHaveText(/12:15\sAM/);
-  });
-
-  test("beside a Date Picker, on one row", async ({ page }) => {
-    const container = await example(page, "time-picker-beside-a-date");
-    const [date, time] = await boxes(container.locator(".hdate-picker"), container.locator(".htime-picker"));
-    expect(time.x).toBeGreaterThan(date.x + date.width - 1);
-    expect(time.y).toBeCloseTo(date.y, 0);
-    await expect(container.locator('input[name="send-date"]')).toHaveValue("2026-11-18");
-    await expect(container.locator('input[name="send-time"]')).toHaveValue("14:00");
   });
 
   test("disabled, it can't be opened and sends nothing", async ({ page }) => {

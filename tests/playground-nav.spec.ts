@@ -3,9 +3,11 @@ import { onEachPlayground, playgrounds, test, url } from "./playgrounds.ts";
 
 // The playgrounds' own navigation is Harmo's Sidebar: the overview and every
 // group of the catalog, the page you're on marked; on a narrow screen, the
-// menu button opens it as a sheet from the side.
+// menu button opens it as a sheet from the side. Both playgrounds build the
+// same nav, from examples/playground.ts, so how it looks, which only CSS and
+// the markup decide, is tested on the HTML playground.
 onEachPlayground("button", () => {
-  test("the nav is a Sidebar, with the page you're on marked", async ({ page }) => {
+  test("the nav is a Sidebar, with the page you're on marked", { tag: "@css" }, async ({ page }) => {
     await page.setViewportSize({ width: 1100, height: 800 });
     const nav = page.getByRole("navigation", { name: "Components" });
     await expect(nav).toHaveClass(/hsidebar-nav/);

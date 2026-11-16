@@ -5,7 +5,9 @@ import { boxes, example, onEachPlayground, rendered, settled, test } from "./pla
 // two seconds, in its icon, its tooltip or text, and a status, unless the
 // value changes meanwhile, even before the copy is done; a field copies
 // what's in it; a failure changes nothing; and a Share Button shares where
-// the browser can, and elsewhere copies the link.
+// the browser can, and elsewhere copies the link. Where the button sits in a
+// field, and how its icon is drawn, only CSS decides, so those are tested on
+// the HTML playground.
 type Recorded = Window & { copied: string[]; shared: ShareData[]; widths: number; finish: () => void };
 
 // Records what's copied or shared, or, with `fail`, fails to copy. With
@@ -247,7 +249,7 @@ onEachPlayground("copy", () => {
     await expect(button).not.toHaveAttribute("data-copied");
   });
 
-  test("in a field, the value stops 6px before the button, and the room kept for it follows --harmo-control-height-small, as the button does", async ({ page }) => {
+  test("in a field, the value stops 6px before the button, and the room kept for it follows --harmo-control-height-small, as the button does", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "copy-in-a-field");
     const input = container.getByRole("textbox");
     // From where the value ends to the button.
@@ -313,7 +315,7 @@ onEachPlayground("copy", () => {
     expect(back.width).toBeCloseTo(before.width, 0);
   });
 
-  test("the copy icon is drawn at the center of its box", async ({ page }) => {
+  test("the copy icon is drawn at the center of its box", { tag: "@css" }, async ({ page }) => {
     const icon = (await example(page, "copy-copy-a-link")).locator(".hcopy-icon");
     const { x, y, width, height } = await icon.evaluate((svg) => {
       const box = (svg as SVGSVGElement).getBBox();
@@ -356,7 +358,7 @@ onEachPlayground("copy", () => {
     expect(field.x + field.width - (target.x + target.width)).toBeGreaterThanOrEqual(2 - 0.5);
   });
 
-  test("with enlarged text, a long value stops short of the button", async ({ page }) => {
+  test("with enlarged text, a long value stops short of the button", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "copy-in-a-field");
     await page.evaluate(() => (document.documentElement.style.fontSize = "32px"));
     const input = container.getByRole("textbox");
@@ -434,7 +436,7 @@ onEachPlayground("copy", () => {
     await expect(container.getByRole("tooltip").filter({ hasText: "Link copied" })).toBeVisible();
   });
 
-  test("right to left, the button is at the field's left end", async ({ page }) => {
+  test("right to left, the button is at the field's left end", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "copy-right-to-left");
     const [field, target] = await boxes(container.getByRole("textbox"), container.getByRole("button"));
     expect(target.x - field.x).toBeLessThanOrEqual(4);

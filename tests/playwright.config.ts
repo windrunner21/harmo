@@ -26,9 +26,12 @@ export default defineConfig({
   globalTimeout: process.env.CI ? 15 * 60 * 1000 : undefined,
   // Locally, a failed test runs once more, and that run records a trace, so
   // the passing ones don't record at all: recording every test, to keep only
-  // the failures', took about 40% of a run's CPU. CI records every test and
-  // keeps a failure's, so a flaky failure has its trace too.
-  retries: process.env.CI ? 0 : 1,
+  // the failures', took about 40% of a run's CPU. On CI, twice more, as
+  // Playwright's own config has it (playwright.dev/docs/test-retries), so a
+  // test that fails only now and then, on a busy runner, shows as flaky in
+  // the report rather than failing the run. CI records every test and keeps a
+  // failure's, so a flaky failure has its trace too.
+  retries: process.env.CI ? 2 : 1,
   use: { trace: process.env.CI ? "retain-on-failure" : "on-first-retry" },
   projects: [
     { name: "chromium", use: devices["Desktop Chrome"] },

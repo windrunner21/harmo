@@ -31,6 +31,9 @@ import {
 // one isn't caught. In a Dialog, which is their card, the forms take off their
 // own frame and padding, their titles step down to <h3>s under the Dialog's
 // <h2>, the steps' titles too, and they switch in place as anywhere else.
+// What only CSS and the markup decide, such as the wrapper's lack of a box
+// and the band under the Sign-in Form's button, is tested on the HTML
+// playground.
 const parts = async (page: Page, id = "account-forms-default") => {
   const container = await example(page, id);
   const root = container.locator(".haccount-forms");
@@ -85,7 +88,7 @@ onEachPlayground("account-forms", () => {
     expect(await animations(signIn.title)).toBe(0);
   });
 
-  test("hidden hides the wrapper and a view, though neither takes a box", async ({ page }) => {
+  test("hidden hides the wrapper and a view, though neither takes a box", { tag: "@css" }, async ({ page }) => {
     const { root } = await parts(page);
     const view = root.locator(":scope > .haccount-forms-view").first();
     await expect(view).toHaveCSS("display", "contents");
@@ -100,7 +103,7 @@ onEachPlayground("account-forms", () => {
     }
   });
 
-  test("the Sign-in Form's band under its button leads to sign-up, its link underlined", async ({ page }) => {
+  test("the Sign-in Form's band under its button leads to sign-up, its link underlined", { tag: "@css" }, async ({ page }) => {
     const { signIn } = await parts(page);
     const footer = signIn.form.locator(".hauth-form-footer");
     await expect(footer).toHaveText("Don't have an account? Sign up");

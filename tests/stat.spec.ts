@@ -4,9 +4,11 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/stat.md says, on the Stat page: a label that's a
 // heading, the number, its caption, and a neutral trend; a hint that names
 // its button; tooltips a press pins open; an action below; and tiles on a
-// tray, as many to a row as fit, all spaced on the golden-ratio scale.
+// tray, as many to a row as fit, all spaced on the golden-ratio scale. The
+// tests without a tooltip, which only the markup and CSS decide, run on the
+// HTML playground.
 onEachPlayground("stat", () => {
-  test("a label that's a heading, the number, its caption, and a trend in the text color with its arrow hidden", async ({ page }) => {
+  test("a label that's a heading, the number, its caption, and a trend in the text color with its arrow hidden", { tag: "@css" }, async ({ page }) => {
     const stat = (await example(page, "stat-default")).locator(".hstat");
     await expect(stat.getByRole("heading", { level: 3, name: "New tickets" })).toBeVisible();
     await expect(stat.locator(".hstat-value")).toHaveText("128");
@@ -68,7 +70,7 @@ onEachPlayground("stat", () => {
     await expect(trigger).not.toHaveAttribute("data-open");
   });
 
-  test("the value 6px under the label's row, the caption 6px under it, and the action 16px below, with actions 10px apart", async ({ page }) => {
+  test("the value 6px under the label's row, the caption 6px under it, and the action 16px below, with actions 10px apart", { tag: "@css" }, async ({ page }) => {
     const stat = (await example(page, "stat-with-a-hint-and-an-action")).locator(".hstat");
     const link = stat.getByRole("link", { name: "View tickets" });
     await expect(link).toHaveAttribute("href", "/tickets");
@@ -134,7 +136,7 @@ onEachPlayground("stat", () => {
     expect(await rows()).toBe(3);
   });
 
-  test("in a narrow Stat with a long label and trend, the trend moves onto a line of its own, and nothing spills out", async ({ page }) => {
+  test("in a narrow Stat with a long label and trend, the trend moves onto a line of its own, and nothing spills out", { tag: "@css" }, async ({ page }) => {
     const stat = (await example(page, "stat-with-a-hint-and-an-action")).locator(".hstat");
     await stat.evaluate((node: HTMLElement) => {
       node.style.inlineSize = "146px";
@@ -151,7 +153,7 @@ onEachPlayground("stat", () => {
     expect(trend.x + trend.width).toBeCloseTo(box.x + box.width, 0);
   });
 
-  test("in a narrow Stat, a word too long for its line, such as an ID, breaks in the caption and the trend rather than spilling out", async ({ page }) => {
+  test("in a narrow Stat, a word too long for its line, such as an ID, breaks in the caption and the trend rather than spilling out", { tag: "@css" }, async ({ page }) => {
     const stat = (await example(page, "stat-default")).locator(".hstat");
     await stat.evaluate((node: HTMLElement) => {
       node.style.inlineSize = "120px";
@@ -166,7 +168,7 @@ onEachPlayground("stat", () => {
     expect(await stat.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
-  test("right to left, the trend is at the left end of the row, and the action starts on the right", async ({ page }) => {
+  test("right to left, the trend is at the left end of the row, and the action starts on the right", { tag: "@css" }, async ({ page }) => {
     const stat = (await example(page, "stat-right-to-left")).locator(".hstat");
     const [box, label, trend, action] = await boxes(
       stat,

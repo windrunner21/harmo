@@ -1,11 +1,12 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { animations, boxes, example, onEachPlayground, release, settled, slowDown, test } from "./playgrounds.ts";
 
-// What docs/components/field.md says a validating script does, on the Field
-// page's Validating example, where SPRING25 is the valid code. The example
-// validates when the field is left.
+// What docs/components/field.md says: how a Field's parts sit and look, which
+// only CSS decides, so it's tested on the HTML playground; and what a
+// validating script does, on the Field page's Validating example, where
+// SPRING25 is the valid code. The example validates when the field is left.
 onEachPlayground("field", () => {
-  test("only the pointer on the control lights its border, not the pointer on its label", async ({ page }) => {
+  test("only the pointer on the control lights its border, not the pointer on its label", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "field-label-and-control");
     const label = container.locator(".hlabel").first();
     const control = container.locator(".hinput").first();
@@ -36,7 +37,7 @@ onEachPlayground("field", () => {
     expect(await durations()).toEqual(["0.2s"]);
   });
 
-  test("an error leaves room past its edges for a focus ring inside it", async ({ page }) => {
+  test("an error leaves room past its edges for a focus ring inside it", { tag: "@css" }, async ({ page }) => {
     const error = (await example(page, "field-with-an-error")).locator(".herror");
     expect(await error.evaluate((node) => getComputedStyle(node).overflow)).toBe("clip");
     const margin = await error.evaluate((node) =>
@@ -45,14 +46,14 @@ onEachPlayground("field", () => {
     if (margin !== null) expect(margin).toContain("4px");
   });
 
-  test("a label row with the Optional marker is as tall as a label alone", async ({ page }) => {
+  test("a label row with the Optional marker is as tall as a label alone", { tag: "@css" }, async ({ page }) => {
     const optional = (await example(page, "field-optional")).locator(".hfield-label-row");
     const plain = (await example(page, "field-label-and-control")).locator(".hlabel");
     expect((await optional.boundingBox())!.height).toBeCloseTo(20, 0);
     expect((await plain.boundingBox())!.height).toBeCloseTo(20, 0);
   });
 
-  test("its parts are 6px apart, the description right under its label, and an error with no text takes no room", async ({ page }) => {
+  test("its parts are 6px apart, the description right under its label, and an error with no text takes no room", { tag: "@css" }, async ({ page }) => {
     const field = (await example(page, "field-with-an-error")).locator(".hfield");
     const [label, optional, description, control, error] = await boxes(
       field.locator(".hlabel"),
@@ -71,7 +72,7 @@ onEachPlayground("field", () => {
     expect(whole.y + whole.height).toBeCloseTo(input.y + input.height, 0);
   });
 
-  test("in a horizontal Field, the description sits right under the label, as in a stacked one", async ({ page }) => {
+  test("in a horizontal Field, the description sits right under the label, as in a stacked one", { tag: "@css" }, async ({ page }) => {
     const under = async (id: string) => {
       const field = (await example(page, id)).locator(".hfield").first();
       const [label, description] = await Promise.all(

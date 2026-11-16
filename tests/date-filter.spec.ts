@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, settled, slowDown, test } from "./playgrounds.ts";
 
 // What docs/components/date-filter.md says: a chip that opens a panel of a
 // condition and the fields it needs; Apply off until they're complete; a value
@@ -147,7 +147,7 @@ onEachPlayground("date-filter", () => {
     await page.clock.setFixedTime(new Date(baku(3, 31, 14, 30) * 1000));
     const { panel, chip, value, amount, unit, apply, query } = await open(page, url);
     await panel.getByRole("combobox", { name: "Condition" }).click();
-    await panel.getByRole("option", { name: "is in the last" }).click();
+    await clickAt(page, panel.getByRole("option", { name: "is in the last" }));
     await amount.fill("30");
     await choose(unit, panel, "minutes");
     await apply.click();
@@ -158,7 +158,7 @@ onEachPlayground("date-filter", () => {
     await expect(panel).toBeVisible();
     await settled(panel);
     await panel.getByRole("combobox", { name: "Condition" }).click();
-    await panel.getByRole("option", { name: "is in the last" }).click();
+    await clickAt(page, panel.getByRole("option", { name: "is in the last" }));
     await amount.fill("1");
     await choose(unit, panel, "months");
     await apply.click();

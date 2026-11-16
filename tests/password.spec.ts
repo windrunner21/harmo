@@ -6,9 +6,10 @@ import { animations, boxes, example, onEachPlayground, release, settled, slowDow
 // weak; upper case, lower case, digits, and symbols together are strong. A
 // form's reset starts the field over. Sending the form, and coming back to the
 // page, hide a password that shows. While the field shows an error, the
-// strength steps aside.
+// strength steps aside. Where a link beside the label sits, which only CSS
+// decides, is tested on the HTML playground.
 onEachPlayground("password", () => {
-  test("a link beside the label sits at the end of its row, at the label's size, and the row stays a label's height", async ({ page }) => {
+  test("a link beside the label sits at the end of its row, at the label's size, and the row stays a label's height", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "password-with-a-link-beside-the-label");
     const row = container.locator(".hfield-label-row");
     const link = container.getByRole("link", { name: "Forgot your password?" });

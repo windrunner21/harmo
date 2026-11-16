@@ -4,9 +4,11 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/tag.md says, on the Tag page: 2px 6px padding and
 // 6px from the dot to the text, from the space scale; and of the remove
 // button, a 16px button with a 12px cross, 2px after the text, with a 24px
-// target.
+// target, which only CSS decides, so they're tested on the HTML playground.
+// Removing a tag by the keyboard moves focus to the next tag's button, or,
+// after the last, to what the tags are in.
 onEachPlayground("tag", () => {
-  test("its side padding and the dot's gap are --harmo-space-2xs, 6px; above and below, 2px", async ({ page }) => {
+  test("its side padding and the dot's gap are --harmo-space-2xs, 6px; above and below, 2px", { tag: "@css" }, async ({ page }) => {
     const tag = (await example(page, "tag-with-a-color")).locator(".htag").first();
     await expect(tag).toHaveCSS("padding", "2px 6px");
     await expect(tag).toHaveCSS("column-gap", "6px");
@@ -15,7 +17,7 @@ onEachPlayground("tag", () => {
     await expect(tag).toHaveCSS("column-gap", "8px");
   });
 
-  test("the remove button is 16px with a 12px cross, 2px after the text, and its target is 24px", async ({ page }) => {
+  test("the remove button is 16px with a 12px cross, 2px after the text, and its target is 24px", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "tag-with-a-remove-button");
     const button = container.getByRole("button", { name: "Remove Billing" });
     const [tag, own, cross] = await boxes(container.locator(".htag").first(), button, button.locator("svg"));

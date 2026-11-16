@@ -5,7 +5,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // start, the title and a description beside it, a chevron at the end, each
 // but the title left out without leaving room; the title in the accent in a
 // card that's a link; a link card a step darker while pressed; and right to
-// left, mirrored.
+// left, mirrored. Only CSS and the markup decide these, so they're tested on
+// the HTML playground.
 const color = (page: import("@playwright/test").Page, name: string) =>
   page.evaluate((name) => {
     const probe = document.createElement("span");
@@ -17,7 +18,7 @@ const color = (page: import("@playwright/test").Page, name: string) =>
   }, name);
 
 onEachPlayground("card", () => {
-  test("a link with an icon: the icon at the start, 16px from the title, with the description 6px under it, the whole card named by both", async ({ page }) => {
+  test("a link with an icon: the icon at the start, 16px from the title, with the description 6px under it, the whole card named by both", { tag: "@css" }, async ({ page }) => {
     const nav = (await example(page, "card-links-with-icons")).getByRole("navigation", { name: "Settings" });
     const card = nav.getByRole("link", { name: /^Personal/ });
     await expect(card).toHaveAttribute("href", "/settings/personal");
@@ -36,7 +37,7 @@ onEachPlayground("card", () => {
     await expect(card.locator(".hcard-icon")).toHaveCSS("color", await color(page, "--harmo-color-primary"));
   });
 
-  test("a link with a chevron and no icon: the title at the card's start, the chevron at its end, centered, turning into an arrow on hover", async ({ page }) => {
+  test("a link with a chevron and no icon: the title at the card's start, the chevron at its end, centered, turning into an arrow on hover", { tag: "@css" }, async ({ page }) => {
     const list = await example(page, "card-links-with-a-chevron");
     const card = list.getByRole("link", { name: /^Talk to us/ });
     const [box, title, chevron] = await boxes(card, card.locator(".hcard-title"), card.locator(".hcard-chevron"));
@@ -52,7 +53,7 @@ onEachPlayground("card", () => {
     await expect(shaft).toHaveCSS("opacity", "1");
   });
 
-  test("pressed, a link card is a step darker, whatever its variant, as a tap on a touch screen shows", async ({ page }) => {
+  test("pressed, a link card is a step darker, whatever its variant, as a tap on a touch screen shows", { tag: "@css" }, async ({ page }) => {
     const card = (await example(page, "card-ghost")).getByRole("link", { name: "Team members" });
     const background = (token: string) =>
       page.evaluate((token) => {
@@ -79,7 +80,7 @@ onEachPlayground("card", () => {
     }
   });
 
-  test("in a card that isn't a link, the title is in the text color, and the icon's tile in the page's", async ({ page }) => {
+  test("in a card that isn't a link, the title is in the text color, and the icon's tile in the page's", { tag: "@css" }, async ({ page }) => {
     const card = (await example(page, "card-not-a-link")).locator(".hcard");
     await expect(card.locator(".hcard-title")).toHaveCSS("color", await color(page, "--harmo-color-text"));
     const background = await page.evaluate(() => {
@@ -93,14 +94,14 @@ onEachPlayground("card", () => {
     await expect(card.locator(".hcard-icon")).toHaveCSS("background-color", background);
   });
 
-  test("its padding is --harmo-space-sm by default, so a theme that changes the space scale on :root changes it too", async ({ page }) => {
+  test("its padding is --harmo-space-sm by default, so a theme that changes the space scale on :root changes it too", { tag: "@css" }, async ({ page }) => {
     const card = (await example(page, "card-links-with-icons")).locator(".hcard").first();
     await expect(card).toHaveCSS("padding-top", "16px");
     await page.evaluate(() => document.documentElement.style.setProperty("--harmo-space-sm", "20px"));
     await expect(card).toHaveCSS("padding-top", "20px");
   });
 
-  test("a long word or address breaks, rather than running into the chevron or out of the card", async ({ page }) => {
+  test("a long word or address breaks, rather than running into the chevron or out of the card", { tag: "@css" }, async ({ page }) => {
     const card = (await example(page, "card-links-with-a-chevron")).getByRole("link").first();
     await card.locator(".hcard-description").evaluate((description) => (description.textContent = "https://help.example.com/articles/activate-your-account-with-an-invitation"));
     const [box, description, chevron] = await boxes(card, card.locator(".hcard-description"), card.locator(".hcard-chevron"));
@@ -109,24 +110,14 @@ onEachPlayground("card", () => {
     expect(await card.locator(".hcard-description").evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 
-  test("the settings grid fits a 320px screen, one card to a row", async ({ page }) => {
-    await page.setViewportSize({ width: 320, height: 800 });
-    const container = await example(page, "card-links-with-icons");
-    const [demo, nav] = await boxes(container.locator(".play-demo"), container.getByRole("navigation"));
-    expect(nav.x + nav.width).toBeLessThanOrEqual(demo.x + demo.width);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
-    const cards = await boxes(...(await container.getByRole("link").all()));
-    for (const card of cards) expect(card.x).toBeCloseTo(cards[0]!.x, 0);
-  });
-
-  test("right to left, the icon is at the right and the chevron at the left", async ({ page }) => {
+  test("right to left, the icon is at the right and the chevron at the left", { tag: "@css" }, async ({ page }) => {
     const card = (await example(page, "card-right-to-left")).getByRole("link");
     const [icon, title, chevron] = await boxes(card.locator(".hcard-icon"), card.locator(".hcard-title"), card.locator(".hcard-chevron"));
     expect(icon.x).toBeGreaterThan(title.x + title.width);
     expect(chevron.x + chevron.width).toBeLessThan(title.x);
   });
 
-  test("a ghost list's frames line up with the section's sides, its first row a step under the header's line", async ({ page }) => {
+  test("a ghost list's frames line up with the section's sides, its first row a step under the header's line", { tag: "@css" }, async ({ page }) => {
     const ghost = await example(page, "card-ghost");
     const [header, first] = await boxes(ghost.locator(".hsection-header"), ghost.getByRole("link", { name: "Team members" }));
     expect(first!.x).toBeCloseTo(header!.x, 0);

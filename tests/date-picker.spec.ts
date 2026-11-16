@@ -4,7 +4,9 @@ import { boxes, example, onEachPlayground, settled, test } from "./playgrounds.t
 // What docs/components/date-picker.md says: a date in the locale's order, with
 // its value in a hidden input; a button that opens the Calendar in a Popup, on
 // the date chosen; typing with the separators added for you; a date that
-// doesn't exist kept, and marked invalid; and right to left, mirrored.
+// doesn't exist kept, and marked invalid; and right to left, mirrored. What
+// the markup and CSS alone decide, such as its parts before it's used and the
+// button's place in the field, is tested on the HTML playground.
 const parts = (container: Locator) => ({
   field: container.locator(".hdate-picker .hinput"),
   button: container.locator(".hdate-picker .hbutton"),
@@ -26,7 +28,7 @@ const retype = async (field: Locator, digits: string) => {
 };
 
 onEachPlayground("date-picker", () => {
-  test("a date in the locale's order, its value in a hidden input, and a named button", async ({ page }) => {
+  test("a date in the locale's order, its value in a hidden input, and a named button", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "date-picker-default");
     const { field, button, hidden, popup } = parts(container);
     await expect(container.getByLabel("Due date")).toHaveValue("11/18/2026");
@@ -368,7 +370,7 @@ onEachPlayground("date-picker", () => {
     await expect(all.field).toHaveValue(/^November 20, 2026.*9:00\sAM$/);
   });
 
-  test("disabled, the field and its button can't be used, and there's no popup", async ({ page }) => {
+  test("disabled, the field and its button can't be used, and there's no popup", { tag: "@css" }, async ({ page }) => {
     const all = parts(await example(page, "date-picker-disabled"));
     await expect(all.field).toBeDisabled();
     await expect(all.button).toBeDisabled();
@@ -377,7 +379,7 @@ onEachPlayground("date-picker", () => {
     await expect(all.button).not.toHaveAttribute("popovertarget");
   });
 
-  test("the button sits 2px from the field's end, and the text stops a small step (6px) before it", async ({ page }) => {
+  test("the button sits 2px from the field's end, and the text stops a small step (6px) before it", { tag: "@css" }, async ({ page }) => {
     const { field, button } = parts(await example(page, "date-picker-default"));
     const [box, small] = await boxes(field, button);
     const textEnd = await field.evaluate((node) => {
@@ -388,7 +390,7 @@ onEachPlayground("date-picker", () => {
     expect(small.x - textEnd).toBeCloseTo(6, 0);
   });
 
-  test("only the pointer on the field lights its border, not the pointer on its label", async ({ page }) => {
+  test("only the pointer on the field lights its border, not the pointer on its label", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "date-picker-default");
     const { field } = parts(container);
     const border = () => field.evaluate((node) => getComputedStyle(node).borderTopColor);

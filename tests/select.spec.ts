@@ -15,7 +15,9 @@ import {
   type Playground,
 } from "./playgrounds.ts";
 
-// What docs/components/select.md says a script does, on the Select page.
+// What docs/components/select.md says a script does, on the Select page. The
+// trigger's insets and hover only CSS decides, so those tests run on the HTML
+// playground.
 onEachPlayground("select", () => {
   test("focus stays on the trigger while the highlight moves", async ({ page }) => {
     const { trigger, listbox } = await select(page, "select-default", "Channel");
@@ -196,14 +198,14 @@ onEachPlayground("select", () => {
     await expectChosen(popupOf("Notify me about"), ["Failed"]);
   });
 
-  test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", async ({ page }) => {
+  test("the trigger has Select's insets: its text 10px from the start, its chevron 16px from the end", { tag: "@css" }, async ({ page }) => {
     const { trigger } = await select(page, "select-default", "Channel");
     const [box, value, chevron] = await boxes(trigger, trigger.locator(".hselect-value"), trigger.locator(".hexpand-chevron"));
     expect(value.x - box.x).toBeCloseTo(11, 0);
     expect(box.x + box.width - (chevron.x + chevron.width)).toBeCloseTo(17, 0);
   });
 
-  test("its label isn't the trigger's, so the pointer on it doesn't light the trigger's border", async ({ page }) => {
+  test("its label isn't the trigger's, so the pointer on it doesn't light the trigger's border", { tag: "@css" }, async ({ page }) => {
     const { container, trigger } = await select(page, "select-default", "Channel");
     const border = () => trigger.evaluate((node) => getComputedStyle(node).borderTopColor);
     const rest = await border();

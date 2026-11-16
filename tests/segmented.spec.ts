@@ -5,7 +5,8 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // option is a native radio, so a click chooses it and the arrow keys move the
 // choice, past a disabled option; a label wider than the group wraps, and only
 // then; a description describes the group; and hover weighs no more than the
-// checked state.
+// checked state. How labels wrap, the description, and hover only the markup
+// and CSS decide, so those tests run on the HTML playground.
 onEachPlayground("segmented", () => {
   test("the group is named by its label, and clicking an option chooses it", async ({ page }) => {
     const container = await example(page, "segmented-options");
@@ -35,7 +36,7 @@ onEachPlayground("segmented", () => {
     await expect(ai).not.toBeChecked();
   });
 
-  test("a label wider than the whole group wraps in a row of its own, and labels that fit stay on one line", async ({ page }) => {
+  test("a label wider than the whole group wraps in a row of its own, and labels that fit stay on one line", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "segmented-long-label");
     const group = container.locator(".hsegmented");
     const options = container.locator(".hsegmented-option");
@@ -49,18 +50,18 @@ onEachPlayground("segmented", () => {
     expect(later.y).toBeCloseTo(now.y, 0);
   });
 
-  test("labels that fit keep one line in a narrow container, moving to a new row instead", async ({ page }) => {
+  test("labels that fit keep one line in a narrow container, moving to a new row instead", { tag: "@css" }, async ({ page }) => {
     const options = (await example(page, "segmented-narrow-container")).locator(".hsegmented-option");
     for (const box of await boxes(...(await options.all()))) expect(box.height).toBeCloseTo(34, 0);
   });
 
-  test("a description describes the group", async ({ page }) => {
+  test("a description describes the group", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "segmented-with-a-description");
     const group = container.getByRole("radiogroup", { name: "Reply tone" });
     await expect(group).toHaveAccessibleDescription("Used for suggested replies.");
   });
 
-  test("an app's own look for the checked option, loaded after Harmo, holds on hover", async ({ page }) => {
+  test("an app's own look for the checked option, loaded after Harmo, holds on hover", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "segmented-options");
     await page.addStyleTag({ content: ".hsegmented-option:has(:checked) { border-color: rgb(255, 0, 0); }" });
     const checked = container.locator(".hsegmented-option").filter({ has: page.getByRole("radio", { checked: true }) });
