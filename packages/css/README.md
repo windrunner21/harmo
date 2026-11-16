@@ -29,7 +29,7 @@ Or load `tokens.css` once, then only the components you use:
 Without a build step, load it from a CDN:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.6/dist/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.7/dist/index.css" />
 ```
 
 Then write the markup:

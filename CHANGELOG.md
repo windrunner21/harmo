@@ -8,6 +8,29 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-16
+
+Patterns: whole tasks built from the components, copied into an app with
+`npx harmo-ui add` and changed there. Sign-in, sign-up, reset password, a
+one-time code, and contact forms, in React and HTML, working without
+JavaScript given a server action; and OTP Input, the component their codes
+are typed in.
+
+### Upgrading
+
+- **In HTML, a Select with a name sends its value from a native `<select>`.**
+  Its value used to go in hidden inputs, which a script kept in step. Now a
+  `.hselect-fallback`, a native `<select>` just before the trigger, sends it,
+  and shows in the trigger's place until a script runs, so the form works
+  without one. Replace the hidden inputs with the fallback, as select.md's "In
+  a form" shows, and have your script hide it with `hidden` as it starts, and
+  keep its options selected to match the list, as "What a script does" says.
+
+  What you'll notice: with a placeholder and nothing chosen, a form now leaves
+  the name out rather than sending it empty, so read a missing value as none.
+
+  In React, nothing to change: the Select renders the fallback itself.
+
 ### Added
 
 - Field: `.hfield-label-end` puts something at the end of the label row, such as a
@@ -2131,7 +2154,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/windrunner21/harmo/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/windrunner21/harmo/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/windrunner21/harmo/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/windrunner21/harmo/compare/v0.5.0...v0.5.1

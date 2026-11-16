@@ -144,7 +144,7 @@ stay in step:
 version, so the CLI copies the code of the packages with its version.
 
 1. Set the version in the three `package.json` files, then run `bun install`.
-   For a new minor version, also set the CDN link's, such as `@0.6`, in
+   For a new minor version, also set the CDN link's, such as `@0.7`, in
    `README.md` and `packages/css/README.md`. In `CHANGELOG.md`, move what's
    under Unreleased to a new section for the version, with the date and a
    one-line summary under its heading, and update the links at the end.
