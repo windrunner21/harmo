@@ -26,15 +26,15 @@ const catalogued = () =>
     ),
   ].map((match) => match[1] as string);
 
-// The slug of every page: "index", "avatar", "banner", and so on. A component
-// in the catalog without a page, or a page the catalog doesn't list, fails,
-// rather than going untested.
+// The slug of every page: "index", "patterns", "avatar", "banner", and so on.
+// A component in the catalog without a page, or a page the catalog doesn't
+// list, fails, rather than going untested.
 export const pages = (playground: Playground) => {
   const built = readdirSync(dist(playground))
     .filter((file) => file.endsWith(".html"))
     .map((file) => file.slice(0, -".html".length))
     .sort();
-  const expected = ["index", ...catalogued()];
+  const expected = ["index", "patterns", ...catalogued()];
   const missing = expected.filter((slug) => !built.includes(slug));
   const extra = built.filter((slug) => !expected.includes(slug));
   if (missing.length) throw new Error(`examples/${playground}/dist has no page for ${missing.join(", ")}`);

@@ -424,7 +424,7 @@ function docsHtml(
     const code: string[] = [];
     return escape(text.replace(/`([^`]+)`/g, (_, inner: string) => `\u0001${code.push(inner) - 1}\u0001`))
       .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, target: string) => `<a class="hlink" href="${link(target)}">${text}</a>`)
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, text: string, target: string) => `<a class="hlink" data-underlined href="${link(target)}">${text}</a>`)
       .replace(/\u0001(\d+)\u0001/g, (_, index: string) => `<code>${escape(code[Number(index)])}</code>`);
   };
   // A table row's cells, split at each | outside code.
