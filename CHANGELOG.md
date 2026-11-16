@@ -29,6 +29,30 @@ are typed in.
   What you'll notice: with a placeholder and nothing chosen, a form now leaves
   the name out rather than sending it empty, so read a missing value as none.
 
+  In 0.6:
+
+  ```html
+  <span class="hlabel" id="channel-label">Channel</span>
+  <button class="hselect" id="channel" type="button" data-name="channel" role="combobox" …>…</button>
+  <div class="hpopup" id="channel-popup" popover style="position-anchor: --channel">…</div>
+  <input type="hidden" name="channel" value="whatsapp" />
+  ```
+
+  Now:
+
+  ```html
+  <span class="hlabel" id="channel-label">Channel</span>
+  <span class="hselect-fallback">
+    <select name="channel" aria-labelledby="channel-label">
+      <option value="whatsapp" selected>WhatsApp</option>
+      <option value="telegram">Telegram</option>
+    </select>
+    <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">…</svg>
+  </span>
+  <button class="hselect" id="channel" type="button" data-name="channel" role="combobox" …>…</button>
+  <div class="hpopup" id="channel-popup" popover style="position-anchor: --channel">…</div>
+  ```
+
   In React, nothing to change: the Select renders the fallback itself.
 
 ### Added
@@ -41,17 +65,69 @@ are typed in.
 - Field: `data-size="small"`, or `size="small"` in React, on a horizontal Field,
   for a line of fine print, such as agreeing to terms: a 13px label, and a 16px
   checkbox or radio, or a smaller switch, still beside the label's first line.
+
+  ```html preview
+  <div class="hfield" data-orientation="horizontal" data-size="small">
+    <input class="hcheckbox" type="checkbox" id="product-news" name="product-news" />
+    <label class="hlabel" for="product-news">Email me product news and tips</label>
+  </div>
+  ```
+
 - Field: `data-variant="card"`, or `variant="card"` in React, on a horizontal
   Field, for a choice card: a checkbox or radio and its label as a bordered
   tile, such as a plan to choose, checked by a click anywhere on it, its
   description included, and taking the control's colors once checked.
+
+  ```html preview
+  <div class="hfield" role="radiogroup" aria-labelledby="plan-label">
+    <span class="hlabel" id="plan-label">Plan</span>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: var(--harmo-space-xs)">
+      <div class="hfield" data-orientation="horizontal" data-variant="card">
+        <input class="hradio" type="radio" name="plan" id="plan-starter" value="starter"
+          aria-describedby="plan-starter-description" />
+        <div class="hfield-content">
+          <label class="hlabel" for="plan-starter">Starter</label>
+          <p class="hdescription" id="plan-starter-description">For one person, with up to 3 projects.</p>
+        </div>
+      </div>
+      <div class="hfield" data-orientation="horizontal" data-variant="card">
+        <input class="hradio" type="radio" name="plan" id="plan-team" value="team"
+          aria-describedby="plan-team-description" checked />
+        <div class="hfield-content">
+          <label class="hlabel" for="plan-team">Team</label>
+          <p class="hdescription" id="plan-team-description">For up to 20 people, with shared projects.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  ```
+
 - TextArea: `--htextarea-min-height`, how tall it starts before it grows with
   its text, such as four lines for a longer message; one line, as tall as an
   Input, by default, as before.
+
+  ```html preview
+  <div class="hfield">
+    <label class="hlabel" for="feedback-text">Feedback</label>
+    <textarea class="htextarea" id="feedback-text" name="feedback" placeholder="What could we do better?"
+      style="--htextarea-min-height: calc(var(--harmo-control-height) + 3 * 1.25rem)"></textarea>
+  </div>
+  ```
+
 - Tooltip: `data-side="inline-start"` and `"inline-end"`, or `side` in React,
   at the start or end of the trigger's line, following its direction:
   `inline-end` is the right in left-to-right text and the left in
   right-to-left text, a part of a page with `dir="rtl"` included.
+
+  ```html preview="tooltip/Sides"
+  <span class="htooltip-trigger">
+    <button class="hbutton" data-variant="secondary" type="button" aria-describedby="end-tip">
+      <span class="hbutton-label">End</span>
+    </button>
+    <span class="htooltip" role="tooltip" id="end-tip" data-side="inline-end">After the button, in the text's direction</span>
+  </span>
+  ```
+
 - OTP Input: a one-time code, such as a sign-in's second step, in one field
   with a slot drawn over it for each character, so pasting, a phone filling the
   code in from a message, undo, and screen readers work as in any field. 4 to 12
@@ -61,9 +137,40 @@ are typed in.
   it's a plain Input that a form still sends, with `maxlength` and `pattern`. In
   React, `<OtpInput>`, with `length`, `characters`, `groups`, and `onComplete`,
   which can send its form once the code is whole.
+
+  ```html preview="otp-input/Default"
+  <div class="hfield">
+    <label class="hlabel" for="code">Verification code</label>
+    <div class="hotp-input" dir="ltr">
+      <input class="hinput" id="code" name="code" type="text" inputmode="numeric"
+        autocomplete="one-time-code" autocorrect="off" spellcheck="false"
+        maxlength="6" pattern="[0-9]{6}" />
+      <div class="hotp-input-slots" aria-hidden="true">
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+        <span class="hotp-input-slot"></span>
+      </div>
+    </div>
+  </div>
+  ```
+
 - Password Input: `labelAccessory` puts your own content in its label row, after
   the strength word, such as that link. With both, the word keeps to the row's
   end and a `.hfield-label-end` follows it.
+
+  ```html preview="password/With a link beside the label"
+  <div class="hfield">
+    <div class="hfield-label-row">
+      <label class="hlabel" for="password">Password</label>
+      <a class="hlink hfield-label-end" href="/reset-password">Forgot your password?</a>
+    </div>
+    <div class="hpassword">…</div>
+  </div>
+  ```
+
 - Patterns: arrangements of components for a whole task, which you copy into
   your app and change as your own code, in React and HTML. See `docs/patterns`.
   - Sign-in Form: the email and password in a raised Card, "Forgot your
@@ -82,7 +189,7 @@ are typed in.
     name or the terms, ask for marketing emails with an unchecked box, and
     offer other accounts to sign up with, such as Google, under the button: one
     to a row, or two with four or more. With `confirmEmail`, it confirms the
-    email once the account is made: by link, "Check your email", as Reset
+    email once the form is sent: by link, "Check your email", as Reset
     Password's sent step reads, with a resend; or by code, Verify Code. Either
     way, "use another email" brings the form back as it was typed.
   - Reset Password, in two forms. One sends a link, then says "Check your email"
@@ -204,6 +311,51 @@ are typed in.
   keeping any choice made in it meanwhile. With a placeholder and nothing
   chosen, a form now leaves the name out rather than sending it empty. In HTML,
   replace the hidden inputs with the fallback, as select.md's "In a form" shows.
+
+  Without a script, as here, the native `<select>` shows and sends the value:
+
+  ```html preview
+  <div class="hfield">
+    <span class="hlabel" id="channel-label">Channel</span>
+    <span class="hselect-fallback">
+      <select name="channel" aria-labelledby="channel-label">
+        <option value="whatsapp" selected>WhatsApp</option>
+        <option value="telegram">Telegram</option>
+      </select>
+      <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+        <g class="hexpand-chevron-head">
+          <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
+          <line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" />
+        </g>
+      </svg>
+    </span>
+    <button class="hselect" id="channel" type="button" data-name="channel" role="combobox"
+      aria-labelledby="channel-label" aria-haspopup="listbox" aria-expanded="false"
+      aria-controls="channel-listbox" popovertarget="channel-popup" style="anchor-name: --channel">
+      <span class="hselect-value">WhatsApp</span>
+      <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+        <g class="hexpand-chevron-head">
+          <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
+          <line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" />
+        </g>
+      </svg>
+    </button>
+    <div class="hpopup" id="channel-popup" popover style="position-anchor: --channel">
+      <ul class="hlistbox" id="channel-listbox" role="listbox" aria-labelledby="channel-label">
+        <li class="hoption" id="channel-whatsapp" role="option" data-value="whatsapp" aria-selected="true">
+          <span class="hoption-label">WhatsApp</span>
+          <svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false">
+            <path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor" />
+          </svg>
+        </li>
+        <li class="hoption" id="channel-telegram" role="option" data-value="telegram" aria-selected="false">
+          <span class="hoption-label">Telegram</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  ```
+
 - Password Input: the toggle's tooltip opens at the field's end rather than
   below, `data-side="inline-end"`, so it no longer covers what's under the
   field, such as a form's next field or its button: to its right in a
