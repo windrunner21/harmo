@@ -9,6 +9,7 @@ the same markup and does what the script would.
 | --- | --- |
 | Accordion | [accordion.md](accordion.md) |
 | Avatar | [avatar.md](avatar.md) |
+| Badge | [badge.md](badge.md) |
 | Banner | [banner.md](banner.md) |
 | Breadcrumb | [breadcrumb.md](breadcrumb.md) |
 | Button | [button.md](button.md) |
@@ -18,11 +19,14 @@ the same markup and does what the script would.
 | ChevronToArrow | [chevron-to-arrow.md](chevron-to-arrow.md) |
 | Combobox | [combobox.md](combobox.md) |
 | Command Menu | [command-menu.md](command-menu.md) |
+| Composer | [composer.md](composer.md) |
+| Conversation | [conversation.md](conversation.md) |
 | Copy Button | [copy.md](copy.md) |
 | Date Filter | [date-filter.md](date-filter.md) |
 | Date Picker | [date-picker.md](date-picker.md) |
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
+| Drop Zone | [drop-zone.md](drop-zone.md) |
 | Empty State | [empty-state.md](empty-state.md) |
 | Expand Chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
@@ -35,9 +39,12 @@ the same markup and does what the script would.
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
 | Language Picker | [language-picker.md](language-picker.md) |
+| Launcher | [launcher.md](launcher.md) |
 | Link | [link.md](link.md) |
 | Listbox | [listbox.md](listbox.md) |
+| Mentions | [mentions.md](mentions.md) |
 | Menu Button | [menu-button.md](menu-button.md) |
+| Message | [message.md](message.md) |
 | Meter | [meter.md](meter.md) |
 | Navigation Menu | [navigation-menu.md](navigation-menu.md) |
 | OTP Input | [otp-input.md](otp-input.md) |
@@ -45,6 +52,7 @@ the same markup and does what the script would.
 | Password Input | [password.md](password.md) |
 | Phone Input | [phone-input.md](phone-input.md) |
 | Popup | [popup.md](popup.md) |
+| Prose | [prose.md](prose.md) |
 | Radio | [radio.md](radio.md) |
 | Search | [search.md](search.md) |
 | Section | [section.md](section.md) |
@@ -119,11 +127,13 @@ Some components are built from others, so their files need company:
 | `accordion.css` | `expand-chevron.css` |
 | `banner.css` | `button.css` for its action |
 | `breadcrumb.css` | `link.css`, `chevron.css` |
-| `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, `kbd.css`, or `tooltip.css` when used |
+| `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, `kbd.css`, `badge.css`, or `tooltip.css` when used |
 | `calendar.css` | `button.css`, `chevron.css` |
 | `card.css` | `chevron-to-arrow.css` for a chevron |
 | `combobox.css` | `input.css`, `popup.css`, `listbox.css`, `expand-chevron.css`; `field.css` for a label; `tag-list.css`, `tag.css`, and `tooltip.css` to choose several |
 | `command-menu.css` | `listbox.css`, `kbd.css`; `search.css`, `input.css`, and `popup.css` under a field; `dialog.css` in a dialog |
+| `composer.css` | `textarea.css`, `button.css`, `tooltip.css`; `file-list.css` to attach; `mentions.css`, `popup.css`, `listbox.css` for commands; `field.css` for an error |
+| `conversation.css` | `message.css`, `button.css`, `tooltip.css`; `empty-state.css` before the first message |
 | `copy.css` | `button.css`; `tooltip.css` for an icon-only one; `input.css` and `field.css` for a field |
 | `date-filter.css` | `filter-chip.css`, `popup.css`, `select.css`, `listbox.css`, `expand-chevron.css`, `input.css`, `date-picker.css`, `calendar.css`, `button.css`, `chevron.css` |
 | `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
@@ -135,8 +145,11 @@ Some components are built from others, so their files need company:
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `filters.css` | `filter-chip.css`, `popup.css`, and those of the filters in it |
 | `language-picker.css` | `button.css`, `popup.css`, `listbox.css`, `expand-chevron.css` |
+| `launcher.css` | `button.css`; `badge.css` for a count |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |
 | `listbox.css` | `popup.css`; `button.css` for a footer or a button that opens it |
+| `mentions.css` | `textarea.css` or `input.css`, `popup.css`, `listbox.css`; `field.css` for a label |
+| `message.css` | `link.css` for "Not sent"; `avatar.css`, `button.css`, `file-list.css`, or `prose.css` for what's in it |
 | `menu-button.css` | `button.css`; `popup.css` to open a Popup |
 | `navigation-menu.css` | `expand-chevron.css` |
 | `otp-input.css` | `input.css`; `field.css` for a label |

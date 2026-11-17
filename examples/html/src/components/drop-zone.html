@@ -1,0 +1,36 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Drag files from your computer over the area: a frame covers it, saying
+    where they'll go, and dropping them adds them to its
+    <a class="hlink" data-underlined href="file-list.html">File List</a>.
+    Add files does the same from the keyboard, as dragging needs a pointer.
+  </play-note>
+  <div
+    class="hdrop-zone"
+    style="display: grid; gap: var(--harmo-space-xs); inline-size: 100%; padding: var(--harmo-space-sm); border-radius: var(--harmo-border-radius)"
+    data-example-files
+    data-example-remove-label="Remove {name}"
+  >
+    <div style="display: flex; align-items: center; gap: var(--harmo-space-xs)">
+      <p style="flex: 1; margin: 0; font-size: var(--harmo-font-size-sm); color: var(--harmo-color-text-secondary)">Drop files anywhere here to share them with your team.</p>
+      <button class="hbutton" data-variant="secondary" data-size="small" type="button" data-example-pick><span class="hbutton-label">Add files</span></button>
+    </div>
+    <input type="file" multiple hidden />
+    <ul class="hfile-list" role="list" aria-label="Shared files" tabindex="-1">
+      <li class="hfile-list-item">
+        <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+        <div class="hfile-list-text">
+          <span class="hfile-list-name" id="drop-zone-brief" title="project-brief.pdf">project-brief.pdf</span>
+          <span class="hfile-list-detail">412 kB</span>
+        </div>
+        <div class="hfile-list-actions">
+          <button class="hbutton hfile-list-remove" data-variant="tertiary" type="button" aria-label="Remove project-brief.pdf"><play-icon name="close" class="hicon"></play-icon></button>
+        </div>
+      </li>
+    </ul>
+    <div class="hdrop-zone-overlay" aria-hidden="true">
+      <play-icon name="upload" class="hicon"></play-icon>
+      <p class="hdrop-zone-label">Drop files to share them</p>
+    </div>
+  </div>
+</play-example>

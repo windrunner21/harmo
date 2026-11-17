@@ -143,3 +143,20 @@ $toast-duration: var(--harmo-toast-duration);
 $toast-ease: var(--harmo-toast-ease);
 $toast-morph-duration: var(--harmo-toast-morph-duration);
 $tooltip-delay: var(--harmo-tooltip-delay);
+
+// Out of sight, but read by screen readers and reached by the keyboard, such
+// as a live region's words or a native control another element draws.
+@mixin visually-hidden {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  border: 0;
+  clip-path: inset(50%);
+}

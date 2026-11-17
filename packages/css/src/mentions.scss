@@ -1,0 +1,28 @@
+@use "shortcuts" as *;
+
+// Mentions: a TextArea that lists suggestions as a trigger is typed, such as
+// "@" for people, "#" for tags, or "/" at the start for commands, in a Popup
+// with a Listbox, as a Combobox's list is. Choosing one puts it in the text,
+// with the trigger and a space. Focus stays in the field.
+.hmentions {
+  display: block;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Its list is at least 240px wide, or the field's width if that's less,
+  // and at most 384px: suggestions are short, however wide the field.
+  & > .hpopup {
+    min-inline-size: min(anchor-size(inline), 15rem);
+    max-inline-size: min(24rem, 100vw - 16px);
+  }
+
+  // data-side="top" opens it over the field first, as for a composer at the
+  // bottom of a chat; it still turns below where there's no room above.
+  & > .hpopup[data-side="top"] {
+    position-area: block-start span-inline-end;
+  }
+}

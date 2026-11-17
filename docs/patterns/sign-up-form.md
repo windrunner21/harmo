@@ -602,7 +602,9 @@ email" in its band.
 [sign-up-form.js](../../examples/html/src/scripts/sign-up-form.js) is an
 example. The password uses
 [Password Input's script](../components/password.md#what-a-script-does),
-`password.js`, and the code step Verify Code's, `verify-code.js`.
+`password.js`, and the code step Verify Code's, `verify-code.js`. The card's
+change of size between steps is `change-step.js`'s, which the forms' scripts
+share.
 
 **As the password is typed:** rate it, with its toggle, as Password Input's
 script does. That sets `aria-invalid="true"` on it while it's too weak, and

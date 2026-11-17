@@ -16,7 +16,7 @@ import {
 import { Button } from "../Button.tsx";
 import { Calendar, type CalendarProps } from "../calendar/Calendar.tsx";
 import { isDate, isDateTime } from "../calendar/dates.ts";
-import { Field, FieldContext, type StackedFieldProps } from "../field/Field.tsx";
+import { Field, FieldContext } from "../field/Field.tsx";
 import { calendar } from "../icons.ts";
 import { Input } from "../Input.tsx";
 import { placePopup } from "../Popup.tsx";
@@ -28,6 +28,7 @@ import {
   typedDateOf,
   type NaturalDateParser,
 } from "./typedDate.ts";
+import type { ControlField } from "../types.ts";
 
 export type { NaturalDateParser };
 
@@ -51,18 +52,7 @@ type DatePickerControlProps = Omit<
     format?: (date: string) => string;
   } & DatePickerReading;
 
-type DatePickerField =
-  | ({ label: StackedFieldProps["label"] } & Partial<
-      Pick<StackedFieldProps, "optional" | "description" | "error">
-    >)
-  | {
-      label?: undefined;
-      optional?: never;
-      description?: never;
-      error?: never;
-    };
-
-export type DatePickerProps = DatePickerControlProps & DatePickerField;
+export type DatePickerProps = DatePickerControlProps & ControlField;
 
 const calendarIcon = (
   <svg className="hicon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">

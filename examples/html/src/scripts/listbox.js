@@ -39,10 +39,14 @@
     // text field that controls the list; combobox.js and command-menu.js do
     // the rest of what each needs.
     const search = popup?.querySelector(".hlistbox-search-input");
-    const field = !search && listbox.id ? document.querySelector(`input[role="combobox"][aria-controls="${listbox.id}"]`) : null;
+    const field = !search && listbox.id ? document.querySelector(`:is(input[role="combobox"], .hmentions > :is(textarea, input))[aria-controls="${listbox.id}"]`) : null;
+    // A Mentions' field keeps its own keys while its list is closed, such as
+    // the arrows that move a text area's caret: mentions.js opens the list.
+    const suggesting = field?.parentElement?.matches(".hmentions") ?? false;
     const freeText = field?.hasAttribute("data-free-text") ?? false;
-    // A Command Menu's options are places to go, so none is ever selected.
-    const commands = listbox.closest(".hcommand-menu") !== null;
+    // A Command Menu's options are places to go, and a Mentions' are put in
+    // the text, so none is ever selected.
+    const commands = listbox.closest(".hcommand-menu, .hmentions") !== null;
     const owner = search ?? field ?? (trigger?.getAttribute("role") === "combobox" ? trigger : listbox);
     // What shows the list and hides it: its popup, or the dialog a field and
     // its list share, such as a Command Menu's.
@@ -274,6 +278,7 @@
       // row is.
       if ((owner === trigger || owner === field) && event.defaultPrevented) return;
       const open = isOpen();
+      if (suggesting && !open) return;
       const typing = owner === search || owner === field;
       // Printable keys type ahead, except in the search field; Space counts
       // only in the middle of a search, and otherwise chooses.

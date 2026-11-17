@@ -8,19 +8,19 @@ import {
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
-  type RefObject,
 } from "react";
 import { renders } from "./children.ts";
+import { closeIcon } from "./closeIcon.tsx";
 import { ErrorMessage } from "./field/ErrorMessage.tsx";
 import { Field, useField } from "./field/Field.tsx";
 import {
-  close as closePaths,
   uploadArrow,
   uploadCheck,
   uploadCloud,
   user as userPaths,
 } from "./icons.ts";
 import type { ControlField } from "./types.ts";
+import { useFileDrop } from "./useFileDrop.ts";
 import { useMergedRef } from "./useMergedRef.ts";
 import { useWidthChange } from "./useWidthChange.ts";
 import { withClass } from "./withClass.ts";
@@ -89,25 +89,6 @@ type FileInputControlProps = FileInputOptions &
 
 export type FileInputProps = FileInputControlProps & ControlField;
 
-const removeIcon = (
-  <svg
-    className="hicon"
-    width="24"
-    height="24"
-    viewBox="0 0 25 25"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    aria-hidden="true"
-    focusable="false"
-  >
-    {closePaths.map((d) => (
-      <path key={d} d={d} />
-    ))}
-  </svg>
-);
-
 const personIcon = (
   <svg className="hicon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
     {userPaths.map((d) => (
@@ -144,101 +125,6 @@ const cloudIcon = (attached: boolean, changed: boolean) => (
     )}
   </svg>
 );
-
-const elementOf = (event: DragEvent) => {
-  const target = event.target as Node;
-  return target instanceof Element ? target : target.parentElement;
-};
-
-const dropAreaOf = (event: DragEvent) =>
-  elementOf(event)?.closest(".hfile-input[data-variant]:has(.hfile-input-control:enabled)");
-
-const ownAnswers = new WeakSet<Event>();
-const stuckAfter = 2000;
-
-const leftToOthers = (event: DragEvent) => {
-  const element = elementOf(event);
-  return (
-    (event.defaultPrevented && !ownAnswers.has(event)) ||
-    (element as HTMLElement | null)?.isContentEditable ||
-    Boolean(element?.closest("input:not(.hfile-input-control), textarea"))
-  );
-};
-
-const useFileDrop = (
-  root: RefObject<HTMLElement | null>,
-  input: RefObject<HTMLInputElement | null>,
-  enabled: boolean,
-) => {
-  const [dragging, setDragging] = useState<"page" | "over">();
-
-  useEffect(() => {
-    if (!enabled) return;
-    let depth = 0;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const carriesFiles = (event: DragEvent) => event.dataTransfer?.types.includes("Files");
-    const inside = (event: DragEvent) => dropAreaOf(event) === root.current;
-    const end = () => {
-      depth = 0;
-      clearTimeout(timer);
-      setDragging(undefined);
-    };
-    const answer = (event: DragEvent) => {
-      setDragging(inside(event) ? "over" : "page");
-      clearTimeout(timer);
-      timer = setTimeout(end, stuckAfter);
-      if (leftToOthers(event)) return;
-      ownAnswers.add(event);
-      event.preventDefault();
-      event.dataTransfer!.dropEffect = dropAreaOf(event) ? "copy" : "none";
-    };
-
-    const enter = (event: DragEvent) => {
-      if (!carriesFiles(event)) return;
-      depth += 1;
-      answer(event);
-    };
-    const leave = (event: DragEvent) => {
-      if (!carriesFiles(event)) return;
-      depth = Math.max(0, depth - 1);
-      if (depth === 0) end();
-    };
-    const over = (event: DragEvent) => {
-      if (carriesFiles(event)) answer(event);
-    };
-    const drop = (event: DragEvent) => {
-      end();
-      if (!carriesFiles(event) || leftToOthers(event)) return;
-      ownAnswers.add(event);
-      event.preventDefault();
-      if (!inside(event) || !input.current) return;
-      const dropped = Array.from(event.dataTransfer!.items)
-        .filter((item) => item.kind === "file" && !item.webkitGetAsEntry?.()?.isDirectory)
-        .flatMap((item) => item.getAsFile() ?? []);
-      const files = input.current.multiple ? dropped : dropped.slice(0, 1);
-      if (!files.length) return;
-      const chosen = new DataTransfer();
-      for (const file of files) chosen.items.add(file);
-      input.current.files = chosen.files;
-      input.current.dispatchEvent(new Event("change", { bubbles: true }));
-    };
-
-    document.addEventListener("dragenter", enter);
-    document.addEventListener("dragleave", leave);
-    document.addEventListener("dragover", over);
-    document.addEventListener("drop", drop);
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener("dragenter", enter);
-      document.removeEventListener("dragleave", leave);
-      document.removeEventListener("dragover", over);
-      document.removeEventListener("drop", drop);
-      setDragging(undefined);
-    };
-  }, [root, input, enabled]);
-
-  return dragging;
-};
 
 export const FileInput = (fileProps: FileInputProps) => {
   const { label, optional, description, error, hidden, ...props } = fileProps;
@@ -292,7 +178,14 @@ const FileInputControl = (controlProps: FileInputControlProps & { error?: ReactN
   const [message, setMessage] = useState<ReactNode>(null);
   const [changed, setChanged] = useState(false);
   const reported = useRef<File | null>(null);
-  const dragging = useFileDrop(root, input, Boolean(variant) && !props.disabled);
+  const dragging = useFileDrop(root, Boolean(variant) && !props.disabled, (dropped) => {
+    const control = input.current;
+    if (!control) return;
+    const chosen = new DataTransfer();
+    for (const file of control.multiple ? dropped : dropped.slice(0, 1)) chosen.items.add(file);
+    control.files = chosen.files;
+    control.dispatchEvent(new Event("change", { bubbles: true }));
+  }, () => input.current?.matches(":enabled") ?? false);
   const describedHint = variant !== "avatar" && renders(hint);
   const validated = Boolean(validate) || given;
   const field = useField(props, {
@@ -501,7 +394,7 @@ const FileInputControl = (controlProps: FileInputControlProps & { error?: ReactN
               input.current?.focus();
             }}
           >
-            {removeIcon}
+            {closeIcon}
           </button>
         )}
       </div>

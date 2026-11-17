@@ -1,0 +1,101 @@
+@use "shortcuts" as *;
+
+// Badge: a count that asks to be looked at, such as unread messages or new
+// notifications, or a dot where there's something new without a number. On
+// its own, it sits in the line, such as beside a tab's label; in a Button,
+// on its top corner at the end, ringed in the page's background so it reads
+// as on top of the button.
+.hbadge {
+  --hbadge-ring: #{$color-background};
+
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+  min-inline-size: 1.25rem;
+  block-size: 1.25rem;
+  padding-inline: 0.375rem;
+
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  color: $color-on-primary;
+  background-color: $color-danger-fill;
+  border-radius: $border-radius-full;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Quieter, for a count that's information rather than a call: the accent,
+  // or gray.
+  &[data-variant="accent"] {
+    background-color: $color-primary-fill;
+  }
+
+  &[data-variant="neutral"] {
+    color: $color-text-secondary;
+    background-color: $color-background-active;
+  }
+
+  // Something new, without a number: an 8px dot.
+  &[data-dot] {
+    min-inline-size: 0.5rem;
+    block-size: 0.5rem;
+    padding: 0;
+  }
+
+  // Added after the page loaded, it settles in from 0.8 over 200ms, as a
+  // File List's file does; with reduced motion, it fades.
+  &[data-new] {
+    animation: hbadge-in $duration-normal $ease-out-cubic;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &[data-new] {
+      animation-name: hbadge-fade-in;
+    }
+  }
+
+  @media (forced-colors: active) {
+    border: 1px solid CanvasText;
+  }
+}
+
+// On a Button, its top corner at the end, 6px over the edge: past its 1px
+// border too, as it's placed from inside it.
+.hbutton:has(> .hbadge) {
+  position: relative;
+}
+
+.hbutton > .hbadge {
+  position: absolute;
+  inset-block-start: calc(-0.375rem - 1px);
+  inset-inline-end: calc(-0.375rem - 1px);
+
+  outline: 2px solid var(--hbadge-ring);
+  pointer-events: none;
+}
+
+.hbutton > .hbadge[data-dot] {
+  inset-block-start: 0.125rem;
+  inset-inline-end: 0.125rem;
+}
+
+@keyframes hbadge-in {
+  from {
+    opacity: 0;
+    scale: 0.8;
+  }
+}
+
+@keyframes hbadge-fade-in {
+  from {
+    opacity: 0;
+  }
+}

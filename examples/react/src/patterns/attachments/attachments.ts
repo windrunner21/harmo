@@ -59,10 +59,10 @@ const releasePicture = (url: string) => {
 
 const subscribe = () => () => {};
 
-// The files a form holds, for its File List. Given `upload`, each one is
-// uploaded as it's added, and the form sends the keys they're stored under;
-// without it, the form sends the files. Uploads need the page's script, so
-// `shown` is false until it runs.
+// The files a form or a chat's composer holds, for its File List. Given
+// `upload`, each one is uploaded as it's added, and what's sent is the keys
+// they're stored under; without it, the files themselves. Uploads need the
+// page's script, so `shown` is false until it runs.
 export const useAttachments = ({ upload, preview = false }: { upload?: Upload; preview?: boolean }) => {
   const [items, setItems] = useState<Attachment[]>([]);
   const latest = useRef<Attachment[]>([]);
@@ -124,7 +124,7 @@ export const useAttachments = ({ upload, preview = false }: { upload?: Upload; p
       name: file.name,
       detail: kilobytes.format(file.size / 1000),
       file,
-      ...(preview && { preview: URL.createObjectURL(file) }),
+      ...(preview && file.type.startsWith("image/") && { preview: URL.createObjectURL(file) }),
     }));
     change((all) => [...all, ...added]);
     for (const item of added) start(item);
@@ -151,5 +151,13 @@ export const useAttachments = ({ upload, preview = false }: { upload?: Upload; p
 
   const entries = () => latest.current.map((item) => (upload ? (item.key ?? "") : item.file));
 
-  return { items, add, remove, retry, settle: upload ? settle : undefined, entries, shown: !upload || scripted };
+  // Hands over the files, emptying the list, once they're sent; their
+  // pictures stay, for what they were sent with, such as a chat's message.
+  const take = () => {
+    const taken = latest.current;
+    change(() => []);
+    return taken;
+  };
+
+  return { items, add, remove, retry, take, settle: upload ? settle : undefined, entries, shown: !upload || scripted };
 };

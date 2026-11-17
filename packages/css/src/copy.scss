@@ -61,18 +61,7 @@
 
 // Says it's copied to screen readers; hidden from sight.
 .hcopy-status {
-  position: absolute;
-
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-
-  white-space: nowrap;
-
-  border: 0;
-  clip-path: inset(50%);
+  @include visually-hidden;
 }
 
 // A value to copy, such as an ID or a key: a read-only Input in a monospace

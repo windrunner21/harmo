@@ -716,4 +716,19 @@ onEachPlayground("file-input", () => {
     const [drawn, removing] = await boxes(button, remove);
     expect(removing!.x + removing!.width).toBeLessThanOrEqual(drawn!.x);
   });
+
+  test("in a disabled fieldset, its area takes no drop", async ({ page }) => {
+    const { root, input, text } = await parts(page, "file-input-compact-drop-area");
+    await root.evaluate((node) => {
+      const set = document.createElement("fieldset");
+      set.disabled = true;
+      node.before(set);
+      set.append(node);
+    });
+    await drag(root, "dragenter");
+    await expect(root).not.toHaveAttribute("data-dragging", "over");
+    await drag(root, "drop");
+    await expect(text).toHaveText("Choose file");
+    expect(await fileCount(input)).toBe(0);
+  });
 });

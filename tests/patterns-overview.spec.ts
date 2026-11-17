@@ -9,6 +9,7 @@ import { onEachPlayground, test } from "./playgrounds.ts";
 // In the nav's order, by name.
 const patterns = [
   ["Account Forms", "account-forms"],
+  ["Chat", "chat"],
   ["Contact Form", "contact-form"],
   ["Reset Password", "reset-password"],
   ["Sign-in Form", "sign-in-form"],

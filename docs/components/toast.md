@@ -243,7 +243,7 @@ without being built again.
 
 ```tsx
 <Toaster
-  label="Notifications (F8)"
+  aria-label="Notifications (F8)"
   icons={{
     success: <SuccessIcon />,
     error: <ErrorIcon />,
@@ -284,7 +284,7 @@ toast({
 
 | `<Toaster>` prop | Effect |
 | --- | --- |
-| `label` | Required. The region's `aria-label`, naming its hotkey, in your app's language |
+| `aria-label` | Required. The region's name, naming its hotkey, in your app's language |
 | `icons` | Required. An icon for each status, as elements from your app; Toaster adds `.htoast-icon` and hides them from screen readers |
 | `position` | Where toasts show: `"bottom-center"` by default, or `"top-start"`, `"top-center"`, `"top-end"`, `"bottom-start"`, `"bottom-end"` |
 | `hotkey` | The key that moves focus to the toasts: `"F8"` by default |

@@ -1,0 +1,145 @@
+@use "shortcuts" as *;
+
+// Conversation: the scrolling log a chat's Messages are in. It stays at the
+// latest as messages come and grow, unless you've scrolled up to read; then
+// a Jump to latest button shows at its foot. Sending one brings it back to
+// the latest. A visually hidden status says what arrived, for screen
+// readers, as the messages themselves aren't a live region.
+.hconversation {
+  --hconversation-column: none;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  min-block-size: 0;
+  padding: $space-sm;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: 1.25rem;
+
+  color: $color-text;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Focusable, so the keyboard can scroll it.
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: -2px;
+  }
+
+  // Larger text, as for an assistant's long replies.
+  &[data-size="large"] {
+    font-size: $font-size-md;
+    line-height: 1.5rem;
+  }
+}
+
+// The messages, a step apart, in a column as wide as
+// --hconversation-column, centered.
+.hconversation-list {
+  display: grid;
+  gap: $space-sm;
+
+  align-self: center;
+
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: var(--hconversation-column);
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Gathered at the foot, nearest the field, as in a messenger.
+  .hconversation[data-align="end"] > & {
+    margin-block-start: auto;
+  }
+}
+
+// What shows before the first message, in the middle.
+.hconversation-empty {
+  display: grid;
+
+  margin-block: auto;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Jump to latest, at the foot, over the messages, when you've scrolled up:
+// it rises in over 200ms and drops away over 150ms.
+.hconversation-latest {
+  position: sticky;
+  inset-block-end: 0;
+  z-index: 1;
+
+  display: flex;
+  flex-shrink: 0;
+  align-self: center;
+
+  margin-block-start: calc(#{$control-height} * -1);
+
+  transition:
+    opacity $duration-normal $ease-out-cubic,
+    translate $duration-normal $ease-out-cubic,
+    display $duration-normal allow-discrete;
+
+  &:not([data-open]) {
+    display: none;
+
+    opacity: 0;
+    translate: 0 0.25rem;
+
+    transition-duration: $duration-fast;
+  }
+
+  &[hidden] {
+    display: none;
+
+    transition: none;
+  }
+
+  @starting-style {
+    &[data-open] {
+      opacity: 0;
+      translate: 0 0.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:not([data-open]) {
+      translate: none;
+    }
+
+    @starting-style {
+      &[data-open] {
+        translate: none;
+      }
+    }
+  }
+
+  // Over the messages, so not see-through as a secondary Button is.
+  & .hbutton,
+  & .hbutton:is(:hover, :active) {
+    background-color: $color-background;
+    border-radius: 50%;
+    box-shadow: $box-shadow-sm;
+  }
+}
+
+.hconversation-status {
+  @include visually-hidden;
+}

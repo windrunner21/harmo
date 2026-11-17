@@ -184,18 +184,7 @@
 
 // Out of sight, not hidden: the keyboard and screen readers still reach it.
 .hfile-input-control {
-  position: absolute;
-
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-
-  white-space: nowrap;
-
-  border: 0;
-  clip-path: inset(50%);
+  @include visually-hidden;
 }
 
 .hfile-input-icon {

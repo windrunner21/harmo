@@ -8,7 +8,6 @@ import {
   useRef,
   type ReactElement,
 } from "react";
-import { close as closePaths } from "./icons.ts";
 
 // What Dialog and Drawer share: each is a native <dialog>, opened as a modal,
 // that fades or slides out before it closes.
@@ -198,25 +197,6 @@ export const useModal = ({
 
   return dialog;
 };
-
-export const closeIcon = (
-  <svg
-    className="hicon"
-    width="24"
-    height="24"
-    viewBox="0 0 25 25"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    aria-hidden="true"
-    focusable="false"
-  >
-    {closePaths.map((d) => (
-      <path key={d} d={d} />
-    ))}
-  </svg>
-);
 
 // Makes the button inside it close the dialog or drawer it's in.
 export const ModalClose = ({

@@ -1,0 +1,55 @@
+<play-example title="Default">
+  <play-note>
+    A count that asks to be looked at, such as unread messages. Past 99, it
+    says <code>99+</code>.
+  </play-note>
+  <span class="hbadge">3</span>
+  <span class="hbadge">12</span>
+  <span class="hbadge">99+</span>
+</play-example>
+
+<play-example title="Variants">
+  <play-note>
+    Red asks to be looked at; the accent and gray are quieter, for a count
+    that's only information. A dot says there's something new, without a
+    number.
+  </play-note>
+  <span class="hbadge">8</span>
+  <span class="hbadge" data-variant="accent">8</span>
+  <span class="hbadge" data-variant="neutral">8</span>
+  <span class="hbadge" data-dot></span>
+</play-example>
+
+<play-example title="On a button">
+  <play-note>
+    On a <a class="hlink" data-underlined href="button.html">Button</a>'s top
+    corner, ringed in the page's background. It's hidden from screen readers,
+    so the button's name says it instead.
+  </play-note>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Messages, 3 unread">
+    <play-icon name="messages" class="hicon"></play-icon>
+    <span class="hbadge" aria-hidden="true">3</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Tickets, 12 open">
+    <play-icon name="tickets" class="hicon"></play-icon>
+    <span class="hbadge" data-variant="neutral" aria-hidden="true">12</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Settings, an update is ready">
+    <play-icon name="settings" class="hicon"></play-icon>
+    <span class="hbadge" data-dot aria-hidden="true"></span>
+  </button>
+</play-example>
+
+<play-example title="As it arrives">
+  <play-note>
+    A badge that comes after the page has loaded settles in, from 0.8 over
+    200ms; with reduced motion, it fades in. One there as the page loads just
+    shows.
+  </play-note>
+  <button class="hbutton" data-variant="tertiary" type="button" aria-label="Messages" data-example-badge-count>
+    <play-icon name="messages" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="secondary" type="button" data-example-badge-add>
+    <span class="hbutton-label">Get a message</span>
+  </button>
+</play-example>

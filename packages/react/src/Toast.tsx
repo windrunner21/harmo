@@ -101,8 +101,8 @@ export type ToastPosition =
   | "bottom-end";
 
 export interface ToasterProps
-  extends Omit<ComponentPropsWithRef<"section">, "children"> {
-  label: string;
+  extends Omit<ComponentPropsWithRef<"section">, "children" | "aria-label"> {
+  "aria-label": string;
   icons: Record<ToastStatus, ReactElement<ComponentPropsWithRef<"svg">>>;
   position?: ToastPosition;
   hotkey?: string;
@@ -261,7 +261,7 @@ const ToastItem = ({
 };
 
 export const Toaster = ({
-  label,
+  "aria-label": label,
   icons,
   position = "bottom-center",
   hotkey = "F8",

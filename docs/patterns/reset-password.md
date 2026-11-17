@@ -422,7 +422,8 @@ in place of the form:
 
 [reset-password.js](../../examples/html/src/scripts/reset-password.js) is an
 example. The Password Inputs' toggle and strength use that component's
-example script, `password.js`.
+example script, `password.js`. The card's change of size between steps is
+`change-step.js`'s, which the forms' scripts share.
 
 **On submit:**
 

@@ -12,7 +12,7 @@ const icons = { success: icon, error: icon, warning: icon, info: icon };
 describe("Toast", () => {
   test("the region is a manual popover, named by its label, empty on the server, with its two announcers", () => {
     toast({ title: "Not rendered on the server" });
-    const markup = renderToStaticMarkup(<Toaster label="Avisos (F8)" icons={icons} />);
+    const markup = renderToStaticMarkup(<Toaster aria-label="Avisos (F8)" icons={icons} />);
     expect(markup).toBe(
       '<section class="htoaster" popover="manual" tabindex="-1" aria-label="Avisos (F8)"><ol class="htoaster-list"></ol><div class="htoaster-announce" role="status" aria-atomic="false"></div><div class="htoaster-announce" role="alert" aria-atomic="false"></div></section>',
     );

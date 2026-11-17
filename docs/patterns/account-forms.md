@@ -287,7 +287,8 @@ The forms' own classes are on their pages. Account Forms adds:
 
 [account-forms.js](../../examples/html/src/scripts/account-forms.js) is an
 example. It only switches between the forms; each keeps its own script, as
-its page says.
+its page says. The card's change of size is `change-step.js`'s, which the
+forms' scripts share.
 
 **On a click:** listen for `click` on `.haccount-forms`, rather than on each
 link. Act only on a link whose `href` is the page of a form other than the

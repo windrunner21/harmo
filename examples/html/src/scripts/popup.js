@@ -4,9 +4,11 @@
 // popup where it is, and hand focus back when one over another closes. The
 // React Popup does all of this itself. A
 // popup with no popovertarget button, such as a Combobox's, is placed by the
-// element it's anchored to, whose own script keeps its aria-expanded.
+// element it's anchored to, whose own script keeps its aria-expanded. A
+// Mentions' list keeps the side it's given, data-side, as the React Mentions
+// does, so it's left alone.
 {
-  for (const popup of document.querySelectorAll(".hpopup[popover]")) {
+  for (const popup of document.querySelectorAll(".hpopup[popover]:not(.hmentions > .hpopup)")) {
     const invoker = [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find(
       (element) => !popup.contains(element),
     );

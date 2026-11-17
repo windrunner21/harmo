@@ -147,18 +147,7 @@ $scroll-room: 16px;
 // in the page, empty, from the start, since a live region that arrives with
 // its text isn't always read; the script adds each toast's text to one.
 .htoaster-announce {
-  position: absolute;
-
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-
-  white-space: nowrap;
-
-  border: 0;
-  clip-path: inset(50%);
+  @include visually-hidden;
 }
 
 // Spread out, the list reaches behind the toasts, away from the edge, so the

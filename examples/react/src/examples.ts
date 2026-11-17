@@ -4,6 +4,7 @@
 import type { ComponentType } from "react";
 import { examples as accordion } from "./components/accordion.tsx";
 import { examples as avatar } from "./components/avatar.tsx";
+import { examples as badge } from "./components/badge.tsx";
 import { examples as banner } from "./components/banner.tsx";
 import { examples as breadcrumb } from "./components/breadcrumb.tsx";
 import { examples as button } from "./components/button.tsx";
@@ -13,11 +14,14 @@ import { examples as checkbox } from "./components/checkbox.tsx";
 import { examples as chevronToArrow } from "./components/chevron-to-arrow.tsx";
 import { examples as combobox } from "./components/combobox.tsx";
 import { examples as commandMenu } from "./components/command-menu.tsx";
+import { examples as composer } from "./components/composer.tsx";
+import { examples as conversation } from "./components/conversation.tsx";
 import { examples as copy } from "./components/copy.tsx";
 import { examples as dateFilter } from "./components/date-filter.tsx";
 import { examples as datePicker } from "./components/date-picker.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
+import { examples as dropZone } from "./components/drop-zone.tsx";
 import { examples as emptyState } from "./components/empty-state.tsx";
 import { examples as expandChevron } from "./components/expand-chevron.tsx";
 import { examples as field } from "./components/field.tsx";
@@ -30,9 +34,12 @@ import { examples as icons } from "./components/icons.tsx";
 import { examples as input } from "./components/input.tsx";
 import { examples as kbd } from "./components/kbd.tsx";
 import { examples as languagePicker } from "./components/language-picker.tsx";
+import { examples as launcher } from "./components/launcher.tsx";
 import { examples as link } from "./components/link.tsx";
 import { examples as listbox } from "./components/listbox.tsx";
+import { examples as mentions } from "./components/mentions.tsx";
 import { examples as menuButton } from "./components/menu-button.tsx";
+import { examples as message } from "./components/message.tsx";
 import { examples as meter } from "./components/meter.tsx";
 import { examples as navigationMenu } from "./components/navigation-menu.tsx";
 import { examples as otpInput } from "./components/otp-input.tsx";
@@ -40,6 +47,7 @@ import { examples as pagination } from "./components/pagination.tsx";
 import { examples as password } from "./components/password.tsx";
 import { examples as phoneInput } from "./components/phone-input.tsx";
 import { examples as popup } from "./components/popup.tsx";
+import { examples as prose } from "./components/prose.tsx";
 import { examples as radio } from "./components/radio.tsx";
 import { examples as search } from "./components/search.tsx";
 import { examples as section } from "./components/section.tsx";
@@ -57,6 +65,7 @@ import { examples as table } from "./components/table.tsx";
 import { examples as signInForm } from "./components/sign-in-form.tsx";
 import { examples as signUpForm } from "./components/sign-up-form.tsx";
 import { examples as resetPassword } from "./components/reset-password.tsx";
+import { examples as chat } from "./components/chat.tsx";
 import { examples as contactForm } from "./components/contact-form.tsx";
 import { examples as accountForms } from "./components/account-forms.tsx";
 import { examples as tableOfContents } from "./components/table-of-contents.tsx";
@@ -73,6 +82,7 @@ import { examples as verifyCode } from "./components/verify-code.tsx";
 export const components: Record<string, Record<string, ComponentType>> = {
   accordion,
   avatar,
+  badge,
   banner,
   breadcrumb,
   button,
@@ -82,11 +92,14 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "chevron-to-arrow": chevronToArrow,
   combobox,
   "command-menu": commandMenu,
+  composer,
+  conversation,
   copy,
   "date-filter": dateFilter,
   "date-picker": datePicker,
   dialog,
   drawer,
+  "drop-zone": dropZone,
   "empty-state": emptyState,
   "expand-chevron": expandChevron,
   field,
@@ -99,9 +112,12 @@ export const components: Record<string, Record<string, ComponentType>> = {
   input,
   kbd,
   "language-picker": languagePicker,
+  launcher,
   link,
   listbox,
+  mentions,
   "menu-button": menuButton,
+  message,
   meter,
   "navigation-menu": navigationMenu,
   "otp-input": otpInput,
@@ -109,6 +125,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   password,
   "phone-input": phoneInput,
   popup,
+  prose,
   radio,
   search,
   section,
@@ -126,6 +143,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "sign-in-form": signInForm,
   "sign-up-form": signUpForm,
   "reset-password": resetPassword,
+  chat,
   "contact-form": contactForm,
   "account-forms": accountForms,
   "table-of-contents": tableOfContents,

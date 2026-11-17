@@ -1,0 +1,163 @@
+/* A chat: its header, its Conversation, and its Composer, one over the
+   other, filling its parent's height, with only the conversation scrolling.
+   Its parts are Harmo's; this lays them out. data-variant sets where it sits:
+   "ai" fills the page, in a column as wide as a comfortable line; "copilot"
+   fills a panel beside the app's content; "support" fills a Launcher's
+   panel. */
+.hchat {
+  display: grid;
+  grid-template-areas: "header" "conversation" "composer";
+  grid-template-rows: auto minmax(0, 1fr) auto;
+
+  box-sizing: border-box;
+  block-size: 100%;
+  min-block-size: 0;
+
+  font-family: var(--harmo-font-family);
+
+  color: var(--harmo-color-text);
+  background-color: var(--harmo-color-background);
+}
+
+.hchat[hidden] {
+  display: none;
+}
+
+/* Who you're talking to, and its buttons at the end. */
+.hchat-header {
+  grid-area: header;
+
+  display: flex;
+  align-items: center;
+  gap: var(--harmo-space-xs);
+
+  padding-block: var(--harmo-space-xs);
+  padding-inline: var(--harmo-space-sm) var(--harmo-space-xs);
+
+  border-block-end: 1px solid var(--harmo-color-border);
+}
+
+.hchat-header[hidden] {
+  display: none;
+}
+
+.hchat-header > .hicon {
+  flex-shrink: 0;
+
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+
+  color: var(--harmo-color-primary);
+}
+
+.hchat-header-text {
+  display: grid;
+  flex: 1;
+
+  min-inline-size: 0;
+}
+
+.hchat-header-text[hidden] {
+  display: none;
+}
+
+.hchat-title,
+.hchat-subtitle {
+  margin: 0;
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hchat-title {
+  font-size: var(--harmo-font-size-sm);
+  font-weight: var(--harmo-font-weight-medium);
+  line-height: 1.25rem;
+}
+
+.hchat-subtitle {
+  font-size: var(--harmo-font-size-xs);
+  line-height: 1.125rem;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+.hchat-header-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.hchat-header-actions[hidden] {
+  display: none;
+}
+
+.hchat-conversation {
+  grid-area: conversation;
+}
+
+/* The composer, at the foot, inset as the conversation is. */
+.hchat-composer {
+  grid-area: composer;
+
+  padding: 0 var(--harmo-space-sm) var(--harmo-space-sm);
+}
+
+/* What shows before anything is sent: a greeting, and prompts to start
+   with, in the middle of the conversation. */
+.hchat-greeting {
+  display: grid;
+  justify-items: center;
+  gap: var(--harmo-space-sm);
+
+  text-align: center;
+}
+
+.hchat-greeting[hidden] {
+  display: none;
+}
+
+.hchat-greeting-title {
+  margin: 0;
+
+  font-size: var(--harmo-font-size-lg);
+  font-weight: var(--harmo-font-weight-medium);
+  line-height: 1.4;
+}
+
+/* Suggested prompts, sent as they read when pressed. */
+.hchat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--harmo-space-2xs);
+
+  max-inline-size: 36rem;
+}
+
+.hchat-suggestions[hidden] {
+  display: none;
+}
+
+/* AI chat: the conversation and composer in a column at most 720px wide, in
+   the middle. */
+.hchat[data-variant="ai"] > .hconversation {
+  --hconversation-column: 45rem;
+}
+
+.hchat[data-variant="ai"] > .hcomposer {
+  --hcomposer-column: 45rem;
+}
+
+/* Support chat: its corners the Launcher panel's, inside its border, so
+   files dragged over it are framed to them. */
+.hchat[data-variant="support"] {
+  border-radius: calc(var(--harmo-border-radius) * 2 - 1px);
+}
+
+@media (max-width: 30rem) {
+  .hchat[data-variant="support"] {
+    border-radius: 0;
+  }
+}

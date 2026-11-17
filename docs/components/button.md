@@ -99,10 +99,12 @@ of its content in `.hbutton-hold`:
 | `disabled` | Dimmed, not-allowed cursor (`<button>` only) |
 | `aria-disabled="true"` | Looks disabled but stays focusable; a script must ignore activation |
 | `aria-busy="true"` | Loading, with `aria-disabled="true"` and a `.hspinner` |
+| `aria-pressed` | A toggle, on with `"true"`, such as a rating or a filter: a secondary or tertiary one that's on is in `--harmo-color-primary`, and a secondary one on `--harmo-color-primary-tint` with a `--harmo-color-primary` border. Its name stays the same, on or off |
 | `data-destructive` | Destructive, in any variant: filled red, outlined with red text, or red text alone; the focus ring keeps the accent |
 | `data-hold` | Hold to confirm: the action runs once the button is held; see [Hold to confirm](#hold-to-confirm) |
 | `--hbutton-hold-duration` | How long it's held: `1.5s` by default |
 | `--hbutton-press-duration` | How long a hold button takes to shrink as it's pressed: `160ms` by default |
+| A `.hbadge` after its content | A [Badge](badge.md) on its top corner, such as a count of unread messages. Say the count in the button's name |
 | `data-instant` | Its width follows a change of its text at once, for text that changes often, such as a countdown or a live count; read by the script |
 
 ## Appearance and states
@@ -198,6 +200,7 @@ of its content in `.hbutton-hold`:
 
 | Change | When |
 | --- | --- |
+| Toggle `aria-pressed` between `"true"` and `"false"` | On a toggle's click |
 | Ignore activation: prevent the click's default, so it sends no form, follows no link, and runs no command, and don't act; prevent a middle click's (`auxclick`) default too, which would open a link in a new tab | While `aria-disabled="true"` |
 | Add `aria-busy="true"`, `aria-disabled="true"`, and a `.hspinner` right after the `.hbutton-label`, before any icon that follows it; remove them when done | While an action is in progress |
 | The width, from the old to the new, over 200ms | When what it shows changes, its text or whether it's loading, unless it's appearing or disappearing, as when `hidden` changes too, or it has `data-instant` |

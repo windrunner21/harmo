@@ -12,7 +12,7 @@ your app holds it.
 | CSS | `pagination.css`, `button.css`, `chevron.css` |
 | Element | `<nav class="hpagination">` |
 | Parts | Previous and Next as `.hbutton`s with `data-variant="secondary"` and a `.hchevron`; between them, optionally, `<ul class="hpagination-pages">` holding a `<li>` around each `.hpagination-page`, a link or a button, and `<li class="hpagination-ellipsis" aria-hidden="true">` where pages are left out |
-| Required | An `aria-label` on the nav, in the page's language, such as "Pages"; an `aria-label` on each page, such as "Page 5"; `aria-current="page"` on the page you're on |
+| Required | A name for the nav, in the page's language: an `aria-label` such as "Pages", or `aria-labelledby` naming a visible heading; an `aria-label` on each page, such as "Page 5"; `aria-current="page"` on the page you're on |
 | Unique | None |
 | Script | Only to ignore a disabled Previous or Next, as for a [Button](button.md); without one, following it reloads the page you're on |
 
@@ -154,7 +154,7 @@ a client component.
 
 | Prop | Effect |
 | --- | --- |
-| `aria-label` | The nav's name, such as "Pages" |
+| `aria-label`, or `aria-labelledby` | Required, one or the other. The nav's name, such as "Pages", or the id of a visible heading that names it |
 | `page` | The page you're on, from 1 to `pageCount`. Keep it in range, such as going back to the first page when the count shrinks: outside it, no page is current |
 | `pageCount` | How many pages there are |
 | `href` | A page's URL, such as ``(page) => `?page=${page}` ``; links through `HarmoProvider`'s `linkComponent` (an `<a>` by default) |

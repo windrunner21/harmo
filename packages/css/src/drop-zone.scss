@@ -1,0 +1,81 @@
+@use "shortcuts" as *;
+
+// Drop Zone: an area that takes files dropped anywhere on it, such as a chat,
+// a folder's page, or a card. While files are dragged over it, with
+// data-dragging, a dashed frame covers it, saying where they'll go. It's an
+// extra for a pointer: a File Input, or a button that opens the picker, does
+// the same from the keyboard.
+.hdrop-zone {
+  position: relative;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The frame: a 2px dashed line in the accent, on its tint, as far as the
+// area's edges and corners, its words in the middle. It takes no presses, so
+// the drop is the area's. It fades in over 150ms, and out as fast.
+.hdrop-zone-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: $space-2xs;
+
+  box-sizing: border-box;
+  padding: $space-sm;
+
+  text-align: center;
+
+  color: $color-primary;
+  background-color: color-mix(in srgb, #{$color-primary-tint} 90%, transparent);
+  border: 2px dashed $color-primary;
+  border-radius: inherit;
+
+  pointer-events: none;
+
+  transition:
+    opacity $duration-fast ease,
+    display $duration-fast allow-discrete;
+
+  .hdrop-zone:not([data-dragging]) > & {
+    display: none;
+
+    opacity: 0;
+  }
+
+  &[hidden] {
+    display: none;
+
+    transition: none;
+  }
+
+  & > .hicon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  @media (forced-colors: active) {
+    background-color: Canvas;
+    border-color: Highlight;
+  }
+}
+
+@starting-style {
+  .hdrop-zone[data-dragging] > .hdrop-zone-overlay {
+    opacity: 0;
+  }
+}
+
+.hdrop-zone-label {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.25rem;
+}

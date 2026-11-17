@@ -11,7 +11,7 @@ import {
 } from "react";
 import { flatChildren } from "./children.ts";
 import { ExpandChevron } from "./ExpandChevron.tsx";
-import { Field, useField, type StackedFieldProps } from "./field/Field.tsx";
+import { Field, useField } from "./field/Field.tsx";
 import {
   Listbox,
   optionsOf,
@@ -25,6 +25,7 @@ import { OptionGroup } from "./listbox/OptionGroup.tsx";
 import { Popup } from "./Popup.tsx";
 import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
+import type { ControlField } from "./types.ts";
 
 type SelectControlProps = Omit<
   ComponentPropsWithRef<"button">,
@@ -37,18 +38,7 @@ type SelectControlProps = Omit<
     renderValue?: (values: string[]) => ReactNode;
   };
 
-type SelectField =
-  | ({ label: StackedFieldProps["label"] } & Partial<
-      Pick<StackedFieldProps, "optional" | "description" | "error">
-    >)
-  | {
-      label?: undefined;
-      optional?: never;
-      description?: never;
-      error?: never;
-    };
-
-export type SelectProps = SelectControlProps & SelectField;
+export type SelectProps = SelectControlProps & ControlField;
 
 export const Select = (selectProps: SelectProps) => {
   const { label, optional, description, error, hidden, ...props } = selectProps;

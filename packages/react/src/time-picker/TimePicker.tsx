@@ -12,11 +12,12 @@ import {
   type ReactNode,
 } from "react";
 import { ExpandChevron } from "../ExpandChevron.tsx";
-import { Field, useField, type StackedFieldProps } from "../field/Field.tsx";
+import { Field, useField } from "../field/Field.tsx";
 import { Popup } from "../Popup.tsx";
 import { useMergedRef } from "../useMergedRef.ts";
 import { withClass } from "../withClass.ts";
 import { clockOf, isTime, minutesOf, type ClockColumn } from "./clock.ts";
+import type { ControlField } from "../types.ts";
 
 type TimePickerControlProps = Omit<
   ComponentPropsWithRef<"button">,
@@ -25,28 +26,17 @@ type TimePickerControlProps = Omit<
   locale: string;
   hourLabel: string;
   minuteLabel: string;
-  periodLabel: string;
   value?: string | null;
   defaultValue?: string | null;
   onValueChange?: (value: string) => void;
   name?: string;
   placeholder?: ReactNode;
   minuteStep?: number;
-  hour12?: boolean;
-};
+} & TimePickerClock;
 
-type TimePickerField =
-  | ({ label: StackedFieldProps["label"] } & Partial<
-      Pick<StackedFieldProps, "optional" | "description" | "error">
-    >)
-  | {
-      label?: undefined;
-      optional?: never;
-      description?: never;
-      error?: never;
-    };
+type TimePickerClock = { hour12: false; periodLabel?: string } | { hour12?: true; periodLabel: string };
 
-export type TimePickerProps = TimePickerControlProps & TimePickerField;
+export type TimePickerProps = TimePickerControlProps & ControlField;
 
 export const TimePicker = (timePickerProps: TimePickerProps) => {
   const { label, optional, description, error, hidden, ...props } = timePickerProps;
@@ -187,7 +177,7 @@ const TimePickerControl = ({
       pick: (value) => choose(hour ?? 0, value),
     },
     dayPeriod: {
-      label: periodLabel,
+      label: periodLabel ?? "",
       options: clock.periods.map((text, value) => ({ value, text })),
       selected: hour === undefined ? undefined : afternoon ? 1 : 0,
       pick: (value) => choose(((hour ?? 0) % 12) + value * 12, minute ?? 0),

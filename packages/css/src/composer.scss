@@ -1,0 +1,210 @@
+@use "shortcuts" as *;
+
+// Composer: where a message is written and sent, at the foot of a chat. The
+// field and its buttons sit in one box, which takes the field's border and
+// focus ring; the field inside has none of its own, and grows with what's
+// written. Send turns into Stop while a reply comes, if it can be stopped.
+// Above the field, the box can hold what the assistant knows about, the
+// message being edited, or the files to send; under the box, a note.
+.hcomposer {
+  --hcomposer-column: none;
+
+  display: grid;
+  justify-items: center;
+  gap: $space-2xs;
+
+  margin: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Its parts in a column as wide as --hcomposer-column, centered.
+  & > * {
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: var(--hcomposer-column);
+  }
+}
+
+.hcomposer-box {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: $space-2xs;
+
+  padding: $space-2xs;
+
+  background-color: $input-color-background;
+  border: 1px solid $input-color-border;
+  border-radius: calc(#{$border-radius} + #{$space-2xs});
+  box-shadow: $input-box-shadow;
+
+  transition: border-color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:has(.htextarea:focus-visible) {
+    border-color: $color-focus;
+    outline: 3px solid color-mix(in srgb, #{$color-focus} 20%, transparent);
+
+    transition: none;
+  }
+
+  // With an attach button, it goes before the field.
+  &:has(> .hcomposer-attach) {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  // Its text 10px from the box's border, as in any field.
+  & .htextarea,
+  & .htextarea:is(:hover, :focus, :focus-visible) {
+    max-block-size: 12.5rem;
+    padding-inline: calc(#{$space-xs} - #{$space-2xs});
+
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+
+    resize: none;
+  }
+
+  // The files to send, above the field.
+  & > .hfile-list {
+    grid-column: 1 / -1;
+
+    padding: calc(#{$space-xs} - #{$space-2xs});
+    padding-block-end: 0;
+  }
+
+  & > .hfile-list[hidden] {
+    display: none;
+  }
+}
+
+// What the assistant knows about, such as the ticket that's open.
+.hcomposer-context {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  gap: $space-2xs;
+
+  padding: calc(#{$space-xs} - #{$space-2xs});
+  padding-block-end: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Your message, being edited in the field: a bar above it, in the primary
+// color, quoting it on one line, with a way to cancel.
+.hcomposer-editing {
+  display: flex;
+  align-items: center;
+  grid-column: 1 / -1;
+  gap: $space-xs;
+
+  padding-block: calc(#{$space-xs} - #{$space-2xs}) 0;
+  padding-inline: calc(#{$space-xs} - #{$space-2xs}) 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .hicon {
+    flex-shrink: 0;
+
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+
+    color: $color-primary;
+  }
+}
+
+.hcomposer-editing-text {
+  display: grid;
+  flex: 1;
+
+  min-inline-size: 0;
+  padding-inline-start: $space-xs;
+
+  border-inline-start: 2px solid $color-primary;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hcomposer-editing-title,
+.hcomposer-editing-quote {
+  margin: 0;
+  overflow: hidden;
+
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  line-height: 1.125rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hcomposer-editing-title {
+  font-weight: $font-weight-medium;
+
+  color: $color-primary;
+}
+
+.hcomposer-editing-quote {
+  color: $color-text-secondary;
+}
+
+// Send turns into Stop while a reply comes, and back: the icon leaving fades
+// and shrinks in 150ms, the one arriving in 200ms, as a Copy Button's do.
+.hcomposer-send-icons {
+  display: inline-grid;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > svg {
+    grid-area: 1 / 1;
+
+    inline-size: 100%;
+    block-size: 100%;
+
+    transition:
+      opacity $duration-normal $ease-out-cubic,
+      scale $duration-normal $ease-out-cubic;
+  }
+}
+
+.hbutton:not([data-stopping]) > .hcomposer-send-icons > .hcomposer-stop-icon,
+.hbutton[data-stopping] > .hcomposer-send-icons > .hcomposer-send-icon {
+  opacity: 0;
+
+  transition-duration: $duration-fast;
+
+  @media (prefers-reduced-motion: no-preference) {
+    scale: 0.8;
+  }
+}
+
+// A line under it, such as what the assistant can get wrong.
+.hcomposer-note {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  line-height: 1.125rem;
+  text-align: center;
+
+  color: $color-text-tertiary;
+
+  &[hidden] {
+    display: none;
+  }
+}

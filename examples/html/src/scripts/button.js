@@ -226,3 +226,11 @@ for (const type of ["click", "auxclick"]) {
     }).observe(button, { attributes: true, attributeFilter: ["disabled", "aria-disabled"] });
   }
 }
+
+// Example only: a toggle, data-example-toggle, turns on and off as your
+// app's would, with aria-pressed.
+for (const toggle of document.querySelectorAll("[data-example-toggle]")) {
+  toggle.addEventListener("click", () => {
+    toggle.setAttribute("aria-pressed", String(toggle.getAttribute("aria-pressed") !== "true"));
+  });
+}

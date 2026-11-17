@@ -1,0 +1,110 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Type <code>@</code> and a few letters: the people whose name or handle
+    has them are listed, the first highlighted. The arrow keys move through
+    them, <kbd class="hkbd">Enter</kbd> or <kbd class="hkbd">Tab</kbd> puts the
+    handle in the note, and <kbd class="hkbd">Escape</kbd> closes the list.
+    Focus stays in the field.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="mentions-note">Internal note</label>
+    <div class="hmentions" style="anchor-name: --mentions-note">
+      <textarea class="htextarea" id="mentions-note" aria-autocomplete="list" aria-controls="mentions-note-list" placeholder="Type @ to mention someone"></textarea>
+      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --mentions-note">
+        <ul class="hlistbox" id="mentions-note-list" role="listbox" aria-label="People">
+          <li class="hoption" id="mentions-note-sam" role="option" aria-selected="false" data-example-value="sam">
+            <span class="hoption-text">
+              <span class="hoption-label">Sam Rivera</span>
+              <span class="hoption-description">@sam</span>
+            </span>
+          </li>
+          <li class="hoption" id="mentions-note-ana" role="option" aria-selected="false" data-example-value="ana">
+            <span class="hoption-text">
+              <span class="hoption-label">Ana Lopez</span>
+              <span class="hoption-description">@ana</span>
+            </span>
+          </li>
+          <li class="hoption" id="mentions-note-maya" role="option" aria-selected="false" data-example-value="maya">
+            <span class="hoption-text">
+              <span class="hoption-label">Maya Chen</span>
+              <span class="hoption-description">@maya</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="One line" layout="stack">
+  <play-note>
+    In an <a class="hlink" data-underlined href="input.html">Input</a>, for a
+    line such as a task's title. With its trigger typed, ↓ or ↑ opens the list
+    again after <kbd class="hkbd">Escape</kbd> closed it, as there are no
+    lines for them to move between.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="mentions-task">Task</label>
+    <div class="hmentions" style="anchor-name: --mentions-task">
+      <input class="hinput" id="mentions-task" autocomplete="off" placeholder="Type @ to assign someone" aria-autocomplete="list" aria-controls="mentions-task-list" value="" />
+      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --mentions-task">
+        <ul class="hlistbox" id="mentions-task-list" role="listbox" aria-label="People">
+          <li class="hoption" id="mentions-task-sam" role="option" aria-selected="false" data-example-value="sam">
+            <span class="hoption-text">
+              <span class="hoption-label">Sam Rivera</span>
+              <span class="hoption-description">@sam</span>
+            </span>
+          </li>
+          <li class="hoption" id="mentions-task-ana" role="option" aria-selected="false" data-example-value="ana">
+            <span class="hoption-text">
+              <span class="hoption-label">Ana Lopez</span>
+              <span class="hoption-description">@ana</span>
+            </span>
+          </li>
+          <li class="hoption" id="mentions-task-maya" role="option" aria-selected="false" data-example-value="maya">
+            <span class="hoption-text">
+              <span class="hoption-label">Maya Chen</span>
+              <span class="hoption-description">@maya</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Commands" layout="stack">
+  <play-note>
+    With the trigger at the start only, such as <code>/</code> for a chat's
+    commands, a slash anywhere else is just a slash. Its list opens over the
+    field first, as for a composer at the bottom of a chat.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="mentions-command">Message</label>
+    <div class="hmentions" style="anchor-name: --mentions-command">
+      <textarea class="htextarea" id="mentions-command" aria-autocomplete="list" aria-controls="mentions-command-list" placeholder="Type / for a command" data-example-at-start data-example-trigger="/"></textarea>
+      <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --mentions-command">
+        <ul class="hlistbox" id="mentions-command-list" role="listbox" aria-label="Commands">
+          <li class="hoption" id="mentions-command-summarize" role="option" aria-selected="false" data-example-value="summarize">
+            <span class="hoption-text">
+              <span class="hoption-label">/summarize</span>
+              <span class="hoption-description">Summarize this ticket</span>
+            </span>
+          </li>
+          <li class="hoption" id="mentions-command-draft" role="option" aria-selected="false" data-example-value="draft">
+            <span class="hoption-text">
+              <span class="hoption-label">/draft</span>
+              <span class="hoption-description">Draft a reply</span>
+            </span>
+          </li>
+          <li class="hoption" id="mentions-command-translate" role="option" aria-selected="false" data-example-value="translate">
+            <span class="hoption-text">
+              <span class="hoption-label">/translate</span>
+              <span class="hoption-description">Translate the customer's message</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</play-example>

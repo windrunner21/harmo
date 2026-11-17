@@ -245,7 +245,7 @@ describe("add", () => {
     // type-checks with it as copied.
   });
 
-  test("every pattern brings form-action, which its forms' actions run through, and only the account forms bring auth-form's code", () => {
+  test("every form pattern brings form-action, which its forms' actions run through, and only the account forms bring auth-form's code", () => {
     const paths = (name: string) => registry(name).files.map(({ path }: { path: string }) => path);
     for (const name of ["sign-in-form", "sign-up-form", "reset-password", "account-forms", "verify-code", "contact-form"]) {
       expect(paths(name), name).toContain("patterns/form-action/formAction.ts");
@@ -254,6 +254,15 @@ describe("add", () => {
       expect(paths(name), name).toContain("patterns/auth-form/authForm.ts");
     }
     expect(paths("contact-form")).not.toContain("patterns/auth-form/authForm.ts");
+  });
+
+  test("the Chat and the Contact Form bring the attachments helper they share, which isn't a pattern; the Chat brings no form-action", () => {
+    const paths = (name: string) => registry(name).files.map(({ path }: { path: string }) => path);
+    for (const name of ["chat", "contact-form"]) {
+      expect(paths(name), name).toContain("patterns/attachments/attachments.ts");
+    }
+    expect(paths("chat")).not.toContain("patterns/form-action/formAction.ts");
+    expect(names).not.toContain("attachments");
   });
 
   test("a stylesheet in a pattern's folder, whatever its name, is imported once, however often it's added", () => {
@@ -550,7 +559,7 @@ describe("add", () => {
   test("uses an absolute --path as it is", () => {
     const outside = mkdtempSync(join(output, "outside-"));
     const { out } = run("add", "tag", "--path", outside);
-    expect(out).toContain(`Created 8 files in ${outside}`);
+    expect(out).toContain(`Created 9 files in ${outside}`);
     expect(existsSync(join(outside, "tag/Tag.tsx"))).toBe(true);
     expect(copied(".").filter((file) => file !== "package.json")).toEqual([]);
     rmSync(outside, { recursive: true, force: true });
@@ -558,7 +567,7 @@ describe("add", () => {
 
   test("--dry-run says what would change, and changes nothing", () => {
     const { out } = run("add", "tag", "--dry-run");
-    expect(out).toContain(`Would create 8 files in ${harmo}`);
+    expect(out).toContain(`Would create 9 files in ${harmo}`);
     expect(existsSync(join(project, harmo))).toBe(false);
   });
 

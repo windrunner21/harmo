@@ -1,0 +1,181 @@
+@use "shortcuts" as *;
+
+// Launcher: a round button in the page's corner that opens a panel above it,
+// such as a support chat or help. The panel is a dialog that isn't modal: the
+// page stays usable around it. It grows from the corner as it opens, and the
+// button's icon turns into a close icon. On a phone, the panel takes the
+// whole screen, over the button. A Badge on the button can count what came
+// while it was closed.
+.hlauncher {
+  --hlauncher-offset: #{$space-sm};
+  --hlauncher-size: 3rem;
+
+  display: contents;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hlauncher > .hbutton.hlauncher-button {
+  position: fixed;
+  inset-block-end: var(--hlauncher-offset);
+  inset-inline-end: var(--hlauncher-offset);
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+
+  inline-size: var(--hlauncher-size);
+  block-size: var(--hlauncher-size);
+  padding: 0;
+
+  border-radius: 50%;
+  box-shadow: $box-shadow-sm;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Its count, on the circle's edge rather than its box's corner.
+  & > .hbadge {
+    inset-block-start: -0.125rem;
+    inset-inline-end: -0.125rem;
+  }
+}
+
+// The two icons, one over the other: the closed one turns away and the close
+// one turns in as the panel opens, and back; with reduced motion, they fade.
+.hlauncher-icons {
+  display: inline-grid;
+
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > * {
+    grid-area: 1 / 1;
+
+    inline-size: 100%;
+    block-size: 100%;
+
+    transition:
+      opacity $duration-fast ease,
+      rotate $duration-normal $ease-out-cubic;
+  }
+}
+
+.hlauncher-button[aria-expanded="true"] > .hlauncher-icons > :first-child,
+.hlauncher-button:not([aria-expanded="true"]) > .hlauncher-icons > :last-child {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hlauncher-button[aria-expanded="true"] > .hlauncher-icons > :first-child {
+    rotate: 45deg;
+  }
+
+  .hlauncher-button:not([aria-expanded="true"]) > .hlauncher-icons > :last-child {
+    rotate: -45deg;
+  }
+}
+
+// The panel, above the button: at most 384px wide and 600px tall, and less
+// on a small screen, with room for the button. Shown while it has
+// data-open: it grows from the corner in 200ms, and shrinks back in 150ms;
+// with reduced motion, it only fades. hidden hides it at once, as anywhere.
+.hlauncher-panel {
+  position: fixed;
+  inset-block-end: calc(var(--hlauncher-offset) + var(--hlauncher-size) + #{$space-xs});
+  inset-inline-end: var(--hlauncher-offset);
+  z-index: 1;
+
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+
+  box-sizing: border-box;
+  inline-size: min(24rem, 100% - var(--hlauncher-offset) * 2);
+  block-size: min(37.5rem, 100% - var(--hlauncher-size) - var(--hlauncher-offset) * 2 - #{$space-xs});
+  overflow: hidden;
+
+  color: $color-text;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: calc(#{$border-radius} * 2);
+  box-shadow: $box-shadow-sm;
+
+  transform-origin: 100% 100%;
+
+  transition:
+    opacity $duration-normal $ease-out-cubic,
+    scale $duration-normal $ease-out-cubic,
+    display $duration-normal allow-discrete;
+
+  &:dir(rtl) {
+    transform-origin: 0 100%;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-focus;
+    outline-offset: -2px;
+  }
+
+  &:not([data-open]) {
+    display: none;
+
+    opacity: 0;
+    scale: 0.95;
+
+    transition-duration: $duration-fast;
+  }
+
+  &[hidden] {
+    display: none;
+
+    transition: none;
+  }
+
+  @starting-style {
+    &[data-open] {
+      opacity: 0;
+      scale: 0.95;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &:not([data-open]) {
+      scale: none;
+    }
+
+    @starting-style {
+      &[data-open] {
+        scale: none;
+      }
+    }
+  }
+
+  // On a phone, the whole screen, over the button: the panel's own close
+  // button closes it.
+  @media (max-width: 30rem) {
+    inset: 0;
+
+    inline-size: auto;
+    block-size: auto;
+
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    &[data-open] ~ .hlauncher-button {
+      display: none;
+    }
+  }
+}
+
+.hlauncher-status {
+  @include visually-hidden;
+}

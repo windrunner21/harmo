@@ -7,6 +7,7 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
+import { Badge } from "./Badge.tsx";
 import { Chevron } from "./Chevron.tsx";
 import { ChevronToArrow } from "./ChevronToArrow.tsx";
 import { flatChildren } from "./children.ts";
@@ -21,6 +22,7 @@ import { withClass } from "./withClass.ts";
 
 interface ButtonOptions {
   variant?: "secondary" | "tertiary";
+  badge?: ReactNode;
   size?: "small";
   destructive?: boolean;
   loading?: boolean;
@@ -52,6 +54,7 @@ export type ButtonProps =
 
 export const Button = ({
   variant,
+  badge,
   size,
   destructive,
   loading,
@@ -92,11 +95,20 @@ export const Button = ({
     },
   };
   const content = renderContent(children, loading);
+  const corner =
+    badge === undefined || badge === null || badge === false ? null : isValidElement(badge) ? (
+      badge
+    ) : typeof badge === "number" ? (
+      <Badge aria-hidden="true" count={badge} />
+    ) : (
+      <Badge aria-hidden="true">{badge}</Badge>
+    );
 
   if (props.href !== undefined) {
     return (
       <Anchor {...props} {...attributes} ref={ref}>
         {content}
+        {corner}
       </Anchor>
     );
   }
@@ -105,6 +117,7 @@ export const Button = ({
     return (
       <button type="button" {...props} {...attributes} ref={ref}>
         {content}
+        {corner}
       </button>
     );
   }
@@ -166,6 +179,7 @@ export const Button = ({
         <span className="hbutton-hold" aria-hidden="true">
           {content}
         </span>
+        {corner}
       </button>
   );
 };

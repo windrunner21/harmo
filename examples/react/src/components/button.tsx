@@ -1,6 +1,6 @@
-import { Button, Card, ChevronToArrow, Setting, Settings } from "@harmo-ui/react";
+import { Button, Card, ChevronToArrow, Setting, Settings, Tooltip } from "@harmo-ui/react";
 import { useState } from "react";
-import { CloseIcon, MoreIcon, PlusIcon, TrashIcon } from "../app-icons.tsx";
+import { CloseIcon, MoreIcon, PlusIcon, ThumbsDownIcon, ThumbsUpIcon, TrashIcon } from "../app-icons.tsx";
 
 export const examples = {
   Variants: () => (
@@ -99,6 +99,30 @@ export const examples = {
       </Button>
     </>
   ),
+
+  Toggle: () => {
+    const [good, setGood] = useState(true);
+    const [bad, setBad] = useState(false);
+    const [unread, setUnread] = useState(false);
+
+    return (
+      <>
+        <Tooltip label="Good reply">
+          <Button variant="tertiary" aria-pressed={good} onClick={() => setGood(!good)}>
+            <ThumbsUpIcon className="hicon" />
+          </Button>
+        </Tooltip>
+        <Tooltip label="Bad reply">
+          <Button variant="tertiary" aria-pressed={bad} onClick={() => setBad(!bad)}>
+            <ThumbsDownIcon className="hicon" />
+          </Button>
+        </Tooltip>
+        <Button variant="secondary" aria-pressed={unread} onClick={() => setUnread(!unread)}>
+          Unread only
+        </Button>
+      </>
+    );
+  },
 
   "Side by side": () => (
     <>

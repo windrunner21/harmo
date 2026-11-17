@@ -5,7 +5,7 @@ import {
   useContext,
   type ComponentPropsWithRef,
 } from "react";
-import { close as closePaths } from "./icons.ts";
+import { closeIcon } from "./closeIcon.tsx";
 import { withClass } from "./withClass.ts";
 
 export interface TagProps extends ComponentPropsWithRef<"span"> {
@@ -46,22 +46,7 @@ export const TagRemove = ({ className, ...props }: TagRemoveProps) => {
   if (copy) return null;
   return (
     <button {...props} className={withClass("htag-remove", className)} type="button">
-      <svg
-        className="hicon"
-        width="24"
-        height="24"
-        viewBox="0 0 25 25"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        aria-hidden="true"
-        focusable="false"
-      >
-        {closePaths.map((d) => (
-          <path key={d} d={d} />
-        ))}
-      </svg>
+      {closeIcon}
     </button>
   );
 };

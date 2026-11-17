@@ -5,6 +5,7 @@
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, normalize, relative } from "node:path/posix";
+import { components } from "./components.js";
 import { sharedClasses } from "./shared-styles.js";
 
 const root = import.meta.dirname;
@@ -37,89 +38,21 @@ for (const folder of patternFolders
 const cssSource = join(root, "..", "css", "dist");
 const registry = join(root, "registry");
 
-// Each component is a folder of its own in the copy, named as harmo-ui add names it,
-// with a stylesheet of the same name beside its code.
-const components: Record<string, string[]> = {
-  accordion: ["Accordion.tsx"],
-  avatar: ["Avatar.tsx"],
-  banner: ["Banner.tsx"],
-  breadcrumb: ["Breadcrumb.tsx"],
-  button: ["Button.tsx"],
-  calendar: ["calendar/Calendar.tsx", "calendar/dates.ts"],
-  card: ["Card.tsx"],
-  checkbox: ["Checkbox.tsx", "CheckboxGroup.tsx"],
-  chevron: ["Chevron.tsx"],
-  "chevron-to-arrow": ["ChevronToArrow.tsx"],
-  combobox: ["Combobox.tsx"],
-  "command-menu": ["CommandMenu.tsx"],
-  copy: ["CopyButton.tsx"],
-  "date-filter": ["date-filter/DateFilter.tsx", "date-filter/range.ts"],
-  "date-picker": ["date-picker/DatePicker.tsx", "date-picker/typedDate.ts"],
-  dialog: ["Dialog.tsx"],
-  drawer: ["Drawer.tsx"],
-  "empty-state": ["EmptyState.tsx"],
-  "expand-chevron": ["ExpandChevron.tsx"],
-  field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
-  "file-input": ["FileInput.tsx"],
-  "file-list": ["FileList.tsx"],
-  "filter-bar": ["FilterBar.tsx"],
-  "filter-chip": ["FilterChip.tsx"],
-  filters: ["Filters.tsx"],
-  input: ["Input.tsx"],
-  kbd: ["Kbd.tsx"],
-  "language-picker": ["LanguagePicker.tsx"],
-  link: ["Link.tsx"],
-  listbox: [
-    "listbox/Listbox.tsx",
-    "listbox/Option.tsx",
-    "listbox/OptionGroup.tsx",
-  ],
-  "menu-button": ["MenuButton.tsx"],
-  meter: ["Meter.tsx"],
-  "navigation-menu": ["NavigationMenu.tsx"],
-  "otp-input": ["OtpInput.tsx"],
-  pagination: ["pagination/Pagination.tsx", "pagination/PaginationPage.tsx"],
-  password: ["PasswordInput.tsx"],
-  "phone-input": ["PhoneInput.tsx"],
-  popup: ["Popup.tsx"],
-  provider: ["HarmoProvider.tsx"],
-  radio: ["Radio.tsx", "RadioGroup.tsx"],
-  search: ["Search.tsx"],
-  section: ["Section.tsx"],
-  segmented: ["Segmented.tsx"],
-  select: ["Select.tsx"],
-  "selection-bar": ["SelectionBar.tsx"],
-  settings: ["Settings.tsx"],
-  "showcase-card": ["ShowcaseCard.tsx"],
-  sidebar: ["Sidebar.tsx"],
-  spinner: ["Spinner.tsx"],
-  stat: ["Stat.tsx"],
-  status: ["Status.tsx"],
-  switch: ["Switch.tsx"],
-  table: ["table/DataTable.tsx", "table/useColumnVisibility.ts", "table/useRowSelection.ts"],
-  "table-of-contents": ["TableOfContents.tsx"],
-  tabs: ["tabs/Tabs.tsx", "tabs/TabNav.tsx", "tabs/useTabsMotion.ts"],
-  tag: ["Tag.tsx"],
-  "tag-list": ["TagList.tsx"],
-  textarea: ["TextArea.tsx"],
-  "time-picker": ["time-picker/TimePicker.tsx", "time-picker/clock.ts"],
-  toast: ["Toast.tsx"],
-  toolbar: ["Toolbar.tsx"],
-  tooltip: ["Tooltip.tsx"],
-};
-
 // Shared by components, and copied only to those that use them. But
 // customProperties.ts, which types Harmo's custom properties for React's style
 // prop, comes with every component, as the tokens do.
 const helpers = [
   "children.ts",
+  "closeIcon.tsx",
   "customProperties.ts",
   "highlight.tsx",
   "icons.ts",
   "milliseconds.ts",
   "modal.tsx",
   "types.ts",
+  "useAddedLater.ts",
   "useCurrentValue.ts",
+  "useFileDrop.ts",
   "useHold.ts",
   "usePinned.ts",
   "useMergedRef.ts",
@@ -134,6 +67,7 @@ const alsoStyledBy: Record<string, string[]> = {
   "command-menu": ["dialog"],
   "file-input": ["avatar", "button"],
   "file-list": ["button"],
+  message: ["link"],
   "tag-list": ["tag"],
 };
 

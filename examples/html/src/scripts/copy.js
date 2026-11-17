@@ -8,6 +8,7 @@
 // changed isn't confirmed, since the new one wasn't copied. A Share Button
 // opens the device's share sheet where the browser has one, and elsewhere
 // copies the link. If copying fails, nothing changes.
+let setUpCopyButton;
 {
   // Calls `changed` whenever a script sets the input's value to a new one:
   // setting it sends no event.
@@ -41,7 +42,9 @@
       true,
     );
 
-  for (const button of document.querySelectorAll(".hcopy")) {
+  // Each Copy Button on the page, and any a script adds later, such as one
+  // under a chat's reply, which chat.js sets up with this.
+  setUpCopyButton = (button) => {
     const trigger = button.parentElement.matches(".htooltip-trigger") ? button.parentElement : null;
     const tooltip = trigger?.querySelector(":scope > .htooltip");
     const status = (trigger ?? button).nextElementSibling;
@@ -116,7 +119,8 @@
         // Your app says it couldn't, such as with a Toast.
       }
     });
-  }
+  };
+  for (const button of document.querySelectorAll(".hcopy")) setUpCopyButton(button);
 
   // Example only: your app regenerating a key, which sets the field's value.
   for (const button of document.querySelectorAll("[data-example-regenerate]")) {

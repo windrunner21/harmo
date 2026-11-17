@@ -3,14 +3,15 @@ import { Button } from "../Button.tsx";
 import { Chevron } from "../Chevron.tsx";
 import { withClass } from "../withClass.ts";
 import { PaginationPage } from "./PaginationPage.tsx";
+import type { Naming } from "../types.ts";
 
 type Numbering =
   | { numbered: true; pageLabel: (page: number) => string }
   | { numbered?: false; pageLabel?: undefined };
 
-export type PaginationProps = Omit<ComponentPropsWithRef<"nav">, "children"> &
+export type PaginationProps = Omit<ComponentPropsWithRef<"nav">, "children" | "aria-label" | "aria-labelledby"> &
+  Naming &
   Numbering & {
-    "aria-label": string;
     page: number;
     pageCount: number;
     href?: (page: number) => string;

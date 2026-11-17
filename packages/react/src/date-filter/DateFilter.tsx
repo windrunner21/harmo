@@ -7,7 +7,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
   type ComponentPropsWithRef,
   type KeyboardEvent,
 } from "react";
@@ -21,6 +20,7 @@ import { Input } from "../Input.tsx";
 import { Option } from "../listbox/Option.tsx";
 import { Popup } from "../Popup.tsx";
 import { Select } from "../Select.tsx";
+import { useInBrowser } from "../useAddedLater.ts";
 import { useMergedRef } from "../useMergedRef.ts";
 import {
   amountOf,
@@ -88,8 +88,6 @@ export interface DateFilterProps
 const CONDITIONS: DateFilterCondition[] = ["last", "equal", "between", "after", "before"];
 const UNITS: DateFilterUnit[] = ["minutes", "hours", "days", "weeks", "months"];
 
-const subscribe = () => () => {};
-
 export const DateFilter = ({
   label,
   locale,
@@ -108,7 +106,7 @@ export const DateFilter = ({
   const chipRef = useMergedRef(ref, chip);
   const dates = useRef<HTMLDivElement>(null);
   const messageId = useId();
-  const inBrowser = useSyncExternalStore(subscribe, () => true, () => false);
+  const inBrowser = useInBrowser();
   const typing = useMemo(() => typedDateOf(locale), [locale]);
 
   const [chosen, setChosen] = useState(defaultValue);

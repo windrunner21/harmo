@@ -1,0 +1,94 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    Press the button in the corner: the panel grows from it, and focus moves
+    to what's marked <code>data-autofocus</code> in it, here the first link.
+    The page around it stays usable. <kbd class="hkbd">Escape</kbd>, the
+    button, or the panel's own Close closes it, and focus goes back to the
+    button. What's in the panel is yours: here a heading, links, and a
+    Close Button, laid out with inline styles. On a phone, it takes the whole
+    screen.
+  </play-note>
+  <div style="contain: layout; box-sizing: border-box; block-size: 36rem; inline-size: 100%; padding: var(--harmo-space-sm); background: var(--harmo-color-background-secondary); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+  <div class="hlauncher">
+    <div class="hlauncher-panel" id="launcher-default-panel" role="dialog" aria-label="Help" tabindex="-1">
+      <div style="display: grid; grid-template-rows: auto minmax(0, 1fr); min-block-size: 0">
+        <div style="display: flex; align-items: center; gap: var(--harmo-space-xs); padding: var(--harmo-space-xs) var(--harmo-space-xs) var(--harmo-space-xs) var(--harmo-space-sm); border-block-end: 1px solid var(--harmo-color-border)">
+          <h2 style="flex: 1; margin: 0; font-size: var(--harmo-font-size-sm); font-weight: var(--harmo-font-weight-semibold)">Help</h2>
+          <span class="htooltip-trigger">
+            <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="launcher-default-close-tip" data-example-close>
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" id="launcher-default-close-tip">Close</span>
+          </span>
+        </div>
+        <ul style="display: grid; gap: var(--harmo-space-xs); align-content: start; margin: 0; padding: var(--harmo-space-sm); list-style: none">
+          <li><a class="hlink" href="#track" data-autofocus>Track an order</a></li>
+          <li><a class="hlink" href="#return">Start a return</a></li>
+          <li><a class="hlink" href="#delivery">Delivery times</a></li>
+        </ul>
+      </div>
+    </div>
+    <button class="hbutton hlauncher-button" type="button" aria-label="Help" aria-expanded="false" aria-controls="launcher-default-panel">
+      <span class="hicon hlauncher-icons" aria-hidden="true">
+        <play-icon name="messages" class="hicon"></play-icon>
+        <play-icon name="close" class="hicon"></play-icon>
+      </span>
+    </button>
+    <p class="hlauncher-status" aria-live="polite"></p>
+  </div>
+  </div>
+</play-example>
+
+<play-example title="With new messages" layout="wide">
+  <play-note>
+    Press <strong>A message comes</strong> while it's closed: a
+    <a class="hlink" data-underlined href="badge.html">Badge</a> on the
+    button counts them, the button's name says how many, and a screen reader
+    hears "New message from Imran". Opening it clears the count. Inside, a
+    <a class="hlink" data-underlined href="conversation.html">Conversation</a>.
+  </play-note>
+  <div style="contain: layout; box-sizing: border-box; block-size: 36rem; inline-size: 100%; padding: var(--harmo-space-sm); background: var(--harmo-color-background-secondary); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+  <button class="hbutton" data-variant="secondary" data-size="small" type="button" data-example-arrive data-example-name="Imran"><span class="hbutton-label">A message comes</span></button>
+  <div class="hlauncher" data-example-unread>
+    <div class="hlauncher-panel" id="launcher-messages-panel" role="dialog" aria-label="Chat with Imran" tabindex="-1">
+      <div style="display: grid; grid-template-rows: auto minmax(0, 1fr); min-block-size: 0">
+        <div style="display: flex; align-items: center; gap: var(--harmo-space-xs); padding: var(--harmo-space-xs) var(--harmo-space-xs) var(--harmo-space-xs) var(--harmo-space-sm); border-block-end: 1px solid var(--harmo-color-border)">
+          <img class="havatar" src="images/imran.webp" alt="" />
+          <h2 style="flex: 1; margin: 0; font-size: var(--harmo-font-size-sm); font-weight: var(--harmo-font-weight-semibold)">Imran Hajiyev</h2>
+          <span class="htooltip-trigger">
+            <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="launcher-messages-close-tip" data-example-close>
+              <play-icon name="close" class="hicon"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" id="launcher-messages-close-tip">Close</span>
+          </span>
+        </div>
+        <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+          <p class="hconversation-status" aria-live="polite"></p>
+          <ol class="hconversation-list">
+            <li class="hmessage" data-from="assistant" data-bubble>
+              <div class="hmessage-body">
+                <div class="hmessage-text">Hi! Your order #4821 ships today.</div>
+              </div>
+            </li>
+          </ol>
+          <div class="hconversation-latest">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="launcher-messages-latest-tip">
+                <play-icon name="arrow-down" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="launcher-messages-latest-tip">Jump to latest</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="hbutton hlauncher-button" type="button" aria-label="Chat with Imran" aria-expanded="false" aria-controls="launcher-messages-panel">
+      <span class="hicon hlauncher-icons" aria-hidden="true">
+        <play-icon name="messages" class="hicon"></play-icon>
+        <play-icon name="close" class="hicon"></play-icon>
+      </span>
+    </button>
+    <p class="hlauncher-status" aria-live="polite"></p>
+  </div>
+  </div>
+</play-example>

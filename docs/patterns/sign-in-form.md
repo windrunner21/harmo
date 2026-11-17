@@ -429,7 +429,8 @@ to this page.
 [sign-in-form.js](../../examples/html/src/scripts/sign-in-form.js) is an
 example. The password's toggle uses Password Input's example script,
 `password.js`, and the code step Verify Code's, `verify-code.js`, which sets up
-its card as it arrives.
+its card as it arrives. The card's change of size between steps is
+`change-step.js`'s, which the forms' scripts share.
 
 **On submit:**
 

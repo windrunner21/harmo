@@ -23,7 +23,7 @@ const restore = (node: HTMLElement, change: Change) => {
 };
 
 // Stops a change that's playing, at once, with its inline styles back.
-export const stopChange = (node: HTMLElement) => {
+const stopChange = (node: HTMLElement) => {
   const playing = changes.get(node);
   if (!playing) return;
   playing.animation.cancel();
@@ -31,7 +31,7 @@ export const stopChange = (node: HTMLElement) => {
 };
 
 // The width it shows now: mid-change, where the change has got to.
-export const widthBefore = (node: HTMLElement) =>
+const widthBefore = (node: HTMLElement) =>
   changes.has(node) ? node.offsetWidth : (widths.get(node) ?? node.offsetWidth);
 
 // From one width to another over --harmo-duration-normal, with
@@ -41,7 +41,7 @@ export const widthBefore = (node: HTMLElement) =>
 // one had got to, toward the new width. Appearing or disappearing isn't a
 // change of width: it shows or goes at once. With data-instant, for text that
 // changes often, such as a countdown, it changes at once too.
-export const changeWidth = (node: HTMLElement, from: number, to: number) => {
+const changeWidth = (node: HTMLElement, from: number, to: number) => {
   stopChange(node);
   if (from < 1 || to < 1 || Math.abs(from - to) < 1) return;
   if (node.hasAttribute("data-instant")) return;

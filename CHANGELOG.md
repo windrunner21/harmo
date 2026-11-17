@@ -8,8 +8,76 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Upgrading
+
+- **React: Toaster's `label` is now `aria-label`.** It was only ever the
+  region's name, never shown, and elsewhere `label` means words on screen.
+  Rename the prop: `<Toaster label="Notifications (F8)" …>` becomes
+  `<Toaster aria-label="Notifications (F8)" …>`. The markup is the same.
+
 ### Added
 
+- Chat, a pattern: a conversation with an assistant, in React and HTML. Three
+  of them, one for each place a chat sits: an AI chat that fills the page,
+  beside a Sidebar of past chats; a copilot, a panel beside your app's content
+  that knows what's open there and puts a reply into it with Insert; and a
+  support chat, a window over the page's corner, opened by its launcher, that
+  hands the conversation to a person. Each gets `respond`, which returns the
+  reply whole or streamed a piece at a time. They share the conversation,
+  whose replies show paragraphs, lists, code, bold, and links, and the
+  composer, with `/` commands, and files attached, dropped, or pasted,
+  uploaded as they're added with `upload`. Stop, Try again, Copy, ratings,
+  editing your last message, Jump to latest, and a support chat's times,
+  quick replies, messages your server pushes, and a count of them on the
+  launcher are built in. It's built from the components below: Conversation,
+  Message, Prose, Composer, Mentions, Drop Zone, Launcher, and Badge.
+  `npx harmo-ui add chat` copies it.
+- Conversation: the scrolling log a chat's Messages are in. It opens at the
+  latest and stays there as messages come and grow, a reply's words as they
+  stream in too, unless you've scrolled up to read; then Jump to latest shows
+  at its foot. Sending a message brings it back. A hidden status says what
+  arrived, for screen readers. `data-align="end"` gathers a short
+  conversation at the foot, as in a messenger, and `data-size="large"` gives
+  long replies larger text.
+- Message: one message in a conversation. Yours sits at the end, in a bubble;
+  the assistant's at the start, as plain text, or in a bubble beside its
+  avatar with `data-bubble`; a line from the conversation itself, such as
+  someone joining, in the middle. It can show its time, its actions, quick
+  replies, the files sent with it, "Not sent" with a way to try again, or
+  three dots while a reply is on its way. A reply fades in as it arrives.
+- Composer: where a message is written and sent. The field and its buttons
+  sit in one box, and the field grows with what's written. Enter sends;
+  Shift+Enter starts a new line. Send turns into Stop while a reply comes, if
+  it can be stopped. Files can be attached or pasted, and listed above the
+  field; it can show what the assistant knows about, or a sent message being
+  edited, with a bar that quotes it.
+- Mentions: a TextArea that lists suggestions as a trigger is typed, such as
+  `@` for people, or `/` at the start for commands, in a Listbox, as a
+  Combobox's list is. Choosing one puts it in the text. Focus stays in the
+  field, and the arrow keys move the caret while the list is closed. For one
+  line, such as a task's title, it takes an Input: `singleLine` in React.
+- Launcher: a round button in the page's corner that opens a panel above it,
+  such as a support chat. The panel is a dialog that isn't modal, growing from
+  the corner, and the whole screen on a phone. Focus moves in as it opens and
+  back as it closes; Escape closes it. A Badge on the button can count what
+  came while it was closed.
+- Badge: a count, or a dot, on a Button or beside a label, such as unread
+  messages. On a Button, it sits on its corner, ringed in the page's color;
+  in React, Button's `badge` takes the number. One added after the page
+  loaded settles in, so a new count is noticed.
+- Prose: text formatted to read, such as an assistant's reply: paragraphs,
+  headings, lists, quotes, code, and links, spaced to read. In React,
+  `<Prose text>` formats a small part of Markdown itself, paragraphs, lists,
+  code, bold, and links, building elements, never HTML, and linking only web
+  and email addresses.
+- Drop Zone: an area files can be dropped on, which shows a dashed frame
+  over itself, saying where they'll go, while they're dragged over it. It
+  takes a drag as a File Input's drop area does, and in React they share it:
+  folders are left out, a drop that just misses doesn't open the file in the
+  tab, and a field inside the area is the area's.
+- Button: a toggle, with `aria-pressed="true"`, shows it's on: a secondary or
+  tertiary Button's icon and text in the primary color, and a secondary's
+  background and border tinted.
 - Showcase Card: a card that shows where it leads before it's opened, for a
   product's news, or a gallery of templates, patterns, or stories. What it leads to sits small, or
   as an image, on a dashed grid, then its title, a description, and an action
@@ -61,6 +129,14 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Changed
 
+- React: Table of Contents and Pagination take `aria-labelledby`, naming them
+  by a visible heading, in place of `aria-label`, as Filter Bar does.
+- React: Time Picker's `periodLabel` is needed only where there can be an AM
+  and PM column: with `hour12={false}`, leave it out.
+- Patterns: the Contact Form's `attachments.ts`, which holds and uploads its
+  files, is now shared, in `patterns/attachments/`, as the Chat uses it too.
+  `npx harmo-ui add contact-form` copies it there; change the import in a
+  copy you already have, or keep both. It makes a preview only of a picture.
 - Tokens: the light theme's tertiary text, `--harmo-color-text-tertiary`, is a
   step darker, `#6a707c` from `#6e7480`, so it passes WCAG AA's 4.5:1 on a
   tinted surface too, such as a default Card or a Sidebar: 4.6:1, where it was

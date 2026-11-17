@@ -59,7 +59,9 @@ npx harmo-ui add contact-form
 It copies into `components/harmo/patterns/`:
 
 - `contact-form/`, the five components, `useContactForm.ts`, which the four
-  forms share, `attachments.ts`, for files, and `contact-form.css`;
+  forms share, and `contact-form.css`;
+- `attachments/attachments.ts`, which holds and uploads the files, as the
+  [Chat](chat.md) does too;
 - `form-action/formAction.ts`, which runs every pattern form's action;
 - `step-motion/useStepMotion.ts`, which animates the card to its thank-you.
 
@@ -207,14 +209,14 @@ that takes each key once, only if `signUpload` made it, and checks the stored
 file, as [Security](#security) says; and where the request is kept.
 
 Give the form `upload`, in a client component of yours, since a server page
-can't pass a function. `putFile`, from `attachments.ts`, puts the file at the
+can't pass a function. `putFile`, from `attachments/attachments.ts`, puts the file at the
 signed URL and reports its progress:
 
 ```tsx
 // app/support/SupportForm.tsx
 "use client";
 
-import { putFile } from "@/components/harmo/patterns/contact-form/attachments";
+import { putFile } from "@/components/harmo/patterns/attachments/attachments";
 import { SupportRequestForm } from "@/components/harmo/patterns/contact-form/SupportRequestForm";
 import { sendSupportRequest, signUpload } from "./actions";
 
@@ -544,7 +546,8 @@ The ways to reach you:
 [contact-form.js](../../examples/html/src/scripts/contact-form.js) is an
 example. The Select, the TextArea's counter, and the files use those
 components' example scripts: `select.js` and `listbox.js`, `textarea.js`, and
-`file-input.js` and `file-list.js`.
+`file-input.js` and `file-list.js`. The card's change of size between steps is
+`change-step.js`'s, which the forms' scripts share.
 
 **On submit:**
 

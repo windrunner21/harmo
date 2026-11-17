@@ -25,7 +25,7 @@ const page = document.querySelector<HTMLElement>("[data-play-root]")?.dataset.pl
 if (page && patterns.has(page)) {
   createRoot(document.body.appendChild(document.createElement("div"))).render(
     <Toaster
-      label="Notifications (F8)"
+      aria-label="Notifications (F8)"
       icons={{ success: <SuccessIcon />, error: <ErrorIcon />, warning: <WarningIcon />, info: <InfoIcon /> }}
     />,
   );

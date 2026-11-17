@@ -1,0 +1,184 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    <kbd class="hkbd">Enter</kbd> sends, and <kbd class="hkbd">Shift</kbd> +
+    <kbd class="hkbd">Enter</kbd> starts a new line; the field grows with what's
+    written. Attach files with the paperclip, or paste them; they're listed
+    above the field, in a <a class="hlink" data-underlined href="file-list.html">File List</a>.
+    While a reply comes, Send turns into Stop. Above it, a
+    <a class="hlink" data-underlined href="conversation.html">Conversation</a>.
+  </play-note>
+  <div style="display: grid; grid-template-rows: minmax(0, 1fr) auto; box-sizing: border-box; inline-size: 100%; max-inline-size: 40rem; block-size: 24rem; margin-inline: auto; overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+      <p class="hconversation-status" aria-live="polite"></p>
+      <div class="hconversation-empty">
+        <div class="hempty-state" data-size="small">
+          <p class="hempty-state-title">No messages yet</p>
+          <p class="hempty-state-description">Send one to start.</p>
+        </div>
+      </div>
+      <ol class="hconversation-list" hidden>
+      </ol>
+      <div class="hconversation-latest">
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="composer-default-latest-tip">
+            <play-icon name="arrow-down" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-default-latest-tip">Jump to latest</span>
+        </span>
+      </div>
+    </div>
+    <form class="hcomposer" style="padding: 0 var(--harmo-space-sm) var(--harmo-space-sm)" data-example-reply>
+      <div class="hcomposer-box">
+        <ul class="hfile-list" role="list" aria-label="Attachments" tabindex="-1" hidden data-example-files data-example-remove-label="Remove {name}"></ul>
+        <span class="htooltip-trigger hcomposer-attach">
+          <button class="hbutton" data-variant="tertiary" type="button" aria-labelledby="composer-default-attach-tip">
+            <play-icon name="paperclip" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-default-attach-tip">Attach files</span>
+        </span>
+        <textarea class="htextarea" aria-label="Message" placeholder="Ask anything" rows="1"></textarea>
+        <span class="htooltip-trigger">
+          <button class="hbutton" type="submit" disabled aria-labelledby="composer-default-send-tip" data-example-stop-label="Stop" data-example-send-label="Send">
+            <span class="hicon hcomposer-send-icons" aria-hidden="true">
+              <play-icon name="arrow-up" class="hcomposer-send-icon"></play-icon>
+              <play-icon name="stop" class="hcomposer-stop-icon"></play-icon>
+            </span>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-default-send-tip">Send</span>
+        </span>
+      </div>
+      <input type="file" multiple hidden />
+      <p class="herror" aria-live="polite"></p>
+      <p class="hcomposer-note">Replies here are made up.</p>
+    </form>
+  </div>
+</play-example>
+
+<play-example title="Commands" layout="wide">
+  <play-note>
+    Its field can be a <a class="hlink" data-underlined href="mentions.html">Mentions</a>:
+    here <code>/</code> at the start lists commands, over the field. Above the
+    field, what the assistant knows about, here a
+    <a class="hlink" data-underlined href="tag.html">Tag</a>. Send can't be
+    pressed while a reply comes, as this one can't be stopped.
+  </play-note>
+  <div style="display: grid; grid-template-rows: minmax(0, 1fr) auto; box-sizing: border-box; inline-size: 100%; max-inline-size: 32rem; block-size: 24rem; margin-inline: auto; overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+      <p class="hconversation-status" aria-live="polite"></p>
+      <div class="hconversation-empty">
+        <div class="hempty-state" data-size="small">
+          <p class="hempty-state-title">No messages yet</p>
+          <p class="hempty-state-description">Send one to start.</p>
+        </div>
+      </div>
+      <ol class="hconversation-list" hidden>
+      </ol>
+      <div class="hconversation-latest">
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="composer-commands-latest-tip">
+            <play-icon name="arrow-down" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-commands-latest-tip">Jump to latest</span>
+        </span>
+      </div>
+    </div>
+    <form class="hcomposer" style="padding: 0 var(--harmo-space-sm) var(--harmo-space-sm)" data-example-reply>
+      <div class="hcomposer-box">
+        <div class="hcomposer-context">
+          <span class="htag">Ticket #4821</span>
+        </div>
+        <div class="hmentions" style="anchor-name: --composer-commands">
+          <textarea class="htextarea" aria-label="Message" placeholder="Ask about this ticket, or type / for a command" rows="1" aria-autocomplete="list" aria-controls="composer-commands-list" data-example-at-start data-example-trigger="/"></textarea>
+          <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --composer-commands">
+            <ul class="hlistbox" id="composer-commands-list" role="listbox" aria-label="Commands">
+              <li class="hoption" id="composer-commands-summarize" role="option" aria-selected="false" data-example-value="summarize">
+                <span class="hoption-text">
+                  <span class="hoption-label">/summarize</span>
+                  <span class="hoption-description">Summarize this ticket</span>
+                </span>
+              </li>
+              <li class="hoption" id="composer-commands-draft" role="option" aria-selected="false" data-example-value="draft">
+                <span class="hoption-text">
+                  <span class="hoption-label">/draft</span>
+                  <span class="hoption-description">Draft a reply</span>
+                </span>
+              </li>
+              <li class="hoption" id="composer-commands-translate" role="option" aria-selected="false" data-example-value="translate">
+                <span class="hoption-text">
+                  <span class="hoption-label">/translate</span>
+                  <span class="hoption-description">Translate the customer's message</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <span class="htooltip-trigger">
+          <button class="hbutton" type="submit" disabled aria-labelledby="composer-commands-send-tip">
+            <play-icon name="arrow-up" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-commands-send-tip">Send</span>
+        </span>
+      </div>
+    </form>
+  </div>
+</play-example>
+
+<play-example title="Editing" layout="wide">
+  <play-note>
+    <kbd class="hkbd">↑</kbd> in the empty field edits your last message, in
+    the field itself, with a bar above it quoting what it said;
+    <kbd class="hkbd">Escape</kbd> or the bar's button cancels, and sending
+    puts the new words in its place.
+  </play-note>
+  <div style="display: grid; grid-template-rows: minmax(0, 1fr) auto; box-sizing: border-box; inline-size: 100%; max-inline-size: 32rem; block-size: 24rem; margin-inline: auto; overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+      <p class="hconversation-status" aria-live="polite"></p>
+      <ol class="hconversation-list">
+        <li class="hmessage" data-from="user">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Where's my order?</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="assistant">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Which order? Its number is in your confirmation email.</div>
+          </div>
+        </li>
+      </ol>
+      <div class="hconversation-latest">
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="composer-editing-latest-tip">
+            <play-icon name="arrow-down" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-editing-latest-tip">Jump to latest</span>
+        </span>
+      </div>
+    </div>
+    <form class="hcomposer" style="padding: 0 var(--harmo-space-sm) var(--harmo-space-sm)" data-example-reply data-example-editable>
+      <div class="hcomposer-box">
+        <textarea class="htextarea" aria-label="Message" placeholder="Message" rows="1"></textarea>
+        <span class="htooltip-trigger">
+          <button class="hbutton" type="submit" disabled aria-labelledby="composer-editing-send-tip">
+            <play-icon name="arrow-up" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-editing-send-tip">Send</span>
+        </span>
+      </div>
+    </form>
+    <template data-example-editing>
+      <div class="hcomposer-editing">
+        <play-icon name="edit" class="hicon"></play-icon>
+        <div class="hcomposer-editing-text">
+          <p class="hcomposer-editing-title">Editing your message</p>
+          <p class="hcomposer-editing-quote"></p>
+        </div>
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="composer-editing-cancel-tip">
+            <play-icon name="close" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="composer-editing-cancel-tip">Cancel editing</span>
+        </span>
+      </div>
+    </template>
+  </div>
+</play-example>

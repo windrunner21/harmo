@@ -145,7 +145,7 @@ without a `label`.
 | --- | --- |
 | `label`, `optional`, `description`, `error` | The Field around it. Without a `label`, name it with `aria-label` |
 | `locale` | Required: its clock, digits, and order of columns |
-| `hourLabel`, `minuteLabel`, `periodLabel` | Required: the columns' names |
+| `hourLabel`, `minuteLabel`, `periodLabel` | Required: the columns' names; `periodLabel` all but with `hour12={false}`, which has no AM and PM column |
 | `value`, `defaultValue` | The time, or `null` for none. A time that doesn't exist is ignored |
 | `onValueChange` | Called with the time as it changes. A form reset that changes the time calls it too, unless you hold the value, with `""` when there's no time to go back to |
 | `name` | Sends the time with a form, in a hidden input |

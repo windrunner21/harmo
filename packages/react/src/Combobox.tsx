@@ -14,7 +14,7 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import { ExpandChevron } from "./ExpandChevron.tsx";
-import { Field, useField, type StackedFieldProps } from "./field/Field.tsx";
+import { Field, useField } from "./field/Field.tsx";
 import {
   ComboboxContext,
   Listbox,
@@ -26,7 +26,7 @@ import {
 import { placePopup } from "./Popup.tsx";
 import { Tag, TagRemove } from "./Tag.tsx";
 import { TagList, TagListContext } from "./TagList.tsx";
-import type { FormatCount } from "./types.ts";
+import type { ControlField, FormatCount } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
 type ComboboxValue =
@@ -73,18 +73,7 @@ type ComboboxControlProps = Omit<
     children?: ReactNode;
   };
 
-type ComboboxField =
-  | ({ label: StackedFieldProps["label"] } & Partial<
-      Pick<StackedFieldProps, "optional" | "description" | "error">
-    >)
-  | {
-      label?: undefined;
-      optional?: never;
-      description?: never;
-      error?: never;
-    };
-
-export type ComboboxProps = ComboboxControlProps & ComboboxField;
+export type ComboboxProps = ComboboxControlProps & ControlField;
 
 export const Combobox = (comboboxProps: ComboboxProps) => {
   const { label, optional, description, error, hidden, ...props } =
@@ -105,32 +94,85 @@ export const Combobox = (comboboxProps: ComboboxProps) => {
   );
 };
 
-const ComboboxControl = ({
-  multiple = false,
-  freeText = false,
-  value,
-  defaultValue,
-  onValueChange,
-  removeLabel,
-  moreLabel,
-  formatCount,
-  inputValue,
-  onInputChange,
-  filter = true,
-  emptyMessage,
-  name,
-  disabled,
-  required,
-  hidden,
-  ref,
-  className,
-  children,
-  onKeyDown,
-  onBlur,
-  onClick,
-  onCompositionEnd,
-  ...props
-}: ComboboxControlProps) => {
+// The value in its three modes: one option picked, free text, or several,
+// each held here unless the app holds it, and the app told of each change.
+const useComboboxValue = (spec: ComboboxValue) => {
+  const [pickedState, setPickedState] = useState<string | null>(() =>
+    spec.multiple || spec.freeText ? null : (spec.defaultValue ?? null),
+  );
+  const [freeState, setFreeState] = useState(() =>
+    !spec.multiple && spec.freeText ? (spec.value ?? spec.defaultValue ?? "") : "",
+  );
+  const [valuesState, setValuesState] = useState<string[]>(() =>
+    spec.multiple ? (spec.defaultValue ?? []) : [],
+  );
+
+  const chosen =
+    spec.multiple || spec.freeText ? null : spec.value === undefined ? pickedState : spec.value;
+  const free = !spec.multiple && spec.freeText ? (spec.value ?? freeState) : "";
+  const values = spec.multiple ? (spec.value ?? valuesState) : [];
+
+  const choose = (item: string | null) => {
+    setPickedState(item);
+    if (!spec.multiple && !spec.freeText && item !== chosen) spec.onValueChange?.(item);
+  };
+  const setFree = (next: string) => {
+    setFreeState(next);
+    if (!spec.multiple && spec.freeText && next !== free) spec.onValueChange?.(next);
+  };
+  const changeValues = (next: string[]) => {
+    setValuesState(next);
+    if (spec.multiple) spec.onValueChange?.(next);
+  };
+  // Back to the value the page loaded with, telling the app only when the
+  // value is held here.
+  const restore = () => {
+    if (spec.multiple) {
+      const next = spec.defaultValue ?? [];
+      setValuesState(next);
+      if (spec.value === undefined && next.join("\n") !== valuesState.join("\n")) spec.onValueChange?.(next);
+    } else if (spec.freeText) {
+      const next = spec.defaultValue ?? "";
+      setFreeState(next);
+      if (spec.value === undefined && next !== freeState) spec.onValueChange?.(next);
+    } else {
+      const next = spec.defaultValue ?? null;
+      setPickedState(next);
+      if (spec.value === undefined && next !== pickedState) spec.onValueChange?.(next);
+    }
+  };
+
+  return { chosen, free, values, choose, setFree, changeValues, restore };
+};
+
+const ComboboxControl = (controlProps: ComboboxControlProps) => {
+  const {
+    multiple = false,
+    freeText = false,
+    value,
+    defaultValue,
+    onValueChange,
+    removeLabel,
+    moreLabel,
+    formatCount,
+    inputValue,
+    onInputChange,
+    filter = true,
+    emptyMessage,
+    name,
+    disabled,
+    required,
+    hidden,
+    ref,
+    className,
+    children,
+    onKeyDown,
+    onBlur,
+    onClick,
+    onCompositionEnd,
+    ...props
+  } = controlProps;
+  const { chosen, free, values, choose, setFree, changeValues, restore } = useComboboxValue(controlProps);
   const field = useField(props);
   const listId = useId();
   const popupId = useId();
@@ -162,35 +204,6 @@ const ComboboxControl = ({
       ? undefined
       : (options.find((option) => option.value === item)?.label ??
         known.current.get(item));
-  const changeValue = onValueChange as
-    | ((value: string | null) => void)
-    | undefined;
-
-  // Pick mode: the chosen option, held here unless the app holds it.
-  const [chosenState, setChosenState] = useState<string | null>(() =>
-    multiple || freeText ? null : ((defaultValue as string | undefined) ?? null),
-  );
-  const chosen =
-    multiple || freeText
-      ? null
-      : value === undefined
-        ? chosenState
-        : (value as string | null);
-
-  // Free text: the text is the value, held here unless the app holds it.
-  const [freeState, setFreeState] = useState(() =>
-    freeText && !multiple
-      ? ((value as string | undefined) ?? (defaultValue as string | undefined) ?? "")
-      : "",
-  );
-
-  // Several: the choices, in the order they were made.
-  const [valuesState, setValuesState] = useState<string[]>(() =>
-    multiple ? ((defaultValue as string[] | undefined) ?? []) : [],
-  );
-  const values = multiple
-    ? ((value as string[] | undefined) ?? valuesState)
-    : [];
 
   // What's typed since the last pick. In pick mode, the field shows the
   // chosen option's label, from the options as they are now, except while
@@ -199,33 +212,13 @@ const ComboboxControl = ({
   // what's typed, toward the next choice.
   const [typed, setTyped] = useState(false);
   const [draft, setDraft] = useState("");
-  const shownText = multiple
-    ? draft
-    : freeText
-      ? typeof value === "string"
-        ? value
-        : freeState
-      : typed
-        ? draft
-        : (labelOf(chosen) ?? "");
+  const shownText = multiple ? draft : freeText ? free : typed ? draft : (labelOf(chosen) ?? "");
   const text: string = inputValue ?? shownText;
 
-  const choose = (item: string | null) => {
-    setChosenState(item);
-    if (item !== chosen) changeValue?.(item);
-  };
-  const setFree = (next: string) => {
-    setFreeState(next);
-    if (next !== shownText) changeValue?.(next);
-  };
   const report = (next: string) => {
     if (next !== text) onInputChange?.(next);
   };
 
-  const changeValues = (next: string[]) => {
-    setValuesState(next);
-    (onValueChange as ((value: string[]) => void) | undefined)?.(next);
-  };
   // The option typed text names, if it can be picked.
   const optionNamed = (typedText: string) => {
     const wanted = typedText.trim().toLowerCase();
@@ -327,7 +320,6 @@ const ComboboxControl = ({
   // hold the value, tells you when that changes it; once it's happened,
   // since another listener may cancel it, and not if the field has gone by
   // then, such as when the reset closes what it's in.
-  const defaults = JSON.stringify(defaultValue ?? null);
   const resetting = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(resetting.current), []);
   useEffect(() => {
@@ -337,25 +329,10 @@ const ComboboxControl = ({
       clearTimeout(resetting.current);
       resetting.current = setTimeout(() => {
         if (event.defaultPrevented) return;
-        const restored = JSON.parse(defaults) as string | string[] | null;
         following.current = false;
         setTyped(false);
         setDraft("");
-        if (multiple) {
-          const next = (restored as string[] | null) ?? [];
-          setValuesState(next);
-          if (value === undefined && next.join("\n") !== valuesState.join("\n")) {
-            (onValueChange as ((value: string[]) => void) | undefined)?.(next);
-          }
-        } else if (freeText) {
-          const next = (restored as string | null) ?? "";
-          setFreeState(next);
-          if (value === undefined && next !== freeState) changeValue?.(next);
-        } else {
-          const next = restored as string | null;
-          setChosenState(next);
-          if (value === undefined && next !== chosenState) changeValue?.(next);
-        }
+        restore();
       });
     };
     form.addEventListener("reset", reset);

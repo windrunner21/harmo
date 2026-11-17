@@ -17,7 +17,7 @@
 // A page is touched when a file it's built from changes, or a component it
 // uses does: its markup in html/src/components has one of the classes that
 // component's stylesheet defines. A component changes with its stylesheet,
-// its React files (as packages/cli/build-registry.ts lists them, and what
+// its React files (as packages/cli/components.ts lists them, and what
 // they import), its example script, and a pattern with its folder and the
 // patterns that import it. A spec runs when a page it opens is touched, or
 // it changed itself. What every page shares, such as the tokens, the
@@ -27,6 +27,7 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, join, normalize } from "node:path";
+import { components } from "../packages/cli/components.ts";
 
 const root = join(import.meta.dirname, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -114,12 +115,10 @@ const scssUsers = (partial: string): string[] => {
     .flatMap((file) => (file.startsWith("_") ? scssUsers(file) : [file]));
 };
 
-// The React files of each component, from the CLI's registry source.
-const registry = read("packages/cli/build-registry.ts");
-const componentBlock = registry.slice(registry.indexOf("const components"), registry.indexOf("};", registry.indexOf("const components")));
+// The React files of each component, from the CLI's list of them.
 const componentFiles = new Map<string, string>();
-for (const [, name, files] of componentBlock.matchAll(/^\s*"?([a-z-]+)"?: \[([^\]]*)\]/gm)) {
-  for (const [, file] of files!.matchAll(/"([^"]+)"/g)) componentFiles.set(file!, name!);
+for (const [name, files] of Object.entries(components)) {
+  for (const file of files) componentFiles.set(file, name);
 }
 
 // The React files that import a file, and those that import them, and so on.

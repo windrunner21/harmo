@@ -125,6 +125,7 @@ export type HarmoCustomProperty =
   | "--harmo-tooltip-delay"
   | "--harmo-tooltip-hint-box-shadow"
   | "--harmo-white"
+  | "--hbadge-ring"
   | "--hbanner-color"
   | "--hbutton-hold-background"
   | "--hbutton-hold-border"
@@ -133,7 +134,9 @@ export type HarmoCustomProperty =
   | "--hbutton-press-duration"
   | "--hcalendar-day-size"
   | "--hcommand-menu-top"
+  | "--hcomposer-column"
   | "--hcontrol-focus-border"
+  | "--hconversation-column"
   | "--hdialog-margin"
   | "--hdialog-max-inline-size"
   | "--hdialog-scale"
@@ -148,6 +151,10 @@ export type HarmoCustomProperty =
   | "--hlanguage-picker-close"
   | "--hlanguage-picker-columns"
   | "--hlanguage-picker-open"
+  | "--hlauncher-offset"
+  | "--hlauncher-size"
+  | "--hmessage-bubble-color"
+  | "--hmessage-bubble-radius"
   | "--hmeter-color"
   | "--hnavigation-menu-height"
   | "--hnavigation-menu-room"
@@ -339,6 +346,7 @@ declare module "react" {
     "--harmo-tooltip-delay"?: string | number;
     "--harmo-tooltip-hint-box-shadow"?: string | number;
     "--harmo-white"?: string | number;
+    "--hbadge-ring"?: string | number;
     "--hbanner-color"?: string | number;
     "--hbutton-hold-background"?: string | number;
     "--hbutton-hold-border"?: string | number;
@@ -347,7 +355,9 @@ declare module "react" {
     "--hbutton-press-duration"?: string | number;
     "--hcalendar-day-size"?: string | number;
     "--hcommand-menu-top"?: string | number;
+    "--hcomposer-column"?: string | number;
     "--hcontrol-focus-border"?: string | number;
+    "--hconversation-column"?: string | number;
     "--hdialog-margin"?: string | number;
     "--hdialog-max-inline-size"?: string | number;
     "--hdialog-scale"?: string | number;
@@ -362,6 +372,10 @@ declare module "react" {
     "--hlanguage-picker-close"?: string | number;
     "--hlanguage-picker-columns"?: string | number;
     "--hlanguage-picker-open"?: string | number;
+    "--hlauncher-offset"?: string | number;
+    "--hlauncher-size"?: string | number;
+    "--hmessage-bubble-color"?: string | number;
+    "--hmessage-bubble-radius"?: string | number;
     "--hmeter-color"?: string | number;
     "--hnavigation-menu-height"?: string | number;
     "--hnavigation-menu-room"?: string | number;

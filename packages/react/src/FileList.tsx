@@ -10,7 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import { renders } from "./children.ts";
-import { close as closePaths, file as filePaths, fileDone } from "./icons.ts";
+import { closeIcon } from "./closeIcon.tsx";
+import { file as filePaths, fileDone } from "./icons.ts";
 import { useMergedRef } from "./useMergedRef.ts";
 import { milliseconds } from "./milliseconds.ts";
 import { withClass } from "./withClass.ts";
@@ -66,25 +67,6 @@ const fileIcon = (
     focusable="false"
   >
     {filePaths.map((d) => (
-      <path key={d} d={d} />
-    ))}
-  </svg>
-);
-
-const removeIcon = (
-  <svg
-    className="hicon"
-    width="24"
-    height="24"
-    viewBox="0 0 25 25"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    aria-hidden="true"
-    focusable="false"
-  >
-    {closePaths.map((d) => (
       <path key={d} d={d} />
     ))}
   </svg>
@@ -278,7 +260,7 @@ const FileRow = ({
             aria-label={removeLabel(file)}
             onClick={() => onRemove(file)}
           >
-            {removeIcon}
+            {closeIcon}
           </button>
         )}
       </div>

@@ -3,11 +3,10 @@
 // A refused file is cleared from the input, so a form doesn't send it. With a
 // data-variant, it also takes a file dropped on it, lights up while one is
 // dragged, and stops a drop that just misses from opening the file in the tab,
-// leaving alone other drop targets and text fields. What it puts in as a file
+// leaving alone other drop targets and text fields, as drag-files.js does. What it puts in as a file
 // comes or goes is marked data-new, so it settles in; what the page loaded with
 // doesn't.
 {
-  const answered = new WeakSet();
   const paths = {
     arrow: "M12 16V10M12 10L9 12M12 10L15 12",
     check: "M9 13L11 15L15 11",
@@ -179,75 +178,21 @@
 
     if (!root.dataset.variant) continue;
 
-    let depth = 0;
-    let timer;
-    const carriesFiles = (event) => event.dataTransfer?.types.includes("Files");
-    // The target can be a text node, and every area answers for the whole page,
-    // so it asks which area the file is over, not only whether it's this one.
-    const elementOf = (event) => (event.target instanceof Element ? event.target : event.target.parentElement);
-    const areaOf = (event) => elementOf(event)?.closest(".hfile-input[data-variant]:has(.hfile-input-control:enabled)");
-    const inside = (event) => areaOf(event) === root;
-    const leftToOthers = (event) => {
-      const element = elementOf(event);
-      return (
-        (event.defaultPrevented && !answered.has(event)) ||
-        element?.isContentEditable ||
-        Boolean(element?.closest("input:not(.hfile-input-control), textarea"))
-      );
-    };
-    const end = () => {
-      depth = 0;
-      clearTimeout(timer);
-      light(null);
-    };
-    // Anything that would stop a drag early gets no event, such as the element
-    // under it being removed, so it ends when the drag's repeating events stop.
-    const answer = (event) => {
-      light(inside(event) ? "over" : "page");
-      clearTimeout(timer);
-      timer = setTimeout(end, 2000);
-      if (leftToOthers(event)) return;
-      answered.add(event);
-      event.preventDefault();
-      event.dataTransfer.dropEffect = areaOf(event) ? "copy" : "none";
-    };
-    const ignored = (event) => {
-      if (input.disabled) end();
-      return input.disabled || !carriesFiles(event);
-    };
-    const light = (state) => {
-      if (state) root.dataset.dragging = state;
-      else delete root.dataset.dragging;
-    };
-
-    document.addEventListener("dragenter", (event) => {
-      if (ignored(event)) return;
-      depth += 1;
-      answer(event);
-    });
-    document.addEventListener("dragleave", (event) => {
-      if (ignored(event)) return;
-      depth = Math.max(0, depth - 1);
-      if (depth === 0) end();
-    });
-    document.addEventListener("dragover", (event) => {
-      if (!ignored(event)) answer(event);
-    });
-    document.addEventListener("drop", (event) => {
-      end();
-      if (ignored(event) || leftToOthers(event)) return;
-      answered.add(event);
-      event.preventDefault();
-      if (!inside(event)) return;
-      const dropped = [...event.dataTransfer.items]
-        .filter((item) => item.kind === "file" && !item.webkitGetAsEntry?.()?.isDirectory)
-        .flatMap((item) => item.getAsFile() ?? []);
-      const files = input.multiple ? dropped : dropped.slice(0, 1);
-      if (!files.length) return;
-      const chosen = new DataTransfer();
-      for (const file of files) chosen.items.add(file);
-      input.files = chosen.files;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
+    // It lights up while files are dragged over the page, and takes a file
+    // dropped on it, by the rules drag-files.js holds.
+    watchFileDrop(root, {
+      show: (state) => {
+        if (state) root.dataset.dragging = state;
+        else delete root.dataset.dragging;
+      },
+      take: (dropped) => {
+        const chosen = new DataTransfer();
+        for (const file of input.multiple ? dropped : dropped.slice(0, 1)) chosen.items.add(file);
+        input.files = chosen.files;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      },
+      enabled: () => !input.disabled,
+      takes: () => input.matches(":enabled"),
     });
   }
 }

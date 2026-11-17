@@ -206,6 +206,24 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     }
   }
 
+  // A toggle that's on, aria-pressed="true", such as a rating or a filter:
+  // in the primary color, and a secondary one on its tint with its border,
+  // as a chosen option is. It keeps its press, and stays as it is on hover.
+  &[aria-pressed="true"]:is([data-variant="secondary"], [data-variant="tertiary"]) {
+    &,
+    &#{$actionable}:is(:hover, :active) {
+      color: $color-primary;
+    }
+  }
+
+  &[aria-pressed="true"][data-variant="secondary"] {
+    &,
+    &#{$actionable}:is(:hover, :active) {
+      background-color: $color-primary-tint;
+      border-color: $color-primary;
+    }
+  }
+
   &[data-size="small"] {
     min-block-size: $control-height-small;
 

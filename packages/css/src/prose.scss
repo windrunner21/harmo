@@ -1,0 +1,123 @@
+@use "shortcuts" as *;
+
+// Prose: formatted text, such as a reply from an assistant, a note, or help:
+// paragraphs, headings, lists, quotes, code, and links, spaced to read, at the
+// size and line height of the text around it. What a Markdown renderer makes
+// fits inside, its plain elements styled as Harmo's.
+.hprose {
+  min-inline-size: 0;
+
+  overflow-wrap: anywhere;
+
+  color: $color-text;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Blocks 10px apart, and a heading after a block a step further.
+  & > * {
+    margin: 0;
+  }
+
+  & > * + * {
+    margin-block-start: $space-xs;
+  }
+
+  & > :is(h2, h3, h4):not(:first-child) {
+    margin-block-start: $space-sm;
+  }
+
+  & :is(h2, h3, h4) {
+    font-weight: $font-weight-semibold;
+    line-height: 1.4;
+  }
+
+  & h2 {
+    font-size: 1.25em;
+  }
+
+  & h3 {
+    font-size: 1.125em;
+  }
+
+  & h4 {
+    font-size: 1em;
+  }
+
+  & :is(ul, ol) {
+    padding-inline-start: 1.5em;
+  }
+
+  & li > :is(ul, ol) {
+    margin: 0;
+  }
+
+  & strong {
+    font-weight: $font-weight-semibold;
+  }
+
+  & blockquote {
+    padding-inline-start: $space-xs;
+
+    color: $color-text-secondary;
+
+    border-inline-start: 2px solid $color-border;
+  }
+
+  & hr {
+    margin-block: $space-sm;
+
+    border: 0;
+    border-block-start: 1px solid $color-border;
+  }
+
+  // Code in a line: monospace, a little smaller, on a tint.
+  & :not(pre) > code {
+    padding: 0.125em 0.3em;
+
+    font-family: $font-family-mono;
+    font-size: 0.875em;
+
+    background-color: $color-background-secondary;
+    border-radius: $border-radius-sm;
+  }
+
+  // A block of code: 13px monospace in a framed panel, scrolling sideways
+  // rather than wrapping.
+  & pre {
+    padding: $space-xs $space-sm;
+    overflow-x: auto;
+
+    font-family: $font-family-mono;
+    font-size: $font-size-xs;
+    line-height: 1.25rem;
+    white-space: pre;
+    overflow-wrap: normal;
+
+    background-color: $color-background-secondary;
+    border: 1px solid $color-border;
+    border-radius: $border-radius;
+  }
+
+  // A plain link, as a Markdown renderer writes it, looks as an underlined
+  // Link does.
+  & :where(a:not(.hlink)) {
+    color: $link-color-text;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+
+    transition: color $duration-fast ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: $link-hover-color-text;
+      }
+    }
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: $focus-outline-offset;
+    }
+  }
+}

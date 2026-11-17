@@ -1,0 +1,159 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    A chat's panel: the Conversation, over a
+    <a class="hlink" data-underlined href="composer.html">Composer</a>. It
+    opens at the latest, and stays there as messages come. Scroll up to read
+    and it stays where you are, with Jump to latest at its foot; send a
+    message and it comes back to the latest. A screen reader hears each
+    reply from its hidden status.
+  </play-note>
+  <div style="display: grid; grid-template-rows: minmax(0, 1fr) auto; box-sizing: border-box; inline-size: 100%; max-inline-size: 32rem; block-size: 24rem; margin-inline: auto; overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+      <p class="hconversation-status" aria-live="polite"></p>
+      <ol class="hconversation-list">
+        <li class="hmessage" data-from="user">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Which orders are late this week?</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="assistant">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Three: #4821 and #4830 are waiting on the courier, and #4833 on stock.</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="user">
+          <div class="hmessage-body">
+            <div class="hmessage-text">When is #4833's stock due?</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="assistant">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Thursday morning. It ships the same day if it arrives before noon.</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="user">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Let the customer know, please.</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="assistant">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Done: I've emailed them the new date, and a 10% discount code for the wait.</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="user">
+          <div class="hmessage-body">
+            <div class="hmessage-text">And the other two?</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="assistant">
+          <div class="hmessage-body">
+            <div class="hmessage-text">The courier picks both up today, between 2 and 4 PM.</div>
+          </div>
+        </li>
+      </ol>
+      <div class="hconversation-latest">
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="conversation-default-latest-tip">
+            <play-icon name="arrow-down" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="conversation-default-latest-tip">Jump to latest</span>
+        </span>
+      </div>
+    </div>
+    <form class="hcomposer" style="padding: 0 var(--harmo-space-sm) var(--harmo-space-sm)" data-example-reply>
+      <div class="hcomposer-box">
+        <textarea class="htextarea" aria-label="Message" placeholder="Message" rows="1"></textarea>
+        <span class="htooltip-trigger">
+          <button class="hbutton" type="submit" disabled aria-labelledby="conversation-default-send-tip">
+            <play-icon name="arrow-up" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="conversation-default-send-tip">Send</span>
+        </span>
+      </div>
+    </form>
+  </div>
+</play-example>
+
+<play-example title="Before the first message" layout="wide">
+  <play-note>
+    With no messages, what you give it shows in the middle, here an
+    <a class="hlink" data-underlined href="empty-state.html">Empty State</a>,
+    until the first is sent.
+  </play-note>
+  <div style="display: grid; grid-template-rows: minmax(0, 1fr) auto; box-sizing: border-box; inline-size: 100%; max-inline-size: 32rem; block-size: 24rem; margin-inline: auto; overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+      <p class="hconversation-status" aria-live="polite"></p>
+      <div class="hconversation-empty">
+        <div class="hempty-state" data-size="small">
+          <p class="hempty-state-title">No messages yet</p>
+          <p class="hempty-state-description">Ask about an order to start.</p>
+        </div>
+      </div>
+      <ol class="hconversation-list" hidden>
+      </ol>
+      <div class="hconversation-latest">
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="conversation-empty-latest-tip">
+            <play-icon name="arrow-down" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="conversation-empty-latest-tip">Jump to latest</span>
+        </span>
+      </div>
+    </div>
+    <form class="hcomposer" style="padding: 0 var(--harmo-space-sm) var(--harmo-space-sm)" data-example-reply>
+      <div class="hcomposer-box">
+        <textarea class="htextarea" aria-label="Message" placeholder="Message" rows="1"></textarea>
+        <span class="htooltip-trigger">
+          <button class="hbutton" type="submit" disabled aria-labelledby="conversation-empty-send-tip">
+            <play-icon name="arrow-up" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="conversation-empty-send-tip">Send</span>
+        </span>
+      </div>
+    </form>
+  </div>
+</play-example>
+
+<play-example title="Gathered at the foot" layout="wide">
+  <play-note>
+    With <code>data-align="end"</code>, a short conversation sits at the
+    foot, nearest the field, as in a messenger.
+  </play-note>
+  <div style="display: grid; grid-template-rows: minmax(0, 1fr) auto; box-sizing: border-box; inline-size: 100%; max-inline-size: 32rem; block-size: 24rem; margin-inline: auto; overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <div class="hconversation" role="region" aria-label="Conversation" tabindex="0" data-align="end">
+      <p class="hconversation-status" aria-live="polite"></p>
+      <ol class="hconversation-list">
+        <li class="hmessage" data-from="user">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Which orders are late this week?</div>
+          </div>
+        </li>
+        <li class="hmessage" data-from="assistant">
+          <div class="hmessage-body">
+            <div class="hmessage-text">Three: #4821 and #4830 are waiting on the courier, and #4833 on stock.</div>
+          </div>
+        </li>
+      </ol>
+      <div class="hconversation-latest">
+        <span class="htooltip-trigger">
+          <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="conversation-end-latest-tip">
+            <play-icon name="arrow-down" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="conversation-end-latest-tip">Jump to latest</span>
+        </span>
+      </div>
+    </div>
+    <form class="hcomposer" style="padding: 0 var(--harmo-space-sm) var(--harmo-space-sm)" data-example-reply>
+      <div class="hcomposer-box">
+        <textarea class="htextarea" aria-label="Message" placeholder="Message" rows="1"></textarea>
+        <span class="htooltip-trigger">
+          <button class="hbutton" type="submit" disabled aria-labelledby="conversation-end-send-tip">
+            <play-icon name="arrow-up" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="conversation-end-send-tip">Send</span>
+        </span>
+      </div>
+    </form>
+  </div>
+</play-example>

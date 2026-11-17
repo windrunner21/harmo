@@ -1,0 +1,56 @@
+<play-example title="Default" layout="stack">
+  <play-note>
+    Formatted text, at the size of the text around it: paragraphs, lists,
+    code in a line or in a block, bold, and links, each block 10px from the
+    next.
+  </play-note>
+  <div class="hprose">
+    <p>Your weekly report is ready. <strong>3 of 5 checks passed</strong>:</p>
+    <ul>
+      <li>Replies took 4 minutes on average, down from 6.</li>
+      <li>92% of customers rated their conversation good.</li>
+    </ul>
+    <p>Read the <a href="https://example.com/reports/42">full report</a>, or run <code>export --week</code> to download it:</p>
+    <pre><code>npx reports export --week 2026-46</code></pre>
+  </div>
+</play-example>
+
+<play-example title="Headings and quotes" layout="stack">
+  <play-note>
+    Headings in proportion to the text, a step further from what's above
+    them; a quote set in from a line; and a rule between parts.
+  </play-note>
+  <div class="hprose">
+    <h3>Returns</h3>
+    <p>You can return anything within 30 days, for free.</p>
+    <blockquote>Keep the box until you're sure: we take items back in it.</blockquote>
+    <ol>
+      <li>Print the label from your order's page.</li>
+      <li>Drop the parcel at any post office.</li>
+    </ol>
+    <hr />
+    <h4>Refunds</h4>
+    <p>They reach your card within five working days of our getting the parcel.</p>
+  </div>
+</play-example>
+
+<play-example title="From text" layout="stack">
+  <play-note>
+    In React, <code>text</code> formats a small part of Markdown: paragraphs,
+    lists, code, bold, and links, built as elements, never as HTML, and only
+    web and email addresses become links. In HTML, your script builds the
+    same markup.
+  </play-note>
+  <div class="hprose">
+    <p>Your report is ready. <strong>3 of 5 checks passed</strong>:</p>
+    <ul>
+      <li>Response time: 4 minutes, down from 6.</li>
+      <li>Satisfaction: 92%, up from 88%.</li>
+    </ul>
+    <p>
+      Read the
+      <a class="hlink" data-underlined href="https://example.com/reports/42" target="_blank" rel="noreferrer">full report</a>, or
+      run <code>export --week</code> to download it.
+    </p>
+  </div>
+</play-example>

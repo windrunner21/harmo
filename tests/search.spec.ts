@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, open, playgrounds, rendered, settled, test } from "./playgrounds.ts";
+import { boxes, colorOf, example, onEachPlayground, open, playgrounds, rendered, settled, test } from "./playgrounds.ts";
 
 // What docs/components/search.md says, on the Search page: a gray field with a
 // magnifier, Input's border and ring once hovered or focused, a clear button
@@ -14,15 +14,6 @@ const styleOf = (element: Locator, property: string, pseudo?: string) =>
     [property, pseudo] as const,
   );
 
-const color = (page: Page, token: string) =>
-  page.evaluate((token) => {
-    const probe = document.createElement("i");
-    probe.style.color = `var(${token})`;
-    document.body.append(probe);
-    const value = getComputedStyle(probe).color;
-    probe.remove();
-    return value;
-  }, token);
 
 // How many input events the field has sent, from now on.
 const countInputs = (input: Locator) =>
@@ -43,10 +34,10 @@ onEachPlayground("search", () => {
   test("a gray field with a magnifier at its start, and Input's border and ring once focused", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "search-default");
     const input = container.getByRole("searchbox", { name: "Search conversations" });
-    expect(await styleOf(input, "background-color")).toBe(await color(page, "--harmo-color-background-secondary"));
+    expect(await styleOf(input, "background-color")).toBe(await colorOf(page, "var(--harmo-color-background-secondary)"));
     expect(await styleOf(input, "border-top-color")).toBe("rgba(0, 0, 0, 0)");
     expect(await styleOf(input, "box-shadow")).toBe("none");
-    expect(await styleOf(input, "color", "::placeholder")).toBe(await color(page, "--harmo-color-text-secondary"));
+    expect(await styleOf(input, "color", "::placeholder")).toBe(await colorOf(page, "var(--harmo-color-text-secondary)"));
 
     const magnifier = container.locator(".hsearch > .hicon");
     const [field, icon] = await boxes(input, magnifier);
@@ -63,7 +54,7 @@ onEachPlayground("search", () => {
     expect(await styleOf(input, "padding-left")).toBe("34px");
 
     await input.focus();
-    expect(await styleOf(input, "border-top-color")).toBe(await color(page, "--harmo-color-focus"));
+    expect(await styleOf(input, "border-top-color")).toBe(await colorOf(page, "var(--harmo-color-focus)"));
     expect(await styleOf(input, "outline-width")).toBe("3px");
   });
 
@@ -258,7 +249,7 @@ onEachPlayground("search", () => {
     const input = container.getByRole("searchbox", { name: "Search archived conversations" });
     await expect(input).toBeDisabled();
     await expect(container.locator(".hsearch-clear")).toBeDisabled();
-    expect(await styleOf(input, "color", "::placeholder")).toBe(await color(page, "--harmo-color-text-tertiary"));
+    expect(await styleOf(input, "color", "::placeholder")).toBe(await colorOf(page, "var(--harmo-color-text-tertiary)"));
     const opacity = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--harmo-opacity-disabled").trim());
     expect(await styleOf(container.locator(".hsearch > .hicon"), "opacity")).toBe(opacity);
     // An enabled field's magnifier doesn't dim.
@@ -274,7 +265,7 @@ onEachPlayground("search", () => {
     expect(await styleOf(input, "border-top-color")).toBe("rgba(0, 0, 0, 0)");
     await input.hover();
     await settled(input);
-    expect(await styleOf(input, "border-top-color")).toBe(await color(page, "--harmo-color-focus"));
+    expect(await styleOf(input, "border-top-color")).toBe(await colorOf(page, "var(--harmo-color-focus)"));
   });
 
   test("on a right-to-left page, the magnifier is at the right and the clear button at the left", async ({ page }) => {

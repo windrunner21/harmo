@@ -1,5 +1,5 @@
-import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
+import { expect, type Locator } from "@playwright/test";
+import { boxes, colorOf, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/section.md says, on the Section page: a region named by
 // its title, a line under its header, actions at its end that wrap under the
@@ -10,15 +10,6 @@ const styleOf = (element: Locator, property: string) =>
   element.evaluate((node, property) => getComputedStyle(node).getPropertyValue(property), property);
 
 // A token's value as the browser computes a color from it.
-const color = (page: Page, token: string) =>
-  page.evaluate((token) => {
-    const probe = document.createElement("i");
-    probe.style.color = `var(${token})`;
-    document.body.append(probe);
-    const value = getComputedStyle(probe).color;
-    probe.remove();
-    return value;
-  }, token);
 
 onEachPlayground("section", () => {
   test("it's a region named by its title, with its description under it and a line under its header", { tag: "@css" }, async ({ page }) => {
@@ -29,13 +20,13 @@ onEachPlayground("section", () => {
     await expect(title).toBeVisible();
     expect(await styleOf(title, "font-size")).toBe("20px");
     const description = section.locator(".hsection-description");
-    expect(await styleOf(description, "color")).toBe(await color(page, "--harmo-color-text-secondary"));
+    expect(await styleOf(description, "color")).toBe(await colorOf(page, "var(--harmo-color-text-secondary)"));
     const [titleBox, descriptionBox] = await boxes(title, description);
     expect(descriptionBox.y - (titleBox.y + titleBox.height)).toBeCloseTo(6, 0);
 
     const header = section.locator(".hsection-header");
     expect(await styleOf(header, "border-bottom-width")).toBe("1px");
-    expect(await styleOf(header, "border-bottom-color")).toBe(await color(page, "--harmo-color-border"));
+    expect(await styleOf(header, "border-bottom-color")).toBe(await colorOf(page, "var(--harmo-color-border)"));
     const [text, line] = await boxes(section.locator(".hsection-text"), header);
     expect(line.y + line.height - (text.y + text.height)).toBeCloseTo(10 + 1, 0);
   });

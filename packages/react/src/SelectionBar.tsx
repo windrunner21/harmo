@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useSyncExternalStore, type ComponentPropsWithRef, type ReactNode } from "react";
+import type { ComponentPropsWithRef, ReactNode } from "react";
+import { useAddedLater } from "./useAddedLater.ts";
 import { withClass } from "./withClass.ts";
 
 export interface SelectionBarProps extends ComponentPropsWithRef<"div"> {
@@ -8,8 +9,6 @@ export interface SelectionBarProps extends ComponentPropsWithRef<"div"> {
   deselectLabel: ReactNode;
   onDeselect: () => void;
 }
-
-const subscribe = () => () => {};
 
 export const SelectionBar = ({
   label,
@@ -19,8 +18,7 @@ export const SelectionBar = ({
   children,
   ...props
 }: SelectionBarProps) => {
-  const inBrowser = useSyncExternalStore(subscribe, () => true, () => false);
-  const [added] = useState(inBrowser);
+  const added = useAddedLater();
 
   return (
     <div data-new={added ? "" : undefined} {...props} className={withClass("hselection-bar", className)}>

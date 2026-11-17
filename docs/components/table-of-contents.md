@@ -8,7 +8,7 @@ in view as the page scrolls.
 | Item | Requirement |
 | --- | --- |
 | CSS | `table-of-contents.css` |
-| Element | `<nav class="htable-of-contents">` with a name from `aria-label` |
+| Element | `<nav class="htable-of-contents">` with a name from `aria-label`, or from a visible heading with `aria-labelledby` |
 | Parts | `<span class="htable-of-contents-marker" aria-hidden="true">`, then `<ul class="htable-of-contents-list" role="list">`, and in each `<li class="htable-of-contents-item">` an `<a class="htable-of-contents-link">` to a heading's `id` |
 | Required | A name for the list, and an `id` on each heading it links to |
 | Unique | Each heading's `id` |
@@ -95,7 +95,7 @@ they come on the page, whatever the order of `items`.
 
 | Prop | Effect |
 | --- | --- |
-| `aria-label` | Required. The list's name |
+| `aria-label`, or `aria-labelledby` | Required, one or the other. The list's name, or the id of a visible heading that names it |
 | `items` | Each has an `id`, the id of its heading, a `label`, and an optional `level` of 1, 2, or 3 |
 | `offset` | How many pixels a sticky header covers at the top, for which section counts as reached. Where a followed link scrolls to is up to `scroll-margin-top`, as for the browser's own jump |
 | `side` | `start`, the default, or `end`: which side of a flex row it goes to |

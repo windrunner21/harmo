@@ -1,6 +1,6 @@
 import { Card, Section } from "@harmo-ui/react";
 import { AnalyticsIcon, InfoIcon, MessagesIcon, SettingsIcon, SuccessIcon, UserIcon } from "../app-icons.tsx";
-import type { Upload } from "../patterns/contact-form/attachments.ts";
+import type { Upload } from "../patterns/attachments/attachments.ts";
 import { ContactForm, type ContactFormResult } from "../patterns/contact-form/ContactForm.tsx";
 import { ContactOptions } from "../patterns/contact-form/ContactOptions.tsx";
 import { OrderHelpForm, type OrderHelpFormResult } from "../patterns/contact-form/OrderHelpForm.tsx";

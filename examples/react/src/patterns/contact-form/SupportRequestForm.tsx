@@ -13,7 +13,7 @@ import {
 } from "@harmo-ui/react";
 import { useRef, type ReactNode } from "react";
 import { emailError, textOf, type FormAction, type FormMessages } from "../form-action/formAction.ts";
-import { useAttachments, type Upload } from "./attachments.ts";
+import { useAttachments, type Upload } from "../attachments/attachments.ts";
 import { useContactForm } from "./useContactForm.ts";
 
 export type SupportRequestFormMessages = FormMessages<

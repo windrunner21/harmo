@@ -38,7 +38,7 @@ for (const slug of contracts) {
       }
       test(title, () => {
         const rendered = withoutFormActions(withoutHints(renderToStaticMarkup(<Example />)));
-        expect(normalize(rendered)).toBe(normalize(withEndpoint(withoutMultipart(markup))));
+        expect(normalize(rendered)).toBe(normalize(withEndpoint(withoutMultipart(withoutTemplates(markup)))));
       });
     }
 
@@ -109,6 +109,17 @@ const withoutMultipart = (markup: string) =>
   markup.replace(/<form\b[^>]*>/g, (tag) =>
     /\smethod="post"/i.test(tag) ? tag.replace(/\s+enctype="multipart\/form-data"/i, "") : tag,
   );
+
+// What an HTML example's script clones as it goes, such as the actions under
+// a chat's reply, waits in a <template> marked with a data-example-* hook.
+// React renders those parts as they're needed, so the templates are left out
+// of the HTML before the two are compared.
+const withoutTemplates = (markup: string) => markup.replace(/<template\b[^>]*\sdata-example-[^>]*>[\s\S]*?<\/template>/g, "");
+
+test("withoutTemplates leaves out only the templates a script clones", () => {
+  expect(withoutTemplates('<p>Hi</p><template data-example-actions><button>Copy</button></template>')).toBe("<p>Hi</p>");
+  expect(withoutTemplates("<template><p>Kept</p></template>")).toBe("<template><p>Kept</p></template>");
+});
 
 test("withoutMultipart leaves out the enctype only of a form that posts", () => {
   expect(withoutMultipart('<form method="post" enctype="multipart/form-data" novalidate>')).toBe(

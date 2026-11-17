@@ -1,0 +1,253 @@
+@use "shortcuts" as *;
+
+// Message: one message in a conversation. Yours, data-from="user", sits at
+// the end, in a bubble; the assistant's, "assistant", at the start, as plain
+// text across the conversation, or in a bubble with data-bubble; a line from
+// the conversation itself, "system", such as someone joining, in the middle.
+// Under the text, a message can have its time, its actions, quick replies, or
+// "Not sent" with a way to try again; above it, its files. Its text takes the
+// size of the conversation's.
+.hmessage {
+  --hmessage-bubble-color: light-dark(#{$color-background-secondary}, #{$color-background-active});
+  --hmessage-bubble-radius: calc(#{$border-radius} * 2);
+  --harmo-avatar-size: 2rem;
+
+  display: grid;
+  justify-items: start;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[data-from="user"] {
+    justify-items: end;
+  }
+
+  // An avatar column, its avatar on the first of a run, the later ones kept
+  // in line by an empty one.
+  &:has(> .hmessage-avatar) {
+    grid-template-columns: var(--harmo-avatar-size) minmax(0, 1fr);
+    column-gap: $space-2xs;
+  }
+
+  // A reply arriving fades in over 200ms, with data-new: not one there as
+  // the page loads, nor your own, sent from the keyboard.
+  &[data-new]:not([data-from="user"]) {
+    animation: hmessage-in $duration-normal $ease-out-cubic;
+  }
+}
+
+.hmessage-avatar {
+  display: flex;
+  align-items: start;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Its parts, a small step apart: files, the text, the time, then what's
+// under it.
+.hmessage-body {
+  display: grid;
+  justify-items: start;
+  gap: $space-2xs;
+
+  min-inline-size: 0;
+  max-inline-size: 100%;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .hmessage[data-from="user"] > & {
+    justify-items: end;
+  }
+
+  .hmessage:has(> .hmessage-avatar) > & {
+    grid-column: 2;
+  }
+
+  // A bubble is at most most of the way across: measured against the row,
+  // whose width is the conversation's, not against what the bubble holds.
+  .hmessage:is([data-from="user"], [data-bubble]) > & {
+    max-inline-size: min(36rem, 85%);
+  }
+}
+
+// A long word or address breaks rather than widening the conversation.
+// Yours keeps its line breaks as you wrote them.
+.hmessage-text {
+  min-inline-size: 0;
+  margin: 0;
+
+  overflow-wrap: anywhere;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .hmessage[data-from="user"] & {
+    white-space: pre-wrap;
+  }
+
+  // In a bubble: yours always, the assistant's with data-bubble.
+  .hmessage:is([data-from="user"], [data-bubble]) & {
+    box-sizing: border-box;
+    max-inline-size: 100%;
+    padding: $space-2xs $space-xs;
+
+    background-color: var(--hmessage-bubble-color);
+    border-radius: var(--hmessage-bubble-radius);
+  }
+
+  // Yours in the accent, with data-accent, as in a support chat.
+  .hmessage[data-from="user"][data-accent] & {
+    color: $color-on-primary;
+    background-color: $color-primary-fill;
+  }
+
+  @media (forced-colors: active) {
+    .hmessage:is([data-from="user"], [data-bubble]) & {
+      border: 1px solid CanvasText;
+    }
+  }
+}
+
+// Three dots while a reply is on its way, each rising in turn; with reduced
+// motion, they hold still.
+.hmessage-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  min-block-size: 1.25rem;
+
+  color: $color-text-secondary;
+
+  & > span {
+    inline-size: 0.375rem;
+    block-size: 0.375rem;
+
+    background-color: currentColor;
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    & > span {
+      animation: hmessage-typing 1.2s ease-in-out infinite;
+    }
+
+    & > span:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    & > span:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  }
+}
+
+// When it was sent.
+.hmessage-time {
+  font-family: $font-family;
+  font-size: $font-size-2xs;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums;
+
+  color: $color-text-tertiary;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// What can be done with it, such as Copy, under it.
+.hmessage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// Quick replies, sent as they read when pressed.
+.hmessage-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2xs;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The files sent with it, above its text: 288px, or less where there isn't
+// room. A set width, as a share of a body that's as wide as what it holds
+// would shrink the list to its narrowest.
+.hmessage-body > .hfile-list {
+  inline-size: 18rem;
+  max-inline-size: 100%;
+}
+
+// A message that didn't send, and the way to send it again.
+.hmessage-failed {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  line-height: 1.125rem;
+
+  color: $color-danger;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > button.hlink {
+    padding: 0;
+
+    background: none;
+    border: 0;
+
+    cursor: pointer;
+  }
+}
+
+// A line from the conversation itself, in the middle.
+.hmessage[data-from="system"] {
+  justify-items: center;
+
+  font-family: $font-family;
+  font-size: $font-size-xs;
+  line-height: 1.125rem;
+  text-align: center;
+
+  color: $color-text-tertiary;
+}
+
+@keyframes hmessage-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hmessage-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.4;
+    translate: 0;
+  }
+
+  30% {
+    opacity: 1;
+    translate: 0 -0.125rem;
+  }
+}

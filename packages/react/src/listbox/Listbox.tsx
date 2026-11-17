@@ -67,14 +67,14 @@ export const GroupContext = createContext<{ filter: boolean; hidden: boolean }>(
   { filter: true, hidden: false },
 );
 
-// A Combobox around the list: its field takes the list's keys and names the
-// active option, and its text filters the options. In pick mode, the first
+// A Combobox around the list, or Mentions: its field, an input or a text
+// area, takes the list's keys and names the active option, and its text filters the options. In pick mode, the first
 // match is highlighted as you type; every pick is reported, even of the
 // option already chosen, so the field can show it again. A CommandMenu
 // marks what's typed in the options, and its list may be in a dialog
 // rather than a popup.
 export interface ComboboxState {
-  input: RefObject<HTMLInputElement | null>;
+  input: RefObject<HTMLInputElement | HTMLTextAreaElement | null>;
   query: string;
   mark?: string;
   autoHighlight: boolean;

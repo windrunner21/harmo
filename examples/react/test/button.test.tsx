@@ -185,6 +185,16 @@ describe("Button", () => {
     expect(renderToStaticMarkup(<Button>Resend code</Button>)).not.toContain("data-instant");
   });
 
+  test("a hold Button keeps its badge, once, outside the fill", () => {
+    const html = renderToStaticMarkup(
+      <Button onHold={() => {}} badge={3}>
+        Delete
+      </Button>,
+    );
+    expect(html.match(/class="hbadge"/g)).toHaveLength(1);
+    expect(html).toMatch(/<\/span><span aria-hidden="true" class="hbadge"/);
+  });
+
   test("an aria-busy you pass is kept, without loading, and without making it disabled", () => {
     const markup = renderToStaticMarkup(<Button aria-busy>Syncing</Button>);
     expect(markup).toContain('aria-busy="true"');

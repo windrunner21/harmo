@@ -21,6 +21,7 @@
     "src",
     "test",
     "build-registry.ts",
+    "components.ts",
     "shared-styles.ts"
   ]
 }

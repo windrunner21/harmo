@@ -8,8 +8,8 @@ import {
 } from "react";
 import { Button } from "./Button.tsx";
 import { renders } from "./children.ts";
+import { closeIcon } from "./closeIcon.tsx";
 import {
-  closeIcon,
   ModalClose,
   ModalContext,
   useModal,

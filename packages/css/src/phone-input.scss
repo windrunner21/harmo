@@ -46,18 +46,7 @@
 
 // Which country it is, for a screen reader: several share a calling code.
 .hphone-input-name {
-  position: absolute;
-
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-
-  white-space: nowrap;
-
-  border: 0;
-  clip-path: inset(50%);
+  @include visually-hidden;
 }
 
 .hphone-input-flag {

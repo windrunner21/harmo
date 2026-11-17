@@ -1,0 +1,515 @@
+<play-example title="AI chat" layout="wide">
+  <play-note>
+    A conversation that fills the page, in a column at most 720px wide. Until
+    something's sent, a greeting and prompts to start with; then each reply
+    streams in, with Copy and Try again under it, and Stop ends one early.
+  </play-note>
+  <div
+    style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+      overflow: hidden;
+      background: var(--harmo-color-border);
+      border: 1px solid var(--harmo-color-border);
+      border-radius: var(--harmo-border-radius);
+    "
+    data-example-chats
+  >
+    <div style="flex: 1 1 13rem; background: var(--harmo-color-background)">
+      <div class="hsidebar">
+        <div class="hsidebar-header">
+          <button class="hbutton" data-variant="secondary" type="button" data-example-start>
+            <play-icon name="new-chat" class="hicon"></play-icon>
+            <span class="hbutton-label">New chat</span>
+          </button>
+        </div>
+        <nav class="hsidebar-nav" aria-label="Chats">
+          <div class="hsidebar-group">
+            <p class="hsidebar-group-label" id="ai-chats-today">Today</p>
+            <ul class="hsidebar-list" aria-labelledby="ai-chats-today">
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="#holiday"><span class="hsidebar-label">Holiday campaign ideas</span></a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Holiday campaign ideas</span>
+              </li>
+            </ul>
+          </div>
+          <div class="hsidebar-group">
+            <p class="hsidebar-group-label" id="ai-chats-earlier">Previous 7 days</p>
+            <ul class="hsidebar-list" aria-labelledby="ai-chats-earlier">
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="#welcome"><span class="hsidebar-label">Welcome message draft</span></a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Welcome message draft</span>
+              </li>
+              <li class="htooltip-trigger">
+                <a class="hsidebar-item" href="#embed"><span class="hsidebar-label">Embed code for the website</span></a>
+                <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Embed code for the website</span>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <div style="flex: 999 1 22rem; block-size: 38rem; background: var(--harmo-color-background)">
+      <div class="hchat hdrop-zone" data-variant="ai" data-example-chat="ai">
+        <div class="hconversation hchat-conversation" role="region" aria-label="Conversation" tabindex="0" data-size="large">
+          <p class="hconversation-status" aria-live="polite"></p>
+          <div class="hconversation-empty">
+            <div class="hchat-greeting">
+              <h2 class="hchat-greeting-title">What can I help with?</h2>
+              <div class="hchat-suggestions" role="group" aria-label="Suggestions">
+                <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                  <span class="hbutton-label">Draft a welcome message</span>
+                </button>
+                <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                  <span class="hbutton-label">Summarize last week's conversations</span>
+                </button>
+                <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                  <span class="hbutton-label">Ideas for a holiday campaign</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ol class="hconversation-list" hidden></ol>
+          <div class="hconversation-latest">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="ai-chat-latest-tip">
+                <play-icon name="arrow-down" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="ai-chat-latest-tip">Jump to latest</span>
+            </span>
+          </div>
+        </div>
+        <form class="hcomposer hchat-composer">
+          <div class="hcomposer-box" data-example-files data-example-preview data-example-remove-label="Remove {name}">
+            <ul class="hfile-list" role="list" aria-label="Attachments" tabindex="-1" hidden></ul>
+            <span class="htooltip-trigger hcomposer-attach">
+              <button class="hbutton" data-variant="tertiary" type="button" aria-labelledby="ai-chat-attach-tip">
+                <play-icon name="paperclip" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="ai-chat-attach-tip">Attach files</span>
+            </span>
+            <div class="hmentions" style="anchor-name: --ai-chat-commands">
+              <textarea class="htextarea" aria-label="Message" placeholder="Ask anything, or type / for a command" rows="1" aria-autocomplete="list" aria-controls="ai-chat-commands" data-example-at-start data-example-trigger="/"></textarea>
+              <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --ai-chat-commands">
+                <ul class="hlistbox" id="ai-chat-commands" role="listbox" aria-label="Commands">
+                  <li class="hoption" id="ai-chat-commands-welcome" role="option" aria-selected="false" data-example-value="welcome">
+                    <span class="hoption-text">
+                      <span class="hoption-label">/welcome</span>
+                      <span class="hoption-description">Draft a welcome message</span>
+                    </span>
+                  </li>
+                  <li class="hoption" id="ai-chat-commands-summarize" role="option" aria-selected="false" data-example-value="summarize">
+                    <span class="hoption-text">
+                      <span class="hoption-label">/summarize</span>
+                      <span class="hoption-description">Summarize last week's conversations</span>
+                    </span>
+                  </li>
+                  <li class="hoption" id="ai-chat-commands-embed" role="option" aria-selected="false" data-example-value="embed">
+                    <span class="hoption-text">
+                      <span class="hoption-label">/embed</span>
+                      <span class="hoption-description">Show the code to embed the chat</span>
+                    </span>
+                  </li>
+                  <li class="hoption" id="ai-chat-commands-campaign" role="option" aria-selected="false" data-example-value="campaign">
+                    <span class="hoption-text">
+                      <span class="hoption-label">/campaign</span>
+                      <span class="hoption-description">Ideas for a holiday campaign</span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <span class="htooltip-trigger">
+              <button class="hbutton" type="submit" aria-labelledby="ai-chat-send-tip" disabled>
+                <span class="hicon hcomposer-send-icons" aria-hidden="true">
+                  <play-icon name="arrow-up" class="hcomposer-send-icon"></play-icon>
+                  <play-icon name="stop" class="hcomposer-stop-icon"></play-icon>
+                </span>
+              </button>
+              <span class="htooltip" role="tooltip" id="ai-chat-send-tip">Send</span>
+            </span>
+          </div>
+          <input type="file" multiple hidden />
+          <p class="herror" aria-live="polite"></p>
+          <p class="hcomposer-note">AI can make mistakes. Check what matters.</p>
+        </form>
+        <div class="hdrop-zone-overlay" aria-hidden="true">
+          <p class="hdrop-zone-label">Drop files to attach</p>
+        </div>
+        <template data-example-actions>
+          <div class="hmessage-actions">
+            <span class="htooltip-trigger">
+              <button class="hbutton hcopy" data-variant="tertiary" data-size="small" type="button" data-example-copied="Copied">
+                <span class="hicon hcopy-icons" aria-hidden="true">
+                  <play-icon name="copy" class="hcopy-icon"></play-icon>
+                  <play-icon name="copied" class="hcopy-done"></play-icon>
+                </span>
+              </button>
+              <span class="htooltip" role="tooltip">Copy</span>
+            </span>
+            <span class="hcopy-status" role="status"></span>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-pressed="false" data-example-feedback="good">
+                <play-icon name="thumbs-up" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Good reply</span>
+            </span>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-pressed="false" data-example-feedback="bad">
+                <play-icon name="thumbs-down" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Bad reply</span>
+            </span>
+            <span class="htooltip-trigger" data-example-last>
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" data-example-regenerate>
+                <play-icon name="retry" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Try again</span>
+            </span>
+          </div>
+        </template>
+        <template data-example-editing>
+          <div class="hcomposer-editing">
+            <play-icon name="edit" class="hicon"></play-icon>
+            <div class="hcomposer-editing-text">
+              <p class="hcomposer-editing-title">Editing your message</p>
+              <p class="hcomposer-editing-quote"></p>
+            </div>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button">
+                <play-icon name="close" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Cancel editing</span>
+            </span>
+          </div>
+        </template>
+        <template data-example-edit>
+          <div class="hmessage-actions">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button">
+                <play-icon name="edit" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Edit</span>
+            </span>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Copilot" layout="wide">
+  <play-note>
+    A panel beside a ticket. It knows which ticket is open, shown as a
+    <a class="hlink" data-underlined href="tag.html">Tag</a> above the field,
+    and Insert puts a reply into the ticket's field. Close hides it, and the
+    button at the ticket's top brings it back.
+  </play-note>
+  <div
+    style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1px;
+      overflow: hidden;
+      background: var(--harmo-color-border);
+      border: 1px solid var(--harmo-color-border);
+      border-radius: var(--harmo-border-radius);
+    "
+  >
+    <section
+      aria-labelledby="copilot-ticket-title"
+      style="
+        flex: 999 1 20rem;
+        display: grid;
+        align-content: start;
+        gap: var(--harmo-space-md);
+        padding: var(--harmo-space-md);
+        background: var(--harmo-color-background);
+      "
+    >
+      <div style="display: flex; align-items: start; gap: var(--harmo-space-xs)">
+        <div style="display: grid; flex: 1; gap: var(--harmo-space-2xs)">
+          <h2 id="copilot-ticket-title" style="margin: 0; font-size: var(--harmo-font-size-lg); font-weight: var(--harmo-font-weight-medium); line-height: 1.4">
+            Mug arrived cracked
+          </h2>
+          <p style="margin: 0; font-size: var(--harmo-font-size-sm); color: var(--harmo-color-text-secondary)">Ticket #1042 · Maya Chen</p>
+        </div>
+        <span class="htooltip-trigger" hidden>
+          <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="copilot-open-tip" data-example-open-copilot>
+            <play-icon name="assistant" class="hicon"></play-icon>
+          </button>
+          <span class="htooltip" role="tooltip" id="copilot-open-tip">Open Copilot</span>
+        </span>
+      </div>
+      <p style="margin: 0; font-size: var(--harmo-font-size-sm); line-height: 1.25rem">
+        Hi, my order #58213 came today and the lid of the travel mug is cracked.
+        Could you send me a new one? I'd rather not have a refund. I wrote about
+        this two days ago too.
+      </p>
+      <div class="hfield">
+        <label class="hlabel" for="copilot-reply">Reply</label>
+        <textarea class="htextarea" id="copilot-reply" placeholder="Write your reply"></textarea>
+      </div>
+      <button class="hbutton" type="button" style="justify-self: end">
+        <span class="hbutton-label">Send reply</span>
+      </button>
+    </section>
+    <div style="flex: 1 1 20rem; block-size: 34rem; background: var(--harmo-color-background)" data-example-copilot>
+      <div class="hchat" data-variant="copilot" data-example-chat="copilot" data-example-insert-into="copilot-reply">
+        <header class="hchat-header">
+          <play-icon name="assistant" class="hicon"></play-icon>
+          <div class="hchat-header-text">
+            <h2 class="hchat-title">Copilot</h2>
+          </div>
+          <div class="hchat-header-actions">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="copilot-new-tip" disabled data-example-new-chat>
+                <play-icon name="new-chat" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="copilot-new-tip">New chat</span>
+            </span>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="copilot-close-tip" data-example-close-copilot>
+                <play-icon name="close" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="copilot-close-tip">Close</span>
+            </span>
+          </div>
+        </header>
+        <div class="hconversation hchat-conversation" role="region" aria-label="Conversation" tabindex="0">
+          <p class="hconversation-status" aria-live="polite"></p>
+          <div class="hconversation-empty">
+            <div class="hchat-greeting">
+              <p class="hchat-greeting-title">How can I help?</p>
+              <div class="hchat-suggestions" role="group" aria-label="Suggestions">
+                <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                  <span class="hbutton-label">Summarize this ticket</span>
+                </button>
+                <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                  <span class="hbutton-label">Draft a reply</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <ol class="hconversation-list" hidden></ol>
+          <div class="hconversation-latest">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="copilot-latest-tip">
+                <play-icon name="arrow-down" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="copilot-latest-tip">Jump to latest</span>
+            </span>
+          </div>
+        </div>
+        <form class="hcomposer hchat-composer">
+          <div class="hcomposer-box">
+            <div class="hcomposer-context">
+              <span class="htag">Ticket #1042</span>
+            </div>
+            <div class="hmentions" style="anchor-name: --copilot-commands">
+              <textarea class="htextarea" aria-label="Message" placeholder="Ask Copilot, or type / for a command" rows="1" aria-autocomplete="list" aria-controls="copilot-commands" data-example-at-start data-example-trigger="/"></textarea>
+              <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --copilot-commands">
+                <ul class="hlistbox" id="copilot-commands" role="listbox" aria-label="Commands">
+                  <li class="hoption" id="copilot-commands-summarize" role="option" aria-selected="false" data-example-value="summarize">
+                    <span class="hoption-text">
+                      <span class="hoption-label">/summarize</span>
+                      <span class="hoption-description">Summarize this ticket</span>
+                    </span>
+                  </li>
+                  <li class="hoption" id="copilot-commands-draft" role="option" aria-selected="false" data-example-value="draft">
+                    <span class="hoption-text">
+                      <span class="hoption-label">/draft</span>
+                      <span class="hoption-description">Draft a reply</span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <span class="htooltip-trigger">
+              <button class="hbutton" type="submit" aria-labelledby="copilot-send-tip" disabled>
+                <span class="hicon hcomposer-send-icons" aria-hidden="true">
+                  <play-icon name="arrow-up" class="hcomposer-send-icon"></play-icon>
+                  <play-icon name="stop" class="hcomposer-stop-icon"></play-icon>
+                </span>
+              </button>
+              <span class="htooltip" role="tooltip" id="copilot-send-tip">Send</span>
+            </span>
+          </div>
+        </form>
+        <template data-example-actions>
+          <div class="hmessage-actions">
+            <button class="hbutton" data-variant="secondary" data-size="small" type="button" data-example-insert>
+              <span class="hbutton-label">Insert</span>
+            </button>
+            <span class="htooltip-trigger">
+              <button class="hbutton hcopy" data-variant="tertiary" data-size="small" type="button" data-example-copied="Copied">
+                <span class="hicon hcopy-icons" aria-hidden="true">
+                  <play-icon name="copy" class="hcopy-icon"></play-icon>
+                  <play-icon name="copied" class="hcopy-done"></play-icon>
+                </span>
+              </button>
+              <span class="htooltip" role="tooltip">Copy</span>
+            </span>
+            <span class="hcopy-status" role="status"></span>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-pressed="false" data-example-feedback="good">
+                <play-icon name="thumbs-up" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Good reply</span>
+            </span>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-pressed="false" data-example-feedback="bad">
+                <play-icon name="thumbs-down" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Bad reply</span>
+            </span>
+          </div>
+        </template>
+        <template data-example-editing>
+          <div class="hcomposer-editing">
+            <play-icon name="edit" class="hicon"></play-icon>
+            <div class="hcomposer-editing-text">
+              <p class="hcomposer-editing-title">Editing your message</p>
+              <p class="hcomposer-editing-quote"></p>
+            </div>
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button">
+                <play-icon name="close" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Cancel editing</span>
+            </span>
+          </div>
+        </template>
+        <template data-example-edit>
+          <div class="hmessage-actions">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="tertiary" data-size="small" type="button">
+                <play-icon name="edit" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip">Edit</span>
+            </span>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Support chat" layout="wide">
+  <play-note>
+    A <a class="hlink" data-underlined href="launcher.html">Launcher</a>'s
+    panel over the page's corner, which its button opens and closes, as
+    Escape does. Quick replies sit under the bot's messages, and "Talk to a
+    person" hands the conversation to Imran. The box stands in for your page.
+  </play-note>
+  <div
+    style="
+      contain: layout;
+      block-size: 40rem;
+      background: var(--harmo-color-background-secondary);
+      border: 1px solid var(--harmo-color-border);
+      border-radius: var(--harmo-border-radius);
+    "
+  >
+    <div class="hlauncher" data-example-unread>
+      <div class="hlauncher-panel" id="support-chat" role="dialog" aria-label="Chat with Fernhill Market" tabindex="-1" data-open>
+        <div class="hchat hdrop-zone" data-variant="support" data-example-chat="support">
+          <header class="hchat-header">
+            <span class="havatar" aria-hidden="true">
+              <play-icon name="assistant" class="hicon"></play-icon>
+            </span>
+            <div class="hchat-header-text">
+              <p class="hchat-title">Fernhill Market</p>
+              <p class="hchat-subtitle">AI assistant · Replies right away</p>
+            </div>
+            <div class="hchat-header-actions">
+              <span class="htooltip-trigger">
+                <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-labelledby="support-close-tip" data-example-close>
+                  <play-icon name="close" class="hicon"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" id="support-close-tip">Close</span>
+              </span>
+            </div>
+          </header>
+          <div class="hconversation hchat-conversation" role="region" aria-label="Conversation" tabindex="0" data-align="end">
+            <p class="hconversation-status" aria-live="polite"></p>
+            <ol class="hconversation-list">
+              <li class="hmessage" data-from="assistant" data-bubble>
+                <span class="hmessage-avatar">
+                  <span class="havatar" aria-hidden="true">
+                    <play-icon name="assistant" class="hicon"></play-icon>
+                  </span>
+                </span>
+                <div class="hmessage-body">
+                  <div class="hmessage-text">
+                    <div class="hprose">
+                      <p>Hi! I'm Fernhill Market's assistant. I can track an order or start a return, or find you a person to talk to.</p>
+                    </div>
+                  </div>
+                  <div class="hmessage-suggestions" role="group" aria-label="Suggested replies">
+                    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                      <span class="hbutton-label">Where's my order?</span>
+                    </button>
+                    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                      <span class="hbutton-label">Start a return</span>
+                    </button>
+                    <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+                      <span class="hbutton-label">Talk to a person</span>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ol>
+          <div class="hconversation-latest">
+            <span class="htooltip-trigger">
+              <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="support-latest-tip">
+                <play-icon name="arrow-down" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="support-latest-tip">Jump to latest</span>
+            </span>
+          </div>
+          </div>
+          <form class="hcomposer hchat-composer">
+            <div class="hcomposer-box" data-example-files data-example-preview data-example-remove-label="Remove {name}" data-example-upload>
+              <ul class="hfile-list" role="list" aria-label="Attachments" tabindex="-1" hidden></ul>
+              <span class="htooltip-trigger hcomposer-attach">
+                <button class="hbutton" data-variant="tertiary" type="button" aria-labelledby="support-attach-tip">
+                  <play-icon name="paperclip" class="hicon"></play-icon>
+                </button>
+                <span class="htooltip" role="tooltip" id="support-attach-tip">Attach files</span>
+              </span>
+              <textarea class="htextarea" aria-label="Message" placeholder="Write a message" rows="1" data-autofocus></textarea>
+            <span class="htooltip-trigger">
+              <button class="hbutton" type="submit" aria-labelledby="support-send-tip" disabled>
+                <play-icon name="arrow-up" class="hicon"></play-icon>
+              </button>
+              <span class="htooltip" role="tooltip" id="support-send-tip">Send</span>
+            </span>
+            </div>
+            <input type="file" multiple hidden />
+            <p class="herror" aria-live="polite"></p>
+          </form>
+          <div class="hdrop-zone-overlay" aria-hidden="true">
+            <p class="hdrop-zone-label">Drop files to attach</p>
+          </div>
+          <template data-example-author="Fernhill Market" data-example-role="AI assistant · Replies right away">
+            <span class="havatar" aria-hidden="true">
+              <play-icon name="assistant" class="hicon"></play-icon>
+            </span>
+          </template>
+          <template data-example-author="Imran" data-example-role="Support team">
+            <img class="havatar" src="images/imran.webp" alt="" />
+          </template>
+        </div>
+      </div>
+      <button class="hbutton hlauncher-button" type="button" aria-label="Chat with Fernhill Market" aria-expanded="true" aria-controls="support-chat">
+        <span class="hicon hlauncher-icons" aria-hidden="true">
+          <play-icon name="messages" class="hicon"></play-icon>
+          <play-icon name="close" class="hicon"></play-icon>
+        </span>
+      </button>
+      <p class="hlauncher-status" aria-live="polite"></p>
+    </div>
+  </div>
+</play-example>

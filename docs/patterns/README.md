@@ -11,6 +11,7 @@ change its words, its fields, and what it does, as you would your own code.
 | [Reset Password](reset-password.md) | Asking for a reset link, then choosing a new password |
 | [Account Forms](account-forms.md) | Sign-in, sign-up, and reset password in one card that switches between them, such as in a Dialog |
 | [Verify Code](verify-code.md) | Entering a code sent by email or text, or from an authenticator app |
+| [Chat](chat.md) | An AI chat beside your past chats, a copilot beside your app's content, or a support chat that opens from a corner and hands over to a person |
 | [Contact Form](contact-form.md) | A message, a sales inquiry, a support request, or help with an order, and cards that lead to them |
 
 Each one comes in React and in HTML, with a small stylesheet for its layout,
@@ -48,7 +49,7 @@ Every pattern needs:
 | --- | --- |
 | React | React and React DOM 19.3 or later, and TypeScript. The CLI copies the Harmo components a pattern uses into your app |
 | HTML | Harmo's CSS, and your own script. Each page's **HTML** section says what it does |
-| Without JavaScript | A framework that runs React server actions, such as Next.js with its App Router. Without one, the React forms need JavaScript |
+| Without JavaScript | For the forms, a framework that runs React server actions, such as Next.js with its App Router. Without one, they need JavaScript; a [Chat](chat.md) always does |
 | Node.js | 20 or newer, which Next.js needs anyway. The code in these docs needs nothing newer |
 
 Your server provides the rest, such as where accounts are kept, sessions,
@@ -56,7 +57,8 @@ rate limits, and sending email. Each page lists what it needs.
 
 ## Actions
 
-Each React form takes `action`, as React 19's `<form>` does. It's a function
+Each React form takes `action`, as React 19's `<form>` does; a
+[Chat](chat.md) takes `respond`, which its page explains. It's a function
 that gets what was sent and returns an answer:
 
 ```ts
@@ -166,6 +168,6 @@ focus to the new step's title with `focus({ preventScroll: true })`, and
 bring it into view with `scrollIntoView({ block: "nearest" })`, smoothly
 unless reduced motion is asked for.
 
-Each pattern's example script, in
-[examples/html/src/scripts](../../examples/html/src/scripts/), has a
-`changeStep` function that does all of this, ready to copy.
+[change-step.js](../../examples/html/src/scripts/change-step.js) has a
+`changeStep` function that does all of this, ready to copy; the forms'
+example scripts share it.

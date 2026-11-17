@@ -1,0 +1,196 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    In a <a class="hlink" data-underlined href="conversation.html">Conversation</a>,
+    as an AI chat's: yours at the end, in a bubble; the assistant's at the
+    start, across the conversation, here as
+    <a class="hlink" data-underlined href="prose.html">Prose</a>, with its
+    actions under it: a Copy Button, and ratings, which are toggle Buttons.
+  </play-note>
+  <div class="hconversation" role="region" aria-label="Conversation" tabindex="0" data-size="large" style="inline-size: 100%; max-inline-size: 40rem; margin-inline: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <p class="hconversation-status" aria-live="polite"></p>
+    <ol class="hconversation-list">
+    <li class="hmessage" data-from="user">
+      <div class="hmessage-body">
+        <div class="hmessage-text">Summarize last week's conversations</div>
+      </div>
+    </li>
+    <li class="hmessage" data-from="assistant">
+      <div class="hmessage-body">
+        <div class="hmessage-text">
+          <div class="hprose">
+            <p>Last week you had <strong>1,284 conversations</strong>, 12% more than the week before.</p>
+            <ul>
+              <li>Most were about delivery times, then returns.</li>
+              <li>Replies took 4 minutes on average, down from 6.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hmessage-actions">
+          <span class="htooltip-trigger">
+            <button class="hbutton hcopy" data-variant="tertiary" data-size="small" type="button" aria-labelledby="message-copy-tip" data-example-copy="Last week you had **1,284 conversations**, 12% more than the week before.&#10;&#10;- Most were about delivery times, then returns.&#10;- Replies took 4 minutes on average, down from 6." data-example-copied="Copied">
+              <span class="hicon hcopy-icons" aria-hidden="true">
+                <play-icon name="copy" class="hcopy-icon"></play-icon>
+                <play-icon name="copied" class="hcopy-done"></play-icon>
+              </span>
+            </button>
+            <span class="htooltip" role="tooltip" id="message-copy-tip">Copy</span>
+          </span>
+          <span class="hcopy-status" role="status"></span>
+          <span class="htooltip-trigger">
+            <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-pressed="false" aria-labelledby="message-good-tip" data-example-toggle data-example-rating>
+              <play-icon name="thumbs-up" class="hicon"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" id="message-good-tip">Good reply</span>
+          </span>
+          <span class="htooltip-trigger">
+            <button class="hbutton" data-variant="tertiary" data-size="small" type="button" aria-pressed="false" aria-labelledby="message-bad-tip" data-example-toggle data-example-rating>
+              <play-icon name="thumbs-down" class="hicon"></play-icon>
+            </button>
+            <span class="htooltip" role="tooltip" id="message-bad-tip">Bad reply</span>
+          </span>
+        </div>
+      </div>
+    </li>
+    </ol>
+    <div class="hconversation-latest">
+      <span class="htooltip-trigger">
+        <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="message-default-latest-tip">
+          <play-icon name="arrow-down" class="hicon"></play-icon>
+        </button>
+        <span class="htooltip" role="tooltip" id="message-default-latest-tip">Jump to latest</span>
+      </span>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Bubbles" layout="wide">
+  <play-note>
+    As in a support chat's window: the assistant's in bubbles too, beside an
+    <a class="hlink" data-underlined href="avatar.html">Avatar</a> on the first
+    of a run, the next kept in line; yours in the accent; quick replies under
+    the last; and a line in the middle when someone joins.
+  </play-note>
+  <div class="hconversation" role="region" aria-label="Conversation" tabindex="0" style="inline-size: 100%; max-inline-size: 24rem; margin-inline: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <p class="hconversation-status" aria-live="polite"></p>
+    <ol class="hconversation-list">
+    <li class="hmessage" data-from="assistant" data-bubble>
+      <span class="hmessage-avatar">
+        <span class="havatar" aria-hidden="true">
+          <play-icon name="assistant" class="hicon"></play-icon>
+        </span>
+      </span>
+      <div class="hmessage-body">
+        <div class="hmessage-text">Hi! I'm Fernhill Market's assistant.</div>
+      </div>
+    </li>
+    <li class="hmessage" data-from="assistant" data-bubble>
+      <span class="hmessage-avatar" aria-hidden="true"></span>
+      <div class="hmessage-body">
+        <div class="hmessage-text">I can track an order or start a return, or find you a person to talk to.</div>
+        <div class="hmessage-suggestions" role="group" aria-label="Suggested replies">
+          <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+            <span class="hbutton-label">Where's my order?</span>
+          </button>
+          <button class="hbutton" data-variant="secondary" data-size="small" type="button">
+            <span class="hbutton-label">Talk to a person</span>
+          </button>
+        </div>
+      </div>
+    </li>
+    <li class="hmessage" data-from="user" data-accent>
+      <div class="hmessage-body">
+        <div class="hmessage-text">Talk to a person</div>
+      </div>
+    </li>
+    <li class="hmessage" data-from="system">Imran joined the conversation</li>
+    <li class="hmessage" data-from="assistant" data-bubble>
+      <span class="hmessage-avatar">
+        <img class="havatar" src="images/imran.webp" alt="" />
+      </span>
+      <div class="hmessage-body">
+        <div class="hmessage-text">Hi, I'm Imran from the support team. How can I help?</div>
+      </div>
+    </li>
+    </ol>
+    <div class="hconversation-latest">
+      <span class="htooltip-trigger">
+        <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="message-bubbles-latest-tip">
+          <play-icon name="arrow-down" class="hicon"></play-icon>
+        </button>
+        <span class="htooltip" role="tooltip" id="message-bubbles-latest-tip">Jump to latest</span>
+      </span>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="States" layout="wide">
+  <play-note>
+    A message that didn't send says so, with a way to send it again; while a
+    reply is on its way, three dots rise in turn, hidden from screen readers,
+    and holding still with reduced motion.
+  </play-note>
+  <div class="hconversation" role="region" aria-label="Conversation" tabindex="0" style="inline-size: 100%; max-inline-size: 24rem; margin-inline: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <p class="hconversation-status" aria-live="polite"></p>
+    <ol class="hconversation-list">
+    <li class="hmessage" data-from="user">
+      <div class="hmessage-body">
+        <div class="hmessage-text">Where's my order?</div>
+        <p class="hmessage-failed">Not sent. <button class="hlink" type="button">Try again</button></p>
+      </div>
+    </li>
+    <li class="hmessage" data-from="assistant" data-bubble aria-hidden="true">
+      <span class="hmessage-avatar">
+        <span class="havatar" aria-hidden="true">
+          <play-icon name="assistant" class="hicon"></play-icon>
+        </span>
+      </span>
+      <div class="hmessage-body">
+        <p class="hmessage-text hmessage-typing"><span></span><span></span><span></span></p>
+      </div>
+    </li>
+    </ol>
+    <div class="hconversation-latest">
+      <span class="htooltip-trigger">
+        <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="message-states-latest-tip">
+          <play-icon name="arrow-down" class="hicon"></play-icon>
+        </button>
+        <span class="htooltip" role="tooltip" id="message-states-latest-tip">Jump to latest</span>
+      </span>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="With files" layout="wide">
+  <play-note>
+    The files sent with it, in a <a class="hlink" data-underlined href="file-list.html">File List</a>
+    with nothing to press, above its text.
+  </play-note>
+  <div class="hconversation" role="region" aria-label="Conversation" tabindex="0" style="inline-size: 100%; max-inline-size: 24rem; margin-inline: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: calc(var(--harmo-border-radius) * 2)">
+    <p class="hconversation-status" aria-live="polite"></p>
+    <ol class="hconversation-list">
+    <li class="hmessage" data-from="user">
+      <div class="hmessage-body">
+        <ul class="hfile-list" role="list" aria-label="Attachments" tabindex="-1">
+          <li class="hfile-list-item">
+            <span class="hfile-list-thumb"><play-icon name="file" class="hicon"></play-icon></span>
+            <div class="hfile-list-text">
+              <span class="hfile-list-name" id="message-receipt" title="receipt.pdf">receipt.pdf</span>
+              <span class="hfile-list-detail">80 kB</span>
+            </div>
+            <div class="hfile-list-actions"></div>
+          </li>
+        </ul>
+        <div class="hmessage-text">Here's the receipt.</div>
+      </div>
+    </li>
+    </ol>
+    <div class="hconversation-latest">
+      <span class="htooltip-trigger">
+        <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="message-files-latest-tip">
+          <play-icon name="arrow-down" class="hicon"></play-icon>
+        </button>
+        <span class="htooltip" role="tooltip" id="message-files-latest-tip">Jump to latest</span>
+      </span>
+    </div>
+  </div>
+</play-example>

@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
+import type { Naming } from "./types.ts";
 
 export interface TableOfContentsItem {
   id: string;
@@ -18,12 +19,12 @@ export interface TableOfContentsItem {
   level?: 1 | 2 | 3;
 }
 
-export interface TableOfContentsProps extends Omit<ComponentPropsWithRef<"nav">, "children" | "aria-label"> {
-  "aria-label": string;
-  items: TableOfContentsItem[];
-  offset?: number;
-  side?: "start" | "end";
-}
+export type TableOfContentsProps = Omit<ComponentPropsWithRef<"nav">, "children" | "aria-label" | "aria-labelledby"> &
+  Naming & {
+    items: TableOfContentsItem[];
+    offset?: number;
+    side?: "start" | "end";
+  };
 
 const scrollerOf = (node: Element) => {
   const root = document.documentElement;

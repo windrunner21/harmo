@@ -173,7 +173,7 @@
       row.querySelector(".hfile-list-detail").textContent = size.format(file.size / 1000);
       row.querySelector(".hfile-list-remove").setAttribute("aria-label", named(exampleRemoveLabel, file));
       const thumb = row.querySelector(".hfile-list-thumb");
-      if (examplePreview === undefined) {
+      if (examplePreview === undefined || !file.type.startsWith("image/")) {
         thumb.innerHTML = fileIcon;
       } else {
         const picture = document.createElement("img");

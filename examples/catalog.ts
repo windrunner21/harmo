@@ -93,6 +93,11 @@ const groups: CatalogGroup[] = [
         purpose: "A round user image, or a placeholder when there is none.",
       },
       {
+        slug: "badge",
+        title: "Badge",
+        purpose: "A count that asks to be looked at, such as unread messages, or a dot where there's something new.",
+      },
+      {
         slug: "card",
         title: "Card",
         purpose:
@@ -103,6 +108,21 @@ const groups: CatalogGroup[] = [
         title: "Showcase Card",
         purpose:
           "A card that shows where it leads: media on a dashed grid, a title, and an action line that comes up as it's hovered.",
+      },
+      {
+        slug: "conversation",
+        title: "Conversation",
+        purpose: "The scrolling log a chat's Messages are in: it stays at the latest, with Jump to latest when you've scrolled up.",
+      },
+      {
+        slug: "message",
+        title: "Message",
+        purpose: "One message in a conversation: yours, the assistant's, or a line from the conversation itself, with its time, actions, and files.",
+      },
+      {
+        slug: "prose",
+        title: "Prose",
+        purpose: "Formatted text, such as an assistant's reply or a note: paragraphs, headings, lists, quotes, code, and links.",
       },
       {
         slug: "section",
@@ -194,9 +214,19 @@ const groups: CatalogGroup[] = [
         purpose: "A text field that filters a list as you type, to pick from it or be helped by it.",
       },
       {
+        slug: "composer",
+        title: "Composer",
+        purpose: "Where a chat's message is written and sent: Send that turns into Stop, files to attach, commands, and editing a sent message.",
+      },
+      {
         slug: "date-picker",
         title: "Date Picker",
         purpose: "A date typed in the locale's order, or chosen from a Calendar it opens.",
+      },
+      {
+        slug: "drop-zone",
+        title: "Drop Zone",
+        purpose: "An area that takes files dropped anywhere on it, with a frame that says where they'll go.",
       },
       {
         slug: "field",
@@ -219,6 +249,11 @@ const groups: CatalogGroup[] = [
         title: "Input",
         purpose:
           "Single-line native inputs: text, email, search, tel, url, and similar.",
+      },
+      {
+        slug: "mentions",
+        title: "Mentions",
+        purpose: "A TextArea that lists suggestions as a trigger is typed, such as @ for people or / for commands.",
       },
       {
         slug: "otp-input",
@@ -374,6 +409,11 @@ const groups: CatalogGroup[] = [
           "A modal panel at the window's edge for a form or details, with an optional preview beside it.",
       },
       {
+        slug: "launcher",
+        title: "Launcher",
+        purpose: "A round button in the page's corner that opens a panel above it, such as a support chat, with a count of what's new.",
+      },
+      {
         slug: "listbox",
         title: "Listbox",
         purpose:
@@ -424,6 +464,12 @@ const groups: CatalogGroup[] = [
         title: "Verify Code",
         purpose:
           "Asks for a one-time code, such as a sign-in's second step or one that confirms an email, with a new code a moment later.",
+      },
+      {
+        slug: "chat",
+        title: "Chat",
+        purpose:
+          "A conversation with an assistant: an AI chat that fills the page, a copilot beside your app's content, or a support chat that opens from a corner.",
       },
       {
         slug: "contact-form",

@@ -56,7 +56,7 @@ export const examples = {
         Save quick reply
       </Button>
       <Toaster
-        label="Notifications (F8)"
+        aria-label="Notifications (F8)"
         icons={{
           success: <SuccessIcon />,
           error: <ErrorIcon />,
@@ -266,7 +266,7 @@ export const shownCode = {
     Show a toast
   </Button>
   <Toaster
-    label="Notifications (F8)"
+    aria-label="Notifications (F8)"
     icons={{
       success: <SuccessIcon />,
       error: <ErrorIcon />,

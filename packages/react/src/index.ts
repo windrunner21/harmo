@@ -5,6 +5,7 @@ export {
   type AccordionProps,
 } from "./Accordion.tsx";
 export { Avatar, type AvatarProps } from "./Avatar.tsx";
+export { Badge, type BadgeProps } from "./Badge.tsx";
 export { Banner, type BannerProps } from "./Banner.tsx";
 export { Breadcrumb, type BreadcrumbProps } from "./Breadcrumb.tsx";
 export { Button, type ButtonProps } from "./Button.tsx";
@@ -21,6 +22,8 @@ export {
   type CommandMenuProps,
   type CommandMenuShortcut,
 } from "./CommandMenu.tsx";
+export { Composer, type ComposerProps } from "./Composer.tsx";
+export { Conversation, type ConversationProps } from "./Conversation.tsx";
 export {
   CopyButton,
   CopyField,
@@ -40,6 +43,7 @@ export {
 export { DatePicker, type DatePickerProps, type NaturalDateParser } from "./date-picker/DatePicker.tsx";
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
+export { DropZone, type DropZoneProps } from "./DropZone.tsx";
 export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
 export { Field, useField, type FieldControl, type FieldProps } from "./field/Field.tsx";
@@ -57,9 +61,12 @@ export {
   type LanguagePickerProps,
   type LanguagePickerRegion,
 } from "./LanguagePicker.tsx";
+export { Launcher, type LauncherProps } from "./Launcher.tsx";
 export { Link, type LinkProps } from "./Link.tsx";
 export { Listbox, type ListboxProps } from "./listbox/Listbox.tsx";
+export { Mentions, type MentionsProps } from "./Mentions.tsx";
 export { MenuButton, type MenuButtonProps } from "./MenuButton.tsx";
+export { Message, type MessageProps } from "./Message.tsx";
 export { Meter, type MeterProps } from "./Meter.tsx";
 export {
   NavigationMenu,
@@ -87,6 +94,7 @@ export {
   type PhoneParser,
 } from "./PhoneInput.tsx";
 export { Popup, type PopupProps } from "./Popup.tsx";
+export { Prose, prosePlainText, type ProseProps } from "./Prose.tsx";
 export { Radio, type RadioProps } from "./Radio.tsx";
 export { RadioGroup, type RadioGroupProps } from "./RadioGroup.tsx";
 export { Search, type SearchProps } from "./Search.tsx";

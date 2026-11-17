@@ -5,6 +5,29 @@ import { boxes, example, onEachPlayground, ready, test } from "./playgrounds.ts"
 // Loading example, whose last button loads for two seconds. The page runs on
 // a paused clock, so those seconds pass only when a test says.
 onEachPlayground("button", () => {
+  test("a toggle turns on and off with aria-pressed, in the primary color while it's on", async ({ page }) => {
+    const container = await example(page, "button-toggle");
+    const good = container.getByRole("button", { name: "Good reply" });
+    const unread = container.getByRole("button", { name: "Unread only" });
+    const primary = await container.evaluate((node) => {
+      const probe = document.createElement("span");
+      probe.style.color = "var(--harmo-color-primary)";
+      node.append(probe);
+      const color = getComputedStyle(probe).color;
+      probe.remove();
+      return color;
+    });
+    await expect(good).toHaveAttribute("aria-pressed", "true");
+    await expect(good).toHaveCSS("color", primary);
+    await good.click();
+    await expect(good).toHaveAttribute("aria-pressed", "false");
+    await expect(good).not.toHaveCSS("color", primary);
+    await unread.click();
+    await expect(unread).toHaveAttribute("aria-pressed", "true");
+    await expect(unread).toHaveCSS("color", primary);
+    await expect(unread).toHaveCSS("border-color", primary);
+  });
+
   test("loading marks the button busy, shows a spinner, and keeps focus", async ({ page }) => {
     const button = await loadingButton(page);
     await button.click();
