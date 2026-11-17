@@ -107,12 +107,13 @@ describe("add", () => {
   test("copies a component, its styles, and what it needs, each in its folder", () => {
     const { code, out } = run("add", "tabs");
     expect(code).toBe(0);
-    expect(out).toContain(`Created 11 files in ${harmo}`);
+    expect(out).toContain(`Created 12 files in ${harmo}`);
     expect(out).toContain(`Import ${harmo}/harmo.css once`);
     expect(copied()).toEqual(
       [
         "harmo.css",
         "lib/children.ts",
+        "lib/customProperties.ts",
         "lib/types.ts",
         "lib/withClass.ts",
         "provider/HarmoProvider.tsx",
@@ -549,7 +550,7 @@ describe("add", () => {
   test("uses an absolute --path as it is", () => {
     const outside = mkdtempSync(join(output, "outside-"));
     const { out } = run("add", "tag", "--path", outside);
-    expect(out).toContain(`Created 7 files in ${outside}`);
+    expect(out).toContain(`Created 8 files in ${outside}`);
     expect(existsSync(join(outside, "tag/Tag.tsx"))).toBe(true);
     expect(copied(".").filter((file) => file !== "package.json")).toEqual([]);
     rmSync(outside, { recursive: true, force: true });
@@ -557,7 +558,7 @@ describe("add", () => {
 
   test("--dry-run says what would change, and changes nothing", () => {
     const { out } = run("add", "tag", "--dry-run");
-    expect(out).toContain(`Would create 7 files in ${harmo}`);
+    expect(out).toContain(`Would create 8 files in ${harmo}`);
     expect(existsSync(join(project, harmo))).toBe(false);
   });
 

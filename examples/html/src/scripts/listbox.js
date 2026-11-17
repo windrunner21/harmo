@@ -356,6 +356,63 @@
     });
   }
 
+  // While a list has more to show above or below, an arrow at that end says
+  // so: a list item with class hlistbox-scroll, first or last, with no role a
+  // screen reader reads and no focus, as the keyboard scrolls the highlighted
+  // option into view itself. Resting the pointer on one scrolls the list that
+  // way, half a pixel a millisecond, until it reaches the end and the arrow
+  // goes. A script that replaces a list's options, such as an async search,
+  // leaves the arrows to this one, which puts them back at the ends.
+  const scrollSpeed = 0.5;
+  for (const listbox of listboxes) {
+    const arrow = (direction) => {
+      const item = document.createElement("li");
+      item.className = "hlistbox-scroll";
+      item.dataset.direction = direction;
+      item.setAttribute("role", "presentation");
+      item.setAttribute("aria-hidden", "true");
+      item.hidden = true;
+      return item;
+    };
+    const up = arrow("up");
+    const down = arrow("down");
+    // Changed only when it changes, as setting it at all is a mutation the
+    // observer below would see.
+    const show = (item, shown) => {
+      if (item.hidden === shown) item.hidden = !shown;
+    };
+    const update = () => {
+      show(up, listbox.scrollTop > 0);
+      show(down, listbox.scrollTop + listbox.clientHeight < listbox.scrollHeight - 1);
+    };
+    const place = () => {
+      if (listbox.firstElementChild !== up) listbox.prepend(up);
+      if (listbox.lastElementChild !== down) listbox.append(down);
+      update();
+    };
+    place();
+    new MutationObserver(place).observe(listbox, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+    new ResizeObserver(update).observe(listbox);
+    listbox.addEventListener("scroll", update, { passive: true });
+
+    let frame = 0;
+    const stop = () => cancelAnimationFrame(frame);
+    for (const [item, way] of [[up, -1], [down, 1]]) {
+      item.addEventListener("pointerenter", () => {
+        stop();
+        let last = performance.now();
+        const step = (now) => {
+          listbox.scrollTop += way * scrollSpeed * (now - last);
+          last = now;
+          update();
+          if (!item.hidden) frame = requestAnimationFrame(step);
+        };
+        frame = requestAnimationFrame(step);
+      });
+      item.addEventListener("pointerleave", stop);
+    }
+  }
+
   // Lists outside a popup, and open ones, are measured as they first show
   // and again as they change size, such as with the window or their
   // container.

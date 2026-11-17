@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Field, Switch } from "@harmo-ui/react";
 
 export const examples = {
@@ -51,13 +50,11 @@ export const examples = {
   "Custom size": () => (
     <Field orientation="horizontal" label="Compact conversation list">
       <Switch
-        style={
-          {
-            "--harmo-switch-height": "20px",
-            "--hswitch-width": "36px",
-            "--hswitch-thumb": "16px",
-          } as CSSProperties
-        }
+        style={{
+          "--harmo-switch-height": "20px",
+          "--hswitch-width": "36px",
+          "--hswitch-thumb": "16px",
+        }}
         defaultChecked
       />
     </Field>

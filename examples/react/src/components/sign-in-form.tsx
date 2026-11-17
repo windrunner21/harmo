@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Card, toast } from "@harmo-ui/react";
 import { AppleIcon, GitHubIcon, GoogleIcon, MicrosoftIcon, OpenAIIcon, XIcon } from "../app-icons.tsx";
 import {
@@ -122,14 +121,12 @@ export const examples = {
     >
       <SignInForm action={signIn} forgotPasswordHref="/reset-password" />
       <ul
-        style={
-          {
-            "--harmo-card-padding": "var(--harmo-space-xs)",
-            margin: 0,
-            padding: 0,
-            listStyle: "none",
-          } as CSSProperties
-        }
+        style={{
+          "--harmo-card-padding": "var(--harmo-space-xs)",
+          margin: 0,
+          padding: 0,
+          listStyle: "none",
+        }}
       >
         <li>
           <Card

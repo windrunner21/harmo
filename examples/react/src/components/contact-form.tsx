@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Card, Section } from "@harmo-ui/react";
 import { AnalyticsIcon, InfoIcon, MessagesIcon, SettingsIcon, SuccessIcon, UserIcon } from "../app-icons.tsx";
 import type { Upload } from "../patterns/contact-form/attachments.ts";
@@ -143,16 +142,14 @@ export const examples = {
         description="Get a demo tailored to you, and see how it fits the way your team works."
       >
         <ul
-          style={
-            {
-              "--harmo-card-padding": "0",
-              display: "grid",
-              gap: "var(--harmo-space-sm)",
-              margin: 0,
-              padding: 0,
-              listStyle: "none",
-            } as CSSProperties
-          }
+          style={{
+            "--harmo-card-padding": "0",
+            display: "grid",
+            gap: "var(--harmo-space-sm)",
+            margin: 0,
+            padding: 0,
+            listStyle: "none",
+          }}
         >
           <li>
             <Card

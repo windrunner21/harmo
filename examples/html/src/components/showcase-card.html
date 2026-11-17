@@ -1,0 +1,167 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    A product's news: each card is one link, with what the post is about drawn
+    small on a dashed grid, then its headline and a line of what it says.
+    Hover a card, or <kbd class="hkbd">Tab</kbd> to it: the front lifts and
+    "Read more" comes up under it, its chevron turning into an arrow once you
+    point at the line. On a touch screen, or with reduced motion asked for,
+    nothing moves, and the line is there from the start.
+  </play-note>
+  <ul role="list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); gap: var(--harmo-space-sm); margin: 0; padding: 0; list-style: none">
+    <li>
+      <a class="hshowcase-card" href="/news/scheduled-messages">
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <div class="hcard" data-variant="raised" style="display: grid; justify-items: start; gap: var(--harmo-space-xs); max-inline-size: 14rem; font-size: var(--harmo-font-size-sm)">
+            <span class="hstatus" data-status="info">Sends tomorrow at 9:00</span>
+            <p style="margin: 0">Your order is on its way. We'll write again when it's out for delivery.</p>
+          </div>
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Messages that go out on time</h3>
+          <p class="hshowcase-card-description">Schedule a reply for later, and it's sent when you chose, even while you're away.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Read more
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="hshowcase-card" href="/news/saved-replies">
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <div class="hcard" data-variant="raised" style="display: grid; justify-items: start; gap: var(--harmo-space-xs); max-inline-size: 14rem; font-size: var(--harmo-font-size-sm)">
+            <p style="margin: 0">Type <kbd class="hkbd">/thanks</kbd> to send</p>
+            <p style="margin: 0; color: var(--harmo-color-text-secondary)">Thanks for your patience! It's all sorted now.</p>
+          </div>
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Saved replies, a keystroke away</h3>
+          <p class="hshowcase-card-description">Type a slash in any chat to send an answer you've written before.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Read more
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="hshowcase-card" href="/news/weekly-report">
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <div class="hcard" data-variant="raised" style="display: grid; justify-items: start; gap: var(--harmo-space-2xs); max-inline-size: 14rem; font-size: var(--harmo-font-size-sm)">
+            <p style="margin: 0; color: var(--harmo-color-text-secondary)">Replies this week</p>
+            <p style="margin: 0; font-size: 1.75rem; font-weight: var(--harmo-font-weight-semibold)">1,284</p>
+            <span class="hstatus" data-status="success">Up 12% on last week</span>
+          </div>
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Your week, in one email</h3>
+          <p class="hshowcase-card-description">Every Monday: replies, response times, and what changed since the week before.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Read more
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Images" layout="wide">
+  <play-note>
+    An image in the media fills it, cropped to its golden rectangle. It lifts
+    with the front, as a preview does.
+  </play-note>
+  <ul role="list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); gap: var(--harmo-space-sm); margin: 0; padding: 0; list-style: none">
+    <li>
+      <a class="hshowcase-card" href="/backgrounds/dune">
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <img src="images/dune.svg" alt="" />
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Dune</h3>
+          <p class="hshowcase-card-description">Warm sand, for the chat window's background.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Preview
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="hshowcase-card" href="/backgrounds/dusk">
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <img src="images/dusk.svg" alt="" />
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Dusk</h3>
+          <p class="hshowcase-card-description">An evening sky, quiet behind long threads.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Preview
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="hshowcase-card" href="/backgrounds/forest">
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <img src="images/forest.svg" alt="" />
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Forest</h3>
+          <p class="hshowcase-card-description">Deep greens, easy on the eyes all day.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Preview
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Folded corner" layout="wide">
+  <play-note>
+    <code>data-fold</code> folds the top corner at the end over, as a page's
+    corner turned down. <code>--hshowcase-card-fold-color</code> is what shows
+    where it was: the page's background, unless the card sits on another.
+  </play-note>
+  <ul role="list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr)); gap: var(--harmo-space-sm); margin: 0; padding: 0; list-style: none">
+    <li>
+      <a class="hshowcase-card" href="/stories/northwind" data-fold>
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <div class="hcard" data-variant="raised" style="max-inline-size: 13rem">
+            <p class="hcard-title">2.4× faster replies</p>
+            <p class="hcard-description">Since moving their inbox over.</p>
+          </div>
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Northwind Travel</h3>
+          <p class="hshowcase-card-description">How a team of six answers a whole season's bookings.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Read the story
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="hshowcase-card" href="/stories/fernhill" data-fold>
+        <div class="hshowcase-card-media" aria-hidden="true" inert>
+          <div class="hcard" data-variant="raised" style="max-inline-size: 13rem">
+            <p class="hcard-title">40% fewer tickets</p>
+            <p class="hcard-description">With answers sent before anyone asks.</p>
+          </div>
+        </div>
+        <div class="hshowcase-card-body">
+          <h3 class="hshowcase-card-title">Fernhill Market</h3>
+          <p class="hshowcase-card-description">How a grocer keeps customers posted on every delivery.</p>
+        </div>
+        <span class="hshowcase-card-action" aria-hidden="true">
+          Read the story
+          <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow"></play-icon>
+        </span>
+      </a>
+    </li>
+  </ul>
+</play-example>

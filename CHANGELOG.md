@@ -8,6 +8,71 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Added
+
+- Showcase Card: a card that shows where it leads before it's opened, for a
+  product's news, or a gallery of templates, patterns, or stories. What it leads to sits small, or
+  as an image, on a dashed grid, then its title, a description, and an action
+  line. The whole card is one link. Hovering or focusing it lifts the front
+  and brings the action line up, its chevron turning into an arrow once the
+  line is pointed at; on a touch screen, or with reduced motion, nothing
+  moves. `data-fold`, or `fold` in React, folds its top corner over.
+
+  ```html
+  <a class="hshowcase-card" href="/news/scheduled-messages">
+    <div class="hshowcase-card-media" aria-hidden="true" inert>…</div>
+    <div class="hshowcase-card-body">
+      <h3 class="hshowcase-card-title">Messages that go out on time</h3>
+      <p class="hshowcase-card-description">Schedule a reply for later, and it's sent when you chose.</p>
+    </div>
+    <span class="hshowcase-card-action" aria-hidden="true">Read more …</span>
+  </a>
+  ```
+
+- Listbox: scroll arrows. A list that has more to show above or below, past
+  its 300px, shows an arrow at that end, and resting the pointer on it
+  scrolls the list that way. The arrows lie over the list's edge, so no
+  option moves as they come and go, and the keyboard keeps the highlighted
+  option clear of them. Select, Combobox, Filter Chip, Command Menu, Phone
+  Input, and Language Picker get them, but for Language Picker's grid of
+  regions. In HTML, the script adds them: `listbox.js` shows how.
+- CLI: `npx harmo-ui add` also copies `lib/customProperties.ts`, so a copied
+  component's `style` takes Harmo's tokens and variables without a cast, as
+  `@harmo-ui/react`'s does.
+
+- React: the `style` prop takes Harmo's custom properties without a cast, its
+  tokens and its components' variables, such as
+  `style={{ "--harmo-card-padding": "var(--harmo-space-xs)" }}`, and they
+  autocomplete. `HarmoCustomProperty` names them all.
+
+- Segmented Control: `data-size="small"`, or `size="small"` in React, for a row
+  of small controls such as a toolbar's: options 29px tall, with 13px text, as
+  a small Button is. An option its radio names, with `aria-label` or a
+  Tooltip, shows only its icon, as a square: 34px, or 29px when small. An icon
+  in an option is drawn at 20px.
+
+  ```html preview
+  <div class="hsegmented" role="radiogroup" aria-label="Chart range" data-size="small">
+    <label class="hsegmented-option"><input type="radio" name="chart-range" value="day" checked />Day</label>
+    <label class="hsegmented-option"><input type="radio" name="chart-range" value="week" />Week</label>
+    <label class="hsegmented-option"><input type="radio" name="chart-range" value="month" />Month</label>
+  </div>
+  ```
+
+### Changed
+
+- Tokens: the light theme's tertiary text, `--harmo-color-text-tertiary`, is a
+  step darker, `#6a707c` from `#6e7480`, so it passes WCAG AA's 4.5:1 on a
+  tinted surface too, such as a default Card or a Sidebar: 4.6:1, where it was
+  4.34:1. On white it's 4.97:1. The dark theme's is unchanged.
+
+### Fixed
+
+- Listbox: in a grouped list, the divider skips the first group shown by
+  counting groups only, and Language Picker's regions count only regions for
+  their columns, so neither changes as a scroll arrow comes and goes.
+
+
 ## [0.7.0] - 2026-11-16
 
 Patterns: whole tasks built from the components, copied into an app with

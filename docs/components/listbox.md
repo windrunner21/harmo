@@ -10,10 +10,10 @@ it. Scripts own the behavior; CSS styles the state they set.
 | --- | --- |
 | CSS | `listbox.css`, `popup.css`; `button.css` for a footer or a button that opens it |
 | Element | `<ul class="hlistbox" role="listbox">` inside a `.hpopup` |
-| Parts | `.hoption`, `.hoption-label`, `.hoption-text`, `.hoption-description`, `.hoption-match`, `.hoption-check`, `.hoption-checkbox`, `.hoption-badge`, `.hoption-group`, `.hoption-group-label`, `.hlistbox-search`, `.hlistbox-search-input`, `.hlistbox-empty`, `.hlistbox-footer` |
+| Parts | `.hoption`, `.hoption-label`, `.hoption-text`, `.hoption-description`, `.hoption-match`, `.hoption-check`, `.hoption-checkbox`, `.hoption-badge`, `.hoption-group`, `.hoption-group-label`, `.hlistbox-search`, `.hlistbox-search-input`, `.hlistbox-empty`, `.hlistbox-footer`; `.hlistbox-scroll`, which the script adds |
 | Required | `aria-label` or `aria-labelledby` on the list, and `tabindex="-1"` when the list takes focus itself (no search row, and not a [Select](select.md)'s); `role="option"`, an `id`, and `aria-selected` on each option; `role="group"` and `aria-labelledby` (its label's id) on each group |
 | Unique | Every id |
-| Script | Required: highlight, keyboard, selection, and search; see [What a script does](#what-a-script-does) |
+| Script | Required: highlight, keyboard, selection, search, and the scroll arrows; see [What a script does](#what-a-script-does) |
 
 ## Markup
 
@@ -112,7 +112,8 @@ focus.
 
 | Part | Appearance |
 | --- | --- |
-| `.hlistbox` | 4px padding, at most 300px tall and `min(32rem, 100vw - 18px)` wide unless its popup is wider, which it then fills, scrolls with a hidden scrollbar |
+| `.hlistbox` | 4px padding, at most 300px tall and `min(32rem, 100vw - 18px)` wide unless its popup is wider, which it then fills, scrolls with a hidden scrollbar, and with scroll arrows where it has more |
+| `.hlistbox-scroll` | A scroll arrow: a 32px band at the list's top or bottom, `data-direction="up"` or `"down"`, with a 16px chevron in `--harmo-icon-color`, shown only while the list has more that way. It lies over the list's edge, so no option moves as it comes and goes: `--harmo-color-background` behind the chevron, then fading over its last 8px, where the next option shows through. Resting the pointer on it scrolls the list that way, half a pixel a millisecond, to the end |
 | `.hoption` | 8px 10px padding (`--harmo-space-xs` at its sides; the 8px sets the row's height), 10px between its parts, 14px `--harmo-color-text-secondary`, one line |
 | `.hoption-label` | The option text; ends with an ellipsis rather than wrapping, so rows keep one height |
 | `.hoption-text` | The label in `--harmo-color-text` over its description, 2px apart |
@@ -121,7 +122,7 @@ focus.
 | `.hoption-badge` | Uppercase 11px pill, 16px after the label: the option's 10px gap and 6px (`--harmo-space-2xs`) |
 | `.hoption-check` | A check mark at `1em` in `--harmo-color-primary` |
 | `.hoption-checkbox` | A 16px checkbox drawing; its mark uses Checkbox's fractions of the box; fill and border fade in 150ms; dimmed in a disabled option |
-| `.hoption-group-label` | Uppercase 11px bold `--harmo-color-primary`; a divider above it, with 10px on each side of its line, unless its group is the list's first child |
+| `.hoption-group-label` | Uppercase 11px bold `--harmo-color-primary`; a divider above it, with 10px on each side of its line, unless its group is the list's first one shown |
 | `.hlistbox-search` | Search icon and borderless input, 6px (`--harmo-space-2xs`) apart, above a divider |
 | `.hlistbox-empty` | The status for no matches, `role="status"`, with 10px 16px padding, in the page from the start and empty until nothing matches; empty, it takes no room |
 | `.hlistbox-footer` | Divider and a full-width button |
@@ -158,6 +159,11 @@ focus.
 - A Select with a search row opens on Down and Up, as a plain one does, and
   then moves focus to the search field.
 - The search field needs no focus ring: its caret shows focus.
+- The scroll arrows are for the pointer: hidden from screen readers with
+  `aria-hidden`, with `role="presentation"`, so a list holds only its
+  options, and never focused. The keyboard needs none: the highlighted option
+  scrolls into view as it moves, kept clear of the arrows by the list's
+  `scroll-padding-block`.
 
 ## What a script does
 
@@ -173,6 +179,9 @@ focus.
 | Clear the search field and show every option | Before the list opens (`beforetoggle`, in the capture phase, so before anything measures the popup, and only for the list's own popup, not one inside it), so each opening starts from the whole list |
 | Set `hidden` on the options and groups that don't match, by their label, description, or keywords, and put the app's message in `.hlistbox-empty` when none do, emptying it once some do; what the app hid stays hidden | As the search text changes |
 | Set a truncated `.hoption-label`'s `title` to its full text, and remove it when it fits | When the list opens, changes size, or its options change, so hovering shows the whole option |
+| Add a scroll arrow at each end of the list, `<li class="hlistbox-scroll" data-direction="up" role="presentation" aria-hidden="true" hidden>` first and the `"down"` one last, and keep them there if the options are replaced | As the list is set up, and whenever its options change |
+| Remove `hidden` from the up arrow while the list is scrolled down at all, and from the down arrow while there's more below, and set it back at the ends | When the list scrolls, changes size, or its options change, as a search hides some |
+| Scroll the list toward an arrow, half a pixel a millisecond, until it reaches that end | While the pointer rests on the arrow |
 
 `examples/html/src/scripts/listbox.js` is an example script that does all of
 this; its search hides the options whose label, description, and keywords

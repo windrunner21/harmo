@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Checkbox, CheckboxGroup, Field } from "@harmo-ui/react";
 
 export const examples = {
@@ -39,10 +38,10 @@ export const examples = {
   "Custom size": () => (
     <>
       <Field orientation="horizontal" label="Send a weekly summary">
-        <Checkbox name="large-summary" style={{ "--harmo-checkbox-size": "24px" } as CSSProperties} defaultChecked />
+        <Checkbox name="large-summary" style={{ "--harmo-checkbox-size": "24px" }} defaultChecked />
       </Field>
       <Field orientation="horizontal" label="Select all reports">
-        <Checkbox name="large-reports" style={{ "--harmo-checkbox-size": "24px" } as CSSProperties} indeterminate />
+        <Checkbox name="large-reports" style={{ "--harmo-checkbox-size": "24px" }} indeterminate />
       </Field>
     </>
   ),

@@ -127,29 +127,35 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
     display: none;
   }
 
-  &:has(> .hoption-group:nth-child(2)) {
+  &:has(> .hoption-group:nth-child(2 of .hoption-group)) {
     --hlanguage-picker-columns: 2;
   }
 
-  &:has(> .hoption-group:nth-child(3)) {
+  &:has(> .hoption-group:nth-child(3 of .hoption-group)) {
     --hlanguage-picker-columns: 3;
   }
 
-  &:has(> .hoption-group:nth-child(7)) {
+  &:has(> .hoption-group:nth-child(7 of .hoption-group)) {
     --hlanguage-picker-columns: 4;
   }
 
   @media (width < 48rem) {
-    &:has(> .hoption-group:nth-child(3)) {
+    &:has(> .hoption-group:nth-child(3 of .hoption-group)) {
       --hlanguage-picker-columns: 2;
     }
   }
 
   @media (width < 30rem) {
-    &:has(> .hoption-group:nth-child(2)) {
+    &:has(> .hoption-group:nth-child(2 of .hoption-group)) {
       --hlanguage-picker-columns: 1;
     }
   }
+}
+
+// The regions' grid has no scroll arrows: in a grid, an arrow would take a row
+// of its own, and its gap, and move the regions as it came and went.
+.hlanguage-picker-regions > .hlistbox > .hlistbox-scroll {
+  display: none;
 }
 
 .hlanguage-picker-regions .hoption-group {

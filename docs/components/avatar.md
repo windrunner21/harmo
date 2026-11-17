@@ -69,7 +69,7 @@ placeholder.
 <span>
   <Avatar alt="">JS</Avatar> Jane Smith
 </span>
-<Avatar alt="Jane Smith" style={{ "--harmo-avatar-size": "4rem" } as CSSProperties}>
+<Avatar alt="Jane Smith" style={{ "--harmo-avatar-size": "4rem" }}>
   JS
 </Avatar>
 ```

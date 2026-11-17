@@ -13,6 +13,7 @@ export { Card, type CardProps } from "./Card.tsx";
 export { Checkbox, type CheckboxProps } from "./Checkbox.tsx";
 export { CheckboxGroup, type CheckboxGroupProps } from "./CheckboxGroup.tsx";
 export { Chevron, type ChevronProps } from "./Chevron.tsx";
+export type { HarmoCustomProperty } from "./customProperties.ts";
 export { ChevronToArrow, type ChevronToArrowProps } from "./ChevronToArrow.tsx";
 export { Combobox, type ComboboxProps } from "./Combobox.tsx";
 export {
@@ -104,6 +105,7 @@ export {
   type SettingProps,
   type SettingsProps,
 } from "./Settings.tsx";
+export { ShowcaseCard, type ShowcaseCardProps } from "./ShowcaseCard.tsx";
 export {
   Sidebar,
   SidebarGroup,

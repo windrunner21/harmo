@@ -3,7 +3,6 @@
 import {
   isValidElement,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type MouseEvent,
   type ReactNode,
   type Ref,
@@ -124,7 +123,7 @@ export const Button = ({
         style={
           holdDuration === undefined
             ? own.style
-            : ({ ...own.style, "--hbutton-hold-duration": `${holdDuration}ms` } as CSSProperties)
+            : { ...own.style, "--hbutton-hold-duration": `${holdDuration}ms` }
         }
         onPointerDown={(event) => {
           own.onPointerDown?.(event);

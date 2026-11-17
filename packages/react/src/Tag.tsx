@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   type ComponentPropsWithRef,
-  type CSSProperties,
 } from "react";
 import { close as closePaths } from "./icons.ts";
 import { withClass } from "./withClass.ts";
@@ -27,7 +26,7 @@ export const Tag = ({
     className={withClass("htag", className)}
     data-variant={variant}
     style={
-      color ? ({ ...style, "--htag-color": color } as CSSProperties) : style
+      color ? { ...style, "--htag-color": color } : style
     }
   >
     {color && <span className="htag-dot" aria-hidden="true" />}

@@ -91,7 +91,8 @@ that a description in the page's language isn't marked as the other one.
 
 ## Regions
 
-With every language in a region, the popup is a panel:
+With every language in a region, the popup is a panel. Its grid has no
+scroll arrows, as an arrow would take a row of its own there:
 
 ```html
 <div class="hpopup hlanguage-picker-regions" id="region-popup" popover style="position-anchor: --region">

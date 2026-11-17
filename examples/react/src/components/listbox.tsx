@@ -217,4 +217,34 @@ export const examples = {
       </Listbox>
     </Popup>
   ),
+
+  "Long list": () => (
+    <Popup
+      trigger={
+        <Button variant="secondary" aria-haspopup="listbox">
+          Time zone
+          <ExpandChevron />
+        </Button>
+      }
+    >
+      <Listbox aria-label="Time zone" defaultValue="london">
+        <Option value="los-angeles">UTC−08:00 Los Angeles</Option>
+        <Option value="denver">UTC−07:00 Denver</Option>
+        <Option value="chicago">UTC−06:00 Chicago</Option>
+        <Option value="new-york">UTC−05:00 New York</Option>
+        <Option value="sao-paulo">UTC−03:00 São Paulo</Option>
+        <Option value="london">UTC+00:00 London</Option>
+        <Option value="berlin">UTC+01:00 Berlin</Option>
+        <Option value="athens">UTC+02:00 Athens</Option>
+        <Option value="istanbul">UTC+03:00 Istanbul</Option>
+        <Option value="dubai">UTC+04:00 Dubai</Option>
+        <Option value="mumbai">UTC+05:30 Mumbai</Option>
+        <Option value="bangkok">UTC+07:00 Bangkok</Option>
+        <Option value="singapore">UTC+08:00 Singapore</Option>
+        <Option value="tokyo">UTC+09:00 Tokyo</Option>
+        <Option value="sydney">UTC+10:00 Sydney</Option>
+        <Option value="auckland">UTC+12:00 Auckland</Option>
+      </Listbox>
+    </Popup>
+  ),
 };

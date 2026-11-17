@@ -47,6 +47,7 @@ import { examples as segmented } from "./components/segmented.tsx";
 import { examples as select } from "./components/select.tsx";
 import { examples as selectionBar } from "./components/selection-bar.tsx";
 import { examples as settings } from "./components/settings.tsx";
+import { examples as showcaseCard } from "./components/showcase-card.tsx";
 import { examples as sidebar } from "./components/sidebar.tsx";
 import { examples as spinner } from "./components/spinner.tsx";
 import { examples as stat } from "./components/stat.tsx";
@@ -115,6 +116,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   select,
   "selection-bar": selectionBar,
   settings,
+  "showcase-card": showcaseCard,
   sidebar,
   spinner,
   stat,

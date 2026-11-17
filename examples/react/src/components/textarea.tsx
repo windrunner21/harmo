@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Button, Field, TextArea } from "@harmo-ui/react";
 
 export const examples = {
@@ -36,7 +35,7 @@ export const examples = {
       <TextArea
         name="feedback"
         placeholder="What could we do better?"
-        style={{ "--htextarea-min-height": "calc(var(--harmo-control-height) + 3 * 1.25rem)" } as CSSProperties}
+        style={{ "--htextarea-min-height": "calc(var(--harmo-control-height) + 3 * 1.25rem)" }}
       />
     </Field>
   ),
@@ -45,7 +44,7 @@ export const examples = {
     <Field label="Email footer">
       <TextArea
         name="footer-text"
-        style={{ "--htextarea-max-height": "200px" } as CSSProperties}
+        style={{ "--htextarea-max-height": "200px" }}
         defaultValue="Acme Support · Mon–Fri, 9:00–18:00"
       />
     </Field>

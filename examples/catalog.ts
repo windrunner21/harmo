@@ -99,6 +99,12 @@ const groups: CatalogGroup[] = [
           "A frame around a group of content: tinted, raised, or ghost; with a title, an icon, a description, and a chevron.",
       },
       {
+        slug: "showcase-card",
+        title: "Showcase Card",
+        purpose:
+          "A card that shows where it leads: media on a dashed grid, a title, and an action line that comes up as it's hovered.",
+      },
+      {
         slug: "section",
         title: "Section",
         purpose:

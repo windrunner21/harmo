@@ -52,8 +52,8 @@ field colors them.
 - The magnifier, 18px in `--harmo-icon-color`, sits 10px in from its start,
   as far as an Input's text, and the text starts 6px (`--harmo-space-2xs`)
   after it. The
-  placeholder is `--harmo-color-text-secondary`, since tertiary text is 4.4:1
-  on the fill.
+  placeholder is `--harmo-color-text-secondary`, a step darker than an
+  Input's, on the fill.
 - The clear button, 24px with a 16px cross in `--harmo-icon-color`, sits 6px
   in from its end, so the cross is 10px in, darkening to
   `--harmo-icon-hover-color` on hover. While it shows, the text stops 6px

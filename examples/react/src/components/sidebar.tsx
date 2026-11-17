@@ -7,7 +7,7 @@ import {
   SidebarSub,
   SidebarSubItem,
 } from "@harmo-ui/react";
-import { useState, type CSSProperties, type MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import {
   AnalyticsIcon,
   CampaignsIcon,
@@ -44,7 +44,7 @@ export const examples = {
                 icon={
                   <span
                     className="havatar"
-                    style={{ "--harmo-avatar-size": "20px" } as CSSProperties}
+                    style={{ "--harmo-avatar-size": "20px" }}
                     aria-hidden="true"
                   >
                     A
@@ -159,7 +159,7 @@ export const examples = {
                 icon={
                   <span
                     className="havatar"
-                    style={{ "--harmo-avatar-size": "20px" } as CSSProperties}
+                    style={{ "--harmo-avatar-size": "20px" }}
                     aria-hidden="true"
                   >
                     A
@@ -274,7 +274,7 @@ export const examples = {
                 icon={
                   <span
                     className="havatar"
-                    style={{ "--harmo-avatar-size": "20px" } as CSSProperties}
+                    style={{ "--harmo-avatar-size": "20px" }}
                     aria-hidden="true"
                   >
                     A
@@ -383,7 +383,7 @@ export const examples = {
         label="Menu"
         closeLabel="Close"
         closedby="any"
-        style={{ "--hdrawer-inline-size": "18rem" } as CSSProperties}
+        style={{ "--hdrawer-inline-size": "18rem" }}
         trigger={
           <Button variant="secondary">
             <MenuIcon className="hicon" />

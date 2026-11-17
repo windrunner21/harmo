@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Avatar } from "@harmo-ui/react";
 import { UserIcon } from "../app-icons.tsx";
 
@@ -15,14 +14,14 @@ export const examples = {
 
   Sizes: () => (
     <>
-      <Avatar alt="Imran Hajiyev" style={{ "--harmo-avatar-size": "4rem" } as CSSProperties}>
+      <Avatar alt="Imran Hajiyev" style={{ "--harmo-avatar-size": "4rem" }}>
         IH
       </Avatar>
-      <Avatar alt="Imran Hajiyev" style={{ "--harmo-avatar-size": "4rem" } as CSSProperties}>
+      <Avatar alt="Imran Hajiyev" style={{ "--harmo-avatar-size": "4rem" }}>
         <UserIcon />
       </Avatar>
       <Avatar alt="Imran Hajiyev">IH</Avatar>
-      <Avatar alt="Imran Hajiyev" style={{ "--harmo-avatar-size": "1.5rem" } as CSSProperties}>
+      <Avatar alt="Imran Hajiyev" style={{ "--harmo-avatar-size": "1.5rem" }}>
         IH
       </Avatar>
     </>

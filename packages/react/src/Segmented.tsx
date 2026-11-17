@@ -12,7 +12,9 @@ import type { ControlField } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
 type SegmentedControlProps = Omit<ComponentPropsWithRef<"div">, "defaultValue"> &
-  RadioGroupOptions;
+  RadioGroupOptions & {
+    size?: "small";
+  };
 
 export type SegmentedProps = SegmentedControlProps & ControlField;
 
@@ -41,6 +43,7 @@ const SegmentedControl = ({
   onValueChange,
   required,
   disabled,
+  size,
   className,
   ...props
 }: SegmentedControlProps) => {
@@ -61,6 +64,7 @@ const SegmentedControl = ({
       <div
         {...props}
         className={withClass("hsegmented", className)}
+        data-size={size}
         role="radiogroup"
         aria-labelledby={field["aria-labelledby"]}
         aria-describedby={field["aria-describedby"]}

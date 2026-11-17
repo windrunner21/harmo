@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Button, Card, Section, Status, Tag } from "@harmo-ui/react";
 import { DevelopersIcon, LockIcon, MessagesIcon, UserIcon } from "../app-icons.tsx";
 
@@ -75,7 +74,7 @@ export const examples = {
       <Card>
         <p>Last synced 5 minutes ago</p>
       </Card>
-      <Card style={{ "--harmo-card-padding": "var(--harmo-space-xs)" } as CSSProperties}>
+      <Card style={{ "--harmo-card-padding": "var(--harmo-space-xs)" }}>
         <p>Last synced 5 minutes ago</p>
       </Card>
     </div>
@@ -130,14 +129,12 @@ export const examples = {
 
   "Links with a chevron": () => (
     <ul
-      style={
-        {
-          "--harmo-card-padding": "var(--harmo-space-xs)",
-          marginBlock: "calc(-1px - var(--harmo-card-padding))",
-          padding: 0,
-          listStyle: "none",
-        } as CSSProperties
-      }
+      style={{
+        "--harmo-card-padding": "var(--harmo-space-xs)",
+        marginBlock: "calc(-1px - var(--harmo-card-padding))",
+        padding: 0,
+        listStyle: "none",
+      }}
     >
       <li>
         <Card

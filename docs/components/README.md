@@ -52,6 +52,7 @@ the same markup and does what the script would.
 | Select | [select.md](select.md) |
 | Selection Bar | [selection-bar.md](selection-bar.md) |
 | Settings List | [settings.md](settings.md) |
+| Showcase Card | [showcase-card.md](showcase-card.md) |
 | Sidebar | [sidebar.md](sidebar.md) |
 | Spinner | [spinner.md](spinner.md) |
 | Stat | [stat.md](stat.md) |
@@ -146,6 +147,7 @@ Some components are built from others, so their files need company:
 | `select.css` | `popup.css`, `listbox.css`, `expand-chevron.css`, `field.css` |
 | `selection-bar.css` | `button.css` for its actions; `tooltip.css` for a reason one is blocked |
 | `settings.css` | The controls it holds, such as `switch.css` |
+| `showcase-card.css` | `chevron-to-arrow.css` for the action line |
 | `sidebar.css` | `tooltip.css`; `expand-chevron.css` for a group of links |
 | `stat.css` | `tooltip.css` for a hint; `link.css` for a link as its action |
 | `table.css` | `checkbox.css` to select rows; `select.css`, `listbox.css`, `popup.css`, `expand-chevron.css`, `pagination.css`, `button.css`, `chevron.css` for a footer |

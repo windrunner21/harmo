@@ -136,7 +136,8 @@ or radio:
   The label keeps its color, as the border shows the hover.
 - Checked, or a checkbox's mixed state: a `--harmo-color-primary` border on a
   `--harmo-color-primary-tint` background, and the description turns
-  `--harmo-color-text-secondary`, as the tertiary is under 4.5:1 on the tint.
+  `--harmo-color-text-secondary`, as the tertiary is under 4.5:1 on the primary
+  tint.
   In forced-colors mode, the border turns `Highlight`.
 - The border and background fade over 150ms (`--harmo-duration-fast`), as the
   control's do. From the keyboard, with the control's focus ring showing, the
@@ -158,8 +159,8 @@ or radio:
   It's cleared while hidden, so a closing error says nothing. A submit that
   shows several errors queues one announcement each; pair them with a summary
   of the errors, or move focus to the first invalid field.
-- Descriptions use `--harmo-color-text-tertiary` (`#6e7480`), 4.69:1 on white,
-  which clears WCAG AA's 4.5:1 for small text.
+- Descriptions use `--harmo-color-text-tertiary` (`#6a707c`), 4.97:1 on white
+  and 4.6:1 on a tinted surface, which clears WCAG AA's 4.5:1 for small text.
 
 ## What a script does
 

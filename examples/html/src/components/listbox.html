@@ -457,3 +457,79 @@
     <p class="hlistbox-empty" role="status">No channels found</p>
   </div>
 </play-example>
+
+<play-example title="Long list">
+  <play-note>
+    A list taller than its 300px shows an arrow at the end where it has more:
+    the bottom at first, the top once it's scrolled, both in the middle.
+    Resting the pointer on one scrolls the list that way. The arrows lie over
+    the list's edge, so no option moves as they come and go, and the
+    <kbd class="hkbd">Arrow</kbd> keys keep the highlighted option clear of
+    them.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    popovertarget="zone-popup"
+    style="anchor-name: --zone-popup"
+  >
+    <span class="hbutton-label">Time zone</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div class="hpopup" id="zone-popup" popover style="position-anchor: --zone-popup">
+    <ul class="hlistbox" role="listbox" aria-label="Time zone" tabindex="-1">
+      <li class="hoption" id="zone-los-angeles" role="option" aria-selected="false">
+        <span class="hoption-label">UTC−08:00 Los Angeles</span>
+      </li>
+      <li class="hoption" id="zone-denver" role="option" aria-selected="false">
+        <span class="hoption-label">UTC−07:00 Denver</span>
+      </li>
+      <li class="hoption" id="zone-chicago" role="option" aria-selected="false">
+        <span class="hoption-label">UTC−06:00 Chicago</span>
+      </li>
+      <li class="hoption" id="zone-new-york" role="option" aria-selected="false">
+        <span class="hoption-label">UTC−05:00 New York</span>
+      </li>
+      <li class="hoption" id="zone-sao-paulo" role="option" aria-selected="false">
+        <span class="hoption-label">UTC−03:00 São Paulo</span>
+      </li>
+      <li class="hoption" id="zone-london" role="option" aria-selected="true">
+        <span class="hoption-label">UTC+00:00 London</span>
+        <play-icon name="check" class="hoption-check"></play-icon>
+      </li>
+      <li class="hoption" id="zone-berlin" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+01:00 Berlin</span>
+      </li>
+      <li class="hoption" id="zone-athens" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+02:00 Athens</span>
+      </li>
+      <li class="hoption" id="zone-istanbul" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+03:00 Istanbul</span>
+      </li>
+      <li class="hoption" id="zone-dubai" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+04:00 Dubai</span>
+      </li>
+      <li class="hoption" id="zone-mumbai" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+05:30 Mumbai</span>
+      </li>
+      <li class="hoption" id="zone-bangkok" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+07:00 Bangkok</span>
+      </li>
+      <li class="hoption" id="zone-singapore" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+08:00 Singapore</span>
+      </li>
+      <li class="hoption" id="zone-tokyo" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+09:00 Tokyo</span>
+      </li>
+      <li class="hoption" id="zone-sydney" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+10:00 Sydney</span>
+      </li>
+      <li class="hoption" id="zone-auckland" role="option" aria-selected="false">
+        <span class="hoption-label">UTC+12:00 Auckland</span>
+      </li>
+    </ul>
+  </div>
+</play-example>

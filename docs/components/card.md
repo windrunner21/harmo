@@ -106,8 +106,8 @@ header does.
   `--harmo-color-background-active` on a tinted or ghost card, and
   `--harmo-color-background-hover` on a raised one, as a pressed secondary
   Button is.
-- On the tint, and on a hovered ghost card, use secondary text or darker:
-  tertiary text is 4.4:1 there, below WCAG AA.
+- On the tint, and on a hovered ghost card, tertiary text is 4.6:1, just over
+  WCAG AA's 4.5:1: use it or darker, never anything lighter.
 - With parts: the icon is a 40px tile with the 8px corners and a 24px icon in
   `--harmo-color-primary`, at the start and at the top, 16px
   (`--harmo-space-sm`) before the title. The tile is `--harmo-color-background-secondary`, or on a tinted

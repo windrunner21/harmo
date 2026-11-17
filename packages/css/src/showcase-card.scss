@@ -1,0 +1,298 @@
+@use "shortcuts" as *;
+
+// A card that shows where it leads before it's opened: a media area on a
+// dashed grid, such as a screenshot or a small preview, then a title, a
+// description, and an action line, such as "View pattern". The whole card is
+// one link. Hovering or focusing it lifts the front, as a page lifted to show
+// what's under it, and the action line comes up from below; where the reader
+// can't hover, or asks for reduced motion, nothing moves and the action line
+// is in place from the start.
+
+// How far the media lifts, and the action line's height, which the front lifts
+// by too, so the line shows under it.
+$lift: 0.75rem;
+$action-height: 1.5rem;
+
+.hshowcase-card {
+  // What shows through the folded corner: the surface the card sits on.
+  --hshowcase-card-fold-color: #{$color-background};
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  font-family: $font-family;
+  color: $color-text;
+  text-decoration: none;
+
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $border-radius;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+}
+
+// A golden rectangle, filled with the secondary background and a dashed grid
+// of three rows and four columns, drawn as backgrounds so the media needs no
+// markup of its own. What it holds is centered, and clipped at its edges.
+.hshowcase-card-media {
+  $dash: $color-border;
+  $row: linear-gradient(to right, $dash 50%, transparent 0);
+  $column: linear-gradient(to bottom, $dash 50%, transparent 0);
+
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  aspect-ratio: 1.618;
+  overflow: hidden;
+
+  border-start-start-radius: calc(#{$border-radius} - 1px);
+  border-start-end-radius: calc(#{$border-radius} - 1px);
+
+  background:
+    $row 0 16.667% / 4px 1px repeat-x,
+    $row 0 50% / 4px 1px repeat-x,
+    $row 0 83.333% / 4px 1px repeat-x,
+    $column 12.5% 0 / 1px 4px repeat-y,
+    $column 37.5% 0 / 1px 4px repeat-y,
+    $column 62.5% 0 / 1px 4px repeat-y,
+    $column 87.5% 0 / 1px 4px repeat-y,
+    $color-background-secondary;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // An image fills it, cropped to its shape. In a <picture>, the image is
+  // what crops: object-fit applies to it, not to its wrapper.
+  & > :where(img, picture, video) {
+    position: absolute;
+    inset: 0;
+
+    inline-size: 100%;
+    block-size: 100%;
+
+    object-fit: cover;
+  }
+
+  & > picture > img {
+    display: block;
+
+    inline-size: 100%;
+    block-size: 100%;
+
+    object-fit: cover;
+  }
+}
+
+.hshowcase-card-body {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: $space-2xs;
+
+  padding: $space-md $space-sm;
+
+  background-color: $color-background;
+  border-end-start-radius: calc(#{$border-radius} - 1px);
+  border-end-end-radius: calc(#{$border-radius} - 1px);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hshowcase-card-title {
+  margin: 0;
+
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  line-height: 1.3;
+
+  color: $color-text;
+}
+
+.hshowcase-card-description {
+  margin: 0;
+
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+}
+
+// The action line, at the card's bottom, under the front until it lifts. It
+// sits above the front, so pointing at it is told apart from pointing at the
+// card.
+.hshowcase-card-action {
+  position: absolute;
+  z-index: 2;
+  inset-inline: $space-sm;
+  inset-block-end: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  block-size: $action-height;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+
+  color: $color-primary;
+
+  opacity: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // At the text's size: with the 2px gap and its own room, its arrow lands
+  // 6px from the words, as parts of one thing are.
+  & > .hchevron-to-arrow {
+    flex-shrink: 0;
+
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      color: $color-primary-hover;
+    }
+  }
+}
+
+// The top corner at the end, folded over: the surface behind shows where it
+// was, and the flap lies on the card, along a 1px crease.
+.hshowcase-card[data-fold]::before {
+  content: "";
+
+  position: absolute;
+  z-index: 3;
+  inset-block-start: -1px;
+  inset-inline-end: -1px;
+
+  inline-size: $space-lg;
+  block-size: $space-lg;
+
+  background: linear-gradient(
+    to bottom left,
+    var(--hshowcase-card-fold-color) calc(50% - 0.5px),
+    $color-border calc(50% - 0.5px) calc(50% + 0.5px),
+    $color-background calc(50% + 0.5px)
+  );
+  border-inline-start: 1px solid $color-border;
+  border-block-end: 1px solid $color-border;
+  border-end-start-radius: $border-radius;
+
+  pointer-events: none;
+}
+
+.hshowcase-card[data-fold]:dir(rtl)::before {
+  background: linear-gradient(
+    to bottom right,
+    var(--hshowcase-card-fold-color) calc(50% - 0.5px),
+    $color-border calc(50% - 0.5px) calc(50% + 0.5px),
+    $color-background calc(50% + 0.5px)
+  );
+}
+
+// Down in 150ms; up, below, in 200ms. Each moves between two places on
+// screen, so it eases in and out.
+.hshowcase-card-media > *,
+.hshowcase-card-body,
+.hshowcase-card-action {
+  transition:
+    transform $duration-fast $ease-in-out-cubic,
+    opacity $duration-fast $ease-in-out-cubic,
+    color $duration-fast $ease-out-cubic;
+}
+
+@mixin lifted {
+  .hshowcase-card-media > *,
+  .hshowcase-card-body,
+  .hshowcase-card-action {
+    transition-duration: $duration-normal;
+  }
+
+  .hshowcase-card-action {
+    opacity: 1;
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .hshowcase-card-media > * {
+      transform: translateY(-$lift);
+    }
+
+    .hshowcase-card-body {
+      transform: translateY(-($action-height + $lift));
+    }
+
+    .hshowcase-card-action {
+      transform: translateY(-$action-height);
+    }
+  }
+}
+
+.hshowcase-card:focus-visible {
+  @include lifted;
+}
+
+@media (hover: hover) {
+  .hshowcase-card:hover {
+    @include lifted;
+  }
+}
+
+// Hovering the card shows the way on as a chevron; hovering the action line
+// turns it into an arrow, as hovering a link does. Keyboard focus shows the
+// arrow, as ChevronToArrow's own rule does.
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hshowcase-card:not(:focus-visible):not(:has(.hshowcase-card-action:hover)) .hshowcase-card-action > .hchevron-to-arrow {
+    .hchevron-to-arrow-head {
+      transform: translateX(-4px);
+    }
+
+    .hchevron-to-arrow-shaft {
+      opacity: 0;
+    }
+  }
+}
+
+// Where nothing lifts, the action line has a row of its own under the text.
+@mixin action-in-flow {
+  .hshowcase-card-action {
+    position: relative;
+    inset: auto;
+
+    margin: calc(#{$space-xs} - #{$space-md}) $space-sm $space-md;
+  }
+}
+
+@media (hover: none) {
+  @include action-in-flow;
+
+  .hshowcase-card-action {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @include action-in-flow;
+}

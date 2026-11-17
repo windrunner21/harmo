@@ -1,4 +1,5 @@
 import { Segmented, SegmentedOption } from "@harmo-ui/react";
+import { AnalyticsIcon, MessagesIcon, TicketsIcon } from "../app-icons.tsx";
 
 export const examples = {
   Options: () => (
@@ -54,5 +55,26 @@ export const examples = {
       <SegmentedOption value="neutral">Neutral</SegmentedOption>
       <SegmentedOption value="formal">Formal</SegmentedOption>
     </Segmented>
+  ),
+
+  Small: () => (
+    <>
+      <Segmented aria-label="Chart range" name="chart-range" defaultValue="day" size="small">
+        <SegmentedOption value="day">Day</SegmentedOption>
+        <SegmentedOption value="week">Week</SegmentedOption>
+        <SegmentedOption value="month">Month</SegmentedOption>
+      </Segmented>
+      <Segmented aria-label="Show" name="inbox-view" defaultValue="messages" size="small">
+        <SegmentedOption value="messages" aria-label="Messages">
+          <MessagesIcon className="hicon" />
+        </SegmentedOption>
+        <SegmentedOption value="tickets" aria-label="Tickets">
+          <TicketsIcon className="hicon" />
+        </SegmentedOption>
+        <SegmentedOption value="analytics" aria-label="Analytics">
+          <AnalyticsIcon className="hicon" />
+        </SegmentedOption>
+      </Segmented>
+    </>
   ),
 };

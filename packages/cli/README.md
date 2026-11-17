@@ -25,13 +25,16 @@ src/components/harmo/
   tabs/tabs.css
   provider/HarmoProvider.tsx
   lib/children.ts
+  lib/customProperties.ts
+  lib/types.ts
   lib/withClass.ts
 ```
 
 Import `harmo.css` once, in your root layout or entry file. It lists the tokens, the
 [accents](https://github.com/windrunner21/harmo#accents), and each component's styles,
-and `npx harmo-ui add` keeps it up to date. Then use the
-component:
+and `npx harmo-ui add` keeps it up to date. `lib/customProperties.ts` lets a
+component's `style` set Harmo's tokens and variables, such as
+`--harmo-card-padding`, without a cast. Then use the component:
 
 ```tsx
 import "@/components/harmo/harmo.css";

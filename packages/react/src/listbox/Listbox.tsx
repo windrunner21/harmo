@@ -489,6 +489,58 @@ export const Listbox = ({
 
   const listOwned = !typing && !triggerOwned;
 
+  // While the list has more to show above or below, an arrow at that end
+  // says so, and resting the pointer on it scrolls the list that way, half a
+  // pixel a millisecond, until the end. Neither is focusable, nor read: the
+  // keyboard scrolls the highlighted option into view itself.
+  const [ends, setEnds] = useState({ up: false, down: false });
+  const scrolling = useRef(0);
+  useEffect(() => {
+    const node = list.current;
+    if (!node) return;
+    const update = () => {
+      const up = node.scrollTop > 0;
+      const down = node.scrollTop + node.clientHeight < node.scrollHeight - 1;
+      setEnds((now) => (now.up === up && now.down === down ? now : { up, down }));
+    };
+    update();
+    node.addEventListener("scroll", update, { passive: true });
+    const resized = new ResizeObserver(update);
+    resized.observe(node);
+    const changed = new MutationObserver(update);
+    changed.observe(node, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
+    return () => {
+      node.removeEventListener("scroll", update);
+      resized.disconnect();
+      changed.disconnect();
+      cancelAnimationFrame(scrolling.current);
+    };
+  }, []);
+  const stopScrolling = () => cancelAnimationFrame(scrolling.current);
+  const scrollToward = (way: 1 | -1) => () => {
+    const node = list.current;
+    if (!node) return;
+    stopScrolling();
+    let last = performance.now();
+    const step = (now: number) => {
+      node.scrollTop += way * 0.5 * (now - last);
+      last = now;
+      const more = way < 0 ? node.scrollTop > 0 : node.scrollTop + node.clientHeight < node.scrollHeight - 1;
+      if (more) scrolling.current = requestAnimationFrame(step);
+    };
+    scrolling.current = requestAnimationFrame(step);
+  };
+  const arrow = (direction: "up" | "down") => (
+    <li
+      className="hlistbox-scroll"
+      data-direction={direction}
+      role="presentation"
+      aria-hidden="true"
+      onPointerEnter={scrollToward(direction === "up" ? -1 : 1)}
+      onPointerLeave={stopScrolling}
+    />
+  );
+
   return (
     <ListboxContext
       value={{
@@ -546,7 +598,9 @@ export const Listbox = ({
           onPointerLeave?.(event);
         }}
       >
+        {ends.up && arrow("up")}
         {children}
+        {ends.down && arrow("down")}
       </ul>
       {emptyMessage !== undefined && (
         // In the page from the start, as a status, so a screen reader reads

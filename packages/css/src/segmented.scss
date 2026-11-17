@@ -87,4 +87,40 @@
 
     cursor: not-allowed;
   }
+
+  // An icon is 20px, whatever size its SVG declares, as in a Button.
+  & > .hicon {
+    flex-shrink: 0;
+
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  // An option its radio names, with aria-label, or a Tooltip's
+  // aria-labelledby, shows only its icon: a square, as wide as it's tall, that
+  // keeps its size rather than sharing the row.
+  &:has(> input:is([aria-label], [aria-labelledby])) {
+    flex-grow: 0;
+    justify-content: center;
+
+    padding-inline: $space-2xs;
+  }
+}
+
+// Small, as a small Button is, for a row of small controls such as a
+// toolbar: 29px tall, 13px text, and the small radius. The text's line, or an
+// icon, is 20px, so the padding above and below it fills the rest.
+.hsegmented[data-size="small"] > .hsegmented-option {
+  $padding-block: calc((#{$control-height-small} - 1.25rem - 2px) / 2);
+
+  min-block-size: $control-height-small;
+  padding-block: $padding-block;
+
+  font-size: $font-size-xs;
+
+  border-radius: calc(#{$border-radius-sm} + 2px);
+
+  &:has(> input:is([aria-label], [aria-labelledby])) {
+    padding-inline: $padding-block;
+  }
 }

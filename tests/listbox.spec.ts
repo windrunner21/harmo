@@ -455,6 +455,82 @@ onEachPlayground("listbox", () => {
     expect(p.y + p.height, "the popup's bottom").toBeLessThanOrEqual(t.y);
     await expect(popup).toHaveAttribute("data-side", "top");
   });
+
+  test("a long list shows an arrow at each end with more: down at the top, both in the middle, and up at the bottom", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-long-list", "Time zone");
+    const up = listbox.locator('.hlistbox-scroll[data-direction="up"]');
+    const down = listbox.locator('.hlistbox-scroll[data-direction="down"]');
+    await listbox.evaluate((node) => node.scrollTo(0, 0));
+    await expect(up).toBeHidden();
+    await expect(down).toBeVisible();
+    await listbox.evaluate((node) => node.scrollTo(0, 100));
+    await expect(up).toBeVisible();
+    await expect(down).toBeVisible();
+    await listbox.evaluate((node) => node.scrollTo(0, node.scrollHeight));
+    await expect(up).toBeVisible();
+    await expect(down).toBeHidden();
+  });
+
+  test("the arrows aren't options, are hidden from screen readers, and move no option as they come", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-long-list", "Time zone");
+    await expect(listbox.getByRole("option")).toHaveCount(16);
+    await expect(listbox.locator('.hlistbox-scroll[data-direction="down"]')).toHaveAttribute("aria-hidden", "true");
+    await listbox.evaluate((node) => node.scrollTo(0, 0));
+    // Where the first option is in the list, whatever the popup's opening
+    // motion is doing to the page around it.
+    const offset = () =>
+      listbox.evaluate((node) => (node.querySelector(".hoption") as Element).getBoundingClientRect().top - node.getBoundingClientRect().top);
+    const before = await offset();
+    // A pixel down brings the up arrow, over the list's edge: the options move
+    // that pixel, and no more.
+    await listbox.evaluate((node) => node.scrollTo(0, 1));
+    await expect(listbox.locator('.hlistbox-scroll[data-direction="up"]')).toBeVisible();
+    expect(await offset()).toBeCloseTo(before - 1, 0);
+  });
+
+  test("the arrows cover the list to its edges, so no option shows past them", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-long-list", "Time zone");
+    for (const top of [37, 70, 123]) {
+      await listbox.evaluate((node, top) => node.scrollTo(0, top), top);
+      await expect(listbox.locator('.hlistbox-scroll[data-direction="up"]')).toBeVisible();
+      // What the page shows 1px to 5px inside the list's top and bottom edges.
+      const edges = await listbox.evaluate((node) => {
+        const box = node.getBoundingClientRect();
+        const at = (y: number) => document.elementFromPoint(box.left + 40, y)?.closest(".hlistbox-scroll, .hoption")?.className ?? "";
+        return [1, 2, 3, 4, 5].flatMap((inset) => [at(box.top + inset), at(box.bottom - inset)]);
+      });
+      expect(edges.every((name) => name === "hlistbox-scroll")).toBe(true);
+    }
+  });
+
+  test("resting the pointer on an arrow scrolls the list that way, to its end", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-long-list", "Time zone");
+    await listbox.evaluate((node) => node.scrollTo(0, 0));
+    await listbox.locator('.hlistbox-scroll[data-direction="down"]').hover();
+    await expect
+      .poll(() => listbox.evaluate((node) => node.scrollTop + node.clientHeight >= node.scrollHeight - 1), { timeout: 5000 })
+      .toBe(true);
+    await listbox.locator('.hlistbox-scroll[data-direction="up"]').hover();
+    await expect.poll(() => listbox.evaluate((node) => node.scrollTop), { timeout: 5000 }).toBe(0);
+  });
+
+  test("the Arrow keys keep the highlighted option clear of the arrows", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-long-list", "Time zone");
+    for (let step = 0; step < 6; step++) await page.keyboard.press("ArrowDown");
+    const active = listbox.locator(".hoption[data-active]");
+    await expectInView(listbox, active);
+    const [list, item] = [await listbox.boundingBox(), await active.boundingBox()];
+    expect(item!.y + item!.height).toBeLessThanOrEqual(list!.y + list!.height - 32 + 1);
+  });
+
+  test("a grouped list's first group gains no divider as the up arrow shows", async ({ page }) => {
+    const { listbox } = await openList(page, "listbox-single-grouped", "Channel");
+    await listbox.evaluate((element) => (element.style.maxBlockSize = "100px"));
+    await listbox.evaluate((node) => node.scrollTo(0, 20));
+    await expect(listbox.locator('.hlistbox-scroll[data-direction="up"]')).toBeVisible();
+    const label = listbox.locator(".hoption-group-label").first();
+    expect(await label.evaluate((node) => getComputedStyle(node).borderTopWidth)).toBe("0px");
+  });
 });
 
 // A Select with a search row, as Phone Input's country is, opens on the keys

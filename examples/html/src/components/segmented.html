@@ -115,3 +115,36 @@
     </div>
   </div>
 </play-example>
+
+<play-example title="Small">
+  <play-note>
+    <code>data-size="small"</code> on the group, for a row of small controls,
+    such as a toolbar's. An option its radio names with
+    <code>aria-label</code>, or a Tooltip, shows only its icon, as a square.
+  </play-note>
+  <div class="hsegmented" role="radiogroup" aria-label="Chart range" data-size="small">
+    <label class="hsegmented-option">
+      <input type="radio" name="chart-range" value="day" checked />Day
+    </label>
+    <label class="hsegmented-option">
+      <input type="radio" name="chart-range" value="week" />Week
+    </label>
+    <label class="hsegmented-option">
+      <input type="radio" name="chart-range" value="month" />Month
+    </label>
+  </div>
+  <div class="hsegmented" role="radiogroup" aria-label="Show" data-size="small">
+    <label class="hsegmented-option">
+      <input type="radio" name="inbox-view" value="messages" aria-label="Messages" checked />
+      <play-icon name="messages" class="hicon"></play-icon>
+    </label>
+    <label class="hsegmented-option">
+      <input type="radio" name="inbox-view" value="tickets" aria-label="Tickets" />
+      <play-icon name="tickets" class="hicon"></play-icon>
+    </label>
+    <label class="hsegmented-option">
+      <input type="radio" name="inbox-view" value="analytics" aria-label="Analytics" />
+      <play-icon name="analytics" class="hicon"></play-icon>
+    </label>
+  </div>
+</play-example>

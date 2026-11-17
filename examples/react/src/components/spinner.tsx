@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { Button, Spinner } from "@harmo-ui/react";
 
 export const examples = {
@@ -17,9 +16,7 @@ export const examples = {
   "Custom size and color": () => (
     <>
       <Spinner
-        style={
-          { "--hspinner-size": "3.5rem", "--hspinner-stroke": "4px" } as CSSProperties
-        }
+        style={{ "--hspinner-size": "3.5rem", "--hspinner-stroke": "4px" }}
       >
         Loading
       </Spinner>

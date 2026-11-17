@@ -4,9 +4,11 @@ import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 // What docs/components/segmented.md says, on the Segmented Control page: each
 // option is a native radio, so a click chooses it and the arrow keys move the
 // choice, past a disabled option; a label wider than the group wraps, and only
-// then; a description describes the group; and hover weighs no more than the
-// checked state. How labels wrap, the description, and hover only the markup
-// and CSS decide, so those tests run on the HTML playground.
+// then; a description describes the group; hover weighs no more than the
+// checked state; and a small group's options are 29px tall, an option named by
+// its radio a square around its 20px icon. How labels wrap, the description,
+// hover, and the sizes only the markup and CSS decide, so those tests run on
+// the HTML playground.
 onEachPlayground("segmented", () => {
   test("the group is named by its label, and clicking an option chooses it", async ({ page }) => {
     const container = await example(page, "segmented-options");
@@ -59,6 +61,32 @@ onEachPlayground("segmented", () => {
     const container = await example(page, "segmented-with-a-description");
     const group = container.getByRole("radiogroup", { name: "Reply tone" });
     await expect(group).toHaveAccessibleDescription("Used for suggested replies.");
+  });
+
+  test("an option that shows only an icon is named by its radio, and a click chooses it", async ({ page }) => {
+    const container = await example(page, "segmented-small");
+    const group = container.getByRole("radiogroup", { name: "Show" });
+    await expect(group.getByRole("radio", { name: "Messages" })).toBeChecked();
+    await group.locator(".hsegmented-option").nth(1).click();
+    await expect(group.getByRole("radio", { name: "Tickets" })).toBeChecked();
+  });
+
+  test("small options are 29px tall with 13px text, and one that shows only an icon is a 29px square around a 20px icon", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "segmented-small");
+    const [words, icons] = await container.locator(".hsegmented").all();
+    for (const option of await words!.locator(".hsegmented-option").all()) {
+      const [box] = await boxes(option);
+      expect(box!.height).toBeCloseTo(29, 0);
+      expect(await option.evaluate((node) => getComputedStyle(node).fontSize)).toBe("13px");
+      expect(await option.evaluate((node) => getComputedStyle(node).borderTopLeftRadius)).toBe("6px");
+    }
+    for (const option of await icons!.locator(".hsegmented-option").all()) {
+      const [box, icon] = await boxes(option, option.locator(".hicon"));
+      expect(box!.width).toBeCloseTo(29, 0);
+      expect(box!.height).toBeCloseTo(29, 0);
+      expect(icon!.width).toBeCloseTo(20, 0);
+      expect(icon!.x - box!.x).toBeCloseTo(box!.x + box!.width - (icon!.x + icon!.width), 0);
+    }
   });
 
   test("an app's own look for the checked option, loaded after Harmo, holds on hover", { tag: "@css" }, async ({ page }) => {

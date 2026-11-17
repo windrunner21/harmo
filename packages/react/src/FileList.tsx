@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
   type ComponentPropsWithRef,
-  type CSSProperties,
   type ReactNode,
 } from "react";
 import { renders } from "./children.ts";
@@ -291,7 +290,7 @@ const FileRow = ({
           aria-valuemax={100}
           aria-valuenow={value}
           aria-labelledby={nameId}
-          style={{ "--hfile-list-progress": value / 100 } as CSSProperties}
+          style={{ "--hfile-list-progress": value / 100 }}
         />
       )}
     </li>

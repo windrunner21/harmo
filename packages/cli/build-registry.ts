@@ -90,6 +90,7 @@ const components: Record<string, string[]> = {
   select: ["Select.tsx"],
   "selection-bar": ["SelectionBar.tsx"],
   settings: ["Settings.tsx"],
+  "showcase-card": ["ShowcaseCard.tsx"],
   sidebar: ["Sidebar.tsx"],
   spinner: ["Spinner.tsx"],
   stat: ["Stat.tsx"],
@@ -107,9 +108,12 @@ const components: Record<string, string[]> = {
   tooltip: ["Tooltip.tsx"],
 };
 
-// Shared by components, and copied only to those that use them.
+// Shared by components, and copied only to those that use them. But
+// customProperties.ts, which types Harmo's custom properties for React's style
+// prop, comes with every component, as the tokens do.
 const helpers = [
   "children.ts",
+  "customProperties.ts",
   "highlight.tsx",
   "icons.ts",
   "milliseconds.ts",
@@ -205,7 +209,7 @@ const copyOf = (source: string) => {
 
 // The files of some components, and of other source files: each component's own
 // folder, every component it imports, whole, the helpers those use, the tokens,
-// and the accents, as index.css has them.
+// and the accents, as index.css has them, with the tokens' types for React.
 const itemFiles = (names: string[], sources: string[] = []) => {
   const files = new Map<string, string>([
     ["tokens.css", readFileSync(join(cssSource, "tokens.css"), "utf8")],
@@ -238,6 +242,7 @@ const itemFiles = (names: string[], sources: string[] = []) => {
     for (const source of components[component] as string[]) addSource(source);
   };
 
+  addSource("customProperties.ts");
   for (const name of names) addComponent(name);
   for (const source of sources) addSource(source);
   return [...files].sort(([a], [b]) => a.localeCompare(b));

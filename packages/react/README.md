@@ -52,6 +52,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 Harmo builds in no text: every word a component shows or announces comes from
 you.
 
+A component's style can set Harmo's tokens and its variables, which autocomplete,
+with no cast:
+
+```tsx
+<Card style={{ "--harmo-card-padding": "var(--harmo-space-xs)" }}>…</Card>
+```
+
 ## Learn more
 
 - [Components](https://github.com/windrunner21/harmo/blob/master/docs/components/README.md):

@@ -30,6 +30,13 @@ describe("the compiled package", () => {
     });
   }
 
+  test("its types give React's style prop Harmo's custom properties, from an entry point an app loads", () => {
+    for (const format of ["esm", "cjs"]) {
+      expect(read("dist", format, "index.d.ts")).toContain("./customProperties");
+      expect(read("dist", format, "customProperties.d.ts")).toContain('declare module "react"');
+    }
+  });
+
   test("every entry point in its package.json exists", () => {
     const { main, module, types, exports } = manifest;
     for (const file of pathsIn({ main, module, types, exports })) {
