@@ -63,8 +63,8 @@ onEachPlayground("sign-in-form", () => {
     await expect(needs).not.toHaveAttribute("open");
     await needs.locator("summary").click();
     const table = needs.getByRole("table", { name: "What you need" });
-    await expect(table.getByRole("rowheader", { name: "Node.js" })).toBeVisible();
-    await expect(table.getByRole("link", { name: "Security" }).first()).toHaveAttribute("href", /docs\/patterns\/sign-in-form\.md#security$/);
+    await expect(table.getByRole("rowheader", { name: "Accounts" })).toBeVisible();
+    await expect(needs.getByRole("link", { name: "Security" }).first()).toHaveAttribute("href", /docs\/patterns\/sign-in-form\.md#security$/);
     // A link to a whole pattern's page goes to its page here.
     await expect(table.getByRole("link", { name: "Verify Code" }).first()).toHaveAttribute("href", "verify-code.html");
   });
