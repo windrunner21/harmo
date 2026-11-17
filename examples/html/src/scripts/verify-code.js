@@ -8,6 +8,9 @@
 // and accepts only 123456, and fails, as a request that can't reach the
 // server does, for 000000. A code it turns down puts its message under the
 // field, which takes focus with the code selected, so typing replaces it.
+// The right code, your app would go on to its next page, which says so; here
+// a toast does, from toast.js: the form's
+// data-example-verify-code-success, or "Code accepted".
 // "Send a new code" waits, counting down, 30 seconds or the form's
 // data-example-verify-code-resend-after, then sends one, here always, says
 // so where the address is, and waits again. A form a script adds later, such
@@ -144,7 +147,12 @@
       working(button, false);
       busy = false;
       const message = messageOf(result);
-      if (message) fail(message);
+      if (message) return fail(message);
+      document.dispatchEvent(
+        new CustomEvent("example:toast", {
+          detail: { status: "success", title: form.dataset.exampleVerifyCodeSuccess ?? "Code accepted" },
+        }),
+      );
     });
 
     again?.addEventListener("click", async (event) => {

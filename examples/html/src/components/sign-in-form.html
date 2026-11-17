@@ -2,10 +2,7 @@
   <play-note>
     A raised <a class="hlink" data-underlined href="card.html">Card</a> with
     the email and password, and "Forgot your password?" beside the password's
-    label. A wrong password's error shows under the password, which takes
-    focus, and the form shakes once, unless you've asked for reduced motion. A
-    message the server gives for the email, such as one that isn't confirmed
-    yet, shows under the email instead.
+    label.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
     <h1 class="hauth-form-title">Sign in</h1>
@@ -108,8 +105,7 @@
   <play-note>
     Under the button, "or", then a secondary
     <a class="hlink" data-underlined href="button.html">Button</a> for each
-    other account to sign in with, as wide as the form, its logo before its
-    name. Each leads to your app's page that starts signing in there.
+    other account, leading to your app's page that starts its sign-in.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
     <h1 class="hauth-form-title">Sign in</h1>
@@ -174,9 +170,8 @@
 
 <play-example title="With many other accounts">
   <play-note>
-    Four or more go two to a row, each with its logo and the account's name.
-    Each is still named "Continue with" the account, so a screen reader says
-    what it does.
+    Four or more go two to a row, each still named "Continue with" the account
+    for a screen reader.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
     <h1 class="hauth-form-title">Sign in</h1>
@@ -253,11 +248,9 @@
 
 <play-example title="With a two-factor code">
   <play-note>
-    With a second step: the right password asks for a code, and <a
-    class="hlink" data-underlined href="verify-code.html">Verify Code</a>
-    takes the form's place, the card growing or shrinking to it as it fades
-    in, its title focused. "Back to sign in" brings the form back with what
-    was typed.
+    The right password asks for a code:
+    <a class="hlink" data-underlined href="verify-code.html">Verify Code</a>
+    takes the form's place, and "Back to sign in" brings the form back.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in data-example-sign-in-two-factor>
     <h1 class="hauth-form-title">Sign in</h1>
@@ -311,7 +304,7 @@
     <a class="hlink" data-underlined href="card.html">Cards</a> with a
     chevron.
   </play-note>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--harmo-space-lg); align-items: center">
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--harmo-space-lg) var(--harmo-space-xl)">
     <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-in>
       <h1 class="hauth-form-title">Sign in</h1>
       <div class="hauth-form-fields">

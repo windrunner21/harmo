@@ -10,14 +10,16 @@
 // under its own, and one for a field the form doesn't have under the
 // password. Either way, the first field with an error takes focus, and the
 // form shakes once, unless the reader asked for reduced motion. Typing in a
-// field takes its error away. The other accounts are links, and need nothing
-// from it.
+// field takes its error away. Signed in, your app would go on to its first
+// page, which says so; here a toast does, from toast.js. The other accounts
+// are links, and need nothing from it.
 //
 // With a second step, data-example-sign-in-two-factor, the right password
 // asks for a code: Verify Code's card takes the form's place, which stays in
 // the page, hidden, with what was typed, the card growing or shrinking to it
 // as it fades in, and its title takes focus. verify-code.js sets the card up
-// as it arrives; "Back to sign in" puts the form back.
+// as it arrives, and the right code's toast says you're signed in; "Back to
+// sign in" puts the form back.
 {
   const anEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const somethingWrong = "Something went wrong. Try again.";
@@ -34,6 +36,15 @@
       }, 800),
     );
 
+  // What your app's first page would say.
+  const signedIn = (data) => {
+    document.dispatchEvent(
+      new CustomEvent("example:toast", {
+        detail: { status: "success", title: "Signed in", description: `Welcome back, ${data.get("email")}.` },
+      }),
+    );
+  };
+
   const signIn = (data) =>
     answer(() => {
       if (data.get("email") === "error@example.com") throw new Error("The server can't be reached.");
@@ -41,7 +52,7 @@
         ? "The email or password is incorrect."
         : data.get("email") === "new@example.com"
           ? { email: "Confirm your email address first. We've sent you a new link." }
-          : undefined;
+          : signedIn(data);
     });
 
   // With a second step, the right password asks for the code the server sent
@@ -188,7 +199,7 @@
     const id = `sign-in-code-${++cards}`;
     const slots = '<span class="hotp-input-slot"></span>'.repeat(6);
     const card = parse(`
-      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code>
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code data-example-verify-code-success="Signed in">
         <div class="hauth-form-header">
           <${heading} class="hauth-form-title" tabindex="-1">Verify it's you</${heading}>
           <p class="hauth-form-description" id="${id}-description" aria-live="polite"></p>

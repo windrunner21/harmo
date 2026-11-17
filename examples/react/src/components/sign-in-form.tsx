@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { Card } from "@harmo-ui/react";
+import { Card, toast } from "@harmo-ui/react";
 import { AppleIcon, GitHubIcon, GoogleIcon, MicrosoftIcon, OpenAIIcon, XIcon } from "../app-icons.tsx";
 import {
   SignInForm,
@@ -10,7 +10,7 @@ import type { ResendResult, VerifyCodeResult } from "../patterns/verify-code/Ver
 
 // Stand in for your app's actions, which answer after a moment, as a request
 // to a server would, and keep nothing of what was typed. The password "harmo"
-// signs in, and any other fails. With it, new@example.com hasn't confirmed
+// signs in, with a toast, and any other fails. With it, new@example.com hasn't confirmed
 // its email yet, which the server says of the email itself, and
 // error@example.com fails as a request that can't reach the server does. A
 // message gives the email back, as `values`, for the page a post renders to
@@ -30,6 +30,13 @@ const unreachable = () => {
   throw new Error("The server can't be reached.");
 };
 
+// Signed in, your app would go on to its first page, which says so; here a
+// toast does.
+const signedIn = (email?: string) => {
+  toast({ status: "success", title: "Signed in", description: email && `Welcome back, ${email}.` });
+  return undefined;
+};
+
 const signIn = (_: SignInFormResult, data: FormData) =>
   answer<SignInFormResult>(() => {
     const email = String(data.get("email"));
@@ -39,7 +46,7 @@ const signIn = (_: SignInFormResult, data: FormData) =>
         ? { form: "The email or password is incorrect.", values: { email } }
         : email === "new@example.com"
           ? { email: "Confirm your email address first. We've sent you a new link.", values: { email } }
-          : undefined;
+          : signedIn(email);
   });
 
 // With a second step, the right password asks for the code the server sent
@@ -58,7 +65,7 @@ const verifyCode = (_: VerifyCodeResult, data: FormData) =>
     data.get("code") === "000000"
       ? unreachable()
       : data.get("code") === "123456"
-        ? undefined
+        ? signedIn()
         : { code: "That code isn't right. Check it, or send a new one." },
   );
 
@@ -106,10 +113,11 @@ export const examples = {
   "With help links": () => (
     <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(min(20rem, 100%), 1fr))",
-        gap: "var(--harmo-space-lg)",
+        display: "flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
         alignItems: "center",
+        gap: "var(--harmo-space-lg) var(--harmo-space-xl)",
       }}
     >
       <SignInForm action={signIn} forgotPasswordHref="/reset-password" />

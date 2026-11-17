@@ -105,13 +105,14 @@ onEachPlayground("verify-code", () => {
     await expect.poll(() => errorOf(code)).toBe("");
   });
 
-  test("the right code verifies, with no error", async ({ page }) => {
+  test("the right code verifies, with no error, and a toast says so where the app would go on", async ({ page }) => {
     const { code, button } = await parts(page);
     await code.pressSequentially("123456");
     await expect(button).toHaveAttribute("aria-busy", "true");
     await expect(button).not.toHaveAttribute("aria-busy");
     expect(await errorOf(code)).toBe("");
     await expect(code).not.toHaveAttribute("aria-invalid");
+    await expect(page.locator(".htoast:not([data-removed]) .htoast-title")).toHaveText("Code accepted");
   });
 
   test("a request that fails says something went wrong, under the field", async ({ page }) => {

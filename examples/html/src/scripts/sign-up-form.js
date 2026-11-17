@@ -14,7 +14,8 @@
 // form doesn't have under the email. Either way, the first field with an
 // error takes focus, and the form shakes once, unless the reader asked for
 // reduced motion. Typing in a field, or checking the box, takes its error
-// away. The password's strength is Password Input's, from password.js, which
+// away. Signed up, your app would go on to its first page, which says so;
+// here a toast does, from toast.js. The password's strength is Password Input's, from password.js, which
 // rates any input with data-example-password-strength, and steps it aside
 // while the field shows an error. The other accounts are links, and need
 // nothing from it.
@@ -22,7 +23,8 @@
 // Asked to confirm the email, data-example-sign-up-confirm, every address
 // goes to the next step, sam@example.com's too, as the server would email
 // its owner instead: "Check your email" for "link", or Verify Code's card for
-// "code", which verify-code.js sets up as it arrives. It takes the form's
+// "code", which verify-code.js sets up as it arrives, and whose right code's
+// toast says the email is confirmed. It takes the form's
 // place, which stays in the page, hidden, with what was typed, the card
 // growing or shrinking to it as it fades in, and its title takes focus. "Use
 // another email" puts the form back.
@@ -47,12 +49,21 @@
 
   const breached = { password: "This password has appeared in a data breach. Choose another." };
 
+  // What your app's first page would say.
+  const signedUp = (data) => {
+    document.dispatchEvent(
+      new CustomEvent("example:toast", {
+        detail: { status: "success", title: "Account created", description: `You're signed in as ${data.get("email")}.` },
+      }),
+    );
+  };
+
   const signUp = (data, confirm) =>
     answer(() => {
       if (data.get("email") === "error@example.com") throw new Error("The server can't be reached.");
       if (!confirm && data.get("email") === "sam@example.com") return "An account already uses that email.";
       if (data.get("password") === "Password123!") return breached;
-      return confirm ? { step: "confirm", email: String(data.get("email")) } : undefined;
+      return confirm ? { step: "confirm", email: String(data.get("email")) } : signedUp(data);
     });
 
   const resend = () => answer(() => ({ sent: true }));
@@ -261,7 +272,7 @@
     const id = `sign-up-code-${++cards}`;
     const slots = '<span class="hotp-input-slot"></span>'.repeat(6);
     const card = parse(`
-      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code>
+      <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code data-example-verify-code-success="Email confirmed">
         <div class="hauth-form-header">
           <${heading} class="hauth-form-title" tabindex="-1">Check your email</${heading}>
           <p class="hauth-form-description" id="${id}-description" aria-live="polite"></p>

@@ -1,4 +1,4 @@
-import { Button, Dialog } from "@harmo-ui/react";
+import { Button, Dialog, toast } from "@harmo-ui/react";
 import { AppleIcon, GitHubIcon, GoogleIcon } from "../app-icons.tsx";
 import { AccountForms } from "../patterns/account-forms/AccountForms.tsx";
 import type { ResetPasswordFormResult } from "../patterns/reset-password/ResetPasswordForm.tsx";
@@ -7,7 +7,7 @@ import type { SignUpFormResult } from "../patterns/sign-up-form/SignUpForm.tsx";
 
 // Stand in for your app's actions, which answer after a moment, as the three
 // forms' own examples do, and keep nothing of what was typed: the password
-// "harmo" signs in, but not yet as new@example.com, which hasn't confirmed
+// "harmo" signs in, and signing up succeeds, each with a toast, but not yet as new@example.com, which hasn't confirmed
 // its email; sam@example.com already has an account, and "Password123!" has
 // appeared in a data breach; and a link goes to any address but one at
 // example.org, or at gmial.com, which can't receive email; and each fails for
@@ -21,6 +21,19 @@ const answer = <Result,>(data: FormData, result: () => Result) =>
     ),
   );
 
+// Signed in, your app would go on to its first page, which says so; here a
+// toast does.
+const signedIn = (email: string) => {
+  toast({ status: "success", title: "Signed in", description: `Welcome back, ${email}.` });
+  return undefined;
+};
+// Signed up, your app would go on to its first page, which says so; here a
+// toast does.
+const signedUp = (email: string) => {
+  toast({ status: "success", title: "Account created", description: `You're signed in as ${email}.` });
+  return undefined;
+};
+
 const signIn = (_: SignInFormResult, data: FormData) =>
   answer<SignInFormResult>(data, () => {
     const email = String(data.get("email"));
@@ -28,7 +41,7 @@ const signIn = (_: SignInFormResult, data: FormData) =>
       ? { form: "The email or password is incorrect.", values: { email } }
       : email === "new@example.com"
         ? { email: "Confirm your email address first. We've sent you a new link.", values: { email } }
-        : undefined;
+        : signedIn(email);
   });
 
 const signUp = (_: SignUpFormResult, data: FormData) =>
@@ -38,7 +51,7 @@ const signUp = (_: SignUpFormResult, data: FormData) =>
       ? { form: "An account already uses that email.", values }
       : data.get("password") === "Password123!"
         ? { password: "This password has appeared in a data breach. Choose another.", values }
-        : undefined;
+        : signedUp(values.email);
   });
 
 const sendLink = (_: ResetPasswordFormResult, data: FormData) =>

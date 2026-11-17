@@ -1,3 +1,4 @@
+import { toast } from "@harmo-ui/react";
 import { AppleIcon, GitHubIcon, GoogleIcon, MicrosoftIcon, OpenAIIcon, XIcon } from "../app-icons.tsx";
 import {
   SignUpForm,
@@ -11,7 +12,7 @@ import type { ResendResult, VerifyCodeResult } from "../patterns/verify-code/Ver
 // already has an account, the password "Password123!" has appeared in a data
 // breach, which the server says of the password itself, error@example.com
 // fails as a request that can't reach the server does, and anything else
-// signs up. A message gives the name and the email back, as `values`, for the
+// signs up, with a toast. A message gives the name and the email back, as `values`, for the
 // page a post renders to fill in again; never the password.
 const answer = <Result,>(result: () => Result) =>
   new Promise<Result>((resolve, reject) =>
@@ -26,6 +27,20 @@ const answer = <Result,>(result: () => Result) =>
 
 const unreachable = () => {
   throw new Error("The server can't be reached.");
+};
+
+// Signed up, your app would go on to its first page, which says so; here a
+// toast does.
+const signedUp = (email: string) => {
+  toast({ status: "success", title: "Account created", description: `You're signed in as ${email}.` });
+  return undefined;
+};
+
+// Confirmed, your app would go on to its first page, which says so; here a
+// toast does.
+const confirmed = () => {
+  toast({ status: "success", title: "Email confirmed", description: "Your account is ready." });
+  return undefined;
 };
 
 const typed = (data: FormData) => ({ name: String(data.get("name") ?? ""), email: String(data.get("email")) });
@@ -43,7 +58,7 @@ const signUp = (_: SignUpFormResult, data: FormData) =>
         ? { form: "An account already uses that email.", values: typed(data) }
         : data.get("password") === "Password123!"
           ? breached(data)
-          : undefined,
+          : signedUp(String(data.get("email"))),
   );
 
 // Asking to confirm the email, every address goes to the step that says an
@@ -64,7 +79,7 @@ const verifyCode = (_: VerifyCodeResult, data: FormData) =>
     data.get("code") === "000000"
       ? unreachable()
       : data.get("code") === "123456"
-        ? undefined
+        ? confirmed()
         : { code: "That code isn't right. Check it, or send a new one." },
   );
 

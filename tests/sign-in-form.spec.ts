@@ -122,7 +122,7 @@ onEachPlayground("sign-in-form", () => {
     await expect(password).not.toHaveAttribute("aria-invalid");
   });
 
-  test("the right password signs in, with no error", async ({ page }) => {
+  test("the right password signs in, with no error, and a toast says so where the app would go on", async ({ page }) => {
     const { email, password, button } = await parts(page);
     await email.fill("sam@example.com");
     await password.fill("harmo");
@@ -131,6 +131,9 @@ onEachPlayground("sign-in-form", () => {
     await expect(button).not.toHaveAttribute("aria-busy");
     expect(await errorOf(password)).toBe("");
     await expect(password).not.toHaveAttribute("aria-invalid");
+    const toast = page.locator(".htoast:not([data-removed])");
+    await expect(toast.locator(".htoast-title")).toHaveText("Signed in");
+    await expect(toast.locator(".htoast-description")).toHaveText("Welcome back, sam@example.com.");
   });
 
   test("every form posts its email and password, so one sent before its script runs keeps what was typed out of the page's address", async ({ page }) => {
@@ -279,6 +282,7 @@ onEachPlayground("sign-in-form", () => {
     await code.pressSequentially("123456");
     await expect(card.getByRole("button", { name: "Verify" })).not.toHaveAttribute("aria-busy");
     await expect.poll(() => errorOf(code)).toBe("");
+    await expect(page.locator(".htoast:not([data-removed]) .htoast-title")).toHaveText("Signed in");
 
     const back = card.getByRole("link", { name: "Back to sign in" });
     await expect(back).toHaveAttribute("href", "");

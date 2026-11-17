@@ -228,6 +228,16 @@ onEachPlayground("account-forms", () => {
     await expect(signIn.password).toBeFocused();
   });
 
+  test("signing in, a toast says so where the app would go on", async ({ page }) => {
+    const { signIn } = await parts(page);
+    await signIn.email.fill("sam@example.com");
+    await signIn.password.fill("harmo");
+    await signIn.button.click();
+    const toast = page.locator(".htoast:not([data-removed])");
+    await expect(toast.locator(".htoast-title")).toHaveText("Signed in");
+    await expect(toast.locator(".htoast-description")).toHaveText("Welcome back, sam@example.com.");
+  });
+
   test("a message the app gives for a field reaches that field of its form: the email's, in the Sign-in Form", async ({ page }) => {
     const { signIn } = await parts(page);
     await signIn.email.fill("new@example.com");

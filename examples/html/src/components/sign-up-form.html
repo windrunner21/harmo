@@ -1,12 +1,8 @@
 <play-example title="Default">
   <play-note>
     A raised <a class="hlink" data-underlined href="card.html">Card</a> with
-    the name, the email, and a new password with its strength; under the
-    button, a line of fine print that creating an account agrees to the terms;
-    and a band along its bottom to sign in instead. Each error shows under its
-    field, the form's own or the server's, such as a password that has
-    appeared in a data breach. The first field with one takes focus, and the
-    form shakes once, unless you've asked for reduced motion.
+    the name, the email, and a new password with its strength, the terms in
+    fine print under the button, and a link to sign in instead.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -87,7 +83,7 @@
 <play-example title="Without the name">
   <play-note>
     Only the email, the password, and the terms, for an app that asks for a
-    name later, once someone has signed up.
+    name later.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -162,8 +158,8 @@
 
 <play-example title="Without the terms">
   <play-note>
-    Without a link to the terms, there's no line about them, for an app that
-    has none, or asks for them another way.
+    No line about the terms, for an app that has none, or asks for them
+    another way.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -239,11 +235,8 @@
 
 <play-example title="With a terms checkbox">
   <play-note>
-    A checkbox to agree to the terms in place of the line, for an app whose
-    law or legal team asks for it. Signing up needs it checked, and its error
-    starts where its label does. It's a small horizontal <a class="hlink"
-    data-underlined href="field.html">Field</a>, fine print with its label in
-    secondary text.
+    A checkbox in place of the terms' line, for where a law or your legal team
+    asks for one. Signing up needs it checked.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -329,9 +322,8 @@
 
 <play-example title="With marketing emails">
   <play-note>
-    A checkbox to get product news by email, after the password, a small Field
-    as the terms' checkbox is. It starts unchecked, so getting them is a
-    choice someone makes, and signing up doesn't need it.
+    An unchecked checkbox for product news by email, after the password.
+    Signing up doesn't need it.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -415,10 +407,9 @@
 
 <play-example title="With other accounts">
   <play-note>
-    Under the terms' line, "or", then a secondary <a class="hlink"
-    data-underlined href="button.html">Button</a> for each other account to
-    sign up with, as wide as the form, its logo before its name. Each leads to
-    your app's page that starts signing in there.
+    Under the terms' line, "or", then a secondary
+    <a class="hlink" data-underlined href="button.html">Button</a> for each
+    other account, leading to your app's page that starts its sign-in.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -509,9 +500,8 @@
 
 <play-example title="With many other accounts">
   <play-note>
-    Four or more go two to a row, each with its logo and the account's name.
-    Each is still named "Continue with" the account, so a screen reader says
-    what it does.
+    Four or more go two to a row, each still named "Continue with" the account
+    for a screen reader.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up>
     <h1 class="hauth-form-title">Create your account</h1>
@@ -618,14 +608,9 @@
 
 <play-example title="Confirm by link">
   <play-note>
-    Asking to confirm the email: once the form is sent, "Check your email"
-    takes the form's place, as in <a class="hlink" data-underlined
-    href="reset-password.html">Reset Password</a>, with the address, a resend,
-    and "use another email", which brings the form back with what was typed.
-    Every address gets this step, one that already has an account too, whose
-    owner your server emails instead, so the form never says who has an
-    account. An address at Gmail, Outlook, or Yahoo gets a button that opens
-    its inbox.
+    Once it's sent, "Check your email" takes the form's place, with a resend
+    and "use another email". Every address gets this step, so the form never
+    says who has an account.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up data-example-sign-up-confirm="link">
     <h1 class="hauth-form-title">Create your account</h1>
@@ -705,10 +690,10 @@
 
 <play-example title="Confirm by code">
   <play-note>
-    Or by a code, sent to the email: once the form is sent, <a class="hlink"
-    data-underlined href="verify-code.html">Verify Code</a> takes the form's
-    place, sending itself as the last digit arrives, with a new code after a
-    wait and "Use another email".
+    Or by a code:
+    <a class="hlink" data-underlined href="verify-code.html">Verify Code</a>
+    takes the form's place, with a new code after a wait, and "Use another
+    email".
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-sign-up data-example-sign-up-confirm="code">
     <h1 class="hauth-form-title">Create your account</h1>

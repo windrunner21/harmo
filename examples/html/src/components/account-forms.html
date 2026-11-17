@@ -1,13 +1,13 @@
 <play-example title="Default">
   <play-note>
-    The <a class="hlink" data-underlined href="sign-in-form.html">Sign-in Form</a>,
-    the <a class="hlink" data-underlined href="sign-up-form.html">Sign-up Form</a>,
-    and <a class="hlink" data-underlined href="reset-password.html">Reset Password</a>'s
-    request, all in the page, one shown at a time. Their links are real links
-    to each form's own page, but a click on one shows that form in place: the
-    card grows or shrinks from the last form's size to its own as its content
-    fades in, its title takes focus, and the email typed so far comes with it.
-    Each form works as it does on its own page.
+    The
+    <a class="hlink" data-underlined href="sign-in-form.html">Sign-in Form</a>,
+    the
+    <a class="hlink" data-underlined href="sign-up-form.html">Sign-up Form</a>,
+    and
+    <a class="hlink" data-underlined href="reset-password.html">Reset Password</a>'s
+    request in one card, one at a time. A link between them shows that form in
+    place, with the email typed so far.
   </play-note>
   <div class="haccount-forms" data-example-account-forms>
     <div class="haccount-forms-view" data-example-account-forms-page="/sign-in">
@@ -331,9 +331,8 @@
 
 <play-example title="With other accounts">
   <play-note>
-    The same, with other accounts under the Sign-in and the Sign-up Forms'
-    buttons, so an account someone signed up with is there to sign in with
-    too: <code>providers</code> in React, which goes to both.
+    The same, with other accounts under both the Sign-in and the Sign-up
+    Forms' buttons: <code>providers</code> in React.
   </play-note>
   <div class="haccount-forms" data-example-account-forms>
     <div class="haccount-forms-view" data-example-account-forms-page="/sign-in">
@@ -525,13 +524,9 @@
 <play-example title="In a Dialog">
   <play-note>
     In a <a class="hlink" data-underlined href="dialog.html">Dialog</a>, for
-    when signing in mustn't leave the page, such as saving changes made
-    before it: the Dialog is the card, so the forms take off their own frame,
-    and their titles step down to <code>&lt;h3&gt;</code>s under the Dialog's
-    <code>&lt;h2&gt;</code>. They switch in place, as
-    above, and the Dialog grows or shrinks with them.
-    <code>closedby="closerequest"</code> keeps a stray click outside from
-    closing it on a half-typed password.
+    when signing in mustn't leave the page: the Dialog is the card, and grows
+    or shrinks as the forms switch, their titles <code>&lt;h3&gt;</code>s
+    under its own.
   </play-note>
   <button class="hbutton" type="button" commandfor="account-dialog" command="show-modal">
     <span class="hbutton-label">Save changes</span>

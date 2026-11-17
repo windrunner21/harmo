@@ -1,12 +1,10 @@
 <play-example title="Default">
   <play-note>
     A raised <a class="hlink" data-underlined href="card.html">Card</a> with
-    the code, in an <a class="hlink" data-underlined href="otp-input.html">OTP
-    Input</a>, under where it went. The form sends itself as the last digit
-    arrives, typed, pasted, or filled in from a message. "Send a new code"
-    waits 30 seconds, counting down, and waits again after each code it sends.
-    A code that's turned down gets its error under the field, which takes
-    focus with its code selected, and the form shakes.
+    the code in an
+    <a class="hlink" data-underlined href="otp-input.html">OTP Input</a>,
+    under where it went. It sends itself as the last digit arrives, and "Send
+    a new code" waits 30 seconds.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code>
     <div class="hauth-form-header">
@@ -107,9 +105,8 @@
 
 <play-example title="Confirming a phone number">
   <play-note>
-    On a page of its own, such as one that confirms a phone number: a title of
-    your own, the code in two groups as the message writes it, a minute
-    between new codes, and a way back of your own.
+    A title of your own, the code in two groups as the message writes it, a
+    minute between new codes, and a way back of your own.
   </play-note>
   <form class="hcard hauth-form" data-variant="raised" method="post" novalidate data-example-verify-code data-example-verify-code-resend-after="60">
     <div class="hauth-form-header">

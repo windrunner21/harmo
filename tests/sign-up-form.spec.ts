@@ -263,7 +263,7 @@ onEachPlayground("sign-up-form", () => {
     }
   });
 
-  test("any other email signs up, with no error", async ({ page }) => {
+  test("any other email signs up, with no error, and a toast says so where the app would go on", async ({ page }) => {
     const elements = await parts(page);
     const { name, email, password, button } = elements;
     await fillIn(elements);
@@ -274,6 +274,9 @@ onEachPlayground("sign-up-form", () => {
       expect(await errorOf(input)).toBe("");
       await expect(input).not.toHaveAttribute("aria-invalid");
     }
+    const toast = page.locator(".htoast:not([data-removed])");
+    await expect(toast.locator(".htoast-title")).toHaveText("Account created");
+    await expect(toast.locator(".htoast-description")).toHaveText("You're signed in as sam.lee@example.com.");
   });
 
   test("every form posts its named fields, so one sent before its script runs keeps what was typed out of the page's address", async ({ page }) => {
@@ -516,6 +519,7 @@ onEachPlayground("sign-up-form", () => {
     await code.pressSequentially("123456");
     await expect(card.getByRole("button", { name: "Verify" })).not.toHaveAttribute("aria-busy");
     await expect.poll(() => errorOf(code)).toBe("");
+    await expect(page.locator(".htoast:not([data-removed]) .htoast-title")).toHaveText("Email confirmed");
     await card.getByRole("link", { name: "Use another email" }).click();
     await expect(form.getByRole("heading", { name: "Create your account" })).toBeFocused();
     await expect(email).toHaveValue("sam.lee@example.com");

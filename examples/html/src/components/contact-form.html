@@ -1,15 +1,9 @@
 <play-example title="Default">
   <play-note>
     A raised <a class="hlink" data-underlined href="card.html">Card</a> with
-    the name and email side by side, and a <a class="hlink" data-underlined
-    href="textarea.html">TextArea</a> with its counter. Each placeholder is an
-    example of what to type, under a label that stays. Sending checks the
-    fields first: each error shows under its field, the first field in error
-    takes focus, and the card shakes once, unless you've asked for reduced
-    motion. Then the button works for a moment, and a thank-you takes the
-    form's place and focus, the card shrinking to it as it fades in. A message
-    the server gives for the whole form shows above the button; one for a
-    field shows under it, as the form's own errors do.
+    the name and email side by side, and a
+    <a class="hlink" data-underlined href="textarea.html">TextArea</a> with
+    its counter. Once it's sent, a thank-you takes the form's place.
   </play-note>
   <div class="hcard hcontact-form" data-variant="raised" data-example-contact="message">
     <form class="hcontact-form-form" method="post" novalidate>
@@ -74,16 +68,11 @@
 
 <play-example title="Sales inquiry" layout="wide">
   <play-note>
-    For a sales page, beside its pitch: a <a class="hlink" data-underlined
-    href="section.html">Section</a> with a heading, a description, and a few
-    points as ghost <a class="hlink" data-underlined
-    href="card.html">Cards</a>. The form takes a company email and a full
-    name, then an optional phone number, country, website, and a message of up
-    to 300 characters. The country is a <a class="hlink" data-underlined
-    href="select.html">Select</a> with a search, whose options React names
-    from region codes. A phone number or a website that's typed is checked
-    too. The server's message about what was written, such as one about links
-    in it, shows above the button, since the message has no error of its own.
+    For a sales page, beside its pitch in a
+    <a class="hlink" data-underlined href="section.html">Section</a>: a
+    company email and full name, then an optional phone number, country, from
+    a <a class="hlink" data-underlined href="select.html">Select</a> with a
+    search, website, and message.
   </play-note>
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: var(--harmo-space-lg); align-items: start">
     <section class="hsection" aria-labelledby="sales-pitch-title">
@@ -754,16 +743,12 @@
 
 <play-example title="Support request">
   <play-note>
-    The email and a topic, from a <a class="hlink" data-underlined
-    href="select.html">Select</a>, side by side, then a subject, the message,
-    and attachments: a <a class="hlink" data-underlined
-    href="file-input.html">File Input</a> that takes up to five files of 10 MB
-    each, which show in a <a class="hlink" data-underlined
-    href="file-list.html">File List</a> under it. Removing the last one moves
-    focus back to the File Input. Each file uploads as it's added, with its
-    progress, and the form sends the keys they're stored under; sending waits
-    for an upload still running. The attachments show once the script runs,
-    since uploading needs it.
+    The email and a topic, from a
+    <a class="hlink" data-underlined href="select.html">Select</a>, then a
+    subject, the message, and up to five attachments in a
+    <a class="hlink" data-underlined href="file-input.html">File Input</a> and
+    <a class="hlink" data-underlined href="file-list.html">File List</a>, each
+    uploading as it's added.
   </play-note>
   <div class="hcard hcontact-form" data-variant="raised" data-example-contact="support">
     <form class="hcontact-form-form" method="post" enctype="multipart/form-data" novalidate>
@@ -913,11 +898,9 @@
 
 <play-example title="Order help">
   <play-note>
-    For a shop: the order number and email, then what's wrong, as a <a
-    class="hlink" data-underlined href="select.html">Select</a>. Then photos,
-    which show as a grid of thumbnails, and an optional message, which starts
-    four lines tall. The photos' File Input takes only pictures, up to five.
-    The photos go with the form when it's sent.
+    For a shop: the order number and email, what's wrong, from a
+    <a class="hlink" data-underlined href="select.html">Select</a>, then up to
+    five photos, shown as thumbnails and sent with the form.
   </play-note>
   <div class="hcard hcontact-form" data-variant="raised" data-example-contact="order">
     <form class="hcontact-form-form" method="post" enctype="multipart/form-data" novalidate>
@@ -1067,13 +1050,11 @@
 
 <play-example title="Contact options" layout="wide">
   <play-note>
-    The ways to reach you, for a contact page, as raised <a class="hlink"
-    data-underlined href="card.html">Cards</a> side by side: each with an
-    icon, a title, a description, and a secondary <a class="hlink"
-    data-underlined href="button.html">Button</a> that's a link, to the sales
-    page, an email to support, or the help center. The buttons line up at the
-    cards' bottom. The support address in its sentence is a link too,
-    semibold, so more than its color tells it from the text.
+    The ways to reach you, for a contact page: raised
+    <a class="hlink" data-underlined href="card.html">Cards</a> side by side,
+    each with an icon, a description, and a
+    <a class="hlink" data-underlined href="button.html">Button</a> to sales,
+    support by email, or the help center.
   </play-note>
   <ul class="hcontact-options" role="list">
     <li class="hcard hcontact-options-item" data-variant="raised">

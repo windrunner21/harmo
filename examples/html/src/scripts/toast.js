@@ -15,8 +15,21 @@
 // and back as it closes.
 //
 // A button with data-example-toast-title sends a toast; its other
-// data-example-toast-* attributes give the rest.
+// data-example-toast-* attributes give the rest. So does an "example:toast"
+// event, its detail the toast, which the patterns' examples send as they
+// succeed, as an app's next page would say so; a page of their forms that
+// has no region gets one, at its end, as an app's layout would have.
 {
+  if (!document.querySelector(".htoaster") && document.querySelector(".hauth-form")) {
+    document.body.insertAdjacentHTML(
+      "beforeend",
+      `<section class="htoaster" popover="manual" tabindex="-1" aria-label="Notifications (F8)">
+        <ol class="htoaster-list"></ol>
+        <div class="htoaster-announce" role="status" aria-atomic="false"></div>
+        <div class="htoaster-announce" role="alert" aria-atomic="false"></div>
+      </section>`,
+    );
+  }
   const toaster = document.querySelector(".htoaster");
   if (toaster) {
     const list = toaster.querySelector(".htoaster-list");
@@ -507,6 +520,8 @@
         action: exampleToastAction && { label: exampleToastAction },
       });
     });
+
+    document.addEventListener("example:toast", (event) => toast(event.detail));
 
     // The drawer example: a shortcut that's taken keeps it open, with an
     // error toast; any other closes it, with a toast that it's saved.
