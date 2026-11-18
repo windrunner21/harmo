@@ -62,6 +62,7 @@ const helpers = [
 
 // Stylesheets a component needs without importing that component's code.
 const alsoStyledBy: Record<string, string[]> = {
+  "account-menu": ["avatar"],
   breadcrumb: ["chevron", "link"],
   combobox: ["input"],
   "command-menu": ["dialog"],

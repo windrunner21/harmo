@@ -23,6 +23,35 @@ export const examples = {
     </>
   ),
 
+  "Extra small": () => (
+    <>
+      <Button size="xsmall">Save</Button>
+      <Button variant="secondary" size="xsmall">
+        Cancel
+      </Button>
+      <Button variant="tertiary" size="xsmall">
+        Details
+      </Button>
+    </>
+  ),
+
+  Round: () => (
+    <>
+      <Button shape="circle" aria-label="Add contact">
+        <PlusIcon className="hicon" />
+      </Button>
+      <Button variant="secondary" shape="circle" size="small" aria-label="More actions">
+        <MoreIcon className="hicon" />
+      </Button>
+      <Button shape="circle" size="xsmall" aria-label="Create">
+        <PlusIcon className="hicon" />
+      </Button>
+      <Button variant="secondary" shape="circle">
+        Follow
+      </Button>
+    </>
+  ),
+
   Disabled: () => (
     <>
       <Button disabled>Save changes</Button>
@@ -92,6 +121,9 @@ export const examples = {
         <PlusIcon className="hicon" />
       </Button>
       <Button variant="secondary" size="small" aria-label="More actions">
+        <MoreIcon className="hicon" />
+      </Button>
+      <Button variant="tertiary" size="xsmall" aria-label="More actions">
         <MoreIcon className="hicon" />
       </Button>
       <Button aria-label="Add contact" disabled>

@@ -1,0 +1,169 @@
+<play-example title="Actions">
+  <play-note>
+    A button with <code>aria-haspopup="menu"</code> opens a list of actions,
+    each a <code>&lt;button role="menuitem"&gt;</code>, with an optional icon.
+    Opened with <kbd class="hkbd">Enter</kbd>, <kbd class="hkbd">Space</kbd>,
+    or <kbd class="hkbd">↓</kbd>, focus goes to the first; the arrows move
+    it, and typing a letter goes to the item that starts with it. Choosing
+    one closes the menu. Delete is <code>data-destructive</code>.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="secondary"
+    type="button"
+    id="actions-trigger"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    popovertarget="actions-menu"
+    style="anchor-name: --actions-menu"
+  >
+    <span class="hbutton-label">Actions</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div
+    class="hpopup hdropdown-menu"
+    id="actions-menu"
+    role="menu"
+    tabindex="-1"
+    aria-labelledby="actions-trigger"
+    popover
+    style="position-anchor: --actions-menu"
+  >
+    <button class="hdropdown-menu-item" type="button" role="menuitem" tabindex="-1">
+      <play-icon name="edit" class="hicon"></play-icon>Edit
+    </button>
+    <button class="hdropdown-menu-item" type="button" role="menuitem" tabindex="-1">
+      <play-icon name="copy" class="hicon"></play-icon>Duplicate
+    </button>
+    <button class="hdropdown-menu-item" type="button" role="menuitem" tabindex="-1">
+      <play-icon name="share" class="hicon"></play-icon>Share
+    </button>
+    <div class="hdropdown-menu-separator" role="separator"></div>
+    <button class="hdropdown-menu-item" type="button" role="menuitem" tabindex="-1" data-destructive>
+      <play-icon name="trash" class="hicon"></play-icon>Delete
+    </button>
+  </div>
+  <p hidden data-example-chosen="Chose {label}"></p>
+</play-example>
+
+<play-example title="With a submenu">
+  <play-note>
+    An item with <code>aria-haspopup="menu"</code> and
+    <code>popovertargetaction="show"</code> opens a menu beside it, a
+    Dropdown Menu inside this one, after its item. Pointed at, it opens a
+    moment later; resting on another item closes it, so the pointer can
+    cross others on its way. <kbd class="hkbd">→</kbd>,
+    <kbd class="hkbd">Enter</kbd>, or <kbd class="hkbd">Space</kbd> opens it
+    on its first item, and <kbd class="hkbd">←</kbd> closes it. Choosing in it
+    closes both.
+  </play-note>
+  <button type="button" id="ticket-trigger" aria-haspopup="menu" popovertarget="ticket-menu" aria-expanded="false" style="anchor-name: --ticket-menu" class="hbutton" data-variant="secondary">
+    <span class="hbutton-label">Ticket</span>
+    <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+  </button>
+  <div role="menu" tabindex="-1" aria-labelledby="ticket-trigger" class="hpopup hdropdown-menu" id="ticket-menu" popover style="position-anchor: --ticket-menu">
+    <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="edit" class="hicon"></play-icon>Edit</button>
+    <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" popovertargetaction="show" id="ticket-share-trigger" aria-haspopup="menu" popovertarget="ticket-share" aria-expanded="false" style="anchor-name: --ticket-share">
+      <play-icon name="share" class="hicon"></play-icon>
+      Share
+      <play-icon name="chevron" class="hicon hchevron hdropdown-menu-sub-chevron"></play-icon>
+    </button>
+    <div role="menu" tabindex="-1" aria-labelledby="ticket-share-trigger" class="hpopup hdropdown-menu" id="ticket-share" popover style="position-anchor: --ticket-share">
+      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Email</button>
+      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Message</button>
+      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Copy link</button>
+    </div>
+    <div role="separator" class="hdropdown-menu-separator"></div>
+    <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" data-destructive><play-icon name="trash" class="hicon"></play-icon>Delete</button>
+  </div>
+  <p hidden data-example-chosen="Chose {label}"></p>
+</play-example>
+
+<play-example title="Aligned to its end" layout="wide">
+  <play-note>
+    Its items can be links, each an <code>&lt;a role="menuitem"&gt;</code>.
+    Opened from the end of a bar, such as a header's round Create, it's
+    aligned to its button's end with the Popup's
+    <code>data-align="end"</code>.
+  </play-note>
+  <div style="display: flex; justify-content: flex-end">
+    <button
+      class="hbutton"
+      data-size="xsmall"
+      data-shape="circle"
+      type="button"
+      id="create-trigger"
+      aria-label="Create"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      popovertarget="create-menu"
+      style="anchor-name: --create-menu"
+    >
+      <play-icon name="plus" class="hicon"></play-icon>
+    </button>
+    <div
+      class="hpopup hdropdown-menu"
+      id="create-menu"
+      role="menu"
+      tabindex="-1"
+      aria-labelledby="create-trigger"
+      data-align="end"
+      popover
+      style="position-anchor: --create-menu"
+    >
+      <a class="hdropdown-menu-item" href="#new-order" role="menuitem" tabindex="-1">
+        <play-icon name="tickets" class="hicon"></play-icon>Order
+      </a>
+      <a class="hdropdown-menu-item" href="#new-customer" role="menuitem" tabindex="-1">
+        <play-icon name="user" class="hicon"></play-icon>Customer
+      </a>
+      <a class="hdropdown-menu-item" href="#new-campaign" role="menuitem" tabindex="-1">
+        <play-icon name="campaigns" class="hicon"></play-icon>Campaign
+      </a>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Groups">
+  <play-note>
+    A <code>role="group"</code> gathers items under a label,
+    <code>.hdropdown-menu-group-label</code>, which names it through
+    <code>aria-labelledby</code>; a <code>role="separator"</code> divides
+    them. Icons are optional.
+  </play-note>
+  <button
+    class="hbutton"
+    data-variant="tertiary"
+    type="button"
+    id="more-trigger"
+    aria-label="More"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    popovertarget="more-menu"
+    style="anchor-name: --more-menu"
+  >
+    <play-icon name="more" class="hicon"></play-icon>
+  </button>
+  <div
+    class="hpopup hdropdown-menu"
+    id="more-menu"
+    role="menu"
+    tabindex="-1"
+    aria-labelledby="more-trigger"
+    popover
+    style="position-anchor: --more-menu"
+  >
+    <div role="group" aria-labelledby="more-workspace">
+      <div class="hdropdown-menu-group-label" id="more-workspace" role="presentation">Workspace</div>
+      <a class="hdropdown-menu-item" href="#settings" role="menuitem" tabindex="-1">Settings</a>
+      <a class="hdropdown-menu-item" href="#members" role="menuitem" tabindex="-1">Members</a>
+      <a class="hdropdown-menu-item" href="#billing" role="menuitem" tabindex="-1">Billing</a>
+    </div>
+    <div class="hdropdown-menu-separator" role="separator"></div>
+    <div role="group" aria-labelledby="more-account">
+      <div class="hdropdown-menu-group-label" id="more-account" role="presentation">Account</div>
+      <a class="hdropdown-menu-item" href="#profile" role="menuitem" tabindex="-1">Profile</a>
+      <a class="hdropdown-menu-item" href="#sign-out" role="menuitem" tabindex="-1">Sign out</a>
+    </div>
+  </div>
+</play-example>

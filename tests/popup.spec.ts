@@ -56,6 +56,38 @@ onEachPlayground("popup", () => {
     expect(p.x + p.width).toBeCloseTo(t.x + t.width, 0);
   });
 
+  test("aligned to its end, it opens 8px below its trigger, lined up with its end, and stays there as it closes", async ({ page }) => {
+    const container = await example(page, "popup-aligned-to-its-end");
+    const trigger = container.getByRole("button", { name: "Newest first" });
+    const popup = container.locator(".hpopup");
+    await expect(popup).toHaveAttribute("data-align", "end");
+    await trigger.click();
+    await expect(popup).toHaveCSS("opacity", "1");
+    const [t, p] = await boxes(trigger, popup);
+    expect(p.y - (t.y + t.height)).toBeCloseTo(8, 0);
+    expect(p.x + p.width).toBeCloseTo(t.x + t.width, 0);
+    expect(p.width).toBeGreaterThan(t.width);
+    await page.keyboard.press("Escape");
+    await expect(popup).toHaveAttribute("data-pinned");
+    const closing = await popup.boundingBox();
+    expect(closing!.x + closing!.width).toBeCloseTo(t.x + t.width, 0);
+  });
+
+  test("aligned to its end, without room at the start, it aligns to the trigger's start", async ({ page }) => {
+    const container = await example(page, "popup-aligned-to-its-end");
+    const trigger = container.getByRole("button", { name: "Newest first" });
+    // Move the trigger to 24px from the window's start.
+    await trigger.evaluate((element) => {
+      const room = element.getBoundingClientRect().left;
+      Object.assign(element.style, { position: "relative", left: `${24 - room}px` });
+    });
+    const popup = container.locator(".hpopup");
+    await trigger.click();
+    await expect(popup).toHaveCSS("opacity", "1");
+    const [t, p] = await boxes(trigger, popup);
+    expect(p.x).toBeCloseTo(t.x, 0);
+  });
+
   test("without room below, it opens above", async ({ page }) => {
     const container = page.locator('[id="popup-placement"]');
     const trigger = container.getByRole("button", { name: "Last 30 days" });

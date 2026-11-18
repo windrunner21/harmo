@@ -56,7 +56,7 @@ export const examples = {
   Bubbles: () => (
     <Conversation aria-label="Conversation" latestLabel="Jump to latest" style={panel("24rem")}>
       <Message from="assistant" bubble avatar={bot}>
-        Hi! I'm Fernhill Market's assistant.
+        Hi! I'm Speedwagon's assistant.
       </Message>
       <Message
         from="assistant"

@@ -21,9 +21,9 @@ describe("ShowcaseCard", () => {
   });
 
   test("without an action there's no line, the title takes labelAs, and fold folds the corner", () => {
-    const markup = renderToStaticMarkup(<ShowcaseCard href="/stories/fernhill" label="Fernhill Market" labelAs="p" fold />);
-    expect(markup).toStartWith('<a href="/stories/fernhill" class="hshowcase-card" data-fold="">');
-    expect(markup).toContain('<p class="hshowcase-card-title">Fernhill Market</p>');
+    const markup = renderToStaticMarkup(<ShowcaseCard href="/stories/speedwagon" label="Speedwagon" labelAs="p" fold />);
+    expect(markup).toStartWith('<a href="/stories/speedwagon" class="hshowcase-card" data-fold="">');
+    expect(markup).toContain('<p class="hshowcase-card-title">Speedwagon</p>');
     expect(markup).not.toContain("hshowcase-card-action");
     expect(markup).not.toContain("hshowcase-card-description");
   });

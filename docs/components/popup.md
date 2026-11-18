@@ -43,6 +43,7 @@ panel lays out its own content.
 
 | Hook | Effect |
 | --- | --- |
+| `data-align="end"` | Aligned to its trigger's end edge instead of its start, as for a popup from the end of a bar or a row; without room, it aligns to the start edge |
 | `data-side="top"` | The popup opened above its trigger, so it slides from below |
 
 ## Appearance and states
@@ -55,6 +56,9 @@ panel lays out its own content.
   trigger's other edge; above, aligned to the other edge; below, shrunk to the
   window and scrolling; then, if it's too wide for either side of the trigger,
   below and centered in the window.
+- With `data-align="end"`, it's aligned to the trigger's end edge, and ends
+  at least 8px from the window's start; without room, it tries the same
+  order, its other edge being the start.
 - Each opening starts from below. Browsers keep the last position that fit
   while it still fits, so an open popup doesn't jump as the page scrolls. A
   change to the fallback list makes them forget it, so `data-refit`, which a
@@ -118,6 +122,7 @@ it. Other props, `ref` included, are the popup `<div>`'s.
 | Prop | Effect |
 | --- | --- |
 | `trigger` | The element that opens it, such as a `<Button>` or a `<FilterChip>` |
+| `align` | `"start"`, the default, or `"end"`: which of the trigger's edges it's aligned to |
 | `id` | The popup's id; generated when left out. Pass your own to close it from a button inside, with `popoverTarget` and `popoverTargetAction="hide"` |
 
 ```tsx

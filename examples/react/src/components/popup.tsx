@@ -70,4 +70,26 @@ export const examples = {
       </Listbox>
     </Popup>
   ),
+
+  "Aligned to its end": () => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--harmo-space-sm)" }}>
+      <span style={{ color: "var(--harmo-color-text-secondary)", fontSize: "var(--harmo-font-size-sm)" }}>12 orders</span>
+      <Popup
+        align="end"
+        trigger={
+          <Button variant="secondary" aria-haspopup="listbox">
+            Newest first
+            <ExpandChevron />
+          </Button>
+        }
+      >
+        <Listbox aria-label="Sort by" defaultValue="newest">
+          <Option value="newest">Newest first</Option>
+          <Option value="oldest">Oldest first</Option>
+          <Option value="total">Largest total</Option>
+          <Option value="customer">Customer, A to Z</Option>
+        </Listbox>
+      </Popup>
+    </div>
+  ),
 };

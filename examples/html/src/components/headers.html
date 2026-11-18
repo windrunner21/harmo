@@ -1,0 +1,625 @@
+<play-example title="Site header" layout="wide">
+  <play-note>
+    A site's header: its logo, a
+    <a class="hlink" data-underlined href="navigation-menu.html">Navigation Menu</a>
+    whose Shop and Recipes open panels as you point at them, the panel
+    changing its size as you move from one to the other, and Sign in and
+    Order now. It's clear over the hero, and moves away with the page as you
+    scroll down, back as you scroll up. The page and its logo are stand-ins.
+  </play-note>
+  <div style="block-size: 24rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader hsite-header" data-scroll="hide" data-transparent>
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+        </div>
+        <nav aria-label="Main" class="hnavigation-menu">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li>
+              <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-1">
+                Shop
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </button>
+              <div class="hnavigation-menu-content" id="headers-site-header-1" inert>
+                <ul class="hnavigation-menu-rows">
+                  <li>
+                    <a href="#offers" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="campaigns" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">This week's offers</span>
+                        <span class="hnavigation-menu-description">What's in season, for less</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#delivery" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="home" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">Delivery</span>
+                        <span class="hnavigation-menu-description">To your door, in a window you choose</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#gift-cards" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="tickets" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">Gift cards</span>
+                        <span class="hnavigation-menu-description">Any amount, sent by email</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-2">
+                Recipes
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </button>
+              <div class="hnavigation-menu-content" id="headers-site-header-2" inert>
+                <ul class="hnavigation-menu-rows">
+                  <li>
+                    <a href="#this-week" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="calendar" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">This week's menu</span>
+                        <span class="hnavigation-menu-description">Seven dinners, planned for you</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#for-a-crowd" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="team" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">For a crowd</span>
+                        <span class="hnavigation-menu-description">Dishes that feed eight or more</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#kitchen" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="book" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">From our kitchen</span>
+                        <span class="hnavigation-menu-description">Stories and tips from our cooks</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#cuisines" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="globe" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">By cuisine</span>
+                        <span class="hnavigation-menu-description">Dishes from around the world</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li><a href="#stores" class="hnavigation-menu-link">Stores</a></li>
+          </ul>
+        </nav>
+        <div class="hheader-actions">
+          <div class="hsite-header-actions">
+            <a href="#sign-in" class="hbutton" data-variant="tertiary"><span class="hbutton-label">Sign in</span></a>
+            <a href="#order" class="hbutton"><span class="hbutton-label">Order now</span></a>
+          </div>
+          <button type="button" aria-label="Menu" aria-controls="headers-site-header-3" aria-expanded="false" class="hbutton hmenu-button hsite-header-menu" data-variant="secondary" data-size="small">
+            <play-icon name="menu-bars" class="hicon hmenu-button-bars"></play-icon>
+          </button>
+          <div id="headers-site-header-3" class="hsite-header-panel">
+            <div class="hsite-header-panel-menu">
+              <nav aria-label="Main" class="hnavigation-menu" data-orientation="vertical">
+                <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+                <ul class="hnavigation-menu-list">
+                  <li>
+                    <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-4">
+                      Shop
+                      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                    </button>
+                    <div class="hnavigation-menu-content" id="headers-site-header-4" inert>
+                      <ul class="hnavigation-menu-rows">
+                        <li>
+                          <a href="#offers" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="campaigns" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">This week's offers</span>
+                              <span class="hnavigation-menu-description">What's in season, for less</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#delivery" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="home" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">Delivery</span>
+                              <span class="hnavigation-menu-description">To your door, in a window you choose</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#gift-cards" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="tickets" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">Gift cards</span>
+                              <span class="hnavigation-menu-description">Any amount, sent by email</span>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-5">
+                      Recipes
+                      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                    </button>
+                    <div class="hnavigation-menu-content" id="headers-site-header-5" inert>
+                      <ul class="hnavigation-menu-rows">
+                        <li>
+                          <a href="#this-week" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="calendar" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">This week's menu</span>
+                              <span class="hnavigation-menu-description">Seven dinners, planned for you</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#for-a-crowd" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="team" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">For a crowd</span>
+                              <span class="hnavigation-menu-description">Dishes that feed eight or more</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#kitchen" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="book" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">From our kitchen</span>
+                              <span class="hnavigation-menu-description">Stories and tips from our cooks</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#cuisines" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="globe" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">By cuisine</span>
+                              <span class="hnavigation-menu-description">Dishes from around the world</span>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li><a href="#stores" class="hnavigation-menu-link">Stores</a></li>
+                </ul>
+              </nav>
+            </div>
+            <div class="hsite-header-panel-actions">
+              <a href="#sign-in" class="hbutton" data-variant="secondary"><span class="hbutton-label">Sign in</span></a>
+              <a href="#order" class="hbutton"><span class="hbutton-label">Order now</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; align-content: end; min-block-size: 14rem; margin-block-start: -3.375rem; padding: 5rem var(--harmo-space-sm) var(--harmo-space-md); background: linear-gradient(160deg, var(--harmo-color-primary-tint), var(--harmo-color-background-secondary))">
+      <h2 style="margin: 0; font-size: var(--harmo-font-size-lg); line-height: 1.4; color: var(--harmo-color-text)">The season's first strawberries</h2>
+    </div>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+
+</play-example>
+
+<play-example title="Site header on a phone" layout="wide">
+  <play-note>
+    Where it's 640px wide or less, the menu and the actions move behind a
+    <a class="hlink" data-underlined href="menu-button.html">Menu Button</a>,
+    which slides them in under the bar and turns into a close as it does:
+    the menu stacked, its sections opening in place, and the actions side by
+    side at the foot. Here it's a bigger site's menu: open Recipes, and it
+    scrolls on its own, the actions staying in reach.
+    <kbd class="hkbd">Escape</kbd> closes it.
+  </play-note>
+  <div style="block-size: 34rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius); inline-size: 100%; max-inline-size: 24rem; margin-inline: auto; --hsite-header-menu-height: calc(34rem - 3.375rem)">
+    <header class="hheader hsite-header" data-scroll="hide">
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+        </div>
+        <nav aria-label="Main" class="hnavigation-menu">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li>
+              <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-on-a-phone-1">
+                Shop
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </button>
+              <div class="hnavigation-menu-content" id="headers-site-header-on-a-phone-1" inert>
+                <ul class="hnavigation-menu-rows">
+                  <li>
+                    <a href="#offers" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="campaigns" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">This week's offers</span>
+                        <span class="hnavigation-menu-description">What's in season, for less</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#delivery" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="home" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">Delivery</span>
+                        <span class="hnavigation-menu-description">To your door, in a window you choose</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#gift-cards" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="tickets" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">Gift cards</span>
+                        <span class="hnavigation-menu-description">Any amount, sent by email</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li>
+              <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-on-a-phone-2">
+                Recipes
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </button>
+              <div class="hnavigation-menu-content" id="headers-site-header-on-a-phone-2" inert>
+                <ul class="hnavigation-menu-rows">
+                  <li>
+                    <a href="#this-week" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="calendar" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">This week's menu</span>
+                        <span class="hnavigation-menu-description">Seven dinners, planned for you</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#for-a-crowd" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="team" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">For a crowd</span>
+                        <span class="hnavigation-menu-description">Dishes that feed eight or more</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#kitchen" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="book" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">From our kitchen</span>
+                        <span class="hnavigation-menu-description">Stories and tips from our cooks</span>
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#cuisines" class="hnavigation-menu-row">
+                      <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="globe" class="hicon"></play-icon></span>
+                      <span class="hnavigation-menu-text">
+                        <span class="hnavigation-menu-title">By cuisine</span>
+                        <span class="hnavigation-menu-description">Dishes from around the world</span>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li><a href="#stores" class="hnavigation-menu-link">Stores</a></li>
+            <li><a href="#about" class="hnavigation-menu-link">About</a></li>
+            <li><a href="#careers" class="hnavigation-menu-link">Careers</a></li>
+            <li><a href="#press" class="hnavigation-menu-link">Press</a></li>
+            <li><a href="#help" class="hnavigation-menu-link">Help</a></li>
+          </ul>
+        </nav>
+        <div class="hheader-actions">
+          <div class="hsite-header-actions">
+            <a href="#sign-in" class="hbutton" data-variant="tertiary"><span class="hbutton-label">Sign in</span></a>
+            <a href="#order" class="hbutton"><span class="hbutton-label">Order now</span></a>
+          </div>
+          <button type="button" aria-label="Menu" aria-controls="headers-site-header-on-a-phone-3" aria-expanded="false" class="hbutton hmenu-button hsite-header-menu" data-variant="secondary" data-size="small">
+            <play-icon name="menu-bars" class="hicon hmenu-button-bars"></play-icon>
+          </button>
+          <div id="headers-site-header-on-a-phone-3" class="hsite-header-panel">
+            <div class="hsite-header-panel-menu">
+              <nav aria-label="Main" class="hnavigation-menu" data-orientation="vertical">
+                <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+                <ul class="hnavigation-menu-list">
+                  <li>
+                    <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-on-a-phone-4">
+                      Shop
+                      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                    </button>
+                    <div class="hnavigation-menu-content" id="headers-site-header-on-a-phone-4" inert>
+                      <ul class="hnavigation-menu-rows">
+                        <li>
+                          <a href="#offers" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="campaigns" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">This week's offers</span>
+                              <span class="hnavigation-menu-description">What's in season, for less</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#delivery" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="home" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">Delivery</span>
+                              <span class="hnavigation-menu-description">To your door, in a window you choose</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#gift-cards" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="tickets" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">Gift cards</span>
+                              <span class="hnavigation-menu-description">Any amount, sent by email</span>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li>
+                    <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="headers-site-header-on-a-phone-5">
+                      Recipes
+                      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+                    </button>
+                    <div class="hnavigation-menu-content" id="headers-site-header-on-a-phone-5" inert>
+                      <ul class="hnavigation-menu-rows">
+                        <li>
+                          <a href="#this-week" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="calendar" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">This week's menu</span>
+                              <span class="hnavigation-menu-description">Seven dinners, planned for you</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#for-a-crowd" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="team" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">For a crowd</span>
+                              <span class="hnavigation-menu-description">Dishes that feed eight or more</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#kitchen" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="book" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">From our kitchen</span>
+                              <span class="hnavigation-menu-description">Stories and tips from our cooks</span>
+                            </span>
+                          </a>
+                        </li>
+                        <li>
+                          <a href="#cuisines" class="hnavigation-menu-row">
+                            <span class="hnavigation-menu-icon" aria-hidden="true"><play-icon name="globe" class="hicon"></play-icon></span>
+                            <span class="hnavigation-menu-text">
+                              <span class="hnavigation-menu-title">By cuisine</span>
+                              <span class="hnavigation-menu-description">Dishes from around the world</span>
+                            </span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                  <li><a href="#stores" class="hnavigation-menu-link">Stores</a></li>
+                  <li><a href="#about" class="hnavigation-menu-link">About</a></li>
+                  <li><a href="#careers" class="hnavigation-menu-link">Careers</a></li>
+                  <li><a href="#press" class="hnavigation-menu-link">Press</a></li>
+                  <li><a href="#help" class="hnavigation-menu-link">Help</a></li>
+                </ul>
+              </nav>
+            </div>
+            <div class="hsite-header-panel-actions">
+              <a href="#sign-in" class="hbutton" data-variant="secondary"><span class="hbutton-label">Sign in</span></a>
+              <a href="#order" class="hbutton"><span class="hbutton-label">Order now</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+
+</play-example>
+
+<play-example title="App header" layout="wide">
+  <play-note>
+    An app's header, beside its sidebar: a
+    <a class="hlink" data-underlined href="command-menu.html">Command Menu</a>
+    at the start, its list opening under it, which <kbd class="hkbd">/</kbd>
+    opens too, where you aren't typing; then Help; Notifications, an accent
+    <a class="hlink" data-underlined href="badge.html">Badge</a> counting the
+    unread, in a <a class="hlink" data-underlined href="popup.html">Popup</a>
+    with Mark all as read; Settings; and Create, round, with a short list of
+    what you can make. What opens is aligned to its button's end. It stays at
+    the top.
+  </play-note>
+  <div style="block-size: 24rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader happ-header" data-bordered>
+      <div class="hheader-bar">
+        <div class="happ-header-search">
+          <div class="hsearch" style="anchor-name: --headers-app-header-1">
+            <play-icon name="search" class="hicon"></play-icon>
+            <input class="hinput" type="text" role="combobox" autocomplete="off" aria-autocomplete="list" aria-expanded="false" aria-controls="headers-app-header-2" aria-label="Search" aria-keyshortcuts="/" placeholder="Search" value="" data-example-shortcut="/" data-example-empty="No results" />
+            <kbd aria-hidden="true" class="hkbd">/</kbd>
+          </div>
+          <div class="hpopup hcommand-menu" popover="manual" style="position-anchor: --headers-app-header-1">
+            <ul aria-label="Search" class="hlistbox" id="headers-app-header-2" role="listbox">
+              <li class="hoption-group" role="presentation">
+                <span class="hoption-group-label" id="headers-app-header-3">Go to</span>
+                <ul role="group" aria-labelledby="headers-app-header-3">
+                  <li class="hoption" id="headers-app-header-4" role="option" data-example-value="#orders" aria-selected="false"><span class="hoption-label">Orders</span></li>
+                  <li class="hoption" id="headers-app-header-5" role="option" data-example-value="#customers" aria-selected="false"><span class="hoption-label">Customers</span></li>
+                  <li class="hoption" id="headers-app-header-6" role="option" data-example-value="#settings" aria-selected="false"><span class="hoption-label">Settings</span></li>
+                </ul>
+              </li>
+              <li class="hoption-group" role="presentation">
+                <span class="hoption-group-label" id="headers-app-header-7">Recent</span>
+                <ul role="group" aria-labelledby="headers-app-header-7">
+                  <li class="hoption" id="headers-app-header-8" role="option" data-example-value="#order-4821" aria-selected="false">
+                    <span class="hoption-text"><span class="hoption-label">Order #4821</span><span class="hoption-description">Delivery tomorrow, 8 to 10 AM</span></span>
+                  </li>
+                  <li class="hoption" id="headers-app-header-9" role="option" data-example-value="#customer-ana" aria-selected="false">
+                    <span class="hoption-text"><span class="hoption-label">Ana Lopez</span><span class="hoption-description">ana@example.com</span></span>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <p class="hlistbox-empty" role="status"></p>
+          </div>
+        </div>
+        <div class="hheader-actions">
+          <a href="#help" aria-label="Help" class="hbutton" data-variant="tertiary"><play-icon name="help" class="hicon"></play-icon></a>
+          <button type="button" aria-label="Notifications, 2 unread" popovertarget="headers-app-header-10" aria-expanded="false" style="anchor-name: --headers-app-header-10" class="hbutton" data-variant="tertiary">
+            <play-icon name="bell" class="hicon"></play-icon>
+            <span aria-hidden="true" class="hbadge" data-variant="accent">2</span>
+          </button>
+          <div class="hpopup happ-header-notifications" id="headers-app-header-10" data-align="end" popover style="position-anchor: --headers-app-header-10">
+            <div class="happ-header-notifications-head">
+              <p class="happ-header-notifications-title">Notifications</p>
+              <button type="button" class="hlink" data-example-mark-read>Mark all as read</button>
+            </div>
+            <ul class="happ-header-notifications-list">
+              <li>
+                <a class="happ-header-notification" href="#order-4821" data-unread>
+                  <img class="havatar" src="images/imran.webp" alt="" />
+                  <span class="happ-header-notification-text">
+                    <span class="happ-header-notification-title">Imran mentioned you on order #4821</span>
+                    <span class="happ-header-notification-detail">&quot;Can you check the delivery window?&quot;</span>
+                    <span class="happ-header-notification-time">2 minutes ago</span>
+                  </span>
+                  <span role="img" aria-label="Unread" class="hbadge" data-variant="accent" data-dot></span>
+                </a>
+              </li>
+              <li>
+                <a class="happ-header-notification" href="#ticket-1042" data-unread>
+                  <span aria-hidden="true" class="havatar">AL</span>
+                  <span class="happ-header-notification-text">
+                    <span class="happ-header-notification-title">Ana Lopez assigned you a ticket</span>
+                    <span class="happ-header-notification-detail">Mug arrived cracked</span>
+                    <span class="happ-header-notification-time">1 hour ago</span>
+                  </span>
+                  <span role="img" aria-label="Unread" class="hbadge" data-variant="accent" data-dot></span>
+                </a>
+              </li>
+              <li>
+                <a class="happ-header-notification" href="#reports">
+                  <span aria-hidden="true" class="havatar"><play-icon name="analytics" class="hicon"></play-icon></span>
+                  <span class="happ-header-notification-text">
+                    <span class="happ-header-notification-title">Last week's report is ready</span>
+                    <span class="happ-header-notification-time">Yesterday</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <a href="#settings" aria-label="Settings" class="hbutton" data-variant="tertiary"><play-icon name="settings" class="hicon"></play-icon></a>
+          <button type="button" aria-label="Create" id="headers-app-header-11-trigger" aria-haspopup="menu" popovertarget="headers-app-header-12" aria-expanded="false" style="anchor-name: --headers-app-header-12" class="hbutton happ-header-create" data-size="xsmall" data-shape="circle">
+            <play-icon name="plus" class="hicon"></play-icon>
+          </button>
+          <div role="menu" tabindex="-1" aria-labelledby="headers-app-header-11-trigger" class="hpopup hdropdown-menu happ-header-create-menu" id="headers-app-header-12" data-align="end" popover style="position-anchor: --headers-app-header-12">
+            <a href="#new-order" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="tickets" class="hicon"></play-icon>Order</a>
+            <a href="#new-customer" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="user" class="hicon"></play-icon>Customer</a>
+            <a href="#new-campaign" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="campaigns" class="hicon"></play-icon>Campaign</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+
+</play-example>
+
+<play-example title="Simple header" layout="wide">
+  <play-note>
+    For a sign-in page: the logo, home, and a link for help. It scrolls away
+    with the page.
+  </play-note>
+  <div style="block-size: 24rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader hsimple-header" data-scroll="away">
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+        </div>
+        <div class="hheader-actions"><a href="#help" class="hlink">Need help?</a></div>
+      </div>
+    </header>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+
+</play-example>

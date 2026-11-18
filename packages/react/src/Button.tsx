@@ -23,7 +23,8 @@ import { withClass } from "./withClass.ts";
 interface ButtonOptions {
   variant?: "secondary" | "tertiary";
   badge?: ReactNode;
-  size?: "small";
+  size?: "small" | "xsmall";
+  shape?: "circle";
   destructive?: boolean;
   loading?: boolean;
   instant?: boolean;
@@ -56,6 +57,7 @@ export const Button = ({
   variant,
   badge,
   size,
+  shape,
   destructive,
   loading,
   instant,
@@ -79,6 +81,7 @@ export const Button = ({
     className: withClass("hbutton", className),
     "data-variant": variant,
     "data-size": size,
+    "data-shape": shape,
     "data-destructive": destructive ? "" : undefined,
     "data-instant": instant ? "" : undefined,
     "aria-busy": loading || props["aria-busy"] || undefined,

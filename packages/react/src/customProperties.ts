@@ -52,6 +52,7 @@ export type HarmoCustomProperty =
   | "--harmo-color-warning"
   | "--harmo-control-height"
   | "--harmo-control-height-small"
+  | "--harmo-control-height-xsmall"
   | "--harmo-cyan"
   | "--harmo-dark-gray"
   | "--harmo-dark-purple"
@@ -148,6 +149,8 @@ export type HarmoCustomProperty =
   | "--hdrawer-shift"
   | "--hfield-gap"
   | "--hfile-list-progress"
+  | "--hheader-height"
+  | "--hheader-width"
   | "--hlanguage-picker-close"
   | "--hlanguage-picker-columns"
   | "--hlanguage-picker-open"
@@ -273,6 +276,7 @@ declare module "react" {
     "--harmo-color-warning"?: string | number;
     "--harmo-control-height"?: string | number;
     "--harmo-control-height-small"?: string | number;
+    "--harmo-control-height-xsmall"?: string | number;
     "--harmo-cyan"?: string | number;
     "--harmo-dark-gray"?: string | number;
     "--harmo-dark-purple"?: string | number;
@@ -369,6 +373,8 @@ declare module "react" {
     "--hdrawer-shift"?: string | number;
     "--hfield-gap"?: string | number;
     "--hfile-list-progress"?: string | number;
+    "--hheader-height"?: string | number;
+    "--hheader-width"?: string | number;
     "--hlanguage-picker-close"?: string | number;
     "--hlanguage-picker-columns"?: string | number;
     "--hlanguage-picker-open"?: string | number;

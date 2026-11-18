@@ -4,7 +4,8 @@
    so re-theming Harmo re-themes the playground too. */
 
 :root {
-  --play-header-height: 3.5rem;
+  /* The Header's: its controls, 10px above and below, and its hairline. */
+  --play-header-height: calc(var(--harmo-control-height) + 2 * var(--harmo-space-xs) + 1px);
   --play-nav-width: 15rem;
   --play-content-width: 50rem;
   --play-radius: 12px;
@@ -56,45 +57,20 @@ body {
 
 /* Header ------------------------------------------------------------------ */
 
+/* The header is Harmo's Header, across the whole window rather than the
+   content's width, with its hairline from the start, data-bordered, where
+   the sidebar's edge meets it. Here it's only placed: the version beside the
+   logo, as one thing, and the Dark switch and Docs as two. */
 .play-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-
-  box-sizing: border-box;
-  block-size: var(--play-header-height);
-  padding-inline: 1rem;
-
-  background-color: color-mix(in srgb, var(--harmo-color-background) 88%, transparent);
-  border-block-end: 1px solid var(--harmo-color-border);
-  backdrop-filter: blur(12px);
-
-  @media (width < 40rem) {
-    gap: 0.5rem;
-  }
+  --hheader-width: none;
 }
 
-.play-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+.play-header .hheader-brand {
+  gap: var(--harmo-space-2xs);
+}
 
-  font-size: 1.0625rem;
-  font-weight: var(--harmo-font-weight-bold);
-  letter-spacing: -0.01em;
-  text-decoration: none;
-
-  color: var(--harmo-color-text);
-  border-radius: var(--harmo-border-radius-sm);
-
-  &:focus-visible {
-    outline: var(--harmo-focus-outline);
-    outline-offset: var(--harmo-focus-outline-offset);
-  }
+.play-header .hheader-actions {
+  gap: var(--harmo-space-sm);
 }
 
 /* As on harmo-ui.com: the cap height times the golden ratio, centered on the
@@ -105,20 +81,6 @@ body {
   inline-size: auto;
 
   fill: var(--harmo-color-primary-fill);
-}
-
-.play-header-end {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-
-  margin-inline-start: auto;
-
-  white-space: nowrap;
-
-  @media (width < 40rem) {
-    gap: 0.75rem;
-  }
 }
 
 .play-header .htag {

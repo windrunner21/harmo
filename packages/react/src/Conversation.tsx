@@ -56,6 +56,7 @@ export const Conversation = ({
   const list = useRef<HTMLOListElement>(null);
   const atEnd = useRef(true);
   const jumping = useRef(false);
+  const lastTop = useRef(0);
   const [away, setAway] = useState(false);
   const [opened, setOpened] = useState(false);
   const none = Children.toArray(children).length === 0;
@@ -76,6 +77,14 @@ export const Conversation = ({
     };
     const interruptions = ["wheel", "touchstart", "pointerdown", "keydown"];
     for (const type of interruptions) element.addEventListener(type, interrupt, { passive: true });
+    const ended = () => {
+      if (!jumping.current) return;
+      jumping.current = false;
+      const near = element.scrollHeight - element.scrollTop - element.clientHeight < nearEnd;
+      atEnd.current = near;
+      setAway(!near);
+    };
+    element.addEventListener("scrollend", ended);
     const resizes = new ResizeObserver(follow);
     resizes.observe(element);
     resizes.observe(messages);
@@ -92,6 +101,7 @@ export const Conversation = ({
       resizes.disconnect();
       changes.disconnect();
       for (const type of interruptions) element.removeEventListener(type, interrupt);
+      element.removeEventListener("scrollend", ended);
     };
   }, []);
 
@@ -117,11 +127,14 @@ export const Conversation = ({
       onScroll={(event) => {
         onScroll?.(event);
         const element = event.currentTarget;
-        const near = element.scrollHeight - element.scrollTop - element.clientHeight < nearEnd;
-        if (jumping.current) {
-          if (near) jumping.current = false;
+        const top = element.scrollTop;
+        const near = element.scrollHeight - top - element.clientHeight < nearEnd;
+        if (jumping.current && !near && top >= lastTop.current) {
+          lastTop.current = top;
           return;
         }
+        jumping.current = false;
+        lastTop.current = top;
         atEnd.current = near;
         setAway(!near);
       }}

@@ -1,0 +1,182 @@
+@use "shortcuts" as *;
+
+// Header: the bar across the top of a page or an app, its logo, navigation or
+// search, and actions in a row as wide as the page's content. data-scroll
+// sets what it does as the page scrolls: it stays at the top by default;
+// "away" scrolls away with the page; "hide" moves away with the page as you
+// scroll down, and back as you scroll up. With data-transparent, it's clear
+// over what's under it, such as a hero, until the page scrolls. A hairline
+// shows under it once the page has scrolled, data-scrolled, which a script
+// sets.
+.hheader {
+  --hheader-width: 75rem;
+  // Its controls, 10px from its edges.
+  --hheader-height: calc(#{$control-height} + 2 * #{$space-xs});
+
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 10;
+
+  container-type: inline-size;
+
+  font-family: $font-family;
+
+  color: $color-text;
+  // Frosted: what scrolls under it shows through, blurred.
+  background-color: color-mix(in srgb, #{$color-background} 80%, transparent);
+  border-block-end: 1px solid transparent;
+  backdrop-filter: blur(12px) saturate(1.8);
+
+  // A clear one turns frosted, its blur with its color, over 200ms.
+  transition:
+    background-color $duration-normal ease,
+    border-color $duration-normal ease,
+    backdrop-filter $duration-normal ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // With data-bordered, from the start, as beside a Sidebar, whose edge
+  // meets it.
+  &[data-scrolled],
+  &[data-bordered] {
+    border-block-end-color: $color-border;
+  }
+
+  &[data-scroll="away"] {
+    position: relative;
+  }
+
+  // Hiding follows the scroll: a script moves it up with the page as you
+  // scroll down, as far as its own height, and back as you scroll up, by
+  // its translate, so nothing animates while you scroll. Where the
+  // scrolling stops partway, it settles to whichever is nearer, with
+  // data-settling: shown in 200ms, or hidden, data-hidden, in 150ms. Focus
+  // in it shows it.
+  &[data-scroll="hide"][data-hidden]:not(:focus-within) {
+    translate: 0 -100%;
+  }
+
+  &[data-scroll="hide"][data-settling] {
+    transition:
+      background-color $duration-normal ease,
+      border-color $duration-normal ease,
+      backdrop-filter $duration-normal ease,
+      translate $duration-normal $ease-out-cubic;
+  }
+
+  &[data-scroll="hide"][data-settling="hide"] {
+    transition:
+      background-color $duration-normal ease,
+      border-color $duration-normal ease,
+      backdrop-filter $duration-normal ease,
+      translate $duration-fast $ease-out-cubic;
+  }
+
+  &[data-transparent]:not([data-scrolled]) {
+    background-color: transparent;
+    backdrop-filter: none;
+  }
+
+  // With reduced motion, nothing follows the scroll: it fades away as you
+  // scroll down past it, and back as you scroll up.
+  @media (prefers-reduced-motion: reduce) {
+    &[data-scroll="hide"] {
+      transition:
+        background-color $duration-normal ease,
+        border-color $duration-normal ease,
+        backdrop-filter $duration-normal ease,
+        opacity $duration-normal ease;
+    }
+
+    &[data-scroll="hide"][data-hidden]:not(:focus-within) {
+      opacity: 0;
+
+      transition:
+        opacity $duration-fast ease,
+        translate 0s $duration-fast;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    &,
+    &[data-transparent]:not([data-scrolled]) {
+      background-color: $color-background;
+      backdrop-filter: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    background-color: Canvas;
+
+    &[data-scrolled],
+    &[data-bordered] {
+      border-block-end-color: CanvasText;
+    }
+  }
+}
+
+// The row: the logo, what's in the middle, and the actions at the end.
+.hheader-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+
+  box-sizing: border-box;
+  min-block-size: var(--hheader-height);
+  max-inline-size: var(--hheader-width);
+  margin-inline: auto;
+  padding-inline: $space-sm;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The logo, a link home, its text semibold.
+.hheader-brand {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  line-height: 1.5rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > a {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2xs;
+
+    color: inherit;
+    text-decoration: none;
+    border-radius: $border-radius-sm;
+  }
+
+  & > a[hidden] {
+    display: none;
+  }
+
+  & > a:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+}
+
+// The actions, at the end, a little apart.
+.hheader-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-2xs;
+
+  margin-inline-start: auto;
+
+  &[hidden] {
+    display: none;
+  }
+}

@@ -108,7 +108,7 @@ const askCopilot: Respond = (conversation, { signal }) => {
 };
 
 const bot: ChatAuthor = {
-  name: "Fernhill Market",
+  name: "Speedwagon",
   role: "AI assistant · Replies right away",
   avatar: (
     <Avatar alt="">
@@ -419,7 +419,7 @@ export const examples = {
       <SupportChat
         respond={askSupport}
         assistant={bot}
-        greeting="Hi! I'm Fernhill Market's assistant. I can track an order or start a return, or find you a person to talk to."
+        greeting="Hi! I'm Speedwagon's assistant. I can track an order or start a return, or find you a person to talk to."
         suggestions={topics}
         upload={upload}
         subscribe={subscribe}

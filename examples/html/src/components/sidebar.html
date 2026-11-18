@@ -1,7 +1,9 @@
 <play-example title="Default" layout="wide">
   <play-note>
     A dashboard's navigation: links in groups, each an icon and its label,
-    with a count such as unread messages, between a header and a footer.
+    with a count such as unread messages, between a header, an
+    <a class="hlink" data-underlined href="account-menu.html">Account Menu</a>
+    of who's signed in, and a footer.
     <code>aria-current="page"</code> marks the page you're on; here a click
     moves it, as your router would. A link with links under it is a
     <code>&lt;details&gt;</code> that opens them, with no script, each group
@@ -22,16 +24,45 @@
         <span class="htooltip" role="tooltip" id="main-sidebar-toggle" data-side="right">Collapse</span>
       </span>
       <div class="hsidebar-header">
-        <div class="hsidebar-group">
-          <ul class="hsidebar-list">
-            <li class="htooltip-trigger">
-              <a class="hsidebar-item" href="/account">
-                <span class="havatar" style="--harmo-avatar-size: 20px" aria-hidden="true">A</span>
-                <span class="hsidebar-label">Acme Support</span>
-              </a>
-              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Acme Support</span>
-            </li>
-          </ul>
+        <button
+          class="haccount-menu"
+          type="button"
+          id="main-account-trigger"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          popovertarget="main-account"
+          style="anchor-name: --main-account"
+        >
+          <img class="havatar" src="images/imran.webp" alt="" />
+          <span class="haccount-menu-text">
+            <span class="haccount-menu-name">Imran Hajiyev</span>
+            <span class="haccount-menu-description">Speedwagon</span>
+          </span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div
+          class="hpopup hdropdown-menu"
+          id="main-account"
+          role="menu"
+          tabindex="-1"
+          aria-labelledby="main-account-trigger"
+          popover
+          style="position-anchor: --main-account"
+        >
+          <a class="hdropdown-menu-item" href="/settings" role="menuitem" tabindex="-1">
+            <play-icon name="settings" class="hicon"></play-icon>Settings
+          </a>
+          <div class="hdropdown-menu-separator" role="separator"></div>
+          <div role="group" aria-labelledby="main-account-switch">
+            <div class="hdropdown-menu-group-label" id="main-account-switch" role="presentation">Switch account</div>
+            <a class="hdropdown-menu-item" href="/joestar-group" role="menuitem" tabindex="-1">
+              <play-icon name="business" class="hicon"></play-icon>Joestar Group
+            </a>
+          </div>
+          <div class="hdropdown-menu-separator" role="separator"></div>
+          <a class="hdropdown-menu-item" href="/sign-out" role="menuitem" tabindex="-1">
+            <play-icon name="sign-out" class="hicon"></play-icon>Sign out
+          </a>
         </div>
       </div>
       <nav class="hsidebar-nav" aria-label="Main">
@@ -136,16 +167,45 @@
   <div style="block-size: 36rem">
     <div class="hsidebar" data-example-router>
       <div class="hsidebar-header">
-        <div class="hsidebar-group">
-          <ul class="hsidebar-list">
-            <li class="htooltip-trigger">
-              <a class="hsidebar-item" href="/account">
-                <span class="havatar" style="--harmo-avatar-size: 20px" aria-hidden="true">A</span>
-                <span class="hsidebar-label">Acme Support</span>
-              </a>
-              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Acme Support</span>
-            </li>
-          </ul>
+        <button
+          class="haccount-menu"
+          type="button"
+          id="grouped-account-trigger"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          popovertarget="grouped-account"
+          style="anchor-name: --grouped-account"
+        >
+          <img class="havatar" src="images/imran.webp" alt="" />
+          <span class="haccount-menu-text">
+            <span class="haccount-menu-name">Imran Hajiyev</span>
+            <span class="haccount-menu-description">Speedwagon</span>
+          </span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div
+          class="hpopup hdropdown-menu"
+          id="grouped-account"
+          role="menu"
+          tabindex="-1"
+          aria-labelledby="grouped-account-trigger"
+          popover
+          style="position-anchor: --grouped-account"
+        >
+          <a class="hdropdown-menu-item" href="/settings" role="menuitem" tabindex="-1">
+            <play-icon name="settings" class="hicon"></play-icon>Settings
+          </a>
+          <div class="hdropdown-menu-separator" role="separator"></div>
+          <div role="group" aria-labelledby="grouped-account-switch">
+            <div class="hdropdown-menu-group-label" id="grouped-account-switch" role="presentation">Switch account</div>
+            <a class="hdropdown-menu-item" href="/joestar-group" role="menuitem" tabindex="-1">
+              <play-icon name="business" class="hicon"></play-icon>Joestar Group
+            </a>
+          </div>
+          <div class="hdropdown-menu-separator" role="separator"></div>
+          <a class="hdropdown-menu-item" href="/sign-out" role="menuitem" tabindex="-1">
+            <play-icon name="sign-out" class="hicon"></play-icon>Sign out
+          </a>
         </div>
       </div>
       <nav class="hsidebar-nav" aria-label="Main">
@@ -254,16 +314,45 @@
   <div style="block-size: 36rem">
     <div class="hsidebar" data-collapsed data-example-router>
       <div class="hsidebar-header">
-        <div class="hsidebar-group">
-          <ul class="hsidebar-list">
-            <li class="htooltip-trigger">
-              <a class="hsidebar-item" href="/account">
-                <span class="havatar" style="--harmo-avatar-size: 20px" aria-hidden="true">A</span>
-                <span class="hsidebar-label">Acme Support</span>
-              </a>
-              <span class="htooltip hsidebar-tooltip" data-side="right" aria-hidden="true">Acme Support</span>
-            </li>
-          </ul>
+        <button
+          class="haccount-menu"
+          type="button"
+          id="collapsed-account-trigger"
+          aria-haspopup="menu"
+          aria-expanded="false"
+          popovertarget="collapsed-account"
+          style="anchor-name: --collapsed-account"
+        >
+          <img class="havatar" src="images/imran.webp" alt="" />
+          <span class="haccount-menu-text">
+            <span class="haccount-menu-name">Imran Hajiyev</span>
+            <span class="haccount-menu-description">Speedwagon</span>
+          </span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div
+          class="hpopup hdropdown-menu"
+          id="collapsed-account"
+          role="menu"
+          tabindex="-1"
+          aria-labelledby="collapsed-account-trigger"
+          popover
+          style="position-anchor: --collapsed-account"
+        >
+          <a class="hdropdown-menu-item" href="/settings" role="menuitem" tabindex="-1">
+            <play-icon name="settings" class="hicon"></play-icon>Settings
+          </a>
+          <div class="hdropdown-menu-separator" role="separator"></div>
+          <div role="group" aria-labelledby="collapsed-account-switch">
+            <div class="hdropdown-menu-group-label" id="collapsed-account-switch" role="presentation">Switch account</div>
+            <a class="hdropdown-menu-item" href="/joestar-group" role="menuitem" tabindex="-1">
+              <play-icon name="business" class="hicon"></play-icon>Joestar Group
+            </a>
+          </div>
+          <div class="hdropdown-menu-separator" role="separator"></div>
+          <a class="hdropdown-menu-item" href="/sign-out" role="menuitem" tabindex="-1">
+            <play-icon name="sign-out" class="hicon"></play-icon>Sign out
+          </a>
         </div>
       </div>
       <nav class="hsidebar-nav" aria-label="Main">

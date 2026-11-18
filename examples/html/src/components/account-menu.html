@@ -1,0 +1,187 @@
+<play-example title="Default">
+  <play-note>
+    Who's signed in, with their avatar and the account they're in, as a button
+    that opens a <a class="hlink" data-underlined href="dropdown-menu.html">Dropdown Menu</a>
+    of what's theirs: settings, the accounts they can switch to, and signing
+    out. Its chevron turns as the menu opens. At the top of a
+    <a class="hlink" data-underlined href="sidebar.html">Sidebar</a>, collapsed,
+    it's the avatar alone.
+  </play-note>
+  <div style="inline-size: 15rem">
+    <button
+      class="haccount-menu"
+      type="button"
+      id="signed-in-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      popovertarget="signed-in-menu"
+      style="anchor-name: --signed-in-menu"
+    >
+      <img class="havatar" src="images/imran.webp" alt="" />
+      <span class="haccount-menu-text">
+        <span class="haccount-menu-name">Imran Hajiyev</span>
+        <span class="haccount-menu-description">Speedwagon</span>
+      </span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div
+      class="hpopup hdropdown-menu"
+      id="signed-in-menu"
+      role="menu"
+      tabindex="-1"
+      aria-labelledby="signed-in-trigger"
+      popover
+      style="position-anchor: --signed-in-menu"
+    >
+      <a class="hdropdown-menu-item" href="#settings" role="menuitem" tabindex="-1">
+        <play-icon name="settings" class="hicon"></play-icon>Settings
+      </a>
+      <div class="hdropdown-menu-separator" role="separator"></div>
+      <div role="group" aria-labelledby="signed-in-switch">
+        <div class="hdropdown-menu-group-label" id="signed-in-switch" role="presentation">Switch account</div>
+        <a class="hdropdown-menu-item" href="#joestar-group" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>Joestar Group
+        </a>
+        <a class="hdropdown-menu-item" href="#stardust-travel" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>Stardust Travel
+        </a>
+      </div>
+      <div class="hdropdown-menu-separator" role="separator"></div>
+      <a class="hdropdown-menu-item" href="#profile" role="menuitem" tabindex="-1">
+        <play-icon name="user" class="hicon"></play-icon>Profile
+      </a>
+      <a class="hdropdown-menu-item" href="#sign-out" role="menuitem" tabindex="-1">
+        <play-icon name="sign-out" class="hicon"></play-icon>Sign out
+      </a>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Initials">
+  <play-note>
+    Without a photo, the <a class="hlink" data-underlined href="avatar.html">Avatar</a>
+    shows initials. A long name, or the line under it, is cut short with an
+    ellipsis; the menu names the account with both.
+  </play-note>
+  <div style="inline-size: 15rem">
+    <button
+      class="haccount-menu"
+      type="button"
+      id="initials-trigger"
+      aria-haspopup="menu"
+      aria-expanded="false"
+      popovertarget="initials-menu"
+      style="anchor-name: --initials-menu"
+    >
+      <span class="havatar" aria-hidden="true">RS</span>
+      <span class="haccount-menu-text">
+        <span class="haccount-menu-name">Robert Edward O. Speedwagon</span>
+        <span class="haccount-menu-description">robert.speedwagon@speedwagon-foundation.example</span>
+      </span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div
+      class="hpopup hdropdown-menu"
+      id="initials-menu"
+      role="menu"
+      tabindex="-1"
+      aria-labelledby="initials-trigger"
+      popover
+      style="position-anchor: --initials-menu"
+    >
+      <a class="hdropdown-menu-item" href="#settings" role="menuitem" tabindex="-1">
+        <play-icon name="settings" class="hicon"></play-icon>Settings
+      </a>
+      <a class="hdropdown-menu-item" href="#sign-out" role="menuitem" tabindex="-1">
+        <play-icon name="sign-out" class="hicon"></play-icon>Sign out
+      </a>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Profile">
+  <play-note>
+    With <code>profile</code>, the menu starts with who's signed in again,
+    as on an account page: their avatar, larger, over their name and the
+    line under it, then a separator.
+  </play-note>
+  <div style="inline-size: 15rem">
+    <button type="button" class="haccount-menu" id="profile-trigger" aria-haspopup="menu" popovertarget="profile-menu" aria-expanded="false" style="anchor-name: --profile-menu">
+      <img class="havatar" src="images/imran.webp" alt="" />
+      <span class="haccount-menu-text"><span class="haccount-menu-name">Imran Hajiyev</span><span class="haccount-menu-description">Speedwagon</span></span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div role="menu" tabindex="-1" aria-labelledby="profile-trigger" class="hpopup hdropdown-menu" id="profile-menu" popover style="position-anchor: --profile-menu">
+      <div class="haccount-menu-profile" role="presentation">
+        <img class="havatar" src="images/imran.webp" alt="" />
+        <span class="haccount-menu-name">Imran Hajiyev</span>
+        <span class="haccount-menu-description">Speedwagon</span>
+      </div>
+      <div role="separator" class="hdropdown-menu-separator"></div>
+      <a href="#settings" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="settings" class="hicon"></play-icon>Settings</a>
+      <a href="#profile" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="user" class="hicon"></play-icon>Profile</a>
+      <div role="separator" class="hdropdown-menu-separator"></div>
+      <a href="#sign-out" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="sign-out" class="hicon"></play-icon>Sign out</a>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Many accounts">
+  <play-note>
+    Many accounts go in a submenu, Other accounts, beside the menu, which
+    keeps Sign out in reach. At most 400px tall, as a Popup is, it scrolls
+    past that, with an arrow at the end that has more, as a Select's list has.
+    Typing a letter in it goes to the next account that starts with it.
+  </play-note>
+  <div style="inline-size: 15rem">
+    <button type="button" class="haccount-menu" id="accounts-trigger" aria-haspopup="menu" popovertarget="accounts-menu" aria-expanded="false" style="anchor-name: --accounts-menu">
+      <img class="havatar" src="images/imran.webp" alt="" />
+      <span class="haccount-menu-text"><span class="haccount-menu-name">Imran Hajiyev</span><span class="haccount-menu-description">Speedwagon</span></span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div role="menu" tabindex="-1" aria-labelledby="accounts-trigger" class="hpopup hdropdown-menu" id="accounts-menu" popover style="position-anchor: --accounts-menu">
+      <a href="#settings" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="settings" class="hicon"></play-icon>Settings</a>
+      <div role="separator" class="hdropdown-menu-separator"></div>
+      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" popovertargetaction="show" id="accounts-other-trigger" aria-haspopup="menu" popovertarget="accounts-other" aria-expanded="false" style="anchor-name: --accounts-other">
+        <play-icon name="business" class="hicon"></play-icon>
+        Other accounts
+        <play-icon name="chevron" class="hicon hchevron hdropdown-menu-sub-chevron"></play-icon>
+      </button>
+      <div role="menu" tabindex="-1" aria-labelledby="accounts-other-trigger" class="hpopup hdropdown-menu" id="accounts-other" popover style="position-anchor: --accounts-other">
+        <a href="#joestar-group" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="business" class="hicon"></play-icon>Joestar Group</a>
+        <a href="#stardust-travel" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="business" class="hicon"></play-icon>Stardust Travel</a>
+        <a href="#passione-logistics" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="business" class="hicon"></play-icon>Passione Logistics</a>
+        <a href="#speedwagon-foundation" class="hdropdown-menu-item" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>
+          Speedwagon Foundation
+        </a>
+        <a href="#morioh-grand-hotel" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="business" class="hicon"></play-icon>Morioh Grand Hotel</a>
+        <a href="#kame-yu-department-store" class="hdropdown-menu-item" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>
+          Kame Yu Department Store
+        </a>
+        <a href="#trattoria-trussardi" class="hdropdown-menu-item" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>
+          Trattoria Trussardi
+        </a>
+        <a href="#libeccio-ristorante" class="hdropdown-menu-item" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>
+          Libeccio Ristorante
+        </a>
+        <a href="#green-dolphin-supply" class="hdropdown-menu-item" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>
+          Green Dolphin Supply
+        </a>
+        <a href="#steel-ball-run-events" class="hdropdown-menu-item" role="menuitem" tabindex="-1">
+          <play-icon name="business" class="hicon"></play-icon>
+          Steel Ball Run Events
+        </a>
+        <a href="#bucciarati-tailors" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="business" class="hicon"></play-icon>Bucciarati Tailors</a>
+        <a href="#sandman-couriers" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="business" class="hicon"></play-icon>Sandman Couriers</a>
+      </div>
+      <div role="separator" class="hdropdown-menu-separator"></div>
+      <a href="#profile" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="user" class="hicon"></play-icon>Imran Hajiyev</a>
+      <a href="#sign-out" class="hdropdown-menu-item" role="menuitem" tabindex="-1"><play-icon name="sign-out" class="hicon"></play-icon>Sign out</a>
+    </div>
+  </div>
+</play-example>

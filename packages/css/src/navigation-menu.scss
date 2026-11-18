@@ -106,6 +106,35 @@
 
     color: $color-primary;
   }
+
+  // Its chevron, a little narrower than its letters are tall, and as light
+  // as their strokes: about 10px wide at 14px text.
+  & > .hexpand-chevron {
+    inline-size: 0.6875em;
+    block-size: 0.5em;
+  }
+}
+
+// The open trigger's own bridge, down to its panel and a pixel into it, so
+// a pointer on its way there never crosses a seam between the two and leaves
+// the menu.
+.hnavigation-menu-trigger {
+  position: relative;
+
+  &[aria-expanded="true"]::after {
+    content: "";
+
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 100%;
+
+    block-size: 9px;
+  }
+
+  // Stacked, a panel opens right under its trigger, so nothing to bridge.
+  .hnavigation-menu[data-orientation="vertical"] &::after {
+    content: none;
+  }
 }
 
 .hnavigation-menu-trigger[aria-expanded="true"] {

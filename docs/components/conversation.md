@@ -84,7 +84,7 @@ list is `hidden`:
 | Scroll to the end | It's shown, and whenever its messages change, such as a reply's words streaming in, or it or its list changes size, while you're within 32px of the end |
 | Scroll to the end, and count you as there | A message of yours is added |
 | Add `data-open` to `.hconversation-latest`, or remove it | You scroll more than 32px from the end, or back |
-| Scroll to the end, smoothly unless motion is reduced, and keep following it there as messages grow on the way, until you scroll yourself | Jump to latest is pressed |
+| Scroll to the end, smoothly unless motion is reduced, and keep following it there as messages grow on the way, until you scroll yourself, the scrolling ends (`scrollend`), or the list moves back up; a browser may not report the last step of a smooth scroll, so the jump doesn't wait for it | Jump to latest is pressed |
 | Remove `.hconversation-empty` and `hidden` from the list | The first message is added |
 | Put what arrived in the status | A reply is whole, or someone joins |
 

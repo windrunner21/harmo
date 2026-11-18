@@ -123,10 +123,10 @@ export const examples = {
       </li>
       <li>
         <ShowcaseCard
-          href="/stories/fernhill"
+          href="/stories/speedwagon"
           fold
           media={message("40% fewer tickets", "With answers sent before anyone asks.")}
-          label="Fernhill Market"
+          label="Speedwagon"
           description="How a grocer keeps customers posted on every delivery."
           action="Read the story"
         />

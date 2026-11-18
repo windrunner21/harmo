@@ -1,6 +1,11 @@
 import {
+  AccountMenu,
+  Avatar,
   Button,
   Drawer,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   Sidebar,
   SidebarGroup,
   SidebarItem,
@@ -10,6 +15,7 @@ import {
 import { useState, type MouseEvent } from "react";
 import {
   AnalyticsIcon,
+  BusinessIcon,
   CampaignsIcon,
   DevelopersIcon,
   HomeIcon,
@@ -17,6 +23,7 @@ import {
   MessagesIcon,
   MoreIcon,
   SettingsIcon,
+  SignOutIcon,
   TicketsIcon,
 } from "../app-icons.tsx";
 
@@ -38,24 +45,21 @@ export const examples = {
           collapseLabel="Collapse"
           expandLabel="Expand"
           header={
-            <SidebarGroup>
-              <SidebarItem
-                href="/account"
-                icon={
-                  <span
-                    className="havatar"
-                    style={{ "--harmo-avatar-size": "20px" }}
-                    aria-hidden="true"
-                  >
-                    A
-                  </span>
-                }
-                current={path === "/account"}
-                onClick={go}
-              >
-                Acme Support
-              </SidebarItem>
-            </SidebarGroup>
+            <AccountMenu name="Imran Hajiyev" description="Speedwagon" avatar={<Avatar src="images/imran.webp" alt="" />}>
+              <DropdownMenuItem href="/settings" icon={<SettingsIcon className="hicon" />}>
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup label="Switch account">
+                <DropdownMenuItem href="/joestar-group" icon={<BusinessIcon className="hicon" />}>
+                  Joestar Group
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem href="/sign-out" icon={<SignOutIcon className="hicon" />}>
+                Sign out
+              </DropdownMenuItem>
+            </AccountMenu>
           }
           footer={
             <SidebarGroup>
@@ -153,24 +157,21 @@ export const examples = {
           aria-label="Main"
           exclusive
           header={
-            <SidebarGroup>
-              <SidebarItem
-                href="/account"
-                icon={
-                  <span
-                    className="havatar"
-                    style={{ "--harmo-avatar-size": "20px" }}
-                    aria-hidden="true"
-                  >
-                    A
-                  </span>
-                }
-                current={path === "/account"}
-                onClick={go}
-              >
-                Acme Support
-              </SidebarItem>
-            </SidebarGroup>
+            <AccountMenu name="Imran Hajiyev" description="Speedwagon" avatar={<Avatar src="images/imran.webp" alt="" />}>
+              <DropdownMenuItem href="/settings" icon={<SettingsIcon className="hicon" />}>
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup label="Switch account">
+                <DropdownMenuItem href="/joestar-group" icon={<BusinessIcon className="hicon" />}>
+                  Joestar Group
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem href="/sign-out" icon={<SignOutIcon className="hicon" />}>
+                Sign out
+              </DropdownMenuItem>
+            </AccountMenu>
           }
           footer={
             <SidebarGroup>
@@ -268,24 +269,21 @@ export const examples = {
           aria-label="Main"
           defaultCollapsed
           header={
-            <SidebarGroup>
-              <SidebarItem
-                href="/account"
-                icon={
-                  <span
-                    className="havatar"
-                    style={{ "--harmo-avatar-size": "20px" }}
-                    aria-hidden="true"
-                  >
-                    A
-                  </span>
-                }
-                current={path === "/account"}
-                onClick={go}
-              >
-                Acme Support
-              </SidebarItem>
-            </SidebarGroup>
+            <AccountMenu name="Imran Hajiyev" description="Speedwagon" avatar={<Avatar src="images/imran.webp" alt="" />}>
+              <DropdownMenuItem href="/settings" icon={<SettingsIcon className="hicon" />}>
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup label="Switch account">
+                <DropdownMenuItem href="/joestar-group" icon={<BusinessIcon className="hicon" />}>
+                  Joestar Group
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem href="/sign-out" icon={<SignOutIcon className="hicon" />}>
+                Sign out
+              </DropdownMenuItem>
+            </AccountMenu>
           }
           footer={
             <SidebarGroup>

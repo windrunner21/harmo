@@ -148,6 +148,17 @@ onEachPlayground("sidebar", () => {
     expect(Math.abs(tip - right)).toBeLessThan(1.5);
   });
 
+  test("its header's Account Menu, collapsed, is the avatar alone, in the middle of the rail; its text still names it", { tag: "@css" }, async ({ page }) => {
+    const { sidebar } = await parts(page, "sidebar-collapsed");
+    const account = sidebar.locator(".haccount-menu");
+    await finish(sidebar);
+    const [rail, avatar] = await boxes(sidebar, account.locator(".havatar"));
+    expect(avatar.x + avatar.width / 2).toBeCloseTo(rail.x + rail.width / 2, 0);
+    await expect(account.locator(".haccount-menu-text")).toHaveCSS("opacity", "0");
+    await expect(account.locator(".hexpand-chevron")).toHaveCSS("opacity", "0");
+    await expect(account).toHaveAccessibleName("Imran Hajiyev Speedwagon");
+  });
+
   test("collapsed, a link's tooltip names it on hover and on keyboard focus; expanded, there's none", async ({ page }) => {
     const { nav, tooltipOf } = await parts(page, "sidebar-collapsed");
     const home = nav.getByRole("link", { name: "Home" });

@@ -3,6 +3,7 @@
 
 import type { ComponentType } from "react";
 import { examples as accordion } from "./components/accordion.tsx";
+import { examples as accountMenu } from "./components/account-menu.tsx";
 import { examples as avatar } from "./components/avatar.tsx";
 import { examples as badge } from "./components/badge.tsx";
 import { examples as banner } from "./components/banner.tsx";
@@ -22,6 +23,7 @@ import { examples as datePicker } from "./components/date-picker.tsx";
 import { examples as dialog } from "./components/dialog.tsx";
 import { examples as drawer } from "./components/drawer.tsx";
 import { examples as dropZone } from "./components/drop-zone.tsx";
+import { examples as dropdownMenu } from "./components/dropdown-menu.tsx";
 import { examples as emptyState } from "./components/empty-state.tsx";
 import { examples as expandChevron } from "./components/expand-chevron.tsx";
 import { examples as field } from "./components/field.tsx";
@@ -30,6 +32,7 @@ import { examples as fileInput } from "./components/file-input.tsx";
 import { examples as fileList } from "./components/file-list.tsx";
 import { examples as filterChip } from "./components/filter-chip.tsx";
 import { examples as filters } from "./components/filters.tsx";
+import { examples as header } from "./components/header.tsx";
 import { examples as icons } from "./components/icons.tsx";
 import { examples as input } from "./components/input.tsx";
 import { examples as kbd } from "./components/kbd.tsx";
@@ -66,6 +69,7 @@ import { examples as signInForm } from "./components/sign-in-form.tsx";
 import { examples as signUpForm } from "./components/sign-up-form.tsx";
 import { examples as resetPassword } from "./components/reset-password.tsx";
 import { examples as chat } from "./components/chat.tsx";
+import { examples as headers } from "./components/headers.tsx";
 import { examples as contactForm } from "./components/contact-form.tsx";
 import { examples as accountForms } from "./components/account-forms.tsx";
 import { examples as tableOfContents } from "./components/table-of-contents.tsx";
@@ -81,6 +85,7 @@ import { examples as verifyCode } from "./components/verify-code.tsx";
 
 export const components: Record<string, Record<string, ComponentType>> = {
   accordion,
+  "account-menu": accountMenu,
   avatar,
   badge,
   banner,
@@ -100,6 +105,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   dialog,
   drawer,
   "drop-zone": dropZone,
+  "dropdown-menu": dropdownMenu,
   "empty-state": emptyState,
   "expand-chevron": expandChevron,
   field,
@@ -108,6 +114,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "file-list": fileList,
   "filter-chip": filterChip,
   filters,
+  header,
   icons,
   input,
   kbd,
@@ -144,6 +151,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "sign-up-form": signUpForm,
   "reset-password": resetPassword,
   chat,
+  headers,
   "contact-form": contactForm,
   "account-forms": accountForms,
   "table-of-contents": tableOfContents,

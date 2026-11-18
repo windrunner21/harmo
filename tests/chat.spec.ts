@@ -209,7 +209,13 @@ onEachPlayground("chat", () => {
 
     await conversation.evaluate((node) => node.scrollTo(0, 0));
     await expect(jump).toBeVisible();
-    await jump.click();
+    // Where it's drawn, as a person would: Playwright would first scroll it
+    // into view, which, for a button pinned to the foot of what scrolls,
+    // scrolls the conversation, and in Firefox lands the click on a message.
+    // By its box, as the page's clock is paused, so no frame comes to wait
+    // for.
+    const box = (await jump.boundingBox())!;
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     await expect.poll(fromEnd).toBeLessThan(2);
     await expect(jump).toBeHidden();
     await expect(field).toBeFocused();
@@ -256,9 +262,9 @@ onEachPlayground("chat", () => {
   test("the launcher opens and closes the support window, as its close button and Escape do, moving focus", async ({ page }) => {
     const { container, chat, field } = await chatIn(page, "chat-support-chat");
     const launcher = container.locator(".hlauncher-button");
-    const panel = container.getByRole("dialog", { name: "Chat with Fernhill Market" });
+    const panel = container.getByRole("dialog", { name: "Chat with Speedwagon" });
     await expect(panel).toBeVisible();
-    await expect(launcher).toHaveAccessibleName("Chat with Fernhill Market");
+    await expect(launcher).toHaveAccessibleName("Chat with Speedwagon");
     await expect(launcher).toHaveAttribute("aria-expanded", "true");
 
     await launcher.click();
@@ -462,10 +468,14 @@ onEachPlayground("chat", () => {
     await drag("drop");
     await expect(frame).toBeHidden();
     await expect(field).toBeFocused();
+    // Firefox's ClipboardEvent takes no clipboardData of its own, so it's
+    // given one, as in the OTP Input's paste.
     await field.evaluate((node) => {
       const data = new DataTransfer();
       data.items.add(new File(["png"], "screenshot.png", { type: "image/png" }));
-      node.dispatchEvent(new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData: data }));
+      const event = new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData: data });
+      if (event.clipboardData?.files.length !== 1) Object.defineProperty(event, "clipboardData", { value: data });
+      node.dispatchEvent(event);
     });
     await expect(chat.locator(".hcomposer-box > .hfile-list .hfile-list-name")).toHaveText(["dropped.txt", "screenshot.png"]);
     // On the chat's own field too, though a field elsewhere keeps its drop.
@@ -488,12 +498,12 @@ onEachPlayground("chat", () => {
     await expect(count).toHaveCount(0);
     await page.clock.runFor(6000);
     await expect(count).toHaveText("1");
-    await expect(launcher).toHaveAccessibleName("Chat with Fernhill Market, 1 new");
+    await expect(launcher).toHaveAccessibleName("Chat with Speedwagon, 1 new");
     await expect(notice).toHaveText("New message from Imran");
 
     await launcher.click();
     await expect(count).toHaveCount(0);
-    await expect(launcher).toHaveAccessibleName("Chat with Fernhill Market");
+    await expect(launcher).toHaveAccessibleName("Chat with Speedwagon");
     await expect(messages.last().locator(".hmessage-text")).toHaveText(
       "I've found your order. A replacement is on its way, and you'll get its tracking link by email.",
     );

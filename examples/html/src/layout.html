@@ -37,30 +37,34 @@
   </head>
   <body>
     <a class="play-skip" href="#play-main">Skip to content</a>
-    <header class="play-header">
-      <button
-        class="hbutton play-menu-button"
-        data-variant="tertiary"
-        type="button"
-        popovertarget="play-nav"
-        aria-label="Components"
-      >
-        <play-icon name="menu" class="hicon"></play-icon>
-      </button>
-      <a class="play-brand" href="index.html">
-        <play-icon name="mark" class="play-mark"></play-icon>
-        Harmo
-      </a>
-      <span class="htag">{{version}}</span>
-      <div class="play-header-end">
-        <div class="hfield" data-orientation="horizontal">
-          <input class="hswitch" type="checkbox" role="switch" id="play-dark" />
-          <label class="hlabel" for="play-dark">Dark</label>
+    <header class="hheader play-header" data-bordered>
+      <div class="hheader-bar">
+        <button
+          class="hbutton play-menu-button"
+          data-variant="tertiary"
+          type="button"
+          popovertarget="play-nav"
+          aria-label="Components"
+        >
+          <play-icon name="menu" class="hicon"></play-icon>
+        </button>
+        <div class="hheader-brand">
+          <a href="index.html">
+            <play-icon name="mark" class="play-mark"></play-icon>
+            Harmo
+          </a>
+          <span class="htag">{{version}}</span>
         </div>
-        <script>
-          document.getElementById("play-dark").checked = document.documentElement.style.colorScheme === "dark";
-        </script>
-        <a class="hlink play-header-link" href="{{docs}}">Docs</a>
+        <div class="hheader-actions">
+          <div class="hfield" data-orientation="horizontal">
+            <input class="hswitch" type="checkbox" role="switch" id="play-dark" />
+            <label class="hlabel" for="play-dark">Dark</label>
+          </div>
+          <script>
+            document.getElementById("play-dark").checked = document.documentElement.style.colorScheme === "dark";
+          </script>
+          <a class="hlink play-header-link" href="{{docs}}">Docs</a>
+        </div>
       </div>
     </header>
     <div class="play-layout">

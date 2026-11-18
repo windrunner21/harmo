@@ -30,6 +30,42 @@
   </button>
 </play-example>
 
+<play-example title="Extra small">
+  <play-note>
+    <code>data-size="xsmall"</code>: 24px tall with 12px text, for a dense
+    row, or beside icon buttons. It still takes presses over 34px, as large as
+    a default button, so keep it 10px from its neighbors.
+  </play-note>
+  <button class="hbutton" data-size="xsmall" type="button">
+    <span class="hbutton-label">Save</span>
+  </button>
+  <button class="hbutton" data-variant="secondary" data-size="xsmall" type="button">
+    <span class="hbutton-label">Cancel</span>
+  </button>
+  <button class="hbutton" data-variant="tertiary" data-size="xsmall" type="button">
+    <span class="hbutton-label">Details</span>
+  </button>
+</play-example>
+
+<play-example title="Round">
+  <play-note>
+    <code>data-shape="circle"</code> makes an icon-only button a circle, at any
+    size, such as a header's 24px Create. With a label, its ends are round.
+  </play-note>
+  <button class="hbutton" data-shape="circle" type="button" aria-label="Add contact">
+    <play-icon name="plus" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="secondary" data-size="small" data-shape="circle" type="button" aria-label="More actions">
+    <play-icon name="more" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-size="xsmall" data-shape="circle" type="button" aria-label="Create">
+    <play-icon name="plus" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="secondary" data-shape="circle" type="button">
+    <span class="hbutton-label">Follow</span>
+  </button>
+</play-example>
+
 <play-example title="Disabled">
   <play-note>
     <code>disabled</code> dims a button and takes it out of the tab order.
@@ -145,6 +181,9 @@
     <play-icon name="plus" class="hicon"></play-icon>
   </button>
   <button class="hbutton" data-variant="secondary" data-size="small" type="button" aria-label="More actions">
+    <play-icon name="more" class="hicon"></play-icon>
+  </button>
+  <button class="hbutton" data-variant="tertiary" data-size="xsmall" type="button" aria-label="More actions">
     <play-icon name="more" class="hicon"></play-icon>
   </button>
   <button class="hbutton" type="button" aria-label="Add contact" disabled>

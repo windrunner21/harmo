@@ -47,6 +47,22 @@ onEachPlayground("navigation-menu", () => {
     await expect(trigger("Resources")).toBeFocused();
   });
 
+  test("moving the pointer down from a trigger to its panel, pixel by pixel, keeps it open all the way", async ({ page }) => {
+    const container = await example(page, "navigation-menu-default");
+    const { trigger, panel } = await parts(container);
+    await trigger("Solutions").hover();
+    const solutions = await panel("Solutions");
+    await expect(solutions.getByRole("link", { name: /^Commerce/ })).toBeVisible();
+    const [from, to] = await Promise.all([trigger("Solutions").boundingBox(), solutions.getByRole("link", { name: /^Commerce/ }).boundingBox()]);
+    const x = from!.x + from!.width / 2;
+    const closed: number[] = [];
+    for (let y = from!.y + from!.height / 2; y <= to!.y + 4; y += 1) {
+      await page.mouse.move(x, y);
+      if ((await trigger("Solutions").getAttribute("aria-expanded")) !== "true") closed.push(Math.round(y - from!.y - from!.height));
+    }
+    expect(closed, "pixels below the trigger where the panel closed").toEqual([]);
+  });
+
   test("the pointer opens a panel on a trigger, the frame wraps its rows, and leaving closes it", async ({ page }) => {
     const container = await example(page, "navigation-menu-default");
     const { nav, trigger, panel, frame } = await parts(container);

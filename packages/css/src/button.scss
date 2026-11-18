@@ -238,6 +238,40 @@ $actionable: ':where(button:enabled:not([aria-disabled="true"]), a[href]:not([ar
     }
   }
 
+  // Extra small: 24px, for a dense row, or beside icon buttons, such as a
+  // header's round Create. It takes presses over the 34px a default button
+  // covers, 5px past its edge all round, from inside its 1px border.
+  &[data-size="xsmall"] {
+    min-block-size: $control-height-xsmall;
+
+    font-size: $font-size-2xs;
+    line-height: 1.2;
+
+    border-radius: $border-radius-sm;
+
+    &:where(:not(:has(> .hbutton-label))) {
+      min-inline-size: $control-height-xsmall;
+    }
+
+    &::after {
+      content: "";
+
+      position: absolute;
+      inset: calc((#{$control-height-xsmall} - #{$control-height}) / 2 - 1px);
+    }
+  }
+
+  // Positioned for that, at the least weight, so a position of your own wins.
+  &:where([data-size="xsmall"]) {
+    position: relative;
+  }
+
+  // Round, as Apple's circle border shape: a circle when it's square, as an
+  // icon-only button is; with a label, round ends.
+  &[data-shape="circle"] {
+    border-radius: $border-radius-full;
+  }
+
   // A <label> around an input, as in a File Input, takes these from the input.
   &:focus-visible,
   &:where(label:has(> input:focus-visible)) {

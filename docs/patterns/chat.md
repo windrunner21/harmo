@@ -133,7 +133,7 @@ A support bot that answers whole messages returns a [reply](#answers) instead:
 
 ```tsx
 <SupportChat
-  assistant={{ name: "Fernhill Market", role: "AI assistant" }}
+  assistant={{ name: "Speedwagon", role: "AI assistant" }}
   greeting="Hi! How can I help?"
   suggestions={["Where's my order?", "Talk to a person"]}
   respond={async (conversation, { signal }) => {
@@ -187,7 +187,7 @@ there:
     await putFile(url, file, report);
     return key;
   }}
-  assistant={{ name: "Fernhill Market" }}
+  assistant={{ name: "Speedwagon" }}
   greeting="Hi! How can I help?"
 />
 ```
@@ -207,7 +207,7 @@ it:
     events.addEventListener("message", (event) => receive(JSON.parse(event.data)));
     return () => events.close();
   }}
-  assistant={{ name: "Fernhill Market" }}
+  assistant={{ name: "Speedwagon" }}
   greeting="Hi! How can I help?"
 />
 ```
@@ -326,7 +326,7 @@ the rest.
   <header class="hchat-header">
     <span class="havatar" aria-hidden="true">…</span>
     <div class="hchat-header-text">
-      <p class="hchat-title">Fernhill Market</p>
+      <p class="hchat-title">Speedwagon</p>
       <p class="hchat-subtitle">AI assistant · Replies right away</p>
     </div>
     <div class="hchat-header-actions">…Close…</div>

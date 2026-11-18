@@ -5,6 +5,7 @@
 // which component a React file belongs to.
 export const components: Record<string, string[]> = {
   accordion: ["Accordion.tsx"],
+  "account-menu": ["AccountMenu.tsx"],
   avatar: ["Avatar.tsx"],
   badge: ["Badge.tsx"],
   banner: ["Banner.tsx"],
@@ -25,6 +26,7 @@ export const components: Record<string, string[]> = {
   dialog: ["Dialog.tsx"],
   drawer: ["Drawer.tsx"],
   "drop-zone": ["DropZone.tsx"],
+  "dropdown-menu": ["DropdownMenu.tsx"],
   "empty-state": ["EmptyState.tsx"],
   "expand-chevron": ["ExpandChevron.tsx"],
   field: ["field/Field.tsx", "field/ErrorMessage.tsx"],
@@ -33,6 +35,7 @@ export const components: Record<string, string[]> = {
   "filter-bar": ["FilterBar.tsx"],
   "filter-chip": ["FilterChip.tsx"],
   filters: ["Filters.tsx"],
+  header: ["Header.tsx"],
   input: ["Input.tsx"],
   kbd: ["Kbd.tsx"],
   "language-picker": ["LanguagePicker.tsx"],

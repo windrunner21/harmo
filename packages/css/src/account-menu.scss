@@ -1,0 +1,157 @@
+@use "shortcuts" as *;
+
+// Account Menu: who's signed in, and the account they're in, as a button
+// that opens a Dropdown Menu of what's theirs, such as their settings, the
+// accounts they can switch to, and signing out. Its avatar, then their name
+// and a line under it, then an Expand Chevron that turns as the menu opens.
+// At the top of a Sidebar, collapsed, it's the avatar alone.
+.haccount-menu {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin: 0;
+  // With the 32px avatar, 6px all round puts it in the middle of a
+  // collapsed Sidebar, 60px wide.
+  padding: $space-2xs;
+
+  font-family: inherit;
+  text-align: start;
+
+  color: $color-text;
+  background: none;
+  border: 0;
+  border-radius: $border-radius;
+
+  cursor: pointer;
+
+  transition: background-color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: $color-background-hover;
+    }
+  }
+
+  &[aria-expanded="true"] {
+    background-color: $color-background-hover;
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: 0;
+  }
+
+  & > .havatar {
+    --harmo-avatar-size: 2rem;
+
+    flex-shrink: 0;
+  }
+
+  & > .hexpand-chevron {
+    flex-shrink: 0;
+
+    color: $color-text-secondary;
+  }
+}
+
+// The name, and the line under it, each cut short with an ellipsis.
+.haccount-menu-text {
+  display: grid;
+  flex: 1;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.haccount-menu-name,
+.haccount-menu-description {
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.haccount-menu-name {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.25rem;
+}
+
+.haccount-menu-description {
+  font-size: $font-size-2xs;
+  line-height: 1rem;
+
+  color: $color-text-secondary;
+}
+
+// With profile, who's signed in again, at the top of its menu, as on an
+// account page: a 40px avatar, 10px over their name in 15px and the line
+// under it, each in the middle and cut short with an ellipsis.
+.haccount-menu-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: $space-sm $space-xs $space-xs;
+
+  text-align: center;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > .havatar {
+    --harmo-avatar-size: 2.5rem;
+
+    margin-block-end: $space-xs;
+  }
+
+  & > .haccount-menu-name,
+  & > .haccount-menu-description {
+    max-inline-size: 100%;
+  }
+
+  & > .haccount-menu-name {
+    font-size: $font-size-md;
+    line-height: 1.5rem;
+
+    color: $color-text;
+  }
+
+  & > .haccount-menu-description {
+    font-size: $font-size-xs;
+    line-height: 1.25rem;
+  }
+}
+
+// In a collapsed Sidebar, its text and chevron fade, as the Sidebar's labels
+// do, quickly as it narrows and back as it finishes widening, and are cut
+// off at its end; still there, they name it.
+.haccount-menu > :is(.haccount-menu-text, .hexpand-chevron) {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: opacity $duration-fast ease $duration-faster;
+
+    :where(.hsidebar[data-collapsed]) & {
+      transition-duration: $duration-faster;
+      transition-delay: 0s;
+    }
+  }
+}
+
+.hsidebar[data-collapsed] .haccount-menu {
+  overflow-x: clip;
+
+  & > :is(.haccount-menu-text, .hexpand-chevron) {
+    opacity: 0;
+  }
+}

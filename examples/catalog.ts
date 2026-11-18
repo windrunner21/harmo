@@ -341,6 +341,11 @@ const groups: CatalogGroup[] = [
     title: "Navigation",
     entries: [
       {
+        slug: "account-menu",
+        title: "Account Menu",
+        purpose: "Who's signed in and the account they're in, opening a menu of what's theirs, such as at the top of a sidebar.",
+      },
+      {
         slug: "breadcrumb",
         title: "Breadcrumb",
         purpose: "A navigation trail ending at the current page.",
@@ -350,6 +355,11 @@ const groups: CatalogGroup[] = [
         title: "Command Menu",
         purpose:
           "Places to go and things to do, found by typing: under a search field, or in a dialog.",
+      },
+      {
+        slug: "header",
+        title: "Header",
+        purpose: "The bar across the top of a page or an app, which stays, scrolls away, or hides as you scroll down.",
       },
       {
         slug: "language-picker",
@@ -407,6 +417,11 @@ const groups: CatalogGroup[] = [
         title: "Drawer",
         purpose:
           "A modal panel at the window's edge for a form or details, with an optional preview beside it.",
+      },
+      {
+        slug: "dropdown-menu",
+        title: "Dropdown Menu",
+        purpose: "A list of actions and links that a button opens, such as a row's More or a header's Create.",
       },
       {
         slug: "launcher",
@@ -470,6 +485,12 @@ const groups: CatalogGroup[] = [
         title: "Chat",
         purpose:
           "A conversation with an assistant: an AI chat that fills the page, a copilot beside your app's content, or a support chat that opens from a corner.",
+      },
+      {
+        slug: "headers",
+        title: "Headers",
+        purpose:
+          "The bar across the top: a site's, with a menu that slides in under it on a phone; an app's, beside its sidebar, with search, notifications, and Create; or a sign-in page's.",
       },
       {
         slug: "contact-form",

@@ -32,6 +32,22 @@ minor version may change an API, and says how to upgrade when it does.
   launcher are built in. It's built from the components below: Conversation,
   Message, Prose, Composer, Mentions, Drop Zone, Launcher, and Badge.
   `npx harmo-ui add chat` copies it.
+- Headers, a pattern: the bar across the top, in React and HTML. Three of
+  them: a site's, its logo, a Navigation Menu whose sections open panels, and
+  actions, which a Menu Button slides in under the bar at 640px wide, the
+  menu scrolling over the actions at its foot; an app's, beside its
+  sidebar, with a Command Menu at the start, then Help, notifications with
+  an unread count and Mark all as read, Settings, and a round Create with a
+  short list of what to make; and a sign-in page's.
+  `npx harmo-ui add headers` copies it.
+- Header: the bar across the top of a page or an app, a logo, navigation or
+  search, and actions in a row. It stays at the top, frosted, with a hairline
+  once the page has scrolled; `data-scroll="away"` scrolls it away with the
+  page, and `data-scroll="hide"` slides it away as you scroll down and back
+  as you scroll up, or as focus comes into it. `data-transparent` keeps it
+  clear over a hero until the page scrolls, and `data-bordered` shows its
+  hairline from the start, as beside a Sidebar. In React, `scroll`,
+  `transparent`, and `bordered`.
 - Conversation: the scrolling log a chat's Messages are in. It opens at the
   latest and stays there as messages come and grow, a reply's words as they
   stream in too, unless you've scrolled up to read; then Jump to latest shows
@@ -75,6 +91,38 @@ minor version may change an API, and says how to upgrade when it does.
   takes a drag as a File Input's drop area does, and in React they share it:
   folders are left out, a drop that just misses doesn't open the file in the
   tab, and a field inside the area is the area's.
+- Account Menu: who's signed in, with their avatar, their name, and a line
+  under it, such as the account they're in, as a button that opens a
+  Dropdown Menu of what's theirs: their settings, the accounts they can
+  switch to, and signing out. At the top of a Sidebar, collapsed, it's the
+  avatar alone, its text fading as the Sidebar's labels do. With `profile`,
+  the menu starts with who's signed in again; many accounts go in a submenu,
+  so Sign out stays in reach.
+- Dropdown Menu: a list of actions and links that a button opens, such as a
+  row's More, an account's menu, or a header's Create, in a Popup. Its items
+  are links or buttons, each with an optional icon, `destructive` for one
+  that destroys something, in groups with labels and between separators.
+  `DropdownMenuSub` opens a submenu beside its item: on hover, a moment
+  later, and closing a moment after the pointer settles elsewhere, so it can
+  cross other items on its way; with →, and back with ←. It's at most 400px
+  tall, as a Popup is. A menu taller than it can be scrolls, with arrows at
+  its ends while there's more, as a Select's list has.
+- Listbox: its scroll arrows' styles are a mixin, `scroll-arrow`, which the
+  Dropdown Menu shares; they look and work the same.
+  Opened from the keys, focus goes to the first item, or with ↑ to the last;
+  the arrows, Home, End, and typing a letter move focus, and the mouse moves
+  it too, so only one item is shown. Choosing one closes the menu, and focus
+  goes back to its button; Tab closes it and moves on. A disabled item is
+  dimmed, and the keys pass it by.
+- Button: `size="xsmall"`, or `data-size="xsmall"`, a 24px button with
+  12px text, for a dense row or beside icon buttons. It takes presses over
+  34px, as a default button does. And `shape="circle"`, or
+  `data-shape="circle"`: round, a circle when it's icon only.
+- Tokens: `--harmo-control-height-xsmall`, 24px, an extra-small Button's
+  height.
+- Popup: `align="end"`, or `data-align="end"`, aligns it to its trigger's
+  end edge instead of its start, as for one opened from the end of a bar or
+  a row. Without room, it aligns to the start.
 - Button: a toggle, with `aria-pressed="true"`, shows it's on: a secondary or
   tertiary Button's icon and text in the primary color, and a secondary's
   background and border tinted.
@@ -129,6 +177,9 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Changed
 
+- Navigation Menu: a trigger's chevron is smaller, about 10px wide at 14px
+  text, and as light as the letters beside it. It was as wide as the text is
+  tall.
 - React: Table of Contents and Pagination take `aria-labelledby`, naming them
   by a visible heading, in place of `aria-label`, as Filter Bar does.
 - React: Time Picker's `periodLabel` is needed only where there can be an AM
@@ -143,6 +194,11 @@ minor version may change an API, and says how to upgrade when it does.
   4.34:1. On white it's 4.97:1. The dark theme's is unchanged.
 
 ### Fixed
+
+- Navigation Menu: moving the pointer from a trigger down to its panel no
+  longer closes it on the way. A seam about a pixel tall, between the
+  trigger and the bridge under it, let the pointer leave the menu; the open
+  trigger now has a bridge of its own, reaching into the panel.
 
 - Listbox: in a grouped list, the divider skips the first group shown by
   counting groups only, and Language Picker's regions count only regions for

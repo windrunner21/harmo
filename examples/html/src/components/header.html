@@ -1,0 +1,173 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    Scroll the page: the header stays at the top, what's under it showing
+    through, blurred, and a hairline appears under it once the page has
+    scrolled. Its logo, a
+    <a class="hlink" data-underlined href="navigation-menu.html">Navigation Menu</a>,
+    and its action share one row, as wide as the page's content. The logo and
+    the page's text are stand-ins.
+  </play-note>
+  <div style="block-size: 22rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader">
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top"><span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>Speedwagon</a>
+        </div>
+        <nav class="hnavigation-menu" aria-label="Main">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li><a class="hnavigation-menu-link" href="#shop">Shop</a></li>
+            <li><a class="hnavigation-menu-link" href="#recipes">Recipes</a></li>
+            <li><a class="hnavigation-menu-link" href="#stores">Stores</a></li>
+          </ul>
+        </nav>
+        <div class="hheader-actions">
+          <a class="hbutton" href="#order"><span class="hbutton-label">Order now</span></a>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Ask in store for the cheese of the month; this month's is a soft goat's cheese from the hills.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Bring your own containers to the deli counter, and we'll fill them, and take 5% off.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Hides as you scroll down" layout="wide">
+  <play-note>
+    With <code>data-scroll="hide"</code>, it slides away as you scroll down,
+    past its own height, and back as soon as you scroll up, so the page has
+    the room while you read. Tabbing into it brings it back, as does a menu
+    open in it.
+  </play-note>
+  <div style="block-size: 22rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader" data-scroll="hide">
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top"><span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>Speedwagon</a>
+        </div>
+        <nav class="hnavigation-menu" aria-label="Main">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li><a class="hnavigation-menu-link" href="#shop">Shop</a></li>
+            <li><a class="hnavigation-menu-link" href="#recipes">Recipes</a></li>
+            <li><a class="hnavigation-menu-link" href="#stores">Stores</a></li>
+          </ul>
+        </nav>
+        <div class="hheader-actions">
+          <a class="hbutton" href="#order"><span class="hbutton-label">Order now</span></a>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Ask in store for the cheese of the month; this month's is a soft goat's cheese from the hills.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Bring your own containers to the deli counter, and we'll fill them, and take 5% off.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Scrolls away" layout="wide">
+  <play-note>
+    With <code>data-scroll="away"</code>, it scrolls away with the page, as
+    for a page read once from the top.
+  </play-note>
+  <div style="block-size: 22rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader" data-scroll="away">
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top"><span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>Speedwagon</a>
+        </div>
+        <nav class="hnavigation-menu" aria-label="Main">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li><a class="hnavigation-menu-link" href="#shop">Shop</a></li>
+            <li><a class="hnavigation-menu-link" href="#recipes">Recipes</a></li>
+            <li><a class="hnavigation-menu-link" href="#stores">Stores</a></li>
+          </ul>
+        </nav>
+        <div class="hheader-actions">
+          <a class="hbutton" href="#order"><span class="hbutton-label">Order now</span></a>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Ask in store for the cheese of the month; this month's is a soft goat's cheese from the hills.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Bring your own containers to the deli counter, and we'll fill them, and take 5% off.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Clear over a hero" layout="wide">
+  <play-note>
+    With <code>data-transparent</code>, it's clear over what's under it until
+    the page scrolls; then it's frosted, as it is otherwise. The hero starts
+    under it, pulled up by the header's height.
+  </play-note>
+  <div style="block-size: 22rem; overflow-y: auto; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader" data-transparent>
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top"><span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>Speedwagon</a>
+        </div>
+        <nav class="hnavigation-menu" aria-label="Main">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li><a class="hnavigation-menu-link" href="#shop">Shop</a></li>
+            <li><a class="hnavigation-menu-link" href="#recipes">Recipes</a></li>
+            <li><a class="hnavigation-menu-link" href="#stores">Stores</a></li>
+          </ul>
+        </nav>
+        <div class="hheader-actions">
+          <a class="hbutton" href="#order"><span class="hbutton-label">Order now</span></a>
+        </div>
+      </div>
+    </header>
+    <div style="display: grid; align-content: end; min-block-size: 14rem; margin-block-start: -3.375rem; padding: 5rem var(--harmo-space-sm) var(--harmo-space-md); background: linear-gradient(160deg, var(--harmo-color-primary-tint), var(--harmo-color-background-secondary))">
+      <h2 style="margin: 0; font-size: var(--harmo-font-size-lg); line-height: 1.4; color: var(--harmo-color-text)">The season's first strawberries</h2>
+    </div>
+    <div style="display: grid; gap: var(--harmo-space-sm); max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      <p style="margin: 0">Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+      <p style="margin: 0">Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.</p>
+      <p style="margin: 0">Every box is packed in paper and card, and we take the last one back when we bring the next.</p>
+      <p style="margin: 0">Members save 10% on every order, and get first pick of the season's harvest.</p>
+      <p style="margin: 0">Not what you hoped for? Tell us, and we'll refund it or send a new one, no questions asked.</p>
+      <p style="margin: 0">Our stores are open every day from 7 AM to 10 PM, and on holidays until 6 PM.</p>
+      <p style="margin: 0">This week: the first asparagus from the valley, and new potatoes, small enough to cook whole.</p>
+      <p style="margin: 0">Bread is baked overnight in our own kitchen, and on the shelves by 7, with rye on Saturdays.</p>
+      <p style="margin: 0">Ask in store for the cheese of the month; this month's is a soft goat's cheese from the hills.</p>
+      <p style="margin: 0">Gift cards come in any amount, sent by email the moment you buy one, or printed at the till.</p>
+      <p style="margin: 0">Bring your own containers to the deli counter, and we'll fill them, and take 5% off.</p>
+      <p style="margin: 0">Questions? Write to us, or call between 8 AM and 8 PM, and a person will answer.</p>
+    </div>
+  </div>
+</play-example>

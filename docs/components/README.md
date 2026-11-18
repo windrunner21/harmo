@@ -8,6 +8,7 @@ the same markup and does what the script would.
 | Component | Page |
 | --- | --- |
 | Accordion | [accordion.md](accordion.md) |
+| Account Menu | [account-menu.md](account-menu.md) |
 | Avatar | [avatar.md](avatar.md) |
 | Badge | [badge.md](badge.md) |
 | Banner | [banner.md](banner.md) |
@@ -27,6 +28,7 @@ the same markup and does what the script would.
 | Dialog | [dialog.md](dialog.md) |
 | Drawer | [drawer.md](drawer.md) |
 | Drop Zone | [drop-zone.md](drop-zone.md) |
+| Dropdown Menu | [dropdown-menu.md](dropdown-menu.md) |
 | Empty State | [empty-state.md](empty-state.md) |
 | Expand Chevron | [expand-chevron.md](expand-chevron.md) |
 | Field, Label, Description, Optional, Error | [field.md](field.md) |
@@ -36,6 +38,7 @@ the same markup and does what the script would.
 | Filter Chip | [filter-chip.md](filter-chip.md) |
 | Filters | [filters.md](filters.md) |
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
+| Header | [header.md](header.md) |
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
 | Language Picker | [language-picker.md](language-picker.md) |
@@ -125,6 +128,7 @@ Some components are built from others, so their files need company:
 | File | Also load |
 | --- | --- |
 | `accordion.css` | `expand-chevron.css` |
+| `account-menu.css` | `dropdown-menu.css`, `popup.css`, `avatar.css`, `expand-chevron.css` |
 | `banner.css` | `button.css` for its action |
 | `breadcrumb.css` | `link.css`, `chevron.css` |
 | `button.css` | `spinner.css` for loading; `chevron-to-arrow.css`, `expand-chevron.css`, `kbd.css`, `badge.css`, or `tooltip.css` when used |
@@ -138,6 +142,7 @@ Some components are built from others, so their files need company:
 | `date-filter.css` | `filter-chip.css`, `popup.css`, `select.css`, `listbox.css`, `expand-chevron.css`, `input.css`, `date-picker.css`, `calendar.css`, `button.css`, `chevron.css` |
 | `date-picker.css` | `input.css`, `button.css`, `popup.css`, `calendar.css`, `chevron.css`; `field.css` for a label |
 | `dialog.css`, `drawer.css` | `button.css` for the close button |
+| `dropdown-menu.css` | `popup.css`; `button.css` for its trigger |
 | `empty-state.css` | `button.css` for actions |
 | `field.css` | The control's own, such as `input.css` or `checkbox.css` |
 | `file-input.css` | `button.css`; `avatar.css` for an avatar; `field.css` for a label and a message |
@@ -221,7 +226,8 @@ Some components are built from others, so their files need company:
   | --- | --- | --- |
   | `data-variant` | Appearance | Button, Tag, Status, Tooltip, Card, Empty State, File Input |
   | `data-status` | `success`, `warning`, `info`, or `error` (Password Input's word and hint: no `info`); on a file, `uploading`, `done`, or `error` | Status, Banner, Meter, Password Input, Toast, File List |
-  | `data-size` | `small` or `large` | Spinner; `small` on Button, Accordion, Empty State |
+  | `data-size` | `small` or `large` | Spinner; `small` on Button, Accordion, Empty State; `xsmall` on Button |
+  | `data-shape` | `circle`: round | Button |
   | `data-orientation` | `horizontal` on Field, `vertical` on Navigation Menu | Field, Navigation Menu |
   | `data-direction` | `back` on the chevrons, `up` or `down` on a trend | ChevronToArrow, Chevron, Stat |
   | `data-side` | Preferred or actual side; `end` puts a Table of Contents after the content | Tooltip, Popup, Table of Contents |
@@ -237,8 +243,8 @@ Some components are built from others, so their files need company:
   | `data-level` | `2` or `3`: a heading under another | Table of Contents |
   | `data-dismissed` | Hidden by Escape (script) | Tooltip |
   | `data-underlined`, `data-visited` | Opt-in underline / visited color | Link |
-  | `data-align` | `start`: lined up at the start, or a panel opening there | Empty State, Navigation Menu |
-  | `data-destructive` | For an action that destroys something | Button |
+  | `data-align` | `start`: lined up at the start, or a panel opening there; `end` on a Popup: aligned to its trigger's end | Empty State, Navigation Menu, Popup |
+  | `data-destructive` | For an action that destroys something | Button, Dropdown Menu's item |
   | `data-hold`, `data-holding`, `data-held` | Held to confirm, and how far along (script) | Button |
   | `data-pinned`, `data-refit` | Keeping or finding its place (script) | Popup |
   | `data-open` | Shown, or open (script) | Tooltip's trigger, Navigation Menu |
@@ -275,7 +281,8 @@ Some components are built from others, so their files need company:
   the window's edges.
 - **Control height.** Buttons, inputs, and select triggers share
   `--harmo-control-height` (34px), so they line up in a row; a small Button
-  is `--harmo-control-height-small` (29px), and a field that holds one, such
+  is `--harmo-control-height-small` (29px), and an extra-small one
+  `--harmo-control-height-xsmall` (24px), and a field that holds one, such
   as a Copy Field, keeps room for it. Inputs and select triggers also share
   their box, border, focus ring, and states through the `%control`
   placeholder in `_control.scss`, and where their text starts, 10px in, from

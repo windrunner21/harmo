@@ -106,6 +106,7 @@ $button-font-line-height: var(--harmo-button-font-line-height);
 // Sizes and spacing.
 $control-height: var(--harmo-control-height);
 $control-height-small: var(--harmo-control-height-small);
+$control-height-xsmall: var(--harmo-control-height-xsmall);
 $avatar-size: var(--harmo-avatar-size);
 $card-padding: var(--harmo-card-padding);
 $checkbox-size: var(--harmo-checkbox-size);
@@ -159,4 +160,71 @@ $tooltip-delay: var(--harmo-tooltip-delay);
 
   border: 0;
   clip-path: inset(50%);
+}
+
+// An arrow at an end of a list that has more to show that way, such as a
+// Listbox's or a Dropdown Menu's, which a script adds as its first and last
+// child, and shows only then. It lies over the list's edge, so no row moves
+// as it comes and goes: solid behind the chevron, so no text runs under it,
+// then fading over its last 8px, where the next row shows through. A sticky
+// element stops at its scroller's padding, where the rows still scroll past;
+// out by $padding, the band covers the list to its edge. Resting the pointer
+// on it scrolls the list that way.
+$scroll-arrow-height: 2rem;
+
+@mixin scroll-arrow($padding) {
+  position: sticky;
+  z-index: 1;
+
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+
+  block-size: $scroll-arrow-height;
+
+  color: $icon-color;
+
+  &[data-direction="up"] {
+    inset-block-start: -$padding;
+
+    margin-block-end: -$scroll-arrow-height;
+
+    background: linear-gradient(to bottom, #{$color-background} 75%, transparent);
+  }
+
+  &[data-direction="down"] {
+    inset-block-end: -$padding;
+
+    margin-block-start: -$scroll-arrow-height;
+
+    background: linear-gradient(to top, #{$color-background} 75%, transparent);
+  }
+
+  // The chevron, pointing the way the list scrolls.
+  &::before {
+    content: "";
+
+    inline-size: 1rem;
+    block-size: 1rem;
+
+    background-color: currentColor;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+
+  &[data-direction="up"]::before {
+    rotate: 180deg;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (forced-colors: active) {
+    background: Canvas;
+
+    &::before {
+      background-color: CanvasText;
+    }
+  }
 }

@@ -4,6 +4,7 @@ export {
   type AccordionItemProps,
   type AccordionProps,
 } from "./Accordion.tsx";
+export { AccountMenu, type AccountMenuProps } from "./AccountMenu.tsx";
 export { Avatar, type AvatarProps } from "./Avatar.tsx";
 export { Badge, type BadgeProps } from "./Badge.tsx";
 export { Banner, type BannerProps } from "./Banner.tsx";
@@ -44,6 +45,17 @@ export { DatePicker, type DatePickerProps, type NaturalDateParser } from "./date
 export { Dialog, DialogClose, type DialogProps } from "./Dialog.tsx";
 export { Drawer, DrawerClose, type DrawerProps } from "./Drawer.tsx";
 export { DropZone, type DropZoneProps } from "./DropZone.tsx";
+export {
+  DropdownMenu,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  type DropdownMenuGroupProps,
+  type DropdownMenuItemProps,
+  type DropdownMenuProps,
+  type DropdownMenuSubProps,
+} from "./DropdownMenu.tsx";
 export { EmptyState, type EmptyStateProps } from "./EmptyState.tsx";
 export { ExpandChevron, type ExpandChevronProps } from "./ExpandChevron.tsx";
 export { Field, useField, type FieldControl, type FieldProps } from "./field/Field.tsx";
@@ -53,6 +65,7 @@ export { FileList, type FileListItem, type FileListProps } from "./FileList.tsx"
 export { FilterChip, type FilterChipProps } from "./FilterChip.tsx";
 export { Filters, type FiltersProps } from "./Filters.tsx";
 export { HarmoProvider, type HarmoProviderProps } from "./HarmoProvider.tsx";
+export { Header, type HeaderProps } from "./Header.tsx";
 export { Input, type InputProps } from "./Input.tsx";
 export { Kbd, type KbdProps } from "./Kbd.tsx";
 export {

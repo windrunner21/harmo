@@ -4,6 +4,9 @@
 // these in order.
 $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
   --hpopup-center;
+// The same, for one aligned to the trigger's end.
+$fallbacks-end: flip-block, flip-inline, flip-block flip-inline,
+  --hpopup-shrink-end, --hpopup-center;
 
 .hpopup {
   --hpopup-slide: 12px;
@@ -73,6 +76,20 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
     position-try-fallbacks: $fallbacks, flip-block;
   }
 
+  // Aligned to the trigger's end instead, as for one at the end of a bar;
+  // without room, it flips to the start. A pinned one stays pinned.
+  &[data-align="end"]:not([data-pinned]) {
+    position-area: block-end span-inline-start;
+    justify-self: end;
+    position-try-fallbacks: $fallbacks-end;
+
+    margin-inline: 8px 0;
+  }
+
+  &[data-align="end"][data-refit]:not([data-pinned]) {
+    position-try-fallbacks: $fallbacks-end, flip-block;
+  }
+
   // A closing popup fades where it is: the script pins it there, by its
   // box, as closing starts, until it next opens. Firefox would otherwise
   // place it afresh as it leaves the top layer, perhaps on the other side.
@@ -102,6 +119,11 @@ $fallbacks: flip-block, flip-inline, flip-block flip-inline, --hpopup-shrink,
 
 @position-try --hpopup-shrink {
   position-area: block-end span-inline-end;
+  max-block-size: calc(100% - 16px);
+}
+
+@position-try --hpopup-shrink-end {
+  position-area: block-end span-inline-start;
   max-block-size: calc(100% - 16px);
 }
 

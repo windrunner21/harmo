@@ -1,5 +1,5 @@
 import { expect, type Locator } from "@playwright/test";
-import { example, onEachPlayground, test } from "./playgrounds.ts";
+import { clickAt, example, onEachPlayground, test } from "./playgrounds.ts";
 
 const fromEnd = (conversation: Locator) =>
   conversation.evaluate((node) => node.scrollHeight - node.scrollTop - node.clientHeight);
@@ -28,7 +28,8 @@ onEachPlayground("conversation", () => {
     await expect(latest).toBeHidden();
     await conversation.evaluate((node) => node.scrollTo({ top: 0 }));
     await expect(latest).toBeVisible();
-    await latest.click();
+    // Where it's drawn, as a person would; see the Chat's spec.
+    await clickAt(page, latest);
     await expect.poll(() => fromEnd(conversation)).toBeLessThan(1);
     await expect(latest).toBeHidden();
     await expect(container.getByRole("textbox", { name: "Message" })).toBeFocused();
@@ -65,7 +66,8 @@ onEachPlayground("conversation", () => {
     const latest = container.getByRole("button", { name: "Jump to latest" });
     await conversation.evaluate((node) => node.scrollTo({ top: 0 }));
     await expect(latest).toBeVisible();
-    await latest.click();
+    // Where it's drawn, as a person would; see the Chat's spec.
+    await clickAt(page, latest);
     await conversation.evaluate((node) => {
       const reply = node.querySelector(".hmessage:last-child .hmessage-text")!;
       reply.append(document.createElement("br"), "And more, ".repeat(150));

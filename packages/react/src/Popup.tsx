@@ -32,10 +32,12 @@ export const PopupTriggerContext = createContext<
 
 export interface PopupProps extends ComponentPropsWithRef<"div"> {
   trigger: ReactElement<PopupTrigger>;
+  align?: "start" | "end";
 }
 
 export const Popup = ({
   trigger,
+  align,
   id,
   className,
   style,
@@ -65,6 +67,7 @@ export const Popup = ({
         {...props}
         className={withClass("hpopup", className)}
         id={popupId}
+        data-align={align === "end" ? "end" : undefined}
         popover=""
         style={{ ...style, positionAnchor: anchor } as CSSProperties}
         onBeforeToggle={(event) => {

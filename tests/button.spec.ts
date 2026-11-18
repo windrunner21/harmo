@@ -221,6 +221,36 @@ onEachPlayground("button", () => {
     expect(await styleOf(text, "color")).toBe(await token(page, "--harmo-color-danger"));
   });
 
+  test("extra small: 24px tall, with 12px text, taking presses 5px past its edge", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "button-extra-small");
+    const save = container.getByRole("button", { name: "Save" });
+    const box = await save.boundingBox();
+    expect(Math.round(box!.height)).toBe(24);
+    expect(await styleOf(save, "font-size")).toBe("12px");
+    const reach = await save.evaluate((button) => {
+      const { left, right, top, bottom } = button.getBoundingClientRect();
+      const at = (x: number, y: number) => document.elementFromPoint(x, y) === button;
+      return { inside: at(right + 4.5, (top + bottom) / 2) && at(left - 4.5, top - 4.5), past: at(right + 5.5, bottom + 5.5) };
+    });
+    expect(reach).toEqual({ inside: true, past: false });
+  });
+
+  test("round: an icon-only button is a circle at each size; with a label, its ends are round", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "button-round");
+    for (const [name, size] of [
+      ["Add contact", 34],
+      ["More actions", 29],
+      ["Create", 24],
+    ] as const) {
+      const button = container.getByRole("button", { name });
+      const box = await button.boundingBox();
+      expect([Math.round(box!.width), Math.round(box!.height)]).toEqual([size, size]);
+      expect(await styleOf(button, "border-radius")).toBe("999px");
+    }
+    const follow = await container.getByRole("button", { name: "Follow" }).boundingBox();
+    expect(follow!.width).toBeGreaterThan(follow!.height);
+  });
+
   test("held for 1.5 seconds, its fill wipes across, evenly; full, it stays so a moment, even let go, then the action starts", async ({ page }) => {
     const { button, fill, labels } = await holdButton(page);
     await press(page, button);

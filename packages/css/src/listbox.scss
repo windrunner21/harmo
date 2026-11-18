@@ -1,9 +1,8 @@
 @use "shortcuts" as *;
 @use "tick" as *;
 
-// The list's padding, and the band of a scroll arrow, below.
+// The list's padding.
 $listbox-padding: 4px;
-$listbox-scroll-height: 2rem;
 
 .hlistbox {
   flex: 1 1 auto;
@@ -20,7 +19,7 @@ $listbox-scroll-height: 2rem;
   padding: $listbox-padding;
   overflow: auto;
   // An option the keyboard scrolls into view stops clear of a scroll arrow.
-  scroll-padding-block: $listbox-scroll-height;
+  scroll-padding-block: $scroll-arrow-height;
 
   // The highlighted option shows where focus is; with none, the popup does
   // (below). A ring on the list would be clipped by the popup's border.
@@ -44,69 +43,10 @@ $listbox-scroll-height: 2rem;
   }
 }
 
-// An arrow at an end of a list that has more to show that way, which a
-// script adds as the list's first and last item, and shows only then. It lies
-// over the list's edge, so no option moves as it comes and goes: solid behind
-// the chevron, so no text runs under it, then fading over its last 8px, where
-// the next option shows through. Resting the pointer on it scrolls the list
-// that way.
+// An arrow at an end of the list that has more to show that way; see the
+// mixin.
 .hlistbox-scroll {
-  position: sticky;
-  z-index: 1;
-
-  display: grid;
-  place-items: center;
-
-  block-size: $listbox-scroll-height;
-
-  color: $icon-color;
-
-  // A sticky element stops at its scroller's padding, where the options
-  // still scroll past; out by the padding, the band covers the list to its
-  // edge.
-  &[data-direction="up"] {
-    inset-block-start: -$listbox-padding;
-
-    margin-block-end: -$listbox-scroll-height;
-
-    background: linear-gradient(to bottom, #{$color-background} 75%, transparent);
-  }
-
-  &[data-direction="down"] {
-    inset-block-end: -$listbox-padding;
-
-    margin-block-start: -$listbox-scroll-height;
-
-    background: linear-gradient(to top, #{$color-background} 75%, transparent);
-  }
-
-  // The chevron, pointing the way the list scrolls.
-  &::before {
-    content: "";
-
-    inline-size: 1rem;
-    block-size: 1rem;
-
-    background-color: currentColor;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
-      center / contain no-repeat;
-  }
-
-  &[data-direction="up"]::before {
-    rotate: 180deg;
-  }
-
-  &[hidden] {
-    display: none;
-  }
-
-  @media (forced-colors: active) {
-    background: Canvas;
-
-    &::before {
-      background-color: CanvasText;
-    }
-  }
+  @include scroll-arrow($listbox-padding);
 }
 
 // A list that has keyboard focus itself, with no option highlighted, such as

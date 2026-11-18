@@ -12,6 +12,7 @@ change its words, its fields, and what it does, as you would your own code.
 | [Account Forms](account-forms.md) | Sign-in, sign-up, and reset password in one card that switches between them, such as in a Dialog |
 | [Verify Code](verify-code.md) | Entering a code sent by email or text, or from an authenticator app |
 | [Chat](chat.md) | An AI chat beside your past chats, a copilot beside your app's content, or a support chat that opens from a corner and hands over to a person |
+| [Headers](headers.md) | The bar across the top: a site's, with a menu that slides in under it on a phone; an app's, beside its sidebar, with search, notifications, and Create; or a sign-in page's |
 | [Contact Form](contact-form.md) | A message, a sales inquiry, a support request, or help with an order, and cards that lead to them |
 
 Each one comes in React and in HTML, with a small stylesheet for its layout,

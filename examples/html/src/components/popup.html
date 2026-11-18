@@ -71,3 +71,44 @@
     </ul>
   </div>
 </play-example>
+
+<play-example title="Aligned to its end" layout="wide">
+  <play-note>
+    With <code>data-align="end"</code>, it's aligned to its trigger's end edge,
+    as for a popup from the end of a bar or a row, such as this list's sort.
+    Without room at the start, it aligns to the trigger's other edge. The
+    toolbar around it is laid out with inline styles.
+  </play-note>
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--harmo-space-sm)">
+    <span style="color: var(--harmo-color-text-secondary); font-size: var(--harmo-font-size-sm)">12 orders</span>
+    <button
+      class="hbutton"
+      data-variant="secondary"
+      type="button"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      popovertarget="order-sort"
+      style="anchor-name: --order-sort"
+    >
+      <span class="hbutton-label">Newest first</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="order-sort" data-align="end" popover style="position-anchor: --order-sort">
+      <ul class="hlistbox" role="listbox" aria-label="Sort by" tabindex="-1">
+        <li class="hoption" id="sort-newest" role="option" aria-selected="true">
+          <span class="hoption-label">Newest first</span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="sort-oldest" role="option" aria-selected="false">
+          <span class="hoption-label">Oldest first</span>
+        </li>
+        <li class="hoption" id="sort-total" role="option" aria-selected="false">
+          <span class="hoption-label">Largest total</span>
+        </li>
+        <li class="hoption" id="sort-customer" role="option" aria-selected="false">
+          <span class="hoption-label">Customer, A to Z</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</play-example>

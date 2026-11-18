@@ -158,10 +158,11 @@
   --harmo-button-font-weight: var(--harmo-font-weight-medium);
   --harmo-button-font-line-height: 1.25rem;
 
-  // Sizes and spacing (single-line controls share one height; a small Button
-  // has its own).
+  // Sizes and spacing (single-line controls share one height; a small and an
+  // extra-small Button have their own).
   --harmo-control-height: 2.125rem;
   --harmo-control-height-small: 1.8125rem;
+  --harmo-control-height-xsmall: 1.5rem;
   --harmo-avatar-size: 2.5rem;
   --harmo-card-padding: var(--harmo-space-sm);
   --harmo-checkbox-size: 1.25rem;

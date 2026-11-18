@@ -15,8 +15,12 @@
     const latest = conversation.querySelector(".hconversation-latest");
     let atEnd = true;
     // Jumping to the latest follows it to its end, though a reply grows on
-    // the way, unless you scroll yourself meanwhile.
+    // the way, unless you scroll yourself meanwhile. It's over once it's
+    // there, once its scrolling ends, or once the list moves back up: a
+    // browser may not report the last step of a smooth scroll, and a jump
+    // left on would ignore every scroll after it.
     let jumping = false;
+    let lastTop = conversation.scrollTop;
     const motion = () => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth");
     const follow = () => {
       if (!atEnd) return;
@@ -25,14 +29,23 @@
     };
     const away = (value) => latest.toggleAttribute("data-open", value);
 
-    conversation.addEventListener("scroll", () => {
-      const near = conversation.scrollHeight - conversation.scrollTop - conversation.clientHeight < 32;
-      if (jumping) {
-        if (near) jumping = false;
+    const placed = () => {
+      const top = conversation.scrollTop;
+      const near = conversation.scrollHeight - top - conversation.clientHeight < 32;
+      if (jumping && !near && top >= lastTop) {
+        lastTop = top;
         return;
       }
+      jumping = false;
+      lastTop = top;
       atEnd = near;
       away(!atEnd);
+    };
+    conversation.addEventListener("scroll", placed);
+    conversation.addEventListener("scrollend", () => {
+      if (!jumping) return;
+      jumping = false;
+      placed();
     });
     for (const type of ["wheel", "touchstart", "pointerdown", "keydown"]) {
       conversation.addEventListener(

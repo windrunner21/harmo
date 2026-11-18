@@ -11,6 +11,7 @@ const patterns = [
   ["Account Forms", "account-forms"],
   ["Chat", "chat"],
   ["Contact Form", "contact-form"],
+  ["Headers", "headers"],
   ["Reset Password", "reset-password"],
   ["Sign-in Form", "sign-in-form"],
   ["Sign-up Form", "sign-up-form"],

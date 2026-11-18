@@ -154,6 +154,12 @@ describe("add", () => {
     expect(code).not.toMatch(/from "\.[^"]*\.tsx?"/);
   });
 
+  test("account-menu brings avatar.css, for the avatar you give it", () => {
+    run("add", "account-menu");
+    expect(copied()).toContain("avatar/avatar.css");
+    expect(importsIn(read(`${harmo}/harmo.css`))).toContain("avatar/avatar.css");
+  });
+
   test("breadcrumb brings link.css, for the links you put in it", () => {
     run("add", "breadcrumb");
     expect(copied()).toContain("link/link.css");

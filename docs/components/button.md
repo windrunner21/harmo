@@ -92,6 +92,8 @@ of its content in `.hbutton-hold`:
 | `data-variant="secondary"` | Outlined, lightly raised |
 | `data-variant="tertiary"` | Text only; tinted background on hover |
 | `data-size="small"` | Compact: `--harmo-control-height-small` (29px), 13px text, 6px radius, for notices, rows, and cards |
+| `data-size="xsmall"` | Extra small: `--harmo-control-height-xsmall` (24px), 12px text, 4px radius, for a dense row, or beside icon buttons, such as a header's Create. It takes presses over 34px, as a default button does; see [Appearance and states](#appearance-and-states) |
+| `data-shape="circle"` | Round, as Apple's circle button border shape: a circle when it's icon only; with a label, round ends |
 | `.hbutton-label` | Spaces the text 6px from the border and from icons; long labels wrap |
 | No `.hbutton-label` | Icon only: a square as wide as it is tall |
 | A direct `.hicon` | Drawn at 20px, whatever size the SVG declares, so icons from different sets match; beside a label, ChevronToArrow and the Expand Chevron keep their own |
@@ -115,8 +117,9 @@ of its content in `.hbutton-hold`:
 - `flex-shrink: 0`: in a row, a full-width neighbor such as an input shrinks
   instead of the button. `vertical-align: middle`, so icon-first and
   text-first buttons line up.
-- Icon only: a 34px square (29px when small) with the icon centered and drawn
-  at 20px, whatever size the SVG declares, a ChevronToArrow too. While
+- Icon only: a 34px square (29px when small, 24px when extra small) with the
+  icon centered and drawn at 20px, whatever size the SVG declares, a
+  ChevronToArrow too. While
   loading, a `.hspinner` takes the icon's place.
 - Loading: the spinner follows the label and the button grows to fit it. The
   spinner is 16px, drawn in the button's text color with a gap, 9px after the
@@ -128,6 +131,11 @@ of its content in `.hbutton-hold`:
 - Hover and press colors apply to enabled buttons and to links with `href`.
   Press scales to 0.98 (`--harmo-ease-out-quad`); reduced motion keeps only
   the color change.
+- Extra small, it answers presses 5px past its edge all round, by an empty
+  `::after`, so 34px for an icon-only one, as large as a default button.
+  Keep it 10px from its neighbors, or their press areas overlap, and the one
+  later in the page takes a press where they do. It's positioned for that,
+  `position: relative`, at the least weight, so your own position wins.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 - Disabled: `--harmo-opacity-disabled` (50%).
 - When what it shows changes, its text or whether it's loading, its width
@@ -230,7 +238,8 @@ stays square. Other props are the button's or the link's attributes, so
 | Prop | Effect |
 | --- | --- |
 | `variant` | `secondary` or `tertiary`; primary when left out |
-| `size` | `small` |
+| `size` | `small` or `xsmall` |
+| `shape` | `circle` |
 | `loading` | Shows the spinner after the label, sets `aria-busy` and `aria-disabled`, and ignores clicks and middle clicks |
 | `href` | Renders a link, through `HarmoProvider`'s `linkComponent` (an `<a>` by default) |
 | `aria-disabled` | `"true"` keeps it focusable but ignores clicks and middle clicks, so a [Tooltip](tooltip.md) can explain why; a link's context menu and dragging it still work |
@@ -260,7 +269,8 @@ stays square. Other props are the button's or the link's attributes, so
 
 ## Tokens
 
-`--harmo-border-radius`, `--harmo-border-radius-sm`, `--harmo-button-duration`,
+`--harmo-border-radius`, `--harmo-border-radius-full`,
+`--harmo-border-radius-sm`, `--harmo-button-duration`,
 `--harmo-button-font-line-height`, `--harmo-button-font-weight`,
 `--harmo-button-secondary-box-shadow`, `--harmo-button-secondary-color-border`,
 `--harmo-button-secondary-color-text`,
@@ -274,7 +284,8 @@ stays square. Other props are the button's or the link's attributes, so
 `--harmo-color-primary-fill-active`, `--harmo-color-primary-fill-hover`,
 `--harmo-color-primary-tint`, `--harmo-color-text`,
 `--harmo-color-text-secondary`, `--harmo-control-height`,
-`--harmo-control-height-small`, `--harmo-ease-out-quad`,
+`--harmo-control-height-small`, `--harmo-control-height-xsmall`,
+`--harmo-ease-out-quad`,
 `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-font-family`, `--harmo-font-size-sm`,
 `--harmo-font-size-xs`, `--harmo-icon-gap`, `--harmo-opacity-disabled`.

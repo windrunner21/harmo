@@ -1,0 +1,314 @@
+/* Headers: a site's, an app's, and a sign-in page's, each a Harmo Header.
+   This lays out what's in them: the site header's menu, which moves into a
+   panel under the bar on a narrow page; the app header's search, its round
+   Create and what it makes, and its notifications, in a Popup. The Header is a size container, so each
+   follows its own width. */
+
+/* The site header: its navigation and actions in the bar; on a page 640px
+   wide or less, behind a Menu Button, which opens them in a panel under the
+   bar, turning into a close as it does. */
+.hsite-header {
+  overflow-x: clip;
+}
+
+.hsite-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--harmo-space-2xs);
+}
+
+.hsite-header-actions[hidden] {
+  display: none;
+}
+
+.hsite-header-menu.hbutton {
+  display: none;
+}
+
+/* The panel fills the window under the header, or --hsite-header-menu-height:
+   the menu stacked, scrolling on its own when it's long, and the actions
+   side by side at the foot, each as wide, always in reach. It slides in
+   from the end in 200ms, eased out, and back in 150ms; with reduced motion,
+   it fades. */
+.hsite-header-panel {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline: 0;
+
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+
+  box-sizing: border-box;
+  block-size: var(--hsite-header-menu-height, calc(100dvh - var(--hheader-height)));
+  overflow: hidden;
+
+  background-color: var(--harmo-color-background);
+
+  transition:
+    translate var(--harmo-duration-normal) var(--harmo-ease-out-cubic),
+    display var(--harmo-duration-normal) allow-discrete;
+}
+
+.hsite-header-panel:not([data-open]) {
+  display: none;
+
+  translate: 100% 0;
+
+  transition-duration: var(--harmo-duration-fast);
+}
+
+.hsite-header-panel:not([data-open]):dir(rtl) {
+  translate: -100% 0;
+}
+
+.hsite-header-panel[hidden] {
+  display: none;
+
+  transition: none;
+}
+
+@starting-style {
+  .hsite-header-panel[data-open] {
+    translate: 100% 0;
+  }
+
+  .hsite-header-panel[data-open]:dir(rtl) {
+    translate: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hsite-header-panel,
+  .hsite-header-panel:not([data-open]),
+  .hsite-header-panel:not([data-open]):dir(rtl) {
+    translate: none;
+
+    transition:
+      opacity var(--harmo-duration-normal) ease,
+      display var(--harmo-duration-normal) allow-discrete;
+  }
+
+  .hsite-header-panel:not([data-open]) {
+    opacity: 0;
+
+    transition-duration: var(--harmo-duration-fast);
+  }
+
+  @starting-style {
+    .hsite-header-panel[data-open],
+    .hsite-header-panel[data-open]:dir(rtl) {
+      translate: none;
+      opacity: 0;
+    }
+  }
+}
+
+.hsite-header-panel-menu {
+  padding: var(--harmo-space-sm);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.hsite-header-panel-menu[hidden] {
+  display: none;
+}
+
+/* Over a line, and clear of a phone's home indicator. */
+.hsite-header-panel-actions {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: var(--harmo-space-xs);
+
+  padding: var(--harmo-space-sm);
+  padding-block-end: max(var(--harmo-space-sm), env(safe-area-inset-bottom));
+
+  border-block-start: 1px solid var(--harmo-color-border);
+}
+
+.hsite-header-panel-actions[hidden] {
+  display: none;
+}
+
+@container (max-width: 40rem) {
+  .hsite-header > .hheader-bar > .hnavigation-menu,
+  .hsite-header-actions {
+    display: none;
+  }
+
+  .hsite-header-menu.hbutton {
+    display: inline-flex;
+  }
+}
+
+.hsite-header-menu.hbutton[hidden] {
+  display: none;
+}
+
+/* Wider, the panel never shows, whatever its state. */
+@container (min-width: 40.0625rem) {
+  .hsite-header-panel[data-open] {
+    display: none;
+  }
+}
+
+/* The app header: its search at the start, a field at most 384px wide whose
+   list opens under it, and its icon buttons and the round Create at the
+   end. On a page 640px wide or less, the field leaves out its shortcut. */
+.happ-header-search {
+  display: flex;
+  flex: 1;
+
+  min-inline-size: 0;
+}
+
+.happ-header-search[hidden] {
+  display: none;
+}
+
+.happ-header-search > .hsearch {
+  inline-size: 100%;
+  max-inline-size: 24rem;
+}
+
+@container (max-width: 40rem) {
+  .happ-header-search .hsearch > .hkbd {
+    display: none;
+  }
+}
+
+/* Create: a round, extra-small Button, a step apart from the icons, and
+   what it makes, a Dropdown Menu, its words in the accent color and its
+   icons in the text's. */
+.happ-header-create.hbutton {
+  margin-inline-start: var(--harmo-space-2xs);
+}
+
+.happ-header-create-menu .hdropdown-menu-item {
+  color: var(--harmo-color-primary);
+}
+
+.happ-header-create-menu .hdropdown-menu-item > .hicon {
+  color: var(--harmo-color-text);
+}
+
+/* The notifications: a title, Mark all as read, and a list of what's new,
+   each a link to it, an unread one in the medium weight with a dot. */
+.happ-header-notifications.hpopup {
+  inline-size: min(22rem, 100vw - 16px);
+}
+
+.happ-header-notifications-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--harmo-space-xs);
+
+  padding: var(--harmo-space-xs) var(--harmo-space-sm);
+
+  border-block-end: 1px solid var(--harmo-color-border);
+}
+
+.happ-header-notifications-head[hidden] {
+  display: none;
+}
+
+.happ-header-notifications-head > button.hlink {
+  padding: 0;
+
+  font-size: var(--harmo-font-size-xs);
+
+  background: none;
+  border: 0;
+
+  cursor: pointer;
+}
+
+.happ-header-notifications-title {
+  margin: 0;
+
+  font-size: var(--harmo-font-size-sm);
+  font-weight: var(--harmo-font-weight-medium);
+}
+
+.happ-header-notifications-list {
+  display: grid;
+
+  margin: 0;
+  padding: var(--harmo-space-2xs);
+
+  list-style: none;
+}
+
+.happ-header-notifications-list[hidden] {
+  display: none;
+}
+
+.happ-header-notification {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--harmo-space-xs);
+
+  padding: var(--harmo-space-xs);
+
+  color: var(--harmo-color-text);
+  text-decoration: none;
+
+  border-radius: var(--harmo-border-radius);
+}
+
+.happ-header-notification[hidden] {
+  display: none;
+}
+
+.happ-header-notification:hover {
+  background-color: var(--harmo-color-background-hover);
+}
+
+.happ-header-notification:focus-visible {
+  outline: var(--harmo-focus-outline);
+  outline-offset: calc(var(--harmo-focus-outline-offset) * -1);
+}
+
+.happ-header-notification > .havatar {
+  --harmo-avatar-size: 2rem;
+}
+
+.happ-header-notification > .hbadge {
+  margin-block-start: 0.375rem;
+}
+
+.happ-header-notification-text {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+
+  min-inline-size: 0;
+}
+
+.happ-header-notification-text[hidden] {
+  display: none;
+}
+
+.happ-header-notification-title {
+  font-size: var(--harmo-font-size-sm);
+  line-height: 1.25rem;
+}
+
+.happ-header-notification[data-unread] .happ-header-notification-title {
+  font-weight: var(--harmo-font-weight-medium);
+}
+
+.happ-header-notification-detail {
+  font-size: var(--harmo-font-size-xs);
+  line-height: 1.125rem;
+
+  color: var(--harmo-color-text-secondary);
+}
+
+.happ-header-notification-time {
+  font-size: var(--harmo-font-size-2xs);
+  line-height: 1rem;
+
+  color: var(--harmo-color-text-tertiary);
+}

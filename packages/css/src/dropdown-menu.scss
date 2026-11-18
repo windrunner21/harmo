@@ -1,0 +1,234 @@
+@use "shortcuts" as *;
+
+// Dropdown Menu: a list of actions and links in a Popup, opened by a button,
+// such as a row's More or a header's Create. Each item is a link or a button,
+// with an optional icon, in groups with labels and between dividers. A script
+// moves focus through the items with the arrow keys and by typing, and closes
+// the menu as one is chosen. Its rows are a Listbox option's: 14px, 37px
+// tall, the one with focus on the hover background.
+
+// At least 128px wide, or its trigger's width, so a short menu isn't
+// cramped; at most 320px, where a long item wraps.
+// It scrolls past its height with its scrollbar hidden, as a Listbox does,
+// arrows at its ends saying there's more; an item the keys reach stops clear
+// of them.
+.hpopup.hdropdown-menu {
+  min-inline-size: max(anchor-size(inline), 8rem);
+  max-inline-size: min(20rem, 100vw - 16px);
+  padding: 4px;
+  scroll-padding-block: $scroll-arrow-height;
+
+  scrollbar-width: none;
+
+  overscroll-behavior: contain;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  // A Popup lays out a column; when the menu scrolls, none of what's in it
+  // shrinks to fit, a separator or a scroll arrow included.
+  & > * {
+    flex-shrink: 0;
+  }
+}
+
+// An arrow at an end of the menu that has more to show that way; see the
+// mixin.
+.hdropdown-menu-scroll {
+  @include scroll-arrow(4px);
+}
+
+.hdropdown-menu-item {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin: 0;
+  padding: 8px $space-xs;
+
+  font-family: inherit;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+  text-align: start;
+  text-decoration: none;
+
+  color: $color-text-secondary;
+  background: none;
+  border: 0;
+  border-radius: $border-radius-sm;
+
+  cursor: pointer;
+  user-select: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // The item with focus, from the keys or the pointer, as only one has it.
+  &:focus {
+    background-color: $color-background-hover;
+    outline: none;
+  }
+
+  // Each icon 20px, as in a Button, whatever its own size says.
+  & > .hicon {
+    flex-shrink: 0;
+
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  // Disabled, a button item is dimmed, and the keys pass it by.
+  &:disabled {
+    color: $color-text-tertiary;
+
+    cursor: not-allowed;
+  }
+
+  // For an action that destroys something: red, on red's tint with focus.
+  &[data-destructive] {
+    color: $color-danger;
+
+    &:focus {
+      background-color: $color-danger-background;
+    }
+  }
+
+  @media (forced-colors: active) {
+    &:focus {
+      outline: 2px solid Highlight;
+      outline-offset: -2px;
+    }
+  }
+}
+
+// A submenu's item: its chevron at the end, pointing where the submenu
+// opens, 16px; open, it keeps the hover background.
+.hdropdown-menu-item[aria-expanded="true"] {
+  background-color: $color-background-hover;
+}
+
+.hdropdown-menu-item > .hdropdown-menu-sub-chevron {
+  inline-size: 1rem;
+  block-size: 1rem;
+  margin-inline-start: auto;
+}
+
+// A submenu: beside its item, 4px past the menu's edge, its first item level
+// with that item, so 5px up for its padding and border; at most 400px tall,
+// as a Popup is, or the window's height, scrolling past that. Without room
+// at the end, it opens at the start; without room below, it ends level with
+// the item; in a window too short for either, it's centered on the item,
+// shifted to stay in the window, at the end or the start; with no room
+// beside the menu at all, as on a phone, it's over the menu, centered on the
+// item the same way. Five fallbacks, as Chromium tries no more. Its height is the same wherever it lands, as a
+// browser keeps a scroller's range from where it first tried it: a height
+// that changed with the place would leave the last items out of reach. It
+// fades, without sliding, as it opens on hover. A pinned one, closing,
+// stays pinned.
+$sub-fallbacks: flip-inline, flip-block, --hdropdown-menu-sub-fit,
+  --hdropdown-menu-sub-fit-start, --hdropdown-menu-sub-over;
+
+.hpopup.hdropdown-menu .hpopup.hdropdown-menu:not([data-pinned]) {
+  position-area: inline-end span-block-end;
+  justify-self: start;
+  position-try-fallbacks: $sub-fallbacks;
+
+  max-block-size: min(400px, 100dvh - 16px);
+  margin-block: -5px 8px;
+  margin-inline: 9px 8px;
+
+  &[data-refit] {
+    position-try-fallbacks: $sub-fallbacks, flip-inline;
+  }
+}
+
+// Closed, a submenu takes no room. A closed Popup stays laid out, for its
+// fade, and while the menu slides in, its transform makes the menu the
+// submenu's containing block, so the submenu would make it scroll. It still
+// fades out as it closes, its display changing as the fade ends.
+.hpopup.hdropdown-menu .hpopup.hdropdown-menu {
+  // Pinned as it closes too, so it never slides.
+  --hpopup-slide: 0px;
+
+  transition:
+    opacity $duration-normal $ease-out-cubic,
+    visibility 0s,
+    overlay $duration-normal allow-discrete,
+    display $duration-normal allow-discrete;
+
+  &:not(:popover-open) {
+    display: none;
+
+    transition-duration: $duration-fast;
+  }
+
+  @starting-style {
+    &:popover-open {
+      opacity: 0;
+    }
+  }
+}
+
+@position-try --hdropdown-menu-sub-fit {
+  position-area: inline-end span-all;
+  align-self: anchor-center;
+  margin-block: 8px;
+}
+
+// The same at the start, written out: Chromium drops the whole list when
+// one rule comes in it twice, as itself and with flip-inline.
+@position-try --hdropdown-menu-sub-fit-start {
+  position-area: inline-start span-all;
+  justify-self: end;
+  align-self: anchor-center;
+  margin-block: 8px;
+  margin-inline: 8px 9px;
+}
+
+@position-try --hdropdown-menu-sub-over {
+  position-area: span-all;
+  justify-self: anchor-center;
+  align-self: anchor-center;
+  margin: 8px;
+}
+
+// A group's label, as a Listbox group's: small capitals in the accent color.
+.hdropdown-menu-group-label {
+  display: block;
+
+  padding: $space-xs $space-xs $space-2xs;
+
+  font-size: $font-size-3xs;
+  font-weight: $font-weight-bold;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: $color-primary;
+
+  cursor: default;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// A 1px line across the menu, to its edges, between items or groups.
+.hdropdown-menu-separator {
+  block-size: 1px;
+  margin: 4px -4px;
+
+  background-color: $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+}

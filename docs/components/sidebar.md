@@ -76,7 +76,8 @@ The sidebar is as tall as what it's in, such as a full-height column of your
 layout; the nav scrolls when the links don't fit, expanded or collapsed, and
 the footer stays at the bottom. A group without a label is a
 `.hsidebar-group` with only its list. The header and footer hold anything,
-such as a group of links, or your account switcher. To hide a link or a
+such as a group of links, or an [Account Menu](account-menu.md), who's
+signed in, which a collapsed sidebar shows as their avatar. To hide a link or a
 group of links, put `hidden` on its `<li>`, so the list leaves no gap.
 
 ## Options
