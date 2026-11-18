@@ -57,7 +57,8 @@
 <play-example title="Commands" layout="wide">
   <play-note>
     Its field can be a <a class="hlink" data-underlined href="mentions.html">Mentions</a>:
-    here <code>/</code> at the start lists commands, over the field. Above the
+    here <code>/</code> at the start lists commands, and <code>@</code>
+    teammates, over the field, each marked in the text once chosen. Above the
     field, what the assistant knows about, here a
     <a class="hlink" data-underlined href="tag.html">Tag</a>. Send can't be
     pressed while a reply comes, as this one can't be stopped.
@@ -88,8 +89,12 @@
           <span class="htag">Ticket #4821</span>
         </div>
         <div class="hmentions" style="anchor-name: --composer-commands">
-          <textarea class="htextarea" aria-label="Message" placeholder="Ask about this ticket, or type / for a command" rows="1" aria-autocomplete="list" aria-controls="composer-commands-list" data-example-at-start data-example-trigger="/"></textarea>
-          <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --composer-commands">
+          <div class="htextarea-highlight">
+            <textarea class="htextarea" aria-label="Message" placeholder="Ask about this ticket, type / for a command, or @ for a teammate" rows="1" spellcheck="false" aria-autocomplete="list" aria-controls="composer-commands-list"></textarea>
+            <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="^(/(?:summarize|translate|draft))(?=$|[\s\p{P}\p{S}])(?![_-])|(?&lt;!\S)(@(?:sam|ana))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span>
+</span></div>
+          </div>
+          <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --composer-commands" data-example-trigger="/" data-example-at-start>
             <ul class="hlistbox" id="composer-commands-list" role="listbox" aria-label="Commands">
               <li class="hoption" id="composer-commands-summarize" role="option" aria-selected="false" data-example-value="summarize">
                 <span class="hoption-text">
@@ -107,6 +112,22 @@
                 <span class="hoption-text">
                   <span class="hoption-label">/translate</span>
                   <span class="hoption-description">Translate the customer's message</span>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --composer-commands">
+            <ul class="hlistbox" id="composer-commands-teammates" role="listbox" aria-label="Teammates">
+              <li class="hoption" id="composer-commands-sam" role="option" aria-selected="false" data-example-value="sam">
+                <span class="hoption-text">
+                  <span class="hoption-label">Sam Rivera</span>
+                  <span class="hoption-description">@sam</span>
+                </span>
+              </li>
+              <li class="hoption" id="composer-commands-ana" role="option" aria-selected="false" data-example-value="ana">
+                <span class="hoption-text">
+                  <span class="hoption-label">Ana Lopez</span>
+                  <span class="hoption-description">@ana</span>
                 </span>
               </li>
             </ul>

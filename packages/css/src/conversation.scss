@@ -35,6 +35,12 @@
     outline-offset: -2px;
   }
 
+  // A reply's Prose takes the conversation's line height, whatever it is, so
+  // its lines match the rest of the chat.
+  & .hprose {
+    line-height: inherit;
+  }
+
   // Larger text, as for an assistant's long replies.
   &[data-size="large"] {
     font-size: $font-size-md;

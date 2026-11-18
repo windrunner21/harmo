@@ -31,20 +31,29 @@ elements styled as Harmo's.
 
 ## Options
 
-None: it styles the elements inside it.
+| Hook | Effect |
+| --- | --- |
+| `--hprose-line-height` | Its line height: `--harmo-font-line-height` (1.5) by default. In a [Conversation](conversation.md), it takes the conversation's instead, whatever it's set to, so a reply's lines match the rest of the chat |
 
 ## Appearance and states
 
-- The text is the size and line height of what's around it, in
-  `--harmo-color-text`; a long word or address breaks rather than widening it.
-- Blocks are 10px (`--harmo-space-xs`) apart, and a heading after a block 16px
-  (`--harmo-space-sm`).
+- The text is the size of what's around it, on its own line height, 1.5
+  unless `--hprose-line-height` says otherwise, so it reads the same however
+  its container is set, in `--harmo-color-text`; a long word or address
+  breaks rather than widening it.
+- Its spacing is the golden-ratio scale's steps in em, so it grows and
+  shrinks with the text: blocks are 1em apart; a heading is 1.625em of the
+  text from what's above it and 0.375em from what's under it, so it sits with
+  the part it heads; list items are 0.375em apart. At 16px text, that's 16px,
+  26px, 6px, and 6px. The em is always the text's, worked out once on
+  `.hprose`, so a block with a smaller size of its own, such as a block of
+  code, is spaced the same.
 - Headings are semibold, with 1.4 lines: `<h2>` 1.25 times the text, `<h3>`
   1.125, `<h4>` the same size.
 - Lists are indented 1.5em. Bold is semibold.
 - A quote is set 10px in from a 2px line in `--harmo-color-border`, in
-  `--harmo-color-text-secondary`. A rule is a 1px line, with 16px above and
-  below.
+  `--harmo-color-text-secondary`. A rule is a 1px line, with 1.625em above
+  and below.
 - Code in a line is in `--harmo-font-family-mono`, at 0.875 times the text, on
   `--harmo-color-background-secondary` with 4px corners. A block of code is
   13px monospace in a panel on the same color, with a 1px border, 8px
@@ -112,5 +121,5 @@ for a screen reader's live region.
 `--harmo-duration-fast`, `--harmo-focus-outline`,
 `--harmo-focus-outline-offset`, `--harmo-font-family-mono`,
 `--harmo-font-size-xs`, `--harmo-font-weight-semibold`,
-`--harmo-link-color-text`, `--harmo-link-hover-color-text`,
-`--harmo-space-sm`, `--harmo-space-xs`
+`--harmo-font-line-height`, `--harmo-link-color-text`,
+`--harmo-link-hover-color-text`, `--harmo-space-sm`, `--harmo-space-xs`

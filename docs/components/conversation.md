@@ -57,7 +57,8 @@ list is `hidden`:
 
 ## Appearance and states
 
-- 14px text on 20px lines, `--harmo-color-text`, which its Messages take.
+- 14px text on 20px lines, `--harmo-color-text`, which its Messages take, a
+  reply's [Prose](prose.md) too, whatever its line height is set to.
 - 16px of padding (`--harmo-space-sm`), and its messages 16px apart.
 - What shows before the first message is centered.
 - Jump to latest is a round secondary Button, opaque, with a small shadow,

@@ -90,8 +90,12 @@
               <span class="htooltip" role="tooltip" id="ai-chat-attach-tip">Attach files</span>
             </span>
             <div class="hmentions" style="anchor-name: --ai-chat-commands">
-              <textarea class="htextarea" aria-label="Message" placeholder="Ask anything, or type / for a command" rows="1" aria-autocomplete="list" aria-controls="ai-chat-commands" data-example-at-start data-example-trigger="/"></textarea>
-              <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --ai-chat-commands">
+              <div class="htextarea-highlight">
+                <textarea class="htextarea" aria-label="Message" placeholder="Ask anything, or type / for a command" rows="1" spellcheck="false" aria-autocomplete="list" aria-controls="ai-chat-commands"></textarea>
+                <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="^(/(?:summarize|campaign|welcome|embed))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span>
+</span></div>
+              </div>
+              <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --ai-chat-commands" data-example-trigger="/" data-example-at-start>
                 <ul class="hlistbox" id="ai-chat-commands" role="listbox" aria-label="Commands">
                   <li class="hoption" id="ai-chat-commands-welcome" role="option" aria-selected="false" data-example-value="welcome">
                     <span class="hoption-text">
@@ -308,8 +312,12 @@
               <span class="htag">Ticket #1042</span>
             </div>
             <div class="hmentions" style="anchor-name: --copilot-commands">
-              <textarea class="htextarea" aria-label="Message" placeholder="Ask Copilot, or type / for a command" rows="1" aria-autocomplete="list" aria-controls="copilot-commands" data-example-at-start data-example-trigger="/"></textarea>
-              <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --copilot-commands">
+              <div class="htextarea-highlight">
+                <textarea class="htextarea" aria-label="Message" placeholder="Ask Copilot, or type / for a command" rows="1" spellcheck="false" aria-autocomplete="list" aria-controls="copilot-commands"></textarea>
+                <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="^(/(?:summarize|draft))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span>
+</span></div>
+              </div>
+              <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --copilot-commands" data-example-trigger="/" data-example-at-start>
                 <ul class="hlistbox" id="copilot-commands" role="listbox" aria-label="Commands">
                   <li class="hoption" id="copilot-commands-summarize" role="option" aria-selected="false" data-example-value="summarize">
                     <span class="hoption-text">

@@ -1,16 +1,24 @@
 import { expect } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
-// What docs/components/prose.md says: blocks 10px apart and a heading after
-// one 16px; headings in proportion; lists indented; code in a line on a tint,
+// What docs/components/prose.md says: its own 1.5 lines; blocks 1em apart, a
+// heading 1.625em from what's above it and 0.375em from what's under it, and
+// list items 0.375em apart; headings in proportion; lists indented; code in a line on a tint,
 // and in a block in a framed panel that scrolls sideways; a plain link looks
 // as an underlined Link does. React's `text` formats paragraphs, lists, code,
 // bold, and links, as elements, and only web and email addresses become
 // links. The look is CSS's, tested on the HTML playground.
 onEachPlayground("prose", () => {
-  test("blocks 10px apart; code in a line on a tint, and a block of code in a framed panel that scrolls sideways", { tag: "@css" }, async ({ page }) => {
+  test("its own 1.5 lines, blocks 1em apart, list items 0.375em; code in a line on a tint, and a block of code in a framed panel that scrolls sideways", { tag: "@css" }, async ({ page }) => {
     const prose = (await example(page, "prose-default")).locator(".hprose");
-    await expect(prose.locator("ul")).toHaveCSS("margin-top", "10px");
+    const base = parseFloat(await prose.evaluate((node) => getComputedStyle(node).fontSize));
+    // Inside a container on the browser's default line height, it keeps its own.
+    await prose.evaluate((node) => ((node.parentElement as HTMLElement).style.lineHeight = "normal"));
+    await expect(prose).toHaveCSS("line-height", `${base * 1.5}px`);
+    await expect(prose.locator("ul")).toHaveCSS("margin-top", `${base}px`);
+    await expect(prose.locator("li").nth(1)).toHaveCSS("margin-top", `${base * 0.375}px`);
+    // A block of code, whose text is smaller, is spaced in the text's em too.
+    await expect(prose.locator("pre")).toHaveCSS("margin-top", `${base}px`);
     await expect(prose.locator("ul")).toHaveCSS("padding-inline-start", "24px");
     const code = prose.locator("p > code");
     await expect(code).toHaveCSS("font-family", /monospace/);
@@ -23,12 +31,14 @@ onEachPlayground("prose", () => {
     await expect(prose.locator("p > a")).toHaveCSS("text-decoration-line", "underline");
   });
 
-  test("headings in proportion, a step further from what's above; a quote set in from a line", { tag: "@css" }, async ({ page }) => {
+  test("headings in proportion, further from what's above than from what's under; a quote set in from a line", { tag: "@css" }, async ({ page }) => {
     const prose = (await example(page, "prose-headings-and-quotes")).locator(".hprose");
     const base = parseFloat(await prose.evaluate((node) => getComputedStyle(node).fontSize));
     await expect(prose.locator("h3")).toHaveCSS("font-size", `${base * 1.125}px`);
     await expect(prose.locator("h3")).toHaveCSS("font-weight", "600");
-    await expect(prose.locator("h4")).toHaveCSS("margin-top", "16px");
+    await expect(prose.locator("h4")).toHaveCSS("margin-top", `${base * 1.625}px`);
+    await expect(prose.locator("h3")).toBeVisible();
+    await expect(prose.locator("h3 + p")).toHaveCSS("margin-top", `${base * 0.375}px`);
     await expect(prose.locator("blockquote")).toHaveCSS("border-inline-start-width", "2px");
     await expect(prose.locator("blockquote")).toHaveCSS("padding-inline-start", "10px");
   });

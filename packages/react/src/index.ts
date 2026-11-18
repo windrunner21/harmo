@@ -78,7 +78,8 @@ export {
 export { Launcher, type LauncherProps } from "./Launcher.tsx";
 export { Link, type LinkProps } from "./Link.tsx";
 export { Listbox, type ListboxProps } from "./listbox/Listbox.tsx";
-export { Mentions, type MentionsProps } from "./Mentions.tsx";
+export { Mentions, MentionsTrigger, type MentionsProps, type MentionsTriggerProps } from "./Mentions.tsx";
+export { mentionsIn, type Mention, type MentionList, type MentionLists } from "./mentionsIn.ts";
 export { MenuButton, type MenuButtonProps } from "./MenuButton.tsx";
 export { Message, type MessageProps } from "./Message.tsx";
 export { Meter, type MeterProps } from "./Meter.tsx";

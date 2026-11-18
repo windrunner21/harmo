@@ -39,10 +39,17 @@
     // text field that controls the list; combobox.js and command-menu.js do
     // the rest of what each needs.
     const search = popup?.querySelector(".hlistbox-search-input");
-    const field = !search && listbox.id ? document.querySelector(`:is(input[role="combobox"], .hmentions > :is(textarea, input))[aria-controls="${listbox.id}"]`) : null;
+    // A Mentions' field serves each of its lists, one for each trigger, and
+    // may be inside a highlight's wrapper, so it's found from the Mentions.
+    const mentions = listbox.closest(".hmentions");
+    const field = search || !listbox.id
+      ? null
+      : mentions
+        ? mentions.querySelector(".htextarea, .hinput")
+        : document.querySelector(`input[role="combobox"][aria-controls="${listbox.id}"]`);
     // A Mentions' field keeps its own keys while its list is closed, such as
     // the arrows that move a text area's caret: mentions.js opens the list.
-    const suggesting = field?.parentElement?.matches(".hmentions") ?? false;
+    const suggesting = mentions !== null && field !== null;
     const freeText = field?.hasAttribute("data-free-text") ?? false;
     // A Command Menu's options are places to go, and a Mentions' are put in
     // the text, so none is ever selected.
@@ -65,7 +72,10 @@
           option.setAttribute("data-active", "");
           owner.setAttribute("aria-activedescendant", option.id);
         } else {
-          owner.removeAttribute("aria-activedescendant");
+          // A field another list shares, such as a Mentions' with a list for
+          // each trigger, keeps the option of whichever list set it.
+          const current = document.getElementById(owner.getAttribute("aria-activedescendant") ?? "");
+          if (!current || listbox.contains(current)) owner.removeAttribute("aria-activedescendant");
         }
       }
       if (option && scroll) option.scrollIntoView({ block: "nearest" });

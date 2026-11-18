@@ -1,7 +1,10 @@
 // Example only: what the React Input and TextArea do with highlight. Marks what
 // matches in the text drawn over the field, and keeps that text lined up with
 // the field: its size, type, and padding, with room for a scrollbar, and its
-// scrolling. Only for a field that shows its text, so never a password.
+// scrolling. Only for a field that shows its text, so never a password. The
+// pattern is the backdrop's data-example-pattern, with data-example-flags, such
+// as "i" to match any case, read each time it draws. A script that sets the
+// field's text sends it an example-redraw event.
 {
   const copied = [
     "boxSizing", "width", "height", "paddingTop", "borderTopWidth", "borderRightWidth",
@@ -18,7 +21,10 @@
     const text = backdrop.firstElementChild;
     const textarea = field.localName === "textarea";
     const scroller = textarea ? backdrop : text;
-    const pattern = new RegExp(backdrop.dataset.examplePattern, "g");
+    // Read as it draws, so a script can change it, as Mentions' does as its
+    // lists change; "g" once, whatever the flags.
+    const patternNow = () =>
+      new RegExp(backdrop.dataset.examplePattern, [...new Set(`g${backdrop.dataset.exampleFlags ?? ""}`)].join(""));
 
     const follow = () => {
       scroller.scrollLeft = field.scrollLeft;
@@ -45,7 +51,7 @@
       const { value } = field;
       const parts = [];
       let end = 0;
-      for (const found of value.matchAll(pattern)) {
+      for (const found of value.matchAll(patternNow())) {
         if (!found[0]) continue;
         if (found.index > end) parts.push(value.slice(end, found.index));
         const mark = document.createElement("mark");
@@ -60,6 +66,9 @@
     };
 
     field.addEventListener("input", draw);
+    // A script that sets the field's text itself, such as a chat clearing
+    // it once a message is sent, asks for it to be drawn again.
+    field.addEventListener("example-redraw", draw);
     field.addEventListener("scroll", follow);
     new ResizeObserver(match).observe(field);
     // The form it belongs to when it resets, even one it joined later.

@@ -1,7 +1,9 @@
 // Example only: what an app's script does for a Chat, as the React pattern
 // does, with Harmo's components: conversation.js keeps the Conversation at
 // its latest message and shows Jump to latest; mentions.js and listbox.js
-// list the commands a slash at the start of the field brings up;
+// list the commands a slash at the start of the field brings up, and
+// highlight.js marks them, drawn again with example-redraw as this script
+// sets the field's text;
 // drop-zone.js frames files dragged over the chat; launcher.js opens and
 // closes a support chat's panel, and counts what came while it was closed.
 //
@@ -460,6 +462,7 @@
       if (attachButton) attachButton.hidden = true;
       if (files) files.hidden = true;
       field.value = last.text;
+      field.dispatchEvent(new CustomEvent("example-redraw"));
       field.focus();
       field.setSelectionRange(field.value.length, field.value.length);
       refresh();
@@ -476,6 +479,7 @@
       if (attachButton) attachButton.hidden = false;
       if (files) files.hidden = rows().length === 0;
       field.value = draft;
+      field.dispatchEvent(new CustomEvent("example-redraw"));
       draft = "";
       refresh();
       placeEdit();
@@ -808,6 +812,7 @@
       for (const row of sent) row.remove();
       start(field.value.trim(), attached);
       field.value = "";
+      field.dispatchEvent(new CustomEvent("example-redraw"));
       if (error) error.textContent = "";
       field.focus();
     });
@@ -997,6 +1002,7 @@
         greeting.hidden = messages.length > 0;
         list.hidden = messages.length === 0;
         field.value = "";
+        field.dispatchEvent(new CustomEvent("example-redraw"));
         for (const row of rows()) row.remove();
         error.textContent = "";
         status.textContent = "";

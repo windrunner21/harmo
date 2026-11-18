@@ -73,6 +73,22 @@ onEachPlayground("composer", () => {
     await expect(container.locator('.hmessage[data-from="user"]')).toHaveText("/summarize");
   });
 
+  test("with a second trigger, Enter picks a teammate from its list rather than sending, and the sent text is drawn again", async ({ page }) => {
+    const container = await example(page, "composer-commands");
+    const field = container.getByRole("textbox", { name: "Message" });
+    await field.pressSequentially("Ask @sa");
+    await expect(page.locator(".hpopup:popover-open").getByRole("listbox")).toHaveAccessibleName("Teammates");
+    await field.press("Enter");
+    await expect(field).toHaveValue("Ask @sam ");
+    await expect(container.locator(".hmessage")).toHaveCount(0);
+    await expect(container.locator(".htextarea-highlight-backdrop mark")).toHaveText(["@sam"]);
+    await field.press("Enter");
+    await expect(container.locator('.hmessage[data-from="user"]')).toHaveText("Ask @sam");
+    // Sent, the field is empty, and so is the text drawn over it.
+    await expect(field).toHaveValue("");
+    await expect(container.locator(".htextarea-highlight-backdrop")).toHaveText("");
+  });
+
   test("↑ in the empty field edits your last message; Escape cancels; sending replaces it", async ({ page }) => {
     const container = await example(page, "composer-editing");
     const field = container.getByRole("textbox", { name: "Message" });

@@ -1,4 +1,4 @@
-import { Composer, Conversation, EmptyState, FileList, Message, Option, Tag } from "@harmo-ui/react";
+import { Composer, Conversation, EmptyState, FileList, MentionsTrigger, Message, Option, Tag } from "@harmo-ui/react";
 import { useRef, useState, type CSSProperties } from "react";
 
 // Example only: a conversation that takes what's sent, and a reply after a
@@ -138,25 +138,32 @@ export const examples = {
         <Lines lines={chat.lines} status={chat.status} />
         <Composer
           aria-label="Message"
-          placeholder="Ask about this ticket, or type / for a command"
+          placeholder="Ask about this ticket, type / for a command, or @ for a teammate"
           style={foot}
           replying={chat.replying}
           sendLabel="Send"
           context={<Tag>Ticket #4821</Tag>}
-          listLabel="Commands"
-          trigger="/"
-          atStart
           onSend={(sent) => chat.send(sent)}
         >
-          <Option value="summarize" description="Summarize this ticket">
-            /summarize
-          </Option>
-          <Option value="draft" description="Draft a reply">
-            /draft
-          </Option>
-          <Option value="translate" description="Translate the customer's message">
-            /translate
-          </Option>
+          <MentionsTrigger trigger="/" listLabel="Commands" atStart>
+            <Option value="summarize" description="Summarize this ticket">
+              /summarize
+            </Option>
+            <Option value="draft" description="Draft a reply">
+              /draft
+            </Option>
+            <Option value="translate" description="Translate the customer's message">
+              /translate
+            </Option>
+          </MentionsTrigger>
+          <MentionsTrigger trigger="@" listLabel="Teammates">
+            <Option value="sam" description="@sam">
+              Sam Rivera
+            </Option>
+            <Option value="ana" description="@ana">
+              Ana Lopez
+            </Option>
+          </MentionsTrigger>
         </Composer>
       </div>
     );

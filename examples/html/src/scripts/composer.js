@@ -6,7 +6,9 @@
 // type="button", its Tooltip saying data-example-stop-label; without, it
 // can't be pressed then. The paperclip opens the file picker; what's picked
 // or pasted is handed to your app, here as an example-files-add event, which
-// file-list.js lists, and the list shows once it has a file.
+// file-list.js lists, and the list shows once it has a file. Setting the
+// field's text, as sending or editing does, sends it example-redraw, so a
+// Mentions' highlight is drawn again.
 //
 // The rest is your app's, as the React Composer's props are: what's sent
 // goes to the Conversation beside it as an example-message-add event, which
@@ -73,6 +75,7 @@
       field.removeAttribute("aria-describedby");
       editing = null;
       field.value = "";
+      field.dispatchEvent(new CustomEvent("example-redraw"));
       update();
     };
 
@@ -92,6 +95,7 @@
       box.prepend(bar);
       field.setAttribute("aria-describedby", id);
       field.value = text;
+      field.dispatchEvent(new CustomEvent("example-redraw"));
       field.setSelectionRange(text.length, text.length);
       update();
       return true;
@@ -108,6 +112,7 @@
       const moved = rows();
       add("user", text, moved);
       field.value = "";
+      field.dispatchEvent(new CustomEvent("example-redraw"));
       update();
       reply(text, moved.length);
     };

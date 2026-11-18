@@ -38,7 +38,8 @@ type Attaching =
 
 type Suggesting =
   | { children?: undefined; listLabel?: undefined; trigger?: undefined; atStart?: undefined }
-  | { children: ReactNode; listLabel: string; trigger?: string; atStart?: boolean };
+  | { children: ReactNode; listLabel: string; trigger?: string; atStart?: boolean }
+  | { children: ReactNode; listLabel?: undefined; trigger?: undefined; atStart?: undefined };
 
 export type ComposerProps = ComposerOptions & Stopping & Attaching & Suggesting;
 

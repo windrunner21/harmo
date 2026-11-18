@@ -4,31 +4,26 @@
     has them are listed, the first highlighted. The arrow keys move through
     them, <kbd class="hkbd">Enter</kbd> or <kbd class="hkbd">Tab</kbd> puts the
     handle in the note, and <kbd class="hkbd">Escape</kbd> closes the list.
-    Focus stays in the field.
+    Focus stays in the field, and the handle is highlighted in the text.
   </play-note>
   <div class="hfield">
-    <label class="hlabel" for="mentions-note">Internal note</label>
-    <div class="hmentions" style="anchor-name: --mentions-note">
-      <textarea class="htextarea" id="mentions-note" aria-autocomplete="list" aria-controls="mentions-note-list" placeholder="Type @ to mention someone"></textarea>
-      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --mentions-note">
-        <ul class="hlistbox" id="mentions-note-list" role="listbox" aria-label="People">
-          <li class="hoption" id="mentions-note-sam" role="option" aria-selected="false" data-example-value="sam">
-            <span class="hoption-text">
-              <span class="hoption-label">Sam Rivera</span>
-              <span class="hoption-description">@sam</span>
-            </span>
+    <label class="hlabel" for="mentions-default-1">Internal note</label>
+    <div class="hmentions" style="anchor-name: --mentions-default-2">
+      <div class="htextarea-highlight">
+        <textarea placeholder="Type @ to mention someone" spellcheck="false" aria-autocomplete="list" aria-controls="mentions-default-2-list" id="mentions-default-1" class="htextarea"></textarea>
+        <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="(?&lt;!\S)(@(?:maya|sam|ana))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span>
+</span></div>
+      </div>
+      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --mentions-default-2">
+        <ul aria-label="People" class="hlistbox" id="mentions-default-2-list" role="listbox">
+          <li class="hoption" id="mentions-default-3" role="option" aria-selected="false" data-example-value="sam">
+            <span class="hoption-text"><span class="hoption-label">Sam Rivera</span> <span class="hoption-description">@sam</span></span>
           </li>
-          <li class="hoption" id="mentions-note-ana" role="option" aria-selected="false" data-example-value="ana">
-            <span class="hoption-text">
-              <span class="hoption-label">Ana Lopez</span>
-              <span class="hoption-description">@ana</span>
-            </span>
+          <li class="hoption" id="mentions-default-4" role="option" aria-selected="false" data-example-value="ana">
+            <span class="hoption-text"><span class="hoption-label">Ana Lopez</span> <span class="hoption-description">@ana</span></span>
           </li>
-          <li class="hoption" id="mentions-note-maya" role="option" aria-selected="false" data-example-value="maya">
-            <span class="hoption-text">
-              <span class="hoption-label">Maya Chen</span>
-              <span class="hoption-description">@maya</span>
-            </span>
+          <li class="hoption" id="mentions-default-5" role="option" aria-selected="false" data-example-value="maya">
+            <span class="hoption-text"><span class="hoption-label">Maya Chen</span> <span class="hoption-description">@maya</span></span>
           </li>
         </ul>
       </div>
@@ -44,28 +39,22 @@
     lines for them to move between.
   </play-note>
   <div class="hfield">
-    <label class="hlabel" for="mentions-task">Task</label>
-    <div class="hmentions" style="anchor-name: --mentions-task">
-      <input class="hinput" id="mentions-task" autocomplete="off" placeholder="Type @ to assign someone" aria-autocomplete="list" aria-controls="mentions-task-list" value="" />
-      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --mentions-task">
-        <ul class="hlistbox" id="mentions-task-list" role="listbox" aria-label="People">
-          <li class="hoption" id="mentions-task-sam" role="option" aria-selected="false" data-example-value="sam">
-            <span class="hoption-text">
-              <span class="hoption-label">Sam Rivera</span>
-              <span class="hoption-description">@sam</span>
-            </span>
+    <label class="hlabel" for="mentions-one-line-1">Task</label>
+    <div class="hmentions" style="anchor-name: --mentions-one-line-2">
+      <div class="hinput-highlight">
+        <input autocomplete="off" placeholder="Type @ to assign someone" spellcheck="false" aria-autocomplete="list" aria-controls="mentions-one-line-2-list" id="mentions-one-line-1" class="hinput" value />
+        <div class="hinput-highlight-backdrop" aria-hidden="true" data-example-pattern="(?&lt;!\S)(@(?:maya|sam|ana))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span></span></div>
+      </div>
+      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --mentions-one-line-2">
+        <ul aria-label="People" class="hlistbox" id="mentions-one-line-2-list" role="listbox">
+          <li class="hoption" id="mentions-one-line-3" role="option" aria-selected="false" data-example-value="sam">
+            <span class="hoption-text"><span class="hoption-label">Sam Rivera</span> <span class="hoption-description">@sam</span></span>
           </li>
-          <li class="hoption" id="mentions-task-ana" role="option" aria-selected="false" data-example-value="ana">
-            <span class="hoption-text">
-              <span class="hoption-label">Ana Lopez</span>
-              <span class="hoption-description">@ana</span>
-            </span>
+          <li class="hoption" id="mentions-one-line-4" role="option" aria-selected="false" data-example-value="ana">
+            <span class="hoption-text"><span class="hoption-label">Ana Lopez</span> <span class="hoption-description">@ana</span></span>
           </li>
-          <li class="hoption" id="mentions-task-maya" role="option" aria-selected="false" data-example-value="maya">
-            <span class="hoption-text">
-              <span class="hoption-label">Maya Chen</span>
-              <span class="hoption-description">@maya</span>
-            </span>
+          <li class="hoption" id="mentions-one-line-5" role="option" aria-selected="false" data-example-value="maya">
+            <span class="hoption-text"><span class="hoption-label">Maya Chen</span> <span class="hoption-description">@maya</span></span>
           </li>
         </ul>
       </div>
@@ -80,28 +69,79 @@
     field first, as for a composer at the bottom of a chat.
   </play-note>
   <div class="hfield">
-    <label class="hlabel" for="mentions-command">Message</label>
-    <div class="hmentions" style="anchor-name: --mentions-command">
-      <textarea class="htextarea" id="mentions-command" aria-autocomplete="list" aria-controls="mentions-command-list" placeholder="Type / for a command" data-example-at-start data-example-trigger="/"></textarea>
-      <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --mentions-command">
-        <ul class="hlistbox" id="mentions-command-list" role="listbox" aria-label="Commands">
-          <li class="hoption" id="mentions-command-summarize" role="option" aria-selected="false" data-example-value="summarize">
-            <span class="hoption-text">
-              <span class="hoption-label">/summarize</span>
-              <span class="hoption-description">Summarize this ticket</span>
-            </span>
+    <label class="hlabel" for="mentions-commands-1">Message</label>
+    <div class="hmentions" style="anchor-name: --mentions-commands-2">
+      <div class="htextarea-highlight">
+        <textarea placeholder="Type / for a command" spellcheck="false" aria-autocomplete="list" aria-controls="mentions-commands-2-list" id="mentions-commands-1" class="htextarea"></textarea>
+        <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="^(/(?:summarize|translate|draft))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span>
+</span></div>
+      </div>
+      <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --mentions-commands-2" data-example-trigger="/" data-example-at-start>
+        <ul aria-label="Commands" class="hlistbox" id="mentions-commands-2-list" role="listbox">
+          <li class="hoption" id="mentions-commands-3" role="option" aria-selected="false" data-example-value="summarize">
+            <span class="hoption-text"><span class="hoption-label">/summarize</span> <span class="hoption-description">Summarize this ticket</span></span>
           </li>
-          <li class="hoption" id="mentions-command-draft" role="option" aria-selected="false" data-example-value="draft">
-            <span class="hoption-text">
-              <span class="hoption-label">/draft</span>
-              <span class="hoption-description">Draft a reply</span>
-            </span>
+          <li class="hoption" id="mentions-commands-4" role="option" aria-selected="false" data-example-value="draft">
+            <span class="hoption-text"><span class="hoption-label">/draft</span> <span class="hoption-description">Draft a reply</span></span>
           </li>
-          <li class="hoption" id="mentions-command-translate" role="option" aria-selected="false" data-example-value="translate">
-            <span class="hoption-text">
-              <span class="hoption-label">/translate</span>
-              <span class="hoption-description">Translate the customer's message</span>
-            </span>
+          <li class="hoption" id="mentions-commands-5" role="option" aria-selected="false" data-example-value="translate">
+            <span class="hoption-text"><span class="hoption-label">/translate</span> <span class="hoption-description">Translate the customer's message</span></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Several triggers" layout="stack">
+  <play-note>
+    A message box with a list for each trigger: <code>@</code> for people,
+    <code>#</code> for channels, and <code>/</code> at the start for a
+    command. The trigger nearest the caret picks the list. Each mention of
+    someone or something in a list is highlighted as you type, as in the
+    text it starts with, and stays a plain text field underneath.
+  </play-note>
+  <div class="hfield">
+    <label class="hlabel" for="mentions-several-triggers-1">Message</label>
+    <div class="hmentions" style="anchor-name: --mentions-several-triggers-2">
+      <div class="htextarea-highlight">
+        <textarea placeholder="Type @ for people, # for channels, or / for a command" spellcheck="false" aria-autocomplete="list" aria-controls="mentions-several-triggers-2-list" id="mentions-several-triggers-1" class="htextarea">Thanks @sam! I'll post the update in #releases.</textarea>
+        <div class="htextarea-highlight-backdrop" aria-hidden="true" data-example-pattern="(?&lt;!\S)(@(?:maya|sam|ana))(?=$|[\s\p{P}\p{S}])(?![_-])|(?&lt;!\S)(#(?:releases|support|general))(?=$|[\s\p{P}\p{S}])(?![_-])|^(/(?:remind|poll))(?=$|[\s\p{P}\p{S}])(?![_-])" data-example-flags="iu"><span>Thanks <mark>@sam</mark>! I'll post the update in <mark>#releases</mark>.
+</span></div>
+      </div>
+      <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --mentions-several-triggers-2">
+        <ul aria-label="People" class="hlistbox" id="mentions-several-triggers-2-list" role="listbox">
+          <li class="hoption" id="mentions-several-triggers-3" role="option" aria-selected="false" data-example-value="sam">
+            <span class="hoption-text"><span class="hoption-label">Sam Rivera</span> <span class="hoption-description">@sam</span></span>
+          </li>
+          <li class="hoption" id="mentions-several-triggers-4" role="option" aria-selected="false" data-example-value="ana">
+            <span class="hoption-text"><span class="hoption-label">Ana Lopez</span> <span class="hoption-description">@ana</span></span>
+          </li>
+          <li class="hoption" id="mentions-several-triggers-5" role="option" aria-selected="false" data-example-value="maya">
+            <span class="hoption-text"><span class="hoption-label">Maya Chen</span> <span class="hoption-description">@maya</span></span>
+          </li>
+        </ul>
+      </div>
+      <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --mentions-several-triggers-2" data-example-trigger="#">
+        <ul aria-label="Channels" class="hlistbox" id="mentions-several-triggers-2-list-1" role="listbox">
+          <li class="hoption" id="mentions-several-triggers-6" role="option" aria-selected="false" data-example-value="support">
+            <span class="hoption-text"><span class="hoption-label">#support</span> <span class="hoption-description">Questions from customers</span></span>
+          </li>
+          <li class="hoption" id="mentions-several-triggers-7" role="option" aria-selected="false" data-example-value="releases">
+            <span class="hoption-text"><span class="hoption-label">#releases</span> <span class="hoption-description">What's shipping, and when</span></span>
+          </li>
+          <li class="hoption" id="mentions-several-triggers-8" role="option" aria-selected="false" data-example-value="general">
+            <span class="hoption-text"><span class="hoption-label">#general</span> <span class="hoption-description">Everything else</span></span>
+          </li>
+        </ul>
+      </div>
+      <div class="hpopup" popover="manual" data-side="top" style="position-anchor: --mentions-several-triggers-2" data-example-trigger="/" data-example-at-start>
+        <ul aria-label="Commands" class="hlistbox" id="mentions-several-triggers-2-list-2" role="listbox">
+          <li class="hoption" id="mentions-several-triggers-9" role="option" aria-selected="false" data-example-value="remind">
+            <span class="hoption-text"><span class="hoption-label">/remind</span> <span class="hoption-description">Set a reminder</span></span>
+          </li>
+          <li class="hoption" id="mentions-several-triggers-10" role="option" aria-selected="false" data-example-value="poll">
+            <span class="hoption-text"><span class="hoption-label">/poll</span> <span class="hoption-description">Start a poll</span></span>
           </li>
         </ul>
       </div>

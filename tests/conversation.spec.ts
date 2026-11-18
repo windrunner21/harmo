@@ -53,6 +53,32 @@ onEachPlayground("conversation", () => {
     await expect(conversation.getByRole("listitem")).toHaveText(["Hi"]);
   });
 
+  test("a reply's Prose takes the conversation's lines, 20px or its own, not Prose's 1.5", { tag: "@css" }, async ({ page }) => {
+    const conversation = (await example(page, "conversation-default")).locator(".hconversation");
+    const lineHeight = await conversation.evaluate((node) => {
+      const prose = document.createElement("div");
+      prose.className = "hprose";
+      prose.textContent = "A reply.";
+      node.append(prose);
+      const value = getComputedStyle(prose).lineHeight;
+      prose.remove();
+      return value;
+    });
+    expect(lineHeight).toBe("20px");
+    // A conversation set to lines of its own: the reply's are the same.
+    const custom = await conversation.evaluate((node) => {
+      node.style.lineHeight = "2rem";
+      const prose = document.createElement("div");
+      prose.className = "hprose";
+      prose.textContent = "A reply.";
+      node.append(prose);
+      const value = getComputedStyle(prose).lineHeight;
+      prose.remove();
+      return value;
+    });
+    expect(custom).toBe("32px");
+  });
+
   test("gathered at the foot, a short conversation ends at its padding, nearest the field", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "conversation-gathered-at-the-foot");
     const conversation = await container.getByRole("region", { name: "Conversation" }).boundingBox();

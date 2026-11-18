@@ -1,13 +1,30 @@
 @use "shortcuts" as *;
 
+// Prose's text size, as a length: set to 1em on .hprose, it's worked out
+// there, so a block inside with a smaller size of its own, such as a block of
+// code, is still spaced in the text's em.
+@property --hprose-text-size {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 16px;
+}
+
 // Prose: formatted text, such as a reply from an assistant, a note, or help:
 // paragraphs, headings, lists, quotes, code, and links, spaced to read, at the
-// size and line height of the text around it. What a Markdown renderer makes
-// fits inside, its plain elements styled as Harmo's.
+// size of the text around it. What a Markdown renderer makes fits inside, its
+// plain elements styled as Harmo's. Its own line height, 1.5 unless
+// --hprose-line-height says otherwise, so it reads the same wherever it's
+// placed, but in a Conversation, whose it takes; and its spacing is the
+// golden-ratio
+// scale's steps in em, so it grows and shrinks with the text, as the headings
+// do.
 .hprose {
+  --hprose-text-size: 1em;
+
   min-inline-size: 0;
 
   overflow-wrap: anywhere;
+  line-height: var(--hprose-line-height, #{$font-line-height});
 
   color: $color-text;
 
@@ -15,17 +32,24 @@
     display: none;
   }
 
-  // Blocks 10px apart, and a heading after a block a step further.
+  // Blocks 1em of the text apart. A heading is 1.625em from what's above it
+  // and 0.375em from what's under it, so it sits with the part it heads.
+  // Margins collapse, so a heading after a rule is the larger of the two
+  // from it.
   & > * {
     margin: 0;
   }
 
   & > * + * {
-    margin-block-start: $space-xs;
+    margin-block-start: var(--hprose-text-size);
   }
 
   & > :is(h2, h3, h4):not(:first-child) {
-    margin-block-start: $space-sm;
+    margin-block-start: calc(var(--hprose-text-size) * 1.625);
+  }
+
+  & > :is(h2, h3, h4) + * {
+    margin-block-start: calc(var(--hprose-text-size) * 0.375);
   }
 
   & :is(h2, h3, h4) {
@@ -49,6 +73,11 @@
     padding-inline-start: 1.5em;
   }
 
+  // List items 0.375em apart, so two that wrap read as two.
+  & li + li {
+    margin-block-start: calc(var(--hprose-text-size) * 0.375);
+  }
+
   & li > :is(ul, ol) {
     margin: 0;
   }
@@ -66,7 +95,7 @@
   }
 
   & hr {
-    margin-block: $space-sm;
+    margin-block: calc(var(--hprose-text-size) * 1.625);
 
     border: 0;
     border-block-start: 1px solid $color-border;

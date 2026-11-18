@@ -158,7 +158,7 @@ or its own with `defaultValue`, which empties after sending.
 | `onEditLast` | Called on ↑ in the empty field; return `true` if you've started editing, and the caret goes to the end |
 | `error` | What was wrong, such as with a file |
 | `note` | The line under it |
-| `listLabel`, `trigger`, `atStart`, and [Options](listbox.md#react) as children | The field is a [Mentions](mentions.md), its list over the field |
+| `listLabel`, `trigger`, `atStart`, and [Options](listbox.md#react) as children | The field is a [Mentions](mentions.md), its list over the field; or a `MentionsTrigger` for each trigger as children, for several, such as `@` and `/` |
 
 ```tsx
 <Composer

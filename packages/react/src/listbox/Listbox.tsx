@@ -115,6 +115,15 @@ export const Listbox = ({
 }: ListboxProps) => {
   const generatedId = useId();
   const list = useRef<HTMLUListElement>(null);
+  // A field another list shares, such as a Mentions' with a list for each
+  // trigger, keeps the active option of whichever list set it: this one only
+  // clears its own, or one that's gone.
+  const ownsActive = (owner: HTMLElement) => {
+    const current = owner.getAttribute("aria-activedescendant");
+    if (!current) return false;
+    const option = owner.ownerDocument.getElementById(current);
+    return !option || (list.current?.contains(option) ?? false);
+  };
   useImperativeHandle(ref, () => list.current as HTMLUListElement, []);
   const search = useRef<HTMLInputElement>(null);
   const searchable = searchLabel !== undefined;
@@ -426,7 +435,7 @@ export const Listbox = ({
       if (throughTrigger?.current === pressed) throughTrigger.current = null;
       pressedOn?.removeEventListener("keydown", pressed);
       owner?.removeEventListener("keyup", keyup);
-      owner?.removeAttribute("aria-activedescendant");
+      if (owner && ownsActive(owner)) owner.removeAttribute("aria-activedescendant");
       popup.removeEventListener("keydown", tabbed);
       popup.removeEventListener("beforetoggle", beforeToggle, true);
       popup.removeEventListener("toggle", toggle);
@@ -437,7 +446,7 @@ export const Listbox = ({
   useEffect(() => {
     if (!trigger.current) return;
     if (activeId) trigger.current.setAttribute("aria-activedescendant", activeId);
-    else trigger.current.removeAttribute("aria-activedescendant");
+    else if (ownsActive(trigger.current)) trigger.current.removeAttribute("aria-activedescendant");
   }, [activeId, triggerOwned]);
 
   // The options showing, and the list's text, to notice when they change,

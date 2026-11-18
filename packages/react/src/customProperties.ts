@@ -173,6 +173,8 @@ export type HarmoCustomProperty =
   | "--hpopup-pinned-width"
   | "--hpopup-slide"
   | "--hpopup-slide-direction"
+  | "--hprose-line-height"
+  | "--hprose-text-size"
   | "--hshowcase-card-fold-color"
   | "--hsidebar-collapsed-inline-size"
   | "--hsidebar-color-background"
@@ -399,6 +401,8 @@ declare module "react" {
     "--hpopup-pinned-width"?: string | number;
     "--hpopup-slide"?: string | number;
     "--hpopup-slide-direction"?: string | number;
+    "--hprose-line-height"?: string | number;
+    "--hprose-text-size"?: string | number;
     "--hshowcase-card-fold-color"?: string | number;
     "--hsidebar-collapsed-inline-size"?: string | number;
     "--hsidebar-color-background"?: string | number;

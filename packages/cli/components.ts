@@ -47,7 +47,7 @@ export const components: Record<string, string[]> = {
     "listbox/Option.tsx",
     "listbox/OptionGroup.tsx",
   ],
-  mentions: ["Mentions.tsx"],
+  mentions: ["Mentions.tsx", "mentionsIn.ts"],
   "menu-button": ["MenuButton.tsx"],
   message: ["Message.tsx"],
   meter: ["Meter.tsx"],
