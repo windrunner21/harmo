@@ -8,6 +8,107 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-19
+
+Mentions for a chat's message box, with a list for each trigger, such as `@`,
+`#`, and `/`, and each mention highlighted as it's typed; and Prose spaced to
+read wherever it's placed.
+
+### Added
+
+- Mentions: a list for each trigger, such as a chat's message box with `@`
+  for people, `#` for channels, and `/` for commands: in React, a
+  `<MentionsTrigger>` for each, with its `trigger`, `listLabel`, `atStart`,
+  and Options; in HTML, a popup for each, the field's `aria-controls` naming
+  the one in use. The trigger nearest the caret picks the list, and where
+  one starts another, such as `@` and `@@`, the longer. Composer takes them
+  too.
+- Mentions: each mention of someone or something in a list is highlighted
+  as it's typed, as a TextArea's highlight is: `@sam`, in any case and any
+  script, ending at a space or punctuation, but not inside `@samuel`,
+  `@sam_lee`, or an email address. The field stays a plain text field
+  underneath. `highlight={false}` turns it off, and a RegExp of your own
+  marks what it matches instead, as before. Spellcheck is off by default,
+  so a handle isn't underlined as a misspelling; `spellCheck` turns it back
+  on for the whole text. `mentionsIn(text, lists)` finds them, such as when
+  your app sends the text, in a server action too, with each one's trigger,
+  value as the list spells it, and place; a list can be `{ values, atStart }`
+  for commands.
+
+  ```html preview="mentions/Several triggers"
+  <div class="hmentions" style="anchor-name: --message">
+    <div class="htextarea-highlight">
+      <textarea class="htextarea" id="message" aria-label="Message" spellcheck="false" aria-autocomplete="list" aria-controls="message-people">Thanks @sam! I'll post the update in #releases.</textarea>
+      <div class="htextarea-highlight-backdrop" aria-hidden="true"><span>Thanks <mark>@sam</mark>! I'll post the update in <mark>#releases</mark>.
+  </span></div>
+    </div>
+    <div class="hpopup" popover="manual" style="position-anchor: --message">
+      <ul class="hlistbox" id="message-people" role="listbox" aria-label="People">…</ul>
+    </div>
+    <div class="hpopup" popover="manual" style="position-anchor: --message">
+      <ul class="hlistbox" id="message-channels" role="listbox" aria-label="Channels">…</ul>
+    </div>
+    <div class="hpopup" popover="manual" style="position-anchor: --message">
+      <ul class="hlistbox" id="message-commands" role="listbox" aria-label="Commands">…</ul>
+    </div>
+  </div>
+  ```
+
+  ```tsx
+  mentionsIn("Thanks @Sam! See #releases.", { "@": ["sam", "ana"], "#": ["releases"] });
+  // [{ trigger: "@", value: "sam", start: 7, end: 11 }, { trigger: "#", value: "releases", start: 17, end: 26 }]
+  ```
+
+### Changed
+
+- Mentions, in HTML: the field is inside its highlight, `.htextarea-highlight`
+  or `.hinput-highlight`, with its backdrop, as a TextArea's or an Input's.
+  Without it, it's as before, and nothing is marked.
+
+  ```html title="Before"
+  <div class="hmentions" style="anchor-name: --note">
+    <textarea class="htextarea" id="note" aria-autocomplete="list" aria-controls="note-people"></textarea>
+    <div class="hpopup" popover="manual" style="position-anchor: --note">…</div>
+  </div>
+  ```
+
+  ```html title="After"
+  <div class="hmentions" style="anchor-name: --note">
+    <div class="htextarea-highlight">
+      <textarea class="htextarea" id="note" spellcheck="false" aria-autocomplete="list" aria-controls="note-people"></textarea>
+      <div class="htextarea-highlight-backdrop" aria-hidden="true"><span>
+  </span></div>
+    </div>
+    <div class="hpopup" popover="manual" style="position-anchor: --note">…</div>
+  </div>
+  ```
+
+- Prose: it sets its own line height, 1.5, so it reads the same wherever
+  it's placed, rather than taking its container's, which can be the
+  browser's tighter default. `--hprose-line-height` changes it; in a
+  Conversation, it takes the conversation's, whatever that's set to, so chat
+  replies are as they were. Its spacing is the golden-ratio scale's steps in
+  the text's em, so it grows and shrinks with the text: blocks 1em apart,
+  where they were 10px; a heading 1.625em from what's above it and 0.375em
+  from what's under it, so it sits with the part it heads, where it was
+  16px and 10px; list items 0.375em apart, where they touched; and 1.625em
+  around a rule. A block of code, whose text is smaller, is spaced in the
+  text's em too.
+
+  ```html preview
+  <div class="hprose">
+    <h3>Returns</h3>
+    <p>You can return anything within 30 days, for free.</p>
+    <ol>
+      <li>Print the label from your order's page.</li>
+      <li>Drop the parcel at any post office.</li>
+    </ol>
+    <hr />
+    <h4>Refunds</h4>
+    <p>They reach your card within five working days of our getting the parcel.</p>
+  </div>
+  ```
+
 ## [0.8.0] - 2026-11-18
 
 Three more patterns, Chat, Headers, and Footers, and the components they're
@@ -19,8 +120,15 @@ Toaster takes `aria-label` in place of `label`.
 
 - **React: Toaster's `label` is now `aria-label`.** It was only ever the
   region's name, never shown, and elsewhere `label` means words on screen.
-  Rename the prop: `<Toaster label="Notifications (F8)" …>` becomes
-  `<Toaster aria-label="Notifications (F8)" …>`. The markup is the same.
+  Rename the prop. The markup is the same.
+
+  ```tsx title="Before"
+  <Toaster label="Notifications (F8)" icons={icons} />
+  ```
+
+  ```tsx title="After"
+  <Toaster aria-label="Notifications (F8)" icons={icons} />
+  ```
 
 ### Added
 
@@ -61,6 +169,35 @@ Toaster takes `aria-label` in place of `label`.
   Accordion item does. A Language Picker in the bottom row reads as its
   small print does, at the row's end; give it `side="top"` to open it
   above. In React, `Footer` and `FooterGroup`.
+
+  ```html preview="footer/Default"
+  <footer class="hfooter">
+    <div class="hfooter-main">
+      <div class="hfooter-brand">
+        <a href="/"><img src="/logo.svg" alt="" width="20" height="20" />Speedwagon</a>
+        <p>Fresh produce, delivered the morning after it's picked.</p>
+      </div>
+      <nav class="hfooter-groups" aria-label="Footer">
+        <details class="hfooter-group">
+          <summary class="hfooter-summary">
+            <h2 class="hfooter-heading">Shop</h2>
+            …an Expand Chevron…
+          </summary>
+          <ul class="hfooter-links">
+            <li><a class="hfooter-link" href="/offers">This week's offers</a></li>
+          </ul>
+        </details>
+      </nav>
+    </div>
+    <div class="hfooter-bottom">
+      <p>© 2026 Speedwagon Ltd.</p>
+      <ul class="hfooter-bottom-links">
+        <li><a class="hfooter-link" href="/privacy">Privacy</a></li>
+      </ul>
+    </div>
+  </footer>
+  ```
+
 - Header: the bar across the top of a page or an app, a logo, navigation or
   search, and actions in a row. It stays at the top, frosted, with a hairline
   once the page has scrolled; `data-scroll="away"` scrolls it away with the
@@ -69,6 +206,21 @@ Toaster takes `aria-label` in place of `label`.
   clear over a hero until the page scrolls, and `data-bordered` shows its
   hairline from the start, as beside a Sidebar. In React, `scroll`,
   `transparent`, and `bordered`.
+
+  ```html preview="header/Default"
+  <header class="hheader">
+    <div class="hheader-bar">
+      <div class="hheader-brand">
+        <a href="/"><img src="/logo.svg" alt="" width="20" height="20" />Speedwagon</a>
+      </div>
+      <nav class="hnavigation-menu" aria-label="Main">…</nav>
+      <div class="hheader-actions">
+        <a class="hbutton" href="/order"><span class="hbutton-label">Order now</span></a>
+      </div>
+    </div>
+  </header>
+  ```
+
 - Conversation: the scrolling log a chat's Messages are in. It opens at the
   latest and stays there as messages come and grow, a reply's words as they
   stream in too, unless you've scrolled up to read; then Jump to latest shows
@@ -76,42 +228,163 @@ Toaster takes `aria-label` in place of `label`.
   arrived, for screen readers. `data-align="end"` gathers a short
   conversation at the foot, as in a messenger, and `data-size="large"` gives
   long replies larger text.
+
+  ```html preview="conversation/Default"
+  <div class="hconversation" role="region" aria-label="Conversation" tabindex="0">
+    <p class="hconversation-status" aria-live="polite"></p>
+    <ol class="hconversation-list">
+      <li class="hmessage" data-from="user">…</li>
+      <li class="hmessage" data-from="assistant">…</li>
+    </ol>
+    <div class="hconversation-latest">
+      <span class="htooltip-trigger">
+        <button class="hbutton" data-variant="secondary" type="button" aria-labelledby="latest-tip">
+          <svg class="hicon" viewBox="0 0 25 25" aria-hidden="true">…</svg>
+        </button>
+        <span class="htooltip" role="tooltip" id="latest-tip">Jump to latest</span>
+      </span>
+    </div>
+  </div>
+  ```
+
 - Message: one message in a conversation. Yours sits at the end, in a bubble;
   the assistant's at the start, as plain text, or in a bubble beside its
   avatar with `data-bubble`; a line from the conversation itself, such as
   someone joining, in the middle. It can show its time, its actions, quick
   replies, the files sent with it, "Not sent" with a way to try again, or
   three dots while a reply is on its way. A reply fades in as it arrives.
+
+  ```html preview="message/Default"
+  <ol class="hconversation-list">
+    <li class="hmessage" data-from="user">
+      <div class="hmessage-body">
+        <div class="hmessage-text">Summarize last week's conversations</div>
+      </div>
+    </li>
+    <li class="hmessage" data-from="assistant">
+      <div class="hmessage-body">
+        <div class="hmessage-text"><div class="hprose">…</div></div>
+        <div class="hmessage-actions">…</div>
+      </div>
+    </li>
+    <li class="hmessage" data-from="system">Imran joined the conversation</li>
+  </ol>
+  ```
+
 - Composer: where a message is written and sent. The field and its buttons
   sit in one box, and the field grows with what's written. Enter sends;
   Shift+Enter starts a new line. Send turns into Stop while a reply comes, if
   it can be stopped. Files can be attached or pasted, and listed above the
   field; it can show what the assistant knows about, or a sent message being
   edited, with a bar that quotes it.
+
+  ```html preview="composer/Default"
+  <form class="hcomposer">
+    <div class="hcomposer-box">
+      <textarea class="htextarea" aria-label="Message" placeholder="Ask anything" rows="1"></textarea>
+      <span class="htooltip-trigger">
+        <button class="hbutton" type="submit" disabled aria-labelledby="send-tip">
+          <svg class="hicon" viewBox="0 0 24 24" aria-hidden="true">…</svg>
+        </button>
+        <span class="htooltip" role="tooltip" id="send-tip">Send</span>
+      </span>
+    </div>
+    <p class="hcomposer-note">Replies can be wrong. Check what matters.</p>
+  </form>
+  ```
+
 - Mentions: a TextArea that lists suggestions as a trigger is typed, such as
   `@` for people, or `/` at the start for commands, in a Listbox, as a
   Combobox's list is. Choosing one puts it in the text. Focus stays in the
   field, and the arrow keys move the caret while the list is closed. For one
   line, such as a task's title, it takes an Input: `singleLine` in React.
+
+  ```html preview="mentions/Default"
+  <div class="hfield">
+    <label class="hlabel" for="note">Internal note</label>
+    <div class="hmentions" style="anchor-name: --note">
+      <textarea class="htextarea" id="note" aria-autocomplete="list" aria-controls="note-people"
+        placeholder="Type @ to mention someone"></textarea>
+      <div class="hpopup" popover="manual" data-side="bottom" style="position-anchor: --note">
+        <ul class="hlistbox" id="note-people" role="listbox" aria-label="People">
+          <li class="hoption" id="note-sam" role="option" aria-selected="false">
+            <span class="hoption-text">
+              <span class="hoption-label">Sam Rivera</span>
+              <span class="hoption-description">@sam</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  ```
+
 - Launcher: a round button in the page's corner that opens a panel above it,
   such as a support chat. The panel is a dialog that isn't modal, growing from
   the corner, and the whole screen on a phone. Focus moves in as it opens and
   back as it closes; Escape closes it. A Badge on the button can count what
   came while it was closed.
+
+  ```html preview="launcher/Default"
+  <div class="hlauncher">
+    <div class="hlauncher-panel" id="help" role="dialog" aria-label="Help" tabindex="-1">
+      …
+    </div>
+    <button class="hbutton hlauncher-button" type="button" aria-label="Help" aria-expanded="false" aria-controls="help">
+      <span class="hicon hlauncher-icons" aria-hidden="true">
+        <svg class="hicon" viewBox="0 0 24 24">…</svg>
+        <svg class="hicon" viewBox="0 0 25 25">…</svg>
+      </span>
+    </button>
+    <p class="hlauncher-status" aria-live="polite"></p>
+  </div>
+  ```
+
 - Badge: a count, or a dot, on a Button or beside a label, such as unread
   messages. On a Button, it sits on its corner, ringed in the page's color;
   in React, Button's `badge` takes the number. One added after the page
   loaded settles in, so a new count is noticed.
+
+  ```html preview
+  <span class="hbadge">3</span>
+  <span class="hbadge" data-variant="accent">12</span>
+  <span class="hbadge" data-variant="neutral">99+</span>
+  <span class="hbadge" data-dot aria-hidden="true"></span>
+  ```
+
 - Prose: text formatted to read, such as an assistant's reply: paragraphs,
   headings, lists, quotes, code, and links, spaced to read. In React,
   `<Prose text>` formats a small part of Markdown itself, paragraphs, lists,
   code, bold, and links, building elements, never HTML, and linking only web
   and email addresses.
+
+  ```html preview
+  <div class="hprose">
+    <p>Your weekly report is ready. <strong>3 of 5 checks passed</strong>:</p>
+    <ul>
+      <li>Replies took 4 minutes on average, down from 6.</li>
+    </ul>
+    <p>Read the <a href="/reports/42">full report</a>, or run <code>export --week</code>:</p>
+    <pre><code>npx reports export --week 2026-46</code></pre>
+  </div>
+  ```
+
 - Drop Zone: an area files can be dropped on, which shows a dashed frame
   over itself, saying where they'll go, while they're dragged over it. It
   takes a drag as a File Input's drop area does, and in React they share it:
   folders are left out, a drop that just misses doesn't open the file in the
   tab, and a field inside the area is the area's.
+
+  ```html preview="drop-zone/Default"
+  <div class="hdrop-zone">
+    <ul class="hfile-list" role="list" aria-label="Shared files" tabindex="-1">…</ul>
+    <div class="hdrop-zone-overlay" aria-hidden="true">
+      <svg class="hicon" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">…</svg>
+      <p class="hdrop-zone-label">Drop files to share them</p>
+    </div>
+  </div>
+  ```
+
 - Account Menu: who's signed in, with their avatar, their name, and a line
   under it, such as the account they're in, as a button that opens a
   Dropdown Menu of what's theirs: their settings, the accounts they can
@@ -119,6 +392,31 @@ Toaster takes `aria-label` in place of `label`.
   avatar alone, its text fading as the Sidebar's labels do. With `profile`,
   the menu starts with who's signed in again; many accounts go in a submenu,
   so Sign out stays in reach.
+
+  ```html preview="account-menu/Default"
+  <button class="haccount-menu" type="button" id="account-trigger" aria-haspopup="menu"
+    aria-expanded="false" popovertarget="account-menu" style="anchor-name: --account-menu">
+    <img class="havatar" src="/avatars/imran.webp" alt="" />
+    <span class="haccount-menu-text">
+      <span class="haccount-menu-name">Imran Hajiyev</span>
+      <span class="haccount-menu-description">Speedwagon</span>
+    </span>
+    …an Expand Chevron…
+  </button>
+
+  <div class="hpopup hdropdown-menu" id="account-menu" role="menu" tabindex="-1"
+    aria-labelledby="account-trigger" popover style="position-anchor: --account-menu">
+    <a class="hdropdown-menu-item" href="/settings" role="menuitem" tabindex="-1">Settings</a>
+    <div class="hdropdown-menu-separator" role="separator"></div>
+    <div role="group" aria-labelledby="account-switch">
+      <div class="hdropdown-menu-group-label" id="account-switch" role="presentation">Switch account</div>
+      <a class="hdropdown-menu-item" href="/accounts/joestar-group" role="menuitem" tabindex="-1">Joestar Group</a>
+    </div>
+    <div class="hdropdown-menu-separator" role="separator"></div>
+    <a class="hdropdown-menu-item" href="/sign-out" role="menuitem" tabindex="-1">Sign out</a>
+  </div>
+  ```
+
 - Dropdown Menu: a list of actions and links that a button opens, such as a
   row's More, an account's menu, or a header's Create, in a Popup. Its items
   are links or buttons, each with an optional icon, `destructive` for one
@@ -133,6 +431,29 @@ Toaster takes `aria-label` in place of `label`.
   it too, so only one item is highlighted. Choosing one closes the menu, and focus
   goes back to its button; Tab closes it and moves on. A disabled item is
   dimmed, and the keys pass it by.
+
+  ```html preview="dropdown-menu/Actions"
+  <button class="hbutton" data-variant="secondary" type="button" id="actions-trigger"
+    aria-haspopup="menu" aria-expanded="false" popovertarget="actions-menu"
+    style="anchor-name: --actions-menu">
+    <span class="hbutton-label">Actions</span>
+    …an Expand Chevron…
+  </button>
+
+  <div class="hpopup hdropdown-menu" id="actions-menu" role="menu" tabindex="-1"
+    aria-labelledby="actions-trigger" popover style="position-anchor: --actions-menu">
+    <button class="hdropdown-menu-item" type="button" role="menuitem" tabindex="-1">
+      <svg class="hicon" aria-hidden="true">…</svg>Duplicate
+    </button>
+    <a class="hdropdown-menu-item" href="/orders/4821/share" role="menuitem" tabindex="-1">Share</a>
+    <div class="hdropdown-menu-separator" role="separator"></div>
+    <div role="group" aria-labelledby="actions-danger">
+      <div class="hdropdown-menu-group-label" id="actions-danger" role="presentation">Danger zone</div>
+      <button class="hdropdown-menu-item" type="button" role="menuitem" tabindex="-1" data-destructive>Delete</button>
+    </div>
+  </div>
+  ```
+
 - Button: `size="xsmall"`, or `data-size="xsmall"`, a 24px button with
   12px text, for a dense row or beside icon buttons. It takes presses over
   34px, as a default button does. And `shape="circle"`, or
@@ -140,6 +461,13 @@ Toaster takes `aria-label` in place of `label`.
   with `aria-pressed="true"`, shows it's on: a secondary or tertiary
   Button's icon and text in the primary color, and a secondary's background
   and border tinted.
+
+  ```html preview
+  <button class="hbutton" data-size="xsmall" type="button"><span class="hbutton-label">Create</span></button>
+  <button class="hbutton" data-variant="secondary" data-shape="circle" type="button"><span class="hbutton-label">New chat</span></button>
+  <button class="hbutton" data-variant="secondary" type="button" aria-pressed="true"><span class="hbutton-label">Starred</span></button>
+  ```
+
 - Tokens: `--harmo-control-height-xsmall`, 24px, an extra-small Button's
   height.
 - Popup: `align="end"`, or `data-align="end"`, aligns it to its trigger's
@@ -148,6 +476,21 @@ Toaster takes `aria-label` in place of `label`.
   `data-preferred-side="top"`, opens it above its trigger by preference, as
   from a bar at the foot of a page or a footer; without room above, below
   it. Language Picker passes its `side` to its popup.
+
+  ```html preview="popup/Aligned to its end"
+  <button class="hbutton" data-variant="secondary" type="button" popovertarget="sort" style="anchor-name: --sort">
+    <span class="hbutton-label">Newest first</span>
+  </button>
+  <div class="hpopup" id="sort" data-align="end" popover style="position-anchor: --sort">…</div>
+  ```
+
+  ```html preview="popup/Above its trigger"
+  <button class="hbutton" data-variant="secondary" type="button" popovertarget="indentation" style="anchor-name: --indentation">
+    <span class="hbutton-label">Spaces: 2</span>
+  </button>
+  <div class="hpopup" id="indentation" data-preferred-side="top" popover style="position-anchor: --indentation">…</div>
+  ```
+
 - Showcase Card: a card that shows where it leads before it's opened, for a
   product's news, or a gallery of templates, patterns, or stories. What it leads to sits small, or
   as an image, on a dashed grid, then its title, a description, and an action
@@ -156,7 +499,7 @@ Toaster takes `aria-label` in place of `label`.
   line is pointed at; on a touch screen, or with reduced motion, nothing
   moves. `data-fold`, or `fold` in React, folds its top corner over.
 
-  ```html
+  ```html preview="showcase-card/Default"
   <a class="hshowcase-card" href="/news/scheduled-messages">
     <div class="hshowcase-card-media" aria-hidden="true" inert>…</div>
     <div class="hshowcase-card-body">
@@ -174,6 +517,15 @@ Toaster takes `aria-label` in place of `label`.
   option clear of them. Select, Combobox, Filter Chip, Command Menu, Phone
   Input, and Language Picker get them, but for Language Picker's grid of
   regions. In HTML, the script adds them: `listbox.js` shows how.
+
+  ```html preview="listbox/Long list"
+  <ul class="hlistbox" role="listbox" aria-label="Time zone">
+    …sixteen options, past the list's 300px: the script adds an arrow at each
+    end, <li class="hlistbox-scroll" data-direction="down" role="presentation"
+    aria-hidden="true">, shown while there's more that way…
+  </ul>
+  ```
+
 - CLI: `npx harmo-ui add` also copies `lib/customProperties.ts`, so a copied
   component's `style` takes Harmo's tokens and variables without a cast, as
   `@harmo-ui/react`'s does.
@@ -202,6 +554,42 @@ Toaster takes `aria-label` in place of `label`.
 - Navigation Menu: a trigger's chevron is smaller, about 10px wide at 14px
   text, and as light as the letters beside it. It was as wide as the text is
   tall.
+
+  ```html preview="navigation-menu/Default"
+  <nav class="hnavigation-menu" aria-label="Main">
+    <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+    <ul class="hnavigation-menu-list">
+      <li><a class="hnavigation-menu-link" href="/product">Product</a></li>
+      <li>
+        <button class="hnavigation-menu-trigger" type="button" aria-expanded="false" aria-controls="nav-solutions">
+          Solutions
+          <svg class="hexpand-chevron" viewBox="0 0 16 12" aria-hidden="true" focusable="false">
+            <g class="hexpand-chevron-head">
+              <line class="hexpand-chevron-left" x1="0" y1="6" x2="8" y2="6" />
+              <line class="hexpand-chevron-right" x1="16" y1="6" x2="8" y2="6" />
+            </g>
+          </svg>
+        </button>
+        <div class="hnavigation-menu-content" id="nav-solutions" inert>
+          <ul class="hnavigation-menu-rows">
+            <li>
+              <a class="hnavigation-menu-row" href="/solutions/commerce">
+                <span class="hnavigation-menu-icon" aria-hidden="true">
+                  <svg class="hicon" …>…</svg>
+                </span>
+                <span class="hnavigation-menu-text">
+                  <span class="hnavigation-menu-title">Commerce</span>
+                  <span class="hnavigation-menu-description">Drive sales and convert chats</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  ```
+
 - React: Table of Contents and Pagination take `aria-labelledby`, naming them
   by a visible heading, in place of `aria-label`, as Filter Bar does.
 - React: Time Picker's `periodLabel` is needed only where there can be an AM
@@ -216,6 +604,16 @@ Toaster takes `aria-label` in place of `label`.
   4.34:1. On white it's 4.97:1. The dark theme's is unchanged.
 - Language Picker: with three to six regions, its panel has two columns
   rather than three, so a few regions stay compact.
+
+  ```html preview="language-picker/Regions with search"
+  <div class="hpopup hlanguage-picker-regions" popover>
+    <ul class="hlistbox" role="listbox" aria-label="Region and language">
+      <li class="hoption-group" role="presentation">…France, and its languages…</li>
+      …four more regions, in two columns…
+    </ul>
+  </div>
+  ```
+
 - Patterns: the email check in Sign-in Form, Sign-up Form, Reset Password,
   and Contact Form follows the rule a browser checks an email field by, with
   a dot in the domain, so an address such as `name@-example.com` is turned
@@ -2536,7 +2934,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/windrunner21/harmo/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/windrunner21/harmo/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/windrunner21/harmo/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/windrunner21/harmo/compare/v0.5.2...v0.6.0
