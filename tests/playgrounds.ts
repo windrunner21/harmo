@@ -122,10 +122,19 @@ export const onEachPlayground = (slug: string, tests: () => void) => {
 };
 
 // An example by its id, such as "listbox-single", with its demo scrolled to
-// the middle of the window first, so a popup it opens has room.
+// the middle of the window first, so a popup it opens has room: the middle
+// of what's below the page's scroll padding, as scrollIntoView() centers it.
+// To a whole pixel, worked out here: after scrollIntoView(), Firefox lands a
+// pixel away from where it first said, a few frames later, moving everything
+// by 1px between one check and the next.
 export const example = async (page: Page, id: string) => {
   const container = page.locator(`[id="${id}"]`);
-  await container.locator(".play-demo").evaluate((demo) => demo.scrollIntoView({ block: "center" }));
+  await container.locator(".play-demo").evaluate((demo) => {
+    const box = demo.getBoundingClientRect();
+    const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingBlockStart) || 0;
+    const middle = padding + (window.innerHeight - padding) / 2;
+    window.scrollTo({ top: Math.round(window.scrollY + box.top + box.height / 2 - middle), behavior: "instant" });
+  });
   return container;
 };
 

@@ -506,11 +506,13 @@ onEachPlayground("listbox", () => {
   test("resting the pointer on an arrow scrolls the list that way, to its end", async ({ page }) => {
     const { listbox } = await openList(page, "listbox-long-list", "Time zone");
     await listbox.evaluate((node) => node.scrollTo(0, 0));
-    await listbox.locator('.hlistbox-scroll[data-direction="down"]').hover();
+    // Once the list has stopped sliding open, so the arrow stays under the
+    // pointer: one that slides out from under it stops scrolling.
+    await pointAt(page, listbox.locator('.hlistbox-scroll[data-direction="down"]'));
     await expect
       .poll(() => listbox.evaluate((node) => node.scrollTop + node.clientHeight >= node.scrollHeight - 1), { timeout: 5000 })
       .toBe(true);
-    await listbox.locator('.hlistbox-scroll[data-direction="up"]').hover();
+    await pointAt(page, listbox.locator('.hlistbox-scroll[data-direction="up"]'));
     await expect.poll(() => listbox.evaluate((node) => node.scrollTop), { timeout: 5000 }).toBe(0);
   });
 

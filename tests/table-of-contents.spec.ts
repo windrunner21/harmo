@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { boxes, example, onEachPlayground, ready, rendered, test } from "./playgrounds.ts";
+import { boxes, clickAt, example, onEachPlayground, ready, rendered, test } from "./playgrounds.ts";
 
 // What docs/components/table-of-contents.md says: links to each heading that stay in
 // view, with the section you've reached marked, the last one at the end, and a
@@ -65,7 +65,9 @@ onEachPlayground("table-of-contents", () => {
   test("in a scrolling box, following a link scrolls only the box", async ({ page }) => {
     const { links, scroller, container } = await parts(page);
     const before = await page.evaluate(() => window.scrollY);
-    await links.nth(3).click();
+    // Where it's drawn: Playwright's click in Firefox would scroll the page
+    // to bring the link to the middle of the window first.
+    await clickAt(page, links.nth(3));
     await expect.poll(() => boxes(scroller, container.locator("#budget")).then(([v, t]) => Math.abs(t!.y - v!.y))).toBeLessThan(2);
     expect(await page.evaluate(() => window.scrollY)).toBe(before);
     expect(page.url()).toContain("#budget");
