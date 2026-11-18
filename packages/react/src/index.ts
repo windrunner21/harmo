@@ -65,6 +65,7 @@ export { FileList, type FileListItem, type FileListProps } from "./FileList.tsx"
 export { FilterChip, type FilterChipProps } from "./FilterChip.tsx";
 export { Filters, type FiltersProps } from "./Filters.tsx";
 export { HarmoProvider, type HarmoProviderProps } from "./HarmoProvider.tsx";
+export { Footer, FooterGroup, type FooterGroupProps, type FooterLink, type FooterProps } from "./Footer.tsx";
 export { Header, type HeaderProps } from "./Header.tsx";
 export { Input, type InputProps } from "./Input.tsx";
 export { Kbd, type KbdProps } from "./Kbd.tsx";

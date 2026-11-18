@@ -32,6 +32,7 @@ import { examples as fileInput } from "./components/file-input.tsx";
 import { examples as fileList } from "./components/file-list.tsx";
 import { examples as filterChip } from "./components/filter-chip.tsx";
 import { examples as filters } from "./components/filters.tsx";
+import { examples as footer } from "./components/footer.tsx";
 import { examples as header } from "./components/header.tsx";
 import { examples as icons } from "./components/icons.tsx";
 import { examples as input } from "./components/input.tsx";
@@ -69,6 +70,7 @@ import { examples as signInForm } from "./components/sign-in-form.tsx";
 import { examples as signUpForm } from "./components/sign-up-form.tsx";
 import { examples as resetPassword } from "./components/reset-password.tsx";
 import { examples as chat } from "./components/chat.tsx";
+import { examples as footers } from "./components/footers.tsx";
 import { examples as headers } from "./components/headers.tsx";
 import { examples as contactForm } from "./components/contact-form.tsx";
 import { examples as accountForms } from "./components/account-forms.tsx";
@@ -114,6 +116,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "file-list": fileList,
   "filter-chip": filterChip,
   filters,
+  footer,
   header,
   icons,
   input,
@@ -151,6 +154,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   "sign-up-form": signUpForm,
   "reset-password": resetPassword,
   chat,
+  footers,
   headers,
   "contact-form": contactForm,
   "account-forms": accountForms,

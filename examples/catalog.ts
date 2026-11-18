@@ -357,6 +357,11 @@ const groups: CatalogGroup[] = [
           "Places to go and things to do, found by typing: under a search field, or in a dialog.",
       },
       {
+        slug: "footer",
+        title: "Footer",
+        purpose: "The foot of a site's or an app's pages: its brand, groups of links that fold on a phone, and the small print.",
+      },
+      {
         slug: "header",
         title: "Header",
         purpose: "The bar across the top of a page or an app, which stays, scrolls away, or hides as you scroll down.",
@@ -485,6 +490,12 @@ const groups: CatalogGroup[] = [
         title: "Chat",
         purpose:
           "A conversation with an assistant: an AI chat that fills the page, a copilot beside your app's content, or a support chat that opens from a corner.",
+      },
+      {
+        slug: "footers",
+        title: "Footers",
+        purpose:
+          "The foot of a page: a site's, with groups of links that fold on a phone; one with a newsletter sign-up; or a sign-in page's.",
       },
       {
         slug: "headers",

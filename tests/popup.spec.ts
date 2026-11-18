@@ -52,6 +52,9 @@ onEachPlayground("popup", () => {
       Object.assign(element.style, { position: "relative", left: `${room - 24}px` });
     });
     const { popup } = await openPlacement(container);
+    // Shown, not left at its closing opacity, as Firefox would at a fallback
+    // position without its fallbacks changing once it's open.
+    await expect(popup).toHaveCSS("opacity", "1");
     const [t, p] = await boxes(trigger, popup);
     expect(p.x + p.width).toBeCloseTo(t.x + t.width, 0);
   });

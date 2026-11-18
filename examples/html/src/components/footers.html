@@ -1,0 +1,288 @@
+<play-example title="Site footer" layout="wide">
+  <play-note>
+    A site's footer: its logo, a line about it, and a
+    <a class="hlink" data-underlined href="language-picker.html">Language Picker</a>;
+    Shop, Company, Legal, and Social, whose links open in a new tab, each
+    with its icon; and the copyright and the address. The page and its logo
+    are stand-ins.
+  </play-note>
+  <div style="overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <p style="max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.
+    </p>
+    <footer class="hfooter hsite-footer">
+      <div class="hfooter-main">
+        <div class="hfooter-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+          <p>Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+          <button type="button" aria-label="Language" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="footers-site-footer-1" popovertarget="footers-site-footer-2" style="anchor-name: --footers-site-footer-2" class="hbutton hlanguage-picker" data-variant="tertiary">
+            <play-icon name="globe" class="hicon"></play-icon>
+            <span class="hbutton-label"><span lang="en">English</span></span>
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hpopup" id="footers-site-footer-2" popover style="position-anchor: --footers-site-footer-2">
+            <ul aria-label="Language" class="hlistbox" id="footers-site-footer-1" role="listbox">
+              <li class="hoption" id="footers-site-footer-3" role="option" aria-selected="true" data-value="en">
+                <span class="hoption-label"><span lang="en">English</span></span>
+                <play-icon name="check" class="hoption-check"></play-icon>
+              </li>
+              <li class="hoption" id="footers-site-footer-4" role="option" aria-selected="false" data-value="de">
+                <span class="hoption-label"><span lang="de">Deutsch</span></span>
+              </li>
+              <li class="hoption" id="footers-site-footer-5" role="option" aria-selected="false" data-value="es">
+                <span class="hoption-label"><span lang="es">Español</span></span>
+              </li>
+              <li class="hoption" id="footers-site-footer-6" role="option" aria-selected="false" data-value="fr">
+                <span class="hoption-label"><span lang="fr">Français</span></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <nav class="hfooter-groups" aria-label="Footer">
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Shop</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#offers" class="hfooter-link">This week's offers</a></li>
+              <li><a href="#delivery" class="hfooter-link">Delivery</a></li>
+              <li><a href="#gift-cards" class="hfooter-link">Gift cards</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Company</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#about" class="hfooter-link">About</a></li>
+              <li><a href="#careers" class="hfooter-link">Careers</a></li>
+              <li><a href="#contact" class="hfooter-link">Contact us</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Legal</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#privacy" class="hfooter-link">Privacy</a></li>
+              <li><a href="#terms" class="hfooter-link">Terms</a></li>
+              <li><a href="#cookies" class="hfooter-link">Cookies</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Social</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a target="_blank" rel="noreferrer" href="https://instagram.com" class="hfooter-link"><play-icon name="instagram" class="hicon"></play-icon>Instagram</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://youtube.com" class="hfooter-link"><play-icon name="youtube" class="hicon"></play-icon>YouTube</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://linkedin.com" class="hfooter-link"><play-icon name="linkedin" class="hicon"></play-icon>LinkedIn</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://x.com" class="hfooter-link"><play-icon name="x" class="hicon"></play-icon>X</a></li>
+            </ul>
+          </details>
+        </nav>
+      </div>
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+        <address>1 Joestar Lane, Morioh</address>
+      </div>
+    </footer>
+  </div>
+</play-example>
+
+<play-example title="Site footer on a phone" layout="wide">
+  <play-note>
+    Where it's 640px wide or less, each group folds, as an
+    <a class="hlink" data-underlined href="accordion.html">Accordion</a>
+    item does, so a phone shows the headings first, and the bottom row wraps.
+  </play-note>
+  <div style="overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius); inline-size: 100%; max-inline-size: 24rem; margin-inline: auto">
+    <p style="max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.
+    </p>
+    <footer class="hfooter hsite-footer">
+      <div class="hfooter-main">
+        <div class="hfooter-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+          <button type="button" aria-label="Language" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="footers-site-footer-on-a-phone-1" popovertarget="footers-site-footer-on-a-phone-2" style="anchor-name: --footers-site-footer-on-a-phone-2" class="hbutton hlanguage-picker" data-variant="tertiary">
+            <play-icon name="globe" class="hicon"></play-icon>
+            <span class="hbutton-label"><span lang="en">English</span></span>
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hpopup" id="footers-site-footer-on-a-phone-2" popover style="position-anchor: --footers-site-footer-on-a-phone-2">
+            <ul aria-label="Language" class="hlistbox" id="footers-site-footer-on-a-phone-1" role="listbox">
+              <li class="hoption" id="footers-site-footer-on-a-phone-3" role="option" aria-selected="true" data-value="en">
+                <span class="hoption-label"><span lang="en">English</span></span>
+                <play-icon name="check" class="hoption-check"></play-icon>
+              </li>
+              <li class="hoption" id="footers-site-footer-on-a-phone-4" role="option" aria-selected="false" data-value="de">
+                <span class="hoption-label"><span lang="de">Deutsch</span></span>
+              </li>
+              <li class="hoption" id="footers-site-footer-on-a-phone-5" role="option" aria-selected="false" data-value="es">
+                <span class="hoption-label"><span lang="es">Español</span></span>
+              </li>
+              <li class="hoption" id="footers-site-footer-on-a-phone-6" role="option" aria-selected="false" data-value="fr">
+                <span class="hoption-label"><span lang="fr">Français</span></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <nav class="hfooter-groups" aria-label="Footer">
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Shop</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#offers" class="hfooter-link">This week's offers</a></li>
+              <li><a href="#delivery" class="hfooter-link">Delivery</a></li>
+              <li><a href="#gift-cards" class="hfooter-link">Gift cards</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Company</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#about" class="hfooter-link">About</a></li>
+              <li><a href="#careers" class="hfooter-link">Careers</a></li>
+              <li><a href="#contact" class="hfooter-link">Contact us</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Legal</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#privacy" class="hfooter-link">Privacy</a></li>
+              <li><a href="#terms" class="hfooter-link">Terms</a></li>
+              <li><a href="#cookies" class="hfooter-link">Cookies</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Social</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a target="_blank" rel="noreferrer" href="https://instagram.com" class="hfooter-link"><play-icon name="instagram" class="hicon"></play-icon>Instagram</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://youtube.com" class="hfooter-link"><play-icon name="youtube" class="hicon"></play-icon>YouTube</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://linkedin.com" class="hfooter-link"><play-icon name="linkedin" class="hicon"></play-icon>LinkedIn</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://x.com" class="hfooter-link"><play-icon name="x" class="hicon"></play-icon>X</a></li>
+            </ul>
+          </details>
+        </nav>
+      </div>
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+        <address>1 Joestar Lane, Morioh</address>
+      </div>
+    </footer>
+  </div>
+</play-example>
+
+<play-example title="Newsletter footer" layout="wide">
+  <play-note>
+    With a newsletter sign-up beside the links: an email and Subscribe. An
+    empty or malformed address says so under the field; here,
+    taken@example.com is already on the list, and any other address
+    subscribes, a moment later.
+  </play-note>
+  <div style="overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <p style="max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.
+    </p>
+    <footer class="hfooter hnewsletter-footer">
+      <div class="hfooter-main">
+        <div class="hfooter-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+          <div class="hnewsletter-footer-signup">
+            <p class="hnewsletter-footer-title">Fresh picks, every Friday</p>
+            <p>What's in season, and a recipe for it. No more than once a week.</p>
+            <form class="hnewsletter-footer-form" novalidate>
+              <div class="hfield">
+                <label class="hlabel" for="footers-newsletter-footer-1">Email</label>
+                <input type="email" autocomplete="email" placeholder="name@example.com" id="footers-newsletter-footer-1" aria-describedby="footers-newsletter-footer-1-error" class="hinput" name="email" />
+                <p aria-live="polite" id="footers-newsletter-footer-1-error" class="herror"></p>
+              </div>
+              <button type="submit" class="hbutton"><span class="hbutton-label">Subscribe</span></button>
+            </form>
+            <p class="hnewsletter-footer-status" role="status"></p>
+          </div>
+        </div>
+        <nav class="hfooter-groups" aria-label="Footer">
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Shop</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#offers" class="hfooter-link">This week's offers</a></li>
+              <li><a href="#delivery" class="hfooter-link">Delivery</a></li>
+              <li><a href="#gift-cards" class="hfooter-link">Gift cards</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Company</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#about" class="hfooter-link">About</a></li>
+              <li><a href="#careers" class="hfooter-link">Careers</a></li>
+              <li><a href="#contact" class="hfooter-link">Contact us</a></li>
+            </ul>
+          </details>
+        </nav>
+      </div>
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+        <nav aria-label="Legal">
+          <ul class="hfooter-bottom-links">
+            <li><a class="hfooter-link" href="#privacy">Privacy</a></li>
+            <li><a class="hfooter-link" href="#terms">Terms</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </div>
+</play-example>
+
+<play-example title="Simple footer" layout="wide">
+  <play-note>
+    For a sign-in page or an app: the copyright and a few small links, in
+    one row.
+  </play-note>
+  <div style="overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <p style="max-inline-size: 75rem; margin: 0 auto; padding: var(--harmo-space-md) var(--harmo-space-sm); font-size: var(--harmo-font-size-sm); line-height: 1.5rem; color: var(--harmo-color-text-secondary)">
+      Order by 8 PM for delivery tomorrow, in a window you choose, or pick it up from your nearest store.
+    </p>
+    <footer class="hfooter hsimple-footer">
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+        <nav aria-label="Legal">
+          <ul class="hfooter-bottom-links">
+            <li><a class="hfooter-link" href="#privacy">Privacy</a></li>
+            <li><a class="hfooter-link" href="#terms">Terms</a></li>
+            <li><a class="hfooter-link" href="#help">Help</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </div>
+</play-example>

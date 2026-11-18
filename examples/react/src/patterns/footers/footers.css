@@ -1,0 +1,60 @@
+/* Footers: a site's, one with a newsletter sign-up, and a sign-in page's,
+   each a Harmo Footer. This lays out what's in them: the newsletter's
+   title, its field and button in a row, and what it says once someone has
+   subscribed. The Footer is a size container, so each follows its own
+   width. */
+
+/* The newsletter: its title in the text's color, then its line, its form,
+   and what it says, 6px apart, as wide as 384px. */
+.hnewsletter-footer-signup {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+
+  inline-size: 100%;
+  max-inline-size: 24rem;
+}
+
+.hnewsletter-footer-signup[hidden] {
+  display: none;
+}
+
+.hnewsletter-footer-signup > p {
+  margin: 0;
+}
+
+.hnewsletter-footer-title {
+  font-weight: var(--harmo-font-weight-medium);
+
+  color: var(--harmo-color-text);
+}
+
+/* The field and its button in a row, 6px apart, the button level with the
+   field's input, under its label's 20px line and the field's 6px gap, where
+   an error under the input leaves it. */
+.hnewsletter-footer-form {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--harmo-space-2xs);
+
+  margin-block-start: var(--harmo-space-xs);
+}
+
+.hnewsletter-footer-form[hidden] {
+  display: none;
+}
+
+.hnewsletter-footer-form > .hfield {
+  flex: 1;
+
+  min-inline-size: 0;
+}
+
+.hnewsletter-footer-form > .hbutton {
+  margin-block-start: calc(1.25rem + var(--harmo-space-2xs));
+}
+
+/* What it says once someone has subscribed, empty till then, but there
+   from the start, so a screen reader hears it as it's filled in. */
+.hnewsletter-footer-status {
+  color: var(--harmo-color-success);
+}

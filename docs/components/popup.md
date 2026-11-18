@@ -69,7 +69,10 @@ panel lays out its own content.
 - A column layout, so a list inside can shrink and scroll while a search row or
   footer stays put.
 - Opens in 200ms: a 12px slide away from the trigger and a fade. Closes in
-  150ms. Both use `--harmo-ease-out-cubic`. Reduced motion: fade only.
+  150ms. Both use `--harmo-ease-out-cubic`. Reduced motion: fade only. In
+  Firefox, at a fallback position, such as aligned to the trigger's other
+  edge, it shows once its fade would have ended, without it: Firefox doesn't
+  run a transition there.
 - Closed popups stay rendered with `visibility: hidden` instead of
   `display: none`, which Firefox can't animate. An opening popup turns
   visible at once, so focus can move inside it right away; a closing one stays
@@ -89,7 +92,7 @@ panel lays out its own content.
 | Change | When |
 | --- | --- |
 | `aria-expanded` on the trigger | On every open and close; it also styles open select triggers |
-| `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; its value doesn't matter, the change does |
+| `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; and again once it's open, and once its opening fade has ended or stopped. At a fallback position, Firefox keeps the styles it worked out when it placed the popup there until its fallbacks change: while it was closed, or partway through its fade, so it would stay unseen or faint. Its value doesn't matter, the change does |
 | Focus, back on the trigger | When a popup opened over another closes with focus inside it, once its `toggle` event says it closed, not when it opened again at once; browsers do this only for the first popup open |
 | `data-side="top"` on the popup | Before opening, when it will land above its trigger, and before closing, when it's above; CSS can't tell which side it landed on |
 | `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box, less the slide still under way if it closes as it opens | Before closing, so it fades where it is; removed as it next opens |

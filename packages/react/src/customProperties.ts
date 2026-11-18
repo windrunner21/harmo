@@ -149,6 +149,7 @@ export type HarmoCustomProperty =
   | "--hdrawer-shift"
   | "--hfield-gap"
   | "--hfile-list-progress"
+  | "--hfooter-width"
   | "--hheader-height"
   | "--hheader-width"
   | "--hlanguage-picker-close"
@@ -373,6 +374,7 @@ declare module "react" {
     "--hdrawer-shift"?: string | number;
     "--hfield-gap"?: string | number;
     "--hfile-list-progress"?: string | number;
+    "--hfooter-width"?: string | number;
     "--hheader-height"?: string | number;
     "--hheader-width"?: string | number;
     "--hlanguage-picker-close"?: string | number;

@@ -65,7 +65,8 @@ onEachPlayground("account-menu", () => {
     await expect(up).toBeVisible();
     // Inside the submenu's box and the window, where it's shown.
     const [box, item] = await boxes(accounts, last);
-    expect(box.height).toBeLessThanOrEqual(400);
+    // Rounded, as Firefox can measure it a hair over.
+    expect(Math.round(box.height)).toBeLessThanOrEqual(400);
     expect(item.y).toBeGreaterThanOrEqual(box.y);
     expect(item.y + item.height).toBeLessThanOrEqual(box.y + box.height);
     expect(box.y + box.height).toBeLessThanOrEqual(page.viewportSize()!.height);

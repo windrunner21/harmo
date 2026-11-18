@@ -1,0 +1,141 @@
+<play-example title="Default" layout="wide">
+  <play-note>
+    The foot of a page: the logo and a line about the site, groups of links
+    side by side, each a <code>&lt;details&gt;</code> kept open with its
+    heading a plain title, and a bottom row for the copyright and small
+    links. The frame around it stands in for your page.
+  </play-note>
+  <div style="overflow: hidden; border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <footer class="hfooter">
+      <div class="hfooter-main">
+        <div class="hfooter-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+          <p>Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
+        </div>
+        <nav class="hfooter-groups" aria-label="Footer">
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Shop</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#offers" class="hfooter-link">This week's offers</a></li>
+              <li><a href="#delivery" class="hfooter-link">Delivery</a></li>
+              <li><a href="#gift-cards" class="hfooter-link">Gift cards</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Company</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#about" class="hfooter-link">About</a></li>
+              <li><a href="#careers" class="hfooter-link">Careers</a></li>
+              <li><a href="#press" class="hfooter-link">Press</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Help</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#contact" class="hfooter-link">Contact us</a></li>
+              <li><a href="#returns" class="hfooter-link">Returns</a></li>
+              <li><a href="#stores" class="hfooter-link">Stores</a></li>
+            </ul>
+          </details>
+        </nav>
+      </div>
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+        <ul class="hfooter-bottom-links">
+          <li><a class="hfooter-link" href="#privacy">Privacy</a></li>
+          <li><a class="hfooter-link" href="#terms">Terms</a></li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+</play-example>
+
+<play-example title="On a phone" layout="wide">
+  <play-note>
+    640px wide or less, each group folds, as an
+    <a class="hlink" data-underlined href="accordion.html">Accordion</a>
+    item does, its heading a control with a chevron. The Footer follows its
+    own width, so it folds here though the window is wide.
+  </play-note>
+  <div style="overflow: hidden; border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius); inline-size: 100%; max-inline-size: 24rem; margin-inline: auto">
+    <footer class="hfooter">
+      <div class="hfooter-main">
+        <div class="hfooter-brand">
+          <a href="#top">
+            <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
+            Speedwagon
+          </a>
+        </div>
+        <nav class="hfooter-groups" aria-label="Footer">
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Shop</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#offers" class="hfooter-link">This week's offers</a></li>
+              <li><a href="#delivery" class="hfooter-link">Delivery</a></li>
+              <li><a href="#gift-cards" class="hfooter-link">Gift cards</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Company</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#about" class="hfooter-link">About</a></li>
+              <li><a href="#careers" class="hfooter-link">Careers</a></li>
+              <li><a href="#press" class="hfooter-link">Press</a></li>
+            </ul>
+          </details>
+          <details class="hfooter-group">
+            <summary class="hfooter-summary">
+              <h2 class="hfooter-heading">Help</h2>
+              <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+            </summary>
+            <ul class="hfooter-links">
+              <li><a href="#contact" class="hfooter-link">Contact us</a></li>
+              <li><a href="#returns" class="hfooter-link">Returns</a></li>
+              <li><a href="#stores" class="hfooter-link">Stores</a></li>
+            </ul>
+          </details>
+        </nav>
+      </div>
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+      </div>
+    </footer>
+  </div>
+</play-example>
+
+<play-example title="Bottom row only" layout="wide">
+  <play-note>
+    Without a brand or groups, the Footer is its bottom row, as for an app
+    or a sign-in page: the copyright and a few small links.
+  </play-note>
+  <div style="overflow: hidden; border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <footer class="hfooter">
+      <div class="hfooter-bottom">
+        <p>© 2026 Speedwagon Ltd.</p>
+        <ul class="hfooter-bottom-links">
+          <li><a class="hfooter-link" href="#privacy">Privacy</a></li>
+          <li><a class="hfooter-link" href="#terms">Terms</a></li>
+          <li><a class="hfooter-link" href="#help">Help</a></li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+</play-example>

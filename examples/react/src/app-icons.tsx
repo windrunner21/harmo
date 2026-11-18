@@ -20,6 +20,7 @@ import google from "../../html/src/icons/google.svg" with { type: "text" };
 import home from "../../html/src/icons/home.svg" with { type: "text" };
 import linkedin from "../../html/src/icons/linkedin.svg" with { type: "text" };
 import info from "../../html/src/icons/info.svg" with { type: "text" };
+import instagram from "../../html/src/icons/instagram.svg" with { type: "text" };
 import lock from "../../html/src/icons/lock.svg" with { type: "text" };
 import menu from "../../html/src/icons/menu.svg" with { type: "text" };
 import messages from "../../html/src/icons/messages.svg" with { type: "text" };
@@ -48,6 +49,7 @@ import thumbsDown from "../../html/src/icons/thumbs-down.svg" with { type: "text
 import thumbsUp from "../../html/src/icons/thumbs-up.svg" with { type: "text" };
 import upload from "../../html/src/icons/upload.svg" with { type: "text" };
 import x from "../../html/src/icons/x.svg" with { type: "text" };
+import youtube from "../../html/src/icons/youtube.svg" with { type: "text" };
 
 const icon = (source: string) => {
   const [, attributes = "", body = ""] =
@@ -108,6 +110,8 @@ export const UserIcon = icon(user);
 export const WarningIcon = icon(warning);
 export const FacebookIcon = icon(facebook);
 export const LinkedInIcon = icon(linkedin);
+export const InstagramIcon = icon(instagram);
+export const YouTubeIcon = icon(youtube);
 export const XIcon = icon(x);
 export const AppleIcon = icon(apple);
 export const GitHubIcon = icon(github);

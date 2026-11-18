@@ -1,0 +1,310 @@
+@use "shortcuts" as *;
+@use "details";
+
+// Footer: the foot of a site's or an app's pages: its brand, groups of links,
+// and a bottom row for the copyright and the small print, as wide as the
+// page's content, as a Header's row is. Each group is a <details> whose
+// heading is in its summary. Wider than 640px, the groups sit side by side,
+// shown whether open or not, their headings plain titles; a script keeps
+// them open, so a screen reader hears them so, and their summaries out of
+// the Tab order. 640px wide or less, each folds, as an Accordion item does.
+// The Footer is a size container, so it follows its own width.
+.hfooter {
+  --hfooter-width: 75rem;
+
+  container-type: inline-size;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+
+  color: $color-text-secondary;
+  background-color: $color-background;
+  border-block-start: 1px solid $color-border;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The brand and the groups, 42px from the top and the bottom row.
+.hfooter-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-lg $space-md;
+
+  box-sizing: border-box;
+  max-inline-size: var(--hfooter-width);
+  margin-inline: auto;
+  padding: $space-lg $space-sm;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// The logo's link, as a Header's, then what goes under it, such as a line
+// about the site or a Language Picker, 16px apart.
+.hfooter-brand {
+  display: flex;
+  flex: 1 1 15rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-sm;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > p {
+    margin: 0;
+  }
+
+  & > a {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2xs;
+
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    line-height: 1.5rem;
+
+    color: $color-text;
+    text-decoration: none;
+    border-radius: $border-radius-sm;
+  }
+
+  & > a[hidden] {
+    display: none;
+  }
+
+  & > a:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+}
+
+// The groups, side by side, each at least 128px wide, 26px apart.
+.hfooter-groups {
+  display: grid;
+  flex: 3 1 30rem;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: $space-md;
+
+  min-inline-size: 0;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hfooter-group {
+  display: block;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @include details.grows;
+}
+
+// Side by side, a plain title, 16px over its links: not a control, its
+// chevron hidden.
+.hfooter-summary {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+
+  margin-block-end: $space-sm;
+
+  list-style: none;
+
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  // Safari's own triangle; the others draw none for a flex summary.
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    border-radius: $border-radius-sm;
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  & > .hexpand-chevron {
+    display: none;
+
+    margin-inline-start: auto;
+
+    color: $color-text-secondary;
+  }
+}
+
+.hfooter-heading {
+  margin: 0;
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  line-height: $font-line-height;
+
+  color: $color-text;
+}
+
+// A group's links, 10px apart.
+.hfooter-links {
+  display: grid;
+  justify-items: start;
+  gap: $space-xs;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @include details.grows-content;
+}
+
+// A link, in the secondary color, the text's as it's pointed at; an icon
+// before it is 16px, 6px from it.
+.hfooter-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2xs;
+
+  // An icon has no baseline, which would sit the link higher in its line,
+  // and make its row taller than a plain link's.
+  vertical-align: top;
+
+  color: inherit;
+  text-decoration: none;
+  border-radius: $border-radius-sm;
+
+  transition: color $duration-fast ease;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: $color-text;
+    }
+  }
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+  }
+
+  & > .hicon {
+    flex-shrink: 0;
+
+    inline-size: 1rem;
+    block-size: 1rem;
+  }
+}
+
+// Side by side, each group's links are shown, open or not.
+@container (min-width: 40.0625rem) {
+  .hfooter-group::details-content {
+    grid-template-rows: 1fr;
+
+    content-visibility: visible;
+  }
+}
+
+// 640px wide or less: the groups stack under the brand, a line between
+// them, each folding as an Accordion item does: its heading a control, 16px
+// above and below, with an Expand Chevron at its end.
+@container (max-width: 40rem) {
+  // The first heading's own padding spaces it from the brand.
+  .hfooter-main {
+    row-gap: $space-sm;
+  }
+
+  .hfooter-groups {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .hfooter-group:not([hidden]) ~ .hfooter-group {
+    border-block-start: 1px solid $color-border;
+  }
+
+  .hfooter-summary {
+    margin-block-end: 0;
+    padding-block: $space-sm;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    & > .hexpand-chevron {
+      display: block;
+    }
+  }
+
+  .hfooter-links {
+    padding-block-end: $space-sm;
+  }
+}
+
+// The bottom row: the copyright and the small print, in 13px, wrapping as
+// it needs, 26px apart; under a line across the whole footer where the
+// groups are above it. Its padding keeps its content in line with theirs.
+.hfooter-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2xs $space-md;
+
+  box-sizing: border-box;
+  padding-block: $space-md;
+  padding-inline: max(#{$space-sm}, calc((100% - var(--hfooter-width)) / 2 + #{$space-sm}));
+
+  font-size: $font-size-xs;
+
+  &[hidden] {
+    display: none;
+  }
+
+  & > p {
+    margin: 0;
+  }
+
+  & address {
+    font-style: normal;
+  }
+}
+
+.hfooter-main + .hfooter-bottom {
+  border-block-start: 1px solid $color-border;
+}
+
+// Small links in the bottom row, such as Privacy and Terms, 16px apart.
+.hfooter-bottom-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2xs $space-sm;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  &[hidden] {
+    display: none;
+  }
+}

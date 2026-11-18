@@ -38,6 +38,7 @@ the same markup and does what the script would.
 | Filter Chip | [filter-chip.md](filter-chip.md) |
 | Filters | [filters.md](filters.md) |
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
+| Footer | [footer.md](footer.md) |
 | Header | [header.md](header.md) |
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
@@ -149,6 +150,7 @@ Some components are built from others, so their files need company:
 | `file-list.css` | `button.css` for its buttons |
 | `filter-chip.css` | `popup.css`; `listbox.css` for a list; `button.css` for a footer or a panel's action; `field.css` and `input.css` for a text panel |
 | `filters.css` | `filter-chip.css`, `popup.css`, and those of the filters in it |
+| `footer.css` | `expand-chevron.css`; those of what's in it, such as `language-picker.css` |
 | `language-picker.css` | `button.css`, `popup.css`, `listbox.css`, `expand-chevron.css` |
 | `launcher.css` | `button.css`; `badge.css` for a count |
 | `link.css` | `chevron.css` or `chevron-to-arrow.css` for an icon |

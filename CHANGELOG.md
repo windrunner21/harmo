@@ -32,6 +32,12 @@ minor version may change an API, and says how to upgrade when it does.
   launcher are built in. It's built from the components below: Conversation,
   Message, Prose, Composer, Mentions, Drop Zone, Launcher, and Badge.
   `npx harmo-ui add chat` copies it.
+- Footers, a pattern: the foot of a page, in React and HTML. Three of them:
+  a site's, its logo, a line about it, and a Language Picker, groups of
+  links, Social's with icons, and the copyright and the address; one with a
+  newsletter sign-up beside its links, which checks the address and says
+  once it's subscribed; and a sign-in page's, the copyright and a few small
+  links.
 - Headers, a pattern: the bar across the top, in React and HTML. Three of
   them: a site's, its logo, a Navigation Menu whose sections open panels, and
   actions, which a Menu Button slides in under the bar at 640px wide, the
@@ -40,6 +46,10 @@ minor version may change an API, and says how to upgrade when it does.
   an unread count and Mark all as read, Settings, and a round Create with a
   short list of what to make; and a sign-in page's.
   `npx harmo-ui add headers` copies it.
+- Footer: the foot of a site's or an app's pages, a brand, groups of links,
+  and a bottom row for the copyright and the small print. Wider than 640px,
+  the groups sit side by side; 640px wide or less, each folds, as an
+  Accordion item does. In React, `Footer` and `FooterGroup`.
 - Header: the bar across the top of a page or an app, a logo, navigation or
   search, and actions in a row. It stays at the top, frosted, with a hairline
   once the page has scrolled; `data-scroll="away"` scrolls it away with the
@@ -195,6 +205,11 @@ minor version may change an API, and says how to upgrade when it does.
 
 ### Fixed
 
+- Popup: in Firefox, a popup that moves to fit, such as one aligned to its
+  trigger's other edge near the window's edge, now shows. It stayed unseen:
+  Firefox kept the styles it worked out for that position while the popup
+  was closed. Select, Combobox, Command Menu, Date Picker, and every other
+  popup get the fix; there, it shows without its fade.
 - Navigation Menu: moving the pointer from a trigger down to its panel no
   longer closes it on the way. A seam about a pixel tall, between the
   trigger and the bridge under it, let the pointer leave the menu; the open

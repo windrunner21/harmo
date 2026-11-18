@@ -109,12 +109,39 @@ export const placePopup = (popup: HTMLElement, opening: boolean) => {
   if (opening) {
     unpin(popup);
     popup.toggleAttribute("data-refit");
+    refitOnceOpen(popup);
   }
   placeSide(popup, opening);
   if (!opening) {
     pin(popup);
     handBackFocus(popup);
   }
+};
+
+// Once open, and again once its opening fade is over, its fallbacks change
+// again. At a fallback position, Firefox keeps the styles it worked out when
+// it placed the popup there, until they change: while it was closed, as a
+// closed popup stays laid out for its fade, or partway through the fade, so
+// it would stay unseen or faint.
+const refitOnceOpen = (popup: HTMLElement) => {
+  const refit = () => {
+    if (popup.matches(":popover-open")) popup.toggleAttribute("data-refit");
+  };
+  popup.addEventListener(
+    "toggle",
+    (event) => {
+      if ((event as ToggleEvent).newState === "open") refit();
+    },
+    { once: true },
+  );
+  const faded = (event: TransitionEvent) => {
+    if (event.target !== popup || event.propertyName !== "opacity") return;
+    popup.removeEventListener("transitionend", faded);
+    popup.removeEventListener("transitioncancel", faded);
+    refit();
+  };
+  popup.addEventListener("transitionend", faded);
+  popup.addEventListener("transitioncancel", faded);
 };
 
 // A browser hands focus back only for the first popup open, not one opened
