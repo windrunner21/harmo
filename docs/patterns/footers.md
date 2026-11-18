@@ -5,7 +5,7 @@ each kind of page:
 
 | Use case | React | What it is |
 | --- | --- | --- |
-| A site | `SiteFooter` | The logo, a line about the site, and a Language Picker; groups of links, such as Shop, Company, Legal, and Social, which fold on a phone; and the copyright and the address |
+| A site | `SiteFooter` | The logo and a line about the site; groups of links, such as Shop, Company, Legal, and Social, which fold on a phone; and the copyright, the address, and a Language Picker of regions |
 | A site with a newsletter | `NewsletterFooter` | The same, with an email field and Subscribe beside the links |
 | A sign-in page or an app | `SimpleFooter` | The copyright and a few small links, in one row |
 
@@ -17,7 +17,7 @@ side, and fold, as an Accordion's items do, where it's 640px wide or less.
 | Footer | Try | You see |
 | --- | --- | --- |
 | Site | Press a Social link | It opens in a new tab |
-| Site | Choose a language | The Language Picker shows it |
+| Site | Choose a region and language, at the bottom row's end | The Language Picker shows both, such as "Germany (Deutsch)" |
 | Site on a phone | Press a group's heading | Its links open under it; press it again to close them |
 | Newsletter | Press Subscribe with the field empty, or with "anna" | It says what's wrong under the field, which takes focus |
 | Newsletter | Subscribe with taken@example.com | "That address is already subscribed." under the field |
@@ -60,7 +60,7 @@ Put the footer last in your page's layout.
 <SiteFooter
   logo={<><img src="/logo.svg" alt="" width={20} height={20} />Speedwagon</>}
   description="Fresh produce, delivered the morning after it's picked."
-  language={<LanguagePicker aria-label="Language" value={locale} onValueChange={setLocale} languages={languages} />}
+  language={<LanguagePicker aria-label="Region and language" side="top" value={locale} onValueChange={setLocale} languages={regions} />}
   groups={[
     { label: "Shop", links: [{ label: "This week's offers", href: "/offers" }] },
     {
@@ -106,7 +106,7 @@ that throws says "Something went wrong. Try again."
 | `logo` | Required. What the home link shows: your logo and name |
 | `homeHref` | The home link's address: `"/"` by default |
 | `description` | A line under the logo |
-| `language` | Under it: a [Language Picker](../components/language-picker.md) |
+| `language` | At the bottom row's end: a [Language Picker](../components/language-picker.md), with regions or without, and `side="top"`, so it opens above |
 | `groups` | Required. The groups of links |
 | `copyright` | Required. The bottom row's first line |
 | `address` | The bottom row's `<address>` |
@@ -141,7 +141,6 @@ The playground shows each footer's whole markup; these are its parts.
     <div class="hfooter-brand">
       <a href="/">…Speedwagon</a>
       <p>Fresh produce, delivered the morning after it's picked.</p>
-      …a Language Picker…
     </div>
     <nav class="hfooter-groups" aria-label="Footer">
       <details class="hfooter-group">…Shop…</details>
@@ -150,6 +149,7 @@ The playground shows each footer's whole markup; these are its parts.
   <div class="hfooter-bottom">
     <p>© 2026 Speedwagon Ltd.</p>
     <address>1 Joestar Lane, Morioh</address>
+    …a Language Picker…
   </div>
 </footer>
 ```
@@ -234,9 +234,11 @@ rest:
 
 The [Footer](../components/footer.md)'s docs give its own. The pattern adds:
 
-- **Site:** under the logo, 16px apart, the line about the site and the
-  Language Picker; four groups, Social's links with 16px icons; the
-  copyright and the address in the bottom row.
+- **Site:** under the logo, 16px apart, the line about the site; four
+  groups, Social's links with 16px icons; in the bottom row, the copyright
+  and the address, and at its end the Language Picker, as small print, the
+  region before the language; its panel opens above it, its five regions in
+  two columns.
 - **Newsletter:** under the logo, at most 384px wide, its title, 14px medium
   in `--harmo-color-text`, and its line, 6px apart; 10px under them, the
   field and Subscribe in a row, 6px apart, Subscribe level with the input;

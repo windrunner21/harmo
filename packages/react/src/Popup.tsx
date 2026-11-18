@@ -33,11 +33,13 @@ export const PopupTriggerContext = createContext<
 export interface PopupProps extends ComponentPropsWithRef<"div"> {
   trigger: ReactElement<PopupTrigger>;
   align?: "start" | "end";
+  side?: "bottom" | "top";
 }
 
 export const Popup = ({
   trigger,
   align,
+  side,
   id,
   className,
   style,
@@ -68,6 +70,7 @@ export const Popup = ({
         className={withClass("hpopup", className)}
         id={popupId}
         data-align={align === "end" ? "end" : undefined}
+        data-preferred-side={side === "top" ? "top" : undefined}
         popover=""
         style={{ ...style, positionAnchor: anchor } as CSSProperties}
         onBeforeToggle={(event) => {
@@ -172,7 +175,14 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
     const needed =
       popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
     const below = popup.ownerDocument.documentElement.clientHeight - triggerBox.bottom;
-    side = below < needed && triggerBox.top >= needed ? "top" : "bottom";
+    side =
+      popup.dataset.preferredSide === "top"
+        ? triggerBox.top >= needed || below < needed
+          ? "top"
+          : "bottom"
+        : below < needed && triggerBox.top >= needed
+          ? "top"
+          : "bottom";
   } else {
     const popupBox = popup.getBoundingClientRect();
     side =

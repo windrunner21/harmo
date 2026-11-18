@@ -78,8 +78,9 @@
 
 // With regions, a panel: the regions in columns, each with its picture and its
 // name, and its languages side by side under the name. The region in use shows
-// a check in its picture's place. Up to four columns, each as wide as its
-// longest region, as the window allows. The panel keeps its width rather than
+// a check in its picture's place. Two columns, or four from seven regions,
+// so a few stay compact, each as wide as its longest region, as the window
+// allows. The panel keeps its width rather than
 // fitting beside the button: below or above it, lined up with either of its
 // ends, as a Popup is, or else in the middle of the window, below or above, before
 // it would shrink. Not while it's pinned, closing, where Popup holds it still.
@@ -129,10 +130,6 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
 
   &:has(> .hoption-group:nth-child(2 of .hoption-group)) {
     --hlanguage-picker-columns: 2;
-  }
-
-  &:has(> .hoption-group:nth-child(3 of .hoption-group)) {
-    --hlanguage-picker-columns: 3;
   }
 
   &:has(> .hoption-group:nth-child(7 of .hoption-group)) {

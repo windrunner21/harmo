@@ -112,3 +112,40 @@
     </div>
   </div>
 </play-example>
+
+<play-example title="Above its trigger" layout="wide">
+  <play-note>
+    With <code>data-preferred-side="top"</code>, it opens above its trigger,
+    as from a bar at the foot of a page or a footer; without room above, it
+    opens below. The bar around it is laid out with inline styles.
+  </play-note>
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--harmo-space-sm)">
+    <button
+      class="hbutton"
+      data-variant="secondary"
+      type="button"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      popovertarget="indentation"
+      style="anchor-name: --indentation"
+    >
+      <span class="hbutton-label">Spaces: 2</span>
+      <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+    </button>
+    <div class="hpopup" id="indentation" data-preferred-side="top" popover style="position-anchor: --indentation">
+      <ul class="hlistbox" role="listbox" aria-label="Indentation" tabindex="-1">
+        <li class="hoption" id="indentation-2" role="option" aria-selected="true">
+          <span class="hoption-label">Spaces: 2</span>
+          <play-icon name="check" class="hoption-check"></play-icon>
+        </li>
+        <li class="hoption" id="indentation-4" role="option" aria-selected="false">
+          <span class="hoption-label">Spaces: 4</span>
+        </li>
+        <li class="hoption" id="indentation-tab" role="option" aria-selected="false">
+          <span class="hoption-label">Tabs</span>
+        </li>
+      </ul>
+    </div>
+    <span style="color: var(--harmo-color-text-secondary); font-size: var(--harmo-font-size-sm)">Saved just now</span>
+  </div>
+</play-example>

@@ -33,8 +33,9 @@ minor version may change an API, and says how to upgrade when it does.
   Message, Prose, Composer, Mentions, Drop Zone, Launcher, and Badge.
   `npx harmo-ui add chat` copies it.
 - Footers, a pattern: the foot of a page, in React and HTML. Three of them:
-  a site's, its logo, a line about it, and a Language Picker, groups of
-  links, Social's with icons, and the copyright and the address; one with a
+  a site's, its logo and a line about it, groups of links, Social's with
+  icons, and the copyright, the address, and a Language Picker of regions;
+  one with a
   newsletter sign-up beside its links, which checks the address and says
   once it's subscribed; and a sign-in page's, the copyright and a few small
   links.
@@ -49,7 +50,8 @@ minor version may change an API, and says how to upgrade when it does.
 - Footer: the foot of a site's or an app's pages, a brand, groups of links,
   and a bottom row for the copyright and the small print. Wider than 640px,
   the groups sit side by side; 640px wide or less, each folds, as an
-  Accordion item does. In React, `Footer` and `FooterGroup`.
+  Accordion item does. A Language Picker in the bottom row reads as its
+  small print does, at the row's end, and opens above it. In React, `Footer` and `FooterGroup`.
 - Header: the bar across the top of a page or an app, a logo, navigation or
   search, and actions in a row. It stays at the top, frosted, with a hairline
   once the page has scrolled; `data-scroll="away"` scrolls it away with the
@@ -185,6 +187,11 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
+- Popup: `side="top"`, or `data-preferred-side="top"`, opens it above its
+  trigger by preference, as from a bar at the foot of a page or a footer;
+  without room above, below it. Language Picker passes its `side` to its
+  popup.
+
 ### Changed
 
 - Navigation Menu: a trigger's chevron is smaller, about 10px wide at 14px
@@ -202,6 +209,8 @@ minor version may change an API, and says how to upgrade when it does.
   step darker, `#6a707c` from `#6e7480`, so it passes WCAG AA's 4.5:1 on a
   tinted surface too, such as a default Card or a Sidebar: 4.6:1, where it was
   4.34:1. On white it's 4.97:1. The dark theme's is unchanged.
+- Language Picker: with three to six regions, its panel has two columns
+  rather than three, so a few regions stay compact.
 
 ### Fixed
 

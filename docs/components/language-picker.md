@@ -67,6 +67,7 @@ that a description in the page's language isn't marked as the other one.
 | `<span class="hlanguage-picker-icon" aria-hidden="true">` | A picture, such as a flag, which your app brings: before a region's name, in its `.hoption-group-label`, or before a language's, in its `.hoption-label` |
 | `.hlistbox-search` | A search row, for a long list, as Listbox has; it finds a language by its name or its description, and by its region's name with `data-example-keywords` in the HTML examples |
 | `data-size="small"` | The small [Button](button.md) size |
+| `data-preferred-side="top"` on the popup | The list opens above the button by preference, as in a footer, as a [Popup](popup.md)'s does |
 | `aria-expanded="true"` | Open: the hover background, and the chevron folds up |
 | `disabled` | Disabled, as a Button is |
 | `aria-disabled="true"` | Looks disabled but keeps focus, as a Button does; the script keeps the popup from opening, and closes an open one |
@@ -112,8 +113,8 @@ scroll arrows, as an arrow would take a row of its own there:
 </div>
 ```
 
-- The regions are in columns: two from two regions, three from three, and four
-  from seven, each as wide as its longest region. Under 48rem of window there
+- The regions are in columns: two from two regions, and four from seven, so a
+  few regions stay compact, each as wide as its longest region. Under 48rem of window there
   are at most two, and under 30rem one. The panel keeps that width. It opens
   below the button, or above it when there's more room there, lined up with
   either end of the button where it fits, or else in the middle of the window, so
@@ -186,6 +187,7 @@ keeps a key from opening the list or moving the highlight.
 | `searchLabel` | Adds a search row, with this as its placeholder and name |
 | `emptyMessage` | Required with `searchLabel`: shown when the search matches nothing, such as "No languages found" |
 | `size` | `"small"`, as for a [Button](button.md#react) |
+| `side` | `"top"` opens the list above the button by preference, as in a footer, as a [Popup](popup.md#react)'s `side` does |
 
 Each language is `{ value, label, lang, description, keywords, icon, disabled }`:
 

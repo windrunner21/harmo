@@ -77,7 +77,7 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Pagination](docs/components/pagination.md): moves through a list shown a page at a time: Previous and Next, and the page numbers if you show them
 - [Password Input](docs/components/password.md): a password field with a show/hide toggle and an optional strength meter
 - [Phone Input](docs/components/phone-input.md): a phone number, with a searchable country code, formatted as it's typed
-- [Popup](docs/components/popup.md): a floating surface for option lists and small panels, aligned to its trigger's start, or its end with `align="end"`
+- [Popup](docs/components/popup.md): a floating surface for option lists and small panels, aligned to its trigger's start, or its end with `align="end"`, below it, or above with `side="top"`
 - [Prose](docs/components/prose.md): formatted text, such as an assistant's reply or a note, at the size of the text around it: paragraphs, headings, lists, quotes, code, and links; in React, `text` formats a small part of Markdown as elements, never HTML, and `prosePlainText` gives it without its marks
 - [Radio](docs/components/radio.md): a native radio with Harmo's appearance
 - [Search](docs/components/search.md): a field for searching, such as above a list, with an optional clear button and shortcut hint

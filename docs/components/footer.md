@@ -14,7 +14,7 @@ a newsletter, and a sign-in page.
 | --- | --- |
 | CSS | `footer.css`, `expand-chevron.css` |
 | Element | `<footer class="hfooter">` |
-| Parts | `<div class="hfooter-main">` holding an optional `.hfooter-brand`, with the logo's link first, and `<nav class="hfooter-groups">` of groups: each `<details class="hfooter-group">` holding `<summary class="hfooter-summary">`, with `<h2 class="hfooter-heading">` and an [Expand Chevron](expand-chevron.md), then `<ul class="hfooter-links">` of `<a class="hfooter-link">`s. Then an optional `<div class="hfooter-bottom">`, which can hold `<ul class="hfooter-bottom-links">` |
+| Parts | `<div class="hfooter-main">` holding an optional `.hfooter-brand`, with the logo's link first, and `<nav class="hfooter-groups">` of groups: each `<details class="hfooter-group">` holding `<summary class="hfooter-summary">`, with `<h2 class="hfooter-heading">` and an [Expand Chevron](expand-chevron.md), then `<ul class="hfooter-links">` of `<a class="hfooter-link">`s. Then an optional `<div class="hfooter-bottom">`, which can hold `<ul class="hfooter-bottom-links">` and a [Language Picker](language-picker.md) |
 | Required | A name for the groups' nav, such as `aria-label="Footer"`; the logo link's name, from its text or its image's `alt` |
 | Unique | None |
 | Script | Required, to keep the groups open while they're side by side; see [What a script does](#what-a-script-does) |
@@ -80,9 +80,17 @@ bottom row alone, as for an app or a sign-in page.
   its end. A group opens in 200ms and closes in 150ms, as an Accordion item
   does; with reduced motion, at once.
 - The bottom row: 13px, 26px above and below, its parts 26px apart and
-  wrapping, under a line across the whole footer where the groups are
-  above it, its content in line with theirs. Its small links are 16px
-  apart.
+  wrapping, its last part at its end, under a line across the whole footer
+  where the groups are above it, its content in line with theirs. Its
+  small links are 16px apart.
+- A [Language Picker](language-picker.md) in the bottom row reads as the
+  small print does, at the row's end: its words in the row's 13px and
+  color, its globe 16px and 6px from them, with no padding or fill, so it
+  ends where the row does. Pointed at, or open, it takes
+  `--harmo-color-text`. With regions, it shows the region and the language,
+  such as "United Kingdom (English)". Give it `side="top"`, or
+  `data-preferred-side="top"` on its popup, so its list opens above it, as
+  at the foot of a page there's seldom room below.
 
 ## Accessibility
 

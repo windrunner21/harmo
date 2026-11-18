@@ -21,7 +21,8 @@
     if (!trigger) continue;
 
     // Where an opening popup will land, from the room around its trigger, as
-    // its CSS decides: above when it fits there and not below. Measured once
+    // its CSS decides: above when it fits there and not below; or, with
+    // data-preferred-side="top", above unless it fits only below. Measured once
     // data-refit has changed, so the popup takes its whole height, not one it
     // was shrunk to where it last fit; its position can't tell where it will
     // land.
@@ -30,6 +31,7 @@
       const { marginBlockStart, marginBlockEnd } = getComputedStyle(popup);
       const needed = popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
       const below = document.documentElement.clientHeight - triggerBox.bottom;
+      if (popup.dataset.preferredSide === "top") return triggerBox.top >= needed || below < needed ? "top" : "bottom";
       return below < needed && triggerBox.top >= needed ? "top" : "bottom";
     };
 

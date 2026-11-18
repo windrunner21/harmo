@@ -44,6 +44,7 @@ panel lays out its own content.
 | Hook | Effect |
 | --- | --- |
 | `data-align="end"` | Aligned to its trigger's end edge instead of its start, as for a popup from the end of a bar or a row; without room, it aligns to the start edge |
+| `data-preferred-side="top"` | Above its trigger by preference, as from a bar at the foot of a page or a footer; without room above, below it |
 | `data-side="top"` | The popup opened above its trigger, so it slides from below |
 
 ## Appearance and states
@@ -94,7 +95,7 @@ panel lays out its own content.
 | `aria-expanded` on the trigger | On every open and close; it also styles open select triggers |
 | `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; and again once it's open, and once its opening fade has ended or stopped. At a fallback position, Firefox keeps the styles it worked out when it placed the popup there until its fallbacks change: while it was closed, or partway through its fade, so it would stay unseen or faint. Its value doesn't matter, the change does |
 | Focus, back on the trigger | When a popup opened over another closes with focus inside it, once its `toggle` event says it closed, not when it opened again at once; browsers do this only for the first popup open |
-| `data-side="top"` on the popup | Before opening, when it will land above its trigger, and before closing, when it's above; CSS can't tell which side it landed on |
+| `data-side="top"` on the popup | Before opening, when it will land above its trigger: when it fits there and not below, or, with `data-preferred-side="top"`, unless it fits only below; and before closing, when it's above. CSS can't tell which side it landed on |
 | `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box, less the slide still under way if it closes as it opens | Before closing, so it fades where it is; removed as it next opens |
 
 In `beforetoggle`, when opening, remove `data-pinned` and toggle `data-refit`
@@ -126,6 +127,7 @@ it. Other props, `ref` included, are the popup `<div>`'s.
 | --- | --- |
 | `trigger` | The element that opens it, such as a `<Button>` or a `<FilterChip>` |
 | `align` | `"start"`, the default, or `"end"`: which of the trigger's edges it's aligned to |
+| `side` | `"bottom"`, the default, or `"top"`: the side of the trigger it opens on by preference; without room there, it opens on the other |
 | `id` | The popup's id; generated when left out. Pass your own to close it from a button inside, with `popoverTarget` and `popoverTargetAction="hide"` |
 
 ```tsx

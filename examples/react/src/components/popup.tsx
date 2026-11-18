@@ -92,4 +92,25 @@ export const examples = {
       </Popup>
     </div>
   ),
+
+  "Above its trigger": () => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--harmo-space-sm)" }}>
+      <Popup
+        side="top"
+        trigger={
+          <Button variant="secondary" aria-haspopup="listbox">
+            Spaces: 2
+            <ExpandChevron />
+          </Button>
+        }
+      >
+        <Listbox aria-label="Indentation" defaultValue="2">
+          <Option value="2">Spaces: 2</Option>
+          <Option value="4">Spaces: 4</Option>
+          <Option value="tab">Tabs</Option>
+        </Listbox>
+      </Popup>
+      <span style={{ color: "var(--harmo-color-text-secondary)", fontSize: "var(--harmo-font-size-sm)" }}>Saved just now</span>
+    </div>
+  ),
 };

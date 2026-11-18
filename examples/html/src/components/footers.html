@@ -1,9 +1,10 @@
 <play-example title="Site footer" layout="wide">
   <play-note>
-    A site's footer: its logo, a line about it, and a
-    <a class="hlink" data-underlined href="language-picker.html">Language Picker</a>;
-    Shop, Company, Legal, and Social, whose links open in a new tab, each
-    with its icon; and the copyright and the address. The page and its logo
+    A site's footer: its logo and a line about it; Shop, Company, Legal, and
+    Social, whose links open in a new tab, each with its icon; and, in the
+    bottom row, the copyright, the address, and a
+    <a class="hlink" data-underlined href="language-picker.html">Language Picker</a>
+    of regions, which reads as the small print does. The page and its logo
     are stand-ins.
   </play-note>
   <div style="overflow: hidden; background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
@@ -18,28 +19,6 @@
             Speedwagon
           </a>
           <p>Fresh produce from farms within a day's drive, delivered the morning after it's picked.</p>
-          <button type="button" aria-label="Language" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="footers-site-footer-1" popovertarget="footers-site-footer-2" style="anchor-name: --footers-site-footer-2" class="hbutton hlanguage-picker" data-variant="tertiary">
-            <play-icon name="globe" class="hicon"></play-icon>
-            <span class="hbutton-label"><span lang="en">English</span></span>
-            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
-          </button>
-          <div class="hpopup" id="footers-site-footer-2" popover style="position-anchor: --footers-site-footer-2">
-            <ul aria-label="Language" class="hlistbox" id="footers-site-footer-1" role="listbox">
-              <li class="hoption" id="footers-site-footer-3" role="option" aria-selected="true" data-value="en">
-                <span class="hoption-label"><span lang="en">English</span></span>
-                <play-icon name="check" class="hoption-check"></play-icon>
-              </li>
-              <li class="hoption" id="footers-site-footer-4" role="option" aria-selected="false" data-value="de">
-                <span class="hoption-label"><span lang="de">Deutsch</span></span>
-              </li>
-              <li class="hoption" id="footers-site-footer-5" role="option" aria-selected="false" data-value="es">
-                <span class="hoption-label"><span lang="es">Español</span></span>
-              </li>
-              <li class="hoption" id="footers-site-footer-6" role="option" aria-selected="false" data-value="fr">
-                <span class="hoption-label"><span lang="fr">Français</span></span>
-              </li>
-            </ul>
-          </div>
         </div>
         <nav class="hfooter-groups" aria-label="Footer">
           <details class="hfooter-group">
@@ -92,6 +71,83 @@
       <div class="hfooter-bottom">
         <p>© 2026 Speedwagon Ltd.</p>
         <address>1 Joestar Lane, Morioh</address>
+        <button type="button" aria-label="Region and language" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="footers-site-footer-1" popovertarget="footers-site-footer-2" style="anchor-name: --footers-site-footer-2" class="hbutton hlanguage-picker" data-variant="tertiary">
+          <play-icon name="globe" class="hicon"></play-icon>
+          <span class="hbutton-label"><span class="hlanguage-picker-region">United Kingdom</span> <span lang="en-GB">English</span></span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div class="hpopup hlanguage-picker-regions" id="footers-site-footer-2" data-preferred-side="top" popover style="position-anchor: --footers-site-footer-2">
+          <ul aria-label="Region and language" class="hlistbox" id="footers-site-footer-1" role="listbox">
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-3">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/fr.svg" alt="" /></span>
+                France
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-3">
+                <li class="hoption" id="footers-site-footer-4" role="option" aria-selected="false" data-value="fr-FR">
+                  <span class="hoption-label"><span lang="fr-FR">Français</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-5" role="option" aria-selected="false" data-value="en-FR">
+                  <span class="hoption-label"><span lang="en-FR">English</span></span>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-6">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/de.svg" alt="" /></span>
+                Germany
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-6">
+                <li class="hoption" id="footers-site-footer-7" role="option" aria-selected="false" data-value="de-DE">
+                  <span class="hoption-label"><span lang="de-DE">Deutsch</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-8" role="option" aria-selected="false" data-value="en-DE">
+                  <span class="hoption-label"><span lang="en-DE">English</span></span>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-9">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/es.svg" alt="" /></span>
+                Spain
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-9">
+                <li class="hoption" id="footers-site-footer-10" role="option" aria-selected="false" data-value="es-ES">
+                  <span class="hoption-label"><span lang="es-ES">Español</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-11" role="option" aria-selected="false" data-value="en-ES">
+                  <span class="hoption-label"><span lang="en-ES">English</span></span>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-12">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/gb.svg" alt="" /></span>
+                United Kingdom
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-12">
+                <li class="hoption" id="footers-site-footer-13" role="option" aria-selected="true" data-value="en-GB">
+                  <span class="hoption-label"><span lang="en-GB">English</span></span>
+                  <play-icon name="check" class="hoption-check"></play-icon>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-14">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/us.svg" alt="" /></span>
+                United States
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-14">
+                <li class="hoption" id="footers-site-footer-15" role="option" aria-selected="false" data-value="en-US">
+                  <span class="hoption-label"><span lang="en-US">English</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-16" role="option" aria-selected="false" data-value="es-US">
+                  <span class="hoption-label"><span lang="es-US">Español</span></span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
   </div>
@@ -114,28 +170,6 @@
             <span style="inline-size: 1.25rem; block-size: 1.25rem; background: var(--harmo-color-primary-fill); border-radius: 0.375rem" aria-hidden="true"></span>
             Speedwagon
           </a>
-          <button type="button" aria-label="Language" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="footers-site-footer-on-a-phone-1" popovertarget="footers-site-footer-on-a-phone-2" style="anchor-name: --footers-site-footer-on-a-phone-2" class="hbutton hlanguage-picker" data-variant="tertiary">
-            <play-icon name="globe" class="hicon"></play-icon>
-            <span class="hbutton-label"><span lang="en">English</span></span>
-            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
-          </button>
-          <div class="hpopup" id="footers-site-footer-on-a-phone-2" popover style="position-anchor: --footers-site-footer-on-a-phone-2">
-            <ul aria-label="Language" class="hlistbox" id="footers-site-footer-on-a-phone-1" role="listbox">
-              <li class="hoption" id="footers-site-footer-on-a-phone-3" role="option" aria-selected="true" data-value="en">
-                <span class="hoption-label"><span lang="en">English</span></span>
-                <play-icon name="check" class="hoption-check"></play-icon>
-              </li>
-              <li class="hoption" id="footers-site-footer-on-a-phone-4" role="option" aria-selected="false" data-value="de">
-                <span class="hoption-label"><span lang="de">Deutsch</span></span>
-              </li>
-              <li class="hoption" id="footers-site-footer-on-a-phone-5" role="option" aria-selected="false" data-value="es">
-                <span class="hoption-label"><span lang="es">Español</span></span>
-              </li>
-              <li class="hoption" id="footers-site-footer-on-a-phone-6" role="option" aria-selected="false" data-value="fr">
-                <span class="hoption-label"><span lang="fr">Français</span></span>
-              </li>
-            </ul>
-          </div>
         </div>
         <nav class="hfooter-groups" aria-label="Footer">
           <details class="hfooter-group">
@@ -188,6 +222,83 @@
       <div class="hfooter-bottom">
         <p>© 2026 Speedwagon Ltd.</p>
         <address>1 Joestar Lane, Morioh</address>
+        <button type="button" aria-label="Region and language" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="footers-site-footer-on-a-phone-1" popovertarget="footers-site-footer-on-a-phone-2" style="anchor-name: --footers-site-footer-on-a-phone-2" class="hbutton hlanguage-picker" data-variant="tertiary">
+          <play-icon name="globe" class="hicon"></play-icon>
+          <span class="hbutton-label"><span class="hlanguage-picker-region">United Kingdom</span> <span lang="en-GB">English</span></span>
+          <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+        </button>
+        <div class="hpopup hlanguage-picker-regions" id="footers-site-footer-on-a-phone-2" data-preferred-side="top" popover style="position-anchor: --footers-site-footer-on-a-phone-2">
+          <ul aria-label="Region and language" class="hlistbox" id="footers-site-footer-on-a-phone-1" role="listbox">
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-on-a-phone-3">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/fr.svg" alt="" /></span>
+                France
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-on-a-phone-3">
+                <li class="hoption" id="footers-site-footer-on-a-phone-4" role="option" aria-selected="false" data-value="fr-FR">
+                  <span class="hoption-label"><span lang="fr-FR">Français</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-on-a-phone-5" role="option" aria-selected="false" data-value="en-FR">
+                  <span class="hoption-label"><span lang="en-FR">English</span></span>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-on-a-phone-6">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/de.svg" alt="" /></span>
+                Germany
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-on-a-phone-6">
+                <li class="hoption" id="footers-site-footer-on-a-phone-7" role="option" aria-selected="false" data-value="de-DE">
+                  <span class="hoption-label"><span lang="de-DE">Deutsch</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-on-a-phone-8" role="option" aria-selected="false" data-value="en-DE">
+                  <span class="hoption-label"><span lang="en-DE">English</span></span>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-on-a-phone-9">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/es.svg" alt="" /></span>
+                Spain
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-on-a-phone-9">
+                <li class="hoption" id="footers-site-footer-on-a-phone-10" role="option" aria-selected="false" data-value="es-ES">
+                  <span class="hoption-label"><span lang="es-ES">Español</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-on-a-phone-11" role="option" aria-selected="false" data-value="en-ES">
+                  <span class="hoption-label"><span lang="en-ES">English</span></span>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-on-a-phone-12">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/gb.svg" alt="" /></span>
+                United Kingdom
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-on-a-phone-12">
+                <li class="hoption" id="footers-site-footer-on-a-phone-13" role="option" aria-selected="true" data-value="en-GB">
+                  <span class="hoption-label"><span lang="en-GB">English</span></span>
+                  <play-icon name="check" class="hoption-check"></play-icon>
+                </li>
+              </ul>
+            </li>
+            <li class="hoption-group" role="presentation">
+              <span class="hoption-group-label" id="footers-site-footer-on-a-phone-14">
+                <span class="hlanguage-picker-icon" aria-hidden="true"><img src="images/flags/us.svg" alt="" /></span>
+                United States
+              </span>
+              <ul role="group" aria-labelledby="footers-site-footer-on-a-phone-14">
+                <li class="hoption" id="footers-site-footer-on-a-phone-15" role="option" aria-selected="false" data-value="en-US">
+                  <span class="hoption-label"><span lang="en-US">English</span></span>
+                </li>
+                <li class="hoption" id="footers-site-footer-on-a-phone-16" role="option" aria-selected="false" data-value="es-US">
+                  <span class="hoption-label"><span lang="es-US">Español</span></span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
   </div>

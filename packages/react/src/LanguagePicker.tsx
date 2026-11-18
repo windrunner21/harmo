@@ -18,7 +18,7 @@ import {
 } from "./listbox/Listbox.tsx";
 import { Option } from "./listbox/Option.tsx";
 import { OptionGroup } from "./listbox/OptionGroup.tsx";
-import { Popup } from "./Popup.tsx";
+import { Popup, type PopupProps } from "./Popup.tsx";
 import { withClass } from "./withClass.ts";
 
 export interface LanguagePickerLanguage {
@@ -48,6 +48,7 @@ export type LanguagePickerProps = Omit<
     defaultValue?: string;
     onValueChange?: (value: string) => void;
     size?: "small";
+    side?: PopupProps["side"];
   };
 
 const isRegion = (
@@ -111,6 +112,7 @@ export const LanguagePicker = ({
   searchLabel,
   emptyMessage,
   size,
+  side,
   disabled,
   hidden,
   className,
@@ -178,6 +180,7 @@ export const LanguagePicker = ({
     <Popup
       ref={popup}
       trigger={button}
+      side={side}
       className={grouped ? "hlanguage-picker-regions" : undefined}
       onBeforeToggle={(event) => {
         if (inactive && event.newState === "open") event.preventDefault();

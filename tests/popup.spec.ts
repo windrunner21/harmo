@@ -91,6 +91,34 @@ onEachPlayground("popup", () => {
     expect(p.x).toBeCloseTo(t.x, 0);
   });
 
+  test("preferring the top, it opens 8px above its trigger, and below it without room above", async ({ page }) => {
+    const container = await example(page, "popup-above-its-trigger");
+    const trigger = container.getByRole("button", { name: "Spaces: 2" });
+    const popup = container.locator(".hpopup");
+    await expect(popup).toHaveAttribute("data-preferred-side", "top");
+    await trigger.evaluate((element) => element.scrollIntoView({ block: "center" }));
+    await trigger.click();
+    await settled(popup);
+    await expect(popup).toHaveAttribute("data-side", "top");
+    const [t, p] = await boxes(trigger, popup);
+    expect(t.y - (p.y + p.height)).toBeCloseTo(8, 0);
+    await page.keyboard.press("Escape");
+    await expect(openPopup(container)).toHaveCount(0);
+
+    // Move the trigger to 70px from the window's top, under the playground's
+    // header, where there's no room above for its three options. The page
+    // ends too soon to scroll it there.
+    await trigger.evaluate((element) => {
+      const top = element.getBoundingClientRect().top;
+      Object.assign(element.style, { position: "relative", top: `${70 - top}px` });
+    });
+    await trigger.click();
+    await settled(popup);
+    await expect(popup).not.toHaveAttribute("data-side", "top");
+    const [below, opened] = await boxes(trigger, popup);
+    expect(opened.y - (below.y + below.height)).toBeCloseTo(8, 0);
+  });
+
   test("without room below, it opens above", async ({ page }) => {
     const container = page.locator('[id="popup-placement"]');
     const trigger = container.getByRole("button", { name: "Last 30 days" });

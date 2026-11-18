@@ -26,13 +26,13 @@ export const SiteFooter = ({ logo, homeHref = "/", description, language, groups
       <>
         <a href={homeHref}>{logo}</a>
         {description && <p>{description}</p>}
-        {language}
       </>
     }
     bottom={
       <>
         <p>{copyright}</p>
         {address && <address>{address}</address>}
+        {language}
       </>
     }
   >

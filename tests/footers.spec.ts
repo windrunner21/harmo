@@ -15,7 +15,10 @@ onEachPlayground("footers", () => {
     const instagram = nav.getByRole("link", { name: "Instagram" });
     await expect(instagram).toHaveAttribute("target", "_blank");
     await expect(instagram).toHaveAttribute("rel", "noreferrer");
-    await expect(container.getByRole("combobox", { name: "Language" })).toBeVisible();
+    const picker = container.locator(".hfooter-bottom").getByRole("combobox", { name: "Region and language" });
+    // The region, then the language, whose parentheses CSS draws.
+    await expect(picker.locator(".hlanguage-picker-region")).toHaveText("United Kingdom");
+    await expect(picker.locator('.hbutton-label > [lang="en-GB"]')).toHaveText("English");
     await expect(container.locator(".hfooter-bottom")).toContainText("© 2026 Speedwagon Ltd.");
     await expect(container.locator(".hfooter-bottom address")).toHaveText("1 Joestar Lane, Morioh");
   });
@@ -58,6 +61,41 @@ onEachPlayground("footers", () => {
     const [input, button] = await boxes(container.getByRole("textbox", { name: "Email" }), container.getByRole("button", { name: "Subscribe" }));
     expect(Math.round(button.y)).toBe(Math.round(input.y));
     expect(Math.round(button.x - (input.x + input.width))).toBe(6);
+  });
+
+  test("the Language Picker is small print at the bottom row's end: 13px, no fill, its globe 16px", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "footers-site-footer");
+    const row = container.locator(".hfooter-bottom");
+    const picker = row.getByRole("combobox", { name: "Region and language" });
+    await expect(picker).toHaveCSS("font-size", "13px");
+    await picker.hover();
+    await expect(picker).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    const [box, globe] = await boxes(picker, picker.locator(".hicon").first());
+    expect(Math.round(globe.width)).toBe(16);
+    const end = await row.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return node.getBoundingClientRect().right - parseFloat(style.paddingRight);
+    });
+    expect(Math.round(box.x + box.width)).toBe(Math.round(end));
+  });
+
+  test("the Language Picker's panel opens above it, with room on both sides, its five regions in two columns", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 1000 });
+    const container = await example(page, "footers-site-footer");
+    const picker = container.locator(".hfooter-bottom").getByRole("combobox", { name: "Region and language" });
+    await picker.evaluate((node) => node.scrollIntoView({ block: "center" }));
+    await picker.click();
+    const panel = container.locator(".hpopup:popover-open");
+    await expect(panel).toHaveCSS("opacity", "1");
+    await expect(panel).toHaveAttribute("data-side", "top");
+    const [button, box] = await boxes(picker, panel);
+    expect(box.y + box.height).toBeLessThanOrEqual(button.y);
+    const groups = panel.getByRole("group");
+    await expect(groups).toHaveCount(5);
+    const [first, second, third] = await boxes(groups.nth(0), groups.nth(1), groups.nth(2));
+    expect(Math.round(second.y)).toBe(Math.round(first.y));
+    expect(Math.round(third.x)).toBe(Math.round(first.x));
+    expect(third.y).toBeGreaterThan(first.y);
   });
 
   test("a link with an icon takes the same room as one without", { tag: "@css" }, async ({ page }) => {

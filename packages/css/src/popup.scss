@@ -90,6 +90,16 @@ $fallbacks-end: flip-block, flip-inline, flip-block flip-inline,
     position-try-fallbacks: $fallbacks-end, flip-block;
   }
 
+  // Above its trigger by preference, as from a footer at the foot of the
+  // page; flip-block, first in each list, puts it below without room there.
+  &[data-preferred-side="top"]:not([data-pinned]) {
+    position-area: block-start span-inline-end;
+  }
+
+  &[data-preferred-side="top"][data-align="end"]:not([data-pinned]) {
+    position-area: block-start span-inline-start;
+  }
+
   // A closing popup fades where it is: the script pins it there, by its
   // box, as closing starts, until it next opens. Firefox would otherwise
   // place it afresh as it leaves the top layer, perhaps on the other side.

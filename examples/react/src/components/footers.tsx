@@ -85,13 +85,47 @@ const groups: SiteFooterProps["groups"] = [
 
 const language = (
   <LanguagePicker
-    aria-label="Language"
-    defaultValue="en"
+    aria-label="Region and language"
+    side="top"
+    defaultValue="en-GB"
     languages={[
-      { value: "en", label: "English" },
-      { value: "de", label: "Deutsch" },
-      { value: "es", label: "Español" },
-      { value: "fr", label: "Français" },
+      {
+        label: "France",
+        icon: <img src="images/flags/fr.svg" alt="" />,
+        languages: [
+          { value: "fr-FR", label: "Français" },
+          { value: "en-FR", label: "English" },
+        ],
+      },
+      {
+        label: "Germany",
+        icon: <img src="images/flags/de.svg" alt="" />,
+        languages: [
+          { value: "de-DE", label: "Deutsch" },
+          { value: "en-DE", label: "English" },
+        ],
+      },
+      {
+        label: "Spain",
+        icon: <img src="images/flags/es.svg" alt="" />,
+        languages: [
+          { value: "es-ES", label: "Español" },
+          { value: "en-ES", label: "English" },
+        ],
+      },
+      {
+        label: "United Kingdom",
+        icon: <img src="images/flags/gb.svg" alt="" />,
+        languages: [{ value: "en-GB", label: "English" }],
+      },
+      {
+        label: "United States",
+        icon: <img src="images/flags/us.svg" alt="" />,
+        languages: [
+          { value: "en-US", label: "English" },
+          { value: "es-US", label: "Español" },
+        ],
+      },
     ]}
   />
 );
