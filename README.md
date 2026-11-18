@@ -75,7 +75,7 @@ Load the full stylesheet, tokens and every component, then use the `.h*`
 classes:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.7/dist/index.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@harmo-ui/css@0.8/dist/index.css" />
 
 <button class="hbutton" type="button">
   <span class="hbutton-label">Save changes</span>

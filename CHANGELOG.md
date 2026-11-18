@@ -8,6 +8,13 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-18
+
+Three more patterns, Chat, Headers, and Footers, and the components they're
+built from: Conversation, Message, Composer, Mentions, Launcher, Badge,
+Prose, Drop Zone, Header, Footer, Dropdown Menu, and Account Menu. React's
+Toaster takes `aria-label` in place of `label`.
+
 ### Upgrading
 
 - **React: Toaster's `label` is now `aria-label`.** It was only ever the
@@ -121,25 +128,26 @@ minor version may change an API, and says how to upgrade when it does.
   cross other items on its way; with →, and back with ←. It's at most 400px
   tall, as a Popup is. A menu taller than it can be scrolls, with arrows at
   its ends while there's more, as a Select's list has.
-- Listbox: its scroll arrows' styles are a mixin, `scroll-arrow`, which the
-  Dropdown Menu shares; they look and work the same.
   Opened from the keys, focus goes to the first item, or with ↑ to the last;
   the arrows, Home, End, and typing a letter move focus, and the mouse moves
-  it too, so only one item is shown. Choosing one closes the menu, and focus
+  it too, so only one item is highlighted. Choosing one closes the menu, and focus
   goes back to its button; Tab closes it and moves on. A disabled item is
   dimmed, and the keys pass it by.
 - Button: `size="xsmall"`, or `data-size="xsmall"`, a 24px button with
   12px text, for a dense row or beside icon buttons. It takes presses over
   34px, as a default button does. And `shape="circle"`, or
-  `data-shape="circle"`: round, a circle when it's icon only.
+  `data-shape="circle"`: round, a circle when it's icon only. A toggle,
+  with `aria-pressed="true"`, shows it's on: a secondary or tertiary
+  Button's icon and text in the primary color, and a secondary's background
+  and border tinted.
 - Tokens: `--harmo-control-height-xsmall`, 24px, an extra-small Button's
   height.
 - Popup: `align="end"`, or `data-align="end"`, aligns it to its trigger's
   end edge instead of its start, as for one opened from the end of a bar or
-  a row. Without room, it aligns to the start.
-- Button: a toggle, with `aria-pressed="true"`, shows it's on: a secondary or
-  tertiary Button's icon and text in the primary color, and a secondary's
-  background and border tinted.
+  a row. Without room, it aligns to the start. And `side="top"`, or
+  `data-preferred-side="top"`, opens it above its trigger by preference, as
+  from a bar at the foot of a page or a footer; without room above, below
+  it. Language Picker passes its `side` to its popup.
 - Showcase Card: a card that shows where it leads before it's opened, for a
   product's news, or a gallery of templates, patterns, or stories. What it leads to sits small, or
   as an image, on a dashed grid, then its title, a description, and an action
@@ -189,11 +197,6 @@ minor version may change an API, and says how to upgrade when it does.
   </div>
   ```
 
-- Popup: `side="top"`, or `data-preferred-side="top"`, opens it above its
-  trigger by preference, as from a bar at the foot of a page or a footer;
-  without room above, below it. Language Picker passes its `side` to its
-  popup.
-
 ### Changed
 
 - Navigation Menu: a trigger's chevron is smaller, about 10px wide at 14px
@@ -230,7 +233,6 @@ minor version may change an API, and says how to upgrade when it does.
   longer closes it on the way. A seam about a pixel tall, between the
   trigger and the bridge under it, let the pointer leave the menu; the open
   trigger now has a bridge of its own, reaching into the panel.
-
 - Listbox: in a grouped list, the divider skips the first group shown by
   counting groups only, and Language Picker's regions count only regions for
   their columns, so neither changes as a scroll arrow comes and goes.
@@ -2534,7 +2536,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/windrunner21/harmo/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/windrunner21/harmo/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/windrunner21/harmo/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/windrunner21/harmo/compare/v0.5.1...v0.5.2
