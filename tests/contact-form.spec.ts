@@ -7,6 +7,7 @@ import {
   fadingIn,
   onEachPlayground,
   openPopup,
+  ready,
   release,
   resizing,
   settled,
@@ -328,13 +329,20 @@ onEachPlayground("contact-form", () => {
   });
 
   test("sending waits for an upload still running, the button working meanwhile", async ({ page }) => {
+    // On a clock that stops once the form is filled in, so the upload is still
+    // running when Send is pressed, however long a slow machine takes.
+    await page.clock.install();
+    await page.reload();
+    await ready(page);
     const elements = await parts(page, "contact-form-support-request");
     const { form, title, button } = elements;
     await fillSupportRequest(elements);
+    await page.clock.pauseAt(Date.now() + 1000);
     await form.locator(".hfile-input-control").setInputFiles(text("log.txt"));
     await button.click();
     await expect(button).toHaveAttribute("aria-busy", "true");
     await expect(form.locator(".hfile-list-item")).toHaveAttribute("data-status", "uploading");
+    await page.clock.resume();
     await expect(title).toBeFocused();
   });
 

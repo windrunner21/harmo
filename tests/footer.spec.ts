@@ -55,19 +55,29 @@ onEachPlayground("footer", () => {
     await expect(groups.first().locator(".hexpand-chevron")).toBeVisible();
   });
 
-  test("its script follows the CSS at the fold: wide at 640.25px, folded at 640px", async ({ page }) => {
+  test("its script follows the CSS at the fold: wide at 641px, folded at 640px, and as the CSS says between", async ({ page }) => {
     const container = await example(page, "footer-default");
     const footer = container.locator("footer.hfooter");
+    const nav = container.getByRole("navigation", { name: "Footer" });
     const shop = container.locator(".hfooter-group").first();
     const delivery = shop.getByRole("link", { name: "Delivery" });
-    await footer.evaluate((node) => (node.style.width = "640.25px"));
-    await expect(shop).toHaveAttribute("open", "");
-    await expect(shop.locator(".hfooter-summary")).toHaveAttribute("tabindex", "-1");
-    await expect(delivery).toBeVisible();
-    await footer.evaluate((node) => (node.style.width = "640px"));
-    await expect(shop).not.toHaveAttribute("open");
-    await expect(shop.locator(".hfooter-summary")).not.toHaveAttribute("tabindex");
-    await expect(delivery).toBeHidden();
+    // At 640.25px a browser may round the width either way; the groups must
+    // match what its CSS decided.
+    for (const width of ["641px", "640.25px", "640px"]) {
+      await footer.evaluate((node, width) => (node.style.width = width), width);
+      const layout = await nav.evaluate((node) => getComputedStyle(node).getPropertyValue("--hfooter-layout").trim());
+      if (width === "641px") expect(layout).toBe("wide");
+      if (width === "640px") expect(layout).toBe("folded");
+      if (layout === "wide") {
+        await expect(shop).toHaveAttribute("open", "");
+        await expect(shop.locator(".hfooter-summary")).toHaveAttribute("tabindex", "-1");
+        await expect(delivery).toBeVisible();
+      } else {
+        await expect(shop).not.toHaveAttribute("open");
+        await expect(shop.locator(".hfooter-summary")).not.toHaveAttribute("tabindex");
+        await expect(delivery).toBeHidden();
+      }
+    }
   });
 
   test("a group added later takes the layout: open while it's wide", async ({ page }) => {
