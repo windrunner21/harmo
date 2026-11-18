@@ -55,6 +55,37 @@ onEachPlayground("footer", () => {
     await expect(groups.first().locator(".hexpand-chevron")).toBeVisible();
   });
 
+  test("its script follows the CSS at the fold: wide at 640.25px, folded at 640px", async ({ page }) => {
+    const container = await example(page, "footer-default");
+    const footer = container.locator("footer.hfooter");
+    const shop = container.locator(".hfooter-group").first();
+    const delivery = shop.getByRole("link", { name: "Delivery" });
+    await footer.evaluate((node) => (node.style.width = "640.25px"));
+    await expect(shop).toHaveAttribute("open", "");
+    await expect(shop.locator(".hfooter-summary")).toHaveAttribute("tabindex", "-1");
+    await expect(delivery).toBeVisible();
+    await footer.evaluate((node) => (node.style.width = "640px"));
+    await expect(shop).not.toHaveAttribute("open");
+    await expect(shop.locator(".hfooter-summary")).not.toHaveAttribute("tabindex");
+    await expect(delivery).toBeHidden();
+  });
+
+  test("a group added later takes the layout: open while it's wide", async ({ page }) => {
+    test.skip(page.url().includes("/react/"), "A React group takes it from its Footer, as it renders");
+    const container = await example(page, "footer-default");
+    const nav = container.getByRole("navigation", { name: "Footer" });
+    await nav.evaluate((node) => {
+      const group = node.querySelector(".hfooter-group")!.cloneNode(true) as HTMLDetailsElement;
+      group.open = false;
+      group.querySelector(".hfooter-summary")!.removeAttribute("tabindex");
+      group.querySelector(".hfooter-heading")!.textContent = "Later";
+      node.append(group);
+    });
+    const later = nav.locator(".hfooter-group").last();
+    await expect(later).toHaveAttribute("open", "");
+    await expect(later.locator(".hfooter-summary")).toHaveAttribute("tabindex", "-1");
+  });
+
   test("its bottom row alone, with no groups, has no navigation", async ({ page }) => {
     const container = await example(page, "footer-bottom-row-only");
     await expect(container.locator("footer.hfooter")).toHaveCount(1);

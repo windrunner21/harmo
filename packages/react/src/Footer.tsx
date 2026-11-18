@@ -1,10 +1,23 @@
 "use client";
 
-import { useEffect, useRef, type ComponentPropsWithRef, type ReactNode } from "react";
+import {
+  createContext,
+  use,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithRef,
+  type ReactNode,
+} from "react";
+import { renders } from "./children.ts";
 import { ExpandChevron } from "./ExpandChevron.tsx";
 import { useLinkComponent } from "./HarmoProvider.tsx";
 import { useMergedRef } from "./useMergedRef.ts";
 import { withClass } from "./withClass.ts";
+
+type Layout = "wide" | "folded";
+
+const FooterLayout = createContext<Layout | undefined>(undefined);
 
 export interface FooterProps extends Omit<ComponentPropsWithRef<"footer">, "aria-label"> {
   "aria-label"?: string;
@@ -12,54 +25,41 @@ export interface FooterProps extends Omit<ComponentPropsWithRef<"footer">, "aria
   bottom?: ReactNode;
 }
 
-const folds = 40;
-
 export const Footer = ({ "aria-label": ariaLabel, brand, bottom, className, children, ref, ...props }: FooterProps) => {
   const footer = useRef<HTMLElement>(null);
   const merged = useMergedRef(footer, ref);
+  const [layout, setLayout] = useState<Layout>();
+  const hasBrand = renders(brand);
+  const hasGroups = renders(children);
 
   useEffect(() => {
     const element = footer.current;
     if (!element) return;
-    let wide: boolean | undefined;
     const fit = () => {
-      const rem = parseFloat(getComputedStyle(element.ownerDocument.documentElement).fontSize) || 16;
-      const now = element.clientWidth > folds * rem;
-      if (now === wide) return;
-      wide = now;
-      for (const group of element.querySelectorAll<HTMLDetailsElement>(".hfooter-group")) {
-        group.open = now;
-        const summary = group.querySelector(":scope > .hfooter-summary");
-        if (now) summary?.setAttribute("tabindex", "-1");
-        else summary?.removeAttribute("tabindex");
-      }
-    };
-    const keep = (event: MouseEvent) => {
-      if (wide && event.target instanceof Element && event.target.closest(".hfooter-summary")) event.preventDefault();
+      const groups = element.querySelector(":scope > .hfooter-main > .hfooter-groups");
+      if (!groups) return;
+      const now = getComputedStyle(groups).getPropertyValue("--hfooter-layout").trim();
+      if (now === "wide" || now === "folded") setLayout(now);
     };
     fit();
     const resized = new ResizeObserver(fit);
     resized.observe(element);
-    element.addEventListener("click", keep);
-    return () => {
-      resized.disconnect();
-      element.removeEventListener("click", keep);
-    };
-  }, []);
+    return () => resized.disconnect();
+  }, [hasGroups]);
 
   return (
     <footer {...props} ref={merged} className={withClass("hfooter", className)}>
-      {(brand !== undefined || children !== undefined) && (
+      {(hasBrand || hasGroups) && (
         <div className="hfooter-main">
-          {brand !== undefined && <div className="hfooter-brand">{brand}</div>}
-          {children !== undefined && (
+          {hasBrand && <div className="hfooter-brand">{brand}</div>}
+          {hasGroups && (
             <nav className="hfooter-groups" aria-label={ariaLabel}>
-              {children}
+              <FooterLayout value={layout}>{children}</FooterLayout>
             </nav>
           )}
         </div>
       )}
-      {bottom !== undefined && <div className="hfooter-bottom">{bottom}</div>}
+      {renders(bottom) && <div className="hfooter-bottom">{bottom}</div>}
     </footer>
   );
 };
@@ -70,17 +70,30 @@ export interface FooterLink {
   icon?: ReactNode;
 }
 
-export interface FooterGroupProps extends Omit<ComponentPropsWithRef<"details">, "children"> {
+export interface FooterGroupProps extends Omit<ComponentPropsWithRef<"details">, "children" | "name"> {
   label: ReactNode;
   links: (FooterLink & ComponentPropsWithRef<"a">)[];
 }
 
-export const FooterGroup = ({ label, links, className, ...props }: FooterGroupProps) => {
+export const FooterGroup = ({ label, links, className, ref, ...props }: FooterGroupProps) => {
   const Anchor = useLinkComponent();
+  const layout = use(FooterLayout);
+  const group = useRef<HTMLDetailsElement>(null);
+  const merged = useMergedRef(group, ref);
+
+  useEffect(() => {
+    if (group.current && layout) group.current.open = layout === "wide";
+  }, [layout]);
 
   return (
-    <details {...props} className={withClass("hfooter-group", className)}>
-      <summary className="hfooter-summary">
+    <details {...props} ref={merged} className={withClass("hfooter-group", className)}>
+      <summary
+        className="hfooter-summary"
+        tabIndex={layout === "wide" ? -1 : undefined}
+        onClick={(event) => {
+          if (layout === "wide") event.preventDefault();
+        }}
+      >
         <h2 className="hfooter-heading">{label}</h2>
         <ExpandChevron />
       </summary>

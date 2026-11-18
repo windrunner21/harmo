@@ -109,11 +109,8 @@ export const popupTrigger = (popup: HTMLElement) => {
 // As a popup opens: where it lands, measured afresh; as it closes: pinned
 // where it is, so it fades there.
 export const placePopup = (popup: HTMLElement, opening: boolean) => {
-  if (opening) {
-    unpin(popup);
-    popup.toggleAttribute("data-refit");
-    refitOnceOpen(popup);
-  }
+  if (opening) unpin(popup);
+  refitPopup(popup, opening);
   placeSide(popup, opening);
   if (!opening) {
     pin(popup);
@@ -121,30 +118,39 @@ export const placePopup = (popup: HTMLElement, opening: boolean) => {
   }
 };
 
-// Once open, and again once its opening fade is over, its fallbacks change
-// again. At a fallback position, Firefox keeps the styles it worked out when
-// it placed the popup there, until they change: while it was closed, as a
+const openings = new WeakMap<HTMLElement, number>();
+
+// In beforetoggle. A change to its fallbacks makes the browser forget where
+// it last fit, so an opening popup is placed afresh. They change again once
+// it's open, and once its opening fade is over if it didn't end fully shown:
+// at a fallback position, Firefox keeps the styles it worked out when it
+// placed the popup there, until they change: while it was closed, as a
 // closed popup stays laid out for its fade, or partway through the fade, so
-// it would stay unseen or faint.
-const refitOnceOpen = (popup: HTMLElement) => {
-  const refit = () => {
-    if (popup.matches(":popover-open")) popup.toggleAttribute("data-refit");
-  };
+// it would stay unseen or faint. Each opening or closing voids what an
+// earlier one left to do, including one in the same task, which shares its
+// toggle event.
+export const refitPopup = (popup: HTMLElement, opening: boolean) => {
+  const opened = (openings.get(popup) ?? 0) + 1;
+  openings.set(popup, opened);
+  if (!opening) return;
+  const current = () => openings.get(popup) === opened && popup.matches(":popover-open");
+  popup.toggleAttribute("data-refit");
   popup.addEventListener(
     "toggle",
     (event) => {
-      if ((event as ToggleEvent).newState === "open") refit();
+      if ((event as ToggleEvent).newState !== "open" || !current()) return;
+      popup.toggleAttribute("data-refit");
+      const fade = popup
+        .getAnimations()
+        .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
+      fade?.finished
+        .catch(() => undefined)
+        .then(() => {
+          if (current() && getComputedStyle(popup).opacity !== "1") popup.toggleAttribute("data-refit");
+        });
     },
     { once: true },
   );
-  const faded = (event: TransitionEvent) => {
-    if (event.target !== popup || event.propertyName !== "opacity") return;
-    popup.removeEventListener("transitionend", faded);
-    popup.removeEventListener("transitioncancel", faded);
-    refit();
-  };
-  popup.addEventListener("transitionend", faded);
-  popup.addEventListener("transitioncancel", faded);
 };
 
 // A browser hands focus back only for the first popup open, not one opened
@@ -175,14 +181,8 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
     const needed =
       popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
     const below = popup.ownerDocument.documentElement.clientHeight - triggerBox.bottom;
-    side =
-      popup.dataset.preferredSide === "top"
-        ? triggerBox.top >= needed || below < needed
-          ? "top"
-          : "bottom"
-        : below < needed && triggerBox.top >= needed
-          ? "top"
-          : "bottom";
+    const above = triggerBox.top >= needed;
+    side = above && (popup.dataset.preferredSide === "top" || below < needed) ? "top" : "bottom";
   } else {
     const popupBox = popup.getBoundingClientRect();
     side =

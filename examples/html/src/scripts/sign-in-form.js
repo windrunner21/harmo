@@ -21,7 +21,7 @@
 // as it arrives, and the right code's toast says you're signed in; "Back to
 // sign in" puts the form back.
 {
-  const anEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const anEmail = /^[\w.!#$%&'*+\/=?^`{|}~-]+@[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)+$/i;
   const somethingWrong = "Something went wrong. Try again.";
 
   // Answers after a moment, as a request to a server would.

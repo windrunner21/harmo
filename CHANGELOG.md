@@ -35,10 +35,11 @@ minor version may change an API, and says how to upgrade when it does.
 - Footers, a pattern: the foot of a page, in React and HTML. Three of them:
   a site's, its logo and a line about it, groups of links, Social's with
   icons, and the copyright, the address, and a Language Picker of regions;
-  one with a
-  newsletter sign-up beside its links, which checks the address and says
-  once it's subscribed; and a sign-in page's, the copyright and a few small
-  links.
+  one with a newsletter sign-up beside its links, which takes an `action`,
+  as the other patterns' forms do, so given a server action it works
+  without JavaScript, checks the address, and says once it's subscribed;
+  and a sign-in page's, the copyright and a few small links.
+  `npx harmo-ui add footers` copies it.
 - Headers, a pattern: the bar across the top, in React and HTML. Three of
   them: a site's, its logo, a Navigation Menu whose sections open panels, and
   actions, which a Menu Button slides in under the bar at 640px wide, the
@@ -51,7 +52,8 @@ minor version may change an API, and says how to upgrade when it does.
   and a bottom row for the copyright and the small print. Wider than 640px,
   the groups sit side by side; 640px wide or less, each folds, as an
   Accordion item does. A Language Picker in the bottom row reads as its
-  small print does, at the row's end, and opens above it. In React, `Footer` and `FooterGroup`.
+  small print does, at the row's end; give it `side="top"` to open it
+  above. In React, `Footer` and `FooterGroup`.
 - Header: the bar across the top of a page or an app, a logo, navigation or
   search, and actions in a row. It stays at the top, frosted, with a hairline
   once the page has scrolled; `data-scroll="away"` scrolls it away with the
@@ -211,14 +213,19 @@ minor version may change an API, and says how to upgrade when it does.
   4.34:1. On white it's 4.97:1. The dark theme's is unchanged.
 - Language Picker: with three to six regions, its panel has two columns
   rather than three, so a few regions stay compact.
+- Patterns: the email check in Sign-in Form, Sign-up Form, Reset Password,
+  and Contact Form follows the rule a browser checks an email field by, with
+  a dot in the domain, so an address such as `name@-example.com` is turned
+  down before it's sent. Run `npx harmo-ui add` for a pattern again to get
+  it, or change `anEmail` in your copy of `form-action/formAction.ts`.
 
 ### Fixed
 
 - Popup: in Firefox, a popup that moves to fit, such as one aligned to its
   trigger's other edge near the window's edge, now shows. It stayed unseen:
   Firefox kept the styles it worked out for that position while the popup
-  was closed. Select, Combobox, Command Menu, Date Picker, and every other
-  popup get the fix; there, it shows without its fade.
+  was closed. Select, Combobox, Command Menu, Date Picker, Mentions, and the
+  rest get the fix; there, it shows without its fade.
 - Navigation Menu: moving the pointer from a trigger down to its panel no
   longer closes it on the way. A seam about a pixel tall, between the
   trigger and the bridge under it, let the pointer leave the menu; the open

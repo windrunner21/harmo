@@ -112,7 +112,9 @@ onEachPlayground("popup", () => {
       const top = element.getBoundingClientRect().top;
       Object.assign(element.style, { position: "relative", top: `${70 - top}px` });
     });
-    await trigger.click();
+    // Where it's drawn: Playwright's click in Firefox would scroll it back to
+    // the middle of the window first, where there's room above.
+    await clickAt(page, trigger);
     await settled(popup);
     await expect(popup).not.toHaveAttribute("data-side", "top");
     const [below, opened] = await boxes(trigger, popup);

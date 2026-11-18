@@ -122,7 +122,10 @@ export const firstOf = <Field extends string>(messages: Partial<Record<Field, st
 
 export const textOf = (data: FormData, name: string) => String(data.get(name) ?? "").trim();
 
-const anEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// The rule a browser checks an email field by, as the HTML standard gives
+// it, with a dot in the domain: each of its labels starts and ends with a
+// letter or digit, so "name@-example.com" isn't one.
+const anEmail = /^[\w.!#$%&'*+\/=?^`{|}~-]+@[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)+$/i;
 
 export const emailError = (email: string, missing = "Enter your email address.") =>
   !email ? missing : anEmail.test(email) ? undefined : "Enter an email address, such as name@example.com.";

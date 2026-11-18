@@ -98,6 +98,15 @@ onEachPlayground("footers", () => {
     expect(third.y).toBeGreaterThan(first.y);
   });
 
+  test("with the Language Picker hidden, the address is at the bottom row's end", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "footers-site-footer");
+    const row = container.locator(".hfooter-bottom");
+    await row.locator(".hlanguage-picker").evaluate((node: HTMLElement) => (node.hidden = true));
+    const [address] = await boxes(row.locator("address"));
+    const end = await row.evaluate((node) => node.getBoundingClientRect().right - parseFloat(getComputedStyle(node).paddingRight));
+    expect(Math.round(address.x + address.width)).toBe(Math.round(end));
+  });
+
   test("a link with an icon takes the same room as one without", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "footers-site-footer");
     const nav = container.getByRole("navigation", { name: "Footer" });

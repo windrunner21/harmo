@@ -6,9 +6,44 @@
 // popup with no popovertarget button, such as a Combobox's, is placed by the
 // element it's anchored to, whose own script keeps its aria-expanded. A
 // Mentions' list keeps the side it's given, data-side, as the React Mentions
-// does, so it's left alone.
+// does, so it's only refit.
 {
-  for (const popup of document.querySelectorAll(".hpopup[popover]:not(.hmentions > .hpopup)")) {
+  for (const popup of document.querySelectorAll(".hpopup[popover]")) {
+    // As it opens, its fallbacks change: that makes the browser forget where
+    // it last fit, so it's placed afresh, and comes before measuring it. They
+    // change again once it's open, and once its opening fade is over if it
+    // didn't end fully shown: at a fallback position, Firefox keeps the
+    // styles it worked out when it placed the popup there, until they change:
+    // while it was closed, as a closed popup stays laid out for its fade, or
+    // partway through the fade, so it would stay unseen or faint. Each opening
+    // or closing voids what an earlier one left to do, including one in the
+    // same task, which shares its toggle event.
+    let openings = 0;
+    popup.addEventListener("beforetoggle", (event) => {
+      if (event.defaultPrevented) return;
+      const opened = ++openings;
+      if (event.newState !== "open") return;
+      const current = () => opened === openings && popup.matches(":popover-open");
+      popup.toggleAttribute("data-refit");
+      popup.addEventListener(
+        "toggle",
+        (event) => {
+          if (event.newState !== "open" || !current()) return;
+          popup.toggleAttribute("data-refit");
+          const fade = popup
+            .getAnimations()
+            .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
+          fade?.finished
+            .catch(() => {})
+            .then(() => {
+              if (current() && getComputedStyle(popup).opacity !== "1") popup.toggleAttribute("data-refit");
+            });
+        },
+        { once: true },
+      );
+    });
+    if (popup.matches(".hmentions > .hpopup")) continue;
+
     const invoker = [...document.querySelectorAll(`[popovertarget="${popup.id}"]`)].find(
       (element) => !popup.contains(element),
     );
@@ -22,7 +57,8 @@
 
     // Where an opening popup will land, from the room around its trigger, as
     // its CSS decides: above when it fits there and not below; or, with
-    // data-preferred-side="top", above unless it fits only below. Measured once
+    // data-preferred-side="top", whenever it fits there. Without room on
+    // either side, it shrinks below. Measured once
     // data-refit has changed, so the popup takes its whole height, not one it
     // was shrunk to where it last fit; its position can't tell where it will
     // land.
@@ -31,8 +67,8 @@
       const { marginBlockStart, marginBlockEnd } = getComputedStyle(popup);
       const needed = popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
       const below = document.documentElement.clientHeight - triggerBox.bottom;
-      if (popup.dataset.preferredSide === "top") return triggerBox.top >= needed || below < needed ? "top" : "bottom";
-      return below < needed && triggerBox.top >= needed ? "top" : "bottom";
+      const above = triggerBox.top >= needed;
+      return above && (popup.dataset.preferredSide === "top" || below < needed) ? "top" : "bottom";
     };
 
     // Where an open popup is, which scrolling may have changed since it
@@ -65,35 +101,7 @@
       if (event.defaultPrevented) return;
       const opening = event.newState === "open";
       if (invoker) trigger.setAttribute("aria-expanded", String(opening));
-      // A change to its fallbacks makes the browser forget where it last fit;
-      // it comes first, so the popup is measured afresh.
-      if (opening) {
-        unpin();
-        popup.toggleAttribute("data-refit");
-        // Once open, and again once its opening fade is over, they change
-        // again. At a fallback position, Firefox keeps the styles it worked
-        // out when it placed the popup there, until they change: while it was
-        // closed, as a closed popup stays laid out for its fade, or partway
-        // through the fade, so it would stay unseen or faint.
-        const refit = () => {
-          if (popup.matches(":popover-open")) popup.toggleAttribute("data-refit");
-        };
-        popup.addEventListener(
-          "toggle",
-          (event) => {
-            if (event.newState === "open") refit();
-          },
-          { once: true },
-        );
-        const faded = (event) => {
-          if (event.target !== popup || event.propertyName !== "opacity") return;
-          popup.removeEventListener("transitionend", faded);
-          popup.removeEventListener("transitioncancel", faded);
-          refit();
-        };
-        popup.addEventListener("transitionend", faded);
-        popup.addEventListener("transitioncancel", faded);
-      }
+      if (opening) unpin();
 
       // A browser hands focus back only for the first popup open, not one
       // opened over another. Not when it opened again at once, which sends

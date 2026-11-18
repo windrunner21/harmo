@@ -49,10 +49,12 @@ a newsletter, and a sign-in page.
 </footer>
 ```
 
-A group's heading is an `<h2>` inside its summary, so a screen reader can go
-from heading to heading at every width. A link can start with an icon, such
-as a social network's, `.hicon`. Without a brand or groups, a Footer is its
-bottom row alone, as for an app or a sign-in page.
+A group's heading is an `<h2>` inside its summary, at every width; see
+[Accessibility](#accessibility) for how screen readers take it. Don't give
+the groups a `name`: a browser keeps only one `<details>` of a name open, so
+side by side, opening one would close the rest. A link can start with an
+icon, such as a social network's, `.hicon`. Without a brand or groups, a
+Footer is its bottom row alone, as for an app or a sign-in page.
 
 ## Options
 
@@ -96,7 +98,11 @@ bottom row alone, as for an app or a sign-in page.
 
 - A `<footer>` at the top level of the page is its contentinfo landmark;
   the groups are a navigation, named by its `aria-label`.
-- Each group's heading is an `<h2>`, in its summary, at every width.
+- Each group's heading is an `<h2>`, in its summary, at every width. A
+  heading inside `<summary>` is valid HTML, but screen readers don't all
+  announce it as a heading, as with an [Accordion](accordion.md#accessibility),
+  so someone jumping between headings may skip the groups; the navigation's
+  name still leads to them.
 - Side by side, the groups are open, so a screen reader hears them as
   expanded, and their summaries are out of the Tab order, as there's
   nothing to open; their links are reached as usual. Folded, each summary
@@ -109,23 +115,24 @@ bottom row alone, as for an app or a sign-in page.
 
 | Change | When |
 | --- | --- |
-| Open each group, and take its summary out of the Tab order, `tabindex="-1"` | The footer is wider than 40rem, as its CSS measures, when the page loads and as it crosses that width |
-| Close each group, and put its summary back in the Tab order | The footer is 40rem wide or less, when the page loads and as it crosses that width; a group opened since stays open until it crosses again |
-| Prevent a click on a summary's default | The footer is wider than 40rem, so a group can't be closed there |
+| Open each group, and take its summary out of the Tab order, `tabindex="-1"` | `--hfooter-layout` on `.hfooter-groups` is `wide`: the CSS sets it from the container query that lays the groups out, wider than 40rem, so the script follows the same width. When the page loads, as it changes, and for a group added later |
+| Close each group, and put its summary back in the Tab order | `--hfooter-layout` is `folded`, 40rem wide or less, when the page loads, as it changes, and for a group added later; a group opened since stays open until it changes again |
+| Prevent a click on a summary's default | `--hfooter-layout` is `wide`, so a group can't be closed there |
 
 `examples/html/src/scripts/footer.js` is an example.
 
 ## React
 
 `<Footer>` renders the footer, its `brand`, its children, the groups, in
-their nav, and its `bottom` row, and keeps the groups open while it's wide.
-Other props are the `<footer>`'s, except `aria-label`, which names the
-groups' nav.
+their nav, and its `bottom` row, each only when it renders something, so no
+groups means no nav; and keeps the groups open while it's wide, those added
+later too. Other props are the `<footer>`'s, except `aria-label`, which
+names the groups' nav: give it one whenever there are groups.
 
 | Component | Effect |
 | --- | --- |
 | `Footer` | `aria-label`, the groups' name; `brand`, what goes in `.hfooter-brand`; `bottom`, what goes in `.hfooter-bottom` |
-| `FooterGroup` | A group: `label`, its heading; `links`, each `{ label, href, icon? }` and any of a link's props, such as `target`, through `HarmoProvider`'s `linkComponent` |
+| `FooterGroup` | A group: `label`, its heading; `links`, each `{ label, href, icon? }` and any of a link's props, such as `target`, through `HarmoProvider`'s `linkComponent`. Its other props are the `<details>`'s, except `name` |
 
 ```tsx
 <Footer

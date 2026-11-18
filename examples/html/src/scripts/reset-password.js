@@ -15,7 +15,7 @@
 // and "try another email" is a link to the page, so both work before the
 // script runs.
 {
-  const anEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const anEmail = /^[\w.!#$%&'*+\/=?^`{|}~-]+@[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)+$/i;
   const mismatch = "Passwords must match.";
   const somethingWrong = "Something went wrong. Try again.";
 

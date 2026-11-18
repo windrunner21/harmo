@@ -87,6 +87,9 @@
 $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
   --hlanguage-picker-middle-below, --hlanguage-picker-middle-above, --hpopup-shrink,
   --hpopup-center;
+$regions-fallbacks-top: flip-block, flip-inline, flip-block flip-inline,
+  --hlanguage-picker-middle-above, --hlanguage-picker-middle-below, --hpopup-shrink,
+  --hpopup-center;
 
 .hpopup.hlanguage-picker-regions:not([data-pinned]) {
   inline-size: max-content;
@@ -97,6 +100,15 @@ $regions-fallbacks: flip-block, flip-inline, flip-block flip-inline,
   // Popup's own list does.
   &[data-refit] {
     position-try-fallbacks: $regions-fallbacks, flip-block;
+  }
+
+  // Above the button by preference, in the middle of the window too.
+  &[data-preferred-side="top"] {
+    position-try-fallbacks: $regions-fallbacks-top;
+  }
+
+  &[data-preferred-side="top"][data-refit] {
+    position-try-fallbacks: $regions-fallbacks-top, flip-block;
   }
 }
 

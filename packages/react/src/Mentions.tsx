@@ -14,6 +14,7 @@ import {
   type SyntheticEvent,
 } from "react";
 import { Input, type InputProps } from "./Input.tsx";
+import { refitPopup } from "./Popup.tsx";
 import { ComboboxContext, Listbox, optionsOf, shownFor, type ListboxSelection } from "./listbox/Listbox.tsx";
 import { TextArea, type TextAreaProps } from "./TextArea.tsx";
 import { useMergedRef } from "./useMergedRef.ts";
@@ -183,6 +184,7 @@ export const Mentions = ({
         popover="manual"
         data-side={side}
         style={{ positionAnchor: anchor } as CSSProperties}
+        onBeforeToggle={(event) => refitPopup(event.currentTarget, event.newState === "open")}
         onMouseDown={(event) => event.preventDefault()}
       >
         <ComboboxContext

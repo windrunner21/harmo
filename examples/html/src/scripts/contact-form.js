@@ -20,7 +20,7 @@
 // stopping it, and sends the keys they're stored under in their place,
 // waiting for an upload still running.
 {
-  const anEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const anEmail = /^[\w.!#$%&'*+\/=?^`{|}~-]+@[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)+$/i;
   const aPhoneNumber = /^\+?[\d\s().-]+$/;
   // A web address, typed with its scheme or without, as example.com: only
   // http or https, to a host with a dot in it, with no name or password

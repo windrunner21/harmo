@@ -59,7 +59,10 @@ onEachPlayground("command-menu", () => {
       const { input, listbox } = await parts(page, "command-menu-default");
       await input.click();
       const home = listbox.getByRole("option", { name: "Home Overview" });
-      const [label, description] = await boxes(home.locator(".hoption-label"), home.locator(".hoption-description"));
+      // Both at once, so the list can't move between them as it opens.
+      const [label, description] = await home.evaluate((option) =>
+        [".hoption-label", ".hoption-description"].map((part) => option.querySelector(part)!.getBoundingClientRect().toJSON() as DOMRect),
+      );
       expect(description.y).toBeGreaterThanOrEqual(label.y + label.height - 1);
       expect(Math.abs(description.x - label.x)).toBeLessThan(1);
     });

@@ -87,7 +87,11 @@
 }
 
 // The groups, side by side, each at least 128px wide, 26px apart.
+// --hfooter-layout says how they're laid out, wide or folded, for the script
+// that opens them, so it follows the same container query.
 .hfooter-groups {
+  --hfooter-layout: wide;
+
   display: grid;
   flex: 3 1 30rem;
   grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
@@ -216,7 +220,7 @@
 }
 
 // Side by side, each group's links are shown, open or not.
-@container (min-width: 40.0625rem) {
+@container (width > 40rem) {
   .hfooter-group::details-content {
     grid-template-rows: 1fr;
 
@@ -227,7 +231,7 @@
 // 640px wide or less: the groups stack under the brand, a line between
 // them, each folding as an Accordion item does: its heading a control, 16px
 // above and below, with an Expand Chevron at its end.
-@container (max-width: 40rem) {
+@container (width <= 40rem) {
   // The first heading's own padding spaces it from the brand, and the last
   // one's from the bottom row: 26px above the brand, 16px under the groups.
   .hfooter-main {
@@ -236,6 +240,8 @@
   }
 
   .hfooter-groups {
+    --hfooter-layout: folded;
+
     grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
@@ -260,11 +266,10 @@
   .hfooter-links {
     padding-block-end: $space-sm;
   }
-
 }
 
 // The bottom row: the copyright and the small print, in 13px, wrapping as
-// it needs, 26px apart, its last part at its end; under a line across the
+// it needs, 26px apart, its last shown part at its end; under a line across the
 // whole footer where the groups are above it. Its padding keeps its content
 // in line with theirs.
 .hfooter-bottom {
@@ -291,8 +296,8 @@
     font-style: normal;
   }
 
-  // Not a popup after it, which isn't laid out in the row.
-  & > :last-child:not(:first-child, [popover]) {
+  // Not a hidden part, or a popup, which isn't laid out in the row.
+  & > :nth-last-child(1 of :not([hidden], [popover])):not(:nth-child(1 of :not([hidden], [popover]))) {
     margin-inline-start: auto;
   }
 }
@@ -360,15 +365,16 @@
 
 // 640px wide or less, the bottom row stacks, each part at the start, 10px
 // apart, rather than wrapping with its last part pushed to the end of a line
-// of its own. After the row's own rules, so it wins over them.
-@container (max-width: 40rem) {
+// of its own.
+@container (width <= 40rem) {
   .hfooter-bottom {
     flex-direction: column;
     align-items: flex-start;
     gap: $space-xs;
   }
 
-  .hfooter-bottom > :last-child:not(:first-child, [popover]),
+  // The same selectors as the row's own, so these come after them and win.
+  .hfooter-bottom > :nth-last-child(1 of :not([hidden], [popover])):not(:nth-child(1 of :not([hidden], [popover]))),
   .hfooter-bottom > .hlanguage-picker.hbutton {
     margin-inline-start: 0;
   }

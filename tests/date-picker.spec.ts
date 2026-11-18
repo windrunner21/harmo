@@ -57,6 +57,24 @@ onEachPlayground("date-picker", () => {
     expect(popup.width).toBeLessThan(calendar.width + 40);
   });
 
+  test("opened from the keyboard above the field, where it had to move to fit, it shows with focus on the chosen date", async ({ page }) => {
+    const container = await example(page, "date-picker-default");
+    const all = parts(container);
+    // Near the window's foot, with no room below: it opens above, a fallback.
+    await container.locator(".hdate-picker").evaluate((node: HTMLElement) => {
+      const room = window.innerHeight - 60 - node.getBoundingClientRect().top;
+      Object.assign(node.style, { position: "relative", top: `${room}px` });
+    });
+    await all.button.focus();
+    await page.keyboard.press("Enter");
+    await expect(all.popup).toHaveCSS("opacity", "1");
+    await expect(all.day("2026-11-18")).toBeFocused();
+    const [field, popup] = await boxes(all.field, all.popup);
+    expect(popup.y + popup.height).toBeLessThanOrEqual(field.y);
+    await page.keyboard.press("ArrowRight");
+    await expect(all.day("2026-11-19")).toBeFocused();
+  });
+
   test("picking a day closes it, fills the field, and returns focus to the button", async ({ page }) => {
     const all = parts(await example(page, "date-picker-default"));
     await open(all);

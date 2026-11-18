@@ -30,17 +30,19 @@ side, and fold, as an Accordion's items do, where it's 640px wide or less.
 | --- | --- |
 | React | React and React DOM 19.3 or later, and TypeScript |
 | HTML | Harmo's CSS, and the components' scripts, as [HTML](#html) says |
-| Your app | Its logo and links; for the newsletter, a call that adds an address to your mailing list |
+| Your app | Its logo and links; for the newsletter, an action that adds an address to your mailing list, best a server action |
 
 ## React
 
 ### Install
 
 ```sh
-npx harmo-ui add footers
+npx harmo-ui add footers language-picker
 ```
 
-It copies into `components/harmo/patterns/`:
+`language-picker` is for the site footer's `language`, as in the example
+below; leave it out if you don't use one. It copies into
+`components/harmo/patterns/`:
 
 - `footers/`, the three footers, and `footers.css`, which lays out the
   newsletter's sign-up.
@@ -76,24 +78,57 @@ Put the footer last in your page's layout.
 A group is `{ label, links }`; a link is `{ label, href, icon? }`, and any of
 a link's props, such as `target` for one that opens in a new tab.
 
+The newsletter takes an `action`, as the other patterns' forms do: a server
+action that checks the address and answers. In a Next.js app:
+
+```ts
+// app/actions.ts
+"use server";
+
+import type { NewsletterFooterResult } from "@/components/harmo/patterns/footers/NewsletterFooter";
+
+export async function subscribe(previous: NewsletterFooterResult, data: FormData): Promise<NewsletterFooterResult> {
+  const email = String(data.get("email") ?? "").trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { email: "Enter an email address, such as name@example.com.", values: { email } };
+
+  const response = await fetch("https://api.example.com/newsletter", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (response.status === 409) return { email: "That address is already subscribed.", values: { email } };
+  if (!response.ok) return "We couldn't subscribe you just now. Try again in a moment.";
+  return { step: "subscribed", email };
+}
+```
+
+The `fetch` stands for your mailing list's own call. Then give the action to
+the footer:
+
 ```tsx
 <NewsletterFooter
   logo={logo}
   title="Fresh picks, every Friday"
   description="What's in season, and a recipe for it."
-  onSubscribe={async (email) => {
-    const response = await fetch("/api/newsletter", { method: "POST", body: JSON.stringify({ email }) });
-    if (response.status === 409) return "That address is already subscribed.";
-  }}
+  action={subscribe}
   groups={groups}
   copyright="© 2026 Speedwagon Ltd."
   links={[{ label: "Privacy", href: "/privacy" }]}
 />
 ```
 
-`onSubscribe` gets the address, already checked to look like one, and
-returns nothing once it's added, or a message to show under the field. One
-that throws says "Something went wrong. Try again."
+The form checks the address first, then shows the button working, the field
+read-only, while your action runs. Its answer:
+
+| Answer | What it shows |
+| --- | --- |
+| `{ step: "subscribed", email }` | The field empties, and "Subscribed. The next one goes to …" shows under the form |
+| `{ email: "…", values: { email } }` | The message under the field, which takes focus; `values` puts the address back on the page a post renders |
+| A string | The same, under the field |
+| A thrown error | "Something went wrong. Try again." |
+
+Without a server, give `action` a plain async function that returns the
+same answers.
 
 ```tsx
 <SimpleFooter copyright="© 2026 Speedwagon Ltd." links={[{ label: "Privacy", href: "/privacy" }]} />
@@ -115,7 +150,7 @@ that throws says "Something went wrong. Try again."
 | --- | --- |
 | `logo`, `homeHref`, `groups`, `copyright` | As `SiteFooter`'s |
 | `title`, `description` | Required, and optional: over the field |
-| `onSubscribe` | Required. Adds the address to your list, as [Use it](#use-it) says |
+| `action` | Required. Adds the address to your list, and answers, as [Use it](#use-it) says |
 | `links` | Required. The bottom row's small links, such as Privacy |
 
 | `SimpleFooter` | Effect |
@@ -127,7 +162,9 @@ that throws says "Something went wrong. Try again."
 
 Before a script runs, each footer shows, its groups side by side with their
 links, and its links work. On a phone, each group folds and opens with no
-script, as a `<details>`. The newsletter's form waits for the script.
+script, as a `<details>`. Given a server action, the newsletter's form posts
+to it, and the page it renders shows the answer; given a plain function, the
+form waits for the script.
 
 ## HTML
 
@@ -159,7 +196,7 @@ The newsletter's sign-up goes in the brand, under the logo:
 ```html
 <div class="hnewsletter-footer-signup">
   <p class="hnewsletter-footer-title">Fresh picks, every Friday</p>
-  <form class="hnewsletter-footer-form" novalidate>
+  <form class="hnewsletter-footer-form" method="post" novalidate>
     <div class="hfield">…Email, its input, and its error…</div>
     <button class="hbutton" type="submit"><span class="hbutton-label">Subscribe</span></button>
   </form>
@@ -202,10 +239,12 @@ rest:
 
 - **Subscribe** checks the address: empty or malformed, it says so in the
   field's error, with `aria-invalid` on the input, which takes focus.
-  Otherwise the button shows it's working, `aria-busy` and a spinner, while
-  your app adds the address; its message goes in the field's error, or, once
-  subscribed, the field is emptied and the status says so. Typing takes the
-  error away.
+  Otherwise the button shows it's working, `aria-busy` and a spinner, and
+  the input is `readonly`, while your app adds the address; its message goes
+  in the field's error, or, once subscribed, the field is emptied and the
+  status says so. Typing takes the error away.
+- **Without the script**, the form posts, `method="post"`, so the address
+  goes to your server in the request's body, never in the page's URL.
 
 ## Customize
 
@@ -221,7 +260,9 @@ rest:
 
 - Each footer is the page's contentinfo landmark. Its groups are a
   navigation named "Footer"; the bottom row's small links, "Legal".
-- Each group's heading is an `<h2>`, at every width. Side by side, the
+- Each group's heading is an `<h2>`, at every width, inside its summary,
+  which not every screen reader announces as a heading, as the
+  [Footer](../components/footer.md#accessibility) says. Side by side, the
   groups are open, their summaries out of the Tab order; folded, each
   summary opens its group, and says whether it's open.
 - A Social link that opens a new tab has `target="_blank"` and

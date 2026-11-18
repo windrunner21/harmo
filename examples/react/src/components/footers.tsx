@@ -1,7 +1,7 @@
 import { LanguagePicker } from "@harmo-ui/react";
 import type { CSSProperties, ReactNode } from "react";
 import { InstagramIcon, LinkedInIcon, XIcon, YouTubeIcon } from "../app-icons.tsx";
-import { NewsletterFooter } from "../patterns/footers/NewsletterFooter.tsx";
+import { NewsletterFooter, type NewsletterFooterResult } from "../patterns/footers/NewsletterFooter.tsx";
 import { SimpleFooter } from "../patterns/footers/SimpleFooter.tsx";
 import { SiteFooter, type SiteFooterProps } from "../patterns/footers/SiteFooter.tsx";
 
@@ -14,6 +14,21 @@ const frame: CSSProperties = {
   borderRadius: "var(--harmo-border-radius)",
 };
 const phone: CSSProperties = { ...frame, inlineSize: "100%", maxInlineSize: "24rem", marginInline: "auto" };
+
+// Stands in for your app's server action, which adds the address to your
+// mailing list: a moment later, taken@example.com is already on it, and any
+// other address is added.
+const subscribe = (_previous: NewsletterFooterResult, data: FormData) =>
+  new Promise<NewsletterFooterResult>((resolve) =>
+    setTimeout(() => {
+      const email = String(data.get("email") ?? "").trim();
+      resolve(
+        email === "taken@example.com"
+          ? { email: "That address is already subscribed.", values: { email } }
+          : { step: "subscribed", email },
+      );
+    }, 800),
+  );
 const body: CSSProperties = {
   maxInlineSize: "75rem",
   margin: "0 auto",
@@ -165,14 +180,7 @@ export const examples = {
         homeHref="#top"
         title="Fresh picks, every Friday"
         description="What's in season, and a recipe for it. No more than once a week."
-        // Your app's call to your mailing list, here pretended: a moment
-        // later, taken@example.com is already on it, and any other address
-        // is added.
-        onSubscribe={(email) =>
-          new Promise((resolve) =>
-            setTimeout(() => resolve(email === "taken@example.com" ? "That address is already subscribed." : undefined), 800),
-          )
-        }
+        action={subscribe}
         groups={groups.slice(0, 2)}
         copyright="© 2026 Speedwagon Ltd."
         links={[

@@ -3,13 +3,15 @@
 // the groups open while they're side by side, and language-picker.js the
 // Language Picker. The newsletter's Subscribe checks the email first: empty
 // or malformed, it says so under the field, with aria-invalid on it, and the
-// field takes focus. Then the button shows it's working while the app adds
-// the address to its mailing list, here a stand-in that takes a moment, for
-// which taken@example.com is already on it. Its answer goes under the field,
-// or, once subscribed, the field is emptied and the status under the form
-// says so. Typing takes the error away.
+// field takes focus. Then the button shows it's working, and the field is
+// read-only, while the app adds the address to its mailing list, here a
+// stand-in that takes a moment, for which taken@example.com is already on it.
+// Its answer goes under the field, or, once subscribed, the field is emptied
+// and the status under the form says so. Typing takes the error away. The
+// form posts, so before this script runs, the address goes to your server in
+// the request's body, not its URL.
 {
-  const anEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const anEmail = /^[\w.!#$%&'*+\/=?^`{|}~-]+@[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)+$/i;
   const subscribe = (email) =>
     new Promise((resolve) =>
       setTimeout(() => resolve(email === "taken@example.com" ? "That address is already subscribed." : undefined), 800),
@@ -34,10 +36,12 @@
         button.append(spinner);
         button.setAttribute("aria-busy", "true");
         button.setAttribute("aria-disabled", "true");
+        input.readOnly = true;
       } else {
         button.querySelector(":scope > .hspinner")?.remove();
         button.removeAttribute("aria-busy");
         button.removeAttribute("aria-disabled");
+        input.readOnly = false;
       }
     };
 

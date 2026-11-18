@@ -1,65 +1,95 @@
 "use client";
 
 import { Button, Field, Footer, FooterGroup, Input, type FooterLink } from "@harmo-ui/react";
-import { useState, type FormEvent, type ReactNode } from "react";
-import { emailError, textOf } from "../form-action/formAction.ts";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import {
+  emailError,
+  messagesOf,
+  stepOf,
+  textOf,
+  useFormAction,
+  useOutcome,
+  type FormAction,
+  type FormMessages,
+  type Outcome,
+} from "../form-action/formAction.ts";
 import type { SiteFooterGroup } from "./SiteFooter.tsx";
+
+export type NewsletterFooterResult =
+  | FormMessages<"email", "email">
+  | { step: "subscribed"; email: string }
+  | string
+  | undefined;
 
 export interface NewsletterFooterProps {
   logo: ReactNode;
   homeHref?: string;
   title: ReactNode;
   description?: ReactNode;
-  onSubscribe: (email: string) => Promise<string | void>;
+  action: FormAction<NewsletterFooterResult>;
   groups: SiteFooterGroup[];
   copyright: ReactNode;
   links: FooterLink[];
 }
+
+type Answer = Pick<Outcome<NewsletterFooterResult>, "result" | "failed">;
+
+const subscribedOf = (answer: Answer) => {
+  const step = answer.failed ? undefined : stepOf<{ step: "subscribed"; email: string }>(answer.result);
+  return step?.step === "subscribed" ? step.email : "";
+};
+
+const errorOf = (answer: Answer) => {
+  const messages = messagesOf(answer, ["email"], "form");
+  return messages.email ?? messages.form ?? "";
+};
 
 export const NewsletterFooter = ({
   logo,
   homeHref = "/",
   title,
   description,
-  onSubscribe,
+  action,
   groups,
   copyright,
   links,
 }: NewsletterFooterProps) => {
-  const [error, setError] = useState("");
-  const [sending, setSending] = useState(false);
-  const [subscribed, setSubscribed] = useState("");
+  const { outcome, formAction, pending, run, refill } = useFormAction(action);
+  const [error, setError] = useState(() => errorOf(outcome));
+  const [subscribed, setSubscribed] = useState(() => subscribedOf(outcome));
+  const form = useRef<HTMLFormElement>(null);
+  const answered = useRef<"error" | "subscribed">(undefined);
 
-  const subscribe = async (event: FormEvent<HTMLFormElement>) => {
+  useOutcome(outcome, (next) => {
+    const email = subscribedOf(next);
+    const message = email ? "" : errorOf(next);
+    setSubscribed(email);
+    setError(message);
+    answered.current = email ? "subscribed" : message ? "error" : undefined;
+  });
+
+  useEffect(() => {
+    const done = answered.current;
+    answered.current = undefined;
+    const element = form.current;
+    if (done === "subscribed") element?.reset();
+    if (done === "error") element?.querySelector<HTMLInputElement>('input[name="email"]')?.focus();
+  }, [outcome]);
+
+  const subscribe = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (sending) return;
-    const form = event.currentTarget;
-    const field = form.elements.namedItem("email") as HTMLInputElement | null;
-    const email = textOf(new FormData(form), "email");
-    const invalid = emailError(email);
+    if (pending) return;
+    const element = event.currentTarget;
+    const data = new FormData(element);
+    const invalid = emailError(textOf(data, "email"));
     setSubscribed("");
     if (invalid) {
       setError(invalid);
-      field?.focus();
+      element.querySelector<HTMLInputElement>('input[name="email"]')?.focus();
       return;
     }
     setError("");
-    setSending(true);
-    let failed: string | void;
-    try {
-      failed = await onSubscribe(email);
-    } catch {
-      failed = "Something went wrong. Try again.";
-    } finally {
-      setSending(false);
-    }
-    if (failed) {
-      setError(failed);
-      field?.focus();
-      return;
-    }
-    form.reset();
-    setSubscribed(`Subscribed. The next one goes to ${email}.`);
+    run(data);
   };
 
   return (
@@ -72,22 +102,25 @@ export const NewsletterFooter = ({
           <div className="hnewsletter-footer-signup">
             <p className="hnewsletter-footer-title">{title}</p>
             {description && <p>{description}</p>}
-            <form className="hnewsletter-footer-form" noValidate onSubmit={subscribe}>
+            <form ref={form} className="hnewsletter-footer-form" noValidate action={formAction} onSubmit={subscribe}>
               <Field label="Email" error={error}>
                 <Input
+                  key={refill.key}
                   name="email"
                   type="email"
                   autoComplete="email"
                   placeholder="name@example.com"
+                  defaultValue={refill.values.email}
+                  readOnly={pending}
                   onChange={() => setError("")}
                 />
               </Field>
-              <Button type="submit" loading={sending}>
+              <Button type="submit" loading={pending}>
                 Subscribe
               </Button>
             </form>
             <p className="hnewsletter-footer-status" role="status">
-              {subscribed}
+              {subscribed && `Subscribed. The next one goes to ${subscribed}.`}
             </p>
           </div>
         </>
