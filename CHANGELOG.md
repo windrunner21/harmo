@@ -8,6 +8,18 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-19
+
+The Globe's sphere on a page in the secondary background, such as an app's.
+
+### Fixed
+
+- Globe: its sphere shows on a page in the secondary background, such as an
+  app's, as on the primary one. It was in the secondary background itself,
+  so there it vanished, and with it the globe's round edge. It's in
+  `--harmo-color-background-active` now, a step past it; set
+  `--hglobe-sphere-color` on `.hglobe` for another.
+
 ## [0.9.0] - 2026-11-19
 
 Two patterns: Kanban, a board whose cards move between columns, and Globe,
@@ -72,6 +84,18 @@ on it move.
   Select, Combobox, Dropdown Menu, Date Picker, Time Picker, Language
   Picker, Mentions, Filters, and the rest.
 
+  ```html preview="popup/Panel"
+  <button class="hbutton" data-variant="secondary" type="button" aria-expanded="false"
+    popovertarget="contains-filter" style="anchor-name: --contains-filter">
+    <span class="hbutton-label">Name contains</span>
+  </button>
+
+  <div class="hpopup" id="contains-filter" popover
+    style="position-anchor: --contains-filter">
+    …
+  </div>
+  ```
+
 ### Added
 
 - CLI: `npx harmo-ui add` installs the npm packages a pattern needs, such as
@@ -84,7 +108,7 @@ on it move.
 
   ```sh
   npx harmo-ui add kanban
-  # Installing @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0 with bun
+  # Installing @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0 with npm
   ```
 - CLI: a pattern's type packages, such as `@types/three`, install as dev
   dependencies, beside the packages it needs.
@@ -3041,7 +3065,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.9.1...HEAD
+[0.9.1]: https://github.com/windrunner21/harmo/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/windrunner21/harmo/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/windrunner21/harmo/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/windrunner21/harmo/compare/v0.7.0...v0.8.0
