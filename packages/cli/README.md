@@ -65,10 +65,13 @@ They need both at 19.3 or later, and TypeScript.
 
 A pattern that needs npm packages, such as `kanban` with `dnd-kit`, installs
 them with your project's package manager: the one `package.json`'s
-`packageManager` names, or the one whose lockfile is there, or npm. Only the
-packages your project doesn't list yet, at the versions Harmo's copies are
-tested with; one you already list is kept as it is. Nothing else installs
-them: not `@harmo-ui/react`, and not any other component or pattern.
+`packageManager` names; inside a workspace, such as `apps/web`, the one its
+root names, or whose lockfile it has; otherwise the one whose lockfile your
+project has; or npm. Only the packages your project doesn't list yet, as a
+dependency of any kind, at the versions Harmo's copies are tested with, and
+type packages, such as `@types/three`, as dev dependencies; one you already
+list is kept as it is. Nothing else installs them: not `@harmo-ui/react`,
+and not any other component or pattern.
 
 ## Patterns
 
