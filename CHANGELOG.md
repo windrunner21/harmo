@@ -8,6 +8,13 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-11-19
+
+Two patterns: Kanban, a board whose cards move between columns, and Globe,
+the world in dots; the CLI installing the npm packages a pattern needs; and
+closed popups out of the layout, so a page with many stays fast as things
+on it move.
+
 ### Upgrading
 
 - **HTML: a popup script sets `data-measuring` and `data-closing`.** A
@@ -69,16 +76,18 @@ minor version may change an API, and says how to upgrade when it does.
 
 - CLI: `npx harmo-ui add` installs the npm packages a pattern needs, such as
   `dnd-kit` for a board, with your project's package manager, at the
-  versions Harmo tests with; only those your project doesn't list yet, as
-  a dependency of any kind. Inside a workspace, such as `apps/web`, it uses
-  the workspace root's package manager.
-  `--no-install` prints the command instead, and `--dry-run` says what it
-  would install. Nothing else installs them.
+  versions Harmo tests with; only those your project doesn't list yet, as a
+  dependency of any kind. Inside a workspace, such as `apps/web`, it uses
+  the workspace root's package manager. `--no-install` prints the command
+  instead, and `--dry-run` says what it would install. Nothing else
+  installs them.
 
   ```sh
   npx harmo-ui add kanban
   # Installing @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0 with bun
   ```
+- CLI: a pattern's type packages, such as `@types/three`, install as dev
+  dependencies, beside the packages it needs.
 - Globe, a pattern: the world in dots, in React and HTML, for a site's hero
   or a picture of where your deliveries, offices, or customers are. The
   land, from Natural Earth, twinkles and fades toward the edge; routes arc
@@ -87,11 +96,10 @@ minor version may change an API, and says how to upgrade when it does.
   turn it without dragging; it starts paused with reduced motion, and your
   page can pause it with `paused`. The controls and dragging each turn off
   on their own, with `controls` and `dragRotate`. A globe that doesn't turn
-  on its own and has no routes is still, without Pause. Drawn with three.js, only while it's on
-  screen, in Harmo's colors in light and dark mode.
-  `npx harmo-ui add globe` copies it, and installs three, with its types.
-- CLI: a pattern's type packages, such as `@types/three`, install as dev
-  dependencies, beside the packages it needs.
+  on its own and has no routes is still, without Pause. Drawn with
+  three.js, only while it's on screen, in Harmo's colors in light and dark
+  mode. `npx harmo-ui add globe` copies it, and installs three, with its
+  types.
 - Kanban, a pattern: a board of columns, in React and HTML, for anything that
   moves through stages, such as tasks or support tickets. Cards are dragged
   with a mouse, by a long press on a touch screen, or from the keys, within
@@ -3032,7 +3040,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/windrunner21/harmo/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/windrunner21/harmo/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/windrunner21/harmo/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/windrunner21/harmo/compare/v0.6.0...v0.7.0
