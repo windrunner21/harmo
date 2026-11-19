@@ -8,6 +8,76 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+### Upgrading
+
+- **HTML: a popup script sets `data-measuring` and `data-closing`.** A
+  closed popup is no longer laid out. A script of your own, as the Popup
+  docs describe, lays it out for a moment with `data-measuring` to measure
+  its side as it opens, and keeps it laid out with `data-closing` as it
+  closes, until its fade ends; without that, it vanishes at once in Firefox
+  and Safari. Harmo's own scripts and React components do both already.
+
+  ```js title="Before"
+  popup.addEventListener("beforetoggle", (event) => {
+    if (event.newState !== "open") return;
+    const needed = popup.offsetHeight + margins;
+  });
+  ```
+
+  ```js title="After"
+  popup.addEventListener("beforetoggle", (event) => {
+    if (event.newState !== "open") {
+      popup.setAttribute("data-closing", "");
+      popup.addEventListener("toggle", () => {
+        const fade = popup.getAnimations().find((each) => each.transitionProperty === "opacity");
+        const release = () => popup.removeAttribute("data-closing");
+        fade ? fade.finished.then(release, release) : release();
+      }, { once: true });
+      return;
+    }
+    popup.removeAttribute("data-closing");
+    popup.setAttribute("data-measuring", "");
+    const needed = popup.offsetHeight + margins;
+    popup.removeAttribute("data-measuring");
+  });
+  ```
+
+### Changed
+
+- Popup: a closed popup isn't laid out, `display: none`, so a page of closed
+  popups, such as a Select in every field or a menu on every row of a table,
+  stays fast as things on it move: laid out, the browser placed each again,
+  anchored to its trigger, every frame. It still fades and slides in as it
+  opens, and fades out as it closes. This is every component with a popup:
+  Select, Combobox, Dropdown Menu, Date Picker, Time Picker, Language
+  Picker, Mentions, Filters, and the rest.
+
+### Added
+
+- CLI: `npx harmo-ui add` installs the npm packages a pattern needs, such as
+  `dnd-kit` for a board, with your project's package manager, at the
+  versions Harmo tests with; only those your project doesn't list yet.
+  `--no-install` prints the command instead, and `--dry-run` says what it
+  would install. Nothing else installs them.
+
+  ```sh
+  npx harmo-ui add kanban
+  # Installing @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0 with bun
+  ```
+- Kanban, a pattern: a board of columns, in React and HTML, for anything that
+  moves through stages, such as tasks or support tickets. Cards are dragged
+  with a mouse, by a long press on a touch screen, or from the keys, within
+  a column or to another, and each card's menu moves them too; a screen
+  reader hears each step. A card can link to its own page, or open in
+  place, such as in a Drawer that changes its status, assignee, and
+  priority. Your app saves each move with `onMove`, which can turn it down,
+  and the card goes back with a Banner saying why, or ask first, in a
+  Dialog; `canMove` says where a card can't go. Each column has its count,
+  a Status's dot, and a dashed Empty State while it's empty. It's built from
+  Card, Badge, Status, Empty State, Button, Dropdown Menu, and Banner, with
+  dnd kit for dragging in React. `npx harmo-ui add kanban` copies it, and
+  installs dnd kit.
+
 ## [0.8.1] - 2026-11-19
 
 Mentions for a chat's message box, with a list for each trigger, such as `@`,

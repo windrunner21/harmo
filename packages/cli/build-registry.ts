@@ -266,6 +266,33 @@ const patternCopyOf = (folder: string, file: string) => {
   return { code, needed, others, helperFiles };
 };
 
+// The npm packages a pattern's code imports, other than React, which the app
+// installs with it, such as dnd-kit for a board: a package's name, without a
+// subpath, as three/addons/controls/OrbitControls.js is three's.
+const packagesIn = (code: string) => {
+  const found = new Set<string>();
+  for (const [, specifier = ""] of code.matchAll(/(?:from\s*|import\s*\(\s*|import\s+)"([^".][^"]*)"/g)) {
+    const parts = specifier.split("/");
+    const name = specifier.startsWith("@") ? parts.slice(0, 2).join("/") : (parts[0] ?? "");
+    if (name !== "react" && name !== "react-dom") found.add(name);
+  }
+  return found;
+};
+
+// The version of each that Harmo's tests compile the copies against: the
+// CLI's own devDependencies, so what's installed is what was tested.
+const tested: Record<string, string> = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).devDependencies ?? {};
+const dependenciesOf = (files: [string, string][]) => {
+  const names = new Set<string>();
+  for (const [path, code] of files) if (/\.tsx?$/.test(path)) for (const name of packagesIn(code)) names.add(name);
+  return [...names].sort().map((name) => {
+    const version = tested[name];
+    if (!version || !/^\d/.test(version))
+      throw new Error(`A pattern imports ${name}: add it to packages/cli's devDependencies at an exact version, the one its copies are tested with`);
+    return `${name}@${version}`;
+  });
+};
+
 // The components whose classes some code puts on its own elements, such as
 // hcard on a <form>, so their styles come with it: each class names the
 // component it starts with, the longest that matches.
@@ -345,14 +372,18 @@ for (const pattern of patterns) {
   if (pattern in components)
     throw new Error(`The pattern ${pattern} has a component's name`);
   // A universal item, as a component's is, which shadcn's CLI can install too;
-  // its category marks it as a pattern.
+  // its category marks it as a pattern, and its dependencies are the npm
+  // packages it needs, at the versions it's tested with.
+  const files = patternFiles(pattern);
+  const dependencies = dependenciesOf(files);
   write(`${pattern}.json`, {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: pattern,
     type: "registry:item",
     categories: ["pattern"],
     description: descriptions.get(pattern),
-    files: patternFiles(pattern).map(([path, content]) => ({
+    ...(dependencies.length > 0 ? { dependencies } : {}),
+    files: files.map(([path, content]) => ({
       path,
       type: "registry:file",
       target: `components/harmo/${path}`,

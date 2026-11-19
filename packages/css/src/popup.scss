@@ -63,11 +63,32 @@ $fallbacks-end: flip-block, flip-inline, flip-block flip-inline,
       calc(var(--hpopup-slide-direction) * var(--hpopup-slide))
     );
     transition-duration: $duration-fast;
+
+    // Closed, it isn't laid out, so a page of closed popups, such as a menu
+    // on every row, costs nothing as things on it move; laid out, the
+    // browser would place each again, anchored to its trigger. A script
+    // keeps it laid out with data-closing as it closes, until its fade ends,
+    // which no browser does for a popover in all three; and lays it out for
+    // a moment with data-measuring as it opens, to measure it, unseen.
+    &:not([data-measuring], [data-closing]) {
+      display: none;
+    }
+  }
+
+  // Each opening fades and slides in from here, as it's laid out again.
+  &[popover]:popover-open {
+    @starting-style {
+      opacity: 0;
+
+      transform: translateY(
+        calc(var(--hpopup-slide-direction) * var(--hpopup-slide))
+      );
+    }
   }
 
   // Each opening starts from below. A browser keeps the last position that
-  // fit for as long as it still fits, and a closed popup stays rendered, so
-  // one that once sat above would keep opening above. A change to the
+  // fit for as long as it still fits, so one that once sat above could keep
+  // opening above. A change to the
   // fallbacks makes it forget, so the script toggles data-refit as each
   // opening starts, between two lists that differ by a repeat that changes
   // nothing: by then, that fallback has been tried. Closing changes neither,
@@ -117,7 +138,7 @@ $fallbacks-end: flip-block, flip-inline, flip-block flip-inline,
     --hpopup-slide-direction: 1;
   }
 
-  // A closed popup stays rendered for its fade, so pause any spinner inside.
+  // A closing popup stays rendered for its fade, so pause any spinner inside.
   &:where(:not(:popover-open)) .hspinner {
     animation-play-state: paused;
   }

@@ -13,6 +13,7 @@ const patterns = [
   ["Contact Form", "contact-form"],
   ["Footers", "footers"],
   ["Headers", "headers"],
+  ["Kanban", "kanban"],
   ["Reset Password", "reset-password"],
   ["Sign-in Form", "sign-in-form"],
   ["Sign-up Form", "sign-up-form"],

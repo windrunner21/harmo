@@ -1,0 +1,322 @@
+/* Kanban: a board of columns, each a list of cards that are dragged
+   between and within them, or moved from each card's menu. The columns sit
+   side by side, each at least 232px wide, sharing the rest, all as tall as
+   the tallest, and scroll sideways when the board is narrower than they
+   are. Each card is a raised Harmo Card, its menu and handle Buttons; an
+   empty column shows a dashed Empty State. */
+
+.hkanban {
+  display: grid;
+  gap: var(--harmo-space-sm);
+
+  font-family: var(--harmo-font-family);
+}
+
+/* Each part that sets its display still hides with hidden. */
+:is(
+    .hkanban,
+    .hkanban-columns,
+    .hkanban-column,
+    .hkanban-column-header,
+    .hkanban-column-body,
+    .hkanban-list,
+    .hkanban-card-description,
+    .hkanban-card-footer,
+    .hkanban-card-actions,
+    .hkanban-menu
+  )[hidden] {
+  display: none;
+}
+
+/* What a move from a menu says, and when one comes back, out of sight but
+   read by screen readers. Dragging says its own. */
+.hkanban-status {
+  position: absolute;
+
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  border: 0;
+  clip-path: inset(50%);
+}
+
+/* The columns stretch to the tallest, so their backgrounds stay still while
+   a card moves between them; a script holds the board's height while one
+   is dragged. A column snaps to its start as the board scrolls, so a phone
+   shows one at a time, whole. */
+.hkanban-columns {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(14.5rem, 1fr);
+  gap: var(--harmo-space-sm);
+
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+
+/* Tinted, as a Card is, so the raised cards stand off it. Where a dragged
+   card would land, data-over="allowed", it looks the same: the dashed
+   outline there says so. */
+.hkanban-column {
+  display: grid;
+  align-content: start;
+  gap: var(--harmo-space-2xs);
+
+  min-inline-size: 0;
+  padding: var(--harmo-space-2xs);
+
+  background-color: var(--harmo-color-background-secondary);
+  border-radius: var(--harmo-border-radius);
+
+  scroll-snap-align: start;
+}
+
+/* Where a card can't go, faded, as a disabled control is. */
+.hkanban-column[data-over="refused"] > .hkanban-column-body {
+  opacity: var(--harmo-opacity-disabled);
+}
+
+/* Its title, with a Status's dot if it has one, lined up with the cards'
+   text, and its count at the end. */
+.hkanban-column-header {
+  display: flex;
+  align-items: center;
+  gap: var(--harmo-space-2xs);
+
+  min-block-size: 1.5rem;
+  padding: var(--harmo-space-xs) calc(var(--harmo-card-padding) + 1px) var(--harmo-space-2xs);
+}
+
+.hkanban-column-header > .hbadge {
+  margin-inline-start: auto;
+}
+
+.hkanban-column-title {
+  min-inline-size: 0;
+  margin: 0;
+
+  font-size: var(--harmo-font-size-sm);
+  font-weight: var(--harmo-font-weight-medium);
+  line-height: 1.25rem;
+  overflow-wrap: anywhere;
+
+  color: var(--harmo-color-text);
+}
+
+.hkanban-column-title > .hstatus {
+  color: inherit;
+}
+
+/* The cards, 6px apart. The list is hidden while it has none, so the Empty
+   State starts the column's body. */
+.hkanban-column-body {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+}
+
+.hkanban-list {
+  display: grid;
+  gap: var(--harmo-space-2xs);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+/* With a mouse, a card is dragged from anywhere on it; on a touch screen,
+   by a long press, so a swipe still scrolls. Its text isn't selected as it
+   goes. */
+.hkanban-item {
+  border-radius: var(--harmo-border-radius);
+
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (pointer: fine) {
+  .hkanban-item {
+    cursor: grab;
+  }
+}
+
+/* Where the dragged card will land, while it's away: a dashed outline its
+   size, as an empty column's. */
+.hkanban-item[data-dragging] {
+  outline: 1px dashed var(--harmo-color-border-control);
+  outline-offset: -1px;
+}
+
+.hkanban-item[data-dragging] > * {
+  opacity: 0;
+}
+
+/* The card under the pointer, lifted further than the others, its border
+   the primary color. */
+.hkanban-overlay {
+  cursor: grabbing;
+}
+
+.hkanban-overlay > .hcard {
+  border-color: var(--harmo-color-primary);
+  box-shadow: 0 10px 26px light-dark(rgb(0 0 0 / 12%), rgb(0 0 0 / 50%));
+}
+
+/* A card: its title, what it says, and its footer, 6px apart, the footer
+   10px under them. Its title leaves room at its end for the menu. */
+.hkanban-card {
+  position: relative;
+
+  display: grid;
+  gap: var(--harmo-space-2xs);
+}
+
+.hkanban-card-title {
+  min-inline-size: 0;
+  margin: 0;
+  padding-inline-end: 1.5rem;
+
+  font-size: var(--harmo-font-size-sm);
+  font-weight: var(--harmo-font-weight-medium);
+  line-height: 1.25rem;
+  overflow-wrap: anywhere;
+
+  color: var(--harmo-color-text);
+}
+
+/* At most three lines. */
+.hkanban-card-description {
+  display: -webkit-box;
+
+  margin: 0;
+  overflow: hidden;
+
+  font-size: var(--harmo-font-size-xs);
+  line-height: 1.25rem;
+
+  color: var(--harmo-color-text-secondary);
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+/* One row: its first part at the start, such as a Tag, the rest at the
+   end, such as a date and a 20px Avatar. */
+.hkanban-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--harmo-space-2xs);
+
+  margin-block-start: 0.25rem;
+
+  font-size: var(--harmo-font-size-2xs);
+  line-height: 1rem;
+
+  color: var(--harmo-color-text-secondary);
+
+  --harmo-avatar-size: 1.25rem;
+}
+
+.hkanban-card-footer > :first-child {
+  margin-inline-end: auto;
+}
+
+/* A card that opens: its title's button, or its link to the card's own
+   page, covers the whole card, so a press anywhere on it opens it, and
+   draws the card's focus ring; a link keeps the title's color. Its border
+   darkens as it's pointed at. */
+.hkanban-card-open.hlink,
+.hkanban-card-open.hlink:is(:hover, :active) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hkanban-card-open {
+  margin: 0;
+  padding: 0;
+
+  font: inherit;
+  text-align: start;
+
+  color: inherit;
+  background: none;
+  border: 0;
+
+  cursor: pointer;
+}
+
+.hkanban-card-open::after {
+  content: "";
+
+  position: absolute;
+  inset: -1px;
+
+  border-radius: var(--harmo-border-radius);
+}
+
+.hkanban-card .hkanban-card-open:focus-visible {
+  outline: none;
+}
+
+.hkanban-card-open:focus-visible::after {
+  outline: var(--harmo-focus-outline);
+  outline-offset: var(--harmo-focus-outline-offset);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hkanban-card:has(> .hkanban-card-title > .hkanban-card-open):hover {
+    border-color: var(--harmo-color-border-control);
+  }
+}
+
+/* Its menu, in the top corner, level with the title's first line, over the
+   button that opens the card. With a mouse, it shows while the card is
+   pointed at or has focus; on a touch screen, always. The handle, which
+   drags the card from the keys, shows only while it has focus. */
+.hkanban-card-actions {
+  position: absolute;
+  inset-block-start: calc(var(--harmo-card-padding) - 0.125rem);
+  inset-inline-end: 0.625rem;
+  z-index: 1;
+
+  display: flex;
+
+  background-color: var(--harmo-color-background);
+  border-radius: var(--harmo-border-radius-sm);
+}
+
+.hkanban-menu {
+  display: flex;
+
+  transition: opacity 150ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hkanban-card:not(:hover, :focus-within) .hkanban-menu {
+    opacity: 0;
+  }
+}
+
+.hkanban-handle:not(:focus-visible) {
+  position: absolute;
+
+  inline-size: 1px;
+  min-inline-size: 0;
+  block-size: 1px;
+  min-block-size: 0;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+
+  border: 0;
+  clip-path: inset(50%);
+}

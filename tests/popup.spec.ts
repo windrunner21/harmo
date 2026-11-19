@@ -185,7 +185,14 @@ onEachPlayground("popup", () => {
 
     await page.keyboard.press("Escape");
     await expect(openPopup(container)).toHaveCount(0);
-    await settled(popup);
+    // At the end of its closing slide, while it's still laid out for its
+    // fade: once that ends, a closed popup isn't laid out.
+    await popup.evaluate((node) => {
+      for (const animation of node.getAnimations()) {
+        animation.pause();
+        animation.currentTime = Number(animation.effect?.getComputedTiming().endTime ?? 1) - 1;
+      }
+    });
     const after = await sides(trigger, popup);
     // Its 12px slide, toward the trigger, and no other move.
     expect(after.top - before.top).toBeCloseTo(before.above ? 12 : -12, 0);

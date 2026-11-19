@@ -684,3 +684,71 @@ test("every item is in the format of a universal shadcn registry item", () => {
     }
   }
 });
+
+// What a pattern that needs npm packages does, such as kanban with dnd-kit:
+// the app's package manager installs the ones it doesn't list, at the
+// versions Harmo tests with. A fake one on the PATH stands in for it, so
+// nothing reaches the network.
+describe("a pattern's npm packages", () => {
+  const board = () =>
+    cliWith([
+      {
+        name: "board",
+        categories: ["pattern"],
+        dependencies: ["@dnd-kit/core@6.3.1", "@dnd-kit/sortable@10.0.0"],
+        files: [{ path: "patterns/board/Board.tsx", content: "export const Board = () => null;\n" }],
+      } as Item,
+    ]);
+  // A package manager, named as the real one, that writes what it was asked
+  // into asked.txt, and fails when told to.
+  const fakeManager = (name: string, fails = false) => {
+    const bin = mkdtempSync(join(output, "bin-"));
+    copies.push(bin);
+    writeFileSync(join(bin, name), `#!/bin/sh\necho "${name} $@" > "${join(project, "asked.txt")}"\n${fails ? "exit 1\n" : ""}`, { mode: 0o755 });
+    return bin;
+  };
+  const runOnPath = (bin: string, tool: string, ...args: string[]) => {
+    const result = Bun.spawnSync(["node", tool, ...args], { cwd: project, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } });
+    return { code: result.exitCode, out: result.stdout.toString(), err: result.stderr.toString() };
+  };
+
+  test("installs what it needs with the project's package manager, found by its lockfile", () => {
+    write("bun.lock", "");
+    const { code, out } = runOnPath(fakeManager("bun"), board(), "add", "board");
+    expect(code).toBe(0);
+    expect(out).toContain("Installing @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0 with bun");
+    expect(read("asked.txt").trim()).toBe("bun add @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0");
+  });
+
+  test("with --no-install, it prints the command, for npm, pnpm, yarn, or the packageManager package.json names", () => {
+    const tool = board();
+    const printed = () => runWith(tool, "add", "board", "--no-install", "--overwrite").out;
+    expect(printed()).toContain("npm install @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0");
+    write("pnpm-lock.yaml", "");
+    expect(printed()).toContain("pnpm add @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0");
+    write("package.json", JSON.stringify({ packageManager: "yarn@4.6.0", dependencies: { react: "19.3.0", "react-dom": "19.3.0" } }));
+    expect(printed()).toContain("yarn add @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0");
+    expect(existsSync(join(project, "asked.txt"))).toBe(false);
+  });
+
+  test("a package the project already lists is kept as it is, and said so", () => {
+    write("package.json", JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0", "@dnd-kit/core": "^6.0.0" } }));
+    const { out } = runWith(board(), "add", "board", "--no-install");
+    expect(out).toContain("Kept your @dnd-kit/core ^6.0.0; Harmo is tested with @dnd-kit/core@6.3.1.");
+    expect(out).toContain("npm install @dnd-kit/sortable@10.0.0");
+    expect(out).not.toContain("npm install @dnd-kit/core");
+  });
+
+  test("--dry-run says what it would install, and installs nothing", () => {
+    const { out } = runOnPath(fakeManager("npm"), board(), "add", "board", "--dry-run");
+    expect(out).toContain("Would install @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0: npm install");
+    expect(existsSync(join(project, "asked.txt"))).toBe(false);
+  });
+
+  test("when the install fails, it says what to run, and exits with an error; the files are copied", () => {
+    const { code, err } = runOnPath(fakeManager("npm", true), board(), "add", "board");
+    expect(code).toBe(1);
+    expect(err).toContain("That didn't install. Run it yourself:\n  npm install @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0");
+    expect(existsSync(join(project, harmo, "patterns/board/Board.tsx"))).toBe(true);
+  });
+});

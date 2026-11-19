@@ -248,7 +248,7 @@ Some components are built from others, so their files need company:
   | `data-align` | `start`: lined up at the start, or a panel opening there; `end` on a Popup: aligned to its trigger's end | Empty State, Navigation Menu, Popup |
   | `data-destructive` | For an action that destroys something | Button, Dropdown Menu's item |
   | `data-hold`, `data-holding`, `data-held` | Held to confirm, and how far along (script) | Button |
-  | `data-pinned`, `data-refit` | Keeping or finding its place (script) | Popup |
+  | `data-pinned`, `data-refit`, `data-measuring`, `data-closing` | Keeping or finding its place, and fading out (script) | Popup |
   | `data-open` | Shown, or open (script) | Tooltip's trigger, Navigation Menu |
   | `data-moving` | Moving between panels (script) | Navigation Menu |
   | `data-copied` | Just copied (script) | Copy Button |
@@ -369,7 +369,7 @@ the React components, set:
 | The title, the rows, Previous's and Next's `aria-disabled`, `aria-selected`, focus and `tabindex` | Calendar | Change the month, choose a day, and move by keyboard |
 | The field's text, `aria-invalid`, the hidden input, the Calendar's day | Date Picker | Write and read the date in the locale's order, or pick it from the Calendar |
 | `aria-selected`, `aria-activedescendant`, `data-instant`, `.htime-picker-value`, `data-placeholder`, the hidden input | Time Picker | Choose the time, by pointer or keyboard, and show it; the keyboard's moves change at once |
-| `data-side="top"`, `data-refit`, `data-pinned`, focus back on the trigger | Popup | Slide away from a trigger it opened above, find its place afresh as it opens, close where it is, and hand focus back when one opened over another closes |
+| `data-side="top"`, `data-refit`, `data-pinned`, `data-measuring`, `data-closing`, focus back on the trigger | Popup | Slide away from a trigger it opened above, find its place afresh as it opens, measure itself while still closed, close where it is, fading, and hand focus back when one opened over another closes |
 | `data-active` | Listbox option | Highlight that follows keyboard and pointer |
 | `aria-selected` | Listbox option | Selection |
 | `aria-activedescendant` | Select trigger, search field, or the list | Announces the highlighted option |

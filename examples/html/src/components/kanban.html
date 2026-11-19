@@ -1,0 +1,625 @@
+<play-example title="Task board" layout="wide">
+  <play-note>
+    A team's tasks in three columns, each with a Status's dot by its title
+    and its count. Drag a card, within its column or to another, with a
+    mouse from anywhere on it, or on a touch screen after a long press; or
+    tab to its handle, press Space, move it with the arrow keys, and press
+    Space again. Its menu, which shows as you point at the card, moves it
+    too, and deletes it. Each card links to its own page. Done is empty, so
+    it shows an
+    <a class="hlink" data-underlined href="empty-state.html">Empty State</a>.
+  </play-note>
+  <section class="hkanban" aria-label="Website launch">
+    <div hidden class="hbanner" data-status="error">
+      <play-icon name="error" class="hbanner-icon"></play-icon>
+      <p class="hbanner-message"></p>
+      <button type="button" class="hbutton" data-variant="tertiary" data-size="small"><span class="hbutton-label">Dismiss</span></button>
+    </div>
+    <p class="hkanban-status" role="status"></p>
+    <p id="kanban-tasks-1-instructions" hidden>
+      To pick up a card, press Space or Enter on its handle. Move it with the arrow keys, within its column or to another, then press Space or Enter to drop it, or Escape to put it back. Its Actions menu moves it too.
+    </p>
+    <div class="hkanban-columns">
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-tasks-2">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-tasks-2"><span class="hstatus">To do</span></h2>
+          <span class="hbadge" data-variant="neutral">3</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-tasks-2">
+            <li class="hkanban-item" data-card="menu-photos">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><a href="#tasks/menu-photos" class="hlink hkanban-card-open">Photograph the autumn menu</a></h3>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-purple)"><span class="htag-dot" aria-hidden="true"></span>Design</span>
+                  <span>Oct 14</span>
+                  <span role="img" aria-label="Lee Chen" title="Lee Chen" class="havatar">LC</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tasks-1-instructions" aria-label="Move Photograph the autumn menu" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Photograph the autumn menu" id="kanban-tasks-3-trigger" aria-haspopup="menu" popovertarget="kanban-tasks-4" aria-expanded="false" style="anchor-name:--kanban-tasks-4" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tasks-3-trigger" class="hpopup hdropdown-menu" id="kanban-tasks-4" data-align="end" popover style="position-anchor:--kanban-tasks-4">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" data-destructive data-example-delete>Delete</button>
+                      <div role="separator" class="hdropdown-menu-separator"></div>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to In progress</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="faq">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><a href="#tasks/faq" class="hlink hkanban-card-open">Write the delivery FAQ</a></h3>
+                <p class="hkanban-card-description">Cut-off times, delivery windows, and what happens when no one's home.</p>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-cyan)"><span class="htag-dot" aria-hidden="true"></span>Website</span>
+                  <span>Oct 18</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tasks-1-instructions" aria-label="Move Write the delivery FAQ" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Write the delivery FAQ" id="kanban-tasks-5-trigger" aria-haspopup="menu" popovertarget="kanban-tasks-6" aria-expanded="false" style="anchor-name:--kanban-tasks-6" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tasks-5-trigger" class="hpopup hdropdown-menu" id="kanban-tasks-6" data-align="end" popover style="position-anchor:--kanban-tasks-6">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" data-destructive data-example-delete>Delete</button>
+                      <div role="separator" class="hdropdown-menu-separator"></div>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to In progress</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="newsletter">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><a href="#tasks/newsletter" class="hlink hkanban-card-open">Send the October newsletter</a></h3>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-amber)"><span class="htag-dot" aria-hidden="true"></span>Marketing</span>
+                  <span>Oct 20</span>
+                  <span role="img" aria-label="Ana Petrova" title="Ana Petrova" class="havatar">AP</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tasks-1-instructions" aria-label="Move Send the October newsletter" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Send the October newsletter" id="kanban-tasks-7-trigger" aria-haspopup="menu" popovertarget="kanban-tasks-8" aria-expanded="false" style="anchor-name:--kanban-tasks-8" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tasks-7-trigger" class="hpopup hdropdown-menu" id="kanban-tasks-8" data-align="end" popover style="position-anchor:--kanban-tasks-8">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" data-destructive data-example-delete>Delete</button>
+                      <div role="separator" class="hdropdown-menu-separator"></div>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to In progress</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">Nothing here yet</p>
+          </div>
+        </div>
+      </div>
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-tasks-9">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-tasks-9"><span class="hstatus" data-status="info">In progress</span></h2>
+          <span class="hbadge" data-variant="neutral">2</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-tasks-9">
+            <li class="hkanban-item" data-card="postcode">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><a href="#tasks/postcode" class="hlink hkanban-card-open">Fix the postcode check at checkout</a></h3>
+                <p class="hkanban-card-description">Postcodes with a space at the end are turned away.</p>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-cyan)"><span class="htag-dot" aria-hidden="true"></span>Website</span>
+                  <span>Oct 11</span>
+                  <span role="img" aria-label="Sam Okafor" title="Sam Okafor" class="havatar">SO</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tasks-1-instructions" aria-label="Move Fix the postcode check at checkout" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Fix the postcode check at checkout" id="kanban-tasks-10-trigger" aria-haspopup="menu" popovertarget="kanban-tasks-11" aria-expanded="false" style="anchor-name:--kanban-tasks-11" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tasks-10-trigger" class="hpopup hdropdown-menu" id="kanban-tasks-11" data-align="end" popover style="position-anchor:--kanban-tasks-11">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" data-destructive data-example-delete>Delete</button>
+                      <div role="separator" class="hdropdown-menu-separator"></div>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to To do</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="stall">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><a href="#tasks/stall" class="hlink hkanban-card-open">Plan the Saturday market stall</a></h3>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-amber)"><span class="htag-dot" aria-hidden="true"></span>Marketing</span>
+                  <span>Oct 12</span>
+                  <span role="img" aria-label="Ana Petrova" title="Ana Petrova" class="havatar">AP</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tasks-1-instructions" aria-label="Move Plan the Saturday market stall" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Plan the Saturday market stall" id="kanban-tasks-12-trigger" aria-haspopup="menu" popovertarget="kanban-tasks-13" aria-expanded="false" style="anchor-name:--kanban-tasks-13" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tasks-12-trigger" class="hpopup hdropdown-menu" id="kanban-tasks-13" data-align="end" popover style="position-anchor:--kanban-tasks-13">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1" data-destructive data-example-delete>Delete</button>
+                      <div role="separator" class="hdropdown-menu-separator"></div>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to To do</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">Nothing here yet</p>
+          </div>
+        </div>
+      </div>
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-tasks-14">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-tasks-14"><span class="hstatus" data-status="success">Done</span></h2>
+          <span class="hbadge" data-variant="neutral">0</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-tasks-14" hidden></ul>
+          <div class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">Nothing here yet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</play-example>
+
+<play-example title="Support tickets" layout="wide">
+  <play-note>
+    Tickets that open: press one to read it in a
+    <a class="hlink" data-underlined href="drawer.html">Drawer</a>,
+    and change its status, assignee, and priority there, or resolve it; the
+    card follows. Each move takes a moment to save. A ticket goes to Resolved only once it's
+    assigned, so ticket 1042, unassigned, can't: the column fades as it's
+    dragged over, and a
+    <a class="hlink" data-underlined href="banner.html">Banner</a>
+    says why. Ticket 1039 comes back after it's moved, as someone else is
+    editing it.
+  </play-note>
+  <section class="hkanban" aria-label="Support tickets" data-example-saves data-example-opens="kanban-tickets-13">
+    <div hidden class="hbanner" data-status="error">
+      <play-icon name="error" class="hbanner-icon"></play-icon>
+      <p class="hbanner-message"></p>
+      <button type="button" class="hbutton" data-variant="tertiary" data-size="small"><span class="hbutton-label">Dismiss</span></button>
+    </div>
+    <p class="hkanban-status" role="status"></p>
+    <p id="kanban-tickets-1-instructions" hidden>
+      To pick up a card, press Space or Enter on its handle. Move it with the arrow keys, within its column or to another, then press Space or Enter to drop it, or Escape to put it back. Its Actions menu moves it too.
+    </p>
+    <div class="hkanban-columns">
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-tickets-2">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-tickets-2"><span class="hstatus" data-status="warning">Open</span></h2>
+          <span class="hbadge" data-variant="neutral">2</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-tickets-2">
+            <li class="hkanban-item" data-card="t-1042" data-example-refusal="Assign ticket 1042 to someone before resolving it." data-example-message="Everything else was there, but the dozen eggs from my list weren't in any of the bags." data-example-href="#tickets/1042">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><button type="button" class="hkanban-card-open">Order arrived without the eggs</button></h3>
+                <p class="hkanban-card-description">#1042 · Maria Santos</p>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-amber)"><span class="htag-dot" aria-hidden="true"></span>High</span>
+                  <span>4 min ago</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tickets-1-instructions" aria-label="Move Ticket 1042, Order arrived without the eggs" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Ticket 1042, Order arrived without the eggs" id="kanban-tickets-3-trigger" aria-haspopup="menu" popovertarget="kanban-tickets-4" aria-expanded="false" style="anchor-name:--kanban-tickets-4" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tickets-3-trigger" class="hpopup hdropdown-menu" id="kanban-tickets-4" data-align="end" popover style="position-anchor:--kanban-tickets-4">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Waiting on customer</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Resolved</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="t-1039" data-example-fails="Sam is editing ticket 1039. Try again once they're done." data-example-message="I need Thursday's delivery moved to the evening, but every window shows as full." data-example-href="#tickets/1039">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><button type="button" class="hkanban-card-open">Can't change my delivery window</button></h3>
+                <p class="hkanban-card-description">#1039 · Tom Becker</p>
+                <div class="hkanban-card-footer"><span>1 h ago</span><span role="img" aria-label="Sam Okafor" title="Sam Okafor" class="havatar">SO</span></div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tickets-1-instructions" aria-label="Move Ticket 1039, Can&#x27;t change my delivery window" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Ticket 1039, Can&#x27;t change my delivery window" id="kanban-tickets-5-trigger" aria-haspopup="menu" popovertarget="kanban-tickets-6" aria-expanded="false" style="anchor-name:--kanban-tickets-6" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tickets-5-trigger" class="hpopup hdropdown-menu" id="kanban-tickets-6" data-align="end" popover style="position-anchor:--kanban-tickets-6">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Waiting on customer</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Resolved</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">No tickets</p>
+          </div>
+        </div>
+      </div>
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-tickets-7">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-tickets-7"><span class="hstatus" data-status="info">Waiting on customer</span></h2>
+          <span class="hbadge" data-variant="neutral">1</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-tickets-7">
+            <li class="hkanban-item" data-card="t-1031" data-example-message="No one came on Monday, and I was home all morning. Can I have my money back?" data-example-href="#tickets/1031">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><button type="button" class="hkanban-card-open">Refund for a missed delivery</button></h3>
+                <p class="hkanban-card-description">#1031 · Priya Nair</p>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-red)"><span class="htag-dot" aria-hidden="true"></span>Urgent</span>
+                  <span>Yesterday</span>
+                  <span role="img" aria-label="Ana Petrova" title="Ana Petrova" class="havatar">AP</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tickets-1-instructions" aria-label="Move Ticket 1031, Refund for a missed delivery" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Ticket 1031, Refund for a missed delivery" id="kanban-tickets-8-trigger" aria-haspopup="menu" popovertarget="kanban-tickets-9" aria-expanded="false" style="anchor-name:--kanban-tickets-9" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tickets-8-trigger" class="hpopup hdropdown-menu" id="kanban-tickets-9" data-align="end" popover style="position-anchor:--kanban-tickets-9">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Open</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Resolved</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">No tickets</p>
+          </div>
+        </div>
+      </div>
+      <div class="hkanban-column" role="group" data-example-requires=".havatar" aria-labelledby="kanban-tickets-10">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-tickets-10"><span class="hstatus" data-status="success">Resolved</span></h2>
+          <span class="hbadge" data-variant="neutral">1</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-tickets-10">
+            <li class="hkanban-item" data-card="t-1027" data-example-message="The code on my birthday card says it's already been used." data-example-href="#tickets/1027">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title"><button type="button" class="hkanban-card-open">Gift card code doesn't work</button></h3>
+                <p class="hkanban-card-description">#1027 · Jonas Weber</p>
+                <div class="hkanban-card-footer"><span>Mon</span><span role="img" aria-label="Lee Chen" title="Lee Chen" class="havatar">LC</span></div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-tickets-1-instructions" aria-label="Move Ticket 1027, Gift card code doesn&#x27;t work" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Ticket 1027, Gift card code doesn&#x27;t work" id="kanban-tickets-11-trigger" aria-haspopup="menu" popovertarget="kanban-tickets-12" aria-expanded="false" style="anchor-name:--kanban-tickets-12" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-tickets-11-trigger" class="hpopup hdropdown-menu" id="kanban-tickets-12" data-align="end" popover style="position-anchor:--kanban-tickets-12">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Open</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Waiting on customer</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">No tickets</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <dialog id="kanban-tickets-13" class="hdrawer" closedby="any" aria-labelledby="kanban-tickets-13-title">
+    <header class="hdrawer-header">
+      <h2 class="hdrawer-title" id="kanban-tickets-13-title"></h2>
+      <button type="button" commandfor="kanban-tickets-13" command="request-close" aria-label="Close" class="hbutton hdrawer-close" data-variant="tertiary">
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdrawer-body">
+      <div style="display:grid;gap:var(--harmo-space-sm)">
+        <p style="margin:0"></p>
+        <div class="hfield">
+          <span class="hlabel" id="kanban-tickets-14-label">Status</span>
+          <button id="kanban-tickets-14" aria-labelledby="kanban-tickets-14-label" aria-describedby="kanban-tickets-14-error" class="hselect" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="kanban-tickets-15" popovertarget="kanban-tickets-16" style="anchor-name:--kanban-tickets-16">
+            <span class="hselect-value">Open</span>
+            <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+          </button>
+          <div class="hpopup" id="kanban-tickets-16" popover style="position-anchor:--kanban-tickets-16">
+            <ul aria-labelledby="kanban-tickets-14-label" class="hlistbox" id="kanban-tickets-15" role="listbox">
+              <li class="hoption" id="kanban-tickets-17" role="option" aria-selected="true">
+                <span class="hoption-label">Open</span>
+                <play-icon name="check" class="hoption-check"></play-icon>
+              </li>
+              <li class="hoption" id="kanban-tickets-18" role="option" aria-selected="false"><span class="hoption-label">Waiting on customer</span></li>
+              <li class="hoption" id="kanban-tickets-19" role="option" aria-selected="false"><span class="hoption-label">Resolved</span></li>
+            </ul>
+          </div>
+          <p aria-live="polite" id="kanban-tickets-14-error" class="herror"></p>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:var(--harmo-space-2xs)">
+          <div style="flex:1">
+            <div class="hfield">
+              <span class="hlabel" id="kanban-tickets-20-label">Assignee</span>
+              <button id="kanban-tickets-20" aria-labelledby="kanban-tickets-20-label" class="hselect" type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="kanban-tickets-21" popovertarget="kanban-tickets-22" style="anchor-name:--kanban-tickets-22">
+                <span class="hselect-value">Unassigned</span>
+                <play-icon name="expand-chevron" class="hexpand-chevron"></play-icon>
+              </button>
+              <div class="hpopup" id="kanban-tickets-22" popover style="position-anchor:--kanban-tickets-22">
+                <ul aria-labelledby="kanban-tickets-20-label" class="hlistbox" id="kanban-tickets-21" role="listbox">
+                  <li class="hoption" id="kanban-tickets-23" role="option" aria-selected="true">
+                    <span class="hoption-label">Unassigned</span>
+                    <play-icon name="check" class="hoption-check"></play-icon>
+                  </li>
+                  <li class="hoption" id="kanban-tickets-24" role="option" aria-selected="false"><span class="hoption-label">Ana Petrova</span></li>
+                  <li class="hoption" id="kanban-tickets-25" role="option" aria-selected="false"><span class="hoption-label">Sam Okafor</span></li>
+                  <li class="hoption" id="kanban-tickets-26" role="option" aria-selected="false"><span class="hoption-label">Lee Chen</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="hbutton" data-variant="secondary" data-example-assign="Ana Petrova"><span class="hbutton-label">Assign to me</span></button>
+        </div>
+        <div class="hfield">
+          <span class="hlabel" id="kanban-tickets-27-label">Priority</span>
+          <div class="hsegmented" role="radiogroup" aria-labelledby="kanban-tickets-27-label">
+            <label class="hsegmented-option"><input type="radio" name="priority" checked value="Normal" />Normal</label>
+            <label class="hsegmented-option"><input type="radio" name="priority" value="High" data-example-color="var(--harmo-amber)" />High</label>
+            <label class="hsegmented-option"><input type="radio" name="priority" value="Urgent" data-example-color="var(--harmo-red)" />Urgent</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="hdrawer-footer">
+      <a href="#tickets/" class="hbutton" data-variant="secondary"><span class="hbutton-label">Open ticket</span></a>
+      <button type="button" class="hbutton" data-example-resolve="Resolved"><span class="hbutton-label">Resolve</span></button>
+    </footer>
+  </dialog>
+</play-example>
+
+<play-example title="Confirm before Done" layout="wide">
+  <play-note>
+    The task board, asking first: a card moved to Done waits there while a
+    <a class="hlink" data-underlined href="dialog.html">Dialog</a>
+    asks, and goes back if you cancel.
+  </play-note>
+  <section class="hkanban" aria-label="Website launch">
+    <div hidden class="hbanner" data-status="error">
+      <play-icon name="error" class="hbanner-icon"></play-icon>
+      <p class="hbanner-message"></p>
+      <button type="button" class="hbutton" data-variant="tertiary" data-size="small"><span class="hbutton-label">Dismiss</span></button>
+    </div>
+    <p class="hkanban-status" role="status"></p>
+    <p id="kanban-confirm-1-instructions" hidden>
+      To pick up a card, press Space or Enter on its handle. Move it with the arrow keys, within its column or to another, then press Space or Enter to drop it, or Escape to put it back. Its Actions menu moves it too.
+    </p>
+    <div class="hkanban-columns">
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-confirm-2">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-confirm-2"><span class="hstatus">To do</span></h2>
+          <span class="hbadge" data-variant="neutral">3</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-confirm-2">
+            <li class="hkanban-item" data-card="menu-photos">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title">Photograph the autumn menu</h3>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-purple)"><span class="htag-dot" aria-hidden="true"></span>Design</span>
+                  <span>Oct 14</span>
+                  <span role="img" aria-label="Lee Chen" title="Lee Chen" class="havatar">LC</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-confirm-1-instructions" aria-label="Move Photograph the autumn menu" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Photograph the autumn menu" id="kanban-confirm-3-trigger" aria-haspopup="menu" popovertarget="kanban-confirm-4" aria-expanded="false" style="anchor-name:--kanban-confirm-4" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-confirm-3-trigger" class="hpopup hdropdown-menu" id="kanban-confirm-4" data-align="end" popover style="position-anchor:--kanban-confirm-4">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to In progress</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="faq">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title">Write the delivery FAQ</h3>
+                <p class="hkanban-card-description">Cut-off times, delivery windows, and what happens when no one's home.</p>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-cyan)"><span class="htag-dot" aria-hidden="true"></span>Website</span>
+                  <span>Oct 18</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-confirm-1-instructions" aria-label="Move Write the delivery FAQ" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Write the delivery FAQ" id="kanban-confirm-5-trigger" aria-haspopup="menu" popovertarget="kanban-confirm-6" aria-expanded="false" style="anchor-name:--kanban-confirm-6" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-confirm-5-trigger" class="hpopup hdropdown-menu" id="kanban-confirm-6" data-align="end" popover style="position-anchor:--kanban-confirm-6">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to In progress</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="newsletter">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title">Send the October newsletter</h3>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-amber)"><span class="htag-dot" aria-hidden="true"></span>Marketing</span>
+                  <span>Oct 20</span>
+                  <span role="img" aria-label="Ana Petrova" title="Ana Petrova" class="havatar">AP</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-confirm-1-instructions" aria-label="Move Send the October newsletter" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Send the October newsletter" id="kanban-confirm-7-trigger" aria-haspopup="menu" popovertarget="kanban-confirm-8" aria-expanded="false" style="anchor-name:--kanban-confirm-8" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-confirm-7-trigger" class="hpopup hdropdown-menu" id="kanban-confirm-8" data-align="end" popover style="position-anchor:--kanban-confirm-8">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to In progress</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">Nothing here yet</p>
+          </div>
+        </div>
+      </div>
+      <div class="hkanban-column" role="group" aria-labelledby="kanban-confirm-9">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-confirm-9"><span class="hstatus" data-status="info">In progress</span></h2>
+          <span class="hbadge" data-variant="neutral">2</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-confirm-9">
+            <li class="hkanban-item" data-card="postcode">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title">Fix the postcode check at checkout</h3>
+                <p class="hkanban-card-description">Postcodes with a space at the end are turned away.</p>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-cyan)"><span class="htag-dot" aria-hidden="true"></span>Website</span>
+                  <span>Oct 11</span>
+                  <span role="img" aria-label="Sam Okafor" title="Sam Okafor" class="havatar">SO</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-confirm-1-instructions" aria-label="Move Fix the postcode check at checkout" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Fix the postcode check at checkout" id="kanban-confirm-10-trigger" aria-haspopup="menu" popovertarget="kanban-confirm-11" aria-expanded="false" style="anchor-name:--kanban-confirm-11" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-confirm-10-trigger" class="hpopup hdropdown-menu" id="kanban-confirm-11" data-align="end" popover style="position-anchor:--kanban-confirm-11">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move down</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to To do</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+            <li class="hkanban-item" data-card="stall">
+              <div class="hcard hkanban-card" data-variant="raised">
+                <h3 class="hkanban-card-title">Plan the Saturday market stall</h3>
+                <div class="hkanban-card-footer">
+                  <span class="htag" style="--htag-color:var(--harmo-amber)"><span class="htag-dot" aria-hidden="true"></span>Marketing</span>
+                  <span>Oct 12</span>
+                  <span role="img" aria-label="Ana Petrova" title="Ana Petrova" class="havatar">AP</span>
+                </div>
+                <div class="hkanban-card-actions">
+                  <button type="button" aria-describedby="kanban-confirm-1-instructions" aria-label="Move Plan the Saturday market stall" class="hbutton hkanban-handle" data-variant="tertiary" data-size="xsmall">
+                    <play-icon name="grip" class="hicon"></play-icon>
+                  </button>
+                  <span class="hkanban-menu">
+                    <button type="button" aria-label="Actions for Plan the Saturday market stall" id="kanban-confirm-12-trigger" aria-haspopup="menu" popovertarget="kanban-confirm-13" aria-expanded="false" style="anchor-name:--kanban-confirm-13" class="hbutton" data-variant="tertiary" data-size="xsmall">
+                      <play-icon name="more" class="hicon"></play-icon>
+                    </button>
+                    <div role="menu" tabindex="-1" aria-labelledby="kanban-confirm-12-trigger" class="hpopup hdropdown-menu" id="kanban-confirm-13" data-align="end" popover style="position-anchor:--kanban-confirm-13">
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move up</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to To do</button>
+                      <button type="button" class="hdropdown-menu-item" role="menuitem" tabindex="-1">Move to Done</button>
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div hidden class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">Nothing here yet</p>
+          </div>
+        </div>
+      </div>
+      <div class="hkanban-column" role="group" data-example-confirm="kanban-confirm-15" aria-labelledby="kanban-confirm-14">
+        <div class="hkanban-column-header">
+          <h2 class="hkanban-column-title" id="kanban-confirm-14"><span class="hstatus" data-status="success">Done</span></h2>
+          <span class="hbadge" data-variant="neutral">0</span>
+        </div>
+        <div class="hkanban-column-body">
+          <ul class="hkanban-list" aria-labelledby="kanban-confirm-14" hidden></ul>
+          <div class="hempty-state" data-size="small" data-variant="dashed">
+            <p class="hempty-state-description">Nothing here yet</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <dialog id="kanban-confirm-15" class="hdialog" data-example-label="Mark “{card}” as done?" closedby="any" aria-labelledby="kanban-confirm-15-title" aria-describedby="kanban-confirm-15-description">
+    <header class="hdialog-header">
+      <h2 class="hdialog-title" id="kanban-confirm-15-title">Mark “” as done?</h2>
+      <p class="hdialog-description" id="kanban-confirm-15-description">It moves to Done, and its assignee hears that it's finished.</p>
+      <button type="button" commandfor="kanban-confirm-15" command="request-close" aria-label="Close" class="hbutton hdialog-close" data-variant="tertiary">
+        <play-icon name="close" class="hicon"></play-icon>
+      </button>
+    </header>
+    <div class="hdialog-body"></div>
+    <footer class="hdialog-footer">
+      <button type="button" commandfor="kanban-confirm-15" command="request-close" class="hbutton" data-variant="secondary"><span class="hbutton-label">Cancel</span></button>
+      <button type="button" class="hbutton"><span class="hbutton-label">Mark as done</span></button>
+    </footer>
+  </dialog>
+</play-example>

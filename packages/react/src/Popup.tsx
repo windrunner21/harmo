@@ -124,15 +124,19 @@ const openings = new WeakMap<HTMLElement, number>();
 // it last fit, so an opening popup is placed afresh. They change again once
 // it's open, and once its opening fade is over if it didn't end fully shown:
 // at a fallback position, Firefox keeps the styles it worked out when it
-// placed the popup there, until they change: while it was closed, as a
-// closed popup stays laid out for its fade, or partway through the fade, so
-// it would stay unseen or faint. Each opening or closing voids what an
+// placed the popup there, until they change: while it was closed, as it
+// stays laid out for its closing fade, or partway through the opening fade,
+// so it would stay unseen or faint. Each opening or closing voids what an
 // earlier one left to do, including one in the same task, which shares its
 // toggle event.
 export const refitPopup = (popup: HTMLElement, opening: boolean) => {
   const opened = (openings.get(popup) ?? 0) + 1;
   openings.set(popup, opened);
-  if (!opening) return;
+  if (!opening) {
+    holdClosing(popup, () => openings.get(popup) === opened && !popup.matches(":popover-open"));
+    return;
+  }
+  popup.removeAttribute("data-closing");
   const current = () => openings.get(popup) === opened && popup.matches(":popover-open");
   popup.toggleAttribute("data-refit");
   popup.addEventListener(
@@ -148,6 +152,28 @@ export const refitPopup = (popup: HTMLElement, opening: boolean) => {
         .then(() => {
           if (current() && getComputedStyle(popup).opacity !== "1") popup.toggleAttribute("data-refit");
         });
+    },
+    { once: true },
+  );
+};
+
+// As it closes: laid out, with data-closing, until its fade ends, so it fades
+// in every browser: Firefox and Safari don't keep a closing popover laid out
+// themselves. A later opening or closing voids it.
+const holdClosing = (popup: HTMLElement, current: () => boolean) => {
+  popup.setAttribute("data-closing", "");
+  popup.addEventListener(
+    "toggle",
+    (event) => {
+      if ((event as ToggleEvent).newState !== "closed") return;
+      const release = () => {
+        if (current()) popup.removeAttribute("data-closing");
+      };
+      const fade = popup
+        .getAnimations()
+        .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
+      if (fade) fade.finished.then(release, release);
+      else release();
     },
     { once: true },
   );
@@ -177,9 +203,12 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
   const triggerBox = trigger.getBoundingClientRect();
   let side: "top" | "bottom";
   if (opening) {
+    // Still closed, so not laid out: laid out for this, unseen.
+    popup.setAttribute("data-measuring", "");
     const { marginBlockStart, marginBlockEnd } = getComputedStyle(popup);
     const needed =
       popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
+    popup.removeAttribute("data-measuring");
     const below = popup.ownerDocument.documentElement.clientHeight - triggerBox.bottom;
     const above = triggerBox.top >= needed;
     side = above && (popup.dataset.preferredSide === "top" || below < needed) ? "top" : "bottom";

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { spawnSync } from "node:child_process";
 import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
@@ -21,6 +22,8 @@ Options for add and theme:
                         src/components/harmo if the project has a src folder
   -o, --overwrite       Replace files that differ from Harmo's, without asking
       --dry-run         Show what would change, and change nothing
+      --no-install      For a pattern that needs npm packages, such as kanban,
+                        print the command that installs them, rather than run it
 
   -h, --help            Show this help
   -v, --version         Show the version`;
@@ -36,6 +39,7 @@ const isPattern = ({ categories }: Listing) =>
 
 interface Item extends Listing {
   files: { path: string; content: string }[];
+  dependencies?: string[];
 }
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -186,12 +190,32 @@ const withStyles = (
 };
 
 // A Windows checkout changes every line ending, which isn't an edit worth asking about.
+// The project's package manager: the one its package.json names, or the one
+// whose lockfile it has, or npm.
+const managers = [
+  { name: "bun", lockfiles: ["bun.lock", "bun.lockb"], add: ["add"] },
+  { name: "pnpm", lockfiles: ["pnpm-lock.yaml"], add: ["add"] },
+  { name: "yarn", lockfiles: ["yarn.lock"], add: ["add"] },
+  { name: "npm", lockfiles: ["package-lock.json"], add: ["install"] },
+] as const;
+const managerOf = (project: string, manifest: { packageManager?: unknown }) => {
+  const named = typeof manifest.packageManager === "string" ? manifest.packageManager.split("@")[0] : undefined;
+  return (
+    managers.find(({ name }) => name === named) ??
+    managers.find(({ lockfiles }) => lockfiles.some((file) => existsSync(join(project, file)))) ??
+    managers[3]
+  );
+};
+
+// A name and version, such as @dnd-kit/core@6.3.1: its name.
+const packageName = (spec: string) => spec.slice(0, spec.lastIndexOf("@") > 0 ? spec.lastIndexOf("@") : spec.length);
+
 const sameText = (a: string, b: string) =>
   a.replaceAll("\r\n", "\n") === b.replaceAll("\r\n", "\n");
 
 const add = async (
   names: string[],
-  options: { all: boolean; path?: string; overwrite: boolean; dryRun: boolean },
+  options: { all: boolean; path?: string; overwrite: boolean; dryRun: boolean; install: boolean },
 ) => {
   const project = process.cwd();
   const manifestPath = join(project, "package.json");
@@ -225,10 +249,11 @@ const add = async (
 
   // Components share files, such as lib/withClass.ts, so each is written once.
   const files = new Map<string, string>();
+  const dependencies = new Set<string>();
   for (const name of requested) {
-    for (const { path, content } of readJson<Item>("registry", `${name}.json`)
-      .files)
-      files.set(path, content);
+    const item = readJson<Item>("registry", `${name}.json`);
+    for (const { path, content } of item.files) files.set(path, content);
+    for (const dependency of item.dependencies ?? []) dependencies.add(dependency);
   }
   refuseOutside(base, folder, [...files.keys(), "harmo.css"]);
 
@@ -321,13 +346,37 @@ const add = async (
     );
 
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-  const unlisted = ["react", "react-dom"].filter(
-    (name) => !manifest.dependencies?.[name] && !manifest.devDependencies?.[name],
-  );
+  const listed = (name: string) => manifest.dependencies?.[name] ?? manifest.devDependencies?.[name];
+  const unlisted = ["react", "react-dom"].filter((name) => !listed(name));
   if (unlisted.length > 0) {
     console.log(
       `\nHarmo's components need React and React DOM 19.3 or later, and this project doesn't list ${unlisted.join(" or ")}.`,
     );
+  }
+
+  // The npm packages a pattern needs, such as dnd-kit for kanban, at the
+  // versions it's tested with. One the project already lists is left as it is.
+  const needed = [...dependencies].sort();
+  const missing = needed.filter((spec) => !listed(packageName(spec)));
+  const own = needed.filter((spec) => listed(packageName(spec)));
+  if (own.length > 0)
+    console.log(
+      `\nKept your ${own.map((spec) => `${packageName(spec)} ${listed(packageName(spec))}`).join(", ")}; Harmo is tested with ${own.join(", ")}.`,
+    );
+  if (missing.length === 0) return;
+  const manager = managerOf(project, manifest);
+  const command = [manager.name, ...manager.add, ...missing];
+  if (options.dryRun) return console.log(`\nWould install ${missing.join(", ")}: ${command.join(" ")}`);
+  if (!options.install) return console.log(`\nInstall what it needs:\n  ${command.join(" ")}`);
+  console.log(`\nInstalling ${missing.join(", ")} with ${manager.name}`);
+  const result = spawnSync(command[0] as string, command.slice(1), {
+    cwd: project,
+    stdio: "inherit",
+    shell: process.platform === "win32",
+  });
+  if (result.status !== 0) {
+    console.error(`\nThat didn't install. Run it yourself:\n  ${command.join(" ")}`);
+    process.exitCode = 1;
   }
 };
 
@@ -452,6 +501,7 @@ const main = async () => {
         path: { type: "string", short: "p" },
         overwrite: { type: "boolean", short: "o", default: false },
         "dry-run": { type: "boolean", default: false },
+        "no-install": { type: "boolean", default: false },
         help: { type: "boolean", short: "h", default: false },
         version: { type: "boolean", short: "v", default: false },
       },
@@ -472,6 +522,7 @@ const main = async () => {
       path: values.path,
       overwrite: values.overwrite,
       dryRun: values["dry-run"],
+      install: !values["no-install"],
     });
   }
   if (command === "theme") {

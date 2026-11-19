@@ -4,7 +4,10 @@
 // so the trigger shows instead. The <select> stays what the form sends: once
 // an option is chosen (listbox.js selects it), this shows the chosen labels in
 // the trigger, or the placeholder when nothing is chosen, and selects the same
-// options in the <select>. listbox.js closes a single select.
+// options in the <select>. listbox.js closes a single select. Your app
+// chooses for it, as React's value does, with an example-select event whose
+// detail is the option, or null for none; a change it makes is heard as a
+// pick's is.
 {
   const checkMark = document.createElement("template");
   checkMark.innerHTML = `<svg class="hoption-check" viewBox="5.845 5.87 14 14" aria-hidden="true" focusable="false"><path d="M11.4261 16.455C11.2261 16.455 11.0361 16.375 10.8961 16.235L8.06613 13.405C7.77613 13.115 7.77613 12.635 8.06613 12.345C8.35613 12.055 8.83613 12.055 9.12613 12.345L11.4261 14.645L16.5661 9.505C16.8561 9.215 17.3361 9.215 17.6261 9.505C17.9161 9.795 17.9161 10.275 17.6261 10.565L11.9561 16.235C11.8161 16.375 11.6261 16.455 11.4261 16.455Z" fill="currentColor" /></svg>`;
@@ -28,7 +31,9 @@
       : null;
     const options = () => [...listbox.querySelectorAll(".hoption")];
     const chosen = () => options().filter((option) => option.getAttribute("aria-selected") === "true");
-    const valuesOf = (list) => list.map((option) => option.dataset.value ?? "").join("\n");
+    // What's chosen, to tell a change: an unnamed select's options have no
+    // data-value, so their ids.
+    const valuesOf = (list) => list.map((option) => option.dataset.value ?? option.id).join("\n");
     const initial = chosen();
 
     // Chooses these options in the list, a single select's check mark moving
@@ -76,6 +81,10 @@
     listbox.addEventListener("click", (event) => {
       const option = event.target.closest(".hoption");
       if (!option || option.getAttribute("aria-disabled") === "true") return;
+      sync();
+    });
+    trigger.addEventListener("example-select", (event) => {
+      choose(event.detail ? [event.detail] : []);
       sync();
     });
 

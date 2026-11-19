@@ -1,4 +1,5 @@
 // Example only: keep each trigger's aria-expanded in sync with its popup,
+// keep a closing popup laid out until its fade ends, with data-closing, and
 // make each opening find its position afresh, record which side of the
 // trigger the popup is on, so it slides away from the trigger, keep a closing
 // popup where it is, and hand focus back when one over another closes. The
@@ -14,15 +15,37 @@
     // change again once it's open, and once its opening fade is over if it
     // didn't end fully shown: at a fallback position, Firefox keeps the
     // styles it worked out when it placed the popup there, until they change:
-    // while it was closed, as a closed popup stays laid out for its fade, or
-    // partway through the fade, so it would stay unseen or faint. Each opening
-    // or closing voids what an earlier one left to do, including one in the
-    // same task, which shares its toggle event.
+    // while it was closed, as it stays laid out for its closing fade, or
+    // partway through the opening fade, so it would stay unseen or faint.
+    // Each opening or closing voids what an earlier one left to do,
+    // including one in the same task, which shares its toggle event.
     let openings = 0;
     popup.addEventListener("beforetoggle", (event) => {
       if (event.defaultPrevented) return;
       const opened = ++openings;
-      if (event.newState !== "open") return;
+      // Closing, it stays laid out with data-closing until its fade ends, so
+      // it fades in every browser: Firefox and Safari don't keep a closing
+      // popover laid out themselves.
+      if (event.newState !== "open") {
+        popup.setAttribute("data-closing", "");
+        popup.addEventListener(
+          "toggle",
+          (event) => {
+            if (event.newState !== "closed") return;
+            const release = () => {
+              if (opened === openings && !popup.matches(":popover-open")) popup.removeAttribute("data-closing");
+            };
+            const fade = popup
+              .getAnimations()
+              .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
+            if (fade) fade.finished.then(release, release);
+            else release();
+          },
+          { once: true },
+        );
+        return;
+      }
+      popup.removeAttribute("data-closing");
       const current = () => opened === openings && popup.matches(":popover-open");
       popup.toggleAttribute("data-refit");
       popup.addEventListener(
@@ -61,11 +84,14 @@
     // either side, it shrinks below. Measured once
     // data-refit has changed, so the popup takes its whole height, not one it
     // was shrunk to where it last fit; its position can't tell where it will
-    // land.
+    // land. Still closed, it isn't laid out: data-measuring lays it out for
+    // this, unseen.
     const landing = () => {
       const triggerBox = trigger.getBoundingClientRect();
+      popup.setAttribute("data-measuring", "");
       const { marginBlockStart, marginBlockEnd } = getComputedStyle(popup);
       const needed = popup.offsetHeight + parseFloat(marginBlockStart) + parseFloat(marginBlockEnd);
+      popup.removeAttribute("data-measuring");
       const below = document.documentElement.clientHeight - triggerBox.bottom;
       const above = triggerBox.top >= needed;
       return above && (popup.dataset.preferredSide === "top" || below < needed) ? "top" : "bottom";

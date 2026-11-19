@@ -72,6 +72,7 @@ import { examples as resetPassword } from "./components/reset-password.tsx";
 import { examples as chat } from "./components/chat.tsx";
 import { examples as footers } from "./components/footers.tsx";
 import { examples as headers } from "./components/headers.tsx";
+import { examples as kanban } from "./components/kanban.tsx";
 import { examples as contactForm } from "./components/contact-form.tsx";
 import { examples as accountForms } from "./components/account-forms.tsx";
 import { examples as tableOfContents } from "./components/table-of-contents.tsx";
@@ -156,6 +157,7 @@ export const components: Record<string, Record<string, ComponentType>> = {
   chat,
   footers,
   headers,
+  kanban,
   "contact-form": contactForm,
   "account-forms": accountForms,
   "table-of-contents": tableOfContents,

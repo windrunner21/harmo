@@ -504,6 +504,12 @@ const groups: CatalogGroup[] = [
           "The bar across the top: a site's, with a menu that slides in under it on a phone; an app's, beside its sidebar, with search, notifications, and Create; or a sign-in page's.",
       },
       {
+        slug: "kanban",
+        title: "Kanban",
+        purpose:
+          "A board of columns whose cards are dragged from one to another, or moved from each card's menu, such as tasks or support tickets.",
+      },
+      {
         slug: "contact-form",
         title: "Contact Form",
         purpose:

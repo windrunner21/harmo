@@ -76,10 +76,13 @@ panel lays out its own content.
   Firefox, at a fallback position, such as aligned to the trigger's other
   edge, it shows once its fade would have ended, without it: Firefox doesn't
   run a transition there.
-- Closed popups stay rendered with `visibility: hidden` instead of
-  `display: none`, which Firefox can't animate. An opening popup turns
-  visible at once, so focus can move inside it right away; a closing one stays
-  visible until its fade ends.
+- A closed popup isn't laid out, `display: none`, so a page of closed
+  popups, such as a menu on every row of a table, costs nothing as things on
+  it move: laid out, each would be placed again, anchored to its trigger. It
+  fades and slides in from `@starting-style` as it opens. As it closes, a
+  script keeps it laid out with `data-closing` until its fade ends, which
+  Firefox and Safari don't do for a popover themselves. An opening popup
+  turns visible at once, so focus can move inside it right away.
 
 ## Accessibility
 
@@ -98,11 +101,13 @@ panel lays out its own content.
 | `data-refit` on the popup, toggled | As each opening starts, so the browser finds its position afresh; again once it's open; and once its opening fade has ended or stopped, only if the popup isn't fully shown, so a popup that's fine doesn't move. At a fallback position, Firefox keeps the styles it worked out when it placed the popup there until its fallbacks change: while it was closed, or partway through its fade, so it would stay unseen or faint. Each opening or closing voids what an earlier one left to do, so opening, closing, and opening again at once refits once. Its value doesn't matter, the change does |
 | Focus, back on the trigger | When a popup opened over another closes with focus inside it, once its `toggle` event says it closed, not when it opened again at once; browsers do this only for the first popup open |
 | `data-side="top"` on the popup | Before opening, when it will land above its trigger: when it fits there and not below, or, with `data-preferred-side="top"`, whenever it fits there; and before closing, when it's above. Without room on either side, it shrinks below. CSS can't tell which side it landed on |
+| `data-measuring` on the popup, set and removed at once | Before opening, around measuring its height for its side: still closed, it isn't laid out otherwise. It stays unseen |
+| `data-closing` on the popup | Before closing, so it stays laid out for its fade; removed once its fade has ended, through `getAnimations()`, and as it next opens |
 | `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box, less the slide still under way if it closes as it opens | Before closing, so it fades where it is; removed as it next opens |
 
 In `beforetoggle`, when opening, remove `data-pinned` and toggle `data-refit`
-first, then work the side out from the room around the trigger, as the CSS
-does: above when the popup fits there but not below, or, with
+first, then work the side out from the room around the trigger, with
+`data-measuring` on the popup while you measure it, as the CSS does: above when the popup fits there but not below, or, with
 `data-preferred-side="top"`, whenever it fits there. Wait for its opening
 fade through `getAnimations()`, not `transitionend`, which a popup with no
 fade never sends. After the toggle, the

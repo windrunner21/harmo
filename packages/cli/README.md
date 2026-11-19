@@ -61,6 +61,14 @@ They need both at 19.3 or later, and TypeScript.
 | `-p`, `--path <folder>` | Where to write. By default `components/harmo`, or `src/components/harmo` if the project has a `src` folder. Pass it each time you use another folder |
 | `-o`, `--overwrite` | Replaces files that differ from Harmo's, without asking |
 | `--dry-run` | Shows what would change, and changes nothing |
+| `--no-install` | For a pattern that needs npm packages, prints the command that installs them, rather than run it |
+
+A pattern that needs npm packages, such as `kanban` with `dnd-kit`, installs
+them with your project's package manager: the one `package.json`'s
+`packageManager` names, or the one whose lockfile is there, or npm. Only the
+packages your project doesn't list yet, at the versions Harmo's copies are
+tested with; one you already list is kept as it is. Nothing else installs
+them: not `@harmo-ui/react`, and not any other component or pattern.
 
 ## Patterns
 
