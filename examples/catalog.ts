@@ -504,6 +504,12 @@ const groups: CatalogGroup[] = [
           "The bar across the top: a site's, with a menu that slides in under it on a phone; an app's, beside its sidebar, with search, notifications, and Create; or a sign-in page's.",
       },
       {
+        slug: "globe",
+        title: "Globe",
+        purpose:
+          "The world in dots, turning slowly, with routes arcing between places, such as a site's hero or where your deliveries go.",
+      },
+      {
         slug: "kanban",
         title: "Kanban",
         purpose:

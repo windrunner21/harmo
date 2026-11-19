@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { existsSync, lstatSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
-import { basename, dirname, join, resolve, sep } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -40,6 +40,7 @@ const isPattern = ({ categories }: Listing) =>
 interface Item extends Listing {
   files: { path: string; content: string }[];
   dependencies?: string[];
+  devDependencies?: string[];
 }
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -193,18 +194,107 @@ const withStyles = (
 // The project's package manager: the one its package.json names, or the one
 // whose lockfile it has, or npm.
 const managers = [
-  { name: "bun", lockfiles: ["bun.lock", "bun.lockb"], add: ["add"] },
-  { name: "pnpm", lockfiles: ["pnpm-lock.yaml"], add: ["add"] },
-  { name: "yarn", lockfiles: ["yarn.lock"], add: ["add"] },
-  { name: "npm", lockfiles: ["package-lock.json"], add: ["install"] },
+  { name: "bun", lockfiles: ["bun.lock", "bun.lockb"], add: ["add"], dev: "--dev" },
+  { name: "pnpm", lockfiles: ["pnpm-lock.yaml"], add: ["add"], dev: "--save-dev" },
+  { name: "yarn", lockfiles: ["yarn.lock"], add: ["add"], dev: "--dev" },
+  { name: "npm", lockfiles: ["package-lock.json"], add: ["install"], dev: "--save-dev" },
 ] as const;
+const manifestAt = (folder: string): { packageManager?: unknown; workspaces?: unknown } => {
+  try {
+    return JSON.parse(readFileSync(join(folder, "package.json"), "utf8"));
+  } catch {
+    return {};
+  }
+};
+
+// The packages pnpm-workspace.yaml lists: the items under its packages key,
+// such as - 'apps/*', without quotes or comments.
+const pnpmPackages = (text: string) => {
+  const lines = text.split(/\r?\n/);
+  const start = lines.findIndex((line) => /^packages\s*:/.test(line));
+  const patterns: string[] = [];
+  if (start === -1) return patterns;
+  for (const line of lines.slice(start + 1)) {
+    if (/^\s*(#.*)?$/.test(line)) continue;
+    const item = /^\s+-\s*(["']?)(.*?)\1\s*(?:#.*)?$/.exec(line);
+    if (!item) break;
+    patterns.push(item[2] ?? "");
+  }
+  return patterns;
+};
+
+// The packages a workspace root names, from its package.json or
+// pnpm-workspace.yaml, such as apps/*; those after a ! are left out.
+const workspacesAt = (folder: string) => {
+  const { workspaces } = manifestAt(folder);
+  const listed = Array.isArray(workspaces)
+    ? workspaces
+    : Array.isArray((workspaces as { packages?: unknown } | undefined)?.packages)
+      ? (workspaces as { packages: unknown[] }).packages
+      : [];
+  let pnpm: string[] = [];
+  try {
+    pnpm = pnpmPackages(readFileSync(join(folder, "pnpm-workspace.yaml"), "utf8"));
+  } catch {
+    // Not a pnpm workspace.
+  }
+  const patterns = [...listed, ...pnpm].filter((pattern): pattern is string => typeof pattern === "string" && pattern !== "");
+  return {
+    included: patterns.filter((pattern) => !pattern.startsWith("!")),
+    excluded: patterns.filter((pattern) => pattern.startsWith("!")).map((pattern) => pattern.slice(1)),
+  };
+};
+
+// A pattern with {a,b} in it, as each pattern it stands for.
+const expanded = (pattern: string): string[] => {
+  const braces = /\{([^{}]*)\}/.exec(pattern);
+  if (!braces) return [pattern];
+  const before = pattern.slice(0, braces.index);
+  const after = pattern.slice(braces.index + braces[0].length);
+  return (braces[1] ?? "").split(",").flatMap((choice) => expanded(before + choice + after));
+};
+
+// Whether a path, such as apps/web, is one a workspace pattern names: * is
+// one folder, or part of one, and ** any number of them.
+const named = (path: string, pattern: string) => {
+  const parts = path.split(/[\\/]/).filter(Boolean);
+  const wanted = pattern.replace(/^\.\//, "").split("/").filter(Boolean);
+  const match = (at: number, from: number): boolean => {
+    if (from === wanted.length) return at === parts.length;
+    if (wanted[from] === "**") return match(at, from + 1) || (at < parts.length && match(at + 1, from));
+    const part = parts[at];
+    if (part === undefined) return false;
+    const glob = new RegExp(`^${(wanted[from] ?? "").replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*")}$`);
+    return glob.test(part) && match(at + 1, from + 1);
+  };
+  return match(0, 0);
+};
+
+// Whether the workspace whose root is this folder has the project in it.
+const memberOf = (root: string, project: string) => {
+  const { included, excluded } = workspacesAt(root);
+  const path = relative(root, project);
+  const matches = (pattern: string) => expanded(pattern).some((each) => named(path, each));
+  return included.some(matches) && !excluded.some(matches);
+};
+
+const namedIn = (manifest: { packageManager?: unknown }) =>
+  typeof manifest.packageManager === "string" ? managers.find(({ name }) => name === String(manifest.packageManager).split("@")[0]) : undefined;
+const lockedAt = (folder: string) =>
+  managers.find(({ lockfiles }) => lockfiles.some((file) => existsSync(join(folder, file)))) ??
+  (existsSync(join(folder, "pnpm-workspace.yaml")) ? managers[1] : undefined);
+
+// The project's package manager: the one its package.json names; inside a
+// workspace, the one the workspace's root names, or whose lockfile it has,
+// as installing changes the root's lockfile; otherwise the one whose
+// lockfile the project has; or npm.
 const managerOf = (project: string, manifest: { packageManager?: unknown }) => {
-  const named = typeof manifest.packageManager === "string" ? manifest.packageManager.split("@")[0] : undefined;
-  return (
-    managers.find(({ name }) => name === named) ??
-    managers.find(({ lockfiles }) => lockfiles.some((file) => existsSync(join(project, file)))) ??
-    managers[3]
-  );
+  const own = namedIn(manifest);
+  if (own) return own;
+  for (let folder = dirname(project); folder !== dirname(folder); folder = dirname(folder)) {
+    if (memberOf(folder, project)) return namedIn(manifestAt(folder)) ?? lockedAt(folder) ?? lockedAt(project) ?? managers[3];
+  }
+  return lockedAt(project) ?? managers[3];
 };
 
 // A name and version, such as @dnd-kit/core@6.3.1: its name.
@@ -250,10 +340,12 @@ const add = async (
   // Components share files, such as lib/withClass.ts, so each is written once.
   const files = new Map<string, string>();
   const dependencies = new Set<string>();
+  const devDependencies = new Set<string>();
   for (const name of requested) {
     const item = readJson<Item>("registry", `${name}.json`);
     for (const { path, content } of item.files) files.set(path, content);
     for (const dependency of item.dependencies ?? []) dependencies.add(dependency);
+    for (const dependency of item.devDependencies ?? []) devDependencies.add(dependency);
   }
   refuseOutside(base, folder, [...files.keys(), "harmo.css"]);
 
@@ -346,7 +438,11 @@ const add = async (
     );
 
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-  const listed = (name: string) => manifest.dependencies?.[name] ?? manifest.devDependencies?.[name];
+  const groups = [manifest.dependencies, manifest.devDependencies, manifest.peerDependencies, manifest.optionalDependencies];
+  // A package listed as a dependency of any kind, even with the empty range,
+  // which npm takes as any version.
+  const rangeOf = (name: string) => groups.find((group) => group !== undefined && Object.hasOwn(group, name))?.[name];
+  const listed = (name: string) => rangeOf(name) !== undefined;
   const unlisted = ["react", "react-dom"].filter((name) => !listed(name));
   if (unlisted.length > 0) {
     console.log(
@@ -355,28 +451,44 @@ const add = async (
   }
 
   // The npm packages a pattern needs, such as dnd-kit for kanban, at the
-  // versions it's tested with. One the project already lists is left as it is.
-  const needed = [...dependencies].sort();
-  const missing = needed.filter((spec) => !listed(packageName(spec)));
+  // versions it's tested with, and their types where they come apart, such
+  // as @types/three for globe, as dev dependencies. One the project already
+  // lists is left as it is.
+  const needed = [...dependencies, ...devDependencies].sort();
   const own = needed.filter((spec) => listed(packageName(spec)));
   if (own.length > 0)
     console.log(
-      `\nKept your ${own.map((spec) => `${packageName(spec)} ${listed(packageName(spec))}`).join(", ")}; Harmo is tested with ${own.join(", ")}.`,
+      `\nKept your ${own.map((spec) => `${packageName(spec)} ${rangeOf(packageName(spec)) || "*"}`).join(", ")}; Harmo is tested with ${own.join(", ")}.`,
     );
-  if (missing.length === 0) return;
   const manager = managerOf(project, manifest);
-  const command = [manager.name, ...manager.add, ...missing];
-  if (options.dryRun) return console.log(`\nWould install ${missing.join(", ")}: ${command.join(" ")}`);
-  if (!options.install) return console.log(`\nInstall what it needs:\n  ${command.join(" ")}`);
-  console.log(`\nInstalling ${missing.join(", ")} with ${manager.name}`);
-  const result = spawnSync(command[0] as string, command.slice(1), {
-    cwd: project,
-    stdio: "inherit",
-    shell: process.platform === "win32",
-  });
-  if (result.status !== 0) {
-    console.error(`\nThat didn't install. Run it yourself:\n  ${command.join(" ")}`);
-    process.exitCode = 1;
+  const installs = [
+    { specs: [...dependencies].sort(), flags: [] as string[], as: "" },
+    { specs: [...devDependencies].sort(), flags: [manager.dev], as: " as dev dependencies" },
+  ]
+    .map((group) => ({ ...group, specs: group.specs.filter((spec) => !listed(packageName(spec))) }))
+    .filter((group) => group.specs.length > 0)
+    .map((group) => ({ ...group, command: [manager.name, ...manager.add, ...group.flags, ...group.specs] }));
+  if (installs.length === 0) return;
+  if (options.dryRun) {
+    for (const { specs, as, command } of installs) console.log(`\nWould install ${specs.join(", ")}${as}: ${command.join(" ")}`);
+    return;
+  }
+  if (!options.install) {
+    console.log(`\nInstall what it needs:\n${installs.map(({ command }) => `  ${command.join(" ")}`).join("\n")}`);
+    return;
+  }
+  for (const { specs, as, command } of installs) {
+    console.log(`\nInstalling ${specs.join(", ")}${as} with ${manager.name}`);
+    const result = spawnSync(command[0] as string, command.slice(1), {
+      cwd: project,
+      stdio: "inherit",
+      shell: process.platform === "win32",
+    });
+    if (result.status !== 0) {
+      console.error(`\nThat didn't install. Run it yourself:\n${installs.map(({ command: each }) => `  ${each.join(" ")}`).join("\n")}`);
+      process.exitCode = 1;
+      return;
+    }
   }
 };
 

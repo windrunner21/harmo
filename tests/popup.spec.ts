@@ -217,6 +217,33 @@ onEachPlayground("popup", () => {
     await release(popup);
   });
 
+  test("closed, it fades out laid out, then leaves the layout once its fade has ended", async ({ page }) => {
+    const container = await example(page, "popup-placement");
+    const { popup } = await openPlacement(container);
+    await slowDown(popup);
+    await page.keyboard.press("Escape");
+    await expect(openPopup(container)).toHaveCount(0);
+    await expect(popup).toHaveAttribute("data-closing", "");
+    expect((await popup.boundingBox())?.height ?? 0).toBeGreaterThan(0);
+    await release(popup);
+    await expect(popup).not.toHaveAttribute("data-closing");
+    await expect(popup).toHaveCSS("display", "none");
+  });
+
+  test("opened again as it fades out, it fades back in from where it was, not from nothing", async ({ page }) => {
+    const container = await example(page, "popup-placement");
+    const { popup } = await openPlacement(container);
+    await slowDown(popup);
+    await page.keyboard.press("Escape");
+    await expect(openPopup(container)).toHaveCount(0);
+    await rendered(page);
+    const fading = (await motionOf(popup)).opacity;
+    await container.getByRole("button", { name: "Last 30 days" }).click();
+    await expect(openPopup(container)).toHaveCount(1);
+    expect((await motionOf(popup)).opacity).toBeGreaterThan(fading - 0.1);
+    await release(popup);
+  });
+
   test("it slides 12px away from its trigger and fades in, in 200ms, and fades out in 150ms", async ({ page }) => {
     const container = await example(page, "popup-placement");
     const popup = container.locator(".hpopup");

@@ -20,6 +20,7 @@
     // Each opening or closing voids what an earlier one left to do,
     // including one in the same task, which shares its toggle event.
     let openings = 0;
+    let closings = 0;
     popup.addEventListener("beforetoggle", (event) => {
       if (event.defaultPrevented) return;
       const opened = ++openings;
@@ -27,25 +28,44 @@
       // it fades in every browser: Firefox and Safari don't keep a closing
       // popover laid out themselves.
       if (event.newState !== "open") {
+        const closed = ++closings;
         popup.setAttribute("data-closing", "");
         popup.addEventListener(
           "toggle",
           (event) => {
             if (event.newState !== "closed") return;
             const release = () => {
-              if (opened === openings && !popup.matches(":popover-open")) popup.removeAttribute("data-closing");
+              if (closed === closings && !popup.matches(":popover-open")) popup.removeAttribute("data-closing");
             };
-            const fade = popup
-              .getAnimations()
-              .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
-            if (fade) fade.finished.then(release, release);
-            else release();
+            const fadeOf = () =>
+              popup
+                .getAnimations()
+                .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
+            const wait = (fade) => {
+              if (fade) fade.finished.then(release, release);
+              else release();
+            };
+            // Safari may start the fade a frame late.
+            const fade = fadeOf();
+            if (fade) wait(fade);
+            else requestAnimationFrame(() => wait(fadeOf()));
           },
           { once: true },
         );
         return;
       }
-      popup.removeAttribute("data-closing");
+      // Opened again as it fades out, it stays laid out until it's open, so
+      // its fade carries on from where it is. Only an opening that happens
+      // voids the closing: not one another listener turns down.
+      popup.addEventListener(
+        "toggle",
+        (event) => {
+          if (event.newState !== "open" || !popup.matches(":popover-open")) return;
+          closings += 1;
+          popup.removeAttribute("data-closing");
+        },
+        { once: true },
+      );
       const current = () => opened === openings && popup.matches(":popover-open");
       popup.toggleAttribute("data-refit");
       popup.addEventListener(
@@ -148,11 +168,14 @@
       if (popup.dataset.side === side) return;
 
       // Move to the new starting offset without animating, so the opening
-      // slide starts from the right side. Only which properties transition
-      // is changed, and put back, so a transition set on the popup inline
-      // stays as it was.
+      // slide starts from the right side; opened again as it fades out, its
+      // fade carries on. Only which properties transition is changed, and
+      // put back, so a transition set on the popup inline stays as it was.
       const transitions = popup.style.transitionProperty;
-      popup.style.transitionProperty = "none";
+      popup.style.transitionProperty = getComputedStyle(popup)
+        .transitionProperty.split(", ")
+        .map((property) => (property === "transform" ? "--hpopup-held" : property))
+        .join(", ");
       popup.dataset.side = side;
       popup.getBoundingClientRect();
       popup.style.transitionProperty = transitions;

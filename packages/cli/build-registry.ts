@@ -293,6 +293,16 @@ const dependenciesOf = (files: [string, string][]) => {
   });
 };
 
+// A package's types, where they come apart from it, as three's come in
+// @types/three: installed beside it, as a dev dependency, when the CLI tests
+// with them.
+const typesOf = (dependencies: string[]) =>
+  dependencies
+    .map((spec) => spec.slice(0, spec.lastIndexOf("@")))
+    .map((name) => `@types/${name.startsWith("@") ? name.slice(1).replace("/", "__") : name}`)
+    .filter((name) => /^\d/.test(tested[name] ?? ""))
+    .map((name) => `${name}@${tested[name]}`);
+
 // The components whose classes some code puts on its own elements, such as
 // hcard on a <form>, so their styles come with it: each class names the
 // component it starts with, the longest that matches.
@@ -376,6 +386,7 @@ for (const pattern of patterns) {
   // packages it needs, at the versions it's tested with.
   const files = patternFiles(pattern);
   const dependencies = dependenciesOf(files);
+  const devDependencies = typesOf(dependencies);
   write(`${pattern}.json`, {
     $schema: "https://ui.shadcn.com/schema/registry-item.json",
     name: pattern,
@@ -383,6 +394,7 @@ for (const pattern of patterns) {
     categories: ["pattern"],
     description: descriptions.get(pattern),
     ...(dependencies.length > 0 ? { dependencies } : {}),
+    ...(devDependencies.length > 0 ? { devDependencies } : {}),
     files: files.map(([path, content]) => ({
       path,
       type: "registry:file",

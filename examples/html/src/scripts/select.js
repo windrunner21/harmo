@@ -65,16 +65,20 @@
       const labels = picked.map((option) => option.querySelector(".hoption-label").textContent.trim());
       value.textContent = labels.length ? labels.join(", ") : placeholder;
       value.toggleAttribute("data-placeholder", labels.length === 0);
-      // What an app hears as onValueChange in React: the choice changed, by a
-      // pick or a reset.
-      if (valuesOf(picked) !== held) trigger.dispatchEvent(new CustomEvent("example-select-change", { bubbles: true }));
+      const changed = valuesOf(picked) !== held;
       held = valuesOf(picked);
 
-      if (!fallback) return;
-      const values = picked.map((option) => option.dataset.value ?? "");
-      if (multiple) for (const option of fallback.options) option.selected = values.includes(option.value);
-      else fallback.value = values[0] ?? "";
-      fallback.disabled = trigger.disabled;
+      if (fallback) {
+        const values = picked.map((option) => option.dataset.value ?? "");
+        if (multiple) for (const option of fallback.options) option.selected = values.includes(option.value);
+        else fallback.value = values[0] ?? "";
+        fallback.disabled = trigger.disabled;
+      }
+      // What an app hears as onValueChange in React: the choice changed, by a
+      // pick or a reset. Last, once the list, the trigger, and the <select>
+      // all show it, so a listener that chooses again, such as to undo a
+      // choice it refuses, isn't undone itself.
+      if (changed) trigger.dispatchEvent(new CustomEvent("example-select-change", { bubbles: true }));
     };
     if (adopting) sync();
 

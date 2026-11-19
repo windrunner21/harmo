@@ -55,14 +55,17 @@
   // the start, and not passively, is what lets that stop it in Safari. A
   // touch while the page still coasts from a swipe can't stop it; the page
   // scrolls, and the drag is cancelled.
+  // Only on a page with a board, so no other page's scrolling waits on it.
   let touchDragging = false;
-  addEventListener(
-    "touchmove",
-    (event) => {
-      if (touchDragging && event.cancelable) event.preventDefault();
-    },
-    { passive: false },
-  );
+  if (document.querySelector(".hkanban")) {
+    addEventListener(
+      "touchmove",
+      (event) => {
+        if (touchDragging && event.cancelable) event.preventDefault();
+      },
+      { passive: false },
+    );
+  }
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // Where an element sits without the slide it may be in the middle of.
@@ -117,23 +120,35 @@
         items.forEach((item, index) => {
           const menu = item.querySelector(".hkanban-menu > .hdropdown-menu");
           const separator = menu.querySelector(":scope > .hdropdown-menu-separator");
-          for (const old of menu.querySelectorAll(":scope > .hdropdown-menu-item")) {
-            if (!separator || separator.compareDocumentPosition(old) & Node.DOCUMENT_POSITION_FOLLOWING) old.remove();
+          const wanted = [];
+          if (index > 0) wanted.push([words.moveUp, "up"]);
+          if (index < items.length - 1) wanted.push([words.moveDown, "down"]);
+          for (const other of columns) if (other !== column) wanted.push([words.moveTo(titleOf(other)), String(columns.indexOf(other))]);
+          const disabled = saving.has(item);
+          const old = [...menu.querySelectorAll(":scope > .hdropdown-menu-item")].filter(
+            (each) => !separator || separator.compareDocumentPosition(each) & Node.DOCUMENT_POSITION_FOLLOWING,
+          );
+          // Unchanged, the items stay, so one in focus keeps it.
+          const same =
+            old.length === wanted.length &&
+            old.every((each, at) => each.dataset.exampleMove === wanted[at][1] && each.textContent === wanted[at][0]);
+          if (same) {
+            for (const each of old) each.disabled = disabled;
+            return;
           }
+          for (const each of old) each.remove();
           const end = menu.lastElementChild?.matches(".hdropdown-menu-scroll") ? menu.lastElementChild : null;
-          const add = (text, move) => {
+          for (const [text, move] of wanted) {
             const choice = document.createElement("button");
             choice.type = "button";
             choice.className = "hdropdown-menu-item";
             choice.setAttribute("role", "menuitem");
             choice.tabIndex = -1;
+            choice.disabled = disabled;
             choice.textContent = text;
             choice.dataset.exampleMove = move;
             menu.insertBefore(choice, end);
-          };
-          if (index > 0) add(words.moveUp, "up");
-          if (index < items.length - 1) add(words.moveDown, "down");
-          for (const other of columns) if (other !== column) add(words.moveTo(titleOf(other)), String(columns.indexOf(other)));
+          }
         });
       }
     };
@@ -195,9 +210,39 @@
         dialog.showModal();
       });
 
-    // The app saves the move, or turns it down, and the card goes back.
+    // Where a card turned down goes back: beside the cards it was between, if
+    // they're still there, so two cards turned down come back in order.
+    const restoredAt = (now, source, item) => {
+      const rest = now.filter((each) => each !== item);
+      const at = source.indexOf(item);
+      for (let earlier = at - 1; earlier >= 0; earlier--) {
+        const found = rest.indexOf(source[earlier]);
+        if (found !== -1) return found + 1;
+      }
+      for (let later = at + 1; later < source.length; later++) {
+        const found = rest.indexOf(source[later]);
+        if (found !== -1) return found;
+      }
+      return Math.min(at, rest.length);
+    };
+
+    // The app saves the move, or turns it down, and the card goes back. While
+    // a card's move saves, it can't move again: it's aria-busy, and its
+    // menu's moves are disabled.
+    const saving = new Set();
+    const busy = (item, on) => {
+      if (on) saving.add(item);
+      else saving.delete(item);
+      if (on) item.setAttribute("aria-busy", "true");
+      else item.removeAttribute("aria-busy");
+      refresh();
+    };
+    // Called as a card's save ends: the Drawer, if it shows the card,
+    // follows where it ends up.
+    let settled = () => {};
     const commit = async (item, from, to, back) => {
       let answer;
+      busy(item, true);
       const dialog = to !== from && to.dataset.exampleConfirm ? document.getElementById(to.dataset.exampleConfirm) : null;
       if (dialog) {
         answer = (await ask(dialog, item)) ? undefined : false;
@@ -205,16 +250,21 @@
         await wait(600);
         answer = item.dataset.exampleFails;
       }
-      if (answer === undefined || !item.isConnected) return;
-      slideTo(item, back.column, back.index);
+      busy(item, false);
+      if (answer === undefined || !item.isConnected) return settled(item);
+      const focused = item.contains(document.activeElement) ? document.activeElement : null;
+      slideTo(item, back.column, restoredAt(itemsOf(back.column), back.source, item));
       refresh();
+      settled(item);
+      if (focused && document.activeElement !== focused) focused.focus();
       if (answer) showError(answer);
       say(`${answer ? `${answer} ` : ""}${words.back(labelOf(item), placeOf(item))}`);
     };
 
     const moveTo = (item, to, index) => {
+      if (saving.has(item)) return;
       const from = columnOf(item);
-      const back = { column: from, index: itemsOf(from).indexOf(item) };
+      const back = { column: from, source: itemsOf(from) };
       const trigger = item.querySelector(".hkanban-menu > .hbutton");
       const permitted = verdict(item, to, from);
       if (permitted !== true) {
@@ -311,6 +361,7 @@
         keyboard,
         home,
         homeIndex: itemsOf(home).indexOf(item),
+        homeItems: itemsOf(home),
         target: home,
         allowed: true,
         x,
@@ -321,6 +372,8 @@
       markOver();
       say(words.pickedUp(labelOf(item), placeOf(item)));
     };
+
+    const landings = new WeakMap();
 
     // The copy over the card, as the keys move it.
     const follow = () => {
@@ -336,9 +389,13 @@
       markOver();
       letGo();
       if (keyboard) handleOf(item).focus();
+      // Picked up and dropped again before this landing ends, the card's own
+      // next landing shows it.
+      const landing = (landings.get(item) ?? 0) + 1;
+      landings.set(item, landing);
       const done = () => {
         overlay.remove();
-        item.removeAttribute("data-dragging");
+        if (drag?.item !== item && landings.get(item) === landing) item.removeAttribute("data-dragging");
       };
       if (still()) return done();
       const from = new DOMMatrixReadOnly(getComputedStyle(overlay).transform === "none" ? undefined : getComputedStyle(overlay).transform);
@@ -354,7 +411,7 @@
     };
 
     const drop = () => {
-      const { item, home, homeIndex, target, allowed } = drag;
+      const { item, home, homeIndex, homeItems, target, allowed } = drag;
       if (!allowed) {
         const refusal = verdict(item, target, home);
         slideTo(item, home, homeIndex);
@@ -369,7 +426,7 @@
       const index = itemsOf(column).indexOf(item);
       say(words.dropped(labelOf(item), placeOf(item)));
       finish();
-      if (column !== home || index !== homeIndex) void commit(item, home, column, { column: home, index: homeIndex });
+      if (column !== home || index !== homeIndex) void commit(item, home, column, { column: home, source: homeItems });
     };
 
     const cancel = () => {
@@ -388,6 +445,7 @@
       if (!drag) {
         if (event.key !== " " && event.key !== "Enter") return;
         event.preventDefault();
+        if (saving.has(item)) return;
         pickUp(item, { keyboard: true });
         follow();
         return;
@@ -464,10 +522,14 @@
       const middleY = y - drag.y + drag.rect.top + drag.rect.height / 2;
       const column = columnAt(middleX);
       const permitted = verdict(drag.item, column, drag.home);
+      const entered = drag.target !== column;
       drag.target = column;
       drag.allowed = permitted === true;
       markOver();
-      if (permitted !== true) return;
+      if (permitted !== true) {
+        if (entered) say(permitted);
+        return;
+      }
       const index = indexAt(column, middleY);
       const items = itemsOf(column);
       if (columnOf(drag.item) === column && items.filter((each) => each !== drag.item)[index] === items[items.indexOf(drag.item) + 1]) return;
@@ -494,7 +556,7 @@
     board.addEventListener("pointerdown", (event) => {
       if (drag || !event.isPrimary || event.button !== 0) return;
       const item = event.target.closest(".hkanban-item");
-      if (!item || event.target.closest(".hkanban-card-actions")) return;
+      if (!item || saving.has(item) || event.target.closest(".hkanban-card-actions")) return;
       const touch = event.pointerType === "touch";
       const { pointerId, clientX, clientY } = event;
       let x = clientX;
@@ -516,8 +578,11 @@
         removeEventListener("keydown", escape, true);
         document.removeEventListener("selectstart", noSelecting);
       };
+      // Escape ends the gesture: the card goes back, and nothing more happens
+      // until the pointer's up, whose click is swallowed.
+      let cancelled = false;
       const move = (moving) => {
-        if (moving.pointerId !== pointerId) return;
+        if (moving.pointerId !== pointerId || cancelled) return;
         x = moving.clientX;
         y = moving.clientY;
         if (drag) {
@@ -532,19 +597,23 @@
           begin();
         }
       };
-      const stop = (ending) => {
-        if (ending.pointerId !== pointerId) return;
-        end();
-        if (!drag || drag.keyboard) return;
-        cancelAnimationFrame(drag.frame);
-        if (ending.type === "pointercancel") return cancel();
-        // The click that follows letting go isn't a press of what's under it.
+      // The click that follows letting go isn't a press of what's under it.
+      const swallowClick = () => {
         const swallow = (click) => {
           click.preventDefault();
           click.stopPropagation();
         };
         addEventListener("click", swallow, { capture: true, once: true });
         setTimeout(() => removeEventListener("click", swallow, true));
+      };
+      const stop = (ending) => {
+        if (ending.pointerId !== pointerId) return;
+        end();
+        if (cancelled) return swallowClick();
+        if (!drag || drag.keyboard) return;
+        cancelAnimationFrame(drag.frame);
+        if (ending.type === "pointercancel") return cancel();
+        swallowClick();
         drop();
       };
       const escape = (key) => {
@@ -552,6 +621,9 @@
         key.preventDefault();
         key.stopPropagation();
         cancelAnimationFrame(drag.frame);
+        cancelled = true;
+        clearTimeout(press);
+        removeEventListener("keydown", escape, true);
         cancel();
       };
       addEventListener("pointermove", move);
@@ -581,6 +653,7 @@
       const page = drawer.querySelector(".hdrawer-footer > a");
       const resolved = columns.find((column) => titleOf(column) === resolve.dataset.exampleResolve);
       let shown = null;
+      let opening = 0;
       let filling = false;
 
       const optionsOf = (trigger) => [...document.getElementById(trigger.getAttribute("popovertarget")).querySelectorAll(".hoption")];
@@ -602,7 +675,10 @@
         resolve.disabled = columnOf(shown) === resolved;
         assignToMe.disabled = assigneeOf(shown) === assignToMe.dataset.exampleAssign;
       };
+      // While its status saves, Status can't be chosen again, and Resolve
+      // shows a spinner.
       const working = (busy) => {
+        statusTrigger.disabled = busy;
         if (busy) {
           const spinner = document.createElement("span");
           spinner.className = "hspinner";
@@ -621,6 +697,9 @@
         const open = event.target.closest("button.hkanban-card-open");
         if (!open) return;
         shown = open.closest(".hkanban-item");
+        opening += 1;
+        working(false);
+        statusTrigger.disabled = saving.has(shown);
         const title = drawer.querySelector(".hdrawer-title");
         title.textContent = open.textContent.trim();
         let description = drawer.querySelector(".hdrawer-description");
@@ -645,10 +724,16 @@
 
       // A status moves the card, by the board's rules, saved as a drag is;
       // turned down, the card and the Select go back, and the field says why.
+      // A late answer changes its card, but the Drawer only while it still
+      // shows the same opening.
       const changeStatus = async (to) => {
         const item = shown;
         const from = columnOf(item);
         if (to === from) return true;
+        if (saving.has(item)) {
+          choose(statusTrigger, titleOf(from));
+          return false;
+        }
         const permitted = verdict(item, to, from);
         if (permitted !== true) {
           statusSays(permitted);
@@ -656,24 +741,37 @@
           return false;
         }
         statusSays("");
-        const back = { column: from, index: itemsOf(from).indexOf(item) };
+        const mine = opening;
+        const back = { column: from, source: itemsOf(from) };
         slideTo(item, to, 0);
         refresh();
+        busy(item, true);
         working(true);
         let answer;
         if (board.hasAttribute("data-example-saves")) {
           await wait(600);
           answer = item.dataset.exampleFails;
         }
+        busy(item, false);
+        if (answer) {
+          slideTo(item, back.column, restoredAt(itemsOf(back.column), back.source, item));
+          refresh();
+        }
+        settled(item);
+        if (opening !== mine) return false;
         working(false);
         if (answer) {
-          slideTo(item, back.column, back.index);
-          refresh();
           statusSays(answer);
-          if (shown === item) choose(statusTrigger, titleOf(from));
+          choose(statusTrigger, titleOf(from));
         }
         update();
         return !answer;
+      };
+      settled = (item) => {
+        if (item !== shown || !drawer.open) return;
+        statusTrigger.disabled = saving.has(item);
+        choose(statusTrigger, titleOf(columnOf(item)));
+        update();
       };
       statusTrigger.addEventListener("example-select-change", () => {
         if (filling || !shown) return;

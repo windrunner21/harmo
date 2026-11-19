@@ -29,9 +29,10 @@ import {
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
+  type KeyboardCoordinateGetter,
   type UniqueIdentifier,
 } from "@dnd-kit/core";
-import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import {
   memo,
   useCallback,
@@ -105,18 +106,32 @@ const listsOf = <Card,>(columns: KanbanColumn<Card>[], cardId: (card: Card) => s
 
 const moved = (lists: Lists, item: string, to: string, index: number): Lists => {
   const from = Object.keys(lists).find((column) => lists[column]?.includes(item));
+  if (from === undefined || !Object.hasOwn(lists, to)) return lists;
   const list = (lists[to] ?? []).filter((each) => each !== item);
   const at = Math.min(index, list.length);
   if (from === to && lists[to]?.indexOf(item) === at) return lists;
   list.splice(at, 0, item);
   const next = { ...lists, [to]: list };
-  if (from !== undefined && from !== to) next[from] = (lists[from] ?? []).filter((each) => each !== item);
+  if (from !== to) next[from] = (lists[from] ?? []).filter((each) => each !== item);
   return next;
+};
+
+const restoredAt = (now: readonly string[], source: readonly string[], item: string) => {
+  const rest = now.filter((each) => each !== item);
+  const at = source.indexOf(item);
+  for (let earlier = at - 1; earlier >= 0; earlier--) {
+    const found = rest.indexOf(source[earlier] ?? "");
+    if (found !== -1) return found + 1;
+  }
+  for (let later = at + 1; later < source.length; later++) {
+    const found = rest.indexOf(source[later] ?? "");
+    if (found !== -1) return found;
+  }
+  return Math.min(at, rest.length);
 };
 
 const mouse = { activationConstraint: { distance: 4 } };
 const touch = { activationConstraint: { delay: 250, tolerance: 5 } };
-const keys = { coordinateGetter: sortableKeyboardCoordinates };
 const measuring = { droppable: { strategy: MeasuringStrategy.Always } };
 
 const easeOut = "cubic-bezier(0.215, 0.61, 0.355, 1)";
@@ -167,6 +182,7 @@ interface Target {
 interface SortableCardProps<Card> {
   id: string;
   card: Card;
+  saving: boolean;
   label: string;
   column: string;
   index: number;
@@ -184,6 +200,7 @@ const stop = (event: SyntheticEvent) => event.stopPropagation();
 function SortableCardContent<Card>({
   id,
   card,
+  saving,
   label,
   column,
   index,
@@ -197,6 +214,7 @@ function SortableCardContent<Card>({
 }: SortableCardProps<Card>) {
   const { setNodeRef, setActivatorNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id,
+    disabled: saving ? { draggable: true, droppable: false } : false,
     transition: still ? null : { duration: 200, easing: easeOut },
   });
   const content = useMemo(() => {
@@ -230,14 +248,20 @@ function SortableCardContent<Card>({
         >
           {own}
           {own && <DropdownMenuSeparator />}
-          {index > 0 && <DropdownMenuItem onClick={() => moveTo(id, column, index - 1)}>{words.moveUp}</DropdownMenuItem>}
+          {index > 0 && (
+            <DropdownMenuItem disabled={saving} onClick={() => moveTo(id, column, index - 1)}>
+              {words.moveUp}
+            </DropdownMenuItem>
+          )}
           {index < count - 1 && (
-            <DropdownMenuItem onClick={() => moveTo(id, column, index + 1)}>{words.moveDown}</DropdownMenuItem>
+            <DropdownMenuItem disabled={saving} onClick={() => moveTo(id, column, index + 1)}>
+              {words.moveDown}
+            </DropdownMenuItem>
           )}
           {targets
             .filter((other) => other.id !== column)
             .map((other) => (
-              <DropdownMenuItem key={other.id} onClick={() => moveTo(id, other.id, 0)}>
+              <DropdownMenuItem key={other.id} disabled={saving} onClick={() => moveTo(id, other.id, 0)}>
                 {words.moveTo(other.title)}
               </DropdownMenuItem>
             ))}
@@ -245,7 +269,7 @@ function SortableCardContent<Card>({
       </span>
     );
     return renderCard(card, { handle, menu });
-  }, [id, card, label, column, index, count, targets, instructions, renderCard, menuItems, moveTo, attributes, listeners, setActivatorNodeRef]);
+  }, [id, card, saving, label, column, index, count, targets, instructions, renderCard, menuItems, moveTo, attributes, listeners, setActivatorNodeRef]);
 
   return (
     <li
@@ -253,6 +277,7 @@ function SortableCardContent<Card>({
       className="hkanban-item"
       data-card={id}
       data-dragging={isDragging || undefined}
+      aria-busy={saving || undefined}
       style={{ transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined, transition }}
       onMouseDown={(event) => listeners?.onMouseDown?.(event)}
       onTouchStart={(event) => listeners?.onTouchStart?.(event)}
@@ -286,6 +311,7 @@ export const KanbanBoard = <Card,>({
   const [active, setActive] = useState<string | null>(null);
   const [target, setTarget] = useState<{ column: string; allowed: boolean } | null>(null);
   const [still, setStill] = useState(false);
+  const [pending, setPending] = useState<Record<string, { to: string; index: number }>>({});
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const latest = useRef(lists);
@@ -302,7 +328,7 @@ export const KanbanBoard = <Card,>({
 
   if (seen !== columns && !active) {
     setSeen(columns);
-    setLists(listsOf(columns, cardId));
+    setLists(Object.entries(pending).reduce((now, [item, { to, index }]) => moved(now, item, to, index), listsOf(columns, cardId)));
   }
 
   useLayoutEffect(() => {
@@ -316,6 +342,8 @@ export const KanbanBoard = <Card,>({
     board.current?.querySelector<HTMLElement>(`[data-card="${CSS.escape(item)}"] .hkanban-menu .hbutton`)?.focus();
   });
 
+  const stepping = useRef<KeyboardCoordinateGetter>(() => undefined);
+  const keys = useMemo(() => ({ coordinateGetter: ((event, args) => stepping.current(event, args)) as KeyboardCoordinateGetter }), []);
   const sensors = useSensors(useSensor(MouseSensor, mouse), useSensor(TouchSensor, touch), useSensor(KeyboardSensor, keys));
 
   const isColumn = (key: UniqueIdentifier) => String(key).startsWith(`${id}:`);
@@ -381,16 +409,26 @@ export const KanbanBoard = <Card,>({
     return canMove(card, to);
   };
 
-  const commit = async (card: Card, item: string, from: string, to: string, index: number, fromIndex: number) => {
+  const settle = (item: string) =>
+    setPending((now) => {
+      const next = { ...now };
+      delete next[item];
+      return next;
+    });
+
+  const commit = async (card: Card, item: string, from: string, to: string, index: number, source: readonly string[]) => {
     if (!onMove) return;
+    setPending((now) => ({ ...now, [item]: { to, index } }));
     let answer: KanbanAnswer;
     try {
       answer = await onMove({ card, from, to, index });
     } catch {
       answer = words.failed;
     }
+    settle(item);
     if (answer === undefined) return;
-    put(moved(latest.current, item, from, fromIndex));
+    if (board.current?.querySelector(`[data-card="${CSS.escape(item)}"]`)?.contains(document.activeElement)) focusAfter.current = item;
+    put(moved(latest.current, item, from, restoredAt(latest.current[from] ?? [], source, item)));
     if (typeof answer === "string") setError(answer);
     setStatus(`${typeof answer === "string" ? `${answer} ` : ""}${words.back(cardLabel(card), placeOf(item))}`);
   };
@@ -398,7 +436,7 @@ export const KanbanBoard = <Card,>({
   const moveTo = (item: string, to: string, index: number) => {
     const from = columnOf(item);
     const card = cards.get(item);
-    if (!from || !card) return;
+    if (!from || !card || Object.hasOwn(pending, item)) return;
     before.current = latest.current;
     focusAfter.current = item;
     const permitted = verdict(item, to);
@@ -408,15 +446,45 @@ export const KanbanBoard = <Card,>({
       return;
     }
     setError("");
-    const fromIndex = (latest.current[from] ?? []).indexOf(item);
+    const source = latest.current[from] ?? [];
     put(moved(latest.current, item, to, index));
     setStatus(words.moved(cardLabel(card), placeOf(item)));
-    void commit(card, item, from, to, index, fromIndex);
+    void commit(card, item, from, to, index, source);
+  };
+
+  const step: KeyboardCoordinateGetter = (event, { context: { active: picked, over: under, collisionRect, droppableRects } }) => {
+    const directions = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+    if (!directions.includes(event.code)) return undefined;
+    event.preventDefault();
+    if (!picked || !collisionRect) return undefined;
+    const item = String(picked.id);
+    const column = columnOf(item);
+    if (!column) return undefined;
+    const list = latest.current[column] ?? [];
+    const at = under ? list.indexOf(String(under.id)) : -1;
+    const index = at === -1 ? list.indexOf(item) : at;
+    let target: string | undefined;
+    if (event.code === "ArrowUp") target = list[index - 1];
+    else if (event.code === "ArrowDown") target = list[index + 1];
+    else {
+      const order = columns.map((each) => each.id);
+      const reversed = board.current ? getComputedStyle(board.current).direction === "rtl" : false;
+      const step = (event.code === "ArrowRight") !== reversed ? 1 : -1;
+      const next = order[order.indexOf(column) + step];
+      if (!next) return undefined;
+      const others = latest.current[next] ?? [];
+      target = others.length > 0 ? others[Math.min(index, others.length - 1)] : `${id}:${next}`;
+    }
+    const rect = target === undefined ? undefined : droppableRects.get(target);
+    if (!rect) return undefined;
+    const after = event.code === "ArrowDown";
+    return { x: rect.left, y: after ? rect.top + rect.height - collisionRect.height : rect.top };
   };
 
   const moving = useRef(moveTo);
   useLayoutEffect(() => {
     moving.current = moveTo;
+    stepping.current = step;
   });
   const move = useCallback((item: string, to: string, index: number) => moving.current(item, to, index), []);
   const targets = useMemo(() => columns.map(({ id: column, title }) => ({ id: column, title })), [columns]);
@@ -480,7 +548,7 @@ export const KanbanBoard = <Card,>({
     if (!card || !from) return;
     const permitted = to ? verdict(item, to) : true;
     if (!under || !to || permitted !== true) {
-      put(previous);
+      put(moved(latest.current, item, from, (previous[from] ?? []).indexOf(item)));
       if (typeof permitted === "string") setError(permitted);
       ended.current = `${typeof permitted === "string" ? `${permitted} ` : ""}${words.back(cardLabel(card), placeOf(item))}`;
       return;
@@ -492,14 +560,16 @@ export const KanbanBoard = <Card,>({
     ended.current = words.dropped(cardLabel(card), placeOf(item));
     const fromIndex = (previous[from] ?? []).indexOf(item);
     if (from === to && fromIndex === index) return;
-    void commit(card, item, from, to, index, fromIndex);
+    void commit(card, item, from, to, index, previous[from] ?? []);
   };
 
   const cancel = ({ active: picked }: DragCancelEvent) => {
+    const item = String(picked.id);
+    const from = columnOf(item, before.current);
     setActive(null);
     setTarget(null);
     letGo();
-    put(before.current);
+    if (from) put(moved(latest.current, item, from, (before.current[from] ?? []).indexOf(item)));
     ended.current = words.back(nameOf(picked.id), placeOf(String(picked.id)));
   };
 
@@ -567,6 +637,7 @@ export const KanbanBoard = <Card,>({
                         key={item}
                         id={item}
                         card={card}
+                        saving={Object.hasOwn(pending, item)}
                         label={cardLabel(card)}
                         column={column.id}
                         index={index}

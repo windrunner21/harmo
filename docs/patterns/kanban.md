@@ -348,8 +348,9 @@ rest:
 - **Cards**: any layout, with `renderCard`; `KanbanCard` is one. Keep the
   footer to one row: a card says more once it's opened.
 - **A long column**: give `.hkanban-column-body` a `max-block-size` and
-  `overflow-y: auto`, and it scrolls on its own; a dragged card scrolls it
-  near its edges.
+  `overflow-y: auto`, and it scrolls on its own. In React, a dragged card
+  scrolls it near its edges, as dnd kit scrolls whatever's scrollable; the
+  HTML example scrolls only the board, sideways, and the window.
 
 ## Accessibility
 

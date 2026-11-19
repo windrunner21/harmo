@@ -25,17 +25,30 @@ minor version may change an API, and says how to upgrade when it does.
   ```
 
   ```js title="After"
+  let closings = 0;
   popup.addEventListener("beforetoggle", (event) => {
     if (event.newState !== "open") {
+      const closing = ++closings;
       popup.setAttribute("data-closing", "");
-      popup.addEventListener("toggle", () => {
-        const fade = popup.getAnimations().find((each) => each.transitionProperty === "opacity");
-        const release = () => popup.removeAttribute("data-closing");
-        fade ? fade.finished.then(release, release) : release();
+      popup.addEventListener("toggle", (event) => {
+        if (event.newState !== "closed") return;
+        const release = () => {
+          if (closing === closings && !popup.matches(":popover-open")) popup.removeAttribute("data-closing");
+        };
+        const fadeOf = () => popup.getAnimations().find((each) => each.transitionProperty === "opacity");
+        const wait = (fade) => (fade ? fade.finished.then(release, release) : release());
+        // Safari may start the fade a frame late.
+        if (fadeOf()) wait(fadeOf());
+        else requestAnimationFrame(() => wait(fadeOf()));
       }, { once: true });
       return;
     }
-    popup.removeAttribute("data-closing");
+    // Opened again as it fades out, it stays laid out until it's open.
+    popup.addEventListener("toggle", (event) => {
+      if (event.newState !== "open" || !popup.matches(":popover-open")) return;
+      closings++;
+      popup.removeAttribute("data-closing");
+    }, { once: true });
     popup.setAttribute("data-measuring", "");
     const needed = popup.offsetHeight + margins;
     popup.removeAttribute("data-measuring");
@@ -56,7 +69,9 @@ minor version may change an API, and says how to upgrade when it does.
 
 - CLI: `npx harmo-ui add` installs the npm packages a pattern needs, such as
   `dnd-kit` for a board, with your project's package manager, at the
-  versions Harmo tests with; only those your project doesn't list yet.
+  versions Harmo tests with; only those your project doesn't list yet, as
+  a dependency of any kind. Inside a workspace, such as `apps/web`, it uses
+  the workspace root's package manager.
   `--no-install` prints the command instead, and `--dry-run` says what it
   would install. Nothing else installs them.
 
@@ -64,6 +79,19 @@ minor version may change an API, and says how to upgrade when it does.
   npx harmo-ui add kanban
   # Installing @dnd-kit/core@6.3.1, @dnd-kit/sortable@10.0.0 with bun
   ```
+- Globe, a pattern: the world in dots, in React and HTML, for a site's hero
+  or a picture of where your deliveries, offices, or customers are. The
+  land, from Natural Earth, twinkles and fades toward the edge; routes arc
+  between places, a light travelling each; it turns slowly, and with a
+  drag. Its controls, Pause and an arrow each way, pause all its motion and
+  turn it without dragging; it starts paused with reduced motion, and your
+  page can pause it with `paused`. The controls and dragging each turn off
+  on their own, with `controls` and `dragRotate`. A globe that doesn't turn
+  on its own and has no routes is still, without Pause. Drawn with three.js, only while it's on
+  screen, in Harmo's colors in light and dark mode.
+  `npx harmo-ui add globe` copies it, and installs three, with its types.
+- CLI: a pattern's type packages, such as `@types/three`, install as dev
+  dependencies, beside the packages it needs.
 - Kanban, a pattern: a board of columns, in React and HTML, for anything that
   moves through stages, such as tasks or support tickets. Cards are dragged
   with a mouse, by a long press on a touch screen, or from the keys, within

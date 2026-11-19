@@ -13,7 +13,9 @@
               "@types/bun": "1.4.4",
               "@types/react": "^19",
               "@types/react-dom": "^19",
+              "@types/three": "0.187.0",
               "chrono-node": "2.10.3",
-              "libphonenumber-js": "1.13.16"
+              "libphonenumber-js": "1.13.16",
+              "three": "0.187.0"
        }
 }

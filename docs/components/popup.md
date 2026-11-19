@@ -102,7 +102,7 @@ panel lays out its own content.
 | Focus, back on the trigger | When a popup opened over another closes with focus inside it, once its `toggle` event says it closed, not when it opened again at once; browsers do this only for the first popup open |
 | `data-side="top"` on the popup | Before opening, when it will land above its trigger: when it fits there and not below, or, with `data-preferred-side="top"`, whenever it fits there; and before closing, when it's above. Without room on either side, it shrinks below. CSS can't tell which side it landed on |
 | `data-measuring` on the popup, set and removed at once | Before opening, around measuring its height for its side: still closed, it isn't laid out otherwise. It stays unseen |
-| `data-closing` on the popup | Before closing, so it stays laid out for its fade; removed once its fade has ended, through `getAnimations()`, and as it next opens |
+| `data-closing` on the popup | Before closing, so it stays laid out for its fade; removed once its fade has ended, found through `getAnimations()`, a frame later where Safari starts it late, or once it's open again, when it's reopened as it fades |
 | `data-pinned` on the popup, with `--hpopup-pinned-top`, `-left`, `-width`, and `-height` from its box, less the slide still under way if it closes as it opens | Before closing, so it fades where it is; removed as it next opens |
 
 In `beforetoggle`, when opening, remove `data-pinned` and toggle `data-refit`

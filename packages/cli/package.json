@@ -40,8 +40,10 @@
               "@types/node": "26.6.6",
               "@types/react": "^19",
               "@types/react-dom": "^19",
+              "@types/three": "0.187.0",
               "react": "19.3.0",
               "react-dom": "19.3.0",
+              "three": "0.187.0",
               "typescript": "^5"
        }
 }

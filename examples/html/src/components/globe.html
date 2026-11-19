@@ -1,0 +1,88 @@
+<play-example title="Routes" layout="wide">
+  <play-note>
+    The world in dots, turning slowly, with routes from Valencia, Nairobi,
+    Lima, and Auckland to London, a light travelling each. Drag it, or
+    press the arrows, to turn it; Pause stops it, its twinkle, and its
+    lights. Named with <code>aria-label</code>, it's an image to a screen
+    reader. With reduced motion, it starts paused.
+  </play-note>
+  <div style="inline-size:100%;max-inline-size:26rem;margin-inline:auto">
+    <div class="hglobe" data-example-routes="39.47,-0.38 51.51,-0.13; -1.29,36.82 51.51,-0.13; -12.05,-77.04 51.51,-0.13; -36.85,174.76 51.51,-0.13">
+      <div class="hglobe-view" role="img" aria-label="Produce shipped to London from Valencia, Nairobi, Lima, and Auckland">
+        <canvas class="hglobe-canvas"></canvas>
+      </div>
+      <div class="hglobe-controls" role="group" aria-label="Globe">
+        <button type="button" aria-label="Turn left" class="hbutton" data-variant="tertiary" data-size="small"><play-icon name="arrow-left" class="hicon"></play-icon></button>
+        <button type="button" aria-label="Pause" aria-pressed="false" class="hbutton" data-variant="tertiary" data-size="small">
+          <play-icon name="pause" class="hicon hglobe-pause-icon"></play-icon>
+          <play-icon name="play" class="hicon hglobe-play-icon"></play-icon>
+        </button>
+        <button type="button" aria-label="Turn right" class="hbutton" data-variant="tertiary" data-size="small"><play-icon name="arrow-right" class="hicon"></play-icon></button>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Centered on a place" layout="wide">
+  <play-note>
+    Centered on Asia, and still: it doesn't turn on its own, and has no
+    routes, so its dots don't twinkle, and it has no Pause. The arrows, or
+    a drag, turn it.
+  </play-note>
+  <div style="inline-size:100%;max-inline-size:26rem;margin-inline:auto">
+    <div class="hglobe" data-example-center="30,100" data-example-not-turning>
+      <div class="hglobe-view" role="img" aria-label="The world, centered on Asia">
+        <canvas class="hglobe-canvas"></canvas>
+      </div>
+      <div class="hglobe-controls" role="group" aria-label="Globe">
+        <button type="button" aria-label="Turn left" class="hbutton" data-variant="tertiary" data-size="small"><play-icon name="arrow-left" class="hicon"></play-icon></button>
+        <button type="button" aria-label="Turn right" class="hbutton" data-variant="tertiary" data-size="small"><play-icon name="arrow-right" class="hicon"></play-icon></button>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Beside a heading" layout="wide">
+  <play-note>
+    A site's hero: the globe beside its heading, as decoration, so screen
+    readers skip it, its controls still there, as it moves. The heading and
+    the layout are stand-ins.
+  </play-note>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(16rem, 1fr));align-items:center;gap:var(--harmo-space-lg)">
+    <div>
+      <h2 style="margin:0;font-size:var(--harmo-font-size-lg);color:var(--harmo-color-text)">Fresh produce from 40 countries</h2>
+      <p style="margin:var(--harmo-space-2xs) 0 0;color:var(--harmo-color-text-secondary)">
+        Picked at its best, shipped the same week, and at your door the morning it lands.
+      </p>
+    </div>
+    <div class="hglobe" data-example-routes="39.47,-0.38 51.51,-0.13; -1.29,36.82 51.51,-0.13; -12.05,-77.04 51.51,-0.13; -36.85,174.76 51.51,-0.13">
+      <div class="hglobe-view" aria-hidden="true">
+        <canvas class="hglobe-canvas"></canvas>
+      </div>
+      <div class="hglobe-controls" role="group" aria-label="Globe">
+        <button type="button" aria-label="Turn left" class="hbutton" data-variant="tertiary" data-size="small"><play-icon name="arrow-left" class="hicon"></play-icon></button>
+        <button type="button" aria-label="Pause" aria-pressed="false" class="hbutton" data-variant="tertiary" data-size="small">
+          <play-icon name="pause" class="hicon hglobe-pause-icon"></play-icon>
+          <play-icon name="play" class="hicon hglobe-play-icon"></play-icon>
+        </button>
+        <button type="button" aria-label="Turn right" class="hbutton" data-variant="tertiary" data-size="small"><play-icon name="arrow-right" class="hicon"></play-icon></button>
+      </div>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Without controls" layout="wide">
+  <play-note>
+    Turning and twinkling as the others do, without its controls; a drag
+    still turns it. Use it this way where your page has its own way to
+    pause motion, and passes it to <code>paused</code>. With reduced
+    motion, it starts paused.
+  </play-note>
+  <div style="inline-size:100%;max-inline-size:26rem;margin-inline:auto">
+    <div class="hglobe" data-example-routes="39.47,-0.38 51.51,-0.13; -1.29,36.82 51.51,-0.13; -12.05,-77.04 51.51,-0.13; -36.85,174.76 51.51,-0.13">
+      <div class="hglobe-view" role="img" aria-label="Produce shipped to London from Valencia, Nairobi, Lima, and Auckland">
+        <canvas class="hglobe-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+</play-example>

@@ -228,7 +228,17 @@ const TicketBoard = () => {
   const [shownId, setShownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [statusError, setStatusError] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [savingIds, setSavingIds] = useState<readonly string[]>([]);
+  const opening = useRef(0);
+  const saving = shownId !== null && savingIds.includes(shownId);
+
+  // One save at a time for each ticket, from the board or the Drawer.
+  const saveOne = async (move: KanbanMove<Ticket>) => {
+    setSavingIds((now) => [...now, move.card.id]);
+    const answer = await save(move);
+    setSavingIds((now) => now.filter((id) => id !== move.card.id));
+    return answer;
+  };
 
   const placeOf = (id: string) => {
     for (const column of columns) {
@@ -248,20 +258,20 @@ const TicketBoard = () => {
   // A status chosen in the Drawer moves the card, by the board's rules, and
   // is saved as a drag is.
   const changeStatus = async (to: string) => {
-    if (!shown || shown.status === to) return true;
+    if (!shown || shown.status === to || saving) return true;
     const permitted = canResolve(shown.ticket, to);
     if (permitted !== true) {
       setStatusError(permitted);
       return false;
     }
     setStatusError("");
+    const mine = opening.current;
     const move = { card: shown.ticket, from: shown.status, to, index: 0 };
     setColumns((now) => moveIn(now, move));
-    setSaving(true);
-    const answer = await save(move);
-    setSaving(false);
-    if (!answer) return true;
+    const answer = await saveOne(move);
+    if (!answer) return opening.current === mine;
     setColumns((now) => moveIn(now, { card: shown.ticket, from: to, to: shown.status, index: shown.index }));
+    if (opening.current !== mine) return false;
     setStatusError(answer);
     return false;
   };
@@ -276,7 +286,8 @@ const TicketBoard = () => {
         emptyLabel="No tickets"
         canMove={canResolve}
         onMove={async (move) => {
-          const answer = await save(move);
+          if (savingIds.includes(move.card.id)) return `Ticket ${move.card.number} is still saving. Try again in a moment.`;
+          const answer = await saveOne(move);
           if (answer) return answer;
           setColumns((now) => moveIn(now, move));
         }}
@@ -286,6 +297,7 @@ const TicketBoard = () => {
             title={each.subject}
             description={`#${each.number} · ${each.customer}`}
             onOpen={() => {
+              opening.current += 1;
               setShownId(each.id);
               setStatusError("");
               setOpen(true);
@@ -329,7 +341,7 @@ const TicketBoard = () => {
       >
         <div style={{ display: "grid", gap: "var(--harmo-space-sm)" }}>
           <p style={{ margin: 0 }}>{ticket?.message}</p>
-          <Select label="Status" value={shown?.status ?? "open"} onValueChange={changeStatus} error={statusError}>
+          <Select label="Status" value={shown?.status ?? "open"} onValueChange={changeStatus} error={statusError} disabled={saving}>
             {columns.map((column) => (
               <Option key={column.id} value={column.id}>
                 {column.title}

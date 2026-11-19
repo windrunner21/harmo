@@ -14,6 +14,7 @@ change its words, its fields, and what it does, as you would your own code.
 | [Chat](chat.md) | An AI chat beside your past chats, a copilot beside your app's content, or a support chat that opens from a corner and hands over to a person |
 | [Footers](footers.md) | The foot of a page: a site's, with groups of links that fold on a phone; one with a newsletter sign-up; or a sign-in page's |
 | [Headers](headers.md) | The bar across the top: a site's, with a menu that slides in under it on a phone; an app's, beside its sidebar, with search, notifications, and Create; or a sign-in page's |
+| [Globe](globe.md) | The world in dots, turning slowly, with routes arcing between places, such as a site's hero or where your deliveries go |
 | [Kanban](kanban.md) | A board of columns whose cards are dragged from one to another, or moved from each card's menu, such as tasks or support tickets |
 | [Contact Form](contact-form.md) | A message, a sales inquiry, a support request, or help with an order, and cards that lead to them |
 

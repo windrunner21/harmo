@@ -10,7 +10,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join, normalize } from "node:path";
+import { delimiter, dirname, join, normalize } from "node:path";
 import { sharedClasses } from "../shared-styles.js";
 
 // Runs the built CLI in Node, as npx would, in a throwaway project. Those projects
@@ -168,7 +168,7 @@ describe("add", () => {
 
   for (const name of names) {
     test(`${name} brings every file it imports, and the styles of every class it uses`, () => {
-      expect(run("add", name).code).toBe(0);
+      expect(run("add", name, "--no-install").code).toBe(0);
       const files = copied();
       const code = files.filter((file) => /\.tsx?$/.test(file));
       const styles = files
@@ -363,7 +363,8 @@ describe("add", () => {
       .filter((item: { categories?: string[] }) => item.categories?.includes("pattern"))
       .map((item: { name: string }) => item.name);
     expect(patterns.length).toBeGreaterThan(1);
-    expect(run("add", ...patterns).code).toBe(0);
+    // Without installing what they need: the copies find it in this package.
+    expect(run("add", ...patterns, "--no-install").code).toBe(0);
     write(
       "tsconfig.json",
       JSON.stringify({
@@ -704,11 +705,16 @@ describe("a pattern's npm packages", () => {
   const fakeManager = (name: string, fails = false) => {
     const bin = mkdtempSync(join(output, "bin-"));
     copies.push(bin);
-    writeFileSync(join(bin, name), `#!/bin/sh\necho "${name} $@" > "${join(project, "asked.txt")}"\n${fails ? "exit 1\n" : ""}`, { mode: 0o755 });
+    const asked = join(project, "asked.txt");
+    if (process.platform === "win32") {
+      writeFileSync(join(bin, `${name}.cmd`), `@echo ${name} %*>> "${asked}"\r\n${fails ? "@exit /b 1\r\n" : ""}`);
+    } else {
+      writeFileSync(join(bin, name), `#!/bin/sh\necho "${name} $@" >> "${asked}"\n${fails ? "exit 1\n" : ""}`, { mode: 0o755 });
+    }
     return bin;
   };
   const runOnPath = (bin: string, tool: string, ...args: string[]) => {
-    const result = Bun.spawnSync(["node", tool, ...args], { cwd: project, env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } });
+    const result = Bun.spawnSync(["node", tool, ...args], { cwd: project, env: { ...process.env, PATH: `${bin}${delimiter}${process.env.PATH}` } });
     return { code: result.exitCode, out: result.stdout.toString(), err: result.stderr.toString() };
   };
 
@@ -736,6 +742,72 @@ describe("a pattern's npm packages", () => {
     const { out } = runWith(board(), "add", "board", "--no-install");
     expect(out).toContain("Kept your @dnd-kit/core ^6.0.0; Harmo is tested with @dnd-kit/core@6.3.1.");
     expect(out).toContain("npm install @dnd-kit/sortable@10.0.0");
+    expect(out).not.toContain("npm install @dnd-kit/core");
+  });
+
+  test("a package's types, where they come apart from it, install as dev dependencies", () => {
+    write("bun.lock", "");
+    const globe = cliWith([
+      {
+        name: "globe",
+        categories: ["pattern"],
+        dependencies: ["three@0.187.0"],
+        devDependencies: ["@types/three@0.187.0"],
+        files: [{ path: "patterns/globe/Globe.tsx", content: "export const Globe = () => null;\n" }],
+      } as Item,
+    ]);
+    const { code, out } = runOnPath(fakeManager("bun"), globe, "add", "globe");
+    expect(code).toBe(0);
+    expect(out).toContain("Installing three@0.187.0 with bun");
+    expect(out).toContain("Installing @types/three@0.187.0 as dev dependencies with bun");
+    expect(read("asked.txt").trim().split(/\r?\n/)).toEqual(["bun add three@0.187.0", "bun add --dev @types/three@0.187.0"]);
+    write("package.json", JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0", three: "^0.180.0" } }));
+    expect(runWith(globe, "add", "globe", "--no-install", "--overwrite").out).toContain("Install what it needs:\n  bun add --dev @types/three@0.187.0");
+  });
+
+  test("inside a workspace, the root's package manager installs, into the package", () => {
+    write("package.json", JSON.stringify({ private: true }));
+    write("pnpm-workspace.yaml", "packages:\n  - 'apps/*'\n");
+    write("pnpm-lock.yaml", "");
+    const web = join(project, "apps", "web");
+    mkdirSync(web, { recursive: true });
+    writeFileSync(join(web, "package.json"), JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0" } }));
+    const result = Bun.spawnSync(["node", board(), "add", "board", "--no-install"], { cwd: web });
+    expect(result.stdout.toString()).toContain("pnpm add @dnd-kit/core@6.3.1 @dnd-kit/sortable@10.0.0");
+  });
+
+  test("in a workspace, its root decides, by a pnpm list with comments, exclusions, and braces", () => {
+    write("package.json", JSON.stringify({ private: true }));
+    write("pnpm-workspace.yaml", "packages:\n  - apps/* # the apps\n  - '!apps/legacy'\nonlyBuiltDependencies:\n  - esbuild\n");
+    const member = (path: string) => {
+      const folder = join(project, path);
+      mkdirSync(folder, { recursive: true });
+      writeFileSync(join(folder, "package.json"), JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0" } }));
+      return folder;
+    };
+    const manager = (folder: string) => Bun.spawnSync(["node", board(), "add", "board", "--no-install"], { cwd: folder }).stdout.toString();
+    const web = member("apps/web");
+    // A lockfile left in the package doesn't count against the root's.
+    writeFileSync(join(web, "package-lock.json"), "{}");
+    expect(manager(web)).toContain("pnpm add @dnd-kit/core@6.3.1");
+    expect(manager(member("apps/legacy"))).toContain("npm install @dnd-kit/core@6.3.1");
+    expect(manager(member("esbuild"))).toContain("npm install @dnd-kit/core@6.3.1");
+
+    write("pnpm-workspace.yaml", "");
+    write("package.json", JSON.stringify({ private: true, packageManager: "yarn@4.5.0", workspaces: ["{apps,sites}/*"] }));
+    expect(manager(member("sites/docs"))).toContain("yarn add @dnd-kit/core@6.3.1");
+  });
+
+  test("a package the project lists, even with the empty range, is kept as it is", () => {
+    write("package.json", JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0", "@dnd-kit/sortable": "" } }));
+    const { out } = runWith(board(), "add", "board", "--no-install");
+    expect(out).toContain("Kept your @dnd-kit/sortable *");
+  });
+
+  test("a package the project lists as a peer dependency is kept as it is", () => {
+    write("package.json", JSON.stringify({ dependencies: { react: "19.3.0", "react-dom": "19.3.0" }, peerDependencies: { "@dnd-kit/core": "^6.0.0" } }));
+    const { out } = runWith(board(), "add", "board", "--no-install");
+    expect(out).toContain("Kept your @dnd-kit/core ^6.0.0");
     expect(out).not.toContain("npm install @dnd-kit/core");
   });
 

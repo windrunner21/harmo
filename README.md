@@ -186,6 +186,7 @@ form action such as a Next.js server action, and works without JavaScript.
 | [Account Forms](docs/patterns/account-forms.md) | Signs someone in, creates an account, or sends a link to reset a password, switching between them in place, such as in a Dialog |
 | [Verify Code](docs/patterns/verify-code.md) | Asks for a one-time code, such as a sign-in's second step or one that confirms an email, with a new code after a wait |
 | [Chat](docs/patterns/chat.md) | A conversation with an assistant: an AI chat, a copilot beside your app's content, or a support chat that opens from a corner |
+| [Globe](docs/patterns/globe.md) | The world in dots, turning slowly, with routes arcing between places, drawn with three.js |
 | [Kanban](docs/patterns/kanban.md) | A board whose cards are dragged from column to column, or moved from each card's menu, saving each move with your app |
 | [Contact Form](docs/patterns/contact-form.md) | Lets people reach your team: a message, a sales inquiry, a support request, and help with an order |
 

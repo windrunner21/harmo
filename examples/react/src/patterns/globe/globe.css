@@ -1,0 +1,52 @@
+/* Globe: the world in dots, turning slowly, with routes arcing between
+   places, a light travelling each, drawn with three.js on a canvas. Square,
+   as wide as its container, with its controls in the corner: turn left,
+   pause, and turn right. Its colors are Harmo's, in light and dark mode,
+   read from these properties as it draws: the sphere, the land's dots,
+   which twinkle and fade toward the edge, and the routes, with a dot at
+   each end. */
+
+.hglobe {
+  --hglobe-sphere-color: var(--harmo-color-background-secondary);
+  --hglobe-dot-color: var(--harmo-color-text-tertiary);
+  --hglobe-route-color: var(--harmo-color-primary);
+
+  position: relative;
+
+  aspect-ratio: 1;
+  inline-size: 100%;
+}
+
+:is(.hglobe, .hglobe-view, .hglobe-canvas, .hglobe-controls)[hidden] {
+  display: none;
+}
+
+.hglobe-view {
+  block-size: 100%;
+}
+
+/* While a drag turns it, its script gives it a grab cursor, and on a touch
+   screen, takes only sideways drags, so a swipe up or down still scrolls
+   the page. */
+.hglobe-canvas {
+  display: block;
+
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* Small tertiary Buttons in the bottom corner, where the round globe leaves
+   room. Pause shows play while it's pressed: paused. */
+.hglobe-controls {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+
+  display: flex;
+  gap: 0.125rem;
+}
+
+.hglobe-controls [aria-pressed="true"] > .hglobe-pause-icon,
+.hglobe-controls [aria-pressed="false"] > .hglobe-play-icon {
+  display: none;
+}

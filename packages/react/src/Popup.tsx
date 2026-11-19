@@ -119,6 +119,7 @@ export const placePopup = (popup: HTMLElement, opening: boolean) => {
 };
 
 const openings = new WeakMap<HTMLElement, number>();
+const closings = new WeakMap<HTMLElement, number>();
 
 // In beforetoggle. A change to its fallbacks makes the browser forget where
 // it last fit, so an opening popup is placed afresh. They change again once
@@ -133,10 +134,23 @@ export const refitPopup = (popup: HTMLElement, opening: boolean) => {
   const opened = (openings.get(popup) ?? 0) + 1;
   openings.set(popup, opened);
   if (!opening) {
-    holdClosing(popup, () => openings.get(popup) === opened && !popup.matches(":popover-open"));
+    const closed = (closings.get(popup) ?? 0) + 1;
+    closings.set(popup, closed);
+    holdClosing(popup, () => closings.get(popup) === closed && !popup.matches(":popover-open"));
     return;
   }
-  popup.removeAttribute("data-closing");
+  // Opened again as it fades out, it stays laid out until it's open, so its
+  // fade carries on from where it is. Only an opening that happens voids the
+  // closing: not one another listener turns down.
+  popup.addEventListener(
+    "toggle",
+    (event) => {
+      if ((event as ToggleEvent).newState !== "open" || !popup.matches(":popover-open")) return;
+      closings.set(popup, (closings.get(popup) ?? 0) + 1);
+      popup.removeAttribute("data-closing");
+    },
+    { once: true },
+  );
   const current = () => openings.get(popup) === opened && popup.matches(":popover-open");
   popup.toggleAttribute("data-refit");
   popup.addEventListener(
@@ -169,11 +183,18 @@ const holdClosing = (popup: HTMLElement, current: () => boolean) => {
       const release = () => {
         if (current()) popup.removeAttribute("data-closing");
       };
-      const fade = popup
-        .getAnimations()
-        .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
-      if (fade) fade.finished.then(release, release);
-      else release();
+      const fadeOf = () =>
+        popup
+          .getAnimations()
+          .find((animation) => animation instanceof CSSTransition && animation.transitionProperty === "opacity");
+      const wait = (fade: Animation | undefined) => {
+        if (fade) fade.finished.then(release, release);
+        else release();
+      };
+      // Safari may start the fade a frame late.
+      const fade = fadeOf();
+      if (fade) wait(fade);
+      else requestAnimationFrame(() => wait(fadeOf()));
     },
     { once: true },
   );
@@ -221,8 +242,12 @@ const placeSide = (popup: HTMLElement, opening: boolean) => {
   }
   if (popup.dataset.side === side) return;
 
+  // Only its slide jumps: opened again as it fades out, its fade carries on.
   const transitions = popup.style.transitionProperty;
-  popup.style.transitionProperty = "none";
+  popup.style.transitionProperty = getComputedStyle(popup)
+    .transitionProperty.split(", ")
+    .map((property) => (property === "transform" ? "--hpopup-held" : property))
+    .join(", ");
   popup.dataset.side = side;
   popup.getBoundingClientRect();
   popup.style.transitionProperty = transitions;

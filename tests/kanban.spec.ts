@@ -88,6 +88,21 @@ onEachPlayground("kanban", () => {
     await expect(board.getByRole("button", { name: "Move Write the delivery FAQ" })).toBeFocused();
   });
 
+  test("from the keys, a card moves down one place at a time, and back up", async ({ page }) => {
+    const board = (await example(page, "kanban-task-board")).getByRole("region", { name: "Website launch" });
+    await board.getByRole("button", { name: "Move Photograph the autumn menu" }).focus();
+    await page.keyboard.press("Space");
+    await expect(board.locator(".hkanban-overlay")).toBeVisible();
+    await rendered(page);
+    for (const key of ["ArrowDown", "ArrowDown", "ArrowUp"]) {
+      await page.keyboard.press(key);
+      await rendered(page);
+    }
+    await page.keyboard.press("Space");
+    await expect(heard(page, "Dropped Photograph the autumn menu in To do, 2 of 3.")).toHaveCount(1);
+    await expect(cardsIn(board, "To do")).toHaveText(["Write the delivery FAQ", "Photograph the autumn menu", "Send the October newsletter"]);
+  });
+
   test("from the keys, Escape puts the card back", async ({ page }) => {
     const board = (await example(page, "kanban-task-board")).getByRole("region", { name: "Website launch" });
     await board.getByRole("button", { name: "Move Write the delivery FAQ" }).focus();
@@ -190,7 +205,22 @@ onEachPlayground("kanban", () => {
     await expect(cardsIn(board, "Resolved")).toContainText(["Order arrived without the eggs"]);
   });
 
-  test("a status chosen in the Drawer that doesn't save comes back, and the field says why", async ({ page }) => {
+  test("while a card's move saves, it can't move again: its menu's moves are disabled until the answer", async ({ page }) => {
+    const board = (await example(page, "kanban-support-tickets")).getByRole("region", { name: "Support tickets" });
+    const card = board.locator(".hkanban-item").filter({ hasText: "Can't change my delivery window" });
+    const menu = await openMenu(board, "Ticket 1039, Can't change my delivery window");
+    await clickAt(page, menu.getByRole("menuitem", { name: "Move to Waiting on customer" }));
+    await expect(card).toHaveAttribute("aria-busy", "true");
+    const again = await openMenu(board, "Ticket 1039, Can't change my delivery window");
+    await expect(again.getByRole("menuitem", { name: "Move to Resolved" })).toBeDisabled();
+    await page.keyboard.press("Escape");
+    await expect(card).not.toHaveAttribute("aria-busy");
+    await expect(cardsIn(board, "Open")).toContainText(["Can't change my delivery window"]);
+    const after = await openMenu(board, "Ticket 1039, Can't change my delivery window");
+    await expect(after.getByRole("menuitem", { name: "Move to Resolved" })).toBeEnabled();
+  });
+
+  test("a status chosen in the Drawer can't be chosen again as it saves; one that doesn't save comes back, and the field says why", async ({ page }) => {
     const board = (await example(page, "kanban-support-tickets")).getByRole("region", { name: "Support tickets" });
     await board.getByRole("button", { name: "Can't change my delivery window", exact: true }).click();
     const drawer = page.getByRole("dialog", { name: "Can't change my delivery window" });
@@ -198,7 +228,10 @@ onEachPlayground("kanban", () => {
     await status.click();
     await clickAt(page, drawer.getByRole("option", { name: "Waiting on customer" }));
     await expect(countOf(board, "Waiting on customer")).toHaveText("2");
+    // Until the answer, it can't be chosen again.
+    await expect(status).toBeDisabled();
     await expect(countOf(board, "Waiting on customer")).toHaveText("1");
+    await expect(status).toBeEnabled();
     await expect(status).toHaveText("Open");
     await expect(status).toHaveAccessibleDescription("Sam is editing ticket 1039. Try again once they're done.");
   });

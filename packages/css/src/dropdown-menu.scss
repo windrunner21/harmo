@@ -150,30 +150,19 @@ $sub-fallbacks: flip-inline, flip-block, --hdropdown-menu-sub-fit,
   }
 }
 
-// Closed, a submenu takes no room. A closed Popup stays laid out, for its
-// fade, and while the menu slides in, its transform makes the menu the
-// submenu's containing block, so the submenu would make it scroll. It still
-// fades out as it closes, its display changing as the fade ends.
+// A submenu fades, and doesn't slide: pinned as it closes too. Closed, it
+// takes no room, as any closed Popup, which keeps it laid out only for its
+// fade, with data-closing.
 .hpopup.hdropdown-menu .hpopup.hdropdown-menu {
-  // Pinned as it closes too, so it never slides.
   --hpopup-slide: 0px;
 
   transition:
     opacity $duration-normal $ease-out-cubic,
     visibility 0s,
-    overlay $duration-normal allow-discrete,
-    display $duration-normal allow-discrete;
+    overlay $duration-normal allow-discrete;
 
   &:not(:popover-open) {
-    display: none;
-
     transition-duration: $duration-fast;
-  }
-
-  @starting-style {
-    &:popover-open {
-      opacity: 0;
-    }
   }
 }
 

@@ -12,6 +12,7 @@ const patterns = [
   ["Chat", "chat"],
   ["Contact Form", "contact-form"],
   ["Footers", "footers"],
+  ["Globe", "globe"],
   ["Headers", "headers"],
   ["Kanban", "kanban"],
   ["Reset Password", "reset-password"],
