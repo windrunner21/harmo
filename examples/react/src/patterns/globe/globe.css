@@ -4,10 +4,11 @@
    pause, and turn right. Its colors are Harmo's, in light and dark mode,
    read from these properties as it draws: the sphere, the land's dots,
    which twinkle and fade toward the edge, and the routes, with a dot at
-   each end. */
+   each end. The sphere is a step past the secondary background, so it shows
+   on a page in either background. */
 
 .hglobe {
-  --hglobe-sphere-color: var(--harmo-color-background-secondary);
+  --hglobe-sphere-color: var(--harmo-color-background-active);
   --hglobe-dot-color: var(--harmo-color-text-tertiary);
   --hglobe-route-color: var(--harmo-color-primary);
 

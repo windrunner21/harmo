@@ -215,7 +215,8 @@ and Pause toggles its `aria-pressed` and calls `setPaused`.
 ## Customize
 
 - **Colors**: `--hglobe-sphere-color`, `--hglobe-dot-color`, and
-  `--hglobe-route-color`, on `.hglobe`: the background secondary, the
+  `--hglobe-route-color`, on `.hglobe`: the active background, a step past
+  the secondary, so the sphere shows on either page background, the
   tertiary text, and the primary color by default. A color with
   transparency makes the sphere, the dots, or the routes see-through.
 - **Size**: its container's width, as large as you like; it's square.
@@ -243,7 +244,7 @@ and Pause toggles its `aria-pressed` and calls `setPaused`.
 
 ## Design details
 
-- **Globe**: a sphere in `--harmo-color-background-secondary`; the land's
+- **Globe**: a sphere in `--harmo-color-background-active`; the land's
   dots in `--harmo-color-text-tertiary`, twinkling slowly, each on its own
   beat, and fading toward the edge, so it reads as round; seen at 32°,
   filling nine tenths of its box.
