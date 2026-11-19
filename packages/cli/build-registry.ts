@@ -223,7 +223,7 @@ const patternCopyOf = (folder: string, file: string) => {
   const others = new Set<string>();
   const helperFiles = new Set<string>();
   const code = readFileSync(join(patternSource, folder, file), "utf8")
-    .replace(/(from\s*")(\.\.?\/[^"]+)(")/g, (_, before: string, specifier: string, after: string) => {
+    .replace(/((?:from\s*|import\()")(\.\.?\/[^"]+)(")/g, (_, before: string, specifier: string, after: string) => {
       const path = normalize(join(folder, specifier));
       const owner = path.split("/")[0] ?? "";
       if (patterns.includes(owner)) {

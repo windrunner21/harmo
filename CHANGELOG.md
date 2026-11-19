@@ -96,10 +96,11 @@ on it move.
   turn it without dragging; it starts paused with reduced motion, and your
   page can pause it with `paused`. The controls and dragging each turn off
   on their own, with `controls` and `dragRotate`. A globe that doesn't turn
-  on its own and has no routes is still, without Pause. Drawn with
-  three.js, only while it's on screen, in Harmo's colors in light and dark
-  mode. `npx harmo-ui add globe` copies it, and installs three, with its
-  types.
+  on its own and has no routes is still, without Pause, and new routes
+  change it as it is, facing where it faces. Drawn with three.js, which
+  loads as a file of its own once a Globe is on the page, only while it's
+  on screen, in Harmo's colors in light and dark mode. `npx harmo-ui add
+  globe` copies it, and installs three, with its types.
 - Kanban, a pattern: a board of columns, in React and HTML, for anything that
   moves through stages, such as tasks or support tickets. Cards are dragged
   with a mouse, by a long press on a touch screen, or from the keys, within

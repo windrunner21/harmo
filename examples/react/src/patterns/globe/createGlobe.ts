@@ -1,8 +1,11 @@
 import {
+  type BufferAttribute,
   BufferGeometry,
   Color,
   DynamicDrawUsage,
   Float32BufferAttribute,
+  Group,
+  type InterleavedBufferAttribute,
   Line,
   LineBasicMaterial,
   Mesh,
@@ -41,6 +44,9 @@ export interface GlobeOptions {
 
 export interface GlobeHandle {
   setPaused: (paused: boolean) => void;
+  setRoutes: (routes: GlobeRoute[]) => void;
+  setAutoRotate: (autoRotate: boolean) => void;
+  setDragRotate: (dragRotate: boolean) => void;
   turn: (degrees: number) => void;
   destroy: () => void;
 }
@@ -179,7 +185,7 @@ const painter = () => {
 
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 
-const build = (canvas: HTMLCanvasElement, routes: GlobeRoute[], center: GlobePlace, dragRotate: boolean) => {
+const build = (canvas: HTMLCanvasElement, center: GlobePlace) => {
   const context = canvas.getContext("webgl2", { antialias: true, alpha: true });
   if (!context) return null;
   let renderer: WebGLRenderer;
@@ -201,25 +207,11 @@ const build = (canvas: HTMLCanvasElement, routes: GlobeRoute[], center: GlobePla
   const dotsMaterial = pointsMaterial(dotSize, 0.35);
   scene.add(new Points(landDots(), dotsMaterial));
 
-  const arcs = routes.map(arcOf);
+  const routing = new Group();
+  scene.add(routing);
   const routeMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.85 });
-  for (const arc of arcs) scene.add(new Line(new BufferGeometry().setFromPoints(arc), routeMaterial));
-
   const markersMaterial = pointsMaterial(markerSize, 0);
-  const markers = new Points(
-    new BufferGeometry().setFromPoints(routes.flatMap(({ from, to }) => [toVector(from), toVector(to)])),
-    markersMaterial,
-  );
-  markers.geometry.setAttribute("phase", zeros(routes.length * 2));
-  markers.visible = routes.length > 0;
-  scene.add(markers);
-
   const lightsMaterial = pointsMaterial(lightSize, 0);
-  const lights = new Points(new BufferGeometry().setFromPoints(arcs.map((arc) => arc[0] as Vector3)), lightsMaterial);
-  lights.geometry.setAttribute("phase", zeros(arcs.length));
-  const lightPositions = lights.geometry.getAttribute("position");
-  if ("setUsage" in lightPositions) lightPositions.setUsage(DynamicDrawUsage);
-  scene.add(lights);
 
   const controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
@@ -228,12 +220,6 @@ const build = (canvas: HTMLCanvasElement, routes: GlobeRoute[], center: GlobePla
   const polar = ((90 - center.lat) * Math.PI) / 180;
   controls.minPolarAngle = Math.min(Math.PI / 2 - 0.6, polar);
   controls.maxPolarAngle = Math.max(Math.PI / 2 + 0.6, polar);
-  if (dragRotate) {
-    controls.cursorStyle = "grab";
-    canvas.style.touchAction = "pan-y";
-  } else {
-    controls.disconnect();
-  }
 
   return {
     renderer,
@@ -245,10 +231,11 @@ const build = (canvas: HTMLCanvasElement, routes: GlobeRoute[], center: GlobePla
     routeMaterial,
     markersMaterial,
     lightsMaterial,
-    lights,
-    lightPositions,
-    arcs,
-    progress: arcs.map((_, index) => index / Math.max(arcs.length, 1)),
+    routing,
+    lights: new Points(),
+    lightPositions: undefined as BufferAttribute | InterleavedBufferAttribute | undefined,
+    arcs: [] as Vector3[][],
+    progress: [] as number[],
     point: new Vector3(),
     spherical: new Spherical(),
   };
@@ -256,13 +243,50 @@ const build = (canvas: HTMLCanvasElement, routes: GlobeRoute[], center: GlobePla
 
 type View = NonNullable<ReturnType<typeof build>>;
 
+// The routes' arcs, a dot at each end, and a light along each, in place of
+// those drawn before.
+const drawRoutes = (globe: View, routes: GlobeRoute[]) => {
+  for (const object of [...globe.routing.children]) {
+    globe.routing.remove(object);
+    if (object instanceof Line || object instanceof Points) object.geometry.dispose();
+  }
+  globe.arcs = routes.map(arcOf);
+  for (const arc of globe.arcs) globe.routing.add(new Line(new BufferGeometry().setFromPoints(arc), globe.routeMaterial));
+  const markers = new Points(
+    new BufferGeometry().setFromPoints(routes.flatMap(({ from, to }) => [toVector(from), toVector(to)])),
+    globe.markersMaterial,
+  );
+  markers.geometry.setAttribute("phase", zeros(routes.length * 2));
+  markers.visible = routes.length > 0;
+  globe.routing.add(markers);
+  globe.lights = new Points(new BufferGeometry().setFromPoints(globe.arcs.map((arc) => arc[0] as Vector3)), globe.lightsMaterial);
+  globe.lights.geometry.setAttribute("phase", zeros(globe.arcs.length));
+  globe.lightPositions = globe.lights.geometry.getAttribute("position");
+  if ("setUsage" in globe.lightPositions) globe.lightPositions.setUsage(DynamicDrawUsage);
+  globe.routing.add(globe.lights);
+  globe.progress = globe.arcs.map((_, index) => index / Math.max(globe.arcs.length, 1));
+};
+
+// Whether a drag turns it: three's OrbitControls listen to the pointer, with
+// a grab cursor, and on a touch screen take only sideways drags, so a swipe
+// up or down still scrolls the page; or they don't listen at all.
+const listen = (globe: View, canvas: HTMLCanvasElement, dragRotate: boolean) => {
+  if (dragRotate) {
+    globe.controls.connect(canvas);
+    globe.controls.cursorStyle = "grab";
+    canvas.style.touchAction = "pan-y";
+  } else {
+    globe.controls.disconnect();
+  }
+};
+
 export const createGlobe = (
   canvas: HTMLCanvasElement,
   {
-    routes = [],
+    routes: startRoutes = [],
     center = { lat: 20, lon: 0 },
-    autoRotate = true,
-    dragRotate = true,
+    autoRotate: startAutoRotate = true,
+    dragRotate: startDragRotate = true,
     paused: startPaused = window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     onUnavailable,
   }: GlobeOptions = {},
@@ -270,6 +294,9 @@ export const createGlobe = (
   const container = canvas.parentElement ?? canvas;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   let view: View | null | undefined;
+  let routes = startRoutes;
+  let autoRotate = startAutoRotate;
+  let dragRotate = startDragRotate;
   let paused = startPaused;
   let intersecting = false;
   let destroyed = false;
@@ -283,8 +310,7 @@ export const createGlobe = (
   let lost = false;
 
   const active = () => intersecting && !document.hidden && !destroyed && !lost;
-  const moving = autoRotate || routes.length > 0;
-  const still = () => paused || !moving;
+  const still = () => paused || !(autoRotate || routes.length > 0);
 
   const probe = document.createElement("span");
   probe.hidden = true;
@@ -357,9 +383,9 @@ export const createGlobe = (
       const at = ((globe.progress[index] ?? 0) + seconds * 0.22) % 1;
       globe.progress[index] = at;
       pointOn(arc, at, globe.point);
-      globe.lightPositions.setXYZ(index, globe.point.x, globe.point.y, globe.point.z);
+      globe.lightPositions?.setXYZ(index, globe.point.x, globe.point.y, globe.point.z);
     });
-    if (globe.arcs.length > 0) globe.lightPositions.needsUpdate = true;
+    if (globe.arcs.length > 0 && globe.lightPositions) globe.lightPositions.needsUpdate = true;
     return true;
   };
 
@@ -380,11 +406,13 @@ export const createGlobe = (
     pending = 0;
     if (!active()) return;
     if (view === undefined) {
-      view = build(canvas, routes, center, dragRotate);
+      view = build(canvas, center);
       if (view === null) {
         onUnavailable?.();
         return;
       }
+      drawRoutes(view, routes);
+      listen(view, canvas, dragRotate);
       view.controls.addEventListener("change", onChange);
       view.controls.addEventListener("start", onStart);
       view.controls.addEventListener("end", onEnd);
@@ -475,6 +503,25 @@ export const createGlobe = (
       if (paused === next) return;
       paused = next;
       settle();
+      wake();
+    },
+    setRoutes: (next) => {
+      routes = next;
+      if (view) drawRoutes(view, routes);
+      settle();
+      wake();
+    },
+    setAutoRotate: (next) => {
+      if (autoRotate === next) return;
+      autoRotate = next;
+      settle();
+      wake();
+    },
+    setDragRotate: (next) => {
+      if (dragRotate === next) return;
+      dragRotate = next;
+      dragging = false;
+      if (view) listen(view, canvas, dragRotate);
       wake();
     },
     turn: (degrees) => {

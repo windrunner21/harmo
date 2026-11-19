@@ -76,9 +76,10 @@ const london = { lat: 51.51, lon: -0.13 };
 
 It's a client component: three.js draws in the browser. In Next.js, import
 it into a page as any client component; its box is there from the server,
-and the globe appears in it as it first comes into view. To keep three.js
-out of a page's first download, where the globe sits below the fold, import
-the Globe with `next/dynamic`.
+and the globe appears in it as it first comes into view. The Globe loads
+`createGlobe.ts`, with three.js, with `import()` once it's on the page, so
+your bundler, Next.js's or Vite's, makes it a file of its own, out of the
+page's first download.
 
 ### Pausing and turning
 
@@ -119,9 +120,10 @@ sits under the pointer's way through a page; the arrows still do.
 | `onPausedChange` | Called with the new value as Pause is pressed |
 | `aria-label`, `aria-labelledby` | Its name, which makes the picture an image to screen readers; without one, the picture is hidden from them |
 
-Any other prop goes on its `<div>`. A change to `routes`, `center`,
-`autoRotate`, or `dragRotate` draws it afresh; one to `paused` or
-`controls` doesn't.
+Any other prop goes on its `<div>`. A change to `routes`, `autoRotate`, or
+`dragRotate` changes the globe as it is, facing where it faces, such as
+routes that follow your data as it comes in. `center` is where it starts:
+a later change to it doesn't turn it.
 
 ### Without JavaScript
 
@@ -177,11 +179,12 @@ The pattern's own, in `globe.css`:
 
 ### What your script does
 
-`createGlobe.ts`'s `createGlobe(canvas, options)` draws it, with options named as
-the React props, but for `controls`, which are your markup's, and
-`onUnavailable`, called without WebGL 2. It returns `{ setPaused, turn, destroy }`: `turn(degrees)`
-turns it, positive to the left, and `destroy()` lets it go, for a globe you
-remove. Import it with three.js through your bundler; the playground's
+`createGlobe.ts`'s `createGlobe(canvas, options)` draws it, with options
+named as the React props, but for `controls`, which are your markup's, and
+`onUnavailable`, called without WebGL 2. It returns `setPaused`,
+`setRoutes`, `setAutoRotate`, and `setDragRotate`, which change it as it
+is; `turn(degrees)`, which turns it, positive to the left; and `destroy()`,
+which lets it go, for a globe you remove. Import it with three.js through your bundler; the playground's
 [globe.js](../../examples/html/src/scripts/globe.js) loads a bundle of it
 only on a page with a globe. It:
 

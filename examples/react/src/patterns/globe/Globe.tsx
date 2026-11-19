@@ -2,7 +2,7 @@
 
 import { Button } from "@harmo-ui/react";
 import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type ComponentPropsWithRef } from "react";
-import { createGlobe, type GlobeHandle, type GlobePlace, type GlobeRoute } from "./createGlobe.ts";
+import type { GlobeHandle, GlobePlace, GlobeRoute } from "./createGlobe.ts";
 import { PauseIcon, PlayIcon, TurnLeftIcon, TurnRightIcon } from "./icons.tsx";
 
 export type { GlobePlace, GlobeRoute };
@@ -49,10 +49,11 @@ export const Globe = ({
   const globe = useRef<GlobeHandle | null>(null);
   const reduced = useSyncExternalStore(subscribe, () => window.matchMedia(reducedMotion).matches, () => false);
   const [chosen, setChosen] = useState<boolean | null>(null);
-  const [unavailable, setUnavailable] = useState<string | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
   const still = paused ?? chosen ?? reduced;
   const stillNow = useRef(still);
-  const options = JSON.stringify({ routes, center, autoRotate, dragRotate });
+  const settings = useRef({ routes, center, autoRotate, dragRotate });
+  const routesKey = JSON.stringify(routes ?? []);
   const named = label !== undefined || labelledBy !== undefined;
   const moving = autoRotate !== false || Boolean(routes?.length);
 
@@ -61,23 +62,36 @@ export const Globe = ({
     globe.current?.setPaused(still);
   }, [still]);
 
+  useLayoutEffect(() => {
+    settings.current = { routes, center, autoRotate, dragRotate };
+  });
+
   useEffect(() => {
-    if (!canvas.current) return;
-    const given = JSON.parse(options) as Pick<GlobeProps, "routes" | "center" | "autoRotate" | "dragRotate">;
-    const handle = createGlobe(canvas.current, {
-      routes: given.routes,
-      center: given.center,
-      autoRotate: given.autoRotate,
-      dragRotate: given.dragRotate,
-      paused: stillNow.current,
-      onUnavailable: () => setUnavailable(options),
+    let cancelled = false;
+    let handle: GlobeHandle | undefined;
+    void import("./createGlobe.ts").then(({ createGlobe }) => {
+      if (cancelled || !canvas.current) return;
+      handle = createGlobe(canvas.current, { ...settings.current, paused: stillNow.current, onUnavailable: () => setUnavailable(true) });
+      globe.current = handle;
     });
-    globe.current = handle;
     return () => {
-      handle.destroy();
+      cancelled = true;
+      handle?.destroy();
       globe.current = null;
     };
-  }, [options]);
+  }, []);
+
+  useEffect(() => {
+    globe.current?.setRoutes(JSON.parse(routesKey) as GlobeRoute[]);
+  }, [routesKey]);
+
+  useEffect(() => {
+    globe.current?.setAutoRotate(autoRotate !== false);
+  }, [autoRotate]);
+
+  useEffect(() => {
+    globe.current?.setDragRotate(dragRotate !== false);
+  }, [dragRotate]);
 
   const toggle = () => {
     if (paused === undefined) setChosen(!still);
@@ -95,7 +109,7 @@ export const Globe = ({
       >
         <canvas ref={canvas} className="hglobe-canvas" />
       </div>
-      {controls && unavailable !== options && (
+      {controls && !unavailable && (
         <div className="hglobe-controls" role="group" aria-label={words.controls}>
           <Button variant="tertiary" size="small" aria-label={words.turnLeft} onClick={() => globe.current?.turn(step)}>
             <TurnLeftIcon className="hicon" />
