@@ -373,9 +373,6 @@ export const KanbanBoard = <Card,>({
   };
   const letGo = () => {
     dragged.current = true;
-    setTimeout(() => {
-      dragged.current = false;
-    });
     release.current = setTimeout(() => {
       if (columnsBox.current) columnsBox.current.style.minBlockSize = "";
     }, 220);
@@ -580,8 +577,15 @@ export const KanbanBoard = <Card,>({
       ref={board}
       className="hkanban"
       aria-label={label}
+      onPointerDownCapture={() => {
+        dragged.current = false;
+      }}
+      onKeyDownCapture={() => {
+        dragged.current = false;
+      }}
       onClickCapture={(event) => {
         if (!dragged.current) return;
+        dragged.current = false;
         event.preventDefault();
         event.stopPropagation();
       }}
