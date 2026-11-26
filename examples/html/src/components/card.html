@@ -196,12 +196,11 @@
   </a>
 </play-example>
 
-<play-example title="With a detail" layout="stack">
+<play-example title="With a detail" layout="wide">
   <play-note>
-    <code>.hcard-meta</code>, a detail at the end of the title row, such as a
-    role's years or a post's date: smaller, in secondary text, on one line,
-    and before the chevron on a link. <code>.hexternal</code>, from Link's
-    styles, marks the post on another site with an arrow.
+    <code>.hcard-meta</code>, a detail at the end of the title row, such as
+    a role's years: smaller, in secondary text, its digits even, so the
+    years down a list line up at its end.
   </play-note>
   <ul style="--harmo-card-padding: var(--harmo-space-xs); margin-block: calc(-1px - var(--harmo-card-padding)); padding: 0; list-style: none">
     <li>
@@ -212,19 +211,48 @@
       </div>
     </li>
     <li>
+      <div class="hcard" data-variant="ghost">
+        <p class="hcard-title">Frontend engineer, Northwind</p>
+        <span class="hcard-meta">2020–2023</span>
+        <p class="hcard-description">The design system, and the checkout built on it.</p>
+      </div>
+    </li>
+    <li>
+      <div class="hcard" data-variant="ghost">
+        <p class="hcard-title">Designer, Lumen Studio</p>
+        <span class="hcard-meta">2018–2020</span>
+        <p class="hcard-description">Brands and sites for small producers.</p>
+      </div>
+    </li>
+  </ul>
+</play-example>
+
+<play-example title="Links with a detail" layout="wide">
+  <play-note>
+    A list of posts, each a link with its date at the end. One published on
+    another site says so, with <code>.hexternal</code>'s arrow, from Link's
+    styles.
+  </play-note>
+  <ul style="--harmo-card-padding: var(--harmo-space-xs); margin-block: calc(-1px - var(--harmo-card-padding)); padding: 0; list-style: none">
+    <li>
       <a class="hcard" data-variant="ghost" href="/blog/native-popovers">
         <p class="hcard-title">Moving a design system to native popovers</p>
         <span class="hcard-meta"><time datetime="2026-11-20">Nov 20</time></span>
         <p class="hcard-description">What the browser now does for us, and what it still doesn't.</p>
-        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
       </a>
     </li>
     <li>
-      <a class="hcard" data-variant="ghost" href="https://example.com/golden-spacing">
+      <a class="hcard" data-variant="ghost" href="/blog/golden-spacing">
         <p class="hcard-title">Spacing on the golden ratio</p>
         <span class="hcard-meta"><time datetime="2026-10-02">Oct 2</time></span>
+        <p class="hcard-description">Why every gap here is 6, 10, 16, or 26 pixels.</p>
+      </a>
+    </li>
+    <li>
+      <a class="hcard" data-variant="ghost" href="https://example.com/accessible-forms">
+        <p class="hcard-title">Notes on accessible forms</p>
+        <span class="hcard-meta"><time datetime="2026-08-14">Aug 14</time></span>
         <p class="hcard-description"><span class="hexternal">On example.com</span></p>
-        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
       </a>
     </li>
   </ul>

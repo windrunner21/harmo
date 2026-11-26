@@ -64,16 +64,25 @@ onEachPlayground("prose", () => {
     await expect(prose.locator("h3")).toHaveCSS("line-height", "24px");
   });
 
-  test("a table: its cells padded and ruled, a firmer rule under its header row, and a wide one scrolls in its region from the keys", { tag: "@css" }, async ({ page }) => {
+  test("a table looks as a Table does, its cells wrapping, and a wide one scrolls in its region from the keys", { tag: "@css" }, async ({ page }) => {
     const container = await example(page, "prose-a-table");
     const region = container.getByRole("region", { name: "Delivery windows" });
     await expect(region).toHaveAttribute("tabindex", "0");
     const header = region.locator("th").first();
     const cell = region.locator("td").first();
-    await expect(cell).toHaveCSS("padding-inline-start", "10px");
-    await expect(cell).toHaveCSS("padding-block-start", "6px");
-    await expect(cell).toHaveCSS("border-block-end-width", "1px");
-    await expect(header).toHaveCSS("border-block-end-width", "2px");
+    // Table's rules: 14px rows padded 12px by 16px, a line above each, and
+    // 12px medium header cells on one line.
+    await expect(cell).toHaveCSS("font-size", "14px");
+    await expect(cell).toHaveCSS("padding-inline-start", "16px");
+    await expect(cell).toHaveCSS("padding-block-start", "12px");
+    await expect(cell).toHaveCSS("border-block-start-width", "1px");
+    await expect(header).toHaveCSS("font-size", "12px");
+    await expect(header).toHaveCSS("font-weight", "500");
+    await expect(header).toHaveCSS("white-space", "nowrap");
+    await expect(cell).not.toHaveCSS("white-space", "nowrap");
+    // Each column at least 6em: 72px at the headers' 12px, 84px at the rows' 14px.
+    await expect(header).toHaveCSS("min-inline-size", "72px");
+    await expect(cell).toHaveCSS("min-inline-size", "84px");
     await region.locator("td").nth(1).evaluate((node) => (node.textContent = "Every day of the week, holidays included, in any weather, from the first frost to the last"));
     await region.evaluate((node) => ((node as HTMLElement).style.inlineSize = "40rem"));
     expect(await region.evaluate((node) => node.scrollWidth > node.clientWidth), "where its words fit, it wraps").toBe(false);
@@ -87,6 +96,8 @@ onEachPlayground("prose", () => {
 
   test("an image as wide as the text at most, with 8px corners, its caption under it, smaller", { tag: "@css" }, async ({ page }) => {
     const prose = (await example(page, "prose-images")).locator(".hprose");
+    // Narrower than the image, so it shrinks to the text.
+    await prose.evaluate((node) => ((node as HTMLElement).style.inlineSize = "15rem"));
     const image = prose.getByRole("img", { name: "Green hills under a sky that darkens toward the top" });
     await expect(image).toHaveCSS("border-radius", "8px");
     const caption = prose.locator("figcaption");

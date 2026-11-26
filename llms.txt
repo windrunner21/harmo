@@ -63,7 +63,6 @@ Rules for using the React components (`@harmo-ui/react`):
 - [Header](docs/components/header.md): the bar across the top of a page or an app, a logo, navigation or search, and actions in a row; it stays at the top, frosted, with a hairline once the page has scrolled, or scrolls away (`data-scroll="away"`), or hides as you scroll down and comes back as you scroll up (`data-scroll="hide"`); `data-transparent` keeps it clear over a hero until the page scrolls
 - [Icons](docs/components/icons.md): SVG icons placed next to text in buttons, links, and breadcrumbs
 - [Input](docs/components/input.md): single-line native inputs: text, email, search, tel, url, and similar
-- [Heading](docs/components/heading.md): a page's title, `.htitle`, 33px on a 42px line, and the headings of its parts, `.hheading`, 20px on 26px, the size of Prose's h2 on its line; React `Title` (an h1) and `Heading` (`as` h2 to h6)
 - [Kbd](docs/components/kbd.md): a key or shortcut, such as Enter or ⌘K, in text or on a button
 - [Language Picker](docs/components/language-picker.md): switches the language a site or app is in, with each language named in its own
 - [Launcher](docs/components/launcher.md): a round button in the page's corner that opens a panel above it, a dialog that isn't modal, such as a support chat; it grows from the corner, the icon turns into a close icon, focus moves in and back, Escape closes it, a Badge counts what came while it was closed, and on a phone it takes the whole screen

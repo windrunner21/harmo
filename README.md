@@ -183,7 +183,7 @@ section lists its props.
 | Navigation | [Account Menu](docs/components/account-menu.md), [Breadcrumb](docs/components/breadcrumb.md), [Command Menu](docs/components/command-menu.md), [Footer](docs/components/footer.md), [Header](docs/components/header.md), [Language Picker](docs/components/language-picker.md), [Menu Button](docs/components/menu-button.md), [Navigation Menu](docs/components/navigation-menu.md), [Pagination](docs/components/pagination.md), [Sidebar](docs/components/sidebar.md), [Table of Contents](docs/components/table-of-contents.md), [Tabs](docs/components/tabs.md) |
 | Data | [Date Filter](docs/components/date-filter.md), [Filter Bar](docs/components/filter-bar.md), [Filter Chip](docs/components/filter-chip.md), [Filters](docs/components/filters.md), [Selection Bar](docs/components/selection-bar.md), [Table](docs/components/table.md), [Toolbar](docs/components/toolbar.md) |
 | Feedback | [Banner](docs/components/banner.md), [Empty State](docs/components/empty-state.md), [Meter](docs/components/meter.md), [Spinner](docs/components/spinner.md), [Toast](docs/components/toast.md) |
-| Display | [Accordion](docs/components/accordion.md), [Avatar](docs/components/avatar.md), [Badge](docs/components/badge.md), [Card](docs/components/card.md), [Conversation](docs/components/conversation.md), [Heading](docs/components/heading.md), [Kbd](docs/components/kbd.md), [Message](docs/components/message.md), [Prose](docs/components/prose.md), [Section](docs/components/section.md), [Showcase Card](docs/components/showcase-card.md), [Stat](docs/components/stat.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md), [Tag List](docs/components/tag-list.md) |
+| Display | [Accordion](docs/components/accordion.md), [Avatar](docs/components/avatar.md), [Badge](docs/components/badge.md), [Card](docs/components/card.md), [Conversation](docs/components/conversation.md), [Kbd](docs/components/kbd.md), [Message](docs/components/message.md), [Prose](docs/components/prose.md), [Section](docs/components/section.md), [Showcase Card](docs/components/showcase-card.md), [Stat](docs/components/stat.md), [Status](docs/components/status.md), [Tag](docs/components/tag.md), [Tag List](docs/components/tag-list.md) |
 | Icons | [Icons](docs/components/icons.md), [ChevronToArrow](docs/components/chevron-to-arrow.md), [Expand Chevron](docs/components/expand-chevron.md) |
 
 Every page has the same sections: a Contract table, copyable markup, the
@@ -290,11 +290,6 @@ default to; change them once, on `:root`, and all three follow:
   padding-inline: var(--harmo-page-padding);
 }
 ```
-
-The type scale goes from `--harmo-font-size-3xs`, 11px, to
-`--harmo-font-size-2xl`, 54px, a display size above a page's title,
-`--harmo-font-size-xl`, 33px, which [Heading](docs/components/heading.md)'s
-title uses.
 
 The built tokens are `--harmo-focus-outline`; the primary fills;
 `--harmo-color-on-primary` and `--harmo-color-on-danger`; the link, input,

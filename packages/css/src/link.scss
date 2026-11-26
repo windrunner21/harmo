@@ -1,7 +1,8 @@
 @use "shortcuts" as *;
 
 // An arrow after text that leads to another site, as on a link or a card's
-// line: in the text's color, as tall as its capitals, so it goes anywhere
+// line: in the text's color, about as tall as its capitals, raised a little
+// off the baseline, its stroke as heavy as regular text's, so it goes anywhere
 // without an icon of your own. It isn't read, so say in the text, or the
 // link's name, if it opens in a new tab. It points the other way in a
 // right-to-left page.
@@ -10,13 +11,15 @@
 
   display: inline-block;
 
-  inline-size: 0.75em;
-  block-size: 0.75em;
+  inline-size: 0.6875em;
+  block-size: 0.6875em;
   margin-inline-start: 0.25em;
+
+  vertical-align: 0.0625em;
 
   background-color: currentColor;
   forced-color-adjust: none;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L17 7M9 7H17V15'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 10L10 2M3.5 2H10V8.5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .hexternal:dir(rtl)::after {

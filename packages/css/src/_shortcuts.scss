@@ -88,10 +88,6 @@ $button-secondary-box-shadow: var(--harmo-button-secondary-box-shadow);
 // Typography.
 $font-family: var(--harmo-font-family);
 $font-family-mono: var(--harmo-font-family-mono);
-// With fallbacks, so a component copied into a project whose tokens.css is
-// older than these tokens still has them.
-$font-size-2xl: var(--harmo-font-size-2xl, 3.375rem);
-$font-size-xl: var(--harmo-font-size-xl, 2.0625rem);
 $font-size-lg: var(--harmo-font-size-lg);
 $font-size-base: var(--harmo-font-size-base);
 $font-size-md: var(--harmo-font-size-md);
@@ -125,6 +121,8 @@ $space-md: var(--harmo-space-md);
 $space-lg: var(--harmo-space-lg);
 $space-xl: var(--harmo-space-xl);
 $space-2xl: var(--harmo-space-2xl);
+// With fallbacks, so a component copied into a project whose tokens.css is
+// older than these tokens still has them.
 $page-width: var(--harmo-page-width, 75rem);
 $page-padding: var(--harmo-page-padding, var(--harmo-space-sm));
 $opacity-disabled: var(--harmo-opacity-disabled);

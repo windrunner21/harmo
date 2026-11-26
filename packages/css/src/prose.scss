@@ -1,4 +1,5 @@
 @use "shortcuts" as *;
+@use "table-cells" as *;
 
 // Prose's text size, as a length: set to 1em on .hprose, it's worked out
 // there, so a block inside with a smaller size of its own, such as a block of
@@ -51,9 +52,8 @@
     margin-block-start: calc(var(--hprose-text-size) * 0.375);
   }
 
-  // Each on the text's own line, 26px for 16px text, 1lh of Prose, so an h2,
-  // 20px, is a Heading's size on a Heading's line, and follows
-  // --hprose-line-height, or a Conversation's.
+  // Each on the text's own line, 26px for 16px text, 1lh of Prose, so it
+  // follows --hprose-line-height, or a Conversation's.
   & :is(h2, h3, h4) {
     font-weight: $font-weight-semibold;
     line-height: 1lh;
@@ -131,36 +131,35 @@
     border-radius: $border-radius;
   }
 
-  // A table: as wide as the text, its cells padded and ruled in the border
-  // color, with a firmer rule under its header row. Its words stay whole, so
-  // a wide table is wider than the text: put it in .hprose-table, which
-  // scrolls it sideways, as a table stays a table, its rows and columns read
-  // as such.
-  // Not a Table's, which has its own look.
-  & table:not(.htable) {
-    inline-size: 100%;
+  // A table looks as a Table does, from the same rules: 14px rows with a line
+  // above each, and 12px header cells on one line. Unlike a Table's, its
+  // cells wrap, as a Markdown table's can hold sentences, each column at least
+  // 6em, so it never shrinks to a word a line; a table too wide for that goes
+  // in .hprose-table, which scrolls it sideways, as a table stays a table,
+  // its rows and columns read as such. Not a Table's or a Calendar's, which
+  // have their own.
+  & table:not(.htable, .hcalendar-grid) {
+    @include table-text;
 
-    border-collapse: collapse;
+    inline-size: 100%;
+  }
+
+  & table:not(.htable, .hcalendar-grid) > thead > tr > :is(th, td) {
+    @include header-cell;
+
+    min-inline-size: 6em;
   }
 
   // A cell of the table itself, in a row group or a row written straight
   // into it, not one of a table nested in a cell.
-  & :is(table:not(.htable) > :is(thead, tbody, tfoot) > tr, table:not(.htable) > tr) > :is(th, td) {
-    padding: calc(var(--hprose-text-size) * 0.375) calc(var(--hprose-text-size) * 0.625);
+  & :is(table:not(.htable, .hcalendar-grid) > :is(tbody, tfoot) > tr, table:not(.htable, .hcalendar-grid) > tr) > :is(th, td) {
+    @include body-cell;
+
+    min-inline-size: 6em;
 
     overflow-wrap: normal;
-    text-align: start;
     vertical-align: top;
-
-    border-block-end: 1px solid $color-border;
-  }
-
-  & :is(table:not(.htable) > :is(thead, tbody, tfoot) > tr, table:not(.htable) > tr) > th {
-    font-weight: $font-weight-semibold;
-  }
-
-  & table:not(.htable) > thead > tr > th {
-    border-block-end-width: 2px;
+    white-space: normal;
   }
 
   // An image: as wide as the text at most, with the 8px corners. In a

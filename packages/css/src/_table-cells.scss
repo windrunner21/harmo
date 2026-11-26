@@ -1,0 +1,35 @@
+@use "shortcuts" as *;
+
+// A table's look, shared by Table and by a table in Prose, so the two read as
+// one: its text, its header cells, and its cells. Each adds what's its own,
+// such as Table's sticky headers, or Prose's cells that wrap.
+@mixin table-text {
+  border-spacing: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-sm;
+  line-height: $font-line-height;
+}
+
+@mixin header-cell {
+  padding-inline: $space-sm;
+  padding-block-end: $space-xs;
+
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-medium;
+  text-align: start;
+  white-space: nowrap;
+
+  color: $color-text;
+}
+
+@mixin body-cell {
+  // The 12px above and below set the rows' height.
+  padding: 12px $space-sm;
+
+  font-weight: $font-weight-normal;
+  text-align: start;
+
+  color: $color-text-secondary;
+  border-block-start: 1px solid $color-border;
+}

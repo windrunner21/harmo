@@ -69,8 +69,7 @@ that lets you swap the element for a table can add the wrapper itself:
   code, is spaced the same.
 - Headings are semibold, each on Prose's own line, `1lh`, which follows
   `--hprose-line-height`: `<h2>` 1.25 times the text, `<h3>` 1.125, `<h4>`
-  the same size. At 16px text, an `<h2>` is 20px on a 26px line, as a
-  [Heading](heading.md) is, so one outside Prose looks the same.
+  the same size. At 16px text, an `<h2>` is 20px on a 26px line.
 - Lists are indented 1.5em. Bold is semibold.
 - A quote is set 10px in from a 2px line in `--harmo-color-border`, in
   `--harmo-color-text-secondary`. A rule is a 1px line, with 1.625em above
@@ -80,12 +79,14 @@ that lets you swap the element for a table can add the wrapper itself:
   13px monospace in a panel on the same color, with a 1px border, 8px
   corners, and 10px by 16px of padding; it scrolls sideways rather than
   wrapping.
-- A table is as wide as the text, its cells padded 6px by 10px, at 16px
-  text, with a 1px line in `--harmo-color-border` under each row and a 2px
-  one under its header row; its words stay whole. In `.hprose-table`, its
-  text wraps, and it scrolls sideways only when its columns still can't
-  fit; focused, the region has the standard ring. A [Table](table.md)
-  inside keeps its own look.
+- A table looks as a [Table](table.md) does, from the same rules: as wide
+  as the text, 14px rows in `--harmo-color-text-secondary`, padded 12px by
+  16px, with a line in `--harmo-color-border` above each, and 12px medium
+  header cells on one line. Unlike a Table's, its cells wrap, as a Markdown
+  table's can hold sentences, its words whole, and each column at least
+  6em, so it never shrinks to a word a line. In `.hprose-table`, it scrolls
+  sideways only when its columns still can't fit; focused, the region has
+  the standard ring. A Table inside keeps its own look.
 - An image is as wide as the text at most, never stretched, with 8px
   corners: one as Markdown places it, in a paragraph, a list item, a
   figure, a quote, a cell, or a link, so a component's, such as an
@@ -164,6 +165,8 @@ for a screen reader's live region.
 `--harmo-color-background-secondary`, `--harmo-color-border`,
 `--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-duration-fast`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
-`--harmo-font-family-mono`, `--harmo-font-size-xs`,
+`--harmo-font-family`, `--harmo-font-family-mono`, `--harmo-font-line-height`,
+`--harmo-font-size-2xs`, `--harmo-font-size-sm`, `--harmo-font-size-xs`,
+`--harmo-font-weight-medium`, `--harmo-font-weight-normal`,
 `--harmo-font-weight-semibold`, `--harmo-link-color-text`,
 `--harmo-link-hover-color-text`, `--harmo-space-sm`, `--harmo-space-xs`.

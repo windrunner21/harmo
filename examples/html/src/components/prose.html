@@ -1,8 +1,8 @@
 <play-example title="Default" layout="stack">
   <play-note>
     Formatted text, at the size of the text around it: paragraphs, lists,
-    code in a line or in a block, bold, and links, on 1.5 lines, each block
-    1em from the next.
+    code in a line or in a block, bold, and links, on 1.625 lines, 26px for
+    16px text, each block 1em from the next.
   </play-note>
   <div class="hprose">
     <p>Your weekly report is ready. <strong>3 of 5 checks passed</strong>:</p>
@@ -56,10 +56,11 @@
   </div>
 </play-example>
 
-<play-example title="A table" layout="stack">
+<play-example title="A table" layout="wide">
   <play-note>
-    A table as a Markdown renderer writes it: as wide as the text, its cells
-    padded and ruled, a firmer rule under its header row. A wide one goes in
+    A table as a Markdown renderer writes it, as a Table looks: as wide as
+    the text, a line above each row, and small header cells. Its cells wrap,
+    each column at least 6em. A wide one goes in
     <code>.hprose-table</code>, a named region that scrolls sideways and
     takes focus, so the keyboard can scroll it; the table stays a table.
   </play-note>
@@ -80,7 +81,7 @@
   </div>
 </play-example>
 
-<play-example title="Images" layout="stack">
+<play-example title="Images" layout="wide">
   <play-note>
     An image as wide as the text at most, never stretched, with 8px corners;
     in a figure, its caption under it, smaller, in secondary text.

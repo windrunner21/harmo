@@ -67,7 +67,6 @@ export { Filters, type FiltersProps } from "./Filters.tsx";
 export { HarmoProvider, type HarmoProviderProps } from "./HarmoProvider.tsx";
 export { Footer, FooterGroup, type FooterGroupProps, type FooterLink, type FooterProps } from "./Footer.tsx";
 export { Header, type HeaderProps } from "./Header.tsx";
-export { Heading, Title, type HeadingProps, type TitleProps } from "./Heading.tsx";
 export { Input, type InputProps } from "./Input.tsx";
 export { Kbd, type KbdProps } from "./Kbd.tsx";
 export {

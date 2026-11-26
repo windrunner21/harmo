@@ -199,14 +199,26 @@ export const examples = {
       }}
     >
       <li>
-        <Card
-          variant="ghost"
-          label="Product engineer, Speedwagon"
-          labelAs="p"
-          meta="2023–now"
-          description="The ordering app, from the first order to the hundred-thousandth."
-        />
+        <Card variant="ghost" label="Product engineer, Speedwagon" labelAs="p" meta="2023–now" description="The ordering app, from the first order to the hundred-thousandth." />
       </li>
+      <li>
+        <Card variant="ghost" label="Frontend engineer, Northwind" labelAs="p" meta="2020–2023" description="The design system, and the checkout built on it." />
+      </li>
+      <li>
+        <Card variant="ghost" label="Designer, Lumen Studio" labelAs="p" meta="2018–2020" description="Brands and sites for small producers." />
+      </li>
+    </ul>
+  ),
+
+  "Links with a detail": () => (
+    <ul
+      style={{
+        "--harmo-card-padding": "var(--harmo-space-xs)",
+        marginBlock: "calc(-1px - var(--harmo-card-padding))",
+        padding: 0,
+        listStyle: "none",
+      }}
+    >
       <li>
         <Card
           variant="ghost"
@@ -215,18 +227,26 @@ export const examples = {
           labelAs="p"
           meta={<time dateTime="2026-11-20">Nov 20</time>}
           description="What the browser now does for us, and what it still doesn't."
-          chevron
         />
       </li>
       <li>
         <Card
           variant="ghost"
-          href="https://example.com/golden-spacing"
+          href="/blog/golden-spacing"
           label="Spacing on the golden ratio"
           labelAs="p"
           meta={<time dateTime="2026-10-02">Oct 2</time>}
+          description="Why every gap here is 6, 10, 16, or 26 pixels."
+        />
+      </li>
+      <li>
+        <Card
+          variant="ghost"
+          href="https://example.com/accessible-forms"
+          label="Notes on accessible forms"
+          labelAs="p"
+          meta={<time dateTime="2026-08-14">Aug 14</time>}
           description={<span className="hexternal">On example.com</span>}
-          chevron
         />
       </li>
     </ul>

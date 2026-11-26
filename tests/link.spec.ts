@@ -54,7 +54,7 @@ onEachPlayground("link", () => {
     expect(box.height).toBeGreaterThan(icon.height + 1);
   });
 
-  test("to another site, an arrow after it, 0.75em, in its color, not read, and pointing the other way right to left", { tag: "@css" }, async ({ page }) => {
+  test("to another site, an arrow after it, 0.6875em, in its color, not read, and pointing the other way right to left", { tag: "@css" }, async ({ page }) => {
     const link = (await example(page, "link-to-another-site")).getByRole("link", { name: "harvest notes", exact: true });
     const arrow = () =>
       link.evaluate((node) => {
@@ -69,7 +69,7 @@ onEachPlayground("link", () => {
       });
     const before = await arrow();
     expect(before.content).toBe('""');
-    expect(before.size).toEqual([0.75, 0.75]);
+    expect(before.size).toEqual([0.6875, 0.6875]);
     expect(before.mask).toContain("data:image/svg+xml");
     expect(before.color).toBe(true);
     expect(before.transform).toBe("none");

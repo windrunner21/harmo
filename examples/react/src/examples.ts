@@ -34,7 +34,6 @@ import { examples as filterChip } from "./components/filter-chip.tsx";
 import { examples as filters } from "./components/filters.tsx";
 import { examples as footer } from "./components/footer.tsx";
 import { examples as header } from "./components/header.tsx";
-import { examples as heading } from "./components/heading.tsx";
 import { examples as icons } from "./components/icons.tsx";
 import { examples as input } from "./components/input.tsx";
 import { examples as kbd } from "./components/kbd.tsx";
@@ -121,7 +120,6 @@ export const components: Record<string, Record<string, ComponentType>> = {
   filters,
   footer,
   header,
-  heading,
   icons,
   input,
   kbd,

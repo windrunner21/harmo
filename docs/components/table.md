@@ -192,6 +192,8 @@ for a table too wide.
   (`--harmo-space-lg`) apart, and wrap on a narrow screen, 10px apart. Rows per
   page is 6px (`--harmo-space-2xs`) from its Select.
 - Right-to-left, the first column is on the right.
+- A table in [Prose](prose.md), as Markdown writes it, looks the same, from
+  the same rules, but its cells wrap.
 
 ## Accessibility
 

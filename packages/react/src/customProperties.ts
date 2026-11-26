@@ -72,14 +72,12 @@ export type HarmoCustomProperty =
   | "--harmo-font-family"
   | "--harmo-font-family-mono"
   | "--harmo-font-line-height"
-  | "--harmo-font-size-2xl"
   | "--harmo-font-size-2xs"
   | "--harmo-font-size-3xs"
   | "--harmo-font-size-base"
   | "--harmo-font-size-lg"
   | "--harmo-font-size-md"
   | "--harmo-font-size-sm"
-  | "--harmo-font-size-xl"
   | "--harmo-font-size-xs"
   | "--harmo-font-weight-bold"
   | "--harmo-font-weight-medium"
@@ -304,14 +302,12 @@ declare module "react" {
     "--harmo-font-family"?: string | number;
     "--harmo-font-family-mono"?: string | number;
     "--harmo-font-line-height"?: string | number;
-    "--harmo-font-size-2xl"?: string | number;
     "--harmo-font-size-2xs"?: string | number;
     "--harmo-font-size-3xs"?: string | number;
     "--harmo-font-size-base"?: string | number;
     "--harmo-font-size-lg"?: string | number;
     "--harmo-font-size-md"?: string | number;
     "--harmo-font-size-sm"?: string | number;
-    "--harmo-font-size-xl"?: string | number;
     "--harmo-font-size-xs"?: string | number;
     "--harmo-font-weight-bold"?: string | number;
     "--harmo-font-weight-medium"?: string | number;

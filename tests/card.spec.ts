@@ -132,21 +132,32 @@ onEachPlayground("card", () => {
     expect(end!.x + end!.width).toBeCloseTo(line!.x + line!.width, 0);
   });
 
-  test("a detail sits on the title's line, at the row's end, before the chevron, on one line", { tag: "@css" }, async ({ page }) => {
-    const cards = (await example(page, "card-with-a-detail")).locator(".hcard");
-    const plain = cards.nth(0);
-    const [title, meta, description, card] = await boxes(plain.locator(".hcard-title"), plain.locator(".hcard-meta"), plain.locator(".hcard-description"), plain);
-    expect(meta.x).toBeGreaterThan(title.x + title.width - 1);
-    expect(meta.y + meta.height / 2).toBeCloseTo(title.y + 12, 0);
-    expect(description.y).toBeGreaterThanOrEqual(meta.y + meta.height - 1);
-    const padding = await plain.evaluate((node) => parseFloat(getComputedStyle(node).paddingInlineEnd) + parseFloat(getComputedStyle(node).borderInlineEndWidth));
-    expect(meta.x + meta.width).toBeCloseTo(card.x + card.width - padding, 0);
-    const link = cards.nth(1);
-    const [linkMeta, chevron] = await boxes(link.locator(".hcard-meta"), link.locator(".hcard-chevron"));
-    expect(chevron.x).toBeGreaterThan(linkMeta.x + linkMeta.width);
-    expect(meta.height).toBeLessThan(30);
-    // In a card too narrow for it, it wraps, and the chevron stays inside.
-    await link.evaluate((node) => ((node as HTMLElement).style.inlineSize = "12rem"));
+  test("a detail sits on the title's line, at the row's end, the details down a list lined up there, and wraps rather than push a chevron out", { tag: "@css" }, async ({ page }) => {
+    for (const id of ["card-with-a-detail", "card-links-with-a-detail"]) {
+      const cards = (await example(page, id)).locator(".hcard");
+      expect(await cards.count()).toBeGreaterThan(1);
+      const ends: number[] = [];
+      for (let index = 0; index < (await cards.count()); index++) {
+        const card = cards.nth(index);
+        const [title, meta, description, box] = await boxes(card.locator(".hcard-title"), card.locator(".hcard-meta"), card.locator(".hcard-description"), card);
+        expect(meta.x).toBeGreaterThan(title.x + title.width - 1);
+        expect(meta.y + meta.height / 2).toBeCloseTo(title.y + 12, 0);
+        expect(description.y).toBeGreaterThanOrEqual(meta.y + meta.height - 1);
+        expect(meta.height).toBeLessThan(30);
+        const padding = await card.evaluate((node) => parseFloat(getComputedStyle(node).paddingInlineEnd) + parseFloat(getComputedStyle(node).borderInlineEndWidth));
+        expect(meta.x + meta.width).toBeCloseTo(box.x + box.width - padding, 0);
+        ends.push(meta.x + meta.width);
+      }
+      expect(Math.max(...ends) - Math.min(...ends), id).toBeLessThan(1);
+    }
+    // In a card too narrow for it, beside a chevron, it wraps, and neither
+    // spills.
+    const link = (await example(page, "card-links-with-a-detail")).locator(".hcard").first();
+    await link.evaluate((node) => {
+      const chevron = document.querySelector(".hcard-chevron")?.cloneNode(true);
+      if (chevron) node.append(chevron);
+      (node as HTMLElement).style.inlineSize = "12rem";
+    });
     const detail = link.locator(".hcard-meta");
     await detail.evaluate((node) => (node.textContent = "ORDER2026112100000000042"));
     const [narrow, end, wrapped] = await boxes(link, link.locator(".hcard-chevron"), detail);

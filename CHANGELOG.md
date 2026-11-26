@@ -11,9 +11,9 @@ minor version may change an API, and says how to upgrade when it does.
 ## [0.9.2] - 2026-11-26
 
 What building an ordinary Next.js site on Harmo turned up: colors that went
-missing in a default Next.js 16 build; a page's title and headings outside
-Prose; a brand with a tagline; a date on a Card's title row; tables and
-images in Prose; and the page itself, its width and base styles.
+missing in a default Next.js 16 build; a brand with a tagline; a date on a
+Card's title row; tables and images in Prose, and its lines on the
+golden-ratio scale; and the page itself, its width and base styles.
 
 ### Upgrading
 
@@ -64,18 +64,6 @@ images in Prose; and the page itself, its width and base styles.
 
 ### Added
 
-- Heading: a page's title, `.htitle`, 33px on a 42px line, and the
-  headings of its parts outside Prose, `.hheading`, 20px on a 26px line,
-  the size of Prose's `h2` on its line, so the two look the same. In React,
-  `Title`, an `h1`, and `Heading`, an `h2`, or with `as`, `h3` to `h6`. The
-  type scale goes up to them: `--harmo-font-size-xl`, 33px, and
-  `--harmo-font-size-2xl`, 54px, for a display title.
-
-  ```html preview
-  <h1 class="htitle">Orders</h1>
-  <h2 class="hheading">Today</h2>
-  <p>12 orders to pack, and 3 to deliver before noon.</p>
-  ```
 - Header: a name over a line of its own, such as a personal site's name and
   role, with `.hheader-brand-name` and `.hheader-brand-tagline` in the
   brand's link. A space between them in the markup keeps a screen reader
@@ -107,13 +95,14 @@ images in Prose; and the page itself, its width and base styles.
   ```html preview
   <p>Read the grower's <a class="hlink hexternal" data-underlined href="https://example.com/harvest">harvest notes</a> before you order.</p>
   ```
-- Prose: tables and images, as a Markdown renderer writes them. A table is
-  as wide as the text, its cells padded and ruled, a firmer rule under its
-  header row; a wide one goes in `.hprose-table`, in React `ProseTable`, which
-  must be named, a region that scrolls sideways and takes focus, so the
-  keyboard can scroll it, while the table stays a table. An image is as wide
-  as the text at most, with 8px corners, and a figure's caption is under it.
-  A Table or an Avatar inside keeps its own look.
+- Prose: tables and images, as a Markdown renderer writes them. A table
+  looks as a Table does, from the same rules, its cells wrapping, as a
+  Markdown table's can hold sentences; a wide one goes in `.hprose-table`,
+  in React `ProseTable`, which must be named, a region that scrolls
+  sideways and takes focus, so the keyboard can scroll it, while the table
+  stays a table. An image is as wide as the text at most, with 8px corners,
+  and a figure's caption is under it. A Table or an Avatar inside keeps its
+  own look.
 
   ```html preview
   <div class="hprose">
@@ -159,7 +148,7 @@ images in Prose; and the page itself, its width and base styles.
 
 - Prose: its text is on a 1.625 line, 26px for 16px text, on the
   golden-ratio scale, rather than 1.5, and its headings on the same line,
-  `1lh`, so an `h2`, 20px, is a Heading's size on a Heading's line. Set
+  `1lh`, so an `h2`, 20px, is on a 26px line. Set
   `--hprose-line-height: 1.5` on it to keep the old lines, and
   `line-height: 1.4` on its headings to keep their old ones.
 

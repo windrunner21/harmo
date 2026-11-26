@@ -1,4 +1,5 @@
 @use "shortcuts" as *;
+@use "table-cells" as *;
 
 // Rows and columns of data. The columns fit their content and the last takes
 // what's left; a table too wide for its place scrolls in .htable-scroll.
@@ -21,31 +22,22 @@
 }
 
 .htable {
-  inline-size: 100%;
-  border-spacing: 0;
+  @include table-text;
 
-  font-family: $font-family;
-  font-size: $font-size-sm;
-  line-height: $font-line-height;
+  inline-size: 100%;
 }
 
 // The cells. Their context stays out of the weight, so an app's own class on a
 // cell wins.
 :where(.htable > thead > tr) > th {
+  @include header-cell;
+
   position: sticky;
   inset-block-start: 0;
   z-index: 2;
 
   inline-size: 0;
-  padding-inline: $space-sm;
-  padding-block-end: $space-xs;
 
-  font-size: $font-size-2xs;
-  font-weight: $font-weight-medium;
-  text-align: start;
-  white-space: nowrap;
-
-  color: $color-text;
   background-color: var(--htable-color-background, #{$color-background});
 
   &:nth-last-child(1 of :not([hidden])) {
@@ -54,15 +46,9 @@
 }
 
 :where(.htable > tbody > tr) > :is(td, th) {
-  // The 12px above and below set the rows' height.
-  padding: 12px $space-sm;
+  @include body-cell;
 
-  font-weight: $font-weight-normal;
-  text-align: start;
   white-space: nowrap;
-
-  color: $color-text-secondary;
-  border-block-start: 1px solid $color-border;
 }
 
 // A column that should stand out, such as a name.
