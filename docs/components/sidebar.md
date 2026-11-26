@@ -283,7 +283,8 @@ export function ToolsGroup() {
 }
 ```
 
-A `SidebarSubItem` takes `current` and `aria-current` the same way.
+`TicketsIcon` and `CampaignsIcon` stand for your own icons, from your icon
+set. A `SidebarSubItem` takes `current` and `aria-current` the same way.
 
 ## Tokens
 

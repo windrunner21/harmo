@@ -294,8 +294,9 @@ default to; change them once, on `:root`, and all three follow:
 The built tokens are `--harmo-focus-outline`; the primary fills;
 `--harmo-color-on-primary` and `--harmo-color-on-danger`; the link, input,
 switch, icon, status, and secondary-button tokens;
-`--harmo-button-font-weight`; `--harmo-card-padding`; and the button and
-chevron durations; see `tokens.css`. A role is built from its palette color
+`--harmo-button-font-weight`; `--harmo-card-padding` and
+`--harmo-page-padding`, from `--harmo-space-sm`; and the button and chevron
+durations; see `tokens.css`. A role is built from its palette color
 too, such as `--harmo-color-text` from `--harmo-black`, so change the role
 itself. Each component page lists every token it reads.
 
