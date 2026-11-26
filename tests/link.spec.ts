@@ -53,4 +53,27 @@ onEachPlayground("link", () => {
     // Broken onto more than one line.
     expect(box.height).toBeGreaterThan(icon.height + 1);
   });
+
+  test("to another site, an arrow after it, 0.75em, in its color, not read, and pointing the other way right to left", { tag: "@css" }, async ({ page }) => {
+    const link = (await example(page, "link-to-another-site")).getByRole("link", { name: "harvest notes", exact: true });
+    const arrow = () =>
+      link.evaluate((node) => {
+        const after = getComputedStyle(node, "::after");
+        return {
+          content: after.content,
+          size: [parseFloat(after.width), parseFloat(after.height)].map((each) => each / parseFloat(getComputedStyle(node).fontSize)),
+          mask: after.maskImage,
+          color: after.backgroundColor === getComputedStyle(node).color,
+          transform: after.transform,
+        };
+      });
+    const before = await arrow();
+    expect(before.content).toBe('""');
+    expect(before.size).toEqual([0.75, 0.75]);
+    expect(before.mask).toContain("data:image/svg+xml");
+    expect(before.color).toBe(true);
+    expect(before.transform).toBe("none");
+    await link.evaluate((node) => node.setAttribute("dir", "rtl"));
+    expect((await arrow()).transform).toBe("matrix(-1, 0, 0, 1, 0, 0)");
+  });
 });

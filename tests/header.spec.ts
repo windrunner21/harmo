@@ -1,4 +1,4 @@
-import { expect, type Locator } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
 const pageOf = (container: Locator) => container.locator('[style*="overflow-y"]');
@@ -9,6 +9,12 @@ const scrollTo = (page: Locator, top: number) => page.evaluate((node, top) => no
 // you scroll down, past its height, and comes back as you scroll up, or as
 // focus comes into it; with "away", it scrolls away; with data-transparent,
 // it's clear until the page scrolls.
+const restyle = async (page: Page, part: Locator) => {
+  await page.addStyleTag({ content: ".site-part { color: rgb(1, 2, 3); }" });
+  await part.evaluate((node) => node.classList.add("site-part"));
+  await expect(part).toHaveCSS("color", "rgb(1, 2, 3)");
+};
+
 onEachPlayground("header", () => {
   test("it stays at the top, and has the hairline once the page has scrolled", async ({ page }) => {
     const container = await example(page, "header-default");
@@ -89,5 +95,32 @@ onEachPlayground("header", () => {
     await scrollTo(pageOf(container), 120);
     await expect(header).toHaveAttribute("data-scrolled", "");
     await expect(header).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  });
+
+  test("a name over a tagline: the tagline under it, smaller and lighter, and the link named with a space between them", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "header-a-name-over-a-line");
+    await expect(container.getByRole("link", { name: "Alex Kim Product engineer" })).toBeVisible();
+    const name = container.locator(".hheader-brand-name");
+    const tagline = container.locator(".hheader-brand-tagline");
+    const [whole, line] = [await name.boundingBox(), await tagline.boundingBox()];
+    expect(line!.x).toBeCloseTo(whole!.x, 0);
+    expect(line!.y).toBeGreaterThan(whole!.y + 10);
+    await expect(tagline).toHaveCSS("font-size", "13px");
+    await expect(tagline).toHaveCSS("font-weight", "400");
+  });
+
+  test("one class of yours on the brand's link restyles it", { tag: "@css" }, async ({ page }) => {
+    await restyle(page, (await example(page, "header-default")).locator(".hheader-brand > a"));
+  });
+
+  test("as wide as --harmo-page-width, padded by --harmo-page-padding, as a page's own container can be", { tag: "@css" }, async ({ page }) => {
+    const header = (await example(page, "header-default")).locator(".hheader-bar");
+    await expect(header).toHaveCSS("max-inline-size", "1200px");
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty("--harmo-page-width", "40rem");
+      document.documentElement.style.setProperty("--harmo-page-padding", "2rem");
+    });
+    await expect(header).toHaveCSS("max-inline-size", "640px");
+    await expect(header).toHaveCSS("padding-inline-start", "32px");
   });
 });

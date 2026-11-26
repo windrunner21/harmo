@@ -164,6 +164,13 @@
   cursor: grabbing;
 }
 
+/* The copy, landing once the card is let go: what's under it takes the
+   pointer, so a click as it lands, such as on the Banner's Dismiss, isn't
+   lost on it. */
+.hkanban-landing {
+  pointer-events: none;
+}
+
 .hkanban-overlay > .hcard {
   border-color: var(--harmo-color-primary);
   box-shadow: 0 10px 26px light-dark(rgb(0 0 0 / 12%), rgb(0 0 0 / 50%));

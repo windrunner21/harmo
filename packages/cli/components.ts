@@ -37,6 +37,7 @@ export const components: Record<string, string[]> = {
   filters: ["Filters.tsx"],
   footer: ["Footer.tsx"],
   header: ["Header.tsx"],
+  heading: ["Heading.tsx"],
   input: ["Input.tsx"],
   kbd: ["Kbd.tsx"],
   "language-picker": ["LanguagePicker.tsx"],

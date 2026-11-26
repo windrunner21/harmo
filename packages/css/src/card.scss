@@ -101,15 +101,16 @@ $actionable: ':where(a[href], button:enabled)';
 }
 
 // A card with a title lays out its parts: an icon at the start, the title
-// and a description beside it, and a chevron at the end. Any but the title
-// can be left out: margins, not gaps, space them, so a missing one leaves no
-// room. At zero specificity, as above, so an app's own layout class wins.
+// and a description beside it, a detail such as a date at the title row's
+// end, and a chevron at the end. Any but the title can be left out: margins,
+// not gaps, space them, so a missing one leaves no room. At zero
+// specificity, as above, so an app's own layout class wins.
 :where(.hcard:has(> .hcard-title)) {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   grid-template-areas:
-    "icon title chevron"
-    "icon description chevron";
+    "icon title meta chevron"
+    "icon description description chevron";
   align-content: start;
   align-items: start;
 
@@ -183,6 +184,25 @@ $actionable: ':where(a[href], button:enabled)';
   overflow-wrap: anywhere;
 
   color: $color-text-secondary;
+}
+
+// A detail at the end of the title row, such as a date or a count: on the
+// title's line, smaller, in secondary text, on one line, its digits even.
+.hcard-meta {
+  grid-area: meta;
+
+  margin-inline-start: $space-sm;
+
+  font-size: $font-size-sm;
+  font-variant-numeric: tabular-nums;
+  line-height: calc(#{$font-size-base} * #{$font-line-height});
+  white-space: nowrap;
+
+  color: $color-text-secondary;
+
+  &[hidden] {
+    display: none;
+  }
 }
 
 // A ChevronToArrow at the end, which turns into an arrow while the card is

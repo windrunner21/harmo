@@ -60,7 +60,7 @@ Footer is its bottom row alone, as for an app or a sign-in page.
 
 | Hook | Effect |
 | --- | --- |
-| `--hfooter-width` | The row's width: 75rem (1200px), as a Header's |
+| `--hfooter-width` | The row's width: `--harmo-page-width`, 75rem (1200px), as a Header's, padded by `--harmo-page-padding`, 16px |
 
 ## Appearance and states
 
@@ -72,7 +72,8 @@ Footer is its bottom row alone, as for an app or a sign-in page.
   brand takes at least 240px, its logo 15px semibold as a Header's, and
   what's under it 16px apart; the groups at least 480px, side by side, each
   at least 128px wide, 26px apart, wrapping under the brand where there's
-  no room.
+  no room. Its own rules for the brand's link and lines are one class,
+  (0,1,0), so a class of yours on one restyles it.
 - A group's heading is 14px semibold in `--harmo-color-text`, 16px over its
   links, which are 10px apart; pointed at, a link takes
   `--harmo-color-text`. An icon before a link is 16px, 6px from it.
@@ -93,6 +94,38 @@ Footer is its bottom row alone, as for an app or a sign-in page.
   such as "United Kingdom (English)". Give it `side="top"`, or
   `data-preferred-side="top"` on its popup, so its list opens above it, as
   at the foot of a page there's seldom room below.
+
+## Keep the footer at the bottom
+
+On a short page, a Footer follows the page's content, so it can end above
+the window's foot. It can't stay at the bottom by itself, since that's its
+parent's layout: make `body` a column at least as tall as the window, and let
+the main content take the room that's left.
+
+```css
+body {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100svh;
+}
+
+main {
+  flex-grow: 1;
+}
+
+.page {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: var(--harmo-page-width);
+  margin-inline: auto;
+  padding-inline: var(--harmo-page-padding);
+}
+```
+
+In a flex column, an element centered with `margin-inline: auto` shrinks to
+its content's width, so a centered page wrapper such as `.page` also needs
+`inline-size: 100%`. `base.css` leaves this out, since a body laid out as a
+column would change an app's own layout.
 
 ## Accessibility
 
@@ -148,11 +181,11 @@ names the groups' nav: give it one whenever there are groups.
 ## Tokens
 
 `--harmo-border-radius-sm`, `--harmo-color-background`,
-`--harmo-color-border`, `--harmo-color-text`,
-`--harmo-color-text-secondary`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`,
+`--harmo-color-border`, `--harmo-color-text`, `--harmo-color-text-secondary`,
+`--harmo-duration-fast`, `--harmo-duration-normal`, `--harmo-ease-out-cubic`,
 `--harmo-focus-outline`, `--harmo-focus-outline-offset`,
 `--harmo-font-family`, `--harmo-font-line-height`, `--harmo-font-size-md`,
 `--harmo-font-size-sm`, `--harmo-font-size-xs`,
-`--harmo-font-weight-semibold`, `--harmo-space-2xs`, `--harmo-space-lg`,
-`--harmo-space-md`, `--harmo-space-sm`, `--harmo-space-xs`
+`--harmo-font-weight-semibold`, `--harmo-page-padding`, `--harmo-page-width`,
+`--harmo-space-2xs`, `--harmo-space-lg`, `--harmo-space-md`,
+`--harmo-space-sm`, `--harmo-space-xs`.

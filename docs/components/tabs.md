@@ -185,6 +185,38 @@ selected.
 </Tabs>
 ```
 
+### The page you're on, in Next.js
+
+`current` is your app's to say. Read the path in a small Client Component
+with `usePathname()`. Tabs are usually pages side by side, so match each
+exactly; a tab with pages of its own under it matches by its start, with a
+`/` after it:
+
+```tsx
+"use client";
+
+import { TabLink, TabNav } from "@harmo-ui/react";
+import { usePathname } from "next/navigation";
+
+const tabs = [
+  { href: "/analytics/tickets", label: "Tickets" },
+  { href: "/analytics/campaigns", label: "Campaigns" },
+];
+
+export function AnalyticsTabs() {
+  const path = usePathname();
+  return (
+    <TabNav aria-label="Analytics">
+      {tabs.map(({ href, label }) => (
+        <TabLink key={href} href={href} current={path === href}>
+          {label}
+        </TabLink>
+      ))}
+    </TabNav>
+  );
+}
+```
+
 ## Tokens
 
 `--harmo-border-radius-sm`, `--harmo-color-background-hover`,

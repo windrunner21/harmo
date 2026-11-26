@@ -114,4 +114,9 @@ onEachPlayground("empty-state", () => {
     expect(other.y).toBeGreaterThanOrEqual(create.y + create.height);
     expect(other.x).toBeCloseTo(create.x, 0);
   });
+
+  test("its title can be the page's h1, as on a page not found", async ({ page }) => {
+    const container = await example(page, "empty-state-a-page-not-found");
+    await expect(container.getByRole("heading", { level: 1, name: "Page not found" })).toBeVisible();
+  });
 });

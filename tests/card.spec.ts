@@ -131,4 +131,19 @@ onEachPlayground("card", () => {
     expect(start!.x).toBeCloseTo(line!.x, 0);
     expect(end!.x + end!.width).toBeCloseTo(line!.x + line!.width, 0);
   });
+
+  test("a detail sits on the title's line, at the row's end, before the chevron, on one line", { tag: "@css" }, async ({ page }) => {
+    const cards = (await example(page, "card-with-a-detail")).locator(".hcard");
+    const plain = cards.nth(0);
+    const [title, meta, description, card] = await boxes(plain.locator(".hcard-title"), plain.locator(".hcard-meta"), plain.locator(".hcard-description"), plain);
+    expect(meta.x).toBeGreaterThan(title.x + title.width - 1);
+    expect(meta.y + meta.height / 2).toBeCloseTo(title.y + 12, 0);
+    expect(description.y).toBeGreaterThanOrEqual(meta.y + meta.height - 1);
+    const padding = await plain.evaluate((node) => parseFloat(getComputedStyle(node).paddingInlineEnd) + parseFloat(getComputedStyle(node).borderInlineEndWidth));
+    expect(meta.x + meta.width).toBeCloseTo(card.x + card.width - padding, 0);
+    const link = cards.nth(1);
+    const [linkMeta, chevron] = await boxes(link.locator(".hcard-meta"), link.locator(".hcard-chevron"));
+    expect(chevron.x).toBeGreaterThan(linkMeta.x + linkMeta.width);
+    await expect(plain.locator(".hcard-meta")).toHaveCSS("white-space", "nowrap");
+  });
 });

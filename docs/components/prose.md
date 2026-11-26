@@ -1,8 +1,8 @@
 # Prose
 
-Formatted text, such as an assistant's reply, a note, or help: paragraphs,
-headings, lists, quotes, code, and links, spaced to read, at the size of the
-text around it. What a Markdown renderer makes fits inside, its plain
+Formatted text, such as an assistant's reply, a note, help, or a blog post:
+paragraphs, headings, lists, quotes, code, links, tables, and images, spaced
+to read, at the size of the text around it. What a Markdown renderer makes fits inside, its plain
 elements styled as Harmo's.
 
 ## Contract
@@ -11,7 +11,7 @@ elements styled as Harmo's.
 | --- | --- |
 | CSS | `prose.css`; `link.css` for a `.hlink` inside |
 | Element | `<div class="hprose">` |
-| Parts | `<p>`, `<h2>` to `<h4>`, `<ul>`, `<ol>`, `<blockquote>`, `<pre><code>`, and `<hr>`, and in a line `<strong>`, `<em>`, `<code>`, and `<a>` |
+| Parts | `<p>`, `<h2>` to `<h4>`, `<ul>`, `<ol>`, `<blockquote>`, `<pre><code>`, `<hr>`, `<table>`, `<img>`, and `<figure>` with `<figcaption>`, and in a line `<strong>`, `<em>`, `<code>`, and `<a>`. A wide table goes in `<div class="hprose-table" role="region" aria-label="…" tabindex="0">` |
 | Required | None |
 | Unique | None |
 | Script | None, unless it builds the markup from text; see [What a script does](#what-a-script-does) |
@@ -29,16 +29,35 @@ elements styled as Harmo's.
 </div>
 ```
 
+A table stays a table, so screen readers keep reading its rows and columns.
+A wide one goes in `.hprose-table`, which scrolls sideways rather than the
+page. Give it a name, `aria-label` or `aria-labelledby`, `role="region"`, and
+`tabindex="0"`, so the keyboard can reach and scroll it. A Markdown renderer
+that lets you swap the element for a table can add the wrapper itself:
+
+```html
+<div class="hprose-table" role="region" aria-label="Delivery windows" tabindex="0">
+  <table>
+    <thead>
+      <tr><th>Area</th><th>Days</th><th>Order by</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>City center</td><td>Every day</td><td>8 PM the day before</td></tr>
+    </tbody>
+  </table>
+</div>
+```
+
 ## Options
 
 | Hook | Effect |
 | --- | --- |
-| `--hprose-line-height` | Its line height: `--harmo-font-line-height` (1.5) by default. In a [Conversation](conversation.md), it takes the conversation's instead, whatever it's set to, so a reply's lines match the rest of the chat |
+| `--hprose-line-height` | Its line height: 1.625 by default, 26px for 16px text. In a [Conversation](conversation.md), it takes the conversation's instead, whatever it's set to, so a reply's lines match the rest of the chat |
 
 ## Appearance and states
 
-- The text is the size of what's around it, on its own line height, 1.5
-  unless `--hprose-line-height` says otherwise, so it reads the same however
+- The text is the size of what's around it, on its own line height, 1.625,
+  26px for 16px text, unless `--hprose-line-height` says otherwise, so it reads the same however
   its container is set, in `--harmo-color-text`; a long word or address
   breaks rather than widening it.
 - Its spacing is the golden-ratio scale's steps in em, so it grows and
@@ -48,8 +67,10 @@ elements styled as Harmo's.
   26px, 6px, and 6px. The em is always the text's, worked out once on
   `.hprose`, so a block with a smaller size of its own, such as a block of
   code, is spaced the same.
-- Headings are semibold, with 1.4 lines: `<h2>` 1.25 times the text, `<h3>`
-  1.125, `<h4>` the same size.
+- Headings are semibold, each on the text's line, 1.625 times the text:
+  `<h2>` 1.25 times the text, `<h3>` 1.125, `<h4>` the same size. At 16px
+  text, an `<h2>` is 20px on a 26px line, as a [Heading](heading.md) is, so
+  one outside Prose looks the same.
 - Lists are indented 1.5em. Bold is semibold.
 - A quote is set 10px in from a 2px line in `--harmo-color-border`, in
   `--harmo-color-text-secondary`. A rule is a 1px line, with 1.625em above
@@ -59,6 +80,14 @@ elements styled as Harmo's.
   13px monospace in a panel on the same color, with a 1px border, 8px
   corners, and 10px by 16px of padding; it scrolls sideways rather than
   wrapping.
+- A table is as wide as the text, its cells padded 6px by 10px, at 16px
+  text, with a 1px line in `--harmo-color-border` under each row and a 2px
+  one under its header row; its words stay whole. In `.hprose-table`, it's
+  as wide as its words need and scrolls sideways; focused, the region has
+  the standard ring.
+- An image is as wide as the text at most, never stretched, with 8px
+  corners. In a `<figure>`, it's a block, its `<figcaption>` 6px under it,
+  0.875 times the text, in `--harmo-color-text-secondary`.
 - A plain `<a>` looks as an underlined [Link](link.md) does, hover and focus
   included.
 
@@ -73,6 +102,10 @@ elements styled as Harmo's.
 - Text from elsewhere, such as an AI service's reply, is untrusted: build it
   as elements, or sanitize the HTML a Markdown renderer makes, and never add
   it with `innerHTML` as it comes.
+- A table keeps its rows and columns for screen readers. A wide one's
+  region, `.hprose-table`, is named and takes focus, so the keyboard can
+  scroll it, and screen readers announce it by its name.
+- An image's `alt` says what it shows; a decorative one has `alt=""`.
 
 ## What a script does
 
@@ -95,9 +128,11 @@ small part of Markdown itself, building elements, never HTML:
 | `` `code` `` | `<code>` |
 | `[text](address)`, or an address written out | A [Link](link.md), underlined, opening in a new tab. Only `http`, `https`, and `mailto` addresses become links |
 
-Anything else shows as it's written. For more, such as tables, render the
-text with your Markdown library, sanitize what it makes, and put that inside
-`<Prose>`. `prosePlainText(text)` gives the text without its marks, such as
+Anything else shows as it's written. For more, such as tables and images,
+render the text with your Markdown library, sanitize what it makes, and put
+that inside `<Prose>`. `<ProseTable>` renders a wide table's region, with
+`role="region"` and `tabIndex={0}`: name it with `aria-label`, and put the
+table in it. `prosePlainText(text)` gives the text without its marks, such as
 for a screen reader's live region.
 
 | Prop | Effect |
@@ -111,15 +146,20 @@ for a screen reader's live region.
   <h3>Returns</h3>
   <p>You can return anything within 30 days.</p>
 </Prose>
+
+<Prose>
+  <ProseTable aria-label="Delivery windows">
+    <table>…</table>
+  </ProseTable>
+</Prose>
 ```
 
 ## Tokens
 
 `--harmo-border-radius`, `--harmo-border-radius-sm`,
 `--harmo-color-background-secondary`, `--harmo-color-border`,
-`--harmo-color-text`, `--harmo-color-text-secondary`,
-`--harmo-duration-fast`, `--harmo-focus-outline`,
-`--harmo-focus-outline-offset`, `--harmo-font-family-mono`,
-`--harmo-font-size-xs`, `--harmo-font-weight-semibold`,
-`--harmo-font-line-height`, `--harmo-link-color-text`,
-`--harmo-link-hover-color-text`, `--harmo-space-sm`, `--harmo-space-xs`
+`--harmo-color-text`, `--harmo-color-text-secondary`, `--harmo-duration-fast`,
+`--harmo-focus-outline`, `--harmo-focus-outline-offset`,
+`--harmo-font-family-mono`, `--harmo-font-size-xs`,
+`--harmo-font-weight-semibold`, `--harmo-link-color-text`,
+`--harmo-link-hover-color-text`, `--harmo-space-sm`, `--harmo-space-xs`.

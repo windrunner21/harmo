@@ -10,7 +10,7 @@
 // the Tab order. 640px wide or less, each folds, as an Accordion item does.
 // The Footer is a size container, so it follows its own width.
 .hfooter {
-  --hfooter-width: 75rem;
+  --hfooter-width: var(--harmo-page-width);
 
   container-type: inline-size;
 
@@ -36,7 +36,7 @@
   box-sizing: border-box;
   max-inline-size: var(--hfooter-width);
   margin-inline: auto;
-  padding: $space-lg $space-sm;
+  padding: $space-lg $page-padding;
 
   &[hidden] {
     display: none;
@@ -44,7 +44,8 @@
 }
 
 // The logo's link, as a Header's, then what goes under it, such as a line
-// about the site or a Language Picker, 16px apart.
+// about the site or a Language Picker, 16px apart. Their elements are under
+// :where(), so a class of yours on one, (0,1,0), restyles it.
 .hfooter-brand {
   display: flex;
   flex: 1 1 15rem;
@@ -58,11 +59,11 @@
     display: none;
   }
 
-  & > p {
+  & > :where(p) {
     margin: 0;
   }
 
-  & > a {
+  & > :where(a) {
     display: inline-flex;
     align-items: center;
     gap: $space-2xs;
@@ -76,11 +77,11 @@
     border-radius: $border-radius-sm;
   }
 
-  & > a[hidden] {
+  & > :where(a)[hidden] {
     display: none;
   }
 
-  & > a:focus-visible {
+  & > :where(a):focus-visible {
     outline: $focus-outline;
     outline-offset: $focus-outline-offset;
   }
@@ -280,7 +281,7 @@
 
   box-sizing: border-box;
   padding-block: $space-md;
-  padding-inline: max(#{$space-sm}, calc((100% - var(--hfooter-width)) / 2 + #{$space-sm}));
+  padding-inline: max(#{$page-padding}, calc((100% - var(--hfooter-width)) / 2 + #{$page-padding}));
 
   font-size: $font-size-xs;
 
@@ -288,11 +289,11 @@
     display: none;
   }
 
-  & > p {
+  & > :where(p) {
     margin: 0;
   }
 
-  & address {
+  & :where(address) {
     font-style: normal;
   }
 

@@ -53,7 +53,7 @@ onEachPlayground("conversation", () => {
     await expect(conversation.getByRole("listitem")).toHaveText(["Hi"]);
   });
 
-  test("a reply's Prose takes the conversation's lines, 20px or its own, not Prose's 1.5", { tag: "@css" }, async ({ page }) => {
+  test("a reply's Prose takes the conversation's lines, 20px or its own, not Prose's 1.625", { tag: "@css" }, async ({ page }) => {
     const conversation = (await example(page, "conversation-default")).locator(".hconversation");
     const lineHeight = await conversation.evaluate((node) => {
       const prose = document.createElement("div");

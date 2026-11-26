@@ -9,7 +9,7 @@
 // shows under it once the page has scrolled, data-scrolled, which a script
 // sets.
 .hheader {
-  --hheader-width: 75rem;
+  --hheader-width: var(--harmo-page-width);
   // Its controls, 10px from its edges.
   --hheader-height: calc(#{$control-height} + 2 * #{$space-xs});
 
@@ -127,14 +127,16 @@
   min-block-size: var(--hheader-height);
   max-inline-size: var(--hheader-width);
   margin-inline: auto;
-  padding-inline: $space-sm;
+  padding-inline: $page-padding;
 
   &[hidden] {
     display: none;
   }
 }
 
-// The logo, a link home, its text semibold.
+// The logo, a link home, its text semibold. Its link's element is under
+// :where(), so a class of yours on it, (0,1,0), restyles it, as it comes
+// after Harmo's.
 .hheader-brand {
   display: flex;
   flex-shrink: 0;
@@ -148,7 +150,7 @@
     display: none;
   }
 
-  & > a {
+  & > :where(a) {
     display: inline-flex;
     align-items: center;
     gap: $space-2xs;
@@ -158,14 +160,33 @@
     border-radius: $border-radius-sm;
   }
 
-  & > a[hidden] {
+  & > :where(a)[hidden] {
     display: none;
   }
 
-  & > a:focus-visible {
+  & > :where(a):focus-visible {
     outline: $focus-outline;
     outline-offset: $focus-outline-offset;
   }
+}
+
+// A name over a line of its own, such as a role, beside the logo. A space
+// between them in the markup keeps a screen reader from running the two
+// together; laid out as a grid, it takes no room.
+.hheader-brand-name {
+  display: grid;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hheader-brand-tagline {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-normal;
+  line-height: 1rem;
+
+  color: $color-text-secondary;
 }
 
 // The actions, at the end, a little apart.

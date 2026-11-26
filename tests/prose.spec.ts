@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
-// What docs/components/prose.md says: its own 1.5 lines; blocks 1em apart, a
+// What docs/components/prose.md says: its own 1.625 lines; blocks 1em apart, a
 // heading 1.625em from what's above it and 0.375em from what's under it, and
 // list items 0.375em apart; headings in proportion; lists indented; code in a line on a tint,
 // and in a block in a framed panel that scrolls sideways; a plain link looks
@@ -9,12 +9,12 @@ import { example, onEachPlayground, test } from "./playgrounds.ts";
 // bold, and links, as elements, and only web and email addresses become
 // links. The look is CSS's, tested on the HTML playground.
 onEachPlayground("prose", () => {
-  test("its own 1.5 lines, blocks 1em apart, list items 0.375em; code in a line on a tint, and a block of code in a framed panel that scrolls sideways", { tag: "@css" }, async ({ page }) => {
+  test("its own 1.625 lines, blocks 1em apart, list items 0.375em; code in a line on a tint, and a block of code in a framed panel that scrolls sideways", { tag: "@css" }, async ({ page }) => {
     const prose = (await example(page, "prose-default")).locator(".hprose");
     const base = parseFloat(await prose.evaluate((node) => getComputedStyle(node).fontSize));
     // Inside a container on the browser's default line height, it keeps its own.
     await prose.evaluate((node) => ((node.parentElement as HTMLElement).style.lineHeight = "normal"));
-    await expect(prose).toHaveCSS("line-height", `${base * 1.5}px`);
+    await expect(prose).toHaveCSS("line-height", `${base * 1.625}px`);
     await expect(prose.locator("ul")).toHaveCSS("margin-top", `${base}px`);
     await expect(prose.locator("li").nth(1)).toHaveCSS("margin-top", `${base * 0.375}px`);
     // A block of code, whose text is smaller, is spaced in the text's em too.
@@ -53,5 +53,39 @@ onEachPlayground("prose", () => {
     await expect(link).toHaveAttribute("href", "https://example.com/reports/42");
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", "noreferrer");
+  });
+
+  test("its text on a 26px line, 1.625 times its size, and its headings on the same line", { tag: "@css" }, async ({ page }) => {
+    const prose = (await example(page, "prose-headings-and-quotes")).locator(".hprose");
+    await expect(prose.locator("p").first()).toHaveCSS("line-height", "26px");
+    await expect(prose.locator("h3")).toHaveCSS("line-height", "26px");
+    await expect(prose.locator("h4")).toHaveCSS("line-height", "26px");
+  });
+
+  test("a table: its cells padded and ruled, a firmer rule under its header row, and a wide one scrolls in its region from the keys", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "prose-a-table");
+    const region = container.getByRole("region", { name: "Delivery windows" });
+    await expect(region).toHaveAttribute("tabindex", "0");
+    const header = region.locator("th").first();
+    const cell = region.locator("td").first();
+    await expect(cell).toHaveCSS("padding-inline-start", "10px");
+    await expect(cell).toHaveCSS("padding-block-start", "6px");
+    await expect(cell).toHaveCSS("border-block-end-width", "1px");
+    await expect(header).toHaveCSS("border-block-end-width", "2px");
+    await region.evaluate((node) => ((node as HTMLElement).style.inlineSize = "16rem"));
+    expect(await region.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
+    await region.focus();
+    await expect(region).toHaveCSS("outline-style", "solid");
+    await page.keyboard.press("ArrowRight");
+    await expect.poll(() => region.evaluate((node) => node.scrollLeft)).toBeGreaterThan(0);
+  });
+
+  test("an image as wide as the text at most, with 8px corners, its caption under it, smaller", { tag: "@css" }, async ({ page }) => {
+    const prose = (await example(page, "prose-images")).locator(".hprose");
+    const image = prose.getByRole("img", { name: "Rows of trees on a hillside at dawn" });
+    await expect(image).toHaveCSS("border-radius", "8px");
+    const [picture, text] = [await image.boundingBox(), await prose.boundingBox()];
+    expect(picture!.width).toBeLessThanOrEqual(text!.width + 0.5);
+    await expect(prose.locator("figcaption")).toHaveCSS("font-size", "14px");
   });
 });

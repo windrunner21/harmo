@@ -1,6 +1,6 @@
 import { Button, EmptyState, Search } from "@harmo-ui/react";
 import { useRef, useState } from "react";
-import { CampaignsIcon, LockIcon, MessagesIcon, PlusIcon } from "../app-icons.tsx";
+import { CampaignsIcon, GlobeIcon, LockIcon, MessagesIcon, PlusIcon } from "../app-icons.tsx";
 
 export const examples = {
   Default: () => (
@@ -110,5 +110,15 @@ export const examples = {
         description="Files sent in this chat show here."
       />
     </>
+  ),
+
+  "A page not found": () => (
+    <EmptyState
+      icon={<GlobeIcon className="hicon" />}
+      label="Page not found"
+      labelAs="h1"
+      description="It may have moved, or there's a typo in its address."
+      actions={<Button href="#top">Back to the home page</Button>}
+    />
   ),
 };

@@ -1,0 +1,35 @@
+@use "shortcuts" as *;
+
+// A page's title, and the headings of its parts, on the golden-ratio scale:
+// a title 33px on a 42px line, and a heading 20px on a 26px line, as Prose's
+// h2 is, so a heading outside Prose reads as one inside it. Neither has a
+// margin; the page spaces them, as it does its other parts.
+.htitle {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  line-height: 2.625rem;
+
+  color: $color-text;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.hheading {
+  margin: 0;
+
+  font-family: $font-family;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  line-height: 1.625rem;
+
+  color: $color-text;
+
+  &[hidden] {
+    display: none;
+  }
+}

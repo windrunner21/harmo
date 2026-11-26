@@ -11,6 +11,7 @@ interface CardOptions {
   label?: ReactNode;
   labelAs?: "h2" | "h3" | "h4" | "h5" | "h6" | "p";
   description?: ReactNode;
+  meta?: ReactNode;
   chevron?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const Card = ({
   label,
   labelAs: Label = "h3",
   description,
+  meta,
   chevron,
   className,
   children,
@@ -42,6 +44,7 @@ export const Card = ({
         </span>
       )}
       <Label className="hcard-title">{label}</Label>
+      {renders(meta) && <span className="hcard-meta">{meta}</span>}
       {renders(description) && <p className="hcard-description">{description}</p>}
       {chevron && <ChevronToArrow className="hcard-chevron" />}
     </>

@@ -1,7 +1,9 @@
 # Empty State
 
 What shows where there's nothing yet: a list before its first item, a search
-that found nothing, or a page you're not allowed to see. An icon, a title
+that found nothing, a page you're not allowed to see, or a page that isn't
+there, such as a 404 or an error page, where it's the whole page and its
+title the page's `h1`. An icon, a title
 that's a heading, a description, and actions, each optional, centered in the
 space it's given or lined up at its start. Small, it fits inside a page, such
 as an empty column or list; dashed, it stands in for what would be there.
@@ -106,9 +108,9 @@ start, as in [Markup](#markup), rather than taking the role itself.
 | Prop | Effect |
 | --- | --- |
 | `label` | The title; this, `description`, or both |
-| `labelAs` | The title's element: `"h2"` by default, or `"h3"` to `"h6"`, or `"p"` where it's no heading |
+| `labelAs` | The title's element: `"h2"` by default, or `"h1"`, as on a 404 page where it's the page's only heading, `"h3"` to `"h6"`, or `"p"` where it's no heading |
 | `description` | The description |
-| `icon` | The icon, such as an `<svg className="hicon">` |
+| `icon` | The icon, such as an `<svg className="hicon">`: your own, from your icon set, such as Lucide's, or drawn inline. Harmo doesn't export its own icons; `MessagesIcon` below stands for yours |
 | `actions` | The actions, such as `<Button>`s |
 | `align` | `"start"`: lined up at its start |
 | `size` | `"small"` |
@@ -123,6 +125,14 @@ start, as in [Markup](#markup), rather than taking the role itself.
 />
 
 <EmptyState size="small" variant="dashed" description="No tickets in this column" />
+
+<EmptyState
+  icon={<GlobeIcon className="hicon" />}
+  label="Page not found"
+  labelAs="h1"
+  description="It may have moved, or there's a typo in its address."
+  actions={<Button href="/">Back to the home page</Button>}
+/>
 ```
 
 ## Tokens

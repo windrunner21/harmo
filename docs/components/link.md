@@ -40,6 +40,7 @@ in place of the static chevron.
 | A direct `.hicon` | `inline-flex`, with `--harmo-icon-gap` (6px) between the text and the icon |
 | `data-underlined` | Underlined, 0.2em below the text, for links in running text; off by default |
 | `data-visited` | Visited links turn `--harmo-link-visited-color-text` (dark purple), without a color transition; off by default |
+| `.hexternal` | An arrow after it, for a link to another site. A class of its own, so it goes on any text, such as a card's line that says where a post was published, with `link.css` loaded |
 
 ## Appearance and states
 
@@ -53,6 +54,9 @@ in place of the static chevron.
   text; an icon first would sit slightly high. It's no wider than its
   container: its text wraps, and a word too long for the line, such as an
   address, breaks, so the icon stays beside it.
+- With `.hexternal`, an arrow pointing up and out after the text, 0.75em,
+  about as tall as its capitals, 0.25em from it, in its color, drawn by CSS,
+  so it needs no icon of your own. Right to left, it points the other way.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 
 ## Accessibility
@@ -63,6 +67,9 @@ text: below what WCAG 1.4.1 asks (an underline, or 3:1 plus a hover cue). Put
 `data-underlined` on links in running text to meet it; standalone and icon
 links can stay ununderlined. Visited links look unvisited unless the link
 carries `data-visited`.
+
+The `.hexternal` arrow isn't read. A link that opens in a new tab should say
+so in its text or its name, such as "harvest notes (opens in a new tab)".
 
 ## What a script does
 
@@ -78,6 +85,7 @@ link's attributes; `href` is required.
 | --- | --- |
 | `underlined` | Adds the underline, for a link in running text |
 | `visited` | Turns it dark purple once its page is in the browser's history |
+| `external` | Adds `.hexternal`'s arrow, for a link to another site |
 
 ```tsx
 <p>

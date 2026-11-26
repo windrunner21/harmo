@@ -188,4 +188,47 @@ export const examples = {
       chevron
     />
   ),
+
+  "With a detail": () => (
+    <ul
+      style={{
+        "--harmo-card-padding": "var(--harmo-space-xs)",
+        marginBlock: "calc(-1px - var(--harmo-card-padding))",
+        padding: 0,
+        listStyle: "none",
+      }}
+    >
+      <li>
+        <Card
+          variant="ghost"
+          label="Product engineer, Speedwagon"
+          labelAs="p"
+          meta="2023–now"
+          description="The ordering app, from the first order to the hundred-thousandth."
+        />
+      </li>
+      <li>
+        <Card
+          variant="ghost"
+          href="/blog/native-popovers"
+          label="Moving a design system to native popovers"
+          labelAs="p"
+          meta={<time dateTime="2026-11-20">Nov 20</time>}
+          description="What the browser now does for us, and what it still doesn't."
+          chevron
+        />
+      </li>
+      <li>
+        <Card
+          variant="ghost"
+          href="https://example.com/golden-spacing"
+          label="Spacing on the golden ratio"
+          labelAs="p"
+          meta={<time dateTime="2026-10-02">Oct 2</time>}
+          description={<span className="hexternal">On example.com</span>}
+          chevron
+        />
+      </li>
+    </ul>
+  ),
 };

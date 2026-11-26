@@ -171,3 +171,30 @@
     </div>
   </div>
 </play-example>
+
+<play-example title="A name over a line" layout="wide">
+  <play-note>
+    A personal site's brand: a name, and under it a line of its own, such as
+    a role, in <code>.hheader-brand-tagline</code>, inside
+    <code>.hheader-brand-name</code>. The space between them in the markup
+    keeps a screen reader from running them together: the link is named
+    "Alex Kim Product engineer". The name is a stand-in.
+  </play-note>
+  <div style="background: var(--harmo-color-background); border: 1px solid var(--harmo-color-border); border-radius: var(--harmo-border-radius)">
+    <header class="hheader">
+      <div class="hheader-bar">
+        <div class="hheader-brand">
+          <a href="#top"><span class="hheader-brand-name">Alex Kim <span class="hheader-brand-tagline">Product engineer</span></span></a>
+        </div>
+        <nav class="hnavigation-menu" aria-label="Main">
+          <div class="hnavigation-menu-frame" aria-hidden="true"></div>
+          <ul class="hnavigation-menu-list">
+            <li><a class="hnavigation-menu-link" href="#work">Work</a></li>
+            <li><a class="hnavigation-menu-link" href="#writing">Writing</a></li>
+            <li><a class="hnavigation-menu-link" href="#about">About</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+  </div>
+</play-example>

@@ -237,6 +237,40 @@ above.
 </Sidebar>
 ```
 
+### The page you're on, in Next.js
+
+`current` is your app's to say. A root layout is a Server Component, which
+doesn't know the path, so read it in a small Client Component with
+`usePathname()`, and put that in the layout. Match home exactly, and the
+others by their start with a `/` after it, so a post under `/blog` marks
+Blog, but `/blogroll` doesn't:
+
+```tsx
+"use client";
+
+import { SidebarGroup, SidebarItem } from "@harmo-ui/react";
+import { usePathname } from "next/navigation";
+
+const on = (path: string, href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+
+export function ToolsGroup() {
+  const path = usePathname();
+  return (
+    <SidebarGroup label="Tools">
+      <SidebarItem href="/tickets" icon={<TicketsIcon className="hicon" />} current={on(path, "/tickets")}>
+        Tickets
+      </SidebarItem>
+      <SidebarItem href="/campaigns" icon={<CampaignsIcon className="hicon" />} current={on(path, "/campaigns")}>
+        Campaigns
+      </SidebarItem>
+    </SidebarGroup>
+  );
+}
+```
+
+A `SidebarSubItem` takes `current` the same way.
+
 ## Tokens
 
 `--harmo-border-radius`, `--harmo-border-radius-full`,

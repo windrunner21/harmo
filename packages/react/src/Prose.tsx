@@ -118,6 +118,12 @@ export const Prose = ({ text, className, children, ...props }: ProseProps) => (
   </div>
 );
 
+export type ProseTableProps = ComponentPropsWithRef<"div">;
+
+export const ProseTable = ({ className, ...props }: ProseTableProps) => (
+  <div role="region" tabIndex={0} {...props} className={withClass("hprose-table", className)} />
+);
+
 // What a screen reader hears of text Prose formats: the text, without its
 // marks.
 export const prosePlainText = (text: string) =>

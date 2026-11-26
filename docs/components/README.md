@@ -40,6 +40,7 @@ the same markup and does what the script would.
 | Icons (`.hicon`, `.hchevron`) | [icons.md](icons.md) |
 | Footer | [footer.md](footer.md) |
 | Header | [header.md](header.md) |
+| Heading | [heading.md](heading.md) |
 | Input | [input.md](input.md) |
 | Kbd | [kbd.md](kbd.md) |
 | Language Picker | [language-picker.md](language-picker.md) |

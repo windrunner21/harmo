@@ -10,6 +10,11 @@ const page: CSSProperties = {
   border: "1px solid var(--harmo-color-border)",
   borderRadius: "var(--harmo-border-radius)",
 };
+const frame: CSSProperties = {
+  background: "var(--harmo-color-background)",
+  border: "1px solid var(--harmo-color-border)",
+  borderRadius: "var(--harmo-border-radius)",
+};
 const mark: CSSProperties = {
   inlineSize: "1.25rem",
   blockSize: "1.25rem",
@@ -119,5 +124,25 @@ export const examples = {
         {navigation}
       </Header>
     </Page>
+  ),
+
+  "A name over a line": () => (
+    <div style={frame}>
+      <Header
+        brand={
+          <a href="#top">
+            <span className="hheader-brand-name">
+              Alex Kim <span className="hheader-brand-tagline">Product engineer</span>
+            </span>
+          </a>
+        }
+      >
+        <NavigationMenu aria-label="Main">
+          <NavigationMenuLink href="#work">Work</NavigationMenuLink>
+          <NavigationMenuLink href="#writing">Writing</NavigationMenuLink>
+          <NavigationMenuLink href="#about">About</NavigationMenuLink>
+        </NavigationMenu>
+      </Header>
+    </div>
   ),
 };

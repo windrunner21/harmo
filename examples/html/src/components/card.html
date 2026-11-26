@@ -195,3 +195,37 @@
     <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
   </a>
 </play-example>
+
+<play-example title="With a detail" layout="stack">
+  <play-note>
+    <code>.hcard-meta</code>, a detail at the end of the title row, such as a
+    role's years or a post's date: smaller, in secondary text, on one line,
+    and before the chevron on a link. <code>.hexternal</code>, from Link's
+    styles, marks the post on another site with an arrow.
+  </play-note>
+  <ul style="--harmo-card-padding: var(--harmo-space-xs); margin-block: calc(-1px - var(--harmo-card-padding)); padding: 0; list-style: none">
+    <li>
+      <div class="hcard" data-variant="ghost">
+        <p class="hcard-title">Product engineer, Speedwagon</p>
+        <span class="hcard-meta">2023–now</span>
+        <p class="hcard-description">The ordering app, from the first order to the hundred-thousandth.</p>
+      </div>
+    </li>
+    <li>
+      <a class="hcard" data-variant="ghost" href="/blog/native-popovers">
+        <p class="hcard-title">Moving a design system to native popovers</p>
+        <span class="hcard-meta"><time datetime="2026-11-20">Nov 20</time></span>
+        <p class="hcard-description">What the browser now does for us, and what it still doesn't.</p>
+        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+      </a>
+    </li>
+    <li>
+      <a class="hcard" data-variant="ghost" href="https://example.com/golden-spacing">
+        <p class="hcard-title">Spacing on the golden ratio</p>
+        <span class="hcard-meta"><time datetime="2026-10-02">Oct 2</time></span>
+        <p class="hcard-description"><span class="hexternal">On example.com</span></p>
+        <play-icon name="chevron-to-arrow" class="hicon hchevron-to-arrow hcard-chevron"></play-icon>
+      </a>
+    </li>
+  </ul>
+</play-example>

@@ -55,3 +55,42 @@
     </p>
   </div>
 </play-example>
+
+<play-example title="A table" layout="stack">
+  <play-note>
+    A table as a Markdown renderer writes it: as wide as the text, its cells
+    padded and ruled, a firmer rule under its header row. A wide one goes in
+    <code>.hprose-table</code>, a named region that scrolls sideways and
+    takes focus, so the keyboard can scroll it; the table stays a table.
+  </play-note>
+  <div class="hprose">
+    <p>Delivery windows by area:</p>
+    <div class="hprose-table" role="region" aria-label="Delivery windows" tabindex="0">
+      <table>
+        <thead>
+          <tr><th>Area</th><th>Days</th><th>Morning</th><th>Evening</th><th>Order by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>City center</td><td>Every day</td><td>7 AM to 11 AM</td><td>5 PM to 9 PM</td><td>8 PM the day before</td></tr>
+          <tr><td>North and east</td><td>Monday to Saturday</td><td>8 AM to noon</td><td>6 PM to 9 PM</td><td>6 PM the day before</td></tr>
+          <tr><td>The valley</td><td>Tuesday and Friday</td><td>9 AM to 1 PM</td><td>None</td><td>Noon the day before</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</play-example>
+
+<play-example title="Images" layout="stack">
+  <play-note>
+    An image as wide as the text at most, never stretched, with 8px corners;
+    in a figure, its caption under it, smaller, in secondary text.
+  </play-note>
+  <div class="hprose">
+    <p>The first harvest of the season came in on Tuesday.</p>
+    <figure>
+      <img src="images/forest.svg" alt="Rows of trees on a hillside at dawn" width="640" height="360" />
+      <figcaption>The orchard at Saint-Rémy, a day's drive away.</figcaption>
+    </figure>
+    <p>Apples are in the shops from Thursday.</p>
+  </div>
+</play-example>

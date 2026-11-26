@@ -3,9 +3,14 @@
 // specificity, so an app's own :root overrides always win.
 // Naming: --harmo-color-* are roles; plain names are the palette they
 // default to. Within a name: what is colored, variant, then state.
-// Colors that differ in dark mode use light-dark(), light first. An app opts in
-// with color-scheme; until it does, they stay light, even on a dark system.
+// Colors that differ in dark mode use light-dark(), light first. The page is
+// light, color-scheme: light, even on a dark system, until an app opts in with
+// its own: light dark, to follow the system, or dark. Declaring one also lets
+// a bundler that lowers light-dark() for older browsers, such as Lightning CSS
+// in Next.js, resolve every color: without one, none would resolve.
 :where(:root) {
+  color-scheme: light;
+
   // Palette: identity purple (6.35:1 with white).
   --harmo-purple: #5e3de8;
   --harmo-dark-purple: #2e1a8f;
@@ -141,6 +146,9 @@
   --harmo-font-family: system-ui, sans-serif;
   // For text that's read character by character, such as an ID or a key.
   --harmo-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  // A page's title, and a display size above it, as for a home page.
+  --harmo-font-size-2xl: 3.375rem; // 54px
+  --harmo-font-size-xl: 2.0625rem; // 33px
   --harmo-font-size-lg: 1.25rem;
   --harmo-font-size-base: 1rem;
   --harmo-font-size-md: 0.9375rem;
@@ -181,6 +189,10 @@
   --harmo-space-lg: 2.625rem; // 42px
   --harmo-space-xl: 4.25rem; // 68px
   --harmo-space-2xl: 6.875rem; // 110px
+  // A page's content: as wide as Header's and Footer's, and padded as they
+  // are, so a page's own container lines up with them.
+  --harmo-page-width: 75rem;
+  --harmo-page-padding: var(--harmo-space-sm);
   --harmo-opacity-disabled: 0.5;
 
   // Shape and elevation.

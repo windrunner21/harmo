@@ -73,4 +73,14 @@ export const examples = {
       </Link>
     </>
   ),
+
+  "To another site": () => (
+    <p>
+      Read the grower's{" "}
+      <Link underlined external href="https://example.com/harvest">
+        harvest notes
+      </Link>{" "}
+      before you order.
+    </p>
+  ),
 };

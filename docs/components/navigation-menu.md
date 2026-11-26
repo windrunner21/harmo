@@ -174,6 +174,43 @@ the `<a>`'s, or the trigger's. Links go through `HarmoProvider`'s `linkComponent
 </NavigationMenu>
 ```
 
+### The page you're on, in Next.js
+
+`current` is your app's to say. A root layout is a Server Component, which
+doesn't know the path, so read it in a small Client Component with
+`usePathname()`, and put that in the layout. Match home exactly, and the
+others by their start with a `/` after it, so a post under `/blog` marks
+Blog, but `/blogroll` doesn't:
+
+```tsx
+"use client";
+
+import { NavigationMenu, NavigationMenuLink } from "@harmo-ui/react";
+import { usePathname } from "next/navigation";
+
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/blog", label: "Blog" },
+  { href: "/projects", label: "Projects" },
+];
+
+const on = (path: string, href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+
+export function MainNavigation() {
+  const path = usePathname();
+  return (
+    <NavigationMenu aria-label="Main">
+      {links.map(({ href, label }) => (
+        <NavigationMenuLink key={href} href={href} current={on(path, href)}>
+          {label}
+        </NavigationMenuLink>
+      ))}
+    </NavigationMenu>
+  );
+}
+```
+
 ## Tokens
 
 `--harmo-font-family`, `--harmo-font-size-base`, `--harmo-font-size-sm`,

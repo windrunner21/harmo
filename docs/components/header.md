@@ -14,7 +14,7 @@ app, and a sign-in page.
 | --- | --- |
 | CSS | `header.css`; the CSS of what's in it, such as `navigation-menu.css` and `button.css` |
 | Element | `<header class="hheader">` |
-| Parts | `<div class="hheader-bar">` holding an optional `.hheader-brand` with the logo's link, then what goes in the middle, such as a [Navigation Menu](navigation-menu.md) or a [Command Menu](command-menu.md), then an optional `.hheader-actions` |
+| Parts | `<div class="hheader-bar">` holding an optional `.hheader-brand` with the logo's link, then what goes in the middle, such as a [Navigation Menu](navigation-menu.md) or a [Command Menu](command-menu.md), then an optional `.hheader-actions`. In the link, an optional `.hheader-brand-name` holding a name and its `.hheader-brand-tagline`, a line of its own under it, such as a role |
 | Required | A name for each navigation in it, such as `aria-label="Main"`; the logo link's name, from its text or its image's `alt` |
 | Unique | None |
 | Script | Required: to show the hairline once the page has scrolled, and, with `data-scroll="hide"`, to hide it; see [What a script does](#what-a-script-does) |
@@ -35,6 +35,24 @@ app, and a sign-in page.
 </header>
 ```
 
+A name over a line of its own, such as a personal site's name and role,
+beside a logo or without one. Keep a space between the name and the tagline
+in the markup, so a screen reader names the link "Alex Kim Product
+engineer", not "Alex KimProduct engineer"; laid out as a grid, the space
+takes no room:
+
+```html
+<div class="hheader-brand">
+  <a href="/">
+    <span class="hheader-brand-name">Alex Kim <span class="hheader-brand-tagline">Product engineer</span></span>
+  </a>
+</div>
+```
+
+The brand's link is a plain link, or your framework's, such as Next.js's
+`<Link>`, which renders one. Harmo's [Link](link.md) would bring a link's
+color and underline with it.
+
 ## Options
 
 | Hook | Effect |
@@ -43,7 +61,7 @@ app, and a sign-in page.
 | `data-scroll="hide"` | It moves away with the page as you scroll down, and back as you scroll up |
 | `data-transparent` | It's clear over what's under it until the page scrolls, as over a hero. Pull what's under it up by its height, 54px: `margin-block-start: -3.375rem` |
 | `data-bordered` | Its hairline shows from the start, not only once the page has scrolled, as beside a [Sidebar](sidebar.md), whose edge meets it |
-| `--hheader-width` | The row's width: 75rem (1200px) |
+| `--hheader-width` | The row's width: `--harmo-page-width`, 75rem (1200px), which a page's own container can share; its sides are padded by `--harmo-page-padding`, 16px |
 | `--hheader-height` | The row's height: 54px, its 34px controls (`--harmo-control-height`) with 10px (`--harmo-space-xs`) above and below |
 
 ## Appearance and states
@@ -57,7 +75,11 @@ app, and a sign-in page.
 - Once the page has scrolled, a 1px hairline in `--harmo-color-border` shows
   under it, over 200ms (`--harmo-duration-normal`); with `data-bordered`,
   it's there from the start.
-- The logo is 15px semibold, its link with the focus ring.
+- The logo is 15px semibold, its link with the focus ring. A tagline under
+  the name is 13px, regular, in `--harmo-color-text-secondary`.
+- Its own rules for the brand's link are one class, (0,1,0), so a class of
+  yours on the link restyles it, as it comes after Harmo's, such as a
+  tagline in a monospace font, or lowercase.
 - With `data-scroll="hide"`, it follows the scroll: it moves up with the page
   as you scroll down, as far as its own height, and back as you scroll up,
   so nothing animates while you scroll. Where the scrolling stops partway,
@@ -107,7 +129,7 @@ holds goes in the middle; other props are the `<header>`'s.
 
 | Prop | Effect |
 | --- | --- |
-| `brand` | The logo's link, at the start |
+| `brand` | The logo's link, at the start; for a name over a tagline, the same markup as in HTML, with `className` |
 | `actions` | At the end |
 | `scroll` | `"stay"`, the default; `"away"`; or `"hide"` |
 | `transparent` | Clear until the page scrolls |
@@ -124,9 +146,10 @@ holds goes in the middle; other props are the `<header>`'s.
 ## Tokens
 
 `--harmo-border-radius-sm`, `--harmo-color-background`,
-`--harmo-color-border`, `--harmo-color-text`, `--harmo-duration-fast`,
-`--harmo-duration-normal`, `--harmo-ease-out-cubic`,
-`--harmo-focus-outline`, `--harmo-focus-outline-offset`,
-`--harmo-font-family`, `--harmo-font-size-md`,
-`--harmo-font-weight-semibold`, `--harmo-space-2xs`, `--harmo-space-md`,
-`--harmo-space-sm`
+`--harmo-color-border`, `--harmo-color-text`, `--harmo-color-text-secondary`,
+`--harmo-control-height`, `--harmo-duration-fast`, `--harmo-duration-normal`,
+`--harmo-ease-out-cubic`, `--harmo-focus-outline`,
+`--harmo-focus-outline-offset`, `--harmo-font-family`, `--harmo-font-size-md`,
+`--harmo-font-size-xs`, `--harmo-font-weight-normal`,
+`--harmo-font-weight-semibold`, `--harmo-page-padding`, `--harmo-page-width`,
+`--harmo-space-2xs`, `--harmo-space-md`, `--harmo-space-xs`.

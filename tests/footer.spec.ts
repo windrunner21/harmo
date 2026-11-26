@@ -1,10 +1,16 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { boxes, example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/footer.md says: wide, its groups sit side by side,
 // open, their headings plain titles out of the Tab order; 640px wide or less,
 // each folds, its heading a control; the groups are a named navigation, their
 // headings h2s; and a Footer can be its bottom row alone.
+const restyle = async (page: Page, part: Locator) => {
+  await page.addStyleTag({ content: ".site-part { color: rgb(1, 2, 3); }" });
+  await part.evaluate((node) => node.classList.add("site-part"));
+  await expect(part).toHaveCSS("color", "rgb(1, 2, 3)");
+};
+
 onEachPlayground("footer", () => {
   test("wide, its groups are open, their summaries out of the Tab order, and a click doesn't close them", async ({ page }) => {
     const container = await example(page, "footer-default");
@@ -101,5 +107,22 @@ onEachPlayground("footer", () => {
     await expect(container.locator("footer.hfooter")).toHaveCount(1);
     await expect(container.getByRole("navigation")).toHaveCount(0);
     await expect(container.locator(".hfooter-bottom").getByRole("link")).toHaveText(["Privacy", "Terms", "Help"]);
+  });
+
+  test("one class of yours on the brand's link or its line restyles it", { tag: "@css" }, async ({ page }) => {
+    const brand = (await example(page, "footer-default")).locator(".hfooter-brand");
+    await restyle(page, brand.locator("> a"));
+    await restyle(page, brand.locator("> p").first());
+  });
+
+  test("as wide as --harmo-page-width, padded by --harmo-page-padding", { tag: "@css" }, async ({ page }) => {
+    const main = (await example(page, "footer-default")).locator(".hfooter-main");
+    await expect(main).toHaveCSS("max-inline-size", "1200px");
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty("--harmo-page-width", "40rem");
+      document.documentElement.style.setProperty("--harmo-page-padding", "2rem");
+    });
+    await expect(main).toHaveCSS("max-inline-size", "640px");
+    await expect(main).toHaveCSS("padding-inline-start", "32px");
   });
 });

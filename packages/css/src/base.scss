@@ -1,0 +1,16 @@
+@use "shortcuts" as *;
+
+// Optional page styles, not part of index.css: the page in Harmo's font, text
+// color, and background, with no margin around it, so a Header's frosted bar
+// and every component sit on Harmo's background, in light and dark mode. Load
+// it once, after tokens.css or index.css. :where() gives it no specificity, so
+// any rule of yours for body wins. Keeping a Footer at the bottom of a short
+// page is the page's layout, so it's in footer.md, not here.
+:where(body) {
+  margin: 0;
+
+  font-family: $font-family;
+
+  color: $color-text;
+  background-color: $color-background;
+}

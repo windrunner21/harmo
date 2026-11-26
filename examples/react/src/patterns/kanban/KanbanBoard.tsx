@@ -660,7 +660,11 @@ export const KanbanBoard = <Card,>({
             );
           })}
         </div>
-        <DragOverlay dropAnimation={still ? null : { duration: 200, easing: easeOut }} transition={still ? "none" : undefined}>
+        <DragOverlay
+          className={active ? undefined : "hkanban-landing"}
+          dropAnimation={still ? null : { duration: 200, easing: easeOut }}
+          transition={still ? "none" : undefined}
+        >
           {picked && (
             <div className="hkanban-overlay" aria-hidden="true" inert>
               {renderCard(picked, standIn)}

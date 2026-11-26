@@ -7,7 +7,7 @@ export type EmptyStateProps = Omit<ComponentPropsWithRef<"div">, "children"> &
     | { label: ReactNode; description?: ReactNode }
     | { label?: ReactNode; description: ReactNode }
   ) & {
-    labelAs?: "h2" | "h3" | "h4" | "h5" | "h6" | "p";
+    labelAs?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
     icon?: ReactNode;
     actions?: ReactNode;
     align?: "start";

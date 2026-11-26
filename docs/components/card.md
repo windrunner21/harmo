@@ -13,7 +13,7 @@ settings pages or help links.
 | --- | --- |
 | CSS | `card.css`; `chevron-to-arrow.css` for a chevron |
 | Element | Any block element with `class="hcard"`, such as `<div>`, `<section>`, or `<article>`; `<a class="hcard" href="…">` or `<button class="hcard" type="button">` for a card that leads somewhere |
-| Parts | None, or, in this order: `<span class="hcard-icon" aria-hidden="true">` around an icon, an `<svg>` or an `<img>`; `.hcard-title`; `<p class="hcard-description">`; a [ChevronToArrow](chevron-to-arrow.md) with `hcard-chevron`. Each but the title is optional |
+| Parts | None, or, in this order: `<span class="hcard-icon" aria-hidden="true">` around an icon, an `<svg>` or an `<img>`; `.hcard-title`; `<span class="hcard-meta">`, a detail at the end of the title row, such as a date; `<p class="hcard-description">`; a [ChevronToArrow](chevron-to-arrow.md) with `hcard-chevron`. Each but the title is optional |
 | Required | `type` on a `<button>`. The title is a heading, a `<p>`, or a `<span>`; in a `<button>` card, a `<span>`, and the description too, since a button holds only phrasing content |
 | Unique | None |
 | Script | None |
@@ -79,6 +79,19 @@ The first row's frame then reaches 17px above the list's place, by default,
 so leave at least that much room above it, as a Section's gap under its
 header does.
 
+A detail at the end of the title row, such as a role's years or a post's
+date, goes in `.hcard-meta`, after the title. On a card that's a link, it
+sits before the chevron. A line that leads to another site can end in an
+arrow, with [Link](link.md)'s `.hexternal`:
+
+```html
+<a class="hcard" data-variant="ghost" href="https://example.com/golden-spacing">
+  <p class="hcard-title">Spacing on the golden ratio</p>
+  <span class="hcard-meta"><time datetime="2026-10-02">Oct 2</time></span>
+  <p class="hcard-description"><span class="hexternal">On example.com</span></p>
+</a>
+```
+
 ## Options
 
 | Hook | Effect |
@@ -87,7 +100,7 @@ header does.
 | `data-variant="raised"` | `--harmo-color-background`, a 1px `--harmo-color-border` border, and `--harmo-box-shadow-sm` |
 | `data-variant="ghost"` | No background; on a link or button card, `--harmo-color-background-hover` on hover |
 | `--harmo-card-padding` | The padding: `--harmo-space-sm`, 16px, by default; set it on a card for a tighter one. Built on `:root`, so a section that changes `--harmo-space-sm` redeclares it there too |
-| `.hcard-title` inside | Lays out the parts in a grid: the icon, the title and description, and the chevron |
+| `.hcard-title` inside | Lays out the parts in a grid: the icon, the title and description, the detail at the title row's end, and the chevron |
 
 ## Appearance and states
 
@@ -117,6 +130,9 @@ header does.
   or a button, as a link's text is, and in `--harmo-color-text` otherwise.
   The description: 14px in `--harmo-color-text-secondary`, 6px
   (`--harmo-space-2xs`) under it.
+- The detail: 14px in `--harmo-color-text-secondary`, on the title's line at
+  the row's end, 16px after the title, kept on one line, its digits even,
+  so dates in a list line up; the description runs under the title and it.
 - The chevron: in `--harmo-color-text-secondary` at the end, centered, 16px
   (`--harmo-space-sm`) after the text. It turns into an arrow while the card is hovered or
   focused, as a ChevronToArrow does in any link or button.
@@ -154,6 +170,7 @@ attributes.
 | `labelAs` | The title's element: `"h3"` by default, or `"h2"` to `"h6"`, or `"p"` where it's no heading |
 | `icon` | The icon, such as an `<svg className="hicon">`, in its tile; needs `label` |
 | `description` | The description; needs `label` |
+| `meta` | A detail at the end of the title row, such as a date; needs `label` |
 | `chevron` | A ChevronToArrow at the end; needs `label` |
 
 ```tsx

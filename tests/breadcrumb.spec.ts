@@ -1,10 +1,16 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { example, onEachPlayground, test } from "./playgrounds.ts";
 
 // What docs/components/breadcrumb.md says: links look like Links, with their
 // hover color, the current page is set apart by its weight, and separators
 // keep their size and color. Only CSS decides them, so they're tested on the
 // HTML playground.
+const restyle = async (page: Page, part: Locator) => {
+  await page.addStyleTag({ content: ".site-part { color: rgb(1, 2, 3); }" });
+  await part.evaluate((node) => node.classList.add("site-part"));
+  await expect(part).toHaveCSS("color", "rgb(1, 2, 3)");
+};
+
 onEachPlayground("breadcrumb", () => {
   test("a link takes Link's hover color, as a theme sets it", { tag: "@css" }, async ({ page }) => {
     const trail = await example(page, "breadcrumb-trail");
@@ -46,5 +52,9 @@ onEachPlayground("breadcrumb", () => {
 
     await page.addStyleTag({ content: ".hbreadcrumb-separator { color: rgb(0, 0, 200); }" });
     await expect(separator).toHaveCSS("color", "rgb(0, 0, 200)");
+  });
+
+  test("one class of yours on the page you're on restyles it", { tag: "@css" }, async ({ page }) => {
+    await restyle(page, (await example(page, "breadcrumb-trail")).locator("[aria-current='page']"));
   });
 });

@@ -131,6 +131,11 @@ const groups: CatalogGroup[] = [
           "A part of a page: its title, a description, and actions, over its content.",
       },
       {
+        slug: "heading",
+        title: "Heading",
+        purpose: "A page's title, and the headings of its parts outside Prose, on the same scale as Prose's.",
+      },
+      {
         slug: "kbd",
         title: "Kbd",
         purpose: "A key or shortcut, such as Enter or ⌘K.",
