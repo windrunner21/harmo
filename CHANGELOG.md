@@ -8,6 +8,119 @@ minor version may change an API, and says how to upgrade when it does.
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-11-26
+
+What building an ordinary Next.js site on Harmo turned up: colors that went
+missing in a default Next.js 16 build; a page's title and headings outside
+Prose; a brand with a tagline; a date on a Card's title row; tables and
+images in Prose; and the page itself, its width and base styles.
+
+### Added
+
+- Heading: a page's title, `.htitle`, 33px on a 42px line, and the
+  headings of its parts outside Prose, `.hheading`, 20px on a 26px line,
+  the size of Prose's `h2` on its line, so the two look the same. In React,
+  `Title`, an `h1`, and `Heading`, an `h2`, or with `as`, `h3` to `h6`. The
+  type scale goes up to them: `--harmo-font-size-xl`, 33px, and
+  `--harmo-font-size-2xl`, 54px, for a display title.
+
+  ```html preview
+  <h1 class="htitle">Orders</h1>
+  <h2 class="hheading">Today</h2>
+  <p>12 orders to pack, and 3 to deliver before noon.</p>
+  ```
+- Header: a name over a line of its own, such as a personal site's name and
+  role, with `.hheader-brand-name` and `.hheader-brand-tagline` in the
+  brand's link. A space between them in the markup keeps a screen reader
+  from running them together.
+
+  ```html preview="header/A name over a line"
+  <div class="hheader-brand">
+    <a href="/">
+      <span class="hheader-brand-name">Alex Kim <span class="hheader-brand-tagline">Product engineer</span></span>
+    </a>
+  </div>
+  ```
+- Card: a detail at the end of the title row, such as a role's years or a
+  post's date, with `.hcard-meta`, in React `meta`: on the title's line,
+  smaller, in secondary text, its digits even, before the chevron on a link.
+
+  ```html preview
+  <a class="hcard" data-variant="ghost" href="/blog/native-popovers">
+    <p class="hcard-title">Moving a design system to native popovers</p>
+    <span class="hcard-meta"><time datetime="2026-11-20">Nov 20</time></span>
+    <p class="hcard-description">What the browser now does for us, and what it still doesn't.</p>
+  </a>
+  ```
+- Link: an arrow after a link to another site, `.hexternal`, in React
+  `external`. A class of its own, so it goes on any text, such as a card's
+  line that says where a post was published.
+
+  ```html preview
+  <p>Read the grower's <a class="hlink hexternal" data-underlined href="https://example.com/harvest">harvest notes</a> before you order.</p>
+  ```
+- Prose: tables and images, as a Markdown renderer writes them. A table is
+  as wide as the text, its cells padded and ruled, a firmer rule under its
+  header row; a wide one goes in `.hprose-table`, in React `ProseTable`, a
+  named region that scrolls sideways and takes focus, so the keyboard can
+  scroll it, while the table stays a table. An image is as wide as the text
+  at most, with 8px corners, and a figure's caption is under it.
+
+  ```html preview
+  <div class="hprose">
+    <div class="hprose-table" role="region" aria-label="Delivery windows" tabindex="0">
+      <table>
+        <thead>
+          <tr><th>Area</th><th>Days</th><th>Order by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>City center</td><td>Every day</td><td>8 PM the day before</td></tr>
+          <tr><td>The valley</td><td>Tuesday and Friday</td><td>Noon the day before</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  ```
+- Empty State: its title can be the page's `h1`, `labelAs="h1"`, as on a
+  404 or error page that's an Empty State and nothing else.
+- `base.css`, which isn't part of `index.css`: the page in Harmo's font, text
+  color, and background, with no margin around it, at no specificity, so
+  any rule of yours for `body` wins. The docs show the lines to copy with
+  the CLI, and, in footer.md, how to keep a Footer at the bottom of a short
+  page.
+- `--harmo-page-width`, 75rem, and `--harmo-page-padding`, 16px: Header and
+  Footer default to them, so a page's own container lines up with them, and
+  changing them once changes all three.
+
+### Changed
+
+- Prose: its text is on a 1.625 line, 26px for 16px text, on the
+  golden-ratio scale, rather than 1.5, and its headings on the same line,
+  so an `h2`, 20px, is a Heading's size on a Heading's line. Set
+  `--hprose-line-height: 1.5` on it to keep the old lines.
+
+  ```html preview
+  <div class="hprose">
+    <h2>Returns</h2>
+    <p>You can return anything within 30 days, for free. Keep the box until you're sure: we take items back in it.</p>
+  </div>
+  ```
+
+### Fixed
+
+- No colors at all, every link, button, and focus ring black, where a
+  bundler lowers `light-dark()` for older browsers, as Lightning CSS does
+  by default in Next.js 16, and the page declares no `color-scheme`. Each
+  color then needs variables only a `color-scheme` declaration sets, so
+  `tokens.css` declares `color-scheme: light` on `:where(:root)`; yours, on
+  `:root`, still takes over from it.
+- Header's and Footer's brand links and lines, and Breadcrumb's links and
+  the page you're on: their own rules are one class, (0,1,0), rather than a
+  class and an element, so one class of yours restyles them, as it comes
+  after Harmo's.
+- Kanban, in React: a click as a dropped card's copy lands, such as on the
+  Banner's Dismiss, reaches what's under it, rather than the copy.
+
 ## [0.9.1] - 2026-11-19
 
 The Globe's sphere on a page in the secondary background, such as an app's.
@@ -3065,7 +3178,8 @@ CSS and React, and `npx harmo-ui add`.
 - `harmo-ui`: `npx harmo-ui add <component>`, which copies components, with
   their styles and what they need, into a project.
 
-[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.9.1...HEAD
+[Unreleased]: https://github.com/windrunner21/harmo/compare/v0.9.2...HEAD
+[0.9.2]: https://github.com/windrunner21/harmo/compare/v0.9.1...v0.9.2
 [0.9.1]: https://github.com/windrunner21/harmo/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/windrunner21/harmo/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/windrunner21/harmo/compare/v0.8.0...v0.8.1
