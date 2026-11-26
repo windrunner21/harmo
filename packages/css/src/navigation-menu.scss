@@ -101,7 +101,7 @@
   }
 
   // The page you're on: its weight tells it apart without its color.
-  &[aria-current="page"] {
+  &:is([aria-current="page"], [aria-current="true"]) {
     font-weight: $font-weight-medium;
 
     color: $color-primary;
@@ -348,7 +348,7 @@
 
   // The page you're on: a line just inside its edge tells it apart without
   // its color.
-  &[aria-current="page"] {
+  &:is([aria-current="page"], [aria-current="true"]) {
     background-color: $color-primary-tint;
 
     & .hnavigation-menu-title {

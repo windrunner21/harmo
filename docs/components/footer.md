@@ -107,6 +107,7 @@ body {
   display: flex;
   flex-direction: column;
   min-block-size: 100svh;
+  margin: 0;
 }
 
 main {

@@ -55,11 +55,13 @@ onEachPlayground("prose", () => {
     await expect(link).toHaveAttribute("rel", "noreferrer");
   });
 
-  test("its text on a 26px line, 1.625 times its size, and its headings on the same line", { tag: "@css" }, async ({ page }) => {
+  test("its text on a 26px line, 1.625 times its size, and its headings on the same line, which follows --hprose-line-height", { tag: "@css" }, async ({ page }) => {
     const prose = (await example(page, "prose-headings-and-quotes")).locator(".hprose");
     await expect(prose.locator("p").first()).toHaveCSS("line-height", "26px");
     await expect(prose.locator("h3")).toHaveCSS("line-height", "26px");
     await expect(prose.locator("h4")).toHaveCSS("line-height", "26px");
+    await prose.evaluate((node) => (node as HTMLElement).style.setProperty("--hprose-line-height", "1.5"));
+    await expect(prose.locator("h3")).toHaveCSS("line-height", "24px");
   });
 
   test("a table: its cells padded and ruled, a firmer rule under its header row, and a wide one scrolls in its region from the keys", { tag: "@css" }, async ({ page }) => {
@@ -72,7 +74,10 @@ onEachPlayground("prose", () => {
     await expect(cell).toHaveCSS("padding-block-start", "6px");
     await expect(cell).toHaveCSS("border-block-end-width", "1px");
     await expect(header).toHaveCSS("border-block-end-width", "2px");
-    await region.evaluate((node) => ((node as HTMLElement).style.inlineSize = "16rem"));
+    await region.locator("td").nth(1).evaluate((node) => (node.textContent = "Every day of the week, holidays included, in any weather, from the first frost to the last"));
+    await region.evaluate((node) => ((node as HTMLElement).style.inlineSize = "40rem"));
+    expect(await region.evaluate((node) => node.scrollWidth > node.clientWidth), "where its words fit, it wraps").toBe(false);
+    await region.evaluate((node) => ((node as HTMLElement).style.inlineSize = "12rem"));
     expect(await region.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
     await region.focus();
     await expect(region).toHaveCSS("outline-style", "solid");
@@ -82,10 +87,12 @@ onEachPlayground("prose", () => {
 
   test("an image as wide as the text at most, with 8px corners, its caption under it, smaller", { tag: "@css" }, async ({ page }) => {
     const prose = (await example(page, "prose-images")).locator(".hprose");
-    const image = prose.getByRole("img", { name: "Rows of trees on a hillside at dawn" });
+    const image = prose.getByRole("img", { name: "Green hills under a sky that darkens toward the top" });
     await expect(image).toHaveCSS("border-radius", "8px");
-    const [picture, text] = [await image.boundingBox(), await prose.boundingBox()];
+    const caption = prose.locator("figcaption");
+    const [picture, text, under] = [await image.boundingBox(), await prose.boundingBox(), await caption.boundingBox()];
     expect(picture!.width).toBeLessThanOrEqual(text!.width + 0.5);
-    await expect(prose.locator("figcaption")).toHaveCSS("font-size", "14px");
+    expect(under!.y).toBeGreaterThanOrEqual(picture!.y + picture!.height);
+    await expect(caption).toHaveCSS("font-size", "14px");
   });
 });

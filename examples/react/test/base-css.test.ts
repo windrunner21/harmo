@@ -8,8 +8,7 @@ import { join } from "node:path";
 const dist = join(import.meta.dir, "..", "..", "..", "packages", "css", "dist");
 
 test("base.css sets the page's margin, font, color, and background under :where(body), and index.css doesn't", () => {
-  const base = readFileSync(join(dist, "base.css"), "utf8");
-  expect(base).toContain(":where(body)");
+  const base = /:where\(body\)\s*\{([^}]*)\}/.exec(readFileSync(join(dist, "base.css"), "utf8"))?.[1] ?? "";
   for (const declaration of [
     "margin: 0",
     "font-family: var(--harmo-font-family)",

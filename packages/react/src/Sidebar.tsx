@@ -268,7 +268,7 @@ export const SidebarSubItem = ({
       <Anchor
         {...props}
         className={withClass("hsidebar-sub-item", className)}
-        aria-current={current ? "page" : undefined}
+        aria-current={current ? "page" : props["aria-current"]}
       />
     </li>
   );
@@ -311,7 +311,7 @@ export const SidebarItem = ({
       <Anchor
         {...props}
         className={withClass("hsidebar-item", className)}
-        aria-current={current ? "page" : undefined}
+        aria-current={current ? "page" : props["aria-current"]}
       >
         {icon}
         <span className="hsidebar-label">{children}</span>

@@ -64,6 +64,7 @@ place, so they look like one.
 | Hook | Effect |
 | --- | --- |
 | `aria-current="page"` on a link or row | The page you're on: a link in `--harmo-color-primary` and medium weight; a row with its title in `--harmo-color-primary`, on `--harmo-color-primary-tint`, with a 1px line just inside its edge |
+| `aria-current="true"` on a link or row | A section you're in, such as Blog while you read a post under it: it looks as the page you're on does |
 | `data-align="start"` | The panel opens at the menu's start rather than its end, for a menu near the start of the window, where the panel would run off the edge |
 | `data-orientation="vertical"` | The triggers stack, and each panel opens in place beneath its trigger, with no hover and no frame, such as in a [Popup](popup.md) on a phone. It's part of the page, as an Accordion is: Escape and a press outside are for whatever it's in. Choosing a link closes the popup it's in |
 | `disabled` or `aria-disabled="true"` on a trigger | A trigger that can't open: `--harmo-color-text-tertiary` text, a not-allowed cursor, and no hover. `aria-disabled` keeps it focusable, so a [Tooltip](tooltip.md) can say why |
@@ -178,9 +179,12 @@ the `<a>`'s, or the trigger's. Links go through `HarmoProvider`'s `linkComponent
 
 `current` is your app's to say. A root layout is a Server Component, which
 doesn't know the path, so read it in a small Client Component with
-`usePathname()`, and put that in the layout. Match home exactly, and the
-others by their start with a `/` after it, so a post under `/blog` marks
-Blog, but `/blogroll` doesn't:
+`usePathname()`, and put that in the layout. `current` marks the page you're
+on, `aria-current="page"`. On a page under a link's section, such as a post
+under Blog, give that link `aria-current="true"` instead: it looks the same,
+and says it's the current one of the set, not the page itself. Compare paths
+without a trailing slash, and a section by its start with a `/` after it, so
+`/blogroll` isn't under Blog:
 
 ```tsx
 "use client";
@@ -194,15 +198,20 @@ const links = [
   { href: "/projects", label: "Projects" },
 ];
 
-const on = (path: string, href: string) =>
-  href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+const at = (path: string, href: string) => (path.replace(/(.)\/$/, "$1")) === href;
+const under = (path: string, href: string) => href !== "/" && path.startsWith(`${href}/`);
 
 export function MainNavigation() {
-  const path = usePathname();
+  const path = usePathname() ?? "";
   return (
     <NavigationMenu aria-label="Main">
       {links.map(({ href, label }) => (
-        <NavigationMenuLink key={href} href={href} current={on(path, href)}>
+        <NavigationMenuLink
+          key={href}
+          href={href}
+          current={at(path, href)}
+          aria-current={under(path, href) ? "true" : undefined}
+        >
           {label}
         </NavigationMenuLink>
       ))}

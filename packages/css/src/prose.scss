@@ -51,11 +51,12 @@
     margin-block-start: calc(var(--hprose-text-size) * 0.375);
   }
 
-  // Each on the text's 26px line, for 16px text, so an h2, 20px, is a
-  // Heading's size on a Heading's line.
+  // Each on the text's own line, 26px for 16px text, 1lh of Prose, so an h2,
+  // 20px, is a Heading's size on a Heading's line, and follows
+  // --hprose-line-height, or a Conversation's.
   & :is(h2, h3, h4) {
     font-weight: $font-weight-semibold;
-    line-height: calc(var(--hprose-text-size) * 1.625);
+    line-height: 1lh;
   }
 
   & h2 {
@@ -135,13 +136,16 @@
   // a wide table is wider than the text: put it in .hprose-table, which
   // scrolls it sideways, as a table stays a table, its rows and columns read
   // as such.
-  & table {
+  // Not a Table's, which has its own look.
+  & table:not(.htable) {
     inline-size: 100%;
 
     border-collapse: collapse;
   }
 
-  & :is(th, td) {
+  // A cell of the table itself, in a row group or a row written straight
+  // into it, not one of a table nested in a cell.
+  & :is(table:not(.htable) > :is(thead, tbody, tfoot) > tr, table:not(.htable) > tr) > :is(th, td) {
     padding: calc(var(--hprose-text-size) * 0.375) calc(var(--hprose-text-size) * 0.625);
 
     overflow-wrap: normal;
@@ -151,17 +155,20 @@
     border-block-end: 1px solid $color-border;
   }
 
-  & th {
+  & :is(table:not(.htable) > :is(thead, tbody, tfoot) > tr, table:not(.htable) > tr) > th {
     font-weight: $font-weight-semibold;
   }
 
-  & thead th {
+  & table:not(.htable) > thead > tr > th {
     border-block-end-width: 2px;
   }
 
   // An image: as wide as the text at most, with the 8px corners. In a
   // figure, it's a block, its caption under it, smaller, in secondary text.
-  & img {
+  // Only an image as Markdown places it, so a component's, such as an
+  // Avatar's, keeps its own shape.
+  & :is(p, li, figure, blockquote, td, th, a, em, strong, h1, h2, h3, h4, h5, h6) > img:not(.havatar),
+  & > img:not(.havatar) {
     max-inline-size: 100%;
     block-size: auto;
 
@@ -209,9 +216,9 @@
 }
 
 // A wide table's region, inside Prose: it scrolls sideways, rather than the
-// page, and is a named region that takes focus, role="region", aria-label,
-// and tabindex="0", so the keyboard can scroll it. The table in it is as
-// wide as its words need, and at least as wide as the text.
+// page, when its columns can't fit, their text wrapped, and is a named region
+// that takes focus, role="region", aria-label, and tabindex="0", so the
+// keyboard can scroll it.
 .hprose-table {
   overflow-x: auto;
 
@@ -224,10 +231,5 @@
   &:focus-visible {
     outline: $focus-outline;
     outline-offset: $focus-outline-offset;
-  }
-
-  & > table {
-    inline-size: max-content;
-    min-inline-size: 100%;
   }
 }

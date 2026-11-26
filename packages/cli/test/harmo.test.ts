@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { components } from "../components.js";
 import {
   cpSync,
   existsSync,
@@ -10,7 +11,7 @@ import {
   symlinkSync,
   writeFileSync,
 } from "node:fs";
-import { delimiter, dirname, join, normalize } from "node:path";
+import { basename, delimiter, dirname, join, normalize } from "node:path";
 import { sharedClasses } from "../shared-styles.js";
 
 // Runs the built CLI in Node, as npx would, in a throwaway project. Those projects
@@ -345,16 +346,58 @@ describe("add", () => {
     expect(imports.slice(-patterns.length)).toEqual(patterns);
   });
 
-  test("--all copies every component, and no pattern", () => {
+  test("--all copies every component, and no pattern, nor the optional page styles", () => {
     expect(run("add", "--all").code).toBe(0);
+    for (const [name, [file = ""]] of Object.entries(components)) {
+      expect(existsSync(join(project, harmo, name, basename(file))), name).toBe(true);
+    }
     expect(existsSync(join(project, harmo, "patterns"))).toBe(false);
+    expect(existsSync(join(project, harmo, "base.css"))).toBe(false);
   });
 
-  test("list shows the patterns after the components, under their own heading", () => {
+  test("add base copies the page styles, with the tokens they read, listed in harmo.css after the tokens and before any component", () => {
+    const { code } = run("add", "base");
+    expect(code).toBe(0);
+    expect(copied()).toEqual(["accents.css", "base.css", "harmo.css", "tokens.css"]);
+    expect(read(`${harmo}/base.css`)).toBe(readFileSync(join(cssFolder, "base.css"), "utf8"));
+    expect(importsIn(read(`${harmo}/harmo.css`))).toEqual(["tokens.css", "accents.css", "base.css"]);
+    run("add", "tabs");
+    expect(importsIn(read(`${harmo}/harmo.css`))).toEqual(["tokens.css", "accents.css", "base.css", "tabs/tabs.css"]);
+    expect(run("add", "base").code).toBe(0);
+    expect(importsIn(read(`${harmo}/harmo.css`))).toEqual(["tokens.css", "accents.css", "base.css", "tabs/tabs.css"]);
+  });
+
+  test("add base, alone, copies only CSS, so it says nothing about React", () => {
+    write("package.json", JSON.stringify({}));
+    const { code, out, err } = run("add", "base");
+    expect(code).toBe(0);
+    expect(`${out}${err}`).not.toContain("React");
+  });
+
+  test("an import written compactly, layered, or with URL() counts as listed, and isn't added again", () => {
+    run("add", "base");
+    const listed = `@import"./tokens.css";\n@IMPORT URL("./accents.css") layer(harmo);\n@import /* layered */ URL("./base.css") layer(harmo);\n`;
+    write(`${harmo}/harmo.css`, listed);
+    expect(run("add", "base").code).toBe(0);
+    expect(read(`${harmo}/harmo.css`)).toBe(listed);
+  });
+
+  test("an import whose path only starts as base.css's does isn't it, so base.css is added once", () => {
+    run("add", "base");
+    write(`${harmo}/harmo.css`, `@import "./tokens.css";\n@import "./accents.css";\n@import "./base.css.d/print.css";\n@import "./base.css backup/print.css";\n`);
+    expect(run("add", "base").code).toBe(0);
+    const css = read(`${harmo}/harmo.css`);
+    expect(css.match(/@import "\.\/base\.css";/g)).toHaveLength(1);
+  });
+
+  test("list shows the patterns after the components, under their own heading, then the optional page styles", () => {
     const { out } = run("list");
     const heading = out.indexOf("Patterns");
     expect(heading).toBeGreaterThan(out.indexOf("tooltip"));
     expect(out.indexOf("sign-in-form")).toBeGreaterThan(heading);
+    const styles = out.indexOf("Page styles");
+    expect(styles).toBeGreaterThan(out.indexOf("sign-in-form"));
+    expect(out.slice(styles)).toMatch(/\nbase\s+the page in Harmo's font/);
   });
 
   test("everything copied type-checks under a default Next.js setup", () => {

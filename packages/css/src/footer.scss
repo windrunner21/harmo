@@ -10,7 +10,7 @@
 // the Tab order. 640px wide or less, each folds, as an Accordion item does.
 // The Footer is a size container, so it follows its own width.
 .hfooter {
-  --hfooter-width: var(--harmo-page-width);
+  --hfooter-width: #{$page-width};
 
   container-type: inline-size;
 

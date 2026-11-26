@@ -144,6 +144,15 @@ onEachPlayground("card", () => {
     const link = cards.nth(1);
     const [linkMeta, chevron] = await boxes(link.locator(".hcard-meta"), link.locator(".hcard-chevron"));
     expect(chevron.x).toBeGreaterThan(linkMeta.x + linkMeta.width);
-    await expect(plain.locator(".hcard-meta")).toHaveCSS("white-space", "nowrap");
+    expect(meta.height).toBeLessThan(30);
+    // In a card too narrow for it, it wraps, and the chevron stays inside.
+    await link.evaluate((node) => ((node as HTMLElement).style.inlineSize = "12rem"));
+    const detail = link.locator(".hcard-meta");
+    await detail.evaluate((node) => (node.textContent = "ORDER2026112100000000042"));
+    const [narrow, end, wrapped] = await boxes(link, link.locator(".hcard-chevron"), detail);
+    expect(end.x + end.width).toBeLessThanOrEqual(narrow.x + narrow.width);
+    expect(wrapped.x + wrapped.width).toBeLessThanOrEqual(end.x);
+    expect(wrapped.height).toBeGreaterThan(30);
+    expect(await detail.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   });
 });

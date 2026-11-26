@@ -67,10 +67,10 @@ that lets you swap the element for a table can add the wrapper itself:
   26px, 6px, and 6px. The em is always the text's, worked out once on
   `.hprose`, so a block with a smaller size of its own, such as a block of
   code, is spaced the same.
-- Headings are semibold, each on the text's line, 1.625 times the text:
-  `<h2>` 1.25 times the text, `<h3>` 1.125, `<h4>` the same size. At 16px
-  text, an `<h2>` is 20px on a 26px line, as a [Heading](heading.md) is, so
-  one outside Prose looks the same.
+- Headings are semibold, each on Prose's own line, `1lh`, which follows
+  `--hprose-line-height`: `<h2>` 1.25 times the text, `<h3>` 1.125, `<h4>`
+  the same size. At 16px text, an `<h2>` is 20px on a 26px line, as a
+  [Heading](heading.md) is, so one outside Prose looks the same.
 - Lists are indented 1.5em. Bold is semibold.
 - A quote is set 10px in from a 2px line in `--harmo-color-border`, in
   `--harmo-color-text-secondary`. A rule is a 1px line, with 1.625em above
@@ -82,12 +82,16 @@ that lets you swap the element for a table can add the wrapper itself:
   wrapping.
 - A table is as wide as the text, its cells padded 6px by 10px, at 16px
   text, with a 1px line in `--harmo-color-border` under each row and a 2px
-  one under its header row; its words stay whole. In `.hprose-table`, it's
-  as wide as its words need and scrolls sideways; focused, the region has
-  the standard ring.
+  one under its header row; its words stay whole. In `.hprose-table`, its
+  text wraps, and it scrolls sideways only when its columns still can't
+  fit; focused, the region has the standard ring. A [Table](table.md)
+  inside keeps its own look.
 - An image is as wide as the text at most, never stretched, with 8px
-  corners. In a `<figure>`, it's a block, its `<figcaption>` 6px under it,
-  0.875 times the text, in `--harmo-color-text-secondary`.
+  corners: one as Markdown places it, in a paragraph, a list item, a
+  figure, a quote, a cell, or a link, so a component's, such as an
+  [Avatar](avatar.md)'s, keeps its own shape. In a `<figure>`, it's a block,
+  its `<figcaption>` 6px under it, 0.875 times the text, in
+  `--harmo-color-text-secondary`.
 - A plain `<a>` looks as an underlined [Link](link.md) does, hover and focus
   included.
 
@@ -131,8 +135,8 @@ small part of Markdown itself, building elements, never HTML:
 Anything else shows as it's written. For more, such as tables and images,
 render the text with your Markdown library, sanitize what it makes, and put
 that inside `<Prose>`. `<ProseTable>` renders a wide table's region, with
-`role="region"` and `tabIndex={0}`: name it with `aria-label`, and put the
-table in it. `prosePlainText(text)` gives the text without its marks, such as
+`role="region"` and `tabIndex={0}`: TypeScript requires its name, with
+`aria-label` or `aria-labelledby`. Put the table in it. `prosePlainText(text)` gives the text without its marks, such as
 for a screen reader's live region.
 
 | Prop | Effect |

@@ -363,6 +363,23 @@ onEachPlayground("tabs", () => {
     const container = await example(page, "tabs-right-to-left");
     await expectPlaced(container.locator(".htabs"), "indicator", container.locator('[aria-current="page"]'));
   });
+
+  test("aria-current=\"true\", a page under a tab, looks as the current tab does, its underline under it", async ({ page }) => {
+    const nav = (await example(page, "tabs-tabs")).getByRole("navigation");
+    // Campaigns is the only current link, by "true", so it shows only if
+    // "true" counts.
+    const tickets = nav.getByRole("link", { name: "Tickets", exact: true });
+    const target = nav.getByRole("link", { name: "Campaigns", exact: true });
+    const currentColor = await tickets.evaluate((node) => getComputedStyle(node).color);
+    for (const link of [tickets, target]) await link.evaluate((node) => ((node as HTMLElement).style.transition = "none"));
+    await tickets.evaluate((node) => node.removeAttribute("aria-current"));
+    await expect(tickets).not.toHaveCSS("color", currentColor);
+    await target.evaluate((node) => node.setAttribute("aria-current", "true"));
+    await expect(target).toHaveCSS("color", currentColor);
+    // The scripts place the underline as the strip resizes.
+    await nav.evaluate((node) => ((node as HTMLElement).style.inlineSize = `${(node as HTMLElement).offsetWidth - 20}px`));
+    await expectPlaced(nav, "indicator", target);
+  });
 });
 
 const tab = (container: Locator, name: string) => container.getByRole("tab", { name, exact: true });

@@ -53,7 +53,8 @@ They need both at 19.3 or later, and TypeScript.
 | --- | --- |
 | `npx harmo-ui add <name...>` | Copies components or patterns, with their styles and what they need |
 | `npx harmo-ui add --all` | Copies every component |
-| `npx harmo-ui list` | Lists the components and patterns |
+| `npx harmo-ui add base` | Copies the optional page styles, `base.css`: the page in Harmo's font, text color, and background, with no margin around it. Listed in `harmo.css` after the tokens; `--all` leaves it out |
+| `npx harmo-ui list` | Lists the components and patterns, then the page styles |
 | `npx harmo-ui theme <color>` | Writes `harmo-theme.css`: your brand color, as a hex code, in every role, in light and dark mode |
 
 | Option for `add` and `theme` | Effect |

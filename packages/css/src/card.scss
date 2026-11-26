@@ -107,7 +107,7 @@ $actionable: ':where(a[href], button:enabled)';
 // specificity, as above, so an app's own layout class wins.
 :where(.hcard:has(> .hcard-title)) {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) fit-content(50%) auto;
   grid-template-areas:
     "icon title meta chevron"
     "icon description description chevron";
@@ -187,7 +187,9 @@ $actionable: ':where(a[href], button:enabled)';
 }
 
 // A detail at the end of the title row, such as a date or a count: on the
-// title's line, smaller, in secondary text, on one line, its digits even.
+// title's line, smaller, in secondary text, its digits even. On one line,
+// unless the card's too narrow, when it wraps, at most half the row, rather
+// than push the chevron out.
 .hcard-meta {
   grid-area: meta;
 
@@ -196,7 +198,8 @@ $actionable: ':where(a[href], button:enabled)';
   font-size: $font-size-sm;
   font-variant-numeric: tabular-nums;
   line-height: calc(#{$font-size-base} * #{$font-line-height});
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  text-align: end;
 
   color: $color-text-secondary;
 

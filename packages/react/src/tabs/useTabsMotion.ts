@@ -15,7 +15,7 @@ export const useTabsMotion = <Root extends HTMLElement>() => {
     tabs.current?.querySelector<HTMLElement>(`:scope > .htabs-${name}`);
   const currentItem = () =>
     tabs.current?.querySelector<HTMLElement>(
-      '[aria-current="page"], [aria-selected="true"]',
+      '[aria-current="page"], a[aria-current="true"], [aria-selected="true"]',
     );
 
   const list = () =>

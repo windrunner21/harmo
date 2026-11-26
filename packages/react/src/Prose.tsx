@@ -2,6 +2,7 @@
 
 import { Fragment, type ComponentPropsWithRef, type ReactNode } from "react";
 import { Link } from "./Link.tsx";
+import type { Naming } from "./types.ts";
 import { withClass } from "./withClass.ts";
 
 export interface ProseProps extends ComponentPropsWithRef<"div"> {
@@ -118,7 +119,7 @@ export const Prose = ({ text, className, children, ...props }: ProseProps) => (
   </div>
 );
 
-export type ProseTableProps = ComponentPropsWithRef<"div">;
+export type ProseTableProps = Omit<ComponentPropsWithRef<"div">, "aria-label" | "aria-labelledby"> & Naming;
 
 export const ProseTable = ({ className, ...props }: ProseTableProps) => (
   <div role="region" tabIndex={0} {...props} className={withClass("hprose-table", className)} />

@@ -4,12 +4,20 @@
 // Naming: --harmo-color-* are roles; plain names are the palette they
 // default to. Within a name: what is colored, variant, then state.
 // Colors that differ in dark mode use light-dark(), light first. The page is
-// light, color-scheme: light, even on a dark system, until an app opts in with
-// its own: light dark, to follow the system, or dark. Declaring one also lets
-// a bundler that lowers light-dark() for older browsers, such as Lightning CSS
-// in Next.js, resolve every color: without one, none would resolve.
+// light, even on a dark system, until an app opts in with color-scheme: light
+// dark, to follow the system, or dark. A bundler that lowers light-dark() for
+// older browsers, as Lightning CSS does in Next.js 16 and Bun's does, writes
+// each color as two, one of which a pair of variables turns off, and sets them
+// only where it sees a color-scheme. These are those variables, light, so with
+// no color-scheme anywhere every color still resolves, without declaring one:
+// a <meta name="color-scheme"> or a color-scheme in a cascade layer still
+// decides the page. An app's own color-scheme, compiled by the same bundler,
+// sets them again where it's declared.
 :where(:root) {
-  color-scheme: light;
+  --lightningcss-light: initial;
+  --lightningcss-dark: ;
+  --buncss-light: initial;
+  --buncss-dark: ;
 
   // Palette: identity purple (6.35:1 with white).
   --harmo-purple: #5e3de8;

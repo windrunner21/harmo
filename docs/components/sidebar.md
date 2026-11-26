@@ -85,6 +85,7 @@ group of links, put `hidden` on its `<li>`, so the list leaves no gap.
 | Hook | Effect |
 | --- | --- |
 | `aria-current="page"` on a link | The page you're on |
+| `aria-current="true"` on a link | A section you're in, such as Blog while you read a post under it: it looks as the page you're on does |
 | `.hsidebar-badge` in a link | A count, such as "3"; name the link with it in words, such as `aria-label="Messages 3 unread"`, which keeps the visible "Messages 3" in its name |
 | `open` on a group of links | Open, such as the group holding the page you're on |
 | One `name` on a sidebar's groups of links | One group open at a time: opening one closes the one that was open. Without it, each opens and closes on its own |
@@ -241,9 +242,12 @@ above.
 
 `current` is your app's to say. A root layout is a Server Component, which
 doesn't know the path, so read it in a small Client Component with
-`usePathname()`, and put that in the layout. Match home exactly, and the
-others by their start with a `/` after it, so a post under `/blog` marks
-Blog, but `/blogroll` doesn't:
+`usePathname()`, and put that in the layout. `current` marks the page you're
+on, `aria-current="page"`. On a page under a link's section, such as a post
+under Blog, give that link `aria-current="true"` instead: it looks the same,
+and says it's the current one of the set, not the page itself. Compare paths
+without a trailing slash, and a section by its start with a `/` after it, so
+`/blogroll` isn't under Blog:
 
 ```tsx
 "use client";
@@ -251,17 +255,27 @@ Blog, but `/blogroll` doesn't:
 import { SidebarGroup, SidebarItem } from "@harmo-ui/react";
 import { usePathname } from "next/navigation";
 
-const on = (path: string, href: string) =>
-  href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+const at = (path: string, href: string) => (path.replace(/(.)\/$/, "$1")) === href;
+const under = (path: string, href: string) => href !== "/" && path.startsWith(`${href}/`);
 
 export function ToolsGroup() {
-  const path = usePathname();
+  const path = usePathname() ?? "";
   return (
     <SidebarGroup label="Tools">
-      <SidebarItem href="/tickets" icon={<TicketsIcon className="hicon" />} current={on(path, "/tickets")}>
+      <SidebarItem
+        href="/tickets"
+        icon={<TicketsIcon className="hicon" />}
+        current={at(path, "/tickets")}
+        aria-current={under(path, "/tickets") ? "true" : undefined}
+      >
         Tickets
       </SidebarItem>
-      <SidebarItem href="/campaigns" icon={<CampaignsIcon className="hicon" />} current={on(path, "/campaigns")}>
+      <SidebarItem
+        href="/campaigns"
+        icon={<CampaignsIcon className="hicon" />}
+        current={at(path, "/campaigns")}
+        aria-current={under(path, "/campaigns") ? "true" : undefined}
+      >
         Campaigns
       </SidebarItem>
     </SidebarGroup>
@@ -269,7 +283,7 @@ export function ToolsGroup() {
 }
 ```
 
-A `SidebarSubItem` takes `current` the same way.
+A `SidebarSubItem` takes `current` and `aria-current` the same way.
 
 ## Tokens
 

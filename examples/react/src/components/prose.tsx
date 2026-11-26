@@ -88,8 +88,8 @@ export const examples = {
     <Prose>
       <p>The first harvest of the season came in on Tuesday.</p>
       <figure>
-        <img src="images/forest.svg" alt="Rows of trees on a hillside at dawn" width={640} height={360} />
-        <figcaption>The orchard at Saint-Rémy, a day's drive away.</figcaption>
+        <img src="images/forest.svg" alt="Green hills under a sky that darkens toward the top" width={400} height={400} />
+        <figcaption>The hills above the orchard, a day's drive away.</figcaption>
       </figure>
       <p>Apples are in the shops from Thursday.</p>
     </Prose>

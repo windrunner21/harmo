@@ -110,7 +110,7 @@ start, as in [Markup](#markup), rather than taking the role itself.
 | `label` | The title; this, `description`, or both |
 | `labelAs` | The title's element: `"h2"` by default, or `"h1"`, as on a 404 page where it's the page's only heading, `"h3"` to `"h6"`, or `"p"` where it's no heading |
 | `description` | The description |
-| `icon` | The icon, such as an `<svg className="hicon">`: your own, from your icon set, such as Lucide's, or drawn inline. Harmo doesn't export its own icons; `MessagesIcon` below stands for yours |
+| `icon` | The icon, such as an `<svg className="hicon">`: your own, from your icon set, such as Lucide's, or drawn inline. `MessagesIcon` and `GlobeIcon` below stand for yours: Harmo exports no icons like them |
 | `actions` | The actions, such as `<Button>`s |
 | `align` | `"start"`: lined up at its start |
 | `size` | `"small"` |

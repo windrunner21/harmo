@@ -201,6 +201,26 @@ for (const name of Object.keys(components)) {
     })),
   });
 }
+// The optional page styles, base.css, with the tokens it reads: not a
+// component, so harmo-ui add --all leaves it out, and harmo.css lists it
+// after the tokens and accents, before any component.
+const baseDescription = "the page in Harmo's font, text color, and background, with no margin around it; optional, so --all leaves it out";
+if ("base" in components || patterns.includes("base"))
+  throw new Error("A component or pattern is called base, the page styles' name");
+write("base.json", {
+  $schema: "https://ui.shadcn.com/schema/registry-item.json",
+  name: "base",
+  type: "registry:item",
+  categories: ["base"],
+  description: baseDescription,
+  files: ["accents.css", "base.css", "tokens.css"].map((path) => ({
+    path,
+    type: "registry:file",
+    target: `components/harmo/${path}`,
+    content: readFileSync(join(cssSource, path), "utf8"),
+  })),
+});
+
 // Where @harmo-ui/react exports each name from.
 const exported = new Map<string, string>();
 for (const [, names = "", file = ""] of readFileSync(
@@ -420,5 +440,6 @@ write("registry.json", {
       categories: ["pattern"],
       description: descriptions.get(name),
     })),
+    { name: "base", type: "registry:item", categories: ["base"], description: baseDescription },
   ],
 });

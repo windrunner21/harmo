@@ -13,6 +13,8 @@ Usage:
   npx harmo-ui add <name...>        Copy components or patterns, with their styles and
                                     what they need
   npx harmo-ui add --all            Copy every component
+  npx harmo-ui add base             Copy the optional page styles: the page in
+                                    Harmo's font, text color, and background
   npx harmo-ui list                 List the components and patterns
   npx harmo-ui theme <color>        Write harmo-theme.css: your brand color, as a hex
                                     code, in every role, in light and dark mode
@@ -36,6 +38,11 @@ interface Listing {
 
 const isPattern = ({ categories }: Listing) =>
   categories?.includes("pattern") ?? false;
+
+// The optional page styles, base.css: not a component, so --all leaves them
+// out, and list shows them on their own.
+const isBase = ({ categories }: Listing) =>
+  categories?.includes("base") ?? false;
 
 interface Item extends Listing {
   files: { path: string; content: string }[];
@@ -108,8 +115,9 @@ const styleOrder = (
   const [folder = "", name = "", file = ""] = path.split("/");
   if (path === "tokens.css") return [0, "", ""];
   if (path === "accents.css") return [1, "", ""];
-  if (folder !== "patterns") return [2, folder, ""];
-  return [patterns.has(name) ? 4 : 3, name, file];
+  if (path === "base.css") return [2, "", ""];
+  if (folder !== "patterns") return [3, folder, ""];
+  return [patterns.has(name) ? 5 : 4, name, file];
 };
 const isBefore = (a: string, b: string, patterns: Set<string>) => {
   const [rankA, folderA, fileA] = styleOrder(a, patterns);
@@ -137,7 +145,7 @@ const cssImports = (css: string) => {
     else if (char === ")") parens = Math.max(0, parens - 1);
     else if (char === "{") braces++;
     else if (char === "}") braces = Math.max(0, braces - 1);
-    else if (start === -1 && braces === 0 && css.startsWith("@import", i) && /[\s"'u]/.test(css[i + 7] ?? ""))
+    else if (start === -1 && braces === 0 && css.slice(i, i + 7).toLowerCase() === "@import" && /[\s"'u/]/i.test(css[i + 7] ?? ""))
       start = i;
     else if (char === ";" && start !== -1 && parens === 0) {
       found.push({ text: css.slice(start, i + 1), start, end: i + 1 });
@@ -148,13 +156,22 @@ const cssImports = (css: string) => {
 };
 
 // The imports of Harmo's own stylesheets, however a formatter or a person wrote
-// them: a component's, named after its folder, and any in a folder in patterns/,
+// them: the tokens, the accents, and the page styles; a component's, named
+// after its folder; and any in a folder in patterns/,
 // as a pattern or a helper can hold more than one, named as it likes.
+// What an import loads, its comments set aside, such as
+// @import /* layered */ URL("./base.css") layer(harmo);
+const importedPath = (text: string) => {
+  const match = /^@import\s*(?:url\(\s*(?:"([^"]*)"|'([^']*)'|([^)\s"']*))\s*\)|"([^"]*)"|'([^']*)')/i.exec(
+    text.replace(/\/\*[\s\S]*?\*\//g, " "),
+  );
+  return match ? (match[1] ?? match[2] ?? match[3] ?? match[4] ?? match[5] ?? "").replace(/^\.\//, "") : undefined;
+};
+const harmoPath = /^(?:tokens\.css|accents\.css|base\.css|patterns\/[\w-]+\/[\w.-]+\.css|([a-z-]+)\/\1\.css)$/;
 const harmoImports = (css: string) =>
   cssImports(css).flatMap(({ text, start, end }) => {
-    const path =
-      /^@import\s+(?:url\(\s*)?["']?(?:\.\/)?(tokens\.css|accents\.css|patterns\/[\w-]+\/[\w.-]+\.css|([a-z-]+)\/\2\.css)/.exec(text)?.[1];
-    return path ? [{ path, start, end }] : [];
+    const path = importedPath(text);
+    return path !== undefined && harmoPath.test(path) ? [{ path, start, end }] : [];
   });
 
 const withStyles = (
@@ -316,7 +333,7 @@ const add = async (
 
   const available = listings();
   const requested = options.all
-    ? available.filter((listing) => !isPattern(listing)).map(({ name }) => name)
+    ? available.filter((listing) => !isPattern(listing) && !isBase(listing)).map(({ name }) => name)
     : [...new Set(names)];
   if (requested.length === 0)
     fail(
@@ -444,7 +461,8 @@ const add = async (
   const rangeOf = (name: string) => groups.find((group) => group !== undefined && Object.hasOwn(group, name))?.[name];
   const listed = (name: string) => rangeOf(name) !== undefined;
   const unlisted = ["react", "react-dom"].filter((name) => !listed(name));
-  if (unlisted.length > 0) {
+  // Only for React's files: the page styles, on their own, are CSS.
+  if (unlisted.length > 0 && [...files.keys()].some((path) => /\.tsx?$/.test(path))) {
     console.log(
       `\nHarmo's components need React and React DOM 19.3 or later, and this project doesn't list ${unlisted.join(" or ")}.`,
     );
@@ -595,11 +613,16 @@ const list = () => {
   const width = Math.max(...items.map(({ name }) => name.length));
   const show = ({ name, description }: Listing) =>
     console.log(`${name.padEnd(width)}  ${description ?? ""}`.trimEnd());
-  items.filter((item) => !isPattern(item)).forEach(show);
+  items.filter((item) => !isPattern(item) && !isBase(item)).forEach(show);
   const patterns = items.filter(isPattern);
   if (patterns.length > 0) {
     console.log("\nPatterns, to copy and change as your own code:");
     patterns.forEach(show);
+  }
+  const base = items.filter(isBase);
+  if (base.length > 0) {
+    console.log("\nPage styles, optional, which --all leaves out:");
+    base.forEach(show);
   }
 };
 

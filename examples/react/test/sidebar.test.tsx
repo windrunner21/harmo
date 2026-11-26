@@ -94,4 +94,21 @@ describe("Sidebar", () => {
     expect(others).toEqual([first, first, first]);
     expect(names(false)).toEqual([null, null, null, null]);
   });
+
+  test("a link takes your aria-current where current isn't set, such as true for a section you're in", () => {
+    const markup = renderToStaticMarkup(
+      <Sidebar aria-label="Main">
+        <SidebarGroup>
+          <SidebarItem href="/" current>
+            Home
+          </SidebarItem>
+          <SidebarItem href="/blog" aria-current="true">
+            Blog
+          </SidebarItem>
+        </SidebarGroup>
+      </Sidebar>,
+    );
+    expect(markup).toMatch(/<a [^>]*href="\/"[^>]*aria-current="page"/);
+    expect(markup).toMatch(/<a [^>]*href="\/blog"[^>]*aria-current="true"/);
+  });
 });

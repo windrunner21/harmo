@@ -261,7 +261,7 @@
   }
 
   // The page you're on.
-  &[aria-current="page"] {
+  &:is([aria-current="page"], [aria-current="true"]) {
     font-weight: $font-weight-medium;
 
     color: $color-primary;
@@ -381,8 +381,8 @@
 
 // A group holding the page you're on shows it on its own row while its
 // links are hidden: closed, or collapsed.
-.hsidebar-sub:not([open]):has(.hsidebar-sub-item[aria-current="page"]) > .hsidebar-item,
-.hsidebar[data-collapsed] .hsidebar-sub:has(.hsidebar-sub-item[aria-current="page"]) > .hsidebar-item {
+.hsidebar-sub:not([open]):has(.hsidebar-sub-item:is([aria-current="page"], [aria-current="true"])) > .hsidebar-item,
+.hsidebar[data-collapsed] .hsidebar-sub:has(.hsidebar-sub-item:is([aria-current="page"], [aria-current="true"])) > .hsidebar-item {
   font-weight: $font-weight-medium;
 
   color: $color-primary;

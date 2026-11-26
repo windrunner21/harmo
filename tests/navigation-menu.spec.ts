@@ -622,7 +622,18 @@ onEachPlayground("navigation-menu", () => {
       await expect(trigger("Solutions")).toHaveAttribute("aria-expanded", "false");
     });
   });
+
+  test("aria-current=\"true\", a section you're in, looks as the page you're on does", { tag: "@css" }, async ({ page }) => {
+    const container = await example(page, "navigation-menu-current-page");
+    const current = container.locator(".hnavigation-menu-link[aria-current='page']");
+    const other = container.getByRole("link", { name: "Product", exact: true });
+    await other.evaluate((node) => node.setAttribute("aria-current", "true"));
+    // Its color transitions, so it's awaited.
+    await expect(other).toHaveCSS("color", await current.evaluate((node) => getComputedStyle(node).color));
+    await expect(other).toHaveCSS("font-weight", await current.evaluate((node) => getComputedStyle(node).fontWeight));
+  });
 });
+
 
 onEachPlayground("menu-button", () => {
   test("three bars turn into a cross while it's expanded, under one name", async ({ page }) => {

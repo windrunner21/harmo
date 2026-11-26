@@ -87,4 +87,19 @@ describe("Tabs", () => {
     );
     expect(markup.match(/<div[^>]*hidden=""[^>]*>/g)).toHaveLength(2);
   });
+
+  test("a TabLink takes your aria-current where current isn't set, such as true for a page under it", () => {
+    const markup = renderToStaticMarkup(
+      <TabNav aria-label="Analytics">
+        <TabLink href="/analytics/tickets" aria-current="true">
+          Tickets
+        </TabLink>
+        <TabLink href="/analytics/campaigns" current>
+          Campaigns
+        </TabLink>
+      </TabNav>,
+    );
+    expect(markup).toMatch(/<a [^>]*href="\/analytics\/tickets"[^>]*aria-current="true"/);
+    expect(markup).toMatch(/<a [^>]*href="\/analytics\/campaigns"[^>]*aria-current="page"/);
+  });
 });

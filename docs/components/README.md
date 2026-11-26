@@ -267,7 +267,8 @@ Some components are built from others, so their files need company:
   | `data-emphasis`, `data-footer` | A cell that stands out; `static`, a footer that stays under the table | Table |
   | `data-front`, `data-beyond`, `data-expanded`, `data-overflowing`, `data-removed`, `data-moved` | Its place in the stack, spread out, scrolling when spread out taller than the window, leaving, and moving (script) | Toast |
 - **Text sizes are in rem**, so text follows the browser's default font-size
-  setting as well as zoom. The scale runs `--harmo-font-size-lg` (20px),
+  setting as well as zoom. The scale runs `--harmo-font-size-2xl` (54px),
+  `-xl` (33px), `-lg` (20px),
   `-base` (16px), `-md` (15px), `-sm` (14px), `-xs` (13px), `-2xs` (12px),
   and `-3xs` (11px); line heights are unitless or rem, never px. Pixel sizes
   in these docs are at the default 16px.

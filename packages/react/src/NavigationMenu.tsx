@@ -287,7 +287,7 @@ export const NavigationMenuLink = ({
       <Anchor
         {...props}
         className={withClass("hnavigation-menu-link", className)}
-        aria-current={current ? "page" : undefined}
+        aria-current={current ? "page" : props["aria-current"]}
       />
     </li>
   );
@@ -349,7 +349,7 @@ export const NavigationMenuRow = ({
       <Anchor
         {...props}
         className={withClass("hnavigation-menu-row", className)}
-        aria-current={current ? "page" : undefined}
+        aria-current={current ? "page" : props["aria-current"]}
       >
         {renders(icon) && (
           <span className="hnavigation-menu-icon" aria-hidden="true">

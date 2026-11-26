@@ -105,22 +105,19 @@ Component files use the `--harmo-*` properties without defining them, so
 Harmo's font, text color, and background, with no margin around it, so a
 Header's frosted bar and every component sit on Harmo's background in light
 and dark mode. Load it once, after the tokens; any rule of yours for `body`
-wins over it:
+wins over it, unless it's in a cascade layer, which loses to Harmo's
+unlayered styles:
 
 ```css
 @import "@harmo-ui/css/base.css";
 ```
 
-With the CLI, which copies the components rather than installing the CSS,
-put its lines in your own global stylesheet:
+With the CLI, which copies the styles rather than installing them, copy it
+with its own command, as `add --all` leaves it out; it's listed in
+`harmo.css` after the tokens:
 
-```css
-body {
-  margin: 0;
-  font-family: var(--harmo-font-family);
-  color: var(--harmo-color-text);
-  background-color: var(--harmo-color-background);
-}
+```sh
+npx harmo-ui add base
 ```
 
 Components with behavior, such as Select, Tabs, and Tooltip, need a script
@@ -321,10 +318,10 @@ links keep Harmo's purple until you set them.
 
 ### Dark mode
 
-Harmo's colors come in light and dark pairs, through CSS's `light-dark()`.
-`tokens.css` declares `color-scheme: light` on `:where(:root)`, so a page
-stays light, even on a dark system, until it opts in with a `color-scheme` of
-its own:
+Harmo's colors come in light and dark pairs, through CSS's `light-dark()`. A
+page stays light, even on a dark system, until it opts in with
+`color-scheme`, or a `<meta name="color-scheme">`, such as Next.js's
+`viewport.colorScheme` writes:
 
 ```css
 :root { color-scheme: dark; }        /* always dark */
@@ -332,12 +329,19 @@ its own:
 .sidebar { color-scheme: dark; }     /* one part of the page */
 ```
 
-Declaring one matters for builds too. A bundler that lowers `light-dark()`
-for older browsers, such as Lightning CSS, which Next.js 16 uses by default,
-writes each color as two, one of which variables turn off, and only a
-`color-scheme` declaration sets those. Without one anywhere, no color would
-resolve, and links, buttons, and focus rings would fall back to black;
-`tokens.css`'s own keeps them, and yours, on `:root`, takes over from it.
+A bundler that lowers `light-dark()` for older browsers, as Lightning CSS
+does by default in Next.js 16, and as Bun's does, writes each color as two,
+one of which a pair of variables turns off, set where it sees a
+`color-scheme` in the CSS it compiles. `tokens.css` sets them for light, so
+every color resolves with no `color-scheme` anywhere. In such a build, the
+colors follow the `color-scheme` in your stylesheets, compiled by the same
+bundler, not a `<meta>` or one set from a script: to switch at runtime,
+toggle a class whose rule sets `color-scheme`, such as `:root.dark`. Keep
+that rule out of a cascade layer, such as Tailwind's `@layer base`: Harmo's
+own, for light, aren't in one, so they'd win over it. And the tokens are worked out
+on `:root`, so a part of the page in its own `color-scheme`, such as
+`.sidebar` above, takes it only where the browser does `light-dark()`
+itself, as every browser since 2024 does.
 
 Every accent, and every theme `harmo-ui theme` writes, covers both modes. To set
 colors by hand for both, give each as a pair, such as

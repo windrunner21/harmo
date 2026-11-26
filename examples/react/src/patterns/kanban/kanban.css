@@ -160,15 +160,16 @@
 
 /* The card under the pointer, lifted further than the others, its border
    the primary color. */
-.hkanban-overlay {
-  cursor: grabbing;
-}
-
-/* The copy, landing once the card is let go: what's under it takes the
-   pointer, so a click as it lands, such as on the Banner's Dismiss, isn't
-   lost on it. */
+/* The copy never takes the pointer, as it follows it and as it lands, so a
+   click as it lands, such as on the Banner's Dismiss, reaches what's under
+   it. While it's there, the board shows the hand that holds it. */
 .hkanban-landing {
   pointer-events: none;
+}
+
+.hkanban:has(.hkanban-overlay),
+.hkanban:has(.hkanban-overlay) * {
+  cursor: grabbing;
 }
 
 .hkanban-overlay > .hcard {

@@ -50,8 +50,8 @@ takes no room:
 ```
 
 The brand's link is a plain link, or your framework's, such as Next.js's
-`<Link>`, which renders one. Harmo's [Link](link.md) would bring a link's
-color and underline with it.
+`<Link>`, which renders one, or Harmo's [Link](link.md), which keeps the
+brand's look there.
 
 ## Options
 

@@ -333,4 +333,22 @@ onEachPlayground("kanban", () => {
     await expect(cardsIn(board, "Done")).toHaveText(["Photograph the autumn menu"]);
     await expect(countOf(board, "To do")).toHaveText("2");
   });
+
+  test("the copy of a dragged card never takes the pointer, so a click as it lands reaches what's under it", async ({ page }) => {
+    const board = (await example(page, "kanban-task-board")).getByRole("region", { name: "Website launch" });
+    await drag(page, board, "Photograph the autumn menu", "In progress", false);
+    const overlay = page.locator(".hkanban-overlay");
+    await expect(overlay).toBeVisible();
+    // The copy, and in React the positioned wrapper dnd kit puts around it,
+    // aren't hit by the pointer.
+    const taken = await overlay.evaluate((node) => {
+      const box = node.getBoundingClientRect();
+      const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+      const wrapper = node.parentElement;
+      const positioned = wrapper && getComputedStyle(wrapper).position === "fixed" ? wrapper : node;
+      return !!hit && (positioned === hit || positioned.contains(hit));
+    });
+    expect(taken).toBe(false);
+    await page.mouse.up();
+  });
 });

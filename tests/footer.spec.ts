@@ -112,7 +112,10 @@ onEachPlayground("footer", () => {
   test("one class of yours on the brand's link or its line restyles it", { tag: "@css" }, async ({ page }) => {
     const brand = (await example(page, "footer-default")).locator(".hfooter-brand");
     await restyle(page, brand.locator("> a"));
-    await restyle(page, brand.locator("> p").first());
+    const line = brand.locator("> p").first();
+    await page.addStyleTag({ content: ".site-line { margin-block-start: 3px; }" });
+    await line.evaluate((node) => node.classList.add("site-line"));
+    await expect(line).toHaveCSS("margin-block-start", "3px");
   });
 
   test("as wide as --harmo-page-width, padded by --harmo-page-padding", { tag: "@css" }, async ({ page }) => {
@@ -124,5 +127,16 @@ onEachPlayground("footer", () => {
     });
     await expect(main).toHaveCSS("max-inline-size", "640px");
     await expect(main).toHaveCSS("padding-inline-start", "32px");
+  });
+
+  test("a Harmo Link as the brand keeps the brand's look", { tag: "@css" }, async ({ page }) => {
+    const link = (await example(page, "footer-default")).locator(".hfooter-brand > a");
+    const look = () => link.evaluate((node) => { const style = getComputedStyle(node); return [style.color, style.fontSize, style.fontWeight, style.textDecorationLine]; });
+    const before = await look();
+    await link.evaluate((node) => {
+      (node as HTMLElement).style.transition = "none";
+      node.classList.add("hlink");
+    });
+    expect(await look()).toEqual(before);
   });
 });

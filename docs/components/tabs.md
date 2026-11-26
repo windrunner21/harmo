@@ -188,9 +188,10 @@ selected.
 ### The page you're on, in Next.js
 
 `current` is your app's to say. Read the path in a small Client Component
-with `usePathname()`. Tabs are usually pages side by side, so match each
-exactly; a tab with pages of its own under it matches by its start, with a
-`/` after it:
+with `usePathname()`. Mark the tab whose path is the page's, compared
+without a trailing slash, with `current`; on a page under a tab, such as one
+ticket under Tickets, give that tab `aria-current="true"`, which looks the
+same:
 
 ```tsx
 "use client";
@@ -204,11 +205,16 @@ const tabs = [
 ];
 
 export function AnalyticsTabs() {
-  const path = usePathname();
+  const path = (usePathname() ?? "").replace(/(.)\/$/, "$1");
   return (
     <TabNav aria-label="Analytics">
       {tabs.map(({ href, label }) => (
-        <TabLink key={href} href={href} current={path === href}>
+        <TabLink
+          key={href}
+          href={href}
+          current={path === href}
+          aria-current={path.startsWith(`${href}/`) ? "true" : undefined}
+        >
           {label}
         </TabLink>
       ))}

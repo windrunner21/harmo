@@ -131,8 +131,10 @@ arrow, with [Link](link.md)'s `.hexternal`:
   The description: 14px in `--harmo-color-text-secondary`, 6px
   (`--harmo-space-2xs`) under it.
 - The detail: 14px in `--harmo-color-text-secondary`, on the title's line at
-  the row's end, 16px after the title, kept on one line, its digits even,
-  so dates in a list line up; the description runs under the title and it.
+  the row's end, 16px after the title, its digits even, so dates in a list
+  line up; the description runs under the title and it. It's on one line,
+  unless the card's too narrow, when it wraps, at most half the row, rather
+  than push the chevron out.
 - The chevron: in `--harmo-color-text-secondary` at the end, centered, 16px
   (`--harmo-space-sm`) after the text. It turns into an arrow while the card is hovered or
   focused, as a ChevronToArrow does in any link or button.

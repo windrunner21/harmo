@@ -33,7 +33,7 @@
     const highlight = tabs.querySelector(".htabs-highlight");
     const indicator = tabs.querySelector(".htabs-indicator");
     const items = () => [...list.querySelectorAll(isTablist ? ':scope > [role="tab"]' : ":scope > li > a")];
-    const current = () => list.querySelector('[aria-current="page"], [aria-selected="true"]');
+    const current = () => list.querySelector('[aria-current="page"], a[aria-current="true"], [aria-selected="true"]');
     let hovered = null;
 
     const measure = (item) => {

@@ -15,6 +15,53 @@ missing in a default Next.js 16 build; a page's title and headings outside
 Prose; a brand with a tagline; a date on a Card's title row; tables and
 images in Prose; and the page itself, its width and base styles.
 
+### Upgrading
+
+- **Header and Footer: their side padding is `--harmo-page-padding`.** It's
+  `--harmo-space-sm` by default, worked out on `:root`, so a part of the
+  page that changes `--harmo-space-sm` to narrow its Header's or Footer's
+  sides sets `--harmo-page-padding` there too.
+
+  ```css title="Before"
+  .compact {
+    --harmo-space-sm: 0.5rem;
+  }
+  ```
+
+  ```css title="After"
+  .compact {
+    --harmo-space-sm: 0.5rem;
+    --harmo-page-padding: 0.5rem;
+  }
+  ```
+
+- **CLI, with a Harmo Link as your brand: update Link with Header or
+  Footer.** A Link as the brand keeps the brand's look through rules in
+  `link.css`, so a project that updates Header or Footer alone, and keeps
+  an older `link.css`, sees its brand take a link's color.
+
+  ```sh title="Before"
+  npx harmo-ui add header
+  ```
+
+  ```sh title="After"
+  npx harmo-ui add header link
+  ```
+- **In a build that lowers `light-dark()`, such as Next.js 16's, keep your
+  `color-scheme` out of cascade layers.** Harmo's light defaults aren't in
+  one, so they'd win over a `color-scheme` in, say, Tailwind's `@layer
+  base`.
+
+  ```css title="Before"
+  @layer base {
+    :root.dark { color-scheme: dark; }
+  }
+  ```
+
+  ```css title="After"
+  :root.dark { color-scheme: dark; }
+  ```
+
 ### Added
 
 - Heading: a page's title, `.htitle`, 33px on a 42px line, and the
@@ -43,7 +90,8 @@ images in Prose; and the page itself, its width and base styles.
   ```
 - Card: a detail at the end of the title row, such as a role's years or a
   post's date, with `.hcard-meta`, in React `meta`: on the title's line,
-  smaller, in secondary text, its digits even, before the chevron on a link.
+  smaller, in secondary text, its digits even, before the chevron on a link;
+  in a card too narrow for it, it wraps rather than push the chevron out.
 
   ```html preview
   <a class="hcard" data-variant="ghost" href="/blog/native-popovers">
@@ -61,10 +109,11 @@ images in Prose; and the page itself, its width and base styles.
   ```
 - Prose: tables and images, as a Markdown renderer writes them. A table is
   as wide as the text, its cells padded and ruled, a firmer rule under its
-  header row; a wide one goes in `.hprose-table`, in React `ProseTable`, a
-  named region that scrolls sideways and takes focus, so the keyboard can
-  scroll it, while the table stays a table. An image is as wide as the text
-  at most, with 8px corners, and a figure's caption is under it.
+  header row; a wide one goes in `.hprose-table`, in React `ProseTable`, which
+  must be named, a region that scrolls sideways and takes focus, so the
+  keyboard can scroll it, while the table stays a table. An image is as wide
+  as the text at most, with 8px corners, and a figure's caption is under it.
+  A Table or an Avatar inside keeps its own look.
 
   ```html preview
   <div class="hprose">
@@ -83,11 +132,25 @@ images in Prose; and the page itself, its width and base styles.
   ```
 - Empty State: its title can be the page's `h1`, `labelAs="h1"`, as on a
   404 or error page that's an Empty State and nothing else.
+- Navigation Menu, Sidebar, Tabs: `aria-current="true"` marks a section
+  you're in, such as Blog while you read a post under it, and looks as the
+  page you're on does; in React, the links take your `aria-current` where
+  `current` isn't set. Their docs show how to mark them in Next.js.
+
+  ```html preview
+  <nav class="hnavigation-menu" aria-label="Main">
+    <ul class="hnavigation-menu-list">
+      <li><a class="hnavigation-menu-link" href="/">Home</a></li>
+      <li><a class="hnavigation-menu-link" href="/blog" aria-current="true">Blog</a></li>
+      <li><a class="hnavigation-menu-link" href="/projects">Projects</a></li>
+    </ul>
+  </nav>
+  ```
 - `base.css`, which isn't part of `index.css`: the page in Harmo's font, text
   color, and background, with no margin around it, at no specificity, so
-  any rule of yours for `body` wins. The docs show the lines to copy with
-  the CLI, and, in footer.md, how to keep a Footer at the bottom of a short
-  page.
+  any rule of yours for `body` wins, unless it's in a cascade layer. With the CLI, `npx harmo-ui add base`
+  copies it, listed in `harmo.css` after the tokens; `add --all` leaves it
+  out. footer.md shows how to keep a Footer at the bottom of a short page.
 - `--harmo-page-width`, 75rem, and `--harmo-page-padding`, 16px: Header and
   Footer default to them, so a page's own container lines up with them, and
   changing them once changes all three.
@@ -96,8 +159,9 @@ images in Prose; and the page itself, its width and base styles.
 
 - Prose: its text is on a 1.625 line, 26px for 16px text, on the
   golden-ratio scale, rather than 1.5, and its headings on the same line,
-  so an `h2`, 20px, is a Heading's size on a Heading's line. Set
-  `--hprose-line-height: 1.5` on it to keep the old lines.
+  `1lh`, so an `h2`, 20px, is a Heading's size on a Heading's line. Set
+  `--hprose-line-height: 1.5` on it to keep the old lines, and
+  `line-height: 1.4` on its headings to keep their old ones.
 
   ```html preview
   <div class="hprose">
@@ -111,15 +175,19 @@ images in Prose; and the page itself, its width and base styles.
 - No colors at all, every link, button, and focus ring black, where a
   bundler lowers `light-dark()` for older browsers, as Lightning CSS does
   by default in Next.js 16, and the page declares no `color-scheme`. Each
-  color then needs variables only a `color-scheme` declaration sets, so
-  `tokens.css` declares `color-scheme: light` on `:where(:root)`; yours, on
-  `:root`, still takes over from it.
+  color then needs a pair of variables the bundler sets only where it sees
+  a `color-scheme`, so `tokens.css` sets Lightning CSS's and Bun's for light
+  on `:where(:root)`, without declaring a `color-scheme` that would override
+  a `<meta>` or a layered one. In such a build, your own `color-scheme`,
+  compiled by the same bundler, decides; a part of the page in its own
+  takes it only where the browser does `light-dark()` itself.
 - Header's and Footer's brand links and lines, and Breadcrumb's links and
   the page you're on: their own rules are one class, (0,1,0), rather than a
   class and an element, so one class of yours restyles them, as it comes
-  after Harmo's.
+  after Harmo's. A Harmo Link as the brand keeps the brand's look.
 - Kanban, in React: a click as a dropped card's copy lands, such as on the
-  Banner's Dismiss, reaches what's under it, rather than the copy.
+  Banner's Dismiss, reaches what's under it, rather than the copy, which
+  never takes the pointer now; the board shows the grabbing hand instead.
 
 ## [0.9.1] - 2026-11-19
 

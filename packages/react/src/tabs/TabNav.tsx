@@ -56,7 +56,7 @@ export const TabLink = ({ current, hidden, ...props }: TabLinkProps) => {
 
   return (
     <li hidden={hidden}>
-      <Anchor {...props} aria-current={current ? "page" : undefined} />
+      <Anchor {...props} aria-current={current ? "page" : props["aria-current"]} />
     </li>
   );
 };

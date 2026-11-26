@@ -76,4 +76,11 @@ onEachPlayground("link", () => {
     await link.evaluate((node) => node.setAttribute("dir", "rtl"));
     expect((await arrow()).transform).toBe("matrix(-1, 0, 0, 1, 0, 0)");
   });
+
+  test("in forced colors, the arrow takes the link's system color", { tag: "@css" }, async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "Only Chromium emulates forced colors");
+    await page.emulateMedia({ forcedColors: "active" });
+    const link = (await example(page, "link-to-another-site")).getByRole("link", { name: "harvest notes", exact: true });
+    expect(await link.evaluate((node) => getComputedStyle(node, "::after").backgroundColor === getComputedStyle(node).color)).toBe(true);
+  });
 });

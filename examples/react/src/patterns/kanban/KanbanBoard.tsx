@@ -661,7 +661,7 @@ export const KanbanBoard = <Card,>({
           })}
         </div>
         <DragOverlay
-          className={active ? undefined : "hkanban-landing"}
+          className="hkanban-landing"
           dropAnimation={still ? null : { duration: 200, easing: easeOut }}
           transition={still ? "none" : undefined}
         >

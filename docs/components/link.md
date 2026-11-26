@@ -57,6 +57,8 @@ in place of the static chevron.
 - With `.hexternal`, an arrow pointing up and out after the text, 0.75em,
   about as tall as its capitals, 0.25em from it, in its color, drawn by CSS,
   so it needs no icon of your own. Right to left, it points the other way.
+  In forced colors, it's in the system's link color on a link, and its text
+  color elsewhere, as the text beside it is.
 - Focus: the standard ring (`--harmo-focus-outline`, 2px offset).
 
 ## Accessibility

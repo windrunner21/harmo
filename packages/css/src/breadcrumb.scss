@@ -40,14 +40,14 @@
   }
 }
 
-// The links and the page you're on: one class, (0,1,0), so a class of yours
-// on one restyles it.
-.hbreadcrumb :where(ol > li > a, ol > li > [aria-current="page"]) {
+// The links and the page you're on, in the trail's own list: one class or
+// attribute, (0,1,0), so a class of yours on one restyles it.
+:where(.hbreadcrumb > ol > li) > :is(a, [aria-current="page"]) {
   min-inline-size: 0;
 }
 
 // The page you're on: its weight tells it apart without its color.
-.hbreadcrumb :where(ol > li > [aria-current="page"]) {
+:where(.hbreadcrumb > ol > li) > [aria-current="page"] {
   font-weight: $font-weight-medium;
 
   color: $color-text;

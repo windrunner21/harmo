@@ -123,4 +123,14 @@ onEachPlayground("header", () => {
     await expect(header).toHaveCSS("max-inline-size", "640px");
     await expect(header).toHaveCSS("padding-inline-start", "32px");
   });
+
+  test("a Harmo Link as the brand keeps the brand's look", { tag: "@css" }, async ({ page }) => {
+    const link = (await example(page, "header-default")).locator(".hheader-brand > a");
+    const before = await link.evaluate((node) => [getComputedStyle(node).color, getComputedStyle(node).textDecorationLine]);
+    await link.evaluate((node) => {
+      (node as HTMLElement).style.transition = "none";
+      node.classList.add("hlink");
+    });
+    expect(await link.evaluate((node) => [getComputedStyle(node).color, getComputedStyle(node).textDecorationLine])).toEqual(before);
+  });
 });

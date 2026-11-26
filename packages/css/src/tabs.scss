@@ -3,7 +3,7 @@
 // One look, two shapes: links between pages in a <nav> (ul > li > a, the
 // current one aria-current="page"), and tabs that switch panels on one page
 // (a tablist of role="tab" buttons, the selected one aria-selected="true").
-$current: ':is([aria-current="page"], [aria-selected="true"])';
+$current: ':is([aria-current="page"], :where(a)[aria-current="true"], [aria-selected="true"])';
 
 .htabs {
   --htabs-highlight-x: 0px;

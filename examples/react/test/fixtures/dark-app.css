@@ -1,0 +1,6 @@
+/* An app's stylesheet: Harmo's tokens, then its own color-scheme. */
+@import "../../../../packages/css/dist/tokens.css";
+
+:root {
+  color-scheme: dark;
+}

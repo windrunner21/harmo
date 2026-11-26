@@ -9,7 +9,7 @@
 // shows under it once the page has scrolled, data-scrolled, which a script
 // sets.
 .hheader {
-  --hheader-width: var(--harmo-page-width);
+  --hheader-width: #{$page-width};
   // Its controls, 10px from its edges.
   --hheader-height: calc(#{$control-height} + 2 * #{$space-xs});
 

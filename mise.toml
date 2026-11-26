@@ -91,7 +91,7 @@ run = "bun examples/react/build.ts --watch"
 
 [tasks."test:react"]
 description = "Compare the React examples' markup with the HTML examples, and check the compiled package"
-depends = ["build:react"]
+depends = ["build:react", "build:css"]
 dir = "{{config_root}}/examples/react"
 run = "bun test"
 
